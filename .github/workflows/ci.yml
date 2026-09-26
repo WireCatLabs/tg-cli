@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      # @leemour/cli-messaging is linked from a sibling checkout until it is published.
+      - uses: actions/checkout@v7
+        with:
+          path: tg-cli
+      - uses: actions/checkout@v7
+        with:
+          repository: leemour/cli-messaging
+          path: cli-messaging
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: tg-cli/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: pnpm install --frozen-lockfile && pnpm build
+        working-directory: cli-messaging
+      - run: pnpm install --frozen-lockfile
+        working-directory: tg-cli
+      - run: pnpm lint && pnpm typecheck && pnpm test && pnpm build
+        working-directory: tg-cli
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar -xz gitleaks
+          ./gitleaks git --no-banner --redact --exit-code 1 .
