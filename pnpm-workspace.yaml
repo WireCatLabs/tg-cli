@@ -1,0 +1,9 @@
+# pnpm blocks dependencies' install scripts by default. Since pnpm 11 the key is `allowBuilds`,
+# with an explicit boolean per package. better-sqlite3 is @mtcute/node's session storage and ships
+# a native module that its install script fetches or builds.
+allowBuilds:
+  better-sqlite3: true
+  esbuild: true
+  lefthook: true
+minimumReleaseAgeExclude:
+  - '@leemour/cli-core@0.7.0'

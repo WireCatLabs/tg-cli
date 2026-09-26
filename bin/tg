@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Runs this checkout's build of `tg` with config, state, the Telegram session and the message store
+# inside the checkout, in .tg/.
+#
+#   pnpm build
+#   bin/tg session start         # once per checkout; asks for api_id and api_hash the first time
+#   bin/tg chats list --limit 5
+#
+# A development build must never open the owner's real session or store: a store migration only
+# goes forward, so a branch build could not be undone on the real file. The same variables scope
+# the keyring entry, which is why each checkout needs its own `session start`.
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+[ -f "$root/dist/bin/tg.js" ] || { echo "no build in $root — run pnpm build first" >&2; exit 1; }
+
+export TG_CONFIG_DIR="$root/.tg/config" TG_STATE_DIR="$root/.tg/state" TG_CACHE_DIR="$root/.tg/cache"
+export MESSAGING_STORE="$root/.tg/messages.db"
+exec node "$root/dist/bin/tg.js" "$@"
