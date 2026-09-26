@@ -80,6 +80,18 @@ describe("machine output", () => {
   })
 })
 
+describe("a person at a terminal", () => {
+  it("gets the message feed as lines, not one escaped line", async () => {
+    const { code, stdout } = await tg(["messages", "list", "Valencia"], { tty: true })
+    const printed = stdout.join("\n")
+
+    expect(code).toBe(0)
+    expect(printed.split("\n").length).toBeGreaterThan(1)
+    expect(printed).not.toContain("\\x0a")
+    expect(printed).toContain("empadronamiento renewal")
+  })
+})
+
 describe("sending", () => {
   it("reads the text from stdin when none is given", async () => {
     const { code, stdout } = await tg(["messages", "send", "me"], { stdin: Readable.from(["from a pipe"]) })
