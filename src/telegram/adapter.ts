@@ -92,13 +92,16 @@ export class TelegramAdapter {
     return this.#call(async () => toAccount(await this.#client.getMe()))
   }
 
-  chats({ limit }: { limit: number }): Promise<Page<Chat>> {
+  /** Telegram lists dialogs by position, so a page is the dialogs up to its end, cut; `limit` unset is every one. */
+  chats({ limit, offset }: { limit?: number; offset: number }): Promise<Page<Chat>> {
     return this.#call(async () => {
+      const wanted = limit === undefined ? Number.POSITIVE_INFINITY : offset + limit + 1
       const items: Chat[] = []
-      for await (const dialog of this.#client.iterDialogs({ limit: limit + 1, archived: "keep" })) {
+      for await (const dialog of this.#client.iterDialogs({ limit: wanted, archived: "keep" })) {
         items.push(toChat(dialog))
       }
-      return { items: items.slice(0, limit), hasMore: items.length > limit }
+      const end = limit === undefined ? items.length : offset + limit
+      return { items: items.slice(offset, end), hasMore: items.length > end }
     })
   }
 

@@ -1,6 +1,7 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@leemour/cli-core"
 import { readSecret, terminalQr } from "@leemour/cli-messaging"
+import { commandWords, refuseCommandName, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
@@ -54,6 +55,7 @@ export const sessionCommand = () => {
     )
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
+      refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const { app } = this.opts<{ app: "browser" | "auto" }>()
       const input = context.stdin
       if (!input.isTTY)

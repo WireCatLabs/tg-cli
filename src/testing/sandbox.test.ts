@@ -1,6 +1,7 @@
 import { homedir } from "node:os"
 import { describe, expect, it } from "vitest"
-import { isolated, pathsFor, profileFrom, sessionFile } from "../paths.js"
+import { resolveSettings } from "../app.js"
+import { isolated, pathsFor, sessionFile } from "../paths.js"
 
 describe("the test sandbox", () => {
   const sandbox = process.env.TG_TEST_SANDBOX ?? ""
@@ -11,7 +12,8 @@ describe("the test sandbox", () => {
       paths.config,
       paths.state,
       paths.cache,
-      sessionFile(profileFrom()),
+      sessionFile(resolveSettings().profile),
+      resolveSettings().configPath,
       process.env.MESSAGING_STORE,
     ]) {
       expect(path?.startsWith(sandbox)).toBe(true)

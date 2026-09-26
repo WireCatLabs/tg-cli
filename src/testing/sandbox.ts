@@ -20,6 +20,8 @@ process.env.TMPDIR = sandbox
 delete process.env.TG_API_ID
 delete process.env.TG_API_HASH
 delete process.env.TG_PROFILE
+delete process.env.TG_PROFILE_LOCK
+delete process.env.TG_TIMEOUT
 process.env.TG_TEST_SANDBOX = sandbox
 
 afterAll(() => rmSync(sandbox, { recursive: true, force: true }))
