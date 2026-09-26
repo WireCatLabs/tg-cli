@@ -21,7 +21,8 @@ export const messagesCommand = () => {
         telegram.history(chat, { limit, ...(before === undefined ? {} : { before }) }),
       )
       if (context.format === "pretty") {
-        context.renderer.result(renderMessages(page.items, { color: context.color, provider: "telegram" }))
+        // Straight to stdout: the pretty renderer keeps every string to one line, and a feed is many.
+        context.streams.data(renderMessages(page.items, { color: context.color, provider: "telegram" }))
         if (page.hasMore) context.renderer.note(`older messages: --before ${page.items[0]?.id}`)
         return
       }

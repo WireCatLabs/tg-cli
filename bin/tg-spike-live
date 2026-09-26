@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# The spike's live checks in one run, after `bin/tg session start`. Sends two probe messages and one
+# check message to Saved Messages, nowhere else. Prints counts, codes and timings — no chat titles,
+# no message text — so the output can go straight into the spike report.
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$root"
+pnpm --silent build
+exec node --experimental-strip-types scripts/spike-live.ts
