@@ -1,0 +1,179 @@
+import { chmodSync, existsSync, mkdirSync } from "node:fs"
+import { dirname } from "node:path"
+import { format } from "node:util"
+import { CliError } from "@leemour/cli-core"
+import { type Chat, type Message, type Page, pickChat } from "@leemour/cli-messaging"
+import { type InputPeerLike, Long, TelegramClient, type User } from "@mtcute/node"
+import { randomLong } from "@mtcute/node/utils.js"
+import type { ApiCredentials } from "./credentials.js"
+import { toCliError } from "./errors.js"
+import { type Account, toAccount, toChat, toMessage } from "./map.js"
+import { openSessionStorage } from "./storage.js"
+
+export interface AdapterOptions {
+  credentials: ApiCredentials
+  sessionPath: string
+  /** Where the library's own log lines go, when asked for. Never stdout. */
+  diagnostic?: (line: string) => void
+  verbose?: boolean
+}
+
+export interface LoginPrompts {
+  method: "qr" | "phone"
+  showQr: (url: string, expires: Date) => void
+  phone: () => Promise<string>
+  code: () => Promise<string>
+  password: () => Promise<string>
+  note: (message: string) => void
+}
+
+export interface Sent {
+  message: Message
+  /** Telegram's `random_id` for this send, as a string. Repeat it with `--send-id` after an unknown outcome. */
+  sendId: string
+}
+
+const SAVED = new Set(["me", "self", "saved"])
+
+/**
+ * One Telegram account over one connection, speaking only the domain model above this line. Every
+ * command closes it in a `finally`: an open socket keeps Node alive, and a piped command that prints
+ * and never returns is a defect.
+ */
+export class TelegramAdapter {
+  readonly #client: TelegramClient
+  readonly #sessionPath: string
+
+  /** Async because the runtime's SQLite module is imported on demand (cli-messaging `openCache`). */
+  static async open(options: AdapterOptions): Promise<TelegramAdapter> {
+    mkdirSync(dirname(options.sessionPath), { recursive: true, mode: 0o700 })
+    // The session file and its -wal and -shm companions are all created by SQLite; a umask is the one
+    // setting that reaches all three.
+    process.umask(0o077)
+    return new TelegramAdapter(options, await openSessionStorage(options.sessionPath))
+  }
+
+  private constructor(
+    { credentials, sessionPath, diagnostic, verbose = false }: AdapterOptions,
+    storage: Awaited<ReturnType<typeof openSessionStorage>>,
+  ) {
+    this.#sessionPath = sessionPath
+    this.#client = new TelegramClient({
+      apiId: credentials.id,
+      apiHash: credentials.hash,
+      storage,
+      disableUpdates: true,
+      logLevel: verbose ? 3 : 1,
+    })
+    // mtcute's default handler writes with console.log, which is stdout — where only data may go.
+    const write = diagnostic ?? ((line: string) => process.stderr.write(`${line}\n`))
+    this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
+  }
+
+  async login(prompts: LoginPrompts): Promise<Account> {
+    return this.#call(async () => {
+      const user: User = await this.#client.start({
+        ...(prompts.method === "qr" ? { qrCodeHandler: prompts.showQr } : { phone: prompts.phone }),
+        code: prompts.code,
+        password: prompts.password,
+        codeSentCallback: (sent) => prompts.note(`Telegram sent a login code (${sent.type})`),
+        invalidCodeCallback: (what) => prompts.note(`that ${what} was not accepted — try again`),
+      })
+      return toAccount(user)
+    })
+  }
+
+  me(): Promise<Account> {
+    return this.#call(async () => toAccount(await this.#client.getMe()))
+  }
+
+  chats({ limit }: { limit: number }): Promise<Page<Chat>> {
+    return this.#call(async () => {
+      const items: Chat[] = []
+      for await (const dialog of this.#client.iterDialogs({ limit: limit + 1, archived: "keep" })) {
+        items.push(toChat(dialog))
+      }
+      return { items: items.slice(0, limit), hasMore: items.length > limit }
+    })
+  }
+
+  history(reference: string, { limit, before }: { limit: number; before?: string }): Promise<Page<Message>> {
+    return this.#call(async () => {
+      const peer = await this.#peerOf(reference)
+      const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
+      const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
+      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined && page.length === limit }
+    })
+  }
+
+  /**
+   * One logical send carries one `random_id`, generated before the request and handed back on every
+   * outcome. Telegram is expected to deduplicate by it — measured in the spike, not assumed.
+   */
+  send(reference: string, text: string, { sendId }: { sendId?: string } = {}): Promise<Sent> {
+    const id = sendId === undefined ? randomLong() : parseSendId(sendId)
+    const kept = id.toString()
+    return this.#call(async () => {
+      const peer = await this.#peerOf(reference)
+      try {
+        const message = await this.#client.sendText(peer, text, { randomId: id })
+        return { message: toMessage(message), sendId: kept }
+      } catch (error) {
+        const known = toCliError(error)
+        if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
+          throw new CliError(
+            "outcome_unknown",
+            `no answer from Telegram — the message may have been sent. Repeat with --send-id ${kept}, never without it`,
+            { sendId: kept, cause: known.code },
+          )
+        }
+        throw known
+      }
+    })
+  }
+
+  /** Forgets the session on Telegram's side too, so the device disappears from the account's list. */
+  logout(): Promise<void> {
+    return this.#call(async () => {
+      await this.#client.logOut()
+    })
+  }
+
+  async close(): Promise<void> {
+    await this.#client.destroy()
+    for (const suffix of ["", "-wal", "-shm"]) {
+      const path = `${this.#sessionPath}${suffix}`
+      if (existsSync(path)) chmodSync(path, 0o600)
+    }
+  }
+
+  async #peerOf(reference: string): Promise<InputPeerLike> {
+    const trimmed = reference.trim()
+    if (SAVED.has(trimmed.toLowerCase())) return "me"
+    if (/^-?\d+$/.test(trimmed)) return Number(trimmed)
+    if (trimmed.startsWith("@")) return trimmed.slice(1)
+
+    const chats: Chat[] = []
+    for await (const dialog of this.#client.iterDialogs({ archived: "keep" })) chats.push(toChat(dialog))
+    return Number(pickChat(trimmed, chats).id)
+  }
+
+  async #call<T>(work: () => Promise<T>): Promise<T> {
+    try {
+      return await work()
+    } catch (error) {
+      throw toCliError(error)
+    }
+  }
+}
+
+const messageNumber = (id: string): number => {
+  if (!/^\d+$/.test(id)) throw new CliError("validation_error", `--before takes a message id, got "${id}"`)
+  return Number(id)
+}
+
+const parseSendId = (typed: string): Long => {
+  if (!/^-?\d{1,20}$/.test(typed))
+    throw new CliError("validation_error", "--send-id is the number a failed send printed")
+  return Long.fromString(typed)
+}

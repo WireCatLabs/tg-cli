@@ -1,0 +1,156 @@
+import type {
+  Attachment,
+  Capabilities,
+  Chat,
+  ChatKind,
+  Message,
+  ProviderMetadata,
+  QuotedMessage,
+  Reactions,
+} from "@leemour/cli-messaging"
+import type { Dialog, MessageMedia, MessageReactions, Peer, PeerSender, Message as TgMessage } from "@mtcute/node"
+
+/** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
+
+export const TELEGRAM_CAPABILITIES: Capabilities = {
+  history: true,
+  chatList: "server",
+  realtime: "push",
+  send: true,
+  edit: true,
+  delete: true,
+  react: true,
+  threads: true,
+}
+
+export interface Account {
+  id: string
+  name: string | null
+  username: string | null
+}
+
+export const toAccount = (user: Peer): Account => ({
+  id: String(user.id),
+  name: user.displayName || null,
+  username: user.username,
+})
+
+const kindOf = (peer: Peer): ChatKind => {
+  if (peer.type === "user") return peer.isSelf ? "saved" : "dialog"
+  if (peer.chatType === "channel") return "channel"
+  return "group"
+}
+
+export const toChat = (dialog: Dialog): Chat => {
+  const peer = dialog.peer
+  const metadata = compact({
+    isBot: peer.type === "user" && peer.isBot ? true : undefined,
+    isForum: peer.type === "chat" && peer.isForum ? true : undefined,
+    chatType: peer.type === "chat" ? peer.chatType : undefined,
+    username: peer.username ?? undefined,
+    archived: dialog.isArchived || undefined,
+    pinned: dialog.isPinned || undefined,
+  })
+  return {
+    id: String(peer.id),
+    title: peer.type === "user" && peer.isSelf ? "Saved Messages" : peer.displayName || null,
+    kind: kindOf(peer),
+    unreadCount: dialog.unreadCount,
+    lastMessageAt: dialog.lastMessage?.date.toISOString() ?? null,
+    participantsCount: peer.type === "chat" ? peer.membersCount : null,
+    ...(metadata ? { providerMetadata: metadata } : {}),
+  }
+}
+
+export const toMessage = (message: TgMessage): Message => {
+  const reply = message.replyToMessage
+  const metadata = compact({
+    views: message.views ?? undefined,
+    forwards: message.forwards ?? undefined,
+    groupedId: message.groupedIdUnique ?? undefined,
+    action: message.action?.type,
+    link: linkOf(message),
+  })
+  return {
+    id: String(message.id),
+    chatId: String(message.chat.id),
+    senderId: String(message.sender.id),
+    senderName: message.sender.displayName || null,
+    timestamp: message.date.toISOString(),
+    editedAt: message.editDate?.toISOString() ?? null,
+    text: message.text,
+    outgoing: message.isOutgoing,
+    attachments: attachmentsOf(message.media),
+    replyTo: null,
+    ...(reply?.id != null ? { replyToId: String(reply.id) } : {}),
+    forwardedFrom: message.forward ? forwardOf(message) : null,
+    ...(message.isTopicMessage && reply?.threadId != null ? { threadId: String(reply.threadId) } : {}),
+    reactions: message.reactions ? reactionsOf(message.reactions) : null,
+    ...(metadata ? { providerMetadata: metadata } : {}),
+  }
+}
+
+/** Only public chats and supergroups have links; mtcute throws for the rest, and that is not an error here. */
+const linkOf = (message: TgMessage): string | undefined => {
+  try {
+    return message.link
+  } catch {
+    return undefined
+  }
+}
+
+const forwardOf = (message: TgMessage): QuotedMessage => {
+  const forward = message.forward
+  const sender: PeerSender | undefined = forward?.sender
+  return {
+    id: forward?.fromMessageId != null ? String(forward.fromMessageId) : "",
+    senderId: sender && sender.type !== "anonymous" ? String(sender.id) : null,
+    senderName: sender?.displayName || null,
+    timestamp: forward?.date.toISOString() ?? null,
+    // The text of a forward is the message's own text in Telegram; a second copy would print twice.
+    text: "",
+    attachments: [],
+    outgoing: null,
+  }
+}
+
+const reactionsOf = (reactions: MessageReactions): Reactions => {
+  const counts = reactions.reactions.map((one) => ({
+    reaction: typeof one.emoji === "string" ? one.emoji : `custom:${String(one.emoji)}`,
+    count: one.count,
+    mine: one.order !== null,
+  }))
+  return {
+    counts: counts.map(({ reaction, count }) => ({ reaction, count })),
+    mine: counts.find((one) => one.mine)?.reaction ?? null,
+    total: counts.reduce((sum, one) => sum + one.count, 0),
+  }
+}
+
+const attachmentsOf = (media: MessageMedia): Attachment[] => {
+  if (!media) return []
+  const read = <T>(name: string): T | undefined => {
+    if (!(name in media)) return undefined
+    const value = (media as unknown as Record<string, unknown>)[name]
+    return value === null || value === "" ? undefined : (value as T)
+  }
+  const attachment: Attachment = { kind: media.type }
+  const name = read<string>("fileName")
+  const mime = read<string>("mimeType")
+  const size = read<number>("fileSize")
+  const width = read<number>("width")
+  const height = read<number>("height")
+  const duration = read<number>("duration")
+  if (name !== undefined) attachment.name = name
+  if (mime !== undefined) attachment.mime = mime
+  if (typeof size === "number") attachment.size = size
+  if (typeof width === "number") attachment.width = width
+  if (typeof height === "number") attachment.height = height
+  if (typeof duration === "number") attachment.duration = duration
+  return [attachment]
+}
+
+const compact = (fields: Record<string, unknown>): ProviderMetadata | undefined => {
+  const kept = Object.entries(fields).filter(([, value]) => value !== undefined)
+  return kept.length > 0 ? Object.fromEntries(kept) : undefined
+}
