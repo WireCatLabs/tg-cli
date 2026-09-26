@@ -1,6 +1,6 @@
 import { Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
-import type { Chat, Message } from "@leemour/cli-messaging"
+import { type Chat, type Message, pickChat } from "@leemour/cli-messaging"
 import { describe, expect, it } from "vitest"
 import type { Adapter, Environment } from "./commands/context.js"
 import { run } from "./program.js"
@@ -63,6 +63,35 @@ describe("machine output", () => {
     expect(stderr).toEqual([])
   })
 
+  it("pages chats through the shared flags, and refuses --all with --page", async () => {
+    let asked: unknown
+    const { code, stdout } = await tg(["chats", "list", "--limit", "5", "--page", "3"], {
+      adapter: () =>
+        scripted({
+          chats: async (window) => {
+            asked = window
+            return { items: [chat], hasMore: true }
+          },
+        }),
+    })
+
+    expect(code).toBe(0)
+    expect(asked).toEqual({ limit: 5, offset: 10 })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ page: 3, limit: 5, hasMore: true })
+    expect((await tg(["chats", "list", "--all", "--page", "2"])).code).toBe(2)
+  })
+
+  it("reads the first word as the profile", async () => {
+    let profile = ""
+    await tg(["work", "chats", "list"], {
+      adapter: (options) => {
+        profile = options.sessionPath
+        return scripted()
+      },
+    })
+    expect(profile).toMatch(/work\.session$/)
+  })
+
   it("keeps every id a string", async () => {
     const { stdout } = await tg(["messages", "list", "Valencia"])
     const [item] = JSON.parse(stdout[0] ?? "").items
@@ -77,6 +106,23 @@ describe("machine output", () => {
     expect(code).toBe(4)
     expect(stdout).toEqual([])
     expect(JSON.parse(stderr[0] ?? "").error.code).toBe("authentication_error")
+  })
+})
+
+describe("a chat named ambiguously", () => {
+  it("**lists the candidates with exit 2**, although the error comes from cli-messaging's copy of cli-core", async () => {
+    const twoMatches = () =>
+      scripted({
+        history: async (reference) => {
+          pickChat(reference, [chat, { ...chat, id: "-1009", title: "Valencia housing" }])
+          return { items: [], hasMore: false }
+        },
+      })
+    const { code, stdout, stderr } = await tg(["messages", "list", "Valencia"], { adapter: twoMatches })
+
+    expect(code).toBe(2)
+    expect(stdout).toEqual([])
+    expect(JSON.parse(stderr[0] ?? "").error.candidates).toHaveLength(2)
   })
 })
 
@@ -110,7 +156,7 @@ describe("sending", () => {
     const { code, stderr } = await tg(["messages", "send", "me", "hi"], { adapter: unknown })
 
     expect(code).toBe(14)
-    expect(JSON.parse(stderr[0] ?? "").error.details.sendId).toBe("-9001")
+    expect(JSON.parse(stderr[0] ?? "").error.sendId).toBe("-9001")
   })
 
   it("refuses an empty message before connecting", async () => {

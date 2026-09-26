@@ -1,7 +1,7 @@
 import { CliError } from "@leemour/cli-core"
 import { renderMessages } from "@leemour/cli-messaging"
 import { Command } from "commander"
-import { forCommand, positiveInteger } from "./context.js"
+import { forCommand } from "./context.js"
 
 const CHAT = "a chat: its title or part of it, its id, @username, or `me` for Saved Messages"
 
@@ -12,17 +12,26 @@ export const messagesCommand = () => {
     .command("list")
     .description("a chat's messages, oldest to newest")
     .argument("<chat>", CHAT)
-    .option("--limit <n>", "how many", positiveInteger("--limit"), 20)
+    .option("--limit <n>", "how many", (value) => Number.parseInt(value, 10))
     .option("--before <id>", "only messages older than this message id")
     .action(async function (this: Command, chat: string) {
       const context = forCommand(this)
-      const { limit, before } = this.opts<{ limit: number; before?: string }>()
+      const { before } = this.opts<{ before?: string }>()
+      const { limit } = context.settings
       const page = await context.withTelegram((telegram) =>
         telegram.history(chat, { limit, ...(before === undefined ? {} : { before }) }),
       )
       if (context.format === "pretty") {
         // Straight to stdout: the pretty renderer keeps every string to one line, and a feed is many.
-        context.streams.data(renderMessages(page.items, { color: context.color, provider: "telegram" }))
+        context.streams.data(
+          renderMessages(page.items, {
+            color: context.color,
+            verbosity: context.settings.detail,
+            senderColors: context.settings.senderColors,
+            profile: context.profile,
+            provider: "telegram",
+          }),
+        )
         if (page.hasMore) context.renderer.note(`older messages: --before ${page.items[0]?.id}`)
         return
       }

@@ -38,6 +38,12 @@ tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 `<chat>` is a title or part of one, an id, `@username`, or `me` for Saved Messages. An ambiguous
 title is an error listing the candidates, never a guess.
 
+The first word is the profile whenever it is not a command: `tg work chats list`. `TG_PROFILE` does
+the same for a shell session, and `TG_PROFILE_LOCK` pins a process to one profile. Every command
+takes `--json`, `--jsonl`, `--quiet`, `-v`/`-vv`, `--trace` (the Telegram library's own log, on
+stderr) and `--timeout 30s`; listings take `--limit`, `--page` and `--all`. Settings live in
+`~/.config/tg-cli/config.json`, per profile or under `defaults`.
+
 ## Development
 
 `cli-messaging` must be checked out beside this repository and built (`pnpm install && pnpm build`

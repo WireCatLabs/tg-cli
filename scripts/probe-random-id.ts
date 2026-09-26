@@ -17,9 +17,10 @@ process.env.TG_CACHE_DIR ??= join(root, ".tg/cache")
 
 const { TelegramAdapter } = await import("../dist/telegram/adapter.js")
 const { apiCredentials } = await import("../dist/telegram/credentials.js")
-const { profileFrom, sessionFile } = await import("../dist/paths.js")
+const { sessionFile } = await import("../dist/paths.js")
+const { resolveSettings } = await import("../dist/app.js")
 
-const profile = profileFrom()
+const { profile } = resolveSettings()
 const credentials = apiCredentials({ profile }).read()
 if (!credentials) {
   console.error("no app credentials — run bin/tg session start first")
