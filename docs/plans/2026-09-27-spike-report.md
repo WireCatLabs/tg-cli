@@ -1,7 +1,7 @@
 # Telegram spike — report
 
-**Status 2026-09-27: built. Everything that needs no Telegram account is measured. The live
-criteria wait for the owner's first login.**
+**Status 2026-09-27: done.** Every criterion is measured against the owner's real account, except
+the phone-and-code login. The owner logged in once, and the method was not recorded.
 Criteria from §9 of
 [the platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md).
 
@@ -12,12 +12,12 @@ and line. **Pending** means it needs the real account.
 
 | # | Criterion | Status | Evidence |
 |---|---|---|---|
-| 1 | QR and phone + 2FA login; the next command needs no prompt | pending | needs the owner's phone |
-| 2 | stdout is one JSON value, stderr is empty, ids are strings | measured with a scripted Telegram; live pending | `src/program.test.ts` — "writes one JSON value…", "keeps every id a string" |
-| 3 | the same `random_id` twice gives one message | the code path is read in the source; Telegram's behaviour is pending | mtcute passes our id through (`@mtcute/core/highlevel/methods/messages/send-text.js:65`, `params.randomId ?? randomLong()`). `pnpm probe:random-id` measures the rest |
-| 4 | the process exits right after printing | measured without a session: 0.3 s; live pending | `time bin/tg chats list --json` |
+| 1 | QR and phone + 2FA login; the next command needs no prompt | **measured, one method** | the owner logged in once; every later command ran with no prompt. The other method has not been tried |
+| 2 | stdout is one JSON value, stderr is empty, ids are strings | **measured live** | `bin/tg-spike-live`: `account show`, `chats list` (5), `messages list me` (5) and `messages send me` each gave one JSON value and an empty stderr, with string ids |
+| 3 | the same `random_id` twice gives one message | **measured live: yes** | `pnpm probe:random-id`: the second send, over a new connection with the same `random_id`, got back the **same message id**, and Saved Messages held **one** copy |
+| 4 | the process exits right after printing | **measured live** | every live command exited in 0.31–0.45 s, connection included |
 | 5 | mtcute is imported only under `src/telegram/` | measured | a deliberate `import "@mtcute/node"` in `src/` and in `src/commands/`, and `import "../telegram/map.js"` in `src/commands/`, each turned `pnpm lint` red |
-| 6 | the session file is mode 600 and printed nowhere | measured for the file; the output side is read in the source | a session file opened from a global install came out `600`. No command prints the session or the app credentials |
+| 6 | the session file is mode 600 and printed nowhere | **measured live** for the file; the output side is read in the source | the owner's real session file is `600`, and its directory `700`. No command prints the session or the app credentials |
 | 7 | `npm i -g` and `pnpm add -g` both give a working `tg` | **measured: pnpm failed, fixed, both work** | see below |
 | 8 | lines reused, copied and new | counted | see below |
 
@@ -80,6 +80,19 @@ code.
 - One request with an invalid number (`+0`) was answered `200` with "Sorry, too many tries. Please try
   again later." That is either its answer for a bad number or a limit on this IP. The command shows
   the site's own sentence either way.
+
+**FIND-5 · The first send failed with "User info is not cached yet" (fixed).** The first live send
+to Saved Messages was refused before anything reached Telegram. `sendText` reads the logged-in user
+from mtcute's cache (`@mtcute/core/highlevel/methods/messages/send-text.js:103`), but mtcute fills
+that cache only on the first request (`highlevel/base.js:78`, `prepare`). Reading history worked,
+because resolving the chat makes a request first. The adapter now calls `prepare()` right after
+opening. It reads the session file only, with no network. Scripted tests could not catch this,
+because the scripted Telegram replaces the adapter.
+
+**FIND-6 · Telegram deduplicates by `random_id`, also across connections.** This is what makes the
+retry rule safe. A send with no answer returns `outcome_unknown` with its `--send-id`, and repeating
+it cannot create a second message. The same holds for MAX's `cid`, as max-cli measured. How long
+Telegram remembers a `random_id` is not measured: the two sends were seconds apart.
 
 ## Counts
 

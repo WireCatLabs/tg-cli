@@ -50,7 +50,12 @@ export class TelegramAdapter {
     // The session file and its -wal and -shm companions are all created by SQLite; a umask is the one
     // setting that reaches all three.
     process.umask(0o077)
-    return new TelegramAdapter(options, await openSessionStorage(options.sessionPath))
+    const adapter = new TelegramAdapter(options, await openSessionStorage(options.sessionPath))
+    // Loads the logged-in user from the session before anything else. mtcute does it on the first
+    // request, but sendText reads that user before making one — measured 2026-09-27: "User info is
+    // not cached yet" on the first send to Saved Messages.
+    await adapter.#client.prepare()
+    return adapter
   }
 
   private constructor(
