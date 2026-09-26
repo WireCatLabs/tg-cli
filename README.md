@@ -9,17 +9,25 @@ is [the platform proposal](https://github.com/leemour/cli-messaging/blob/main/do
 in `cli-messaging`, which holds everything messenger-neutral. Telegram-specific code lives only in
 `src/telegram/`, and a lint rule keeps mtcute there.
 
-## Before the first login
+## The first login
 
-Register your own app at [my.telegram.org/apps](https://my.telegram.org/apps). `tg session start`
-asks for its `api_id` and `api_hash` the first time and keeps them in the OS keyring. Telegram allows
-one app per phone number and watches accounts that use unofficial clients, so an app id is never
-shared between users.
+Every user has their own Telegram app: Telegram allows one per phone number and watches accounts that
+use unofficial clients, so an app id is never shared. `tg session start` gets it the first time and
+keeps it in the OS keyring, in one of two ways:
+
+- `--app browser` (default) opens [my.telegram.org/apps](https://my.telegram.org/apps) and waits for
+  you to paste `App api_id` and `App api_hash`.
+- `--app auto` fills the site in for you: it asks your phone number and the code my.telegram.org sends
+  in Telegram, reads your app, or creates one if you have none. It drives the site's web form, which
+  has no API, so a change on Telegram's side can break it; `--app browser` still works then.
+
+Then the login itself: a QR code in the terminal, or `tg session start phone` for a code and your
+2FA password. With `--app auto` and `phone`, the phone number is asked once.
 
 ## Commands so far
 
 ```sh
-tg session start [qr|phone]      # QR by default; phone asks for the code and the 2FA password
+tg session start [qr|phone] [--app browser|auto]   # QR by default
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
 tg chats list [--limit n]

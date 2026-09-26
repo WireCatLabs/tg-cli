@@ -70,6 +70,17 @@ and `invalidCodeCallback`, so the login flow's own lines are never reached.
 refuses with "global bin directory … is not in PATH". This is for the install instructions, not the
 code.
 
+**FIND-4 · Getting the app credentials is automated two ways (added 2026-09-27, owner's request).**
+`--app browser` opens my.telegram.org and waits for a paste. `--app auto` drives the site:
+- The login half is read from the page's own script: `send_password {phone}` answers
+  `{random_hash}`, then `login {phone, random_hash, password}`.
+- The `/apps` page and `/apps/create` sit behind that login. They are read from two clients that drive
+  it the same way, MadelineProto (`src/MyTelegramOrgWrapper.php`) and gogram (`telegram/auth.go`).
+  **Not measured until the first real run.**
+- One request with an invalid number (`+0`) was answered `200` with "Sorry, too many tries. Please try
+  again later." That is either its answer for a bad number or a limit on this IP. The command shows
+  the site's own sentence either way.
+
 ## Counts
 
 | | lines (no tests) |
@@ -84,7 +95,8 @@ program that will become cli-messaging's skeleton in Phase 1.
 ## What the owner runs
 
 1. Create an app at [my.telegram.org/apps](https://my.telegram.org/apps).
-2. In your own terminal, from the checkout: `pnpm build && bin/tg session start`. It refuses to run
+2. In your own terminal, from the checkout: `pnpm build && bin/tg session start` (or add `--app auto`
+   to have the app registered for you). It refuses to run
    without a terminal. It asks for `api_id`, then `api_hash` (hidden), then shows a QR code. Scan it
    from Telegram → Settings → Devices → Link Desktop Device. To use a phone code instead, run
    `bin/tg session start phone`.
