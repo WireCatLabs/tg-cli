@@ -38,6 +38,7 @@ tg messages list <chat> [--limit n] [--before id]
 tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
+tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg runs list [--limit n]         # recorded runs, newest first
 tg runs show <run-id>            # one run: its outcome and one line per Telegram call
 tg runs path <run-id>

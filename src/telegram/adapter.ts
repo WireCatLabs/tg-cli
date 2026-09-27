@@ -197,11 +197,15 @@ export class TelegramAdapter {
    * One logical send carries one `random_id`, made before the request and repeated by a retry:
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).
    */
-  send(chatId: string, text: string, { sendId }: { sendId: string }): Promise<Sent> {
+  send(chatId: string, text: string, { sendId, replyTo }: { sendId: string; replyTo?: string }): Promise<Sent> {
     const id = parseSendId(sendId)
+    const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     return this.#call(async () => {
       try {
-        const message = await this.#client.sendText(Number(chatId), text, { randomId: id })
+        const message = await this.#client.sendText(Number(chatId), text, {
+          randomId: id,
+          ...(answering === undefined ? {} : { replyTo: answering }),
+        })
         return { message: toMessage(message), sendId }
       } catch (error) {
         const known = toCliError(error)

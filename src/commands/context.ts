@@ -17,7 +17,6 @@ import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 
 export interface Environment extends BaseEnvironment {
-  stdin?: NodeJS.ReadableStream & { isTTY?: boolean }
   keyring?: KeyringStore
   /** Tests hand in a scripted Telegram. */
   adapter?: (options: { credentials: ApiCredentials; sessionPath: string }) => Adapter | Promise<Adapter>
@@ -26,7 +25,6 @@ export interface Environment extends BaseEnvironment {
 export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">
 
 export interface CommandContext extends MessengerContext {
-  stdin: NodeJS.ReadableStream & { isTTY?: boolean }
   sessionPath: string
   credentials: ReturnType<typeof apiCredentials>
   open: (credentials?: ApiCredentials) => Promise<Adapter>
@@ -86,10 +84,9 @@ export const TELEGRAM: Messenger = {
 
 export const forCommand = (command: Command): CommandContext => {
   const context = messengerContext(command, TELEGRAM)
-  const { environment, sessionPath, credentials, open } = telegramOf(command, context)
+  const { sessionPath, credentials, open } = telegramOf(command, context)
   return {
     ...context,
-    stdin: environment.stdin ?? process.stdin,
     sessionPath,
     credentials,
     open,
