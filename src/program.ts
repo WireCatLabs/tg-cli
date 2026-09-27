@@ -23,6 +23,7 @@ import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { type Environment, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
+import { updateSelfCommand } from "./commands/update.js"
 
 const definition: ProgramDefinition = {
   app: TG,
@@ -44,6 +45,7 @@ const definition: ProgramDefinition = {
     doctorCommand(TELEGRAM),
     commandsCommand(TG),
     completeCommand(TELEGRAM, CONFIG),
+    updateSelfCommand(),
   ],
 }
 

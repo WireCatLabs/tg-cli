@@ -16,9 +16,11 @@ import { resolveSettings, TG } from "../app.js"
 import { isolated, sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
+import type { UpdateEnvironment } from "../update.js"
 
 export interface Environment extends BaseEnvironment {
   keyring?: KeyringStore
+  update?: UpdateEnvironment
   /** Tests hand in a scripted Telegram. */
   adapter?: (
     options: { credentials: ApiCredentials; sessionPath: string } & ConnectOptions,

@@ -70,6 +70,7 @@ describe("the stdout contract", () => {
         keyring: memoryKeyring(),
         env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
         adapter: () => telegram,
+        update: { fetch: async () => new Response("{}", { status: 404 }), spawn: () => 1 },
       })
 
       if (code === 0) {
