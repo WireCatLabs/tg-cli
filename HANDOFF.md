@@ -32,24 +32,33 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: 0.3.0 released, run records
+### 3a. Done 2026-09-27: 0.4.0 released — run records and the message store
 
-`@leemour/cli-messaging@0.3.0` is on npm. `baseContext().run` records a run (`--record`, or any
-failure unless `--no-record`) and hands the body an event sink; tg's `withTelegram` wraps the adapter
-in `src/commands/observed.ts`, which emits one request and one response per adapter call.
-`tg runs list|show|path` comes from cli-messaging's `runsCommand`. A cli-messaging release is
-`bin/release` in `../cli-messaging` after the version bump is merged — it runs on GitHub Actions
-with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
+`@leemour/cli-messaging@0.4.0` is on npm and tg-cli depends on it.
+
+- **Run records** (0.3.0): `baseContext().run` records a run (`--record`, or any failure unless
+  `--no-record`) and hands the body an event sink; tg's `withTelegram` wraps the adapter in
+  `src/commands/observed.ts`. `tg runs list|show|path` come from cli-messaging's `runsCommand`.
+- **The store** (0.4.0): `openStore()` in `@leemour/cli-messaging/store` — schema, migrations,
+  save and read methods, trigram search. Nothing in tg writes to it yet. What was left out of
+  migration 1, and why, is the 1.3 row of proposal §8.
+
+A cli-messaging release is `bin/release` in `../cli-messaging` after the version bump is merged — it
+runs on GitHub Actions with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
 `minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window).
 
-### 3b. Next planned work, in order
+### 3b. Next planned work — the order is the owner's call
 
-1. **PR 1.3 — the message store** in cli-messaging: proposal §4 is the schema. It is the business
-   foundation (Phase 2: archive, backfill, search).
-2. Phase 2 per proposal §8.
-3. Small, whenever: failures *before* a command runs (usage errors, a config that will not load)
-   are not kept as runs. max-cli does it in `program.ts` (`keepFailure`); `run()` in cli-messaging
-   would need a settings resolver for it.
+Proposal §8 puts **1.4–1.7** (the generic read commands, `send|reply`, `doctor`/`config`/…, `watch`)
+before **Phase 2**. The previous handoff said Phase 2 next. Ask the owner which comes first:
+
+- **2.1 — ingestion**: every read writes to the store, `--offline` answers from it. The store's
+  first real writer, and the first step of the business milestone (archive, backfill, search).
+- **1.4 — skeleton, part 2**: the generic read commands move into cli-messaging with hooks, so max
+  can reuse them in Phase 4.
+
+Small, whenever: failures *before* a command runs (usage errors, a config that will not load) are
+not kept as runs. max-cli does it in `program.ts` (`keepFailure`).
 
 For any of these, read in this order:
 
@@ -60,6 +69,8 @@ For any of these, read in this order:
 | `src/commands/messages.ts` | the shape of a write: resolve → guard.check → send → guard.record |
 | `src/telegram/adapter.ts` | the only door to Telegram: `open`, `login`, `me`, `chats`, `history`, `resolve`, `send` |
 | `src/telegram/map.ts` | where mtcute's objects become the domain model — the only file that knows their shape |
+| `../cli-messaging/src/store/store.ts` | what the store keeps, what an update may not erase, and how a sender becomes an identity and a person |
+| `../cli-messaging/src/store/migrations.ts` | the schema, and the append-only rule for changing it |
 | `../cli-messaging/src/cli/settings.ts` | flag → env → file → default; how a CLI adds its own settings (`SettingsExtension`) |
 | `../cli-messaging/src/cli/program.ts` | `run()`, global flags, the profile as the first word |
 
@@ -97,7 +108,7 @@ For any of these, read in this order:
    `bin/tg account show`, `bin/tg chats list --limit 3`, `bin/tg messages list me --limit 2`.
 10. **Telegram deduplicates by `random_id`, also across connections** (measured, FIND-6). That is
     what makes `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
-11. **The store (Phase 1.3) is a system of record, not a cache** — forward-only additive
+11. **The store is a system of record, not a cache** — forward-only additive
     migrations, never max-cli's drop-and-rebuild (`../max-cli/src/cache/schema.ts` `migrate`), and
     tests must use `MESSAGING_STORE` (proposal §4, RISK-11).
 12. **npm shows a new version only after a few minutes.** `bin/release` waits and tags; a check
@@ -106,7 +117,13 @@ For any of these, read in this order:
     an argument that already is one, or from the answer (`src/commands/observed.ts`).
 14. **zsh copies stdout into a pipe** when you write `cmd 2>&1 >/dev/null | …` (its `MULTIOS`
     option), so the data seems to reach stderr. Check stream separation under `sh -c`.
-15. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
+15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a
+    message sent as the group). Without it the store makes an identity and a person of a channel,
+    and there is no clean way to undo those rows.
+16. **Migration 1 is not frozen until the first real write** (PR 2.1). Until then it may still be
+    amended. A `.tg/messages.db` made by a branch build is then stale — record it in `CLEANUP.md`,
+    do not delete it mid-task.
+17. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
     fails the same way; that is cli-core's to fix, not yours.
@@ -115,7 +132,6 @@ For any of these, read in this order:
 
 - which of max-cli's command builders (`config`, `doctor`, `commands`, `complete`) move to
   cli-messaging next — the owner asked for a generous extraction with adapter overrides;
-- the store's first schema version — proposal §4 is a sketch, not a contract.
 
 Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
 until Phase 4 (NEED-2); every user registers their own `api_id` (NEED-3); publish cli-messaging on

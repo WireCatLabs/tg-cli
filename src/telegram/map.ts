@@ -81,6 +81,7 @@ export const toMessage = (message: TgMessage): Message => {
     chatId: String(message.chat.id),
     senderId: String(message.sender.id),
     senderName: message.sender.displayName || null,
+    ...(message.sender.type === "chat" ? { senderIsChat: true } : {}),
     timestamp: message.date.toISOString(),
     editedAt: message.editDate?.toISOString() ?? null,
     text: message.text,
