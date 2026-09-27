@@ -46,6 +46,7 @@ tg runs show <run-id>            # one run: its outcome and one line per Telegra
 tg runs path <run-id>
 tg commands                      # every command as JSON, with the output contract version
 tg config show|set|unset         # the settings in force and where each came from
+tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
 ```
 
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a

@@ -12,8 +12,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.12.0
-        version: 0.12.0(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.14.0
+        version: 0.14.0(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -96,6 +96,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@bomb.sh/tab@0.0.22':
+    resolution: {integrity: sha512-l5IuWpV7szqG4MM6A7I+qPMmP2qPMq2TD4veIXaOH0sD53dV0Tv8WZPARp5O5Kp4+y4fnVCl3VL1HZKNghO1yg==}
+    hasBin: true
+    peerDependencies:
+      cac: ^6.7.14 || ^7.0.0
+      citty: ^0.1.6 || ^0.2.0
+      commander: ^13.1.0 || ^14.0.0 || ^15.0.0
+    peerDependenciesMeta:
+      cac:
+        optional: true
+      citty:
+        optional: true
+      commander:
+        optional: true
+
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
@@ -136,8 +151,8 @@ packages:
       commander:
         optional: true
 
-  '@leemour/cli-messaging@0.12.0':
-    resolution: {integrity: sha512-2IZbn6Lbx7Y2s1VvpH7F3FMLRWSuIhr+f3sFzmk6EgH99dDtf1uCaQektiSOXvclw3QF7tQ32zfxBU7feW9nsw==}
+  '@leemour/cli-messaging@0.14.0':
+    resolution: {integrity: sha512-fSNC/hFQILWfD8XuOqTo9d30ShdlE1dJ+lkB5Fdxsjp60ahM8gyj/bXhwXqXGvUu/gSq0vBlGdFZb3h5566Jeg==}
     engines: {node: '>=22'}
     peerDependencies:
       commander: '>=15'
@@ -1112,6 +1127,10 @@ snapshots:
   '@biomejs/cli-win32-x64@2.5.14':
     optional: true
 
+  '@bomb.sh/tab@0.0.22(commander@15.0.0)':
+    optionalDependencies:
+      commander: 15.0.0
+
   '@colors/colors@1.5.0':
     optional: true
 
@@ -1154,8 +1173,9 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@leemour/cli-messaging@0.12.0(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging@0.14.0(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
+      '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@leemour/cli-core': 0.7.0(commander@15.0.0)(typescript@7.0.2)
       commander: 15.0.0
       qrcode-generator: 2.0.4
@@ -1163,6 +1183,8 @@ snapshots:
       valibot: 1.5.0(typescript@7.0.2)
       wrap-ansi: 10.0.2
     transitivePeerDependencies:
+      - cac
+      - citty
       - typescript
 
   '@mtcute/core@0.32.3':
