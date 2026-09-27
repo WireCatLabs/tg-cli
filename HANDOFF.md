@@ -32,7 +32,7 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.14.0) — PRs 1.4, 1.5, 1.6a–c
+### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.15.0) — PRs 1.4, 1.5, 1.6
 
 `account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
@@ -48,11 +48,11 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.6d** — `doctor` and `update`, shared. The rest of 1.6 is done: `recipients`, `sends`,
-   `commands`, `config`, `complete` and the stdout test (`src/contract.test.ts`).
-2. **PR 1.7** — `watch` in the foreground, `--jsonl`.
-3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
-4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+1. **PR 1.7** — `watch` in the foreground, `--jsonl`: new messages as they arrive (mtcute updates are
+   off today — `disableUpdates: true` in `src/telegram/adapter.ts`).
+2. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
+3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+4. `update` — only once tg-cli is published on npm (it is `private` today; the owner's call).
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
 `../cli-messaging/src/cli/messenger/port.ts`, a line in `observed.ts` and `stored.ts`, the store if
