@@ -57,6 +57,9 @@ Phase 1 is complete. Phase 2 per proposal §8:
 3. **PR 2.4** — the tokenizer measurement (proposal §6), then `tg messages search`.
 4. **PR 2.5** — `tg sync status`, `tg export`.
 5. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+   Also small: `watch` prints "listening" before the adapter has connected and started the updates
+   loop, so a script that sends on that line can miss the first message — give the port an
+   `onReady` callback the adapter calls once the loop runs (additive, a minor version).
 6. `update` — only once tg-cli is published on npm (it is `private` today; the owner's call).
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
@@ -132,9 +135,10 @@ For any of these, read in this order:
     check that expects silence will be wrong.
 17. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
     additive, in `../cli-messaging/src/store/migrations.ts`.
-18. **Another session works in cli-messaging too** — it has its own worktree,
-    `../cli-messaging-find`, **with `main` checked out**, so `git checkout main` fails in
-    `../cli-messaging`; do not touch that worktree. Twice on 2026-09-27 both sessions raised the version
+18. **Another session works in cli-messaging too** (the max-cli bot writes the shared store). On
+    2026-09-27 it used a worktree, `../cli-messaging-find`, **with `main` checked out**, so `git
+    checkout main` failed in `../cli-messaging`; that worktree is gone now, but check `git worktree
+    list` and never touch another session's. Twice on 2026-09-27 both sessions raised the version
     to the same number and the other released first (0.10.0, 0.13.0); `bin/release` refused and the fix
     was a bump PR (0.11.0, 0.14.0). Before a bump: `git fetch` and `npm view @leemour/cli-messaging
     version`. Without `main` checked out, `bin/release`'s CI mode is `gh workflow run release.yml --ref
