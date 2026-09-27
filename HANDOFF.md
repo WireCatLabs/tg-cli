@@ -43,22 +43,23 @@ Earlier the same day: run records, the store, and every read kept (proposal §8,
 `tg backfill <chat>` (2.2) fetches a chat's history resumably; `sync_ranges` records what is held.
 `tg watch --events` and `tg serve` (2.3) keep edits, deletions and reactions; `serve` catches up and
 holds a lock per profile. Reaction updates are not yet seen live; edits and deletions are.
+`tg messages search` (2.4) reads the store only; message text is indexed by word beginnings
+(migration 3, after measuring against trigram — proposal §8 row 2.4 has the numbers).
 
-**cli-messaging releases belong to another session** (NEED-7 → A, 2026-09-27): a cli-messaging PR from
-here carries no version bump and `bin/release` is not run. Ask for a release with `SendMessage` (it is
-one of the `max-cli-*` or `asturio-bot` sessions in `ListAgents`), wait for npm, then add the version to
-tg-cli's `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. Announce a store migration's number to that
-session before writing it. To try an unreleased version in tg first, `pnpm pack` it and `pnpm add` the
-tarball (see §4.1).
+**Each session releases its own cli-messaging PRs** (NEED-10 → C, 2026-09-27 evening — relaying
+requests between sessions stalled on approvals). Merge the feature PR without a version bump; then,
+right before releasing, `git fetch` and `npm view @leemour/cli-messaging version`, raise the version in
+a `chore: release` PR, merge it and run `bin/release`. Add the version to tg-cli's
+`pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. Announce a store migration's number to the other
+sessions first. To try an unreleased version in tg, `pnpm pack` it and `pnpm add` the tarball (§4.1).
 
 ### 3b. Next planned work, in order
 
 Phase 1 is complete. Phase 2 per proposal §8:
 
-1. **PR 2.4** — the tokenizer measurement (proposal §6), then `tg messages search`.
-2. **PR 2.5** — `tg sync status`, `tg export`.
-3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
-4. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
+1. **PR 2.5** — `tg sync status`, `tg export`.
+2. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+3. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
    trusted publishing as cli-messaging has, then `tg update`.
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
@@ -132,8 +133,8 @@ For any of these, read in this order:
     now and never replays what arrived while it was stopped (checked live 2026-09-27). One-shot
     commands keep `disableUpdates: true`. A busy account produces messages every few seconds — a live
     check that expects silence will be wrong.
-17. **Migrations 1 and 2 are shipped and frozen** (2 is `sync_ranges`, for `backfill`). The next is
-    migration 3, additive, in `../cli-messaging/src/store/migrations.ts` — announce its number to the
+17. **Migrations 1–3 are shipped and frozen** (2 is `sync_ranges`, 3 the word index). The next is
+    migration 4, additive, in `../cli-messaging/src/store/migrations.ts` — announce its number to the
     releasing session first (rule 18).
 18. **Another session works in cli-messaging too** (the max-cli bot writes the shared store). On
     2026-09-27 it used a worktree, `../cli-messaging-find`, **with `main` checked out**, so `git

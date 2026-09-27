@@ -39,6 +39,7 @@ tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
+tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`
@@ -55,7 +56,8 @@ tg doctor [--online]             # the installation's state; --online connects o
 
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a
 local store shared with other messenger CLIs (`~/.local/share/cli-messaging/messages.db` on Linux;
-`MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list`, `messages list|show|context` and `contacts list` from it
+`MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list`, `messages list|show|context` and `contacts list` from it, and
+`messages search` only ever reads it
 without connecting — the same JSON Telegram gave, except that chats come newest first where
 Telegram puts pinned chats on top. `tg session end` logs out and leaves the store as it is.
 
