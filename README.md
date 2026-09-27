@@ -46,8 +46,9 @@ stderr) and `--timeout 30s`; listings take `--limit`, `--page` and `--all`. Sett
 
 ## Development
 
-`cli-messaging` must be checked out beside this repository and built (`pnpm install && pnpm build`
-there).
+To work on `cli-messaging` at the same time, point the dependency at a checkout for the length of
+the change — `pnpm add @leemour/cli-messaging@link:../cli-messaging` — and put the version back
+before the pull request.
 
 ```sh
 pnpm install
