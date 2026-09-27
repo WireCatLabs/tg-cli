@@ -1,6 +1,6 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-28.** Read this once, then only the files your task needs from §3. It is
+**State 2026-09-28, after 0.2.0.** Read this once, then only the files your task needs from §3. It is
 context, not history.
 
 ## 1. What this is
@@ -35,7 +35,7 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.20.0`**. What it does now: login (`session`), `account show`,
+`tg` uses **`@leemour/cli-messaging@0.20.0`**. What it does now: login (`session`), `update`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
 [--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
@@ -49,13 +49,11 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 ### 3b. Open right now
 
-1. **tg is on npm: `@leemour/tg-cli@0.1.0`** (2026-09-28). The owner published the first version
-   from this machine (`bin/release --local`; npm was slow to show it, so the script did not tag — the
-   tag `v0.1.0` was added by hand on 078ca37, npm's `gitHead`). The owner then set the trusted
-   publisher on npmjs.com (`leemour` / `tg-cli` / `release.yml` / environment `npm`). **The next
-   release is the first from GitHub** — plain `bin/release` after a `chore: release` PR; if it gets
-   `E404` on the upload, the trusted publisher settings are the first suspect. Next to build:
-   `tg update` (max-cli's `src/commands/update.ts`; helpers in `@leemour/cli-core/update`).
+1. **tg is on npm: `@leemour/tg-cli@0.2.0`** (2026-09-28), released from GitHub by `bin/release`
+   (trusted publishing works; the workflow publishes and tags). 0.2.0 added `tg update [--check]`
+   and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
+   `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
+   pnpm and bun paths are covered only by the path patterns in `@leemour/cli-core/update`.
 2. **Not yet seen live:** a reaction update (`watch --events` / `serve` handle them through mtcute's
    raw update stream; 150 s of listening saw none). Edits and deletions are confirmed.
 3. **Search ranking quality is unmeasured** — it needs a person to judge the results.
@@ -150,7 +148,6 @@ Read in this order:
 
 ## 5. Decisions you will make yourself — make them knowingly
 
-- how `tg update` behaves (copy max-cli's, which never runs by itself);
 - what Phase 3 (MCP) exposes first.
 
 Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
