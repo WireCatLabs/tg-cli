@@ -1,0 +1,15 @@
+# tg-cli — working rules
+
+**Start with [`HANDOFF.md`](HANDOFF.md)** — what this is, what to read for your task, and what will
+bite. The design lives in cli-messaging's
+[platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md).
+
+1. **This is the owner's real Telegram account.** Nothing sends unless the command typed asked for
+   it; live checks send only to Saved Messages, and go through `bin/tg`, never `node dist/bin/tg.js`.
+2. **In machine mode, stdout carries data and nothing else.** Diagnostics go to stderr.
+3. **One-shot means the process exits.** Every command closes its Telegram connection in a `finally`.
+4. **No mtcute type crosses `src/telegram/`.** A lint rule enforces it.
+5. **The session and the app credentials never reach a log, a fixture or a document.**
+
+Conventional commits, a branch and a PR per change. Run `pnpm lint && pnpm typecheck && pnpm test`
+before committing. Comments sparse, only *why*.
