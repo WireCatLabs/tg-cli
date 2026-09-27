@@ -4,19 +4,17 @@ import {
   asFirstWord,
   type BaseContext,
   type BaseEnvironment,
-  baseContext,
   environmentOf,
+  type Messenger,
+  type MessengerAdapter,
+  type MessengerContext,
+  messengerContext,
 } from "@leemour/cli-messaging/cli"
-import { guardFor, type SendGuard } from "@leemour/cli-messaging/sends"
-import { type AccountKey, type MessageStore, openStore } from "@leemour/cli-messaging/store"
 import type { Command } from "commander"
-import { recalledAccount, rememberAccount } from "../accounts.js"
 import { resolveSettings, TG } from "../app.js"
 import { sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
-import { observed } from "./observed.js"
-import { stored } from "./stored.js"
 
 export interface Environment extends BaseEnvironment {
   stdin?: NodeJS.ReadableStream & { isTTY?: boolean }
@@ -25,31 +23,19 @@ export interface Environment extends BaseEnvironment {
   adapter?: (options: { credentials: ApiCredentials; sessionPath: string }) => Adapter | Promise<Adapter>
 }
 
-export type Adapter = Pick<
-  TelegramAdapter,
-  "self" | "login" | "me" | "chats" | "history" | "resolve" | "send" | "logout" | "close"
->
+export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">
 
-export interface CommandContext extends BaseContext {
-  profile: string
+export interface CommandContext extends MessengerContext {
   stdin: NodeJS.ReadableStream & { isTTY?: boolean }
   sessionPath: string
   credentials: ReturnType<typeof apiCredentials>
-  /** Read-only, the allow-list, the recipient list and the hourly limit — asked before every write, told after. */
-  guard: SendGuard
   open: (credentials?: ApiCredentials) => Promise<Adapter>
-  /**
-   * Opens Telegram inside `--timeout`, tracked so the deadline can close it, and closes it on every
-   * path. What the reads answer is saved to the message store.
-   */
-  withTelegram: <T>(work: (telegram: Adapter) => Promise<T>) => Promise<T>
-  /** Answers from the message store alone, for `--offline`. Never connects and needs no credentials. */
-  withStore: <T>(work: (store: MessageStore, account: AccountKey) => T) => Promise<T>
+  withTelegram: MessengerContext["withMessenger"]
 }
 
-export const forCommand = (command: Command): CommandContext => {
+/** What only Telegram has: app credentials, a session file, and how to log in. */
+const telegramOf = (command: Command, base: BaseContext) => {
   const environment = environmentOf<Environment>(command)
-  const base = baseContext(command, resolveSettings)
   const { profile } = base.settings
   const sessionPath = sessionFile(profile, base.env)
   const credentials = apiCredentials({
@@ -58,7 +44,6 @@ export const forCommand = (command: Command): CommandContext => {
     warn: base.renderer.warn,
     ...(environment.keyring ? { keyring: environment.keyring } : {}),
   })
-  const diagnostic = (line: string) => base.streams.diagnostic(line)
   const login = `\`tg ${asFirstWord(profile)}session start\``
 
   const open = async (given?: ApiCredentials): Promise<Adapter> => {
@@ -72,65 +57,42 @@ export const forCommand = (command: Command): CommandContext => {
     const options = { credentials: resolved, sessionPath }
     return environment.adapter
       ? await environment.adapter(options)
-      : await TelegramAdapter.open({ ...options, diagnostic, verbose: base.settings.trace })
+      : await TelegramAdapter.open({
+          ...options,
+          diagnostic: (line) => base.streams.diagnostic(line),
+          verbose: base.settings.trace,
+        })
   }
 
+  const connect = async (): Promise<Adapter> => {
+    if (!environment.adapter && !existsSync(sessionPath)) {
+      throw new CliError("authentication_error", `no session for profile "${profile}" — run ${login}`)
+    }
+    return open()
+  }
+
+  return { environment, sessionPath, credentials, open, connect }
+}
+
+export const TELEGRAM: Messenger = {
+  app: TG,
+  provider: "telegram",
+  resolveSettings,
+  connect: (command, base) => telegramOf(command, base).connect(),
+  chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
+  // Saved Messages is the chat with yourself, so its id is the account's.
+  savedChatId: (account) => account.account,
+}
+
+export const forCommand = (command: Command): CommandContext => {
+  const context = messengerContext(command, TELEGRAM)
+  const { environment, sessionPath, credentials, open } = telegramOf(command, context)
   return {
-    ...base,
-    profile,
+    ...context,
     stdin: environment.stdin ?? process.stdin,
     sessionPath,
     credentials,
-    guard: guardFor(TG, base.settings, base.renderer.warn),
     open,
-    withTelegram: (work) =>
-      base.run(async (events) => {
-        if (base.settings.offline) {
-          throw new CliError("validation_error", "--offline answers only `chats list` and `messages list`")
-        }
-        if (!environment.adapter && !existsSync(sessionPath)) {
-          throw new CliError("authentication_error", `no session for profile "${profile}" — run ${login}`)
-        }
-        const telegram = await open()
-        base.track(telegram)
-        let store: Promise<MessageStore | undefined> | undefined
-        try {
-          const self = telegram.self()
-          if (self !== null) rememberAccount(profile, self, base.env)
-          const adapter = observed(telegram, events)
-          return await work(
-            self === null
-              ? adapter
-              : stored(adapter, {
-                  account: { provider: "telegram", account: self },
-                  store: () => {
-                    store ??= openStore({ env: base.env })
-                    return store
-                  },
-                  warn: base.renderer.warn,
-                  events,
-                }),
-          )
-        } finally {
-          await telegram.close()
-          if (store) (await store.catch(() => undefined))?.close()
-        }
-      }),
-    withStore: (work) =>
-      base.run(async () => {
-        const account = recalledAccount(profile, base.env)
-        if (!account) {
-          throw new CliError(
-            "not_found",
-            `nothing recorded for profile "${profile}" yet — run the command once without --offline`,
-          )
-        }
-        const store = await openStore({ env: base.env })
-        try {
-          return work(store, account)
-        } finally {
-          store.close()
-        }
-      }),
+    withTelegram: context.withMessenger,
   }
 }
