@@ -119,6 +119,28 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * One request: history from just above the message, shifted `after` messages newer. Telegram's
+   * offset id is exclusive, hence the `+ 1`; ids are not contiguous, so the window is cut by position.
+   */
+  around(reference: string, messageId: string, { before, after }: { before: number; after: number }) {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const page = await this.#client.getHistory(peer, {
+        offset: { id: id + 1, date: 0 },
+        addOffset: -after,
+        limit: before + 1 + after,
+      })
+      const items = page.map(toMessage).reverse()
+      const index = items.findIndex((message) => message.id === String(id))
+      if (index < 0) throw new CliError("not_found", `no message ${id} in that chat`)
+      return items
+        .slice(Math.max(0, index - before), index + after + 1)
+        .map((message) => (message.id === String(id) ? { ...message, anchor: true as const } : message))
+    })
+  }
+
   /** The chat a reference names — by title, id, `@username` or `me` — so a write can be checked before it goes. */
   resolve(reference: string): Promise<Chat> {
     return this.#call(async () => {
@@ -192,8 +214,8 @@ export class TelegramAdapter {
   }
 }
 
-const messageNumber = (id: string): number => {
-  if (!/^\d+$/.test(id)) throw new CliError("validation_error", `--before takes a message id, got "${id}"`)
+const messageNumber = (id: string, rule = "--before takes a message id"): number => {
+  if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
   return Number(id)
 }
 

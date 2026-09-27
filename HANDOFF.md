@@ -32,9 +32,9 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: the shared read commands (cli-messaging 0.5.0)
+### 3a. Done 2026-09-27: the shared read commands (cli-messaging 0.6.0)
 
-`account show`, `chats list` and `messages list` now come from cli-messaging (`accountCommand`,
+`account show`, `chats list` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
 `src/commands/context.ts`: its `connect`, the chat help, `me` → the account's own id — and adds
 what is its own by composition: `messages send` (moves in 1.5), `session`, `recipients`, `sends`.
@@ -48,8 +48,10 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.4b** — the new read commands: `chats show`, `messages show|context`, `contacts list|show`,
-   with the adapter methods they need (`MessengerAdapter` in cli-messaging, then `TelegramAdapter`).
+1. **PR 1.4b, the rest** — `chats show` and `contacts list|show`, with the adapter methods they need
+   (`MessengerAdapter` in cli-messaging, then `TelegramAdapter`). `messages show|context` are done
+   (cli-messaging 0.6.0; `around` is the model for a new port method: port, `observed`, `stored`,
+   store for `--offline`, then the adapter).
 2. **PR 1.5** — `messages send|reply` move into cli-messaging through the guard.
 3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
 4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).

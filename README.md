@@ -32,6 +32,8 @@ tg session end                   # logs out on Telegram's side and deletes the s
 tg account show
 tg chats list [--limit n]
 tg messages list <chat> [--limit n] [--before id]
+tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
+tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg runs list [--limit n]         # recorded runs, newest first
 tg runs show <run-id>            # one run: its outcome and one line per Telegram call
@@ -40,7 +42,7 @@ tg runs path <run-id>
 
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a
 local store shared with other messenger CLIs (`~/.local/share/cli-messaging/messages.db` on Linux;
-`MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list` and `messages list` from it
+`MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list` and `messages list|show|context` from it
 without connecting — the same JSON Telegram gave, except that chats come newest first where
 Telegram puts pinned chats on top. `tg session end` logs out and leaves the store as it is.
 

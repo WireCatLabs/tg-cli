@@ -24,6 +24,7 @@ const adapter = (overrides: Partial<Adapter> = {}): Adapter => ({
   me: async () => ({ id: "1", name: null, username: null }),
   chats: async () => ({ items: [chat], hasMore: false }),
   history: async () => ({ items: [], hasMore: false }),
+  around: async () => [],
   resolve: async () => chat,
   send: async (chatId, text, { sendId }) => ({
     sendId,

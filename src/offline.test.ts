@@ -38,6 +38,7 @@ const telegram: Adapter = {
   me: async () => ({ id: "100", name: "Owner", username: null }),
   chats: async () => ({ items: [chat], hasMore: false }),
   history: async () => ({ items: [message], hasMore: false }),
+  around: async () => [],
   resolve: async () => chat,
   send: async (_chat, text, { sendId }) => ({ message: { ...message, text }, sendId }),
   logout: async () => {},
