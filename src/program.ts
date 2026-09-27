@@ -8,6 +8,7 @@ import {
   contactsCommand,
   createProgram as create,
   doctorCommand,
+  exportCommand,
   messagesCommand,
   type ProgramDefinition,
   recipientsCommand,
@@ -15,6 +16,7 @@ import {
   runsCommand,
   sendsCommand,
   serveCommand,
+  syncCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
@@ -32,6 +34,8 @@ const definition: ProgramDefinition = {
     messagesCommand(TELEGRAM),
     watchCommand(TELEGRAM),
     serveCommand(TELEGRAM),
+    syncCommand(TELEGRAM),
+    exportCommand(TELEGRAM),
     backfillCommand(TELEGRAM),
     recipientsCommand(TELEGRAM),
     sendsCommand(TELEGRAM),

@@ -43,6 +43,8 @@ tg messages search <words…> [--chat c]   # search the local store: every word,
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`
+tg sync status [chat]            # what the local store holds, per chat
+tg export <chat> --jsonl > chat.jsonl   # a chat's stored messages, oldest first
 tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
 tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first

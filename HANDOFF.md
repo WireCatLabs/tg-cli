@@ -45,6 +45,7 @@ Earlier the same day: run records, the store, and every read kept (proposal §8,
 holds a lock per profile. Reaction updates are not yet seen live; edits and deletions are.
 `tg messages search` (2.4) reads the store only; message text is indexed by word beginnings
 (migration 3, after measuring against trigram — proposal §8 row 2.4 has the numbers).
+`tg sync status` and `tg export` (2.5) read the store only.
 
 **Each session releases its own cli-messaging PRs** (NEED-10 → C, 2026-09-27 evening — relaying
 requests between sessions stalled on approvals). Merge the feature PR without a version bump; then,
@@ -55,11 +56,10 @@ sessions first. To try an unreleased version in tg, `pnpm pack` it and `pnpm add
 
 ### 3b. Next planned work, in order
 
-Phase 1 is complete. Phase 2 per proposal §8:
+Phases 1 and 2 are complete (2026-09-27). What is left of the plan:
 
-1. **PR 2.5** — `tg sync status`, `tg export`.
-2. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
-3. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
+1. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+2. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
    trusted publishing as cli-messaging has, then `tg update`.
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
