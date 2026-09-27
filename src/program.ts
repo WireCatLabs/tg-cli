@@ -29,6 +29,7 @@ import { updateNotice } from "./update.js"
 
 const definition: ProgramDefinition = {
   app: TG,
+  configuration: CONFIG,
   commands: () => [
     sessionCommand(),
     accountCommand(TELEGRAM),

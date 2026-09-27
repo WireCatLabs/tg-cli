@@ -35,7 +35,7 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.20.0`**. What it does now: login (`session`), `update`, `account show`,
+`tg` uses **`@leemour/cli-messaging@0.21.0`**. What it does now: login (`session`), `update`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
 [--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
@@ -57,8 +57,10 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 2. **Not yet seen live:** a reaction update (`watch --events` / `serve` handle them through mtcute's
    raw update stream; 150 s of listening saw none). Edits and deletions are confirmed.
 3. **Search ranking quality is unmeasured** — it needs a person to judge the results.
-4. **Small:** failures *before* a command runs (a usage error, a config that will not load) are not
-   kept as runs (max-cli's `keepFailure` in its `src/program.ts`).
+4. **Done in cli-messaging 0.21.0:** a failure *before* a command runs (a usage error, a config that
+   will not load, a command that never opens a run) is kept as a run by `run()`; tg passes
+   `configuration: CONFIG` in its program definition for that. The command path stops at the first
+   word that is not a command, so `--timeout 30s chats list` is kept as bare `tg` (as in max-cli).
 5. **Phase 3 and 4** per proposal §8: MCP, the skill, capability discovery; then max-cli moves onto
    cli-messaging (under max-cli's own rules — NEED-2).
 
