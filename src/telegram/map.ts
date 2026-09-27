@@ -5,11 +5,23 @@ import type {
   ChatKind,
   Member,
   Message,
+  MessageChange,
+  MessageHit,
   ProviderMetadata,
   QuotedMessage,
   Reactions,
 } from "@leemour/cli-messaging"
-import type { Dialog, MessageMedia, MessageReactions, Peer, PeerSender, Message as TgMessage } from "@mtcute/node"
+import {
+  type DeleteMessageUpdate,
+  type Dialog,
+  getMarkedPeerId,
+  type MessageMedia,
+  MessageReactions,
+  type Peer,
+  type PeerSender,
+  type RawUpdateInfo,
+  type Message as TgMessage,
+} from "@mtcute/node"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
 
@@ -167,4 +179,28 @@ const attachmentsOf = (media: MessageMedia): Attachment[] => {
 const compact = (fields: Record<string, unknown>): ProviderMetadata | undefined => {
   const kept = Object.entries(fields).filter(([, value]) => value !== undefined)
   return kept.length > 0 ? Object.fromEntries(kept) : undefined
+}
+
+export const toMessageHit = (message: TgMessage): MessageHit => ({
+  ...toMessage(message),
+  chatTitle: peerToChat(message.chat).title,
+})
+
+/** Private chats and basic groups name deleted ids without a chat; only a channel's say which. */
+export const toDeletions = (update: DeleteMessageUpdate): MessageChange[] => {
+  const chatId = update.channelId === null ? null : String(getMarkedPeerId(update.channelId, "channel"))
+  return update.messageIds.map((id) => ({ event: "delete", chatId, chatTitle: null, messageId: String(id) }))
+}
+
+/** A personal account gets reaction changes only as a raw update; mtcute parses them for bots alone. */
+export const toReactionChange = ({ update, peers }: RawUpdateInfo): MessageChange | undefined => {
+  if (update._ !== "updateMessageReactions") return undefined
+  const chatId = getMarkedPeerId(update.peer)
+  return {
+    event: "reaction",
+    chatId: String(chatId),
+    chatTitle: null,
+    messageId: String(update.msgId),
+    reactions: reactionsOf(new MessageReactions(update.msgId, chatId, update.reactions, peers)),
+  }
 }

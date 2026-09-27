@@ -14,6 +14,7 @@ import {
   run as runCli,
   runsCommand,
   sendsCommand,
+  serveCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
@@ -30,6 +31,7 @@ const definition: ProgramDefinition = {
     contactsCommand(TELEGRAM),
     messagesCommand(TELEGRAM),
     watchCommand(TELEGRAM),
+    serveCommand(TELEGRAM),
     backfillCommand(TELEGRAM),
     recipientsCommand(TELEGRAM),
     sendsCommand(TELEGRAM),

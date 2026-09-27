@@ -41,6 +41,8 @@ what is its own by composition: `session`.
 Saving reads to the store, `--offline` and the run events live in `../cli-messaging/src/cli/messenger/`.
 Earlier the same day: run records, the store, and every read kept (proposal §8, 1.1b, 1.3, 2.1).
 `tg backfill <chat>` (2.2) fetches a chat's history resumably; `sync_ranges` records what is held.
+`tg watch --events` and `tg serve` (2.3) keep edits, deletions and reactions; `serve` catches up and
+holds a lock per profile. Reaction updates are not yet seen live; edits and deletions are.
 
 **cli-messaging releases belong to another session** (NEED-7 → A, 2026-09-27): a cli-messaging PR from
 here carries no version bump and `bin/release` is not run. Ask for a release with `SendMessage` (it is
@@ -53,15 +55,10 @@ tarball (see §4.1).
 
 Phase 1 is complete. Phase 2 per proposal §8:
 
-1. **PR 2.3** — the background process (`serve`), from max-cli's `src/server/`; edits, deletions and
-   reactions (`watch --events`) come with it.
-2. **PR 2.4** — the tokenizer measurement (proposal §6), then `tg messages search`.
-3. **PR 2.5** — `tg sync status`, `tg export`.
-4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
-   Also small: `watch` prints "listening" before the adapter has connected and started the updates
-   loop, so a script that sends on that line can miss the first message — give the port an
-   `onReady` callback the adapter calls once the loop runs (additive, a minor version).
-5. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
+1. **PR 2.4** — the tokenizer measurement (proposal §6), then `tg messages search`.
+2. **PR 2.5** — `tg sync status`, `tg export`.
+3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+4. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
    trusted publishing as cli-messaging has, then `tg update`.
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in

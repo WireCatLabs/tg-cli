@@ -7,15 +7,33 @@ import {
   type ChatCard,
   type Member,
   type Message,
-  type MessageHit,
+  type MessageEvent,
   type Page,
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
-import { type InputPeerLike, Long, TelegramClient, type Message as TgMessage, type User } from "@mtcute/node"
+import {
+  type DeleteMessageUpdate,
+  type InputPeerLike,
+  Long,
+  type RawUpdateInfo,
+  TelegramClient,
+  type Message as TgMessage,
+  type User,
+} from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
-import { type Account, peerToChat, toAccount, toChat, toMember, toMessage } from "./map.js"
+import {
+  type Account,
+  peerToChat,
+  toAccount,
+  toChat,
+  toDeletions,
+  toMember,
+  toMessage,
+  toMessageHit,
+  toReactionChange,
+} from "./map.js"
 import { openSessionStorage } from "./storage.js"
 
 export interface AdapterOptions {
@@ -24,8 +42,10 @@ export interface AdapterOptions {
   /** Where the library's own log lines go, when asked for. Never stdout. */
   diagnostic?: (line: string) => void
   verbose?: boolean
-  /** Receive updates — only `watch` asks. Missed ones are not fetched: a watch starts from now. */
+  /** Receive updates — only `watch` and `serve` ask. */
   listen?: boolean
+  /** Fetch what arrived while nothing listened — `serve` only; a watch starts from now. */
+  catchUp?: boolean
 }
 
 export interface LoginPrompts {
@@ -69,7 +89,7 @@ export class TelegramAdapter {
   }
 
   private constructor(
-    { credentials, sessionPath, diagnostic, verbose = false, listen = false }: AdapterOptions,
+    { credentials, sessionPath, diagnostic, verbose = false, listen = false, catchUp = false }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
     this.#sessionPath = sessionPath
@@ -78,7 +98,7 @@ export class TelegramAdapter {
       apiHash: credentials.hash,
       storage,
       disableUpdates: !listen,
-      ...(listen ? { updates: { catchUp: false } } : {}),
+      ...(listen ? { updates: { catchUp } } : {}),
       logLevel: verbose ? 3 : 1,
     })
     // mtcute's default handler writes with console.log, which is stdout — where only data may go.
@@ -225,19 +245,37 @@ export class TelegramAdapter {
     })
   }
 
-  /** New messages as they arrive, until `signal` aborts. Only on an adapter opened with `listen`. */
-  async watch(onMessage: (message: MessageHit) => void, signal: AbortSignal): Promise<void> {
-    const handler = (message: TgMessage) =>
-      onMessage({ ...toMessage(message), chatTitle: peerToChat(message.chat).title })
-    this.#client.onNewMessage.add(handler)
+  /**
+   * New messages, edits, deletions and reaction changes as they arrive, until `signal` aborts. Only
+   * on an adapter opened with `listen`. `onReady` once the updates loop runs, not before.
+   */
+  async watch(onEvent: (event: MessageEvent) => void, signal: AbortSignal, onReady?: () => void): Promise<void> {
+    const client = this.#client
+    const message = (found: TgMessage) => onEvent({ event: "message", message: toMessageHit(found) })
+    const edit = (found: TgMessage) => onEvent({ event: "edit", message: toMessageHit(found) })
+    const deletion = (update: DeleteMessageUpdate) => {
+      for (const change of toDeletions(update)) onEvent(change)
+    }
+    const raw = (info: RawUpdateInfo) => {
+      const change = toReactionChange(info)
+      if (change) onEvent(change)
+    }
+    client.onNewMessage.add(message)
+    client.onEditMessage.add(edit)
+    client.onDeleteMessage.add(deletion)
+    client.onRawUpdate.add(raw)
     try {
       await this.#call(async () => {
-        await this.#client.connect()
-        await this.#client.startUpdatesLoop()
+        await client.connect()
+        await client.startUpdatesLoop()
       })
+      onReady?.()
       if (!signal.aborted) await new Promise((resolve) => signal.addEventListener("abort", resolve, { once: true }))
     } finally {
-      this.#client.onNewMessage.remove(handler)
+      client.onNewMessage.remove(message)
+      client.onEditMessage.remove(edit)
+      client.onDeleteMessage.remove(deletion)
+      client.onRawUpdate.remove(raw)
     }
   }
 

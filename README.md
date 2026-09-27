@@ -39,8 +39,9 @@ tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
-tg watch [--jsonl] [--timeout 60s]   # new messages as they arrive; Ctrl-C or --timeout ends it (exit 0)
+tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
+tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`
 tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
 tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first
@@ -70,6 +71,27 @@ Settings live in `~/.config/tg-cli/config.json`, per profile or under `defaults`
 `--record` keeps the run in the state directory (`~/.local/share/tg-cli/runs/` on Linux) — ids, counts, timings and the error
 code, never a chat title or a message. A run that fails is kept without `--record` too, unless
 `--no-record`; runs older than `keepRunsForDays` (30) are removed when the next one is recorded.
+
+## Keeping the archive current
+
+`tg serve` listens until stopped and keeps every new message, edit, deletion and reaction, catching up
+on what arrived while it was down. One runs per profile. Nothing starts it for you; as a systemd user
+service, `~/.config/systemd/user/tg-serve.service`:
+
+```ini
+[Unit]
+Description=tg serve — keep the Telegram archive current
+
+[Service]
+ExecStart=%h/.local/bin/tg serve
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target
+```
+
+Then `systemctl --user enable --now tg-serve`. The path is where `tg` is installed (`command -v tg`).
 
 ## Development
 
