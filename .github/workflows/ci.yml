@@ -9,26 +9,17 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      # @leemour/cli-messaging is linked from a sibling checkout until it is published.
       - uses: actions/checkout@v7
-        with:
-          path: tg-cli
-      - uses: actions/checkout@v7
-        with:
-          repository: leemour/cli-messaging
-          path: cli-messaging
       - uses: pnpm/action-setup@v6
-        with:
-          package_json_file: tg-cli/package.json
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-      - run: pnpm install --frozen-lockfile && pnpm build
-        working-directory: cli-messaging
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
-        working-directory: tg-cli
-      - run: pnpm lint && pnpm typecheck && pnpm test && pnpm build
-        working-directory: tg-cli
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
 
   secrets:
     runs-on: ubuntu-latest
