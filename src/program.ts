@@ -11,7 +11,6 @@ import {
 import type { Command } from "commander"
 import { TG } from "./app.js"
 import { type Environment, TELEGRAM } from "./commands/context.js"
-import { sendCommand } from "./commands/messages.js"
 import { recipientsCommand } from "./commands/recipients.js"
 import { sendsCommand } from "./commands/sends.js"
 import { sessionCommand } from "./commands/session.js"
@@ -23,7 +22,7 @@ const definition: ProgramDefinition = {
     accountCommand(TELEGRAM),
     chatsCommand(TELEGRAM),
     contactsCommand(TELEGRAM),
-    messagesCommand(TELEGRAM).addCommand(sendCommand()),
+    messagesCommand(TELEGRAM),
     recipientsCommand(),
     sendsCommand(),
     runsCommand(TG),
