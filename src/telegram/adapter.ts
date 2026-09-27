@@ -2,7 +2,15 @@ import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
-import { type Chat, type ChatCard, type Member, type Message, type Page, pickChat } from "@leemour/cli-messaging"
+import {
+  type Chat,
+  type ChatCard,
+  type Member,
+  type Message,
+  type Page,
+  type PersonCard,
+  pickChat,
+} from "@leemour/cli-messaging"
 import { type InputPeerLike, Long, TelegramClient, type User } from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
@@ -126,6 +134,32 @@ export class TelegramAdapter {
       const [dialog] = await this.#client.getPeerDialogs(peer)
       const chat = dialog ? toChat(dialog) : peerToChat(await this.#client.getPeer(peer))
       return { ...chat, members: chat.kind === "group" ? await this.#membersOf(peer) : null }
+    })
+  }
+
+  /** A person, their bio, and the groups this account shares with them — newest conversation first. */
+  contact(reference: string): Promise<PersonCard> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const user = await this.#client.getPeer(peer)
+      if (user.type !== "user") throw new CliError("validation_error", `"${reference}" is a chat, not a person`)
+      const [full, [dialog], common] = await Promise.all([
+        this.#client.getFullUser(peer),
+        this.#client.getPeerDialogs(peer),
+        this.#client.getCommonChats(peer),
+      ])
+      const dialogs = common.length > 0 ? await this.#client.getPeerDialogs(common.map((chat) => chat.id)) : []
+      const chats = dialogs
+        .filter((one) => one !== null)
+        .map(toChat)
+        .map(({ id, title, kind, lastMessageAt }) => ({ id, title, kind, lastMessageAt }))
+        .sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""))
+      return {
+        ...toMember(user),
+        description: full.bio || null,
+        lastMessagedAt: dialog ? (toChat(dialog).lastMessageAt ?? null) : null,
+        chats,
+      }
     })
   }
 

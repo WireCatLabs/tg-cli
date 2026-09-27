@@ -33,6 +33,7 @@ const telegram = () => {
     chats: async () => ({ items: [chat], hasMore: false }),
     history: async () => ({ items: [], hasMore: false }),
     chat: async () => ({ ...chat, members: null }),
+    contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
     around: async () => [],
     resolve: async () => chat,
     send: async (chatId, text, { sendId }) => {

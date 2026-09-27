@@ -39,6 +39,7 @@ const telegram: Adapter = {
   chats: async () => ({ items: [chat], hasMore: false }),
   history: async () => ({ items: [message], hasMore: false }),
   chat: async () => ({ ...chat, members: null }),
+  contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
   around: async () => [],
   resolve: async () => chat,
   send: async (_chat, text, { sendId }) => ({ message: { ...message, text }, sendId }),

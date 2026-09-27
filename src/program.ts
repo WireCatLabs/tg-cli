@@ -1,6 +1,7 @@
 import {
   accountCommand,
   chatsCommand,
+  contactsCommand,
   createProgram as create,
   messagesCommand,
   type ProgramDefinition,
@@ -21,6 +22,7 @@ const definition: ProgramDefinition = {
     sessionCommand(),
     accountCommand(TELEGRAM),
     chatsCommand(TELEGRAM),
+    contactsCommand(TELEGRAM),
     messagesCommand(TELEGRAM).addCommand(sendCommand()),
     recipientsCommand(),
     sendsCommand(),
