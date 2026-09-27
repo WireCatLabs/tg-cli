@@ -4,10 +4,19 @@ A local command line interface for a personal Telegram account, built for agents
 operation per call, one JSON value on stdout when piped, a typed error and a stable exit code on
 failure.
 
-**Status: spike, not published.** It proves the transport and measures what was unknown. The design
+**Status: 0.1.0, on npm.** Reads, sends through a guard, keeps a local searchable archive. The design
 is [the platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md)
 in `cli-messaging`, which holds everything messenger-neutral. Telegram-specific code lives only in
 `src/telegram/`, and a lint rule keeps mtcute there.
+
+## Install
+
+```sh
+npm install -g @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli
+tg session start
+```
+
+Node 22 or newer. SQLite comes from the runtime itself, so there is no native module to build.
 
 ## The first login
 
