@@ -32,7 +32,7 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.11.0) — PRs 1.4, 1.5, 1.6a
+### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.12.0) — PRs 1.4, 1.5, 1.6a, 1.6b
 
 `account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
@@ -48,8 +48,8 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.6, the rest** — `config` (1.6b), `complete` (1.6c), `doctor` and `update` (1.6d), shared.
-   `recipients`, `sends`, `commands` and the stdout test (`src/contract.test.ts`) are done (1.6a).
+1. **PR 1.6, the rest** — `complete` (1.6c), `doctor` and `update` (1.6d), shared. `recipients`,
+   `sends`, `commands`, `config` and the stdout test (`src/contract.test.ts`) are done (1.6a, 1.6b).
 2. **PR 1.7** — `watch` in the foreground, `--jsonl`.
 3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
 4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).

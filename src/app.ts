@@ -1,5 +1,5 @@
 import type { AppIdentity } from "@leemour/cli-messaging/cli"
-import { settingsFor } from "@leemour/cli-messaging/cli"
+import { type Configuration, settingsFor } from "@leemour/cli-messaging/cli"
 import { VERSION } from "./version.js"
 
 export const TG: AppIdentity = {
@@ -10,4 +10,5 @@ export const TG: AppIdentity = {
   version: VERSION,
 }
 
-export const { resolveSettings, configuredProfiles, changeSetting } = settingsFor(TG)
+export const CONFIG: Configuration = settingsFor(TG)
+export const { resolveSettings, configuredProfiles, changeSetting } = CONFIG
