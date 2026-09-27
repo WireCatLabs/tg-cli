@@ -32,36 +32,38 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: every read is kept, `--offline` answers from it
+### 3a. Done 2026-09-27: the shared read commands (cli-messaging 0.5.0)
 
-tg uses `@leemour/cli-messaging@0.4.0`. `withTelegram` wraps the adapter twice: `observed.ts`
-emits run events, `stored.ts` saves what `chats`, `history`, `send` and `me` answer (never `resolve`
-— a chat found by name has no unread count or last message, and saving it would erase them). A
-failed save warns and never fails the read. `withStore` answers `--offline` for `chats list` and
-`messages list`, from the account id `src/accounts.ts` remembers per profile. Earlier the same day:
-run records (`tg runs`) and the store itself (proposal §8, rows 1.1b and 1.3).
+`account show`, `chats list` and `messages list` now come from cli-messaging (`accountCommand`,
+`chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
+`src/commands/context.ts`: its `connect`, the chat help, `me` → the account's own id — and adds
+what is its own by composition: `messages send` (moves in 1.5), `session`, `recipients`, `sends`.
+Saving reads to the store, `--offline` and the run events live in `../cli-messaging/src/cli/messenger/`.
+Earlier the same day: run records, the store, and every read kept (proposal §8, 1.1b, 1.3, 2.1).
 
 A cli-messaging release is `bin/release` in `../cli-messaging` after the version bump is merged — it
 runs on GitHub Actions with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
-`minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window).
+`minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window). To try an
+unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see §4.1).
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.4 — skeleton, part 2**: the generic read commands (`session`, `account`, `chats list|show`,
-   `messages list|show|context`, `contacts list|show`) move into cli-messaging with hooks, so max can
-   reuse them in Phase 4. The owner chose 2.1 before it (NEED-6, 2026-09-27); this is the other half.
-2. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — the first migration
-   after 1 (proposal §4, §8).
-3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+1. **PR 1.4b** — the new read commands: `chats show`, `messages show|context`, `contacts list|show`,
+   with the adapter methods they need (`MessengerAdapter` in cli-messaging, then `TelegramAdapter`).
+2. **PR 1.5** — `messages send|reply` move into cli-messaging through the guard.
+3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
+4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
 
 For any of these, read in this order:
 
 | File | Answers |
 |---|---|
-| `src/commands/context.ts` | how a command gets settings, the renderer, the guard and a Telegram connection — and how `--timeout` and the run record reach it (`withTelegram`) |
-| `src/commands/stored.ts` | which reads are saved to the store, and why `resolve` is not |
-| `src/commands/observed.ts` | which ids and counts a run record names per adapter call — a new adapter method gets a line here |
-| `src/commands/messages.ts` | the shape of a write: resolve → guard.check → send → guard.record |
+| `src/commands/context.ts` | what only Telegram has (credentials, the session file, `connect`) and the `TELEGRAM` description the shared commands take |
+| `../cli-messaging/src/cli/messenger/context.ts` | how a shared command connects inside `--timeout`, saves to the store and answers `--offline` |
+| `../cli-messaging/src/cli/messenger/port.ts` | `MessengerAdapter` — what an adapter must do for the shared commands |
+| `../cli-messaging/src/cli/messenger/stored.ts` | which reads are saved to the store, and why `resolve` is not |
+| `../cli-messaging/src/cli/messenger/observed.ts` | which ids and counts a run record names per adapter call — a new adapter method gets a line here |
+| `src/commands/messages.ts` | `messages send`, the shape of a write: resolve → guard.check → send → guard.record |
 | `src/telegram/adapter.ts` | the only door to Telegram: `open`, `login`, `me`, `chats`, `history`, `resolve`, `send` |
 | `src/telegram/map.ts` | where mtcute's objects become the domain model — the only file that knows their shape |
 | `../cli-messaging/src/store/store.ts` | what the store keeps, what an update may not erase, and how a sender becomes an identity and a person |
@@ -109,7 +111,7 @@ For any of these, read in this order:
 12. **npm shows a new version only after a few minutes.** `bin/release` waits and tags; a check
     right after publishing can answer 404 for a version that is there.
 13. **A typed chat is often a title.** A run event never names what was typed — only ids taken from
-    an argument that already is one, or from the answer (`src/commands/observed.ts`).
+    an argument that already is one, or from the answer (`../cli-messaging/src/cli/messenger/observed.ts`).
 14. **zsh copies stdout into a pipe** when you write `cmd 2>&1 >/dev/null | …` (its `MULTIOS`
     option), so the data seems to reach stderr. Check stream separation under `sh -c`.
 15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a

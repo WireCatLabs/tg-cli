@@ -1,9 +1,9 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@leemour/cli-core"
 import { readSecret, terminalQr } from "@leemour/cli-messaging"
-import { commandWords, refuseCommandName, rootOf } from "@leemour/cli-messaging/cli"
+import { commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
-import { rememberAccount } from "../accounts.js"
+import { TG } from "../app.js"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
@@ -88,7 +88,7 @@ export const sessionCommand = () => {
         })
         // Stored only once Telegram has accepted them: a keyring entry cannot be read back to check it.
         if (typed) context.credentials.write(typed)
-        rememberAccount(context.profile, account.id, context.env)
+        rememberAccount(TG, context.profile, account.id, context.env)
         context.renderer.result({ profile: context.profile, account })
       } finally {
         await telegram.close()
