@@ -41,10 +41,12 @@ what is its own by composition: `session`.
 Saving reads to the store, `--offline` and the run events live in `../cli-messaging/src/cli/messenger/`.
 Earlier the same day: run records, the store, and every read kept (proposal §8, 1.1b, 1.3, 2.1).
 
-A cli-messaging release is `bin/release` in `../cli-messaging` after the version bump is merged — it
-runs on GitHub Actions with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
-`minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window). To try an
-unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see §4.1).
+**cli-messaging releases belong to another session** (NEED-7 → A, 2026-09-27): a cli-messaging PR from
+here carries no version bump and `bin/release` is not run. Ask for a release with `SendMessage` (it is
+one of the `max-cli-*` or `asturio-bot` sessions in `ListAgents`), wait for npm, then add the version to
+tg-cli's `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. Announce a store migration's number to that
+session before writing it. To try an unreleased version in tg first, `pnpm pack` it and `pnpm add` the
+tarball (see §4.1).
 
 ### 3b. Next planned work, in order
 
@@ -60,7 +62,8 @@ Phase 1 is complete. Phase 2 per proposal §8:
    Also small: `watch` prints "listening" before the adapter has connected and started the updates
    loop, so a script that sends on that line can miss the first message — give the port an
    `onReady` callback the adapter calls once the loop runs (additive, a minor version).
-6. `update` — only once tg-cli is published on npm (it is `private` today; the owner's call).
+6. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
+   trusted publishing as cli-messaging has, then `tg update`.
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
 `../cli-messaging/src/cli/messenger/port.ts`, a line in `observed.ts` and `stored.ts`, the store if
