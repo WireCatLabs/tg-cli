@@ -30,6 +30,7 @@ const message: Message = {
 }
 
 const scripted = (overrides: Partial<Adapter> = {}): Adapter => ({
+  self: () => "1",
   login: async () => ({ id: "1", name: "Owner", username: null }),
   me: async () => ({ id: "1", name: "Owner", username: null }),
   chats: async () => ({ items: [chat], hasMore: false }),

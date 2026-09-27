@@ -19,6 +19,7 @@ const chat: Chat = {
 const BODY = "the door code is 4321"
 
 const adapter = (overrides: Partial<Adapter> = {}): Adapter => ({
+  self: () => "1",
   login: async () => ({ id: "1", name: null, username: null }),
   me: async () => ({ id: "1", name: null, username: null }),
   chats: async () => ({ items: [chat], hasMore: false }),

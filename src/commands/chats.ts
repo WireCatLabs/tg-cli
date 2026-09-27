@@ -8,7 +8,10 @@ export const chatsCommand = () =>
       this: Command,
     ) {
       const context = forCommand(this)
-      const page = await context.withTelegram((telegram) => telegram.chats(window(context.settings)))
+      const wanted = window(context.settings)
+      const page = context.settings.offline
+        ? await context.withStore((store, account) => store.chats(account, wanted))
+        : await context.withTelegram((telegram) => telegram.chats(wanted))
       renderPage(context, {
         ...page,
         items:
