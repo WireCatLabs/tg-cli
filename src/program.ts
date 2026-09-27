@@ -1,4 +1,4 @@
-import { createProgram as create, type ProgramDefinition, run as runCli } from "@leemour/cli-messaging/cli"
+import { createProgram as create, type ProgramDefinition, run as runCli, runsCommand } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { TG } from "./app.js"
 import { accountCommand } from "./commands/account.js"
@@ -18,6 +18,7 @@ const definition: ProgramDefinition = {
     messagesCommand(),
     recipientsCommand(),
     sendsCommand(),
+    runsCommand(TG),
   ],
 }
 

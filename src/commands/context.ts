@@ -13,6 +13,7 @@ import { resolveSettings, TG } from "../app.js"
 import { sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
+import { observed } from "./observed.js"
 
 export interface Environment extends BaseEnvironment {
   stdin?: NodeJS.ReadableStream & { isTTY?: boolean }
@@ -75,7 +76,7 @@ export const forCommand = (command: Command): CommandContext => {
     guard: guardFor(TG, base.settings, base.renderer.warn),
     open,
     withTelegram: (work) =>
-      base.run(async () => {
+      base.run(async (events) => {
         if (base.settings.offline) {
           throw new CliError("validation_error", "--offline has nothing to answer from yet: tg keeps no local copy")
         }
@@ -85,7 +86,7 @@ export const forCommand = (command: Command): CommandContext => {
         const telegram = await open()
         base.track(telegram)
         try {
-          return await work(telegram)
+          return await work(observed(telegram, events))
         } finally {
           await telegram.close()
         }
