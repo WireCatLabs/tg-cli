@@ -5,11 +5,20 @@ import { accountCommand } from "./commands/account.js"
 import { chatsCommand } from "./commands/chats.js"
 import type { Environment } from "./commands/context.js"
 import { messagesCommand } from "./commands/messages.js"
+import { recipientsCommand } from "./commands/recipients.js"
+import { sendsCommand } from "./commands/sends.js"
 import { sessionCommand } from "./commands/session.js"
 
 const definition: ProgramDefinition = {
   app: TG,
-  commands: () => [sessionCommand(), accountCommand(), chatsCommand(), messagesCommand()],
+  commands: () => [
+    sessionCommand(),
+    accountCommand(),
+    chatsCommand(),
+    messagesCommand(),
+    recipientsCommand(),
+    sendsCommand(),
+  ],
 }
 
 export const createProgram = (): Command => create(definition)

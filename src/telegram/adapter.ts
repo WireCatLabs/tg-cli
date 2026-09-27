@@ -4,10 +4,9 @@ import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import { type Chat, type Message, type Page, pickChat } from "@leemour/cli-messaging"
 import { type InputPeerLike, Long, TelegramClient, type User } from "@mtcute/node"
-import { randomLong } from "@mtcute/node/utils.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
-import { type Account, toAccount, toChat, toMessage } from "./map.js"
+import { type Account, peerToChat, toAccount, toChat, toMessage } from "./map.js"
 import { openSessionStorage } from "./storage.js"
 
 export interface AdapterOptions {
@@ -107,32 +106,38 @@ export class TelegramAdapter {
 
   history(reference: string, { limit, before }: { limit: number; before?: string }): Promise<Page<Message>> {
     return this.#call(async () => {
-      const peer = await this.#peerOf(reference)
+      const peer = await this.#inputOf(reference)
       const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
       const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
       return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined && page.length === limit }
     })
   }
 
-  /**
-   * One logical send carries one `random_id`, generated before the request and handed back on every
-   * outcome. Telegram is expected to deduplicate by it — measured in the spike, not assumed.
-   */
-  send(reference: string, text: string, { sendId }: { sendId?: string } = {}): Promise<Sent> {
-    const id = sendId === undefined ? randomLong() : parseSendId(sendId)
-    const kept = id.toString()
+  /** The chat a reference names — by title, id, `@username` or `me` — so a write can be checked before it goes. */
+  resolve(reference: string): Promise<Chat> {
     return this.#call(async () => {
       const peer = await this.#peerOf(reference)
+      return typeof peer === "object" && "kind" in peer ? peer : peerToChat(await this.#client.getPeer(peer))
+    })
+  }
+
+  /**
+   * One logical send carries one `random_id`, made before the request and repeated by a retry:
+   * Telegram delivers one message for both (measured 2026-09-27, across two connections).
+   */
+  send(chatId: string, text: string, { sendId }: { sendId: string }): Promise<Sent> {
+    const id = parseSendId(sendId)
+    return this.#call(async () => {
       try {
-        const message = await this.#client.sendText(peer, text, { randomId: id })
-        return { message: toMessage(message), sendId: kept }
+        const message = await this.#client.sendText(Number(chatId), text, { randomId: id })
+        return { message: toMessage(message), sendId }
       } catch (error) {
         const known = toCliError(error)
         if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
           throw new CliError(
             "outcome_unknown",
-            `no answer from Telegram — the message may have been sent. Repeat with --send-id ${kept}, never without it`,
-            { sendId: kept, cause: known.code },
+            `no answer from Telegram — the message may have been sent. Repeat with --send-id ${sendId}, never without it`,
+            { sendId, cause: known.code },
           )
         }
         throw known
@@ -155,7 +160,8 @@ export class TelegramAdapter {
     }
   }
 
-  async #peerOf(reference: string): Promise<InputPeerLike> {
+  /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
+  async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()
     if (SAVED.has(trimmed.toLowerCase())) return "me"
     if (/^-?\d+$/.test(trimmed)) return Number(trimmed)
@@ -163,7 +169,12 @@ export class TelegramAdapter {
 
     const chats: Chat[] = []
     for await (const dialog of this.#client.iterDialogs({ archived: "keep" })) chats.push(toChat(dialog))
-    return Number(pickChat(trimmed, chats).id)
+    return pickChat(trimmed, chats)
+  }
+
+  async #inputOf(reference: string): Promise<InputPeerLike> {
+    const peer = await this.#peerOf(reference)
+    return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
   }
 
   async #call<T>(work: () => Promise<T>): Promise<T> {

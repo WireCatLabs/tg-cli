@@ -7,8 +7,9 @@ import {
   baseContext,
   environmentOf,
 } from "@leemour/cli-messaging/cli"
+import { guardFor, type SendGuard } from "@leemour/cli-messaging/sends"
 import type { Command } from "commander"
-import { resolveSettings } from "../app.js"
+import { resolveSettings, TG } from "../app.js"
 import { sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
@@ -20,13 +21,18 @@ export interface Environment extends BaseEnvironment {
   adapter?: (options: { credentials: ApiCredentials; sessionPath: string }) => Adapter | Promise<Adapter>
 }
 
-export type Adapter = Pick<TelegramAdapter, "login" | "me" | "chats" | "history" | "send" | "logout" | "close">
+export type Adapter = Pick<
+  TelegramAdapter,
+  "login" | "me" | "chats" | "history" | "resolve" | "send" | "logout" | "close"
+>
 
 export interface CommandContext extends BaseContext {
   profile: string
   stdin: NodeJS.ReadableStream & { isTTY?: boolean }
   sessionPath: string
   credentials: ReturnType<typeof apiCredentials>
+  /** Read-only, the allow-list, the recipient list and the hourly limit — asked before every write, told after. */
+  guard: SendGuard
   open: (credentials?: ApiCredentials) => Promise<Adapter>
   /** Opens Telegram inside `--timeout`, tracked so the deadline can close it, and closes it on every path. */
   withTelegram: <T>(work: (telegram: Adapter) => Promise<T>) => Promise<T>
@@ -66,6 +72,7 @@ export const forCommand = (command: Command): CommandContext => {
     stdin: environment.stdin ?? process.stdin,
     sessionPath,
     credentials,
+    guard: guardFor(TG, base.settings, base.renderer.warn),
     open,
     withTelegram: (work) =>
       base.run(async () => {
