@@ -32,9 +32,9 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: the shared read commands (cli-messaging 0.7.0)
+### 3a. Done 2026-09-27: the shared read commands (cli-messaging 0.8.0) — PR 1.4 complete
 
-`account show`, `chats list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
+`account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
 `src/commands/context.ts`: its `connect`, the chat help, `me` → the account's own id — and adds
 what is its own by composition: `messages send` (moves in 1.5), `session`, `recipients`, `sends`.
@@ -48,13 +48,17 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.4b, the rest** — `contacts list|show`, with the adapter methods they need
-   (`MessengerAdapter` in cli-messaging, then `TelegramAdapter`). `messages show|context` and `chats show` are done
-   (cli-messaging 0.7.0; `around` is the model for a new port method: port, `observed`, `stored`,
-   store for `--offline`, then the adapter).
-2. **PR 1.5** — `messages send|reply` move into cli-messaging through the guard.
-3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
-4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+1. **PR 1.5** — `messages send|reply` move into cli-messaging through the guard (`sendCommand` in
+   `src/commands/messages.ts` is the thing that moves; `reply` is new: `send` with a reply-to id).
+2. **PR 1.6** — `doctor`, `commands`, `complete`, `config`, `recipients`, `sends`, `update` shared;
+   a test that stdout carries one JSON value.
+3. **PR 1.7** — `watch` in the foreground, `--jsonl`.
+4. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
+5. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+
+A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
+`../cli-messaging/src/cli/messenger/port.ts`, a line in `observed.ts` and `stored.ts`, the store if
+it should work `--offline`, then `TelegramAdapter` and the four test fakes in tg.
 
 For any of these, read in this order:
 

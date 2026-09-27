@@ -36,6 +36,7 @@ const scripted = (overrides: Partial<Adapter> = {}): Adapter => ({
   chats: async () => ({ items: [chat], hasMore: false }),
   history: async () => ({ items: [message], hasMore: false }),
   chat: async () => ({ ...chat, members: null }),
+  contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
   around: async () => [],
   resolve: async (reference) =>
     reference === "me" ? { ...chat, id: "1", kind: "saved", title: "Saved Messages" } : chat,
