@@ -47,6 +47,7 @@ tg runs path <run-id>
 tg commands                      # every command as JSON, with the output contract version
 tg config show|set|unset         # the settings in force and where each came from
 tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
+tg doctor [--online]             # the installation's state; --online connects once
 ```
 
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a
