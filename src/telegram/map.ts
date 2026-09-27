@@ -41,26 +41,31 @@ const kindOf = (peer: Peer): ChatKind => {
   return "group"
 }
 
-export const toChat = (dialog: Dialog): Chat => {
-  const peer = dialog.peer
+/** A chat as a peer alone describes it — no unread count or last message, which only a dialog carries. */
+export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Chat => {
   const metadata = compact({
     isBot: peer.type === "user" && peer.isBot ? true : undefined,
     isForum: peer.type === "chat" && peer.isForum ? true : undefined,
     chatType: peer.type === "chat" ? peer.chatType : undefined,
     username: peer.username ?? undefined,
-    archived: dialog.isArchived || undefined,
-    pinned: dialog.isPinned || undefined,
+    ...extra,
   })
   return {
     id: String(peer.id),
     title: peer.type === "user" && peer.isSelf ? "Saved Messages" : peer.displayName || null,
     kind: kindOf(peer),
-    unreadCount: dialog.unreadCount,
-    lastMessageAt: dialog.lastMessage?.date.toISOString() ?? null,
+    unreadCount: null,
+    lastMessageAt: null,
     participantsCount: peer.type === "chat" ? peer.membersCount : null,
     ...(metadata ? { providerMetadata: metadata } : {}),
   }
 }
+
+export const toChat = (dialog: Dialog): Chat => ({
+  ...peerToChat(dialog.peer, { archived: dialog.isArchived || undefined, pinned: dialog.isPinned || undefined }),
+  unreadCount: dialog.unreadCount,
+  lastMessageAt: dialog.lastMessage?.date.toISOString() ?? null,
+})
 
 export const toMessage = (message: TgMessage): Message => {
   const reply = message.replyToMessage

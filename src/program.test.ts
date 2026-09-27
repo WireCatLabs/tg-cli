@@ -34,7 +34,9 @@ const scripted = (overrides: Partial<Adapter> = {}): Adapter => ({
   me: async () => ({ id: "1", name: "Owner", username: null }),
   chats: async () => ({ items: [chat], hasMore: false }),
   history: async () => ({ items: [message], hasMore: false }),
-  send: async (_chat, text) => ({ message: { ...message, text, outgoing: true }, sendId: "-9001" }),
+  resolve: async (reference) =>
+    reference === "me" ? { ...chat, id: "1", kind: "saved", title: "Saved Messages" } : chat,
+  send: async (_chat, text, { sendId }) => ({ message: { ...message, text, outgoing: true }, sendId }),
   logout: async () => {},
   close: async () => {},
   ...overrides,
@@ -140,7 +142,9 @@ describe("a person at a terminal", () => {
 
 describe("sending", () => {
   it("reads the text from stdin when none is given", async () => {
-    const { code, stdout } = await tg(["messages", "send", "me"], { stdin: Readable.from(["from a pipe"]) })
+    const { code, stdout } = await tg(["messages", "send", "me", "--send-id", "-9001"], {
+      stdin: Readable.from(["from a pipe"]),
+    })
 
     expect(code).toBe(0)
     expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ sendId: "-9001", message: { text: "from a pipe" } })
