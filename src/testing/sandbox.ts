@@ -22,6 +22,8 @@ delete process.env.TG_API_HASH
 delete process.env.TG_PROFILE
 delete process.env.TG_PROFILE_LOCK
 delete process.env.TG_TIMEOUT
+// At a terminal the daily update check would otherwise ask npm from inside the suite.
+process.env.TG_NO_UPDATE_CHECK = "1"
 process.env.TG_TEST_SANDBOX = sandbox
 
 afterAll(() => rmSync(sandbox, { recursive: true, force: true }))
