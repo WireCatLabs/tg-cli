@@ -33,6 +33,9 @@ tg account show
 tg chats list [--limit n]
 tg messages list <chat> [--limit n] [--before id]
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
+tg runs list [--limit n]         # recorded runs, newest first
+tg runs show <run-id>            # one run: its outcome and one line per Telegram call
+tg runs path <run-id>
 ```
 
 `<chat>` is a title or part of one, an id, `@username`, or `me` for Saved Messages. An ambiguous
@@ -40,9 +43,13 @@ title is an error listing the candidates, never a guess.
 
 The first word is the profile whenever it is not a command: `tg work chats list`. `TG_PROFILE` does
 the same for a shell session, and `TG_PROFILE_LOCK` pins a process to one profile. Every command
-takes `--json`, `--jsonl`, `--quiet`, `-v`/`-vv`, `--trace` (the Telegram library's own log, on
-stderr) and `--timeout 30s`; listings take `--limit`, `--page` and `--all`. Settings live in
-`~/.config/tg-cli/config.json`, per profile or under `defaults`.
+takes `--json`, `--jsonl`, `--quiet`, `-v`/`-vv`, `--trace` (each Telegram call and the library's own
+log, on stderr), `--timeout 30s` and `--record`; listings take `--limit`, `--page` and `--all`.
+Settings live in `~/.config/tg-cli/config.json`, per profile or under `defaults`.
+
+`--record` keeps the run in the state directory (`~/.local/share/tg-cli/runs/` on Linux) — ids, counts, timings and the error
+code, never a chat title or a message. A run that fails is kept without `--record` too, unless
+`--no-record`; runs older than `keepRunsForDays` (30) are removed when the next one is recorded.
 
 ## Development
 

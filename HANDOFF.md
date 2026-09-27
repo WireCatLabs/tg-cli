@@ -1,6 +1,6 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-27.** Read this once, then only the files your task needs from §3. It is context,
+**State 2026-09-27, evening.** Read this once, then only the files your task needs from §3. It is context,
 not history.
 
 ## 1. What this is
@@ -32,30 +32,31 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: 0.2.0 released, the guard merged
+### 3a. Done 2026-09-27: 0.3.0 released, run records
 
-`@leemour/cli-messaging@0.2.0` is on npm (tag `v0.2.0`), and tg-cli uses it: `messages send` goes
-through the send guard, with `recipients` and `sends` commands. A cli-messaging release is
+`@leemour/cli-messaging@0.3.0` is on npm. `baseContext().run` records a run (`--record`, or any
+failure unless `--no-record`) and hands the body an event sink; tg's `withTelegram` wraps the adapter
+in `src/commands/observed.ts`, which emits one request and one response per adapter call.
+`tg runs list|show|path` comes from cli-messaging's `runsCommand`. A cli-messaging release is
 `bin/release` in `../cli-messaging` after the version bump is merged — it runs on GitHub Actions
 with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
 `minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window).
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.1b — run records** (`--record`, `tg runs list|show|path`). Copy
-   `../max-cli/src/runs/{run,recording,events}.ts` into `../cli-messaging/src/cli/runs/`;
-   `events.ts` imports MAX's frame type — replace it with a plain record. The flags already exist
-   (`src/cli/program.ts` in cli-messaging); `settings.record`, `keepFailedRuns`, `keepRunsForDays`
-   are resolved but nothing uses them yet.
-2. **PR 1.3 — the message store** in cli-messaging: proposal §4 is the schema. It is the business
+1. **PR 1.3 — the message store** in cli-messaging: proposal §4 is the schema. It is the business
    foundation (Phase 2: archive, backfill, search).
-3. Phase 2 per proposal §8.
+2. Phase 2 per proposal §8.
+3. Small, whenever: failures *before* a command runs (usage errors, a config that will not load)
+   are not kept as runs. max-cli does it in `program.ts` (`keepFailure`); `run()` in cli-messaging
+   would need a settings resolver for it.
 
 For any of these, read in this order:
 
 | File | Answers |
 |---|---|
-| `src/commands/context.ts` | how a command gets settings, the renderer, the guard and a Telegram connection — and how `--timeout` reaches it (`withTelegram`) |
+| `src/commands/context.ts` | how a command gets settings, the renderer, the guard and a Telegram connection — and how `--timeout` and the run record reach it (`withTelegram`) |
+| `src/commands/observed.ts` | which ids and counts a run record names per adapter call — a new adapter method gets a line here |
 | `src/commands/messages.ts` | the shape of a write: resolve → guard.check → send → guard.record |
 | `src/telegram/adapter.ts` | the only door to Telegram: `open`, `login`, `me`, `chats`, `history`, `resolve`, `send` |
 | `src/telegram/map.ts` | where mtcute's objects become the domain model — the only file that knows their shape |
@@ -69,6 +70,8 @@ For any of these, read in this order:
    TypeScript says `TS2883 … cannot be named without a reference`. `run()` recognises errors by
    shape (`isCliFailure`) for this reason. **Link only for a change that spans both repositories,
    and switch back to a published version before the PR.**
+   To try an unreleased cli-messaging in tg without that, `pnpm pack` it and `pnpm add` the
+   tarball: it shares tg's cli-core (done for 0.3.0).
 2. **mtcute writes to stdout by default** — its log handler (`console.log`) and its login prompts.
    The adapter replaces the handler and passes `codeSentCallback` / `invalidCodeCallback`. Any new
    mtcute call path that can print must be checked for this.
@@ -99,15 +102,17 @@ For any of these, read in this order:
     tests must use `MESSAGING_STORE` (proposal §4, RISK-11).
 12. **npm shows a new version only after a few minutes.** `bin/release` waits and tags; a check
     right after publishing can answer 404 for a version that is there.
-13. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
+13. **A typed chat is often a title.** A run event never names what was typed — only ids taken from
+    an argument that already is one, or from the answer (`src/commands/observed.ts`).
+14. **zsh copies stdout into a pipe** when you write `cmd 2>&1 >/dev/null | …` (its `MULTIOS`
+    option), so the data seems to reach stderr. Check stream separation under `sh -c`.
+15. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
     fails the same way; that is cli-core's to fix, not yours.
 
 ## 5. Decisions you will make yourself — make them knowingly
 
-- the run-record event shape without MAX's frame (keep max-cli's rule: never a message body, a
-  name, a phone or a token in an event);
 - which of max-cli's command builders (`config`, `doctor`, `commands`, `complete`) move to
   cli-messaging next — the owner asked for a generous extraction with adapter overrides;
 - the store's first schema version — proposal §4 is a sketch, not a contract.
