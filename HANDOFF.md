@@ -1,6 +1,6 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-27, late evening.** Read this once, then only the files your task needs from §3. It is
+**State 2026-09-28.** Read this once, then only the files your task needs from §3. It is
 context, not history.
 
 ## 1. What this is
@@ -49,19 +49,13 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 ### 3b. Open right now
 
-1. **Publishing tg on npm (NEED-8 → A: "publish from GitHub").** Everything is merged: `bin/release`,
-   `.github/workflows/release.yml` (publishes from the GitHub environment `npm`, created), version
-   0.1.0, `private` removed. **The first try from GitHub failed with npm `E404` on the upload** — the
-   package does not exist on npm yet, so it has no trusted publisher; nothing was published. Waiting
-   on the owner:
-   - **NEED-13** — the one first publish from this machine with the owner's npm token:
-     `bin/release --local` (reads the keyring entry `service npm account leemour`, never prints it).
-     Recommended: the owner runs it.
-   - **NEED-14** — then on npmjs.com, Packages → `@leemour/tg-cli` → Settings → Trusted publishing:
-     user `leemour`, repository `tg-cli`, workflow `release.yml`, environment `npm`. After that every
-     release is plain `bin/release`.
-   - Then build `tg update` (max-cli has one in `src/commands/update.ts`; cli-core has the helpers
-     in `@leemour/cli-core/update`).
+1. **tg is on npm: `@leemour/tg-cli@0.1.0`** (2026-09-28). The owner published the first version
+   from this machine (`bin/release --local`; npm was slow to show it, so the script did not tag — the
+   tag `v0.1.0` was added by hand on 078ca37, npm's `gitHead`). The owner then set the trusted
+   publisher on npmjs.com (`leemour` / `tg-cli` / `release.yml` / environment `npm`). **The next
+   release is the first from GitHub** — plain `bin/release` after a `chore: release` PR; if it gets
+   `E404` on the upload, the trusted publisher settings are the first suspect. Next to build:
+   `tg update` (max-cli's `src/commands/update.ts`; helpers in `@leemour/cli-core/update`).
 2. **Not yet seen live:** a reaction update (`watch --events` / `serve` handle them through mtcute's
    raw update stream; 150 s of listening saw none). Edits and deletions are confirmed.
 3. **Search ranking quality is unmeasured** — it needs a person to judge the results.
@@ -161,7 +155,7 @@ Read in this order:
 
 Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
 until Phase 4 (NEED-2); every user registers their own `api_id` (NEED-3); publish cli-messaging on
-npm while it is 0.x (NEED-5); tg goes to npm, from GitHub (NEED-8); each session releases its own
+npm while it is 0.x (NEED-5); tg is on npm and releases from GitHub (NEED-8, NEED-13, NEED-14); each session releases its own
 cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9, the default).
 
 ## 6. How to check
