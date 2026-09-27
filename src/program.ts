@@ -1,5 +1,6 @@
 import {
   accountCommand,
+  backfillCommand,
   chatsCommand,
   commandsCommand,
   completeCommand,
@@ -29,6 +30,7 @@ const definition: ProgramDefinition = {
     contactsCommand(TELEGRAM),
     messagesCommand(TELEGRAM),
     watchCommand(TELEGRAM),
+    backfillCommand(TELEGRAM),
     recipientsCommand(TELEGRAM),
     sendsCommand(TELEGRAM),
     runsCommand(TG),

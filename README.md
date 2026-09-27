@@ -40,6 +40,7 @@ tg messages context <chat> <id> [--before n] [--after n]   # a message and what 
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg watch [--jsonl] [--timeout 60s]   # new messages as they arrive; Ctrl-C or --timeout ends it (exit 0)
+tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
 tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first
