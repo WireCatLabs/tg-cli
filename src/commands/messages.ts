@@ -1,6 +1,7 @@
 import { CliError } from "@leemour/cli-core"
-import { renderMessages } from "@leemour/cli-messaging"
+import { pickChat, renderMessages } from "@leemour/cli-messaging"
 import { newSendId } from "@leemour/cli-messaging/sends"
+import type { AccountKey, MessageStore } from "@leemour/cli-messaging/store"
 import { Command } from "commander"
 import { forCommand } from "./context.js"
 
@@ -19,9 +20,12 @@ export const messagesCommand = () => {
       const context = forCommand(this)
       const { before } = this.opts<{ before?: string }>()
       const { limit } = context.settings
-      const page = await context.withTelegram((telegram) =>
-        telegram.history(chat, { limit, ...(before === undefined ? {} : { before }) }),
-      )
+      const window = { limit, ...(before === undefined ? {} : { before }) }
+      const page = context.settings.offline
+        ? await context.withStore((store, account) =>
+            store.messages(account, storedChatId(chat, store, account), window),
+          )
+        : await context.withTelegram((telegram) => telegram.history(chat, window))
       if (context.format === "pretty") {
         // Straight to stdout: the pretty renderer keeps every string to one line, and a feed is many.
         context.streams.data(
@@ -88,4 +92,19 @@ const readAll = async (input: NodeJS.ReadableStream & { isTTY?: boolean }): Prom
   const chunks: Buffer[] = []
   for await (const chunk of input) chunks.push(Buffer.from(chunk))
   return Buffer.concat(chunks).toString("utf8")
+}
+
+/** A chat as typed, found among the stored chats the way the adapter finds it among the dialogs. */
+const storedChatId = (reference: string, store: MessageStore, account: AccountKey): string => {
+  const trimmed = reference.trim()
+  if (["me", "self", "saved"].includes(trimmed.toLowerCase())) return account.account
+  if (/^-?\d+$/.test(trimmed)) return trimmed
+  const chats = store.chats(account, {}).items
+  if (trimmed.startsWith("@")) {
+    const username = trimmed.slice(1).toLowerCase()
+    const found = chats.find((one) => String(one.providerMetadata?.username ?? "").toLowerCase() === username)
+    if (!found) throw new CliError("not_found", `no stored chat is ${trimmed}`)
+    return found.id
+  }
+  return pickChat(trimmed, chats).id
 }

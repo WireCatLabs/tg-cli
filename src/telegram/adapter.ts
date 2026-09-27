@@ -87,6 +87,12 @@ export class TelegramAdapter {
     })
   }
 
+  /** The logged-in user's id from the session, without a request; `null` before a login. */
+  self(): string | null {
+    const cached = this.#client.storage.self.getCached(true)
+    return cached ? String(cached.userId) : null
+  }
+
   me(): Promise<Account> {
     return this.#call(async () => toAccount(await this.#client.getMe()))
   }

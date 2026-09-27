@@ -31,6 +31,7 @@ export const observed = (telegram: Adapter, events: EventSink): Adapter => {
   }
 
   return {
+    self: () => telegram.self(),
     login: (prompts) => timed("session.login", {}, () => telegram.login(prompts)),
     me: () => timed("account.me", {}, () => telegram.me()),
     chats: (window) =>

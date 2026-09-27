@@ -27,6 +27,7 @@ const configure = (profiles: Record<string, unknown>) => {
 const telegram = () => {
   const sent: string[] = []
   const adapter: Adapter = {
+    self: () => "1",
     login: async () => ({ id: "1", name: null, username: null }),
     me: async () => ({ id: "1", name: null, username: null }),
     chats: async () => ({ items: [chat], hasMore: false }),

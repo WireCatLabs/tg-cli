@@ -32,39 +32,34 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: 0.4.0 released — run records and the message store
+### 3a. Done 2026-09-27: every read is kept, `--offline` answers from it
 
-`@leemour/cli-messaging@0.4.0` is on npm and tg-cli depends on it.
-
-- **Run records** (0.3.0): `baseContext().run` records a run (`--record`, or any failure unless
-  `--no-record`) and hands the body an event sink; tg's `withTelegram` wraps the adapter in
-  `src/commands/observed.ts`. `tg runs list|show|path` come from cli-messaging's `runsCommand`.
-- **The store** (0.4.0): `openStore()` in `@leemour/cli-messaging/store` — schema, migrations,
-  save and read methods, trigram search. Nothing in tg writes to it yet. What was left out of
-  migration 1, and why, is the 1.3 row of proposal §8.
+tg uses `@leemour/cli-messaging@0.4.0`. `withTelegram` wraps the adapter twice: `observed.ts`
+emits run events, `stored.ts` saves what `chats`, `history`, `send` and `me` answer (never `resolve`
+— a chat found by name has no unread count or last message, and saving it would erase them). A
+failed save warns and never fails the read. `withStore` answers `--offline` for `chats list` and
+`messages list`, from the account id `src/accounts.ts` remembers per profile. Earlier the same day:
+run records (`tg runs`) and the store itself (proposal §8, rows 1.1b and 1.3).
 
 A cli-messaging release is `bin/release` in `../cli-messaging` after the version bump is merged — it
 runs on GitHub Actions with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
 `minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window).
 
-### 3b. Next planned work — the order is the owner's call
+### 3b. Next planned work, in order
 
-Proposal §8 puts **1.4–1.7** (the generic read commands, `send|reply`, `doctor`/`config`/…, `watch`)
-before **Phase 2**. The previous handoff said Phase 2 next. Ask the owner which comes first:
-
-- **2.1 — ingestion**: every read writes to the store, `--offline` answers from it. The store's
-  first real writer, and the first step of the business milestone (archive, backfill, search).
-- **1.4 — skeleton, part 2**: the generic read commands move into cli-messaging with hooks, so max
-  can reuse them in Phase 4.
-
-Small, whenever: failures *before* a command runs (usage errors, a config that will not load) are
-not kept as runs. max-cli does it in `program.ts` (`keepFailure`).
+1. **PR 1.4 — skeleton, part 2**: the generic read commands (`session`, `account`, `chats list|show`,
+   `messages list|show|context`, `contacts list|show`) move into cli-messaging with hooks, so max can
+   reuse them in Phase 4. The owner chose 2.1 before it (NEED-6, 2026-09-27); this is the other half.
+2. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — the first migration
+   after 1 (proposal §4, §8).
+3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
 
 For any of these, read in this order:
 
 | File | Answers |
 |---|---|
 | `src/commands/context.ts` | how a command gets settings, the renderer, the guard and a Telegram connection — and how `--timeout` and the run record reach it (`withTelegram`) |
+| `src/commands/stored.ts` | which reads are saved to the store, and why `resolve` is not |
 | `src/commands/observed.ts` | which ids and counts a run record names per adapter call — a new adapter method gets a line here |
 | `src/commands/messages.ts` | the shape of a write: resolve → guard.check → send → guard.record |
 | `src/telegram/adapter.ts` | the only door to Telegram: `open`, `login`, `me`, `chats`, `history`, `resolve`, `send` |
@@ -120,9 +115,8 @@ For any of these, read in this order:
 15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a
     message sent as the group). Without it the store makes an identity and a person of a channel,
     and there is no clean way to undo those rows.
-16. **Migration 1 is not frozen until the first real write** (PR 2.1). Until then it may still be
-    amended. A `.tg/messages.db` made by a branch build is then stale — record it in `CLEANUP.md`,
-    do not delete it mid-task.
+16. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
+    additive, in `../cli-messaging/src/store/migrations.ts`.
 17. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and

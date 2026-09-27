@@ -147,11 +147,12 @@ const attachmentsOf = (media: MessageMedia): Attachment[] => {
   const width = read<number>("width")
   const height = read<number>("height")
   const duration = read<number>("duration")
-  if (name !== undefined) attachment.name = name
-  if (mime !== undefined) attachment.mime = mime
-  if (typeof size === "number") attachment.size = size
+  // In the domain type's order, so an answer from the store prints byte for byte the same.
   if (typeof width === "number") attachment.width = width
   if (typeof height === "number") attachment.height = height
+  if (name !== undefined) attachment.name = name
+  if (typeof size === "number") attachment.size = size
+  if (mime !== undefined) attachment.mime = mime
   if (typeof duration === "number") attachment.duration = duration
   return [attachment]
 }

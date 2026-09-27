@@ -38,6 +38,12 @@ tg runs show <run-id>            # one run: its outcome and one line per Telegra
 tg runs path <run-id>
 ```
 
+**Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a
+local store shared with other messenger CLIs (`~/.local/share/cli-messaging/messages.db` on Linux;
+`MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list` and `messages list` from it
+without connecting — the same JSON Telegram gave, except that chats come newest first where
+Telegram puts pinned chats on top. `tg session end` logs out and leaves the store as it is.
+
 `<chat>` is a title or part of one, an id, `@username`, or `me` for Saved Messages. An ambiguous
 title is an error listing the candidates, never a guess.
 

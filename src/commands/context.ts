@@ -8,12 +8,15 @@ import {
   environmentOf,
 } from "@leemour/cli-messaging/cli"
 import { guardFor, type SendGuard } from "@leemour/cli-messaging/sends"
+import { type AccountKey, type MessageStore, openStore } from "@leemour/cli-messaging/store"
 import type { Command } from "commander"
+import { recalledAccount, rememberAccount } from "../accounts.js"
 import { resolveSettings, TG } from "../app.js"
 import { sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import { observed } from "./observed.js"
+import { stored } from "./stored.js"
 
 export interface Environment extends BaseEnvironment {
   stdin?: NodeJS.ReadableStream & { isTTY?: boolean }
@@ -24,7 +27,7 @@ export interface Environment extends BaseEnvironment {
 
 export type Adapter = Pick<
   TelegramAdapter,
-  "login" | "me" | "chats" | "history" | "resolve" | "send" | "logout" | "close"
+  "self" | "login" | "me" | "chats" | "history" | "resolve" | "send" | "logout" | "close"
 >
 
 export interface CommandContext extends BaseContext {
@@ -35,8 +38,13 @@ export interface CommandContext extends BaseContext {
   /** Read-only, the allow-list, the recipient list and the hourly limit — asked before every write, told after. */
   guard: SendGuard
   open: (credentials?: ApiCredentials) => Promise<Adapter>
-  /** Opens Telegram inside `--timeout`, tracked so the deadline can close it, and closes it on every path. */
+  /**
+   * Opens Telegram inside `--timeout`, tracked so the deadline can close it, and closes it on every
+   * path. What the reads answer is saved to the message store.
+   */
   withTelegram: <T>(work: (telegram: Adapter) => Promise<T>) => Promise<T>
+  /** Answers from the message store alone, for `--offline`. Never connects and needs no credentials. */
+  withStore: <T>(work: (store: MessageStore, account: AccountKey) => T) => Promise<T>
 }
 
 export const forCommand = (command: Command): CommandContext => {
@@ -78,17 +86,50 @@ export const forCommand = (command: Command): CommandContext => {
     withTelegram: (work) =>
       base.run(async (events) => {
         if (base.settings.offline) {
-          throw new CliError("validation_error", "--offline has nothing to answer from yet: tg keeps no local copy")
+          throw new CliError("validation_error", "--offline answers only `chats list` and `messages list`")
         }
         if (!environment.adapter && !existsSync(sessionPath)) {
           throw new CliError("authentication_error", `no session for profile "${profile}" — run ${login}`)
         }
         const telegram = await open()
         base.track(telegram)
+        let store: Promise<MessageStore | undefined> | undefined
         try {
-          return await work(observed(telegram, events))
+          const self = telegram.self()
+          if (self !== null) rememberAccount(profile, self, base.env)
+          const adapter = observed(telegram, events)
+          return await work(
+            self === null
+              ? adapter
+              : stored(adapter, {
+                  account: { provider: "telegram", account: self },
+                  store: () => {
+                    store ??= openStore({ env: base.env })
+                    return store
+                  },
+                  warn: base.renderer.warn,
+                  events,
+                }),
+          )
         } finally {
           await telegram.close()
+          if (store) (await store.catch(() => undefined))?.close()
+        }
+      }),
+    withStore: (work) =>
+      base.run(async () => {
+        const account = recalledAccount(profile, base.env)
+        if (!account) {
+          throw new CliError(
+            "not_found",
+            `nothing recorded for profile "${profile}" yet — run the command once without --offline`,
+          )
+        }
+        const store = await openStore({ env: base.env })
+        try {
+          return work(store, account)
+        } finally {
+          store.close()
         }
       }),
   }
