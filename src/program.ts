@@ -2,6 +2,7 @@ import {
   accountCommand,
   chatsCommand,
   commandsCommand,
+  completeCommand,
   configCommand,
   contactsCommand,
   createProgram as create,
@@ -30,6 +31,7 @@ const definition: ProgramDefinition = {
     runsCommand(TG),
     configCommand(TG, CONFIG),
     commandsCommand(TG),
+    completeCommand(TELEGRAM, CONFIG),
   ],
 }
 

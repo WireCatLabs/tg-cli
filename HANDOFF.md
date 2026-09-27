@@ -32,7 +32,7 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.12.0) — PRs 1.4, 1.5, 1.6a, 1.6b
+### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.14.0) — PRs 1.4, 1.5, 1.6a–c
 
 `account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
@@ -48,8 +48,8 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.6, the rest** — `complete` (1.6c), `doctor` and `update` (1.6d), shared. `recipients`,
-   `sends`, `commands`, `config` and the stdout test (`src/contract.test.ts`) are done (1.6a, 1.6b).
+1. **PR 1.6d** — `doctor` and `update`, shared. The rest of 1.6 is done: `recipients`, `sends`,
+   `commands`, `config`, `complete` and the stdout test (`src/contract.test.ts`).
 2. **PR 1.7** — `watch` in the foreground, `--jsonl`.
 3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
 4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
@@ -123,9 +123,13 @@ For any of these, read in this order:
     and there is no clean way to undo those rows.
 16. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
     additive, in `../cli-messaging/src/store/migrations.ts`.
-17. **Another session releases cli-messaging too.** On 2026-09-27 it published 0.10.0 from its own
-    PR minutes before this line of work merged with the same number; `bin/release` refused, and the
-    fix was 0.11.0. Before a version bump, `git pull` and `npm view @leemour/cli-messaging version`.
+17. **Another session works in cli-messaging too** — it has its own worktree,
+    `../cli-messaging-find`, **with `main` checked out**, so `git checkout main` fails in
+    `../cli-messaging`; do not touch that worktree. Twice on 2026-09-27 both sessions raised the version
+    to the same number and the other released first (0.10.0, 0.13.0); `bin/release` refused and the fix
+    was a bump PR (0.11.0, 0.14.0). Before a bump: `git fetch` and `npm view @leemour/cli-messaging
+    version`. Without `main` checked out, `bin/release`'s CI mode is `gh workflow run release.yml --ref
+    main` and `gh run watch` — after checking yourself that `origin/main` has the version and npm does not.
 18. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
