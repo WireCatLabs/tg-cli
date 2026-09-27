@@ -3,6 +3,7 @@ import type {
   Capabilities,
   Chat,
   ChatKind,
+  Member,
   Message,
   ProviderMetadata,
   QuotedMessage,
@@ -28,6 +29,12 @@ export interface Account {
   name: string | null
   username: string | null
 }
+
+export const toMember = (user: Peer): Member => ({
+  id: String(user.id),
+  name: user.displayName || null,
+  username: user.username,
+})
 
 export const toAccount = (user: Peer): Account => ({
   id: String(user.id),

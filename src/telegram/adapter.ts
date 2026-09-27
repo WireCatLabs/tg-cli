@@ -2,11 +2,11 @@ import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
-import { type Chat, type Message, type Page, pickChat } from "@leemour/cli-messaging"
+import { type Chat, type ChatCard, type Member, type Message, type Page, pickChat } from "@leemour/cli-messaging"
 import { type InputPeerLike, Long, TelegramClient, type User } from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
-import { type Account, peerToChat, toAccount, toChat, toMessage } from "./map.js"
+import { type Account, peerToChat, toAccount, toChat, toMember, toMessage } from "./map.js"
 import { openSessionStorage } from "./storage.js"
 
 export interface AdapterOptions {
@@ -119,6 +119,16 @@ export class TelegramAdapter {
     })
   }
 
+  /** The chat as its dialog describes it, and for a group, who is in it — at most 200, Telegram's cap. */
+  chat(reference: string): Promise<ChatCard> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const [dialog] = await this.#client.getPeerDialogs(peer)
+      const chat = dialog ? toChat(dialog) : peerToChat(await this.#client.getPeer(peer))
+      return { ...chat, members: chat.kind === "group" ? await this.#membersOf(peer) : null }
+    })
+  }
+
   /**
    * One request: history from just above the message, shifted `after` messages newer. Telegram's
    * offset id is exclusive, hence the `+ 1`; ids are not contiguous, so the window is cut by position.
@@ -203,6 +213,18 @@ export class TelegramAdapter {
   async #inputOf(reference: string): Promise<InputPeerLike> {
     const peer = await this.#peerOf(reference)
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
+  }
+
+  /** `null` when the group hides its member list from us: that is an answer about the group, not a failure. */
+  async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
+    try {
+      const members = await this.#client.getChatMembers(peer, { limit: 200 })
+      return members.map((member) => toMember(member.user))
+    } catch (error) {
+      const known = toCliError(error)
+      if (known instanceof CliError && known.code === "permission_error") return null
+      throw known
+    }
   }
 
   async #call<T>(work: () => Promise<T>): Promise<T> {
