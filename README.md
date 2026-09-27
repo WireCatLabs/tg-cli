@@ -39,9 +39,12 @@ tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
+tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
+tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first
 tg runs show <run-id>            # one run: its outcome and one line per Telegram call
 tg runs path <run-id>
+tg commands                      # every command as JSON, with the output contract version
 ```
 
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a

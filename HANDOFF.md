@@ -32,12 +32,12 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.9.0) — PRs 1.4 and 1.5 complete
+### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.11.0) — PRs 1.4, 1.5, 1.6a
 
 `account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
 `src/commands/context.ts`: its `connect`, the chat help, `me` → the account's own id — and adds
-what is its own by composition: `session`, `recipients`, `sends` (the last two move in 1.6).
+what is its own by composition: `session`.
 Saving reads to the store, `--offline` and the run events live in `../cli-messaging/src/cli/messenger/`.
 Earlier the same day: run records, the store, and every read kept (proposal §8, 1.1b, 1.3, 2.1).
 
@@ -48,8 +48,8 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.6** — `doctor`, `commands`, `complete`, `config`, `recipients`, `sends`, `update` shared;
-   a test that stdout carries one JSON value.
+1. **PR 1.6, the rest** — `config` (1.6b), `complete` (1.6c), `doctor` and `update` (1.6d), shared.
+   `recipients`, `sends`, `commands` and the stdout test (`src/contract.test.ts`) are done (1.6a).
 2. **PR 1.7** — `watch` in the foreground, `--jsonl`.
 3. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
 4. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
@@ -123,7 +123,10 @@ For any of these, read in this order:
     and there is no clean way to undo those rows.
 16. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
     additive, in `../cli-messaging/src/store/migrations.ts`.
-17. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
+17. **Another session releases cli-messaging too.** On 2026-09-27 it published 0.10.0 from its own
+    PR minutes before this line of work merged with the same number; `bin/release` refused, and the
+    fix was 0.11.0. Before a version bump, `git pull` and `npm view @leemour/cli-messaging version`.
+18. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
     fails the same way; that is cli-core's to fix, not yours.

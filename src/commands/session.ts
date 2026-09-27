@@ -1,5 +1,6 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@leemour/cli-core"
+import { annotate } from "@leemour/cli-core/commands"
 import { readSecret, terminalQr } from "@leemour/cli-messaging"
 import { commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
@@ -95,8 +96,7 @@ export const sessionCommand = () => {
       }
     })
 
-  session
-    .command("end")
+  annotate(session.command("end"), { mutates: true })
     .description("log this profile out on Telegram's side and forget the session here")
     .action(async function (this: Command) {
       const context = forCommand(this)
