@@ -31,6 +31,7 @@ tg session start [qr|phone] [--app browser|auto]   # QR by default
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
 tg chats list [--limit n]
+tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg messages list <chat> [--limit n] [--before id]
 tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
