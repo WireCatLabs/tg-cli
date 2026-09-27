@@ -7,11 +7,12 @@ import {
   type ChatCard,
   type Member,
   type Message,
+  type MessageHit,
   type Page,
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
-import { type InputPeerLike, Long, TelegramClient, type User } from "@mtcute/node"
+import { type InputPeerLike, Long, TelegramClient, type Message as TgMessage, type User } from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import { type Account, peerToChat, toAccount, toChat, toMember, toMessage } from "./map.js"
@@ -23,6 +24,8 @@ export interface AdapterOptions {
   /** Where the library's own log lines go, when asked for. Never stdout. */
   diagnostic?: (line: string) => void
   verbose?: boolean
+  /** Receive updates — only `watch` asks. Missed ones are not fetched: a watch starts from now. */
+  listen?: boolean
 }
 
 export interface LoginPrompts {
@@ -66,7 +69,7 @@ export class TelegramAdapter {
   }
 
   private constructor(
-    { credentials, sessionPath, diagnostic, verbose = false }: AdapterOptions,
+    { credentials, sessionPath, diagnostic, verbose = false, listen = false }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
     this.#sessionPath = sessionPath
@@ -74,7 +77,8 @@ export class TelegramAdapter {
       apiId: credentials.id,
       apiHash: credentials.hash,
       storage,
-      disableUpdates: true,
+      disableUpdates: !listen,
+      ...(listen ? { updates: { catchUp: false } } : {}),
       logLevel: verbose ? 3 : 1,
     })
     // mtcute's default handler writes with console.log, which is stdout — where only data may go.
@@ -219,6 +223,22 @@ export class TelegramAdapter {
         throw known
       }
     })
+  }
+
+  /** New messages as they arrive, until `signal` aborts. Only on an adapter opened with `listen`. */
+  async watch(onMessage: (message: MessageHit) => void, signal: AbortSignal): Promise<void> {
+    const handler = (message: TgMessage) =>
+      onMessage({ ...toMessage(message), chatTitle: peerToChat(message.chat).title })
+    this.#client.onNewMessage.add(handler)
+    try {
+      await this.#call(async () => {
+        await this.#client.connect()
+        await this.#client.startUpdatesLoop()
+      })
+      if (!signal.aborted) await new Promise((resolve) => signal.addEventListener("abort", resolve, { once: true }))
+    } finally {
+      this.#client.onNewMessage.remove(handler)
+    }
   }
 
   /** Forgets the session on Telegram's side too, so the device disappears from the account's list. */

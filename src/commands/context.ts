@@ -4,6 +4,7 @@ import {
   asFirstWord,
   type BaseContext,
   type BaseEnvironment,
+  type ConnectOptions,
   environmentOf,
   type Messenger,
   type MessengerAdapter,
@@ -19,7 +20,11 @@ import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 export interface Environment extends BaseEnvironment {
   keyring?: KeyringStore
   /** Tests hand in a scripted Telegram. */
-  adapter?: (options: { credentials: ApiCredentials; sessionPath: string }) => Adapter | Promise<Adapter>
+  adapter?: (options: {
+    credentials: ApiCredentials
+    sessionPath: string
+    listen?: boolean
+  }) => Adapter | Promise<Adapter>
 }
 
 export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">
@@ -44,7 +49,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
   })
   const login = `\`tg ${asFirstWord(profile)}session start\``
 
-  const open = async (given?: ApiCredentials): Promise<Adapter> => {
+  const open = async (given?: ApiCredentials, { listen = false }: ConnectOptions = {}): Promise<Adapter> => {
     const resolved = given ?? credentials.read()
     if (!resolved) {
       throw new CliError(
@@ -52,7 +57,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
         `no Telegram app credentials for profile "${profile}" — run ${login} first`,
       )
     }
-    const options = { credentials: resolved, sessionPath }
+    const options = { credentials: resolved, sessionPath, ...(listen ? { listen } : {}) }
     return environment.adapter
       ? await environment.adapter(options)
       : await TelegramAdapter.open({
@@ -62,11 +67,11 @@ const telegramOf = (command: Command, base: BaseContext) => {
         })
   }
 
-  const connect = async (): Promise<Adapter> => {
+  const connect = async (options: ConnectOptions = {}): Promise<Adapter> => {
     if (!environment.adapter && !existsSync(sessionPath)) {
       throw new CliError("authentication_error", `no session for profile "${profile}" — run ${login}`)
     }
-    return open()
+    return open(undefined, options)
   }
 
   return { environment, sessionPath, credentials, open, connect }
@@ -76,7 +81,7 @@ export const TELEGRAM: Messenger = {
   app: TG,
   provider: "telegram",
   resolveSettings,
-  connect: (command, base) => telegramOf(command, base).connect(),
+  connect: (command, base, options) => telegramOf(command, base).connect(options),
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   // Saved Messages is the chat with yourself, so its id is the account's.
   savedChatId: (account) => account.account,

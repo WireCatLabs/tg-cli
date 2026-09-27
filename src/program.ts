@@ -13,6 +13,7 @@ import {
   run as runCli,
   runsCommand,
   sendsCommand,
+  watchCommand,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
@@ -27,6 +28,7 @@ const definition: ProgramDefinition = {
     chatsCommand(TELEGRAM),
     contactsCommand(TELEGRAM),
     messagesCommand(TELEGRAM),
+    watchCommand(TELEGRAM),
     recipientsCommand(TELEGRAM),
     sendsCommand(TELEGRAM),
     runsCommand(TG),
