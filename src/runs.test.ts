@@ -97,12 +97,22 @@ describe("run records", () => {
     })
 
     expect(code).toBe(11)
+    expect(runsOf("failing")).toHaveLength(1)
     expect(runsOf("failing")[0]).toMatchObject({
       status: "failed",
       errorCode: "provider_error",
       providerError: "CHAT_ADMIN_REQUIRED",
       keptBecauseFailed: true,
     })
+  })
+
+  it("keep a usage error, naming the command and never what was typed", async () => {
+    const { code } = await tg(["usage", "messages", "send", "Valencia", BODY, "--no-such-flag"])
+
+    expect(code).not.toBe(0)
+    expect(runsOf("usage")).toHaveLength(1)
+    expect(runsOf("usage")[0]).toMatchObject({ command: "messages send", errorCode: "validation_error" })
+    expect(keptFor("usage")).not.toContain(BODY)
   })
 
   it("are listed by `tg runs list` without it starting a run of its own", async () => {
