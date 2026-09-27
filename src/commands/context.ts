@@ -80,6 +80,8 @@ export const TELEGRAM: Messenger = {
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   // Saved Messages is the chat with yourself, so its id is the account's.
   savedChatId: (account) => account.account,
+  // In Telegram a one-to-one chat's id is the other person's id.
+  partnerOf: (chat) => (chat.kind === "dialog" ? chat.id : undefined),
 }
 
 export const forCommand = (command: Command): CommandContext => {

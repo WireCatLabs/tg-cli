@@ -1,18 +1,19 @@
 import {
   accountCommand,
   chatsCommand,
+  commandsCommand,
   contactsCommand,
   createProgram as create,
   messagesCommand,
   type ProgramDefinition,
+  recipientsCommand,
   run as runCli,
   runsCommand,
+  sendsCommand,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { TG } from "./app.js"
 import { type Environment, TELEGRAM } from "./commands/context.js"
-import { recipientsCommand } from "./commands/recipients.js"
-import { sendsCommand } from "./commands/sends.js"
 import { sessionCommand } from "./commands/session.js"
 
 const definition: ProgramDefinition = {
@@ -23,9 +24,10 @@ const definition: ProgramDefinition = {
     chatsCommand(TELEGRAM),
     contactsCommand(TELEGRAM),
     messagesCommand(TELEGRAM),
-    recipientsCommand(),
-    sendsCommand(),
+    recipientsCommand(TELEGRAM),
+    sendsCommand(TELEGRAM),
     runsCommand(TG),
+    commandsCommand(TG),
   ],
 }
 
