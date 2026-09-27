@@ -32,7 +32,7 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.15.0) — PRs 1.4, 1.5, 1.6
+### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.16.0) — Phase 1 complete (1.4–1.7)
 
 `account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
 `chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
@@ -48,11 +48,16 @@ unreleased version in tg first, `pnpm pack` it and `pnpm add` the tarball (see �
 
 ### 3b. Next planned work, in order
 
-1. **PR 1.7** — `watch` in the foreground, `--jsonl`: new messages as they arrive (mtcute updates are
-   off today — `disableUpdates: true` in `src/telegram/adapter.ts`).
-2. **PR 2.2 — `tg backfill <chat>`**: resumable, which needs `sync_ranges` — migration 2.
-3. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
-4. `update` — only once tg-cli is published on npm (it is `private` today; the owner's call).
+Phase 1 is complete. Phase 2 per proposal §8:
+
+1. **PR 2.2 — `tg backfill <chat>`**: resumable, throttled, FloodWait-aware; needs `sync_ranges` —
+   migration 2 in `../cli-messaging/src/store/migrations.ts`, additive.
+2. **PR 2.3** — the background process (`serve`), from max-cli's `src/server/`; edits, deletions and
+   reactions (`watch --events`) come with it.
+3. **PR 2.4** — the tokenizer measurement (proposal §6), then `tg messages search`.
+4. **PR 2.5** — `tg sync status`, `tg export`.
+5. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
+6. `update` — only once tg-cli is published on npm (it is `private` today; the owner's call).
 
 A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
 `../cli-messaging/src/cli/messenger/port.ts`, a line in `observed.ts` and `stored.ts`, the store if
@@ -121,6 +126,10 @@ For any of these, read in this order:
 15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a
     message sent as the group). Without it the store makes an identity and a person of a channel,
     and there is no clean way to undo those rows.
+15b. **`watch` opens its own connection with updates on** (`listen`), catch-up off: it starts from
+    now and never replays what arrived while it was stopped (checked live 2026-09-27). One-shot
+    commands keep `disableUpdates: true`. A busy account produces messages every few seconds — a live
+    check that expects silence will be wrong.
 16. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
     additive, in `../cli-messaging/src/store/migrations.ts`.
 17. **Another session works in cli-messaging too** — it has its own worktree,
