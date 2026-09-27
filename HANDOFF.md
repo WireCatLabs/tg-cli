@@ -1,7 +1,7 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-27, evening.** Read this once, then only the files your task needs from §3. It is context,
-not history.
+**State 2026-09-27, late evening.** Read this once, then only the files your task needs from §3. It is
+context, not history.
 
 ## 1. What this is
 
@@ -21,142 +21,148 @@ graph and a CRM on top. The full design:
 
 | Question | Where |
 |---|---|
-| The design, the phases, what is done | [`../cli-messaging/docs/plans/2026-09-26-platform-proposal.md`](../cli-messaging/docs/plans/2026-09-26-platform-proposal.md) — §8 lists every PR with **Done** marks; §4 is the store and the CRM model; §11 the owner's rulings (NEED-1…3) |
-| What was measured against real Telegram | [`docs/plans/2026-09-27-spike-report.md`](docs/plans/2026-09-27-spike-report.md) — FIND-1…6 |
+| The design, the phases, what is done | [`../cli-messaging/docs/plans/2026-09-26-platform-proposal.md`](../cli-messaging/docs/plans/2026-09-26-platform-proposal.md) — §8 lists every PR with **Done** marks (row 2.4 has the search measurement); §4 the store and the CRM model; §11 the owner's rulings |
+| How `serve` and `watch --events` were designed | [`../cli-messaging/docs/plans/2026-09-27-background-process.md`](../cli-messaging/docs/plans/2026-09-27-background-process.md) |
+| What was measured against real Telegram in the spike | [`docs/plans/2026-09-27-spike-report.md`](docs/plans/2026-09-27-spike-report.md) — FIND-1…6 |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
-| What a user is told | [`README.md`](README.md) |
+| What a user is told — every command | [`README.md`](README.md) |
 | How max-cli does something | `../max-cli/docs/dev/ARCHITECTURE.md` — the source most of cli-messaging was copied from. **Read only** |
 
-There is no session journal and no backlog file in these two repositories yet; the proposal's §8
-table is the backlog.
+No session journal and no backlog file exist in these two repositories; the proposal's §8 table is
+the backlog.
 
-## 3. What to read for the next task
+## 3. Where things stand, and what to read for the next task
 
-### 3a. Done 2026-09-27: shared read and send commands (cli-messaging 0.16.0) — Phase 1 complete (1.4–1.7)
+### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`account show`, `chats list|show`, `contacts list|show` and `messages list|show|context` now come from cli-messaging (`accountCommand`,
-`chatsCommand`, `messagesCommand`). tg describes Telegram once — `TELEGRAM` in
-`src/commands/context.ts`: its `connect`, the chat help, `me` → the account's own id — and adds
-what is its own by composition: `session`.
-Saving reads to the store, `--offline` and the run events live in `../cli-messaging/src/cli/messenger/`.
-Earlier the same day: run records, the store, and every read kept (proposal §8, 1.1b, 1.3, 2.1).
-`tg backfill <chat>` (2.2) fetches a chat's history resumably; `sync_ranges` records what is held.
-`tg watch --events` and `tg serve` (2.3) keep edits, deletions and reactions; `serve` catches up and
-holds a lock per profile. Reaction updates are not yet seen live; edits and deletions are.
-`tg messages search` (2.4) reads the store only; message text is indexed by word beginnings
-(migration 3, after measuring against trigram — proposal §8 row 2.4 has the numbers).
-`tg sync status` and `tg export` (2.5) read the store only.
+`tg` uses **`@leemour/cli-messaging@0.20.0`**. What it does now: login (`session`), `account show`,
+`chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
+[--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
+`doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
+`--offline` answers the list and show commands from it; `search`, `sync status` and `export` only
+ever read it.
 
-**Each session releases its own cli-messaging PRs** (NEED-10 → C, 2026-09-27 evening — relaying
-requests between sessions stalled on approvals). Merge the feature PR without a version bump; then,
-right before releasing, `git fetch` and `npm view @leemour/cli-messaging version`, raise the version in
-a `chore: release` PR, merge it and run `bin/release`. Add the version to tg-cli's
-`pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. Announce a store migration's number to the other
-sessions first. To try an unreleased version in tg, `pnpm pack` it and `pnpm add` the tarball (§4.1).
+The split: **everything messenger-neutral is in cli-messaging** — the commands, saving to the store,
+`--offline`, run records, the send guard, the store and its migrations. tg describes Telegram once —
+`TELEGRAM` in `src/commands/context.ts` (how to connect, the chat help, `me` → Saved Messages, the
+partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` and the adapter.
 
-### 3b. Next planned work, in order
+### 3b. Open right now
 
-Phases 1 and 2 are complete (2026-09-27). What is left of the plan:
+1. **Publishing tg on npm (NEED-8 → A: "publish from GitHub").** Everything is merged: `bin/release`,
+   `.github/workflows/release.yml` (publishes from the GitHub environment `npm`, created), version
+   0.1.0, `private` removed. **The first try from GitHub failed with npm `E404` on the upload** — the
+   package does not exist on npm yet, so it has no trusted publisher; nothing was published. Waiting
+   on the owner:
+   - **NEED-13** — the one first publish from this machine with the owner's npm token:
+     `bin/release --local` (reads the keyring entry `service npm account leemour`, never prints it).
+     Recommended: the owner runs it.
+   - **NEED-14** — then on npmjs.com, Packages → `@leemour/tg-cli` → Settings → Trusted publishing:
+     user `leemour`, repository `tg-cli`, workflow `release.yml`, environment `npm`. After that every
+     release is plain `bin/release`.
+   - Then build `tg update` (max-cli has one in `src/commands/update.ts`; cli-core has the helpers
+     in `@leemour/cli-core/update`).
+2. **Not yet seen live:** a reaction update (`watch --events` / `serve` handle them through mtcute's
+   raw update stream; 150 s of listening saw none). Edits and deletions are confirmed.
+3. **Search ranking quality is unmeasured** — it needs a person to judge the results.
+4. **Small:** failures *before* a command runs (a usage error, a config that will not load) are not
+   kept as runs (max-cli's `keepFailure` in its `src/program.ts`).
+5. **Phase 3 and 4** per proposal §8: MCP, the skill, capability discovery; then max-cli moves onto
+   cli-messaging (under max-cli's own rules — NEED-2).
 
-1. Small, whenever: failures *before* a command runs are not kept as runs (max-cli `keepFailure`).
-2. **Publish tg-cli on npm** once backfill and search exist (NEED-8 → A): a release script and
-   trusted publishing as cli-messaging has, then `tg update`.
+### 3c. How to change things
 
-A new adapter method follows the path `around`, `chat` and `contact` took: `MessengerAdapter` in
-`../cli-messaging/src/cli/messenger/port.ts`, a line in `observed.ts` and `stored.ts`, the store if
-it should work `--offline`, then `TelegramAdapter` and the four test fakes in tg.
+**A new adapter method** takes the path `around`, `chat`, `contact` and `watch` took:
+`MessengerAdapter` in `../cli-messaging/src/cli/messenger/port.ts` → a line in `observed.ts` (run
+events) and `stored.ts` (saving) → the store if it should work `--offline` → a command in
+`commands.ts` → `TelegramAdapter` and its mapping in `map.ts` → the test fakes in tg
+(`src/program.test.ts`, `src/runs.test.ts`, `src/send-guard.test.ts`, `src/offline.test.ts`,
+`src/contract.test.ts`).
 
-For any of these, read in this order:
+**A cli-messaging change reaches tg in three steps** (NEED-10 → C: each session releases its own
+PRs): merge the feature PR **without** a version bump; right before releasing, `git fetch` and
+`npm view @leemour/cli-messaging version`, raise the version in a `chore: release` PR, merge, run
+`bin/release` in `../cli-messaging`; then in tg `pnpm add @leemour/cli-messaging@<v>` and add the
+version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. To try an unreleased cli-messaging in
+tg first, `pnpm pack` it and `pnpm add` the tarball — never commit that `file:` path.
+
+Read in this order:
 
 | File | Answers |
 |---|---|
-| `src/commands/context.ts` | what only Telegram has (credentials, the session file, `connect`) and the `TELEGRAM` description the shared commands take |
+| `src/commands/context.ts` | what only Telegram has (credentials, the session file, `connect`) and the `TELEGRAM` description |
 | `../cli-messaging/src/cli/messenger/context.ts` | how a shared command connects inside `--timeout`, saves to the store and answers `--offline` |
 | `../cli-messaging/src/cli/messenger/port.ts` | `MessengerAdapter` — what an adapter must do for the shared commands |
-| `../cli-messaging/src/cli/messenger/stored.ts` | which reads are saved to the store, and why `resolve` is not |
-| `../cli-messaging/src/cli/messenger/observed.ts` | which ids and counts a run record names per adapter call — a new adapter method gets a line here |
-| `../cli-messaging/src/cli/messenger/commands.ts` | every shared command; `sendText` is the shape of a write: resolve → guard.check → send → guard.record |
-| `src/telegram/adapter.ts` | the only door to Telegram: `open`, `login`, `me`, `chats`, `history`, `resolve`, `send` |
+| `../cli-messaging/src/cli/messenger/commands.ts` | the shared commands; `sendText` is the shape of a write: resolve → guard.check → send → guard.record; `listenUntilStopped` is how `watch` and `serve` end |
+| `../cli-messaging/src/cli/messenger/stored.ts` | which reads and events are saved, and why `resolve` and `chat` are not |
+| `../cli-messaging/src/cli/messenger/observed.ts` | which ids and counts a run record names per adapter call |
+| `src/telegram/adapter.ts` | the only door to Telegram |
 | `src/telegram/map.ts` | where mtcute's objects become the domain model — the only file that knows their shape |
-| `../cli-messaging/src/store/store.ts` | what the store keeps, what an update may not erase, and how a sender becomes an identity and a person |
+| `../cli-messaging/src/store/store.ts` | what the store keeps, what an update may not erase, how a sender becomes an identity and a person |
 | `../cli-messaging/src/store/migrations.ts` | the schema, and the append-only rule for changing it |
-| `../cli-messaging/src/cli/settings.ts` | flag → env → file → default; how a CLI adds its own settings (`SettingsExtension`) |
-| `../cli-messaging/src/cli/program.ts` | `run()`, global flags, the profile as the first word |
 
 ## 4. What will bite
 
-1. **A linked `cli-messaging` brings its own copy of cli-core and commander.** Then an error from
-   one is not an `instanceof` the other (an ambiguous chat name exited 1 instead of 2), and
-   TypeScript says `TS2883 … cannot be named without a reference`. `run()` recognises errors by
-   shape (`isCliFailure`) for this reason. **Link only for a change that spans both repositories,
-   and switch back to a published version before the PR.**
-   To try an unreleased cli-messaging in tg without that, `pnpm pack` it and `pnpm add` the
-   tarball: it shares tg's cli-core (done for 0.3.0).
-2. **mtcute writes to stdout by default** — its log handler (`console.log`) and its login prompts.
-   The adapter replaces the handler and passes `codeSentCallback` / `invalidCodeCallback`. Any new
-   mtcute call path that can print must be checked for this.
+1. **A linked `cli-messaging` brings its own copy of cli-core and commander.** An error from one is
+   not an `instanceof` the other, and TypeScript says `TS2883 … cannot be named`. `run()` recognises
+   errors by shape (`isCliFailure`). Use `pnpm pack` + `pnpm add` of the tarball instead of a link.
+2. **mtcute writes to stdout by default** — its log handler and its login prompts. The adapter
+   replaces the handler and passes `codeSentCallback` / `invalidCodeCallback`. Check any new mtcute
+   call path that can print.
 3. **`sendText` reads the cached current user before any request.** The adapter calls
-   `client.prepare()` right after opening; without it the first send of a process fails with "User
-   info is not cached yet" (FIND-5).
-4. **Session storage is ours, not `better-sqlite3`** (`src/telegram/storage.ts`, over cli-messaging's
-   `openCache`): a global `pnpm add -g` leaves better-sqlite3 without its binary (FIND-1). Do not
-   switch back to mtcute's default storage.
-5. **mtcute is pinned at exactly 0.32.3.** Pre-1.0; read its `.d.ts` in `node_modules` rather than
-   trusting docs.
+   `client.prepare()` right after opening; without it the first send fails (FIND-5).
+4. **Session storage is ours, not `better-sqlite3`** (`src/telegram/storage.ts`): a global install
+   leaves better-sqlite3 without its binary (FIND-1).
+5. **mtcute is pinned at exactly 0.32.3.** Pre-1.0; read its `.d.ts` in `node_modules`. `@mtcute/node`
+   re-exports everything from `@mtcute/core`, including `getMarkedPeerId` and `MessageReactions`.
 6. **Never run `node dist/bin/tg.js` against the account — use `bin/tg`.** It keeps config, state,
-   the session and the store in `.tg/` of the checkout. Each checkout needs its own
-   `bin/tg session start` (the owner has one in this checkout). The `TG_*_DIR` variables also
-   change which keyring entry is used.
+   the session and the store in `.tg/` of the checkout (the owner has a session here). The `TG_*_DIR`
+   variables also change which keyring entry is used.
 7. **`pnpm test` must not reach anything real.** `src/testing/sandbox.ts` moves every directory and
-   clears `TG_PROFILE`, `TG_PROFILE_LOCK`, `TG_TIMEOUT`, `TG_API_ID`, `TG_API_HASH`. A new variable
-   that can point at something real goes there too.
-8. **Biome `noRestrictedImports` in two overrides does not merge** — the later one replaces the
-   earlier. `biome.json` repeats the mtcute pattern inside the `src/commands/**` rule for that reason.
-9. **This is the owner's real account.** Live checks send only to Saved Messages (`me`).
-   `bin/tg-spike-live` sends three messages each run — do not run it per PR. A read-only check is
-   `bin/tg account show`, `bin/tg chats list --limit 3`, `bin/tg messages list me --limit 2`.
-10. **Telegram deduplicates by `random_id`, also across connections** (measured, FIND-6). That is
-    what makes `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
-11. **The store is a system of record, not a cache** — forward-only additive
-    migrations, never max-cli's drop-and-rebuild (`../max-cli/src/cache/schema.ts` `migrate`), and
-    tests must use `MESSAGING_STORE` (proposal §4, RISK-11).
-12. **npm shows a new version only after a few minutes.** `bin/release` waits and tags; a check
-    right after publishing can answer 404 for a version that is there.
-13. **A typed chat is often a title.** A run event never names what was typed — only ids taken from
-    an argument that already is one, or from the answer (`../cli-messaging/src/cli/messenger/observed.ts`).
-14. **zsh copies stdout into a pipe** when you write `cmd 2>&1 >/dev/null | …` (its `MULTIOS`
-    option), so the data seems to reach stderr. Check stream separation under `sh -c`.
-15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a
-    message sent as the group). Without it the store makes an identity and a person of a channel,
-    and there is no clean way to undo those rows.
-16. **`watch` opens its own connection with updates on** (`listen`), catch-up off: it starts from
-    now and never replays what arrived while it was stopped (checked live 2026-09-27). One-shot
-    commands keep `disableUpdates: true`. A busy account produces messages every few seconds — a live
-    check that expects silence will be wrong.
-17. **Migrations 1–3 are shipped and frozen** (2 is `sync_ranges`, 3 the word index). The next is
-    migration 4, additive, in `../cli-messaging/src/store/migrations.ts` — announce its number to the
-    releasing session first (rule 18).
-18. **Another session works in cli-messaging too** (the max-cli bot writes the shared store). On
-    2026-09-27 it used a worktree, `../cli-messaging-find`, **with `main` checked out**, so `git
-    checkout main` failed in `../cli-messaging`; that worktree is gone now, but check `git worktree
-    list` and never touch another session's. Twice on 2026-09-27 both sessions raised the version
-    to the same number and the other released first (0.10.0, 0.13.0); `bin/release` refused and the fix
-    was a bump PR (0.11.0, 0.14.0). Before a bump: `git fetch` and `npm view @leemour/cli-messaging
-    version`. Without `main` checked out, `bin/release`'s CI mode is `gh workflow run release.yml --ref
-    main` and `gh run watch` — after checking yourself that `origin/main` has the version and npm does not.
-19. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
-    `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
-    `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
-    fails the same way; that is cli-core's to fix, not yours.
+   clears `TG_PROFILE`, `TG_PROFILE_LOCK`, `TG_TIMEOUT`, `TG_API_ID`, `TG_API_HASH`; cli-messaging has
+   its own sandbox for `MESSAGING_STORE`. A new variable that can point at something real goes there.
+8. **Biome `noRestrictedImports` in two overrides does not merge** — `biome.json` repeats the mtcute
+   pattern inside the `src/commands/**` rule for that reason.
+9. **This is the owner's real account.** Live checks send only to Saved Messages (`me`), and only
+   when the change is about sending. Read-only check: `bin/tg account show`, `bin/tg chats list
+   --limit 3`, `bin/tg messages list me --limit 2`. Print counts and ids in checks, never message text.
+10. **Telegram deduplicates by `random_id`, also across connections** (FIND-6) — that is what makes
+    `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
+11. **The store is a system of record, not a cache.** Migrations 1–3 are shipped and frozen (2
+    `sync_ranges`, 3 the word index for message text). The next is **4**, additive; a derived search
+    index may be dropped and rebuilt, a base table never. Announce a migration's number to the other
+    sessions (`ListAgents`) before writing it.
+12. **An adapter must set `Message.senderIsChat`** for a channel post or a message sent as the group,
+    or the store makes a person of a channel.
+13. **`watch` starts from now; `serve` catches up.** Both open their own connection with updates on
+    (`listen`); one-shot commands keep `disableUpdates: true`. A busy account produces messages every
+    few seconds — a live check that expects silence is wrong. `serve` holds a lock file per profile.
+14. **Telegram rate limits:** walking every dialog (`chats list --all`) right after other calls hit
+    FLOOD_WAIT once; `backfill` of 5,000 messages at one page a second did not.
+15. **A typed chat is often a title.** A run event never names what was typed.
+16. **zsh copies stdout into a pipe** (`cmd 2>&1 >/dev/null | …`, its `MULTIOS`) — check stream
+    separation under `sh -c`. zsh also does not split `$var` into words; write multi-step live checks
+    as `sh` scripts.
+17. **Other sessions work in cli-messaging too** (the max-cli bot writes the shared store). Check
+    `git worktree list`; never touch another session's worktree. Messages to other sessions wait for
+    the owner's approval in their window and often expire — do not depend on them.
+18. **npm trusted publishing:** a publish job must run in the GitHub environment `npm`, and the
+    package must already exist on npm with the trusted publisher set — otherwise `E404` on the upload
+    (happened for cli-messaging twice, and for tg's first publish). npm shows a new version only
+    after a few minutes; `bin/release` waits and tags.
+19. **A local `tsc --build` can leave `dist` without JavaScript** after `pnpm typecheck` (declarations
+    only) and a deleted `dist`, from stale build info. A clean clone builds correctly — which is what
+    the release workflow uses. Locally: `rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo` first.
 
 ## 5. Decisions you will make yourself — make them knowingly
 
-- which of max-cli's command builders (`config`, `doctor`, `commands`, `complete`) move to
-  cli-messaging next — the owner asked for a generous extraction with adapter overrides;
+- how `tg update` behaves (copy max-cli's, which never runs by itself);
+- what Phase 3 (MCP) exposes first.
 
 Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
 until Phase 4 (NEED-2); every user registers their own `api_id` (NEED-3); publish cli-messaging on
-npm while it is 0.x (NEED-5).
+npm while it is 0.x (NEED-5); tg goes to npm, from GitHub (NEED-8); each session releases its own
+cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9, the default).
 
 ## 6. How to check
 
@@ -168,6 +174,7 @@ pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm smoke:bun
 # tg-cli, read-only against the owner's account
 bin/tg account show && bin/tg chats list --limit 3 && bin/tg messages list me --limit 2
+bin/tg doctor && bin/tg sync status
 ```
 
 Conventional commits, a branch and a PR per change, rebase-merge after CI; the owner has asked for
@@ -175,9 +182,9 @@ PRs to be merged once green.
 
 ## 7. What NOT to read or touch
 
-- **`../max-cli`** — read `src/` and `docs/dev/` to copy from; never edit it (several agents work
-  there, worktree rules in its `CLAUDE.md`). Its `docs_ai/` is private and not needed here.
+- **`../max-cli`** — read `src/` and `docs/dev/` to copy from; never edit it. Its `docs_ai/` is private.
 - **`../cli-core`** — use, do not change; it has its own release process.
 - **mtcute's sources** beyond the `.d.ts` of the method you call.
-- **`.tg/`** in the checkout — the owner's live session; never print, copy or commit it.
-- **The spike report's history** — it is evidence, not instructions; the findings are summarised in §4.
+- **`.tg/`** in the checkout — the owner's live session and store; never print, copy or commit it.
+- **`CLEANUP.md`** in both repositories lists leftover local branches, waiting for the owner's OK.
+- **The spike report's history** — it is evidence, not instructions; the findings are in §4.
