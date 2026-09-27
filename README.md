@@ -66,6 +66,9 @@ tg doctor [--online]             # the installation's state; --online connects o
 tg update [--check]              # update with the package manager that installed tg; never runs by itself
 ```
 
+Once a day, at a terminal, tg says on stderr when a newer version is on npm. It never says so to
+`--json`, a pipe, `--quiet` or CI; `tg config set updateCheck false --defaults` or `TG_NO_UPDATE_CHECK=1` turns it off.
+
 **Every read is kept.** What `chats list`, `messages list` and `messages send` see is saved to a
 local store shared with other messenger CLIs (`~/.local/share/cli-messaging/messages.db` on Linux;
 `MESSAGING_STORE` points it elsewhere). `--offline` answers `chats list`, `messages list|show|context` and `contacts list` from it, and
