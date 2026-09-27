@@ -7,4 +7,4 @@ allowBuilds:
   lefthook: true
 minimumReleaseAgeExclude:
   - '@leemour/cli-core@0.7.0'
-  - '@leemour/cli-messaging@0.1.0'
+  - '@leemour/cli-messaging@0.1.0 || 0.2.0'

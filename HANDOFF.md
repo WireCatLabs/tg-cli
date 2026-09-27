@@ -32,25 +32,13 @@ table is the backlog.
 
 ## 3. What to read for the next task
 
-### 3a. First: finish the 0.2.0 release and merge tg-cli's guard branch
+### 3a. Done 2026-09-27: 0.2.0 released, the guard merged
 
-cli-messaging `main` is at **0.2.0 and not published**: `bin/release` failed on 2026-09-27 at
-`npm publish` with `E404 … PUT https://registry.npmjs.org/@leemour%2fcli-messaging`, which means
-npm did not accept the GitHub Actions identity for this package. 0.1.0 is on npm (tagged `v0.1.0`).
-Either the owner fixes the package's trusted-publisher settings on npmjs.com
-(`leemour` / `cli-messaging` / `release.yml`, no environment) and you rerun `bin/release`, or the
-owner runs `bin/release --local` in `../cli-messaging` (token from the keyring).
-
-Then tg-cli branch **`feat/send-guard`** (pushed, no PR): it depends on
-`link:../cli-messaging` and must be switched before a PR:
-
-```sh
-pnpm add @leemour/cli-messaging@0.2.0
-```
-
-and `pnpm-workspace.yaml` → `minimumReleaseAgeExclude` gets `'@leemour/cli-messaging@0.2.0'`
-(pnpm 11 refuses a version younger than its release-age window otherwise). Then lint, typecheck,
-test, PR, merge.
+`@leemour/cli-messaging@0.2.0` is on npm (tag `v0.2.0`), and tg-cli uses it: `messages send` goes
+through the send guard, with `recipients` and `sends` commands. A cli-messaging release is
+`bin/release` in `../cli-messaging` after the version bump is merged — it runs on GitHub Actions
+with no token. A new version also goes into tg-cli's `pnpm-workspace.yaml` →
+`minimumReleaseAgeExclude` (pnpm 11 refuses a version younger than its release-age window).
 
 ### 3b. Next planned work, in order
 
@@ -111,6 +99,10 @@ For any of these, read in this order:
     tests must use `MESSAGING_STORE` (proposal §4, RISK-11).
 12. **npm shows a new version only after a few minutes.** `bin/release` waits and tags; a check
     right after publishing can answer 404 for a version that is there.
+13. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
+    `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
+    `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
+    fails the same way; that is cli-core's to fix, not yours.
 
 ## 5. Decisions you will make yourself — make them knowingly
 
