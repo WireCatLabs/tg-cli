@@ -126,20 +126,20 @@ For any of these, read in this order:
 15. **An adapter must set `Message.senderIsChat`** when the author is a chat (a channel post, a
     message sent as the group). Without it the store makes an identity and a person of a channel,
     and there is no clean way to undo those rows.
-15b. **`watch` opens its own connection with updates on** (`listen`), catch-up off: it starts from
+16. **`watch` opens its own connection with updates on** (`listen`), catch-up off: it starts from
     now and never replays what arrived while it was stopped (checked live 2026-09-27). One-shot
     commands keep `disableUpdates: true`. A busy account produces messages every few seconds — a live
     check that expects silence will be wrong.
-16. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
+17. **Migration 1 is frozen.** tg writes the store since 2026-09-27; a schema change is migration 2,
     additive, in `../cli-messaging/src/store/migrations.ts`.
-17. **Another session works in cli-messaging too** — it has its own worktree,
+18. **Another session works in cli-messaging too** — it has its own worktree,
     `../cli-messaging-find`, **with `main` checked out**, so `git checkout main` fails in
     `../cli-messaging`; do not touch that worktree. Twice on 2026-09-27 both sessions raised the version
     to the same number and the other released first (0.10.0, 0.13.0); `bin/release` refused and the fix
     was a bump PR (0.11.0, 0.14.0). Before a bump: `git fetch` and `npm view @leemour/cli-messaging
     version`. Without `main` checked out, `bin/release`'s CI mode is `gh workflow run release.yml --ref
     main` and `gh run watch` — after checking yourself that `origin/main` has the version and npm does not.
-18. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
+19. **npm's trusted publisher names a GitHub environment, `npm`.** A publish job outside it gets
     `E404` on the upload — it cost two failed releases on 2026-09-27. cli-messaging's
     `release.yml` publishes from `environment: npm`, as max-cli's does. cli-core's does not and
     fails the same way; that is cli-core's to fix, not yours.
