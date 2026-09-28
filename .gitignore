@@ -9,3 +9,6 @@ coverage/
 /docs_ai/
 .claude/settings.local.json
 /.tg/
+
+# Lane worktrees (bin/lane): each a checkout of its own, never part of this one.
+/.worktrees/

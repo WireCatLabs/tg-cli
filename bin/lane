@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+# A lane's own worktrees of tg-cli and cli-messaging, under .worktrees/<lane>/ of the main checkout.
+#
+#   bin/lane l1-reading            # creates, installs, builds, copies the owner's login in
+#   bin/agent l1-reading           # then starts Claude Code there
+#   bin/lane --remove l1-reading   # at the end: worktrees, lane branches, the copied credentials
+#
+# Each worktree parks on branch lane/<lane>; a PR is a branch of its own off origin/main. The
+# message store is never shared: a branch build may migrate it (HANDOFF.md §4, trap 11).
+set -eu
+
+remove=false
+if [ "${1:-}" = "--remove" ]; then remove=true; shift; fi
+[ $# -eq 1 ] || { echo "usage: bin/lane [--remove] <lane>" >&2; exit 2; }
+lane=$1
+here=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+main=$(dirname "$(git -C "$here" rev-parse --path-format=absolute --git-common-dir)")
+messaging=$(dirname "$main")/cli-messaging
+into="$main/.worktrees/$lane"
+
+if $remove; then
+  [ -d "$into" ] || { echo "no lane $lane" >&2; exit 1; }
+  # Unfinished work stops the removal before anything is gone.
+  for repo in tg-cli cli-messaging; do
+    [ -z "$(git -C "$into/$repo" status --porcelain)" ] || { echo "$into/$repo has uncommitted changes" >&2; exit 1; }
+  done
+  node "$main/scripts/seed-worktree.ts" "$into/tg-cli" --remove
+  for repo in "$main" "$messaging"; do
+    git -C "$repo" worktree remove "$into/$(basename "$repo")"
+    git -C "$repo" branch -q -D "lane/$lane"
+  done
+  rmdir "$into"
+  echo "removed lane $lane"
+  exit 0
+fi
+
+[ ! -e "$into" ] || { echo "$into exists — bin/agent $lane starts it" >&2; exit 1; }
+for repo in "$main" "$messaging"; do
+  git -C "$repo" fetch -q origin
+  git -C "$repo" worktree add -q -b "lane/$lane" "$into/$(basename "$repo")" origin/main
+  (cd "$into/$(basename "$repo")" && pnpm install --frozen-lockfile >/dev/null && pnpm build >/dev/null 2>&1)
+done
+node "$main/scripts/seed-worktree.ts" "$main" "$into/tg-cli"
+echo "ready: $into/tg-cli and $into/cli-messaging — bin/agent $lane"
