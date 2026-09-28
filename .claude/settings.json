@@ -9,7 +9,13 @@
       "Bash(pnpm -s test)",
       "Bash(npm view *)",
       "Bash(git fetch)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push)",
+      "Bash(git push *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr merge *)"
     ]
   }
 }
