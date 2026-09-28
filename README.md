@@ -49,6 +49,7 @@ tg messages context <chat> <id> [--before n] [--after n]   # a message and what 
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
+tg inbox [--new | --since 2h] [--limit n]   # other people's unread messages; --new: what arrived since the last check
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`

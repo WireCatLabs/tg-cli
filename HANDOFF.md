@@ -35,7 +35,7 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.24.0`**. What it does now: login (`session`), `update`, `account show`,
+`tg` uses **`@leemour/cli-messaging@0.25.0`**. What it does now: login (`session`), `update`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
 [--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;

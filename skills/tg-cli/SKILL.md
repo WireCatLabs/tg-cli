@@ -76,12 +76,17 @@ file holds what the help cannot say: the traps and the boundaries.
     not have this: `--before` is exact.
 14. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
     one lock per profile — start it only when the owner asked.
+15. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
+    will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
+    `tg inbox --since <time>`. `--since` takes a time, never a message id.
 
 ## The usual path
 
 The ids below are made up — use the real ones from the previous answer.
 
 ```sh
+tg inbox --json                                    # other people's unread messages, every chat
+tg inbox --since 2h --json                         # everything that came in during the last two hours
 tg chats list --json                               # find a chat, take its id
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
