@@ -67,7 +67,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    (`../cli-messaging/src/mcp/`; a write tool carries `permission` and goes through `guardedSend` in
    `commands.ts`; user docs in [`docs/mcp.md`](docs/mcp.md)), and `tg skill show`
    ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
-   Next: P1, starting with `inbox` and `review` (NEED-4 → A), then max's `catch-up` and `review`
+   Next: P1, starting with `inbox` and `review` (NEED-18 → A), then max's `catch-up` and `review`
    prompts. **Every parity command PR adds its MCP tool in the same PR.** Live MCP check:
    the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
    `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
@@ -164,7 +164,12 @@ Read in this order:
 Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
 until Phase 4 (NEED-2); every user registers their own `api_id` (NEED-3); publish cli-messaging on
 npm while it is 0.x (NEED-5); tg is on npm and releases from GitHub (NEED-8, NEED-13, NEED-14); each session releases its own
-cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9, the default).
+cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9, the default); the MCP server may send, as max-cli's (NEED-15 → B);
+aim at feature parity with max-cli and cover kfastov/tgcli, in parallel lanes (NEED-15, and
+[the lanes plan](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md)); Claude may commit, push and
+open and merge PRs without a prompt (NEED-17 → A, `.claude/settings.json`); `inbox` and `review` open
+tier P1 (NEED-18 → A). NEED-1…4 in the PR texts of 2026-09-28 are these, numbered before the
+project's list was checked.
 
 ## 6. How to check
 
