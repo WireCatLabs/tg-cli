@@ -12,8 +12,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.21.0
-        version: 0.21.0(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.22.0
+        version: 0.22.0(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -151,11 +151,19 @@ packages:
       commander:
         optional: true
 
-  '@leemour/cli-messaging@0.21.0':
-    resolution: {integrity: sha512-NkLJRV9VQovSEdU1bfupSgrWe1lGzdxFQky6NNlSyHbYiPJOqrl7//zLWioPiT2m6zSmpDPXPQXCnmg9HZPnaQ==}
+  '@leemour/cli-messaging@0.22.0':
+    resolution: {integrity: sha512-7YG+ie/t6242Tn8bpb5u5T1D9x/EmzUJ067O+eYLlZnxYKdub7uovRPJeQH7FReR3VeWkCMnvS13k+fp9OHNOQ==}
     engines: {node: '>=22'}
     peerDependencies:
       commander: '>=15'
+
+  '@modelcontextprotocol/core@2.1.0':
+    resolution: {integrity: sha512-YdFj5gMRHr0gYNAhTbQDgjLHiEJdIAUYxomhKseUNye7ZGlISQmUoLh2sveFFCiQ7j2YMffT1kgSND0FSfIFjQ==}
+    engines: {node: '>=20'}
+
+  '@modelcontextprotocol/server@2.1.0':
+    resolution: {integrity: sha512-FdvwZU5N03O77Suh35JqjAqq5R1ZTEPFtwu6N4BgBq28qrQtrCnpbLL5U2pwYCuE194jAw0xnlOVmIqhfoYuUQ==}
+    engines: {node: '>=20'}
 
   '@mtcute/core@0.32.3':
     resolution: {integrity: sha512-STG2lrveYy3wuMzolMDGgpShfhgO4VpgEOk/J81KgsEFTA4SQEXRHqUJP8kv0JTjCXRPesDPb51EOUvC0/rqcw==}
@@ -498,6 +506,11 @@ packages:
     engines: {node: '>=16.20.0'}
     cpu: [x64]
     os: [win32]
+
+  '@valibot/to-json-schema@1.8.0':
+    resolution: {integrity: sha512-a0M+uwCuQZEPAo65NYkFSJ14O5c213KoSZmPdoCfuFvUhfULi4T2Z6Tpjv6lTVMW9RoLm74RpRAjNEa43KcN+g==}
+    peerDependencies:
+      valibot: ^1.5.0
 
   '@vitest/mocker@5.0.2':
     resolution: {integrity: sha512-Z5FS00Q1SJHkB35xATsmWGdQ5WA1/0MV3CDjqyv7GavHv1OfOj145MNfHOlHk7QLes21dKFDHr8EO2zvL+9WGA==}
@@ -1090,6 +1103,9 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  zod@4.6.5:
+    resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
+
 snapshots:
 
   '@biomejs/biome@2.5.14':
@@ -1173,10 +1189,12 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@leemour/cli-messaging@0.21.0(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging@0.22.0(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@leemour/cli-core': 0.7.0(commander@15.0.0)(typescript@7.0.2)
+      '@modelcontextprotocol/server': 2.1.0
+      '@valibot/to-json-schema': 1.8.0(valibot@1.5.0(typescript@7.0.2))
       commander: 15.0.0
       qrcode-generator: 2.0.4
       string-width: 8.3.0
@@ -1186,6 +1204,15 @@ snapshots:
       - cac
       - citty
       - typescript
+
+  '@modelcontextprotocol/core@2.1.0':
+    dependencies:
+      zod: 4.6.5
+
+  '@modelcontextprotocol/server@2.1.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.1.0
+      zod: 4.6.5
 
   '@mtcute/core@0.32.3':
     dependencies:
@@ -1411,6 +1438,10 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
+
+  '@valibot/to-json-schema@1.8.0(valibot@1.5.0(typescript@7.0.2))':
+    dependencies:
+      valibot: 1.5.0(typescript@7.0.2)
 
   '@vitest/mocker@5.0.2(vite@8.3.1(@types/node@22.20.4))':
     dependencies:
@@ -1915,3 +1946,5 @@ snapshots:
       string-width: 8.3.0
 
   wrappy@1.0.2: {}
+
+  zod@4.6.5: {}

@@ -52,9 +52,14 @@ const telegramOf = (command: Command, base: BaseContext) => {
   const open = async (given?: ApiCredentials, connecting: ConnectOptions = {}): Promise<Adapter> => {
     const resolved = given ?? credentials.read()
     if (!resolved) {
+      // Logging in again would register another device, and the same environment would lose it again.
       throw new CliError(
         "authentication_error",
-        `no Telegram app credentials for profile "${profile}" — run ${login} first`,
+        existsSync(sessionPath)
+          ? `no Telegram app credentials found for profile "${profile}", although it has logged in on this machine — ` +
+              "the keyring is probably out of reach (cron, ssh, an MCP client that trims the environment: set " +
+              `XDG_RUNTIME_DIR); \`tg ${asFirstWord(profile)}doctor\` shows it. Log in again only if they were removed`
+          : `no Telegram app credentials for profile "${profile}" — run ${login} first`,
       )
     }
     const options = { credentials: resolved, sessionPath, ...connecting }
@@ -80,6 +85,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
 export const TELEGRAM: Messenger = {
   app: TG,
   provider: "telegram",
+  name: "Telegram",
   resolveSettings,
   connect: (command, base, options) => telegramOf(command, base).connect(options),
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",

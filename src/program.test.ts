@@ -1,3 +1,5 @@
+import { mkdirSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
 import { Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { type Chat, type Message, pickChat } from "@leemour/cli-messaging"
@@ -179,5 +181,22 @@ describe("sending", () => {
 
     expect(code).toBe(2)
     expect(opened).toBe(false)
+  })
+})
+
+describe("app credentials out of reach", () => {
+  it("says the keyring is probably out of reach when this profile has logged in here, rather than to log in", async () => {
+    const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
+    const sessions = join(process.env.TG_STATE_DIR as string, "sessions")
+    mkdirSync(sessions, { recursive: true })
+    writeFileSync(join(sessions, "reach.session"), "")
+
+    const loggedIn = await tg(["reach", "chats", "list", "--json"], { env })
+    const never = await tg(["never", "chats", "list", "--json"], { env })
+
+    expect(loggedIn.code).toBe(4)
+    expect(loggedIn.stderr.join("\n")).toContain("XDG_RUNTIME_DIR")
+    expect(never.stderr.join("\n")).toContain("session start")
+    expect(never.stderr.join("\n")).not.toContain("XDG_RUNTIME_DIR")
   })
 })

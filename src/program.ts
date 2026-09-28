@@ -10,6 +10,7 @@ import {
   createProgram as create,
   doctorCommand,
   exportCommand,
+  mcpCommand,
   messagesCommand,
   type ProgramDefinition,
   recipientsCommand,
@@ -49,6 +50,7 @@ const definition: ProgramDefinition = {
     commandsCommand(TG),
     completeCommand(TELEGRAM, CONFIG),
     updateSelfCommand(),
+    mcpCommand(TELEGRAM),
   ],
 }
 
