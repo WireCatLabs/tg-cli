@@ -126,6 +126,22 @@ chat's messages `{ items, limit, hasMore }`, ids are strings. An error is
 Every read is saved to the local store, as a command's is, and each call can be kept as a run
 (`tg runs list`), named `mcp chats list` and so on.
 
+## Prompts, and chats by `@`
+
+The server offers two ready prompts — in Claude Code they are `/` commands:
+
+| Prompt | Argument | What the agent does |
+|---|---|---|
+| `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
+| `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
+
+`reply` sends through `tg_messages_send`, so without `--allow-send` the agent only shows the draft.
+`catch-up` and `review`, which max-cli has, come with `tg inbox` and `tg review`.
+
+Chats are resources `tg://chat/<id>` — in Claude Code you can mention them with `@`. A resource is
+the chat and its recent messages. The list comes from the local store and never connects to
+Telegram; until something was read, it is empty. Only reading one chat connects.
+
 ## How it holds the connection
 
 The first call connects to Telegram, and the next ones reuse the connection. It closes after 2
