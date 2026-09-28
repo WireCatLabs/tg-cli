@@ -35,7 +35,7 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.21.0`**. What it does now: login (`session`), `update`, `account show`,
+`tg` uses **`@leemour/cli-messaging@0.22.0`**. What it does now: login (`session`), `update`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
 [--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
@@ -61,8 +61,13 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    will not load, a command that never opens a run) is kept as a run by `run()`; tg passes
    `configuration: CONFIG` in its program definition for that. The command path stops at the first
    word that is not a command, so `--timeout 30s chats list` is kept as bare `tg` (as in max-cli).
-5. **Phase 3 and 4** per proposal §8: MCP, the skill, capability discovery; then max-cli moves onto
-   cli-messaging (under max-cli's own rules — NEED-2).
+5. **Phase 3 has started** (the owner: MCP may send, as max-cli; aim at feature parity with max-cli —
+   proposal §8 has the Phase 3 rows and the parity tiers P1–P3). Done: 3.1, `tg mcp` read-only
+   (`../cli-messaging/src/mcp/`, user docs in [`docs/mcp.md`](docs/mcp.md)). Next: 3.2 `--allow-send`
+   and `--confirm-send`. **Every parity command PR adds its MCP tool in the same PR.** Live MCP check:
+   the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
+   `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
+6. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
 
 ### 3c. How to change things
 
