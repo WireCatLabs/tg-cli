@@ -108,6 +108,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | Tool | Command | What it does |
 |---|---|---|
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
+| `tg_inbox` | `tg inbox`, `--since` | what came in: the unread messages, or everything after a moment, in one call; marks nothing read and never moves `tg inbox --new`'s point |
 | `tg_account_show` | `tg account show` | who the login is |
 | `tg_chats_list` | `tg chats list` | chats, newest first |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
@@ -128,15 +129,16 @@ Every read is saved to the local store, as a command's is, and each call can be 
 
 ## Prompts, and chats by `@`
 
-The server offers two ready prompts — in Claude Code they are `/` commands:
+The server offers three ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
+| `catch-up` | `since` — optional | calls `tg_inbox` once and summarises per chat; sends nothing |
 | `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
 
 `reply` sends through `tg_messages_send`, so without `--allow-send` the agent only shows the draft.
-`catch-up` and `review`, which max-cli has, come with `tg inbox` and `tg review`.
+`review`, which max-cli has, comes with `tg review`.
 
 Chats are resources `tg://chat/<id>` — in Claude Code you can mention them with `@`. A resource is
 the chat and its recent messages. The list comes from the local store and never connects to

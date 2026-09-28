@@ -12,8 +12,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.24.0
-        version: 0.24.0(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.25.0
+        version: 0.25.0(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -151,8 +151,8 @@ packages:
       commander:
         optional: true
 
-  '@leemour/cli-messaging@0.24.0':
-    resolution: {integrity: sha512-ImYjzrYX5RoP3xIfsxu6Dxirqk/apAS4TRewvqDws7LosDugg2VB45h39QQzXU+F698pnOUhSpzGcDjY3UFutA==}
+  '@leemour/cli-messaging@0.25.0':
+    resolution: {integrity: sha512-MWR+hpcIqdxz/bTN6EmipuE1w/MExd6sw5TgTSYU3/7ruJnrmyb/haldiVD4M9h6WWgBzYYH/wtWWhlq4mE9Gw==}
     engines: {node: '>=22'}
     peerDependencies:
       commander: '>=15'
@@ -1189,7 +1189,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@leemour/cli-messaging@0.24.0(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging@0.25.0(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@leemour/cli-core': 0.7.0(commander@15.0.0)(typescript@7.0.2)
