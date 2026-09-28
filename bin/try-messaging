@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+# Tries this tg checkout against the cli-messaging beside it, unreleased, from a packed tarball.
+#
+#   bin/try-messaging          # pack ../cli-messaging, pnpm add the tarball
+#   bin/try-messaging --undo   # back to the version package.json names
+#
+# Never commit the result: package.json then names a file: path (handoff §3c).
+set -eu
+
+here=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$here"
+if [ "${1:-}" = "--undo" ]; then
+  git checkout -q -- package.json pnpm-lock.yaml pnpm-workspace.yaml
+  pnpm install --frozen-lockfile >/dev/null
+  echo "back to the released cli-messaging"
+  exit 0
+fi
+messaging="$here/../cli-messaging"
+[ -f "$messaging/package.json" ] || { echo "no cli-messaging beside $here" >&2; exit 1; }
+packs=$(mktemp -d)
+(cd "$messaging" && rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo && pnpm build >/dev/null && pnpm pack --pack-destination "$packs" >/dev/null)
+pnpm add "$packs"/leemour-cli-messaging-*.tgz >/dev/null
+echo "trying $(basename "$packs"/leemour-cli-messaging-*.tgz) — bin/try-messaging --undo before committing"

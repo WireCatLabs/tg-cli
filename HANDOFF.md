@@ -65,10 +65,13 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    proposal §8 has the Phase 3 rows and the parity tiers P1–P3): `tg mcp` with read tools,
    `--allow-send` / `--confirm-send`, the `reply` and `find` prompts, the `tg://chat/{id}` resource
    (`../cli-messaging/src/mcp/`; a write tool carries `permission` and goes through `guardedSend` in
-   `commands.ts`; user docs in [`docs/mcp.md`](docs/mcp.md)), and `tg skill show`
+   `messages-command.ts`; user docs in [`docs/mcp.md`](docs/mcp.md)), and `tg skill show`
    ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
-   Next: P1, starting with `inbox` and `review` (NEED-18 → A), then max's `catch-up` and `review`
-   prompts. **Every parity command PR adds its MCP tool in the same PR.** Live MCP check:
+   `tg inbox` shipped (tg 0.4.0). **Parity now runs in parallel lanes** — the plan:
+   [`2026-09-29-parity-lanes.md`](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md); how agents
+   run them: [`docs/dev/agents.md`](docs/dev/agents.md); each lane's handoff: [`docs/lanes/`](docs/lanes/)
+   (standard: [`docs/dev/handoff-standard.md`](docs/dev/handoff-standard.md)). **Every parity command
+   PR adds its MCP tool in the same PR.** Live MCP check:
    the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
    `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
 6. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
@@ -156,6 +159,16 @@ Read in this order:
 19. **A local `tsc --build` can leave `dist` without JavaScript** after `pnpm typecheck` (declarations
     only) and a deleted `dist`, from stale build info. A clean clone builds correctly — which is what
     the release workflow uses. Locally: `rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo` first.
+20. **File edits outside this project, cli-messaging and cli-core are refused by a hook**
+    (`.claude/hooks/writes-stay-inside.sh`), in every permission mode. **Shell commands are not
+    held** — the sandbox cannot start on this machine (Ubuntu 26.04 user-namespace restriction;
+    [`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
+21. **A worktree is a lane's, never shared** (`.worktrees/<lane>/`, gitignored). It has its own copy
+    of the login and an empty message store; never point it at the main checkout's `.tg/`.
+22. **Another session also changes the shared store** — migration 4 (`account_identities`,
+    cli-messaging #48, a breaking `savePeople`) came from max-cli's side on 2026-09-29, and max-cli's
+    personal accounts move into the store next. Fetch before a store change; the next migration
+    number lives in the lanes plan §4.
 
 ## 5. Decisions you will make yourself — make them knowingly
 

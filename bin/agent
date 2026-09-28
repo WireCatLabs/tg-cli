@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+# Starts Claude Code for one lane, in its tg-cli worktree, with no permission prompts. What keeps it
+# inside: .claude/hooks/writes-stay-inside.sh refuses every file edit outside this project,
+# cli-messaging and cli-core (docs/dev/agents.md).
+#
+#   bin/agent l1-reading
+set -eu
+
+[ $# -eq 1 ] || { echo "usage: bin/agent <lane>" >&2; exit 2; }
+lane=$1
+here=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+main=$(dirname "$(git -C "$here" rev-parse --path-format=absolute --git-common-dir)")
+into="$main/.worktrees/$lane"
+[ -d "$into/tg-cli" ] || { echo "no lane $lane — bin/lane $lane creates it" >&2; exit 1; }
+handoff="docs/lanes/$lane.md"
+[ -f "$into/tg-cli/$handoff" ] || { echo "no $handoff in the lane's worktree" >&2; exit 1; }
+
+cd "$into/tg-cli"
+exec claude --permission-mode bypassPermissions --add-dir "$into/cli-messaging" \
+  "You are lane $lane. Read $handoff and follow it: it is your handoff, read instead of HANDOFF.md."
