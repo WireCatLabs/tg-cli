@@ -66,6 +66,7 @@ tg doctor [--online]             # the installation's state; --online connects o
 tg update [--check]              # update with the package manager that installed tg; never runs by itself
 tg mcp [--allow-send [--confirm-send]]   # serve this profile to an agent over MCP — docs/mcp.md
 tg mcp config [the same flags]   # the entry for Claude Desktop, Cursor and others
+tg skill show > ~/.claude/skills/tg-cli/SKILL.md   # the instructions for an agent that has a terminal
 ```
 
 Once a day, at a terminal, tg says on stderr when a newer version is on npm. It never says so to

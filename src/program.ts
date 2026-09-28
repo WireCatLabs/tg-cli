@@ -18,6 +18,7 @@ import {
   runsCommand,
   sendsCommand,
   serveCommand,
+  skillCommand,
   syncCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
@@ -51,6 +52,7 @@ const definition: ProgramDefinition = {
     completeCommand(TELEGRAM, CONFIG),
     updateSelfCommand(),
     mcpCommand(TELEGRAM),
+    skillCommand(TG, new URL("../skills/tg-cli/SKILL.md", import.meta.url)),
   ],
 }
 
