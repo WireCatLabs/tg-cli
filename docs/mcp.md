@@ -28,8 +28,8 @@ claude mcp add tg-work -- tg work mcp
 **Claude Desktop, Cursor and others:** `tg` prints the entry for their settings file:
 
 ```sh
-tg mcp config
-tg work mcp config
+tg mcp config                   # reading only
+tg work mcp config --allow-send
 ```
 
 ```json
@@ -67,11 +67,41 @@ they are set in the terminal and not for the MCP client, or the other way round,
 A client that starts servers with a trimmed environment leaves it out, and every tool then answers
 that the keyring is probably out of reach. The entry from `tg mcp config` includes it.
 
-## Reading only, for now
+## Sending is off until it is turned on
 
-The server **only reads**: there is no send tool in the list at all. Sending with `--allow-send`,
-through the same checks as `tg messages send`, and a confirmation form with `--confirm-send`, come
-next — as in max-cli.
+Without a flag the server **only reads**: there is no send tool in the list at all. To turn it on:
+
+```sh
+claude mcp add tg -- tg mcp --allow-send
+```
+
+A send over MCP goes through the same checks as `tg messages send`: a read-only profile, the
+profile's `allow` list, the list of allowed recipients, the hourly limit, and the journal of sends
+(`tg sends list`). On top of that the tool is marked as dangerous: VS Code and Cursor ask before
+every call, and Claude Code, by its documentation, shows an approval dialog even where everything
+else is allowed in advance.
+
+A profile's `allow` list decides which tools an agent sees at all: `tg mcp --allow-send` for a
+profile whose `allow` does not name `send` shows no send tool. The read tools are always there.
+
+### A confirmation form from the server itself
+
+```sh
+claude mcp add tg -- tg mcp --allow-send --confirm-send
+```
+
+With `--confirm-send`, before every send the server shows a form: **which chat** — the title and id
+the agent's name resolved to — and **the whole text**. The message goes only after Accept; the form
+has no fields, just the one button. The client's own window shows the arguments as the model wrote
+them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna Petrova (123456)").
+
+- Decline, or closing the form: nothing is sent, and the agent gets `confirmation_required` and
+  must not try again.
+- A client that cannot show forms gets an error — **nothing is sent**. Claude Code shows forms.
+- The yes is bound to what the form showed: if the agent changes the chat, the text or the tool
+  after confirming, nothing is sent.
+- A yes works once, for 5 minutes. Replaying the same answer sends nothing.
+- Without `--allow-send` the flag is a startup error.
 
 ## Tools
 
@@ -86,6 +116,7 @@ next — as in max-cli.
 | `tg_messages_list` | `tg messages list` | a chat's messages; marks nothing read |
 | `tg_messages_context` | `tg messages show`, `context` | one message and those either side |
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
+| `tg_messages_send` | `tg messages send`, `reply` | send, only with `--allow-send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
 chat's messages `{ items, limit, hasMore }`, ids are strings. An error is

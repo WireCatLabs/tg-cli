@@ -64,8 +64,8 @@ tg config show|set|unset         # the settings in force and where each came fro
 tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
 tg doctor [--online]             # the installation's state; --online connects once
 tg update [--check]              # update with the package manager that installed tg; never runs by itself
-tg mcp                           # serve this profile to an agent over MCP, read-only — docs/mcp.md
-tg mcp config                    # the entry for Claude Desktop, Cursor and others
+tg mcp [--allow-send [--confirm-send]]   # serve this profile to an agent over MCP — docs/mcp.md
+tg mcp config [the same flags]   # the entry for Claude Desktop, Cursor and others
 ```
 
 Once a day, at a terminal, tg says on stderr when a newer version is on npm. It never says so to
