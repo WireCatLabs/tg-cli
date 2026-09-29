@@ -10,7 +10,7 @@ import {
   type MessengerAdapter,
   type MessengerContext,
   messengerContext,
-  type ServiceSystem,
+  type ServerSystem,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
@@ -27,7 +27,7 @@ export interface Environment extends BaseEnvironment {
     options: { credentials: ApiCredentials; sessionPath: string } & ConnectOptions,
   ) => Adapter | Promise<Adapter>
   /** Tests hand in a machine for `service`, so no test runs systemctl or launchctl. */
-  system?: ServiceSystem
+  system?: ServerSystem
 }
 
 export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">

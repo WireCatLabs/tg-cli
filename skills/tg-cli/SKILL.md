@@ -80,8 +80,8 @@ file holds what the help cannot say: the traps and the boundaries.
     arriving between page one and page two moves someone across the boundary. A chat's messages do
     not have this: `--before` is exact.
 15. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
-    one lock per profile — start it only when the owner asked. The same goes for `tg service
-    start`; `tg service status` is safe to read.
+    one lock per profile — start it only when the owner asked. The same goes for `tg server
+    start`; `tg server status` is safe to read.
 16. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since <time>`. `--since` takes a time, never a message id.
@@ -99,10 +99,12 @@ tg review --since 1d --json                        # every message, the owner's 
                                                    # when complete, the next review starts at until
 tg review --unanswered --json                      # questions to the owner or a group's admins nobody answered in 24 h
 tg chats list --json                               # find a chat, take its id
+tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
 tg messages list -1001234567890 --limit 20 --json  # the latest messages, oldest first
 tg messages list -1001234567890 --before 4242 --json   # older ones
+tg messages list -1001234567890 --after 4242 --json    # newer ones, oldest first; --after 2h reads from a time
 tg messages context -1001234567890 4242 --before 3 --after 3 --json
 tg messages download -1001234567890 4242 --output /tmp/tg --json   # the message's file; answers its path
 tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute
