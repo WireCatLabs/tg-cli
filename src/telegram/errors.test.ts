@@ -21,6 +21,14 @@ describe("Telegram's refusals", () => {
     expect(toCliError(rpc(400, "PEER_ID_INVALID"))).toMatchObject({ code: "not_found" })
   })
 
+  it("says in plain words why a voice message was not transcribed", () => {
+    expect(toCliError(rpc(400, "MSG_VOICE_MISSING"))).toMatchObject({
+      code: "validation_error",
+      message: "that message is not a voice or video note",
+    })
+    expect(toCliError(rpc(403, "PREMIUM_ACCOUNT_REQUIRED"))).toMatchObject({ code: "permission_error" })
+  })
+
   it("makes an unreachable network a network error", () => {
     expect(toCliError(Object.assign(new Error("x"), { code: "ECONNREFUSED" }))).toMatchObject({ code: "network_error" })
   })

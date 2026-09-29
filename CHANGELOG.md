@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages transcribe <chat> <id>`** and the MCP tool `tg_messages_transcribe` turn a voice
+  or video note into text with Telegram's own recognition — on a Premium account, or within
+  Telegram's weekly free trial. Telegram usually needs a few seconds; tg asks again for up to a
+  minute, then answers `"pending": true`. Refusals say why in plain words: not a voice message, too
+  long, no Premium.
 - **The MCP tool `tg_messages_photo`** hands an agent a message's photo as an image to look at, up
   to 512 KB. A larger photo, a file, a video or a voice note is refused with the
   `tg messages download` command that saves it.

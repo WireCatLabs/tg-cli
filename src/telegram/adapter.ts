@@ -13,7 +13,7 @@ import {
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
-import type { Download, SendOptions } from "@leemour/cli-messaging/cli"
+import type { Download, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -306,6 +306,26 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * Telegram's own speech recognition; mtcute has no high-level method for `messages.transcribeAudio`.
+   * A first answer is usually still pending. The finished text arrives as an update, which a one-shot
+   * connection does not receive, but asking again returns it — measured 2026-09-29 on a 19 s voice note.
+   */
+  transcribe(reference: string, messageId: string): Promise<Transcript> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      const peer = await this.#client.resolvePeer(await this.#inputOf(reference))
+      const deadline = Date.now() + TRANSCRIBE_WAIT_MS
+      for (;;) {
+        const answer = await this.#client.call({ _: "messages.transcribeAudio", peer, msgId: id })
+        if (answer.pending !== true || Date.now() >= deadline) {
+          return { text: answer.text, pending: answer.pending === true }
+        }
+        await sleep(TRANSCRIBE_POLL_MS)
+      }
+    })
+  }
+
   /** Forgets the session on Telegram's side too, so the device disappears from the account's list. */
   logout(): Promise<void> {
     return this.#call(async () => {
@@ -377,6 +397,10 @@ export class TelegramAdapter {
     }
   }
 }
+
+export const TRANSCRIBE_POLL_MS = 2000
+const TRANSCRIBE_WAIT_MS = 60_000
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const messageNumber = (id: string, rule = "--before takes a message id"): number => {
   if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
