@@ -51,6 +51,7 @@ tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg messages edit <chat> <id> [text]             # your own message; the other side may have read it already
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
+tg messages transcribe <chat> <id>   # a voice note as text, by Telegram (Premium, or the weekly free trial)
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n] [--all]   # other people's unread messages; --new: what arrived since the last check;

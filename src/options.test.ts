@@ -163,6 +163,16 @@ describe("messages", () => {
     expect(readFileSync(join(into, "42-1.ogg"), "utf8")).toBe("opus")
   })
 
+  it("transcribe answers a voice message's text", async () => {
+    const adapter = scripted({ transcribe: async () => ({ text: "hola", pending: false }) })
+    const { code, stdout } = await tg(["messages", "transcribe", "Valencia", "42", "--json"], {
+      adapter: () => adapter,
+    })
+
+    expect(code).toBe(0)
+    expect(json(stdout)).toEqual({ messageId: "42", text: "hola", pending: false })
+  })
+
   it("reply repeats a send with the --send-id it is given, and answers the message", async () => {
     let asked: unknown
     const adapter = scripted({

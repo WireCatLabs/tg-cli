@@ -1,4 +1,4 @@
-import { CliError, isCliError } from "@leemour/cli-core"
+import { CliError, type ErrorCode, isCliError } from "@leemour/cli-core"
 import { MtArgumentError, MtTimeoutError, tl } from "@mtcute/node"
 
 const { RpcError } = tl
@@ -11,6 +11,17 @@ const NOT_FOUND = new Set([
   "USERNAME_NOT_OCCUPIED",
   "MSG_ID_INVALID",
 ])
+
+/** Refusals whose name alone would not tell a person what to do. */
+const EXPLAINED: Record<string, [ErrorCode, string]> = {
+  MSG_VOICE_MISSING: ["validation_error", "that message is not a voice or video note"],
+  MSG_VOICE_TOO_LONG: ["validation_error", "the voice message is too long for Telegram to transcribe"],
+  PREMIUM_ACCOUNT_REQUIRED: [
+    "permission_error",
+    "Telegram transcribes only for Premium accounts, or a few messages a week on the free trial, used up now",
+  ],
+  TRANSCRIPTION_FAILED: ["provider_error", "Telegram could not transcribe this voice message"],
+}
 
 /**
  * Telegram's refusals as the closed list of codes a script branches on. Only the error's name
@@ -33,6 +44,8 @@ export const toCliError = (error: unknown): unknown => {
         details,
       )
     }
+    const explained = EXPLAINED[error.text]
+    if (explained) return new CliError(explained[0], explained[1], details)
     if (NOT_FOUND.has(error.text))
       return new CliError("not_found", `Telegram does not know that (${error.text})`, details)
     if (error.code === RpcError.FORBIDDEN)

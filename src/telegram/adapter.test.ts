@@ -3,7 +3,7 @@ import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
 import { FileLocation, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { TelegramAdapter } from "./adapter.js"
+import { TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
 
 type Handler = (value: unknown) => void
 
@@ -38,6 +38,12 @@ class FakeClient {
   peer: unknown = undefined
   members: unknown = []
   found: unknown = null
+  transcripts: { text: string; pending?: boolean }[] = []
+  resolvePeer = async (peer: unknown) => ({ _: "inputPeerChannel", peer })
+  call = async (request: { _: string }) => {
+    this.#record("call", [request])
+    return this.transcripts.shift() ?? { text: "", pending: true }
+  }
   chunks: unknown[] = [new Uint8Array([1, 2]), new Uint8Array([3])]
   getMessages = async (...args: unknown[]) => {
     this.#record("getMessages", args)
@@ -360,6 +366,38 @@ describe("downloading", () => {
     const { files } = await adapter.download("-100500", "10")
 
     await expect(read(files[0])).rejects.toMatchObject({ code: "provider_error" })
+  })
+})
+
+describe("transcribing", () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("**asks again until Telegram has finished**, and answers the text", async () => {
+    vi.useFakeTimers()
+    const { adapter, client } = await open()
+    client.transcripts = [{ text: "", pending: true }, { text: "", pending: true }, { text: "hello" }]
+
+    const answer = adapter.transcribe("me", "126508")
+    await vi.advanceTimersByTimeAsync(TRANSCRIBE_POLL_MS * 2)
+
+    expect(await answer).toEqual({ text: "hello", pending: false })
+    expect(client.calls.filter((call) => call.method === "call")).toHaveLength(3)
+    expect(client.calls.find((call) => call.method === "call")?.args[0]).toMatchObject({
+      _: "messages.transcribeAudio",
+      msgId: 126508,
+    })
+  })
+
+  it("stops after a minute and says it is still pending", async () => {
+    vi.useFakeTimers()
+    const { adapter } = await open()
+
+    const answer = adapter.transcribe("me", "5")
+    await vi.advanceTimersByTimeAsync(61_000)
+
+    expect(await answer).toEqual({ text: "", pending: true })
   })
 })
 
