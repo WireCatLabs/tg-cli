@@ -26,6 +26,7 @@ graph and a CRM on top. The full design:
 | What was measured against real Telegram in the spike | [`docs/plans/2026-09-27-spike-report.md`](docs/plans/2026-09-27-spike-report.md) — FIND-1…6 |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
 | What a user is told — every command | [`README.md`](README.md) |
+| How tg is built, tested and written | [`docs/dev/ARCHITECTURE.md`](docs/dev/ARCHITECTURE.md), [`docs/dev/TESTING.md`](docs/dev/TESTING.md), [`docs/dev/CONVENTIONS.md`](docs/dev/CONVENTIONS.md); what each release changed: [`CHANGELOG.md`](CHANGELOG.md) |
 | How max-cli does something | `../max-cli/docs/dev/ARCHITECTURE.md` — the source most of cli-messaging was copied from. **Read only** |
 
 No session journal and no backlog file exist in these two repositories; the proposal's §8 table is
@@ -190,8 +191,9 @@ project's list was checked.
 # in either repository
 pnpm install
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
-# cli-messaging only
 pnpm smoke:bun
+# tg-cli only
+pnpm test:coverage && pnpm docs:check
 # tg-cli, read-only against the owner's account
 bin/tg account show && bin/tg chats list --limit 3 && bin/tg messages list me --limit 2
 bin/tg doctor && bin/tg sync status

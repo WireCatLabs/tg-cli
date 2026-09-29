@@ -24,11 +24,15 @@
   ],
   "scripts": {
     "build": "tsc --build",
-    "typecheck": "tsc --build --force --emitDeclarationOnly && tsc -p tsconfig.test.json",
+    "typecheck": "tsc --build --force --emitDeclarationOnly && tsc -p tsconfig.test.json && tsc -p tsconfig.scripts.json",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:slow": "vitest run --reporter=json --outputFile=coverage/tests.json >/dev/null; node --experimental-strip-types scripts/slow-tests.ts",
+    "smoke:bun": "bun run scripts/smoke.ts",
+    "docs:check": "node --experimental-strip-types scripts/docs-check.ts",
     "probe:random-id": "pnpm build && node --experimental-strip-types scripts/probe-random-id.ts",
     "spike:live": "bin/tg-spike-live",
     "prepare": "lefthook install || true",
@@ -43,6 +47,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
     "@types/node": "^22.20.4",
+    "@vitest/coverage-v8": "5.0.2",
     "lefthook": "^2.1.14",
     "typescript": "^7.0.2",
     "vitest": "^5.0.2"

@@ -1,0 +1,394 @@
+import { mkdtempSync } from "node:fs"
+import { join } from "node:path"
+import type { MessageEvent } from "@leemour/cli-messaging"
+import { MtTimeoutError, tl } from "@mtcute/node"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { TelegramAdapter } from "./adapter.js"
+
+type Handler = (value: unknown) => void
+
+const stand = vi.hoisted(() => ({ client: undefined as unknown as FakeClient, options: undefined as unknown }))
+
+class Signal {
+  readonly handlers = new Set<Handler>()
+  add(handler: Handler) {
+    this.handlers.add(handler)
+  }
+  remove(handler: Handler) {
+    this.handlers.delete(handler)
+  }
+  emit(value: unknown) {
+    for (const handler of this.handlers) handler(value)
+  }
+}
+
+const page = <T>(items: T[], next?: unknown) => Object.assign([...items], { next })
+
+class FakeClient {
+  readonly calls: { method: string; args: unknown[] }[] = []
+  readonly log = { mgr: { handler: undefined as unknown } }
+  readonly storage = { self: { getCached: (_: boolean) => ({ userId: 1 }) as { userId: number } | null } }
+  readonly onNewMessage = new Signal()
+  readonly onEditMessage = new Signal()
+  readonly onDeleteMessage = new Signal()
+  readonly onRawUpdate = new Signal()
+  dialogs: unknown[] = []
+  history: unknown[] = []
+  historyNext: unknown = undefined
+  peer: unknown = undefined
+  members: unknown = []
+  sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
+
+  #record(method: string, args: unknown[]) {
+    this.calls.push({ method, args })
+  }
+  prepare = async () => this.#record("prepare", [])
+  start = async (options: unknown) => {
+    this.#record("start", [options])
+    return user(1, "Owner", { isSelf: true })
+  }
+  getMe = async () => user(1, "Owner", { isSelf: true })
+  async *iterDialogs(options: unknown) {
+    this.#record("iterDialogs", [options])
+    yield* this.dialogs
+  }
+  getHistory = async (...args: unknown[]) => {
+    this.#record("getHistory", args)
+    return page(this.history, this.historyNext)
+  }
+  getPeerDialogs = async (peer: unknown) => {
+    this.#record("getPeerDialogs", [peer])
+    return Array.isArray(peer) ? peer.map(() => this.dialogs[0] ?? null) : [this.dialogs[0]]
+  }
+  getPeer = async (peer: unknown) => {
+    this.#record("getPeer", [peer])
+    return this.peer
+  }
+  getFullUser = async () => ({ bio: "a bio" })
+  getCommonChats = async () => [{ id: -100500 }]
+  getChatMembers = async () => {
+    if (this.members instanceof Error) throw this.members
+    return this.members
+  }
+  connect = async () => this.#record("connect", [])
+  startUpdatesLoop = async () => this.#record("startUpdatesLoop", [])
+  logOut = async () => this.#record("logOut", [])
+  destroy = async () => this.#record("destroy", [])
+}
+
+vi.mock("@mtcute/node", async (importOriginal) => {
+  const real = await importOriginal<typeof import("@mtcute/node")>()
+  return {
+    ...real,
+    TelegramClient: function TelegramClient(options: unknown) {
+      stand.options = options
+      stand.client = new FakeClient()
+      return stand.client
+    },
+  }
+})
+vi.mock("./storage.js", () => ({ openSessionStorage: async () => ({}) }))
+
+const user = (id: number, displayName: string, extra: Record<string, unknown> = {}) => ({
+  type: "user",
+  id,
+  displayName,
+  username: null,
+  isSelf: false,
+  isBot: false,
+  ...extra,
+})
+
+const group = (id: number, displayName: string) => ({
+  type: "chat",
+  id,
+  displayName,
+  username: null,
+  chatType: "supergroup",
+  isForum: false,
+  membersCount: 12,
+})
+
+const dialog = (peer: unknown, lastMessageAt = "2026-09-27T10:00:00.000Z") => ({
+  peer,
+  isArchived: false,
+  isPinned: false,
+  unreadCount: 2,
+  lastMessage: { date: new Date(lastMessageAt) },
+})
+
+function message(id: number) {
+  return {
+    id,
+    chat: group(-100500, "Valencia expats"),
+    sender: user(777, "Ana"),
+    date: new Date("2026-09-27T10:00:00.000Z"),
+    editDate: null,
+    text: `message ${id}`,
+    isOutgoing: false,
+    media: null,
+    replyToMessage: null,
+    forward: null,
+    isTopicMessage: false,
+    reactions: null,
+    views: null,
+    forwards: null,
+    groupedIdUnique: null,
+    action: null,
+    link: undefined,
+  }
+}
+
+let umask: number
+beforeEach(() => {
+  umask = process.umask()
+})
+afterEach(() => {
+  process.umask(umask)
+})
+
+const open = async (options: { listen?: boolean; diagnostic?: (line: string) => void } = {}) => {
+  const adapter = await TelegramAdapter.open({
+    credentials: { id: 1, hash: "h" },
+    sessionPath: join(mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? "", "adapter-")), "default.session"),
+    ...options,
+  })
+  return { adapter, client: stand.client }
+}
+
+describe("opening", () => {
+  it("**loads the logged-in user before any request**, and keeps updates off for a one-shot command", async () => {
+    const { adapter, client } = await open()
+
+    expect(client.calls[0]?.method).toBe("prepare")
+    expect(stand.options).toMatchObject({ apiId: 1, apiHash: "h", disableUpdates: true })
+    expect(adapter.self()).toBe("1")
+  })
+
+  it("sends mtcute's own log lines to the diagnostic stream, never stdout", async () => {
+    const lines: string[] = []
+    const { client } = await open({ diagnostic: (line) => lines.push(line) })
+    const handler = client.log.mgr.handler as (...args: unknown[]) => void
+    handler(0, 2, "net", "connected to %s", ["dc2"])
+
+    expect(lines).toEqual(["[net] connected to dc2"])
+  })
+
+  it("asks for updates only when listening", async () => {
+    await open({ listen: true })
+    expect(stand.options).toMatchObject({ disableUpdates: false, updates: { catchUp: false } })
+  })
+
+  it("answers self() with null before a login", async () => {
+    const { adapter, client } = await open()
+    client.storage.self.getCached = () => null
+    expect(adapter.self()).toBeNull()
+  })
+})
+
+describe("reading", () => {
+  it("pages chats by position and says whether more are left", async () => {
+    const { adapter, client } = await open()
+    client.dialogs = [1, 2, 3, 4].map((id) => dialog(group(-id, `chat ${id}`)))
+
+    const chats = await adapter.chats({ limit: 2, offset: 1 })
+
+    expect(chats.items.map((chat) => chat.title)).toEqual(["chat 2", "chat 3"])
+    expect(chats.hasMore).toBe(true)
+    expect(client.calls.find((call) => call.method === "iterDialogs")?.args[0]).toEqual({ limit: 4, archived: "keep" })
+    expect((await adapter.chats({ offset: 0 })).items).toHaveLength(4)
+  })
+
+  it("reads history oldest first, from before a message id, by chat id or @username", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(3), message(2)]
+    client.historyNext = {}
+
+    const history = await adapter.history("-100500", { limit: 2, before: "10" })
+    await adapter.history("@someone", { limit: 2 })
+
+    expect(history.items.map((one) => one.id)).toEqual(["2", "3"])
+    expect(history.hasMore).toBe(true)
+    const asked = client.calls.filter((call) => call.method === "getHistory").map((call) => call.args)
+    expect(asked).toEqual([
+      [-100500, { limit: 2, offset: { id: 10, date: 0 } }],
+      ["someone", { limit: 2 }],
+    ])
+  })
+
+  it("refuses a --before that is not a message id before asking Telegram", async () => {
+    const { adapter, client } = await open()
+    await expect(adapter.history("me", { limit: 2, before: "abc" })).rejects.toMatchObject({
+      code: "validation_error",
+    })
+    expect(client.calls.some((call) => call.method === "getHistory")).toBe(false)
+  })
+
+  it("finds a chat by part of its title among the dialogs", async () => {
+    const { adapter, client } = await open()
+    client.dialogs = [dialog(group(-100500, "Valencia expats")), dialog(group(-100600, "Books"))]
+
+    const chat = await adapter.resolve("valencia")
+
+    expect(chat).toMatchObject({ id: "-100500", title: "Valencia expats", kind: "group" })
+  })
+
+  it("answers `me` as Saved Messages through Telegram's own peer", async () => {
+    const { adapter, client } = await open()
+    client.peer = user(1, "Owner", { isSelf: true })
+
+    expect(await adapter.resolve("me")).toMatchObject({ id: "1", title: "Saved Messages", kind: "saved" })
+    expect(client.calls.find((call) => call.method === "getPeer")?.args[0]).toBe("me")
+  })
+
+  it("shows a group with its members, and a hidden member list as null", async () => {
+    const { adapter, client } = await open()
+    client.dialogs = [dialog(group(-100500, "Valencia expats"))]
+    client.members = [{ user: user(777, "Ana") }]
+
+    expect((await adapter.chat("-100500")).members).toEqual([{ id: "777", name: "Ana", username: null }])
+
+    client.members = new tl.RpcError(403, "CHAT_ADMIN_REQUIRED")
+    expect((await adapter.chat("-100500")).members).toBeNull()
+  })
+
+  it("shows a person with their bio and the chats in common", async () => {
+    const { adapter, client } = await open()
+    client.peer = user(777, "Ana")
+    client.dialogs = [dialog(group(-100500, "Valencia expats"))]
+
+    const card = await adapter.contact("777")
+
+    expect(card).toMatchObject({ id: "777", name: "Ana", description: "a bio" })
+    expect(card.chats).toEqual([
+      { id: "-100500", title: "Valencia expats", kind: "group", lastMessageAt: "2026-09-27T10:00:00.000Z" },
+    ])
+  })
+
+  it("refuses a contact that is a chat", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "Valencia expats")
+    await expect(adapter.contact("-100500")).rejects.toMatchObject({ code: "validation_error" })
+  })
+
+  it("cuts the window around a message and marks the anchor", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(12), message(11), message(10), message(9), message(8)]
+
+    const window = await adapter.around("-100500", "10", { before: 1, after: 1 })
+
+    expect(window.map((one) => one.id)).toEqual(["9", "10", "11"])
+    expect(window.find((one) => one.id === "10")).toMatchObject({ anchor: true })
+    expect(client.calls.find((call) => call.method === "getHistory")?.args[1]).toEqual({
+      offset: { id: 11, date: 0 },
+      addOffset: -1,
+      limit: 3,
+    })
+  })
+
+  it("says not found when the message is not in the window", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(5)]
+    await expect(adapter.around("-100500", "10", { before: 1, after: 1 })).rejects.toMatchObject({
+      code: "not_found",
+    })
+  })
+
+  it("turns Telegram's refusal into a typed error", async () => {
+    const { adapter, client } = await open()
+    client.getMe = async () => {
+      throw new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")
+    }
+    await expect(adapter.me()).rejects.toMatchObject({ code: "authentication_error" })
+  })
+})
+
+describe("sending", () => {
+  it("**sends with the given random_id** and answers with the message", async () => {
+    const { adapter, client } = await open()
+
+    const sent = await adapter.send("-100500", "hola", { sendId: "123456789012345", replyTo: "7" })
+
+    expect(sent).toMatchObject({ sendId: "123456789012345", message: { id: "99" } })
+    const [chat, text, options] = client.sendText.mock.calls[0] ?? []
+    expect([chat, text]).toEqual([-100500, "hola"])
+    expect(String((options as { randomId: unknown }).randomId)).toBe("123456789012345")
+    expect(options).toMatchObject({ replyTo: 7 })
+  })
+
+  it("**makes a timeout an unknown outcome** that names the send id to repeat", async () => {
+    const { adapter, client } = await open()
+    client.sendText.mockRejectedValueOnce(new MtTimeoutError(1000))
+
+    await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      details: { sendId: "42", cause: "timeout" },
+    })
+  })
+
+  it("passes any other refusal through as it is", async () => {
+    const { adapter, client } = await open()
+    client.sendText.mockRejectedValueOnce(new tl.RpcError(403, "CHAT_WRITE_FORBIDDEN"))
+
+    await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({ code: "permission_error" })
+  })
+
+  it("refuses a send id that is not a number without sending", async () => {
+    const { adapter, client } = await open()
+    expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--send-id/)
+    expect(client.sendText).not.toHaveBeenCalled()
+  })
+})
+
+describe("listening", () => {
+  it("**passes messages, edits and deletions on until aborted**, then lets go of every handler", async () => {
+    const { adapter, client } = await open({ listen: true })
+    const events: MessageEvent[] = []
+    const stop = new AbortController()
+    let ready = false
+
+    const watching = adapter.watch(
+      (event) => events.push(event),
+      stop.signal,
+      () => {
+        ready = true
+      },
+    )
+    await vi.waitFor(() => expect(ready).toBe(true))
+    client.onNewMessage.emit(message(1))
+    client.onEditMessage.emit(message(1))
+    client.onDeleteMessage.emit({ messageIds: [1], channelId: null })
+    client.onRawUpdate.emit({ update: { _: "updateUserStatus" }, peers: {} })
+    stop.abort()
+    await watching
+
+    expect(events.map((event) => event.event)).toEqual(["message", "edit", "delete"])
+    expect(client.calls.map((call) => call.method)).toContain("startUpdatesLoop")
+    expect(client.onNewMessage.handlers.size + client.onRawUpdate.handlers.size).toBe(0)
+  })
+})
+
+describe("closing", () => {
+  it("logs out on Telegram's side, and close destroys the client", async () => {
+    const { adapter, client } = await open()
+    await adapter.logout()
+    await adapter.close()
+
+    expect(client.calls.map((call) => call.method).slice(-2)).toEqual(["logOut", "destroy"])
+  })
+
+  it("logs in by QR code and answers with the account", async () => {
+    const { adapter, client } = await open()
+    const account = await adapter.login({
+      method: "qr",
+      showQr: () => {},
+      phone: async () => "",
+      code: async () => "",
+      password: async () => "",
+      note: () => {},
+    })
+
+    expect(account).toEqual({ id: "1", name: "Owner", username: null })
+    expect(client.calls.find((call) => call.method === "start")?.args[0]).toHaveProperty("qrCodeHandler")
+  })
+})

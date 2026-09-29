@@ -58,4 +58,5 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | `mcp/tools/<resource>.ts` | one file per resource; a new one is a file and a line in `tools.ts` |
 | `README.md`, `docs/mcp.md`, `skills/tg-cli/SKILL.md`, the proposal §8 | lists; on a conflict keep both rows |
 | the version in `package.json` | see releasing, above |
+| coverage (`pnpm test:coverage`) | every file keeps at least 50 % of its lines; a new adapter group comes with its cases in `src/telegram/adapter.test.ts` ([TESTING.md](TESTING.md#coverage-has-a-floor)) |
 | Telegram's rate limits | three lanes reading live at once share one account's FLOOD_WAIT budget; keep live checks small (`--limit 3`) |
