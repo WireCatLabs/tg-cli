@@ -108,6 +108,15 @@ describe("machine output", () => {
     expect(typeof item.chatId).toBe("string")
   })
 
+  it("prints one message per line with --jsonl", async () => {
+    const two = [message, { ...message, id: "2" }]
+    const { stdout } = await tg(["messages", "list", "Valencia", "--jsonl"], {
+      adapter: () => scripted({ history: async () => ({ items: two, hasMore: false }) }),
+    })
+
+    expect(stdout.map((line) => JSON.parse(line).id)).toEqual([message.id, "2"])
+  })
+
   it("says a failure on stderr as JSON, with the exit code for its kind", async () => {
     const { code, stdout, stderr } = await tg(["account", "show"], { env: { ...process.env }, adapter: undefined })
 
