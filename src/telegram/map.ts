@@ -118,6 +118,7 @@ export const toMessage = (message: TgMessage): Message => {
     forwardedFrom: message.forward ? forwardOf(message) : null,
     ...(message.isTopicMessage && reply?.threadId != null ? { threadId: String(reply.threadId) } : {}),
     reactions: message.reactions ? reactionsOf(message.reactions) : null,
+    ...(message.isScheduled ? { scheduledFor: message.date.toISOString() } : {}),
     ...(metadata ? { providerMetadata: metadata } : {}),
   }
 }

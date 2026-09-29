@@ -57,6 +57,8 @@ class FakeClient {
     }
   }
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
+  scheduledQueue: unknown[] = []
+  getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
 
@@ -514,6 +516,25 @@ describe("sending", () => {
       ],
     })
     expect(options).toMatchObject({ silent: true, disableWebPreview: true })
+  })
+
+  it("schedules with --at, and lists the queue soonest first, each with the time it goes", async () => {
+    const { adapter, client } = await open()
+    const at = "2030-01-01T09:00:00.000Z"
+    client.scheduledQueue = [
+      { ...message(8), isScheduled: true, date: new Date("2030-01-02T09:00:00.000Z") },
+      { ...message(7), isScheduled: true, date: new Date(at) },
+    ]
+
+    await adapter.send("-100500", "later", { sendId: "42", at })
+    const queued = await adapter.scheduled("-100500")
+
+    const [, , options] = client.sendText.mock.calls[0] ?? []
+    expect((options as { schedule: Date }).schedule.toISOString()).toBe(at)
+    expect(queued.map((one) => [one.id, one.scheduledFor])).toEqual([
+      ["7", at],
+      ["8", "2030-01-02T09:00:00.000Z"],
+    ])
   })
 
   it("**makes a timeout an unknown outcome** that names the send id to repeat", async () => {
