@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterAll } from "vitest"
+import { ARGV_LOG } from "./argv-log.js"
 
 /**
  * **`pnpm test` must not be able to touch anything the owner has** — config, the keyring entry, the
@@ -25,5 +26,6 @@ delete process.env.TG_TIMEOUT
 // At a terminal the daily update check would otherwise ask npm from inside the suite.
 process.env.TG_NO_UPDATE_CHECK = "1"
 process.env.TG_TEST_SANDBOX = sandbox
+process.env.TG_TEST_ARGV_LOG = ARGV_LOG
 
 afterAll(() => rmSync(sandbox, { recursive: true, force: true }))

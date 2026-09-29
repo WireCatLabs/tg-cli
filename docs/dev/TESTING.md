@@ -2,6 +2,7 @@
 
 ```sh
 pnpm lint && pnpm typecheck && pnpm test:coverage   # what CI runs, with the coverage floor
+pnpm test:matrix                                    # every command and option has a test or a reason
 pnpm docs:check                                     # links, anchors, user pages, the changelog's shape
 pnpm test:slow                                      # the 20 slowest tests and the 10 slowest files
 pnpm build && pnpm smoke:bun                        # the built command, executed under Bun
@@ -45,3 +46,24 @@ fall under the per-file floor.
 `scripts/smoke.ts` runs the built `dist/bin/tg.js` under Bun with directories of its own: the version,
 help and an unknown option, `doctor`, a failure kept as a run, and tg's session storage over
 `bun:sqlite`. Bun cannot run the vitest suite, so this is the only proof the Bun path works.
+
+## Every command and option has a test, or a reason
+
+```sh
+pnpm test:matrix       # the suite, a fresh build, then docs/dev/test-matrix.md; fails on any ❌
+```
+
+[`test-matrix.md`](test-matrix.md) lists every command and option of `tg` and marks each ✅ (a test
+drove it through `run()`), ⛔ (not testable offline — the reason and where it is checked instead) or
+❌ (nothing). CI fails on a ❌, on a ⛔ entry that names nothing any more, and on a stale page.
+
+It is **measured, not searched for**: under vitest (`TG_TEST_ARGV_LOG`, set by the sandbox) each
+top-level command's `preAction` hook appends the command path and the option names given to
+`coverage/argv.jsonl` — names, never a value (`src/program.ts`, `logParsed`). The hook sits on the
+top-level commands because the root program is built inside cli-messaging. A flag a test only
+mentions does not count, and neither does a test that calls a function directly: the matrix is
+about what a person types.
+
+The ⛔ list is `scripts/test-matrix-untested.ts`. A new command or option comes with the test that
+passes it through `run()` — `src/testing/scripted.ts` has a scripted Telegram and a `tg()` helper —
+or, when it truly cannot run offline, an entry there naming where it is checked instead.
