@@ -60,6 +60,7 @@ tg messages pin <chat> <id> [--notify]           # quiet unless --notify; `messa
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
 tg messages transcribe <chat> <id> [--local] [--model id]   # a voice note as text: Telegram, else a model on this machine
 tg models audio list | download <id>   # speech models for --local, in ~/.cache/cli-common; Parakeet (25 languages) is the default
+tg reactions add <chat> <id> <emoji>             # replaces your reaction; `reactions remove <chat> <id>` takes it off
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n] [--all]   # other people's unread messages; --new: what arrived since the last check;

@@ -18,6 +18,7 @@ const configure = (profiles: Record<string, unknown>) => {
 const telegram = () => {
   const sent: string[] = []
   const edited: string[] = []
+  const reacted: string[] = []
   const forwarded: string[] = []
   const pinned: string[] = []
   const adapter = scripted({
@@ -35,12 +36,15 @@ const telegram = () => {
       forwarded.push(options.silent ? `${toChatId} silent` : toChatId)
       return message("70", { chatId: toChatId, outgoing: true })
     },
+    react: async (_chat, messageId, emoji) => {
+      reacted.push(`${messageId} ${emoji}`)
+    },
     edit: async (chatId, messageId, text) => {
       edited.push(text)
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited, forwarded, pinned }
+  return { adapter, sent, edited, forwarded, pinned, reacted }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -186,5 +190,19 @@ describe("the send guard in front of the other writes", () => {
     expect([quiet.code, loud.code, off.code]).toEqual([0, 8, 0])
     expect(JSON.parse(quiet.stdout[0] ?? "")).toEqual({ chatId: chat.id, messageId: "5", pinned: true })
     expect(pinned).toEqual(["5", "5 off"])
+  })
+
+  it("lets a profile that allows only reactions react, and nothing else", async () => {
+    configure({ "g-react": { allow: ["reaction"] } })
+    const { adapter, reacted, sent } = telegram()
+
+    const added = await tg(["g-react", "reactions", "add", "Valencia", "5", "👍", "--json"], adapter)
+    const removed = await tg(["g-react", "reactions", "remove", "Valencia", "5"], adapter)
+    const refused = await tg(["g-react", "messages", "send", "Valencia", "hi"], adapter)
+
+    expect([added.code, removed.code, refused.code]).toEqual([0, 0, 5])
+    expect(JSON.parse(added.stdout[0] ?? "")).toEqual({ chatId: chat.id, messageId: "5", reaction: "👍" })
+    expect(reacted).toEqual(["5 👍", "5 null"])
+    expect(sent).toEqual([])
   })
 })
