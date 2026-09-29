@@ -3,48 +3,15 @@ import { join } from "node:path"
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { type CommandInfo, describeProgram } from "@leemour/cli-core/commands"
-import type { Chat, Message } from "@leemour/cli-messaging"
 import { describe, expect, it } from "vitest"
-import type { Adapter } from "./commands/context.js"
 import { createProgram, run } from "./program.js"
+import { chat, message, scripted } from "./testing/scripted.js"
 
-const chat: Chat = {
-  id: "-100500",
-  title: "Valencia expats",
-  kind: "group",
-  unreadCount: 0,
-  lastMessageAt: "2026-09-27T10:00:00.000Z",
-  participantsCount: 3,
-}
-const message: Message = {
-  id: "42",
-  chatId: chat.id,
-  senderId: "7",
-  senderName: "Ana",
-  timestamp: "2026-09-27T10:00:00.000Z",
-  editedAt: null,
-  text: "hola",
-  outgoing: false,
-  attachments: [],
-  replyTo: null,
-  forwardedFrom: null,
-  reactions: null,
-}
-
-const telegram: Adapter = {
-  self: () => "1",
-  login: async () => ({ id: "1", name: "Owner", username: null }),
-  me: async () => ({ id: "1", name: "Owner", username: null }),
-  chats: async () => ({ items: [chat], hasMore: false }),
-  history: async () => ({ items: [message], hasMore: false }),
-  resolve: async () => chat,
+const telegram = scripted({
   chat: async () => ({ ...chat, members: [] }),
-  contact: async () => ({ id: "7", name: "Ana", username: null, description: null, lastMessagedAt: null, chats: [] }),
-  around: async () => [{ ...message, anchor: true }],
-  send: async (_chat, text, { sendId }) => ({ message: { ...message, text }, sendId }),
-  logout: async () => {},
-  close: async () => {},
-}
+  contact: async () => ({ id: "777", name: "Ana", username: null, description: null, lastMessagedAt: null, chats: [] }),
+  around: async () => [{ ...message("42"), anchor: true }],
+})
 
 const PLACEHOLDER: Record<string, string> = {
   chat: "Valencia",
