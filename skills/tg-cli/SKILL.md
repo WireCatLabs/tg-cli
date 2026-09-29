@@ -100,6 +100,7 @@ tg review --since 1d --json                        # every message, the owner's 
 tg review --unanswered --json                      # questions to the owner or a group's admins nobody answered in 24 h
 tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
+tg chats events -1001234567890 --since 7d --json     # who joined, left, was added or removed
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
 tg messages list -1001234567890 --limit 20 --json  # the latest messages, oldest first

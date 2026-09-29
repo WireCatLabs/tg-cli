@@ -24,14 +24,4 @@ export const UNTESTED: Untested[] = [
       "spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts " +
       "drives it with a stand-in spawnJob, and lane L5 owns the live check",
   },
-  {
-    command: "chats events",
-    option: "--since",
-    reason: "arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests",
-  },
-  {
-    command: "chats events",
-    option: "--event",
-    reason: "arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests",
-  },
 ]

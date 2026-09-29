@@ -105,6 +105,47 @@ describe("chats list", () => {
   })
 })
 
+describe("chats events", () => {
+  it("--since and --event pass the moment on and keep only the events named", async () => {
+    let since = 0
+    const events = scripted({
+      chatEvents: async (_chat, window) => {
+        since = window.since
+        return {
+          chatId: chat.id,
+          since: new Date(window.since).toISOString(),
+          more: false,
+          events: [
+            {
+              messageId: "1",
+              timestamp: chat.lastMessageAt ?? "",
+              event: "join",
+              by: { id: "7", name: null },
+              people: [],
+            },
+            {
+              messageId: "2",
+              timestamp: chat.lastMessageAt ?? "",
+              event: "pin",
+              by: { id: "7", name: null },
+              people: [],
+            },
+          ],
+        }
+      },
+    })
+
+    const { code, stdout } = await tg(
+      ["chats", "events", "Valencia", "--since", "2026-09-20T00:00:00Z", "--event", "join", "--json"],
+      { adapter: () => events },
+    )
+
+    expect(code).toBe(0)
+    expect(since).toBe(Date.parse("2026-09-20T00:00:00Z"))
+    expect(json(stdout).events.map((one: { event: string }) => one.event)).toEqual(["join"])
+  })
+})
+
 describe("contacts list", () => {
   const people = scripted({
     chats: async () => ({
