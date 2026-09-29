@@ -1,6 +1,6 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-28, after 0.2.0.** Read this once, then only the files your task needs from §3. It is
+**State 2026-09-29.** Read this once, then only the files your task needs from §3. It is
 context, not history.
 
 ## 1. What this is
@@ -75,7 +75,26 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    PR adds its MCP tool in the same PR.** Live MCP check:
    the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
    `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
-6. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
+6. **The agent setup — built, one security gap open (2026-09-29).** Lanes run unattended:
+   `bin/agent <lane>` = bypass mode, the owner's `ccs` profile (`TG_CLAUDE_PROFILE`, default
+   `~/.ccs/instances/my` — `~/.zshrc` exports a stale `~/.claude`), folders trusted first, the
+   owner's personal `ask` rules skipped. Enforced: the Bash sandbox (writes only to tg-cli,
+   cli-messaging, cli-core, caches, `/tmp`), a hook refusing any sandbox escape, a hook refusing file
+   edits outside those folders and edits to the guards, `sudo` denied; a plain `bin/tg …` runs
+   outside the sandbox. **`bin/check-agents`** (owner, from a terminal) proved all of it on
+   2026-09-29 — and found **SEC-24: the private key `~/.ssh/id_ed25519` is readable inside the
+   sandbox**, since `sandbox.filesystem.allowRead` of the public key and `known_hosts` (needed for
+   signed commits and SSH pushes) apparently opened all of `~/.ssh`. **Do not start the lanes until
+   it is closed.** Likely fix, to build and prove: drop `allowRead`; per repository (outside the
+   sandbox — it masks `.git/config`) set `user.signingkey` to the literal public key
+   (`key::ssh-ed25519 …`, not a secret) and `core.sshCommand` to `ssh -o UserKnownHostsFile=<a copy
+   of the GitHub lines inside tg-cli>`, as a `bin/` script the owner runs; then `bin/check-agents`
+   again, item 6c must fail. The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's —
+   agents, this one included, cannot edit them. Details: [`docs/dev/agents.md`](docs/dev/agents.md).
+   **Then start the lanes** — three terminals (or zellij tabs), one each: `bin/agent l1-reading`,
+   `bin/agent l2-actions`, `bin/agent l3-sending`. L1 takes BUG-18 first: a one-shot tg command
+   hangs forever when Telegram is unreachable (no default timeout).
+7. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
 
 ### 3c. How to change things
 

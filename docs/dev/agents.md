@@ -4,6 +4,22 @@ Several Claude Code sessions work at once, each on a **lane** of
 [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), each in worktrees of
 its own, without asking the owner for permission. This file is how.
 
+## Before the first lane: SEC-24
+
+`bin/check-agents` (2026-09-29) found the private key `~/.ssh/id_ed25519` readable inside the
+sandbox. Close it first — [`HANDOFF.md`](../../HANDOFF.md) §3b item 6 has the fix path — and rerun
+`bin/check-agents` until its item 6c fails.
+
+## Start the lanes in parallel
+
+1. `bin/check-agents` — every item as its label says (6c must fail).
+2. Three terminals or zellij tabs, from the main checkout, one command each:
+   `bin/agent l1-reading` · `bin/agent l2-actions` · `bin/agent l3-sending`.
+3. Each lane works through its handoff alone: PR per item, merge on green, release its own work.
+   Watch GitHub, not the terminals. When one finishes, write the next lane's handoff (L4 media or
+   L5 archive, [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md)) and
+   `bin/lane <new>`.
+
 ## Start a lane
 
 ```sh
