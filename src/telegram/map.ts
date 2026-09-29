@@ -3,6 +3,7 @@ import type {
   Capabilities,
   Chat,
   ChatKind,
+  GroupMember,
   Markup,
   Member,
   Message,
@@ -14,6 +15,7 @@ import type {
 } from "@leemour/cli-messaging"
 import type { Upload } from "@leemour/cli-messaging/sends"
 import {
+  type ChatMember,
   type DeleteMessageUpdate,
   type Dialog,
   getMarkedPeerId,
@@ -47,6 +49,13 @@ export interface Account {
   name: string | null
   username: string | null
 }
+
+/** Telegram gives a last-seen time only to someone offline whose privacy shows it. */
+export const toGroupMember = (member: ChatMember): GroupMember => ({
+  ...toMember(member.user),
+  role: member.status === "creator" ? "owner" : member.status === "admin" ? "admin" : "member",
+  lastSeenAt: member.user.lastOnline?.toISOString() ?? null,
+})
 
 export const toMember = (user: Peer): Member => ({
   id: String(user.id),
