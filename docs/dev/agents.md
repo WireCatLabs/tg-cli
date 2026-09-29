@@ -29,7 +29,9 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 |---|---|
 | **No prompts** | `bin/agent` starts `claude --permission-mode bypassPermissions`. A project `settings.json` cannot choose bypass mode — the docs say it is ignored there — so it is always the flag. Any CLI, GitHub, npm and the network work without asking |
 | **File edits only in this project, cli-messaging and cli-core** | [`.claude/hooks/writes-stay-inside.sh`](../../.claude/hooks/writes-stay-inside.sh), a `PreToolUse` hook on Edit, Write and NotebookEdit. Hooks run in bypass mode too — **measured 2026-09-29**: a headless bypass session was refused a Write into max-cli. It also allows the session's scratch folder and this project's memory |
-| **Shell commands in the same folders** | the Bash sandbox, **off** — it cannot start on this machine: Ubuntu 26.04 restricts unprivileged user namespaces (`kernel.apparmor_restrict_unprivileged_userns = 1`, the `bwrap-userns-restrict` profile), measured 2026-09-29. Until the owner decides (NEED-22), a shell command can write anywhere the owner can |
+| **Shell commands** | run freely — **no sandbox**, the owner's choice on 2026-09-29: it worked (after [`bin/enable-sandbox`](../../bin/enable-sandbox), the Ubuntu 26.04 AppArmor change from the Claude Code docs), but it broke `git add -A` on its masked dotfiles and every `gh` or `bin/tg` inside a chained command, and each fix was another exclusion to maintain |
+| **Refused, in every mode** | `sudo` — `permissions.deny` in [`.claude/settings.json`](../../.claude/settings.json). **Measured** in a headless bypass session: `sudo -n true` and `echo x && sudo -n true` both refused, while `gh`, `bin/tg` and `git add -A` ran |
+| **Still asks, in every mode** | the owner's own `ask` rules: `rm`, `rmdir`, `git reset`, `git clean`, `git branch -D`, the GitHub MCP merge tool. Deliberate — nothing is deleted mid-task (the owner's rule: record it in `CLEANUP.md`); merge with `gh pr merge`, which is allowed |
 | **The owner's real account** | project rule 1: live checks read, or send only to Saved Messages through the worktree's `bin/tg` |
 
 ## Rules for a lane
