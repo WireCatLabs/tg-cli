@@ -5,8 +5,16 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.10.0 — 29.09.2026
+
 ### What's new
 
+- **Voice to text on this machine.** `tg models audio list` and `tg models audio download <id>`
+  fetch a speech model once — Parakeet v3 (25 languages, the default), GigaAM v3 or GigaAM v3 CTC
+  (Russian) — into `~/.cache/cli-common/models/audio`, a folder every CLI of the family shares. `tg messages transcribe` asks Telegram first
+  and falls back to the local model when the account has no Premium; `--local` or `--model <id>`
+  skip Telegram. The profile's `transcribeWith` (`auto`, `messenger`, `local`) and `speechModel`
+  set the defaults. Nothing downloads a model by itself.
 - **`tg messages send --photo <path>` or `--file <path>`**, the text as the caption, and `photo` and
   `file` on `tg_messages_send`. Hidden files and folders, `~/.ssh`, tg's own folders and the message
   store are refused unless the owner adds `--allow-any-file`; over MCP there is no way around it. The
@@ -25,12 +33,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **Voice to text on this machine.** `tg models audio list` and `tg models audio download <id>`
-  fetch a speech model once — Parakeet v3 (25 languages, the default), GigaAM v3 or GigaAM v3 CTC
-  (Russian) — into `~/.cache/cli-common/models/audio`, a folder every CLI of the family shares. `tg messages transcribe` asks Telegram first
-  and falls back to the local model when the account has no Premium; `--local` or `--model <id>`
-  skip Telegram. The profile's `transcribeWith` (`auto`, `messenger`, `local`) and `speechModel`
-  set the defaults. Nothing downloads a model by itself.
 - **`tg session start` says who logged in, where the session file is, where the app keys are read
   from and what to run next**, in sentences; `--json` gains `session` and `appKeys` (`environment`,
   `keyring` or `file` — never the keys).
