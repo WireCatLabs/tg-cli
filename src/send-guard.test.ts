@@ -19,10 +19,17 @@ const telegram = () => {
   const sent: string[] = []
   const edited: string[] = []
   const forwarded: string[] = []
+  const pinned: string[] = []
   const adapter = scripted({
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
       return { sendId, message: message(String(sent.length), { chatId, text, outgoing: true }) }
+    },
+    pin: async (_chat, messageId, { notify }) => {
+      pinned.push(notify ? `${messageId} notify` : messageId)
+    },
+    unpin: async (_chat, messageId) => {
+      pinned.push(`${messageId} off`)
     },
     forward: async (_from, _id, toChatId, options) => {
       forwarded.push(options.silent ? `${toChatId} silent` : toChatId)
@@ -33,7 +40,7 @@ const telegram = () => {
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited, forwarded }
+  return { adapter, sent, edited, forwarded, pinned }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -165,5 +172,19 @@ describe("the send guard in front of the other writes", () => {
     expect(code).toBe(0)
     expect(forwarded).toEqual(["1 silent"])
     expect(journal("g-quiet")).toMatchObject([{ kind: "forward", outcome: "sent", chatId: "1", messageId: "70" }])
+  })
+
+  it("pins quietly past the hourly limit, but not with --notify", async () => {
+    configure({ "g-pin": { sendsPerHour: 1 } })
+    const { adapter, pinned } = telegram()
+    await tg(["g-pin", "messages", "send", "Valencia", "one"], adapter)
+
+    const quiet = await tg(["g-pin", "messages", "pin", "Valencia", "5", "--json"], adapter)
+    const loud = await tg(["g-pin", "messages", "pin", "Valencia", "6", "--notify"], adapter)
+    const off = await tg(["g-pin", "messages", "unpin", "Valencia", "5"], adapter)
+
+    expect([quiet.code, loud.code, off.code]).toEqual([0, 8, 0])
+    expect(JSON.parse(quiet.stdout[0] ?? "")).toEqual({ chatId: chat.id, messageId: "5", pinned: true })
+    expect(pinned).toEqual(["5", "5 off"])
   })
 })
