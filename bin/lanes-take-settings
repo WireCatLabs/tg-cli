@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+# Brings the guards (.claude/settings.json and .claude/hooks) from origin/main into every lane
+# worktree. Inside the sandbox git cannot replace them — they are locked — so after a change to the
+# guards a lane stops halfway on its next branch switch ("unable to unlink"). The file is staged, so
+# the lane's next switch onto origin/main finds it already in place. Also prunes the worktree records
+# git cannot delete from inside the sandbox. Run it from a terminal, then restart the lanes it names:
+# a session reads its settings when it starts.
+#
+#   bin/lanes-take-settings
+set -eu
+
+cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
+git fetch -q origin
+git worktree prune
+for tree in .worktrees/*/tg-cli; do
+  [ -d "$tree" ] || continue
+  if git -C "$tree" diff --quiet origin/main -- .claude/settings.json .claude/hooks; then
+    echo "$tree: current"
+  else
+    git -C "$tree" checkout origin/main -- .claude/settings.json .claude/hooks
+    echo "$tree: took the guards from main — restart this lane"
+  fi
+done
