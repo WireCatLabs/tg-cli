@@ -58,6 +58,7 @@ class FakeClient {
   }
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
+  forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
 
   #record(method: string, args: unknown[]) {
     this.calls.push({ method, args })
@@ -503,6 +504,32 @@ describe("editing", () => {
 
     await expect(adapter.edit("-100500", "5", "x")).rejects.toMatchObject({ code: "outcome_unknown" })
     await expect(adapter.edit("-100500", "5", "x")).rejects.toMatchObject({ code: "permission_error" })
+  })
+})
+
+describe("forwarding", () => {
+  it("forwards one message by id, quietly when asked, and answers the copy", async () => {
+    const { adapter, client } = await open()
+
+    const copy = await adapter.forward("-100500", "5", "1", { silent: true })
+
+    expect(copy).toMatchObject({ id: "60" })
+    expect(client.forwardMessagesById).toHaveBeenCalledWith({
+      fromChatId: -100500,
+      messages: [5],
+      toChatId: 1,
+      silent: true,
+    })
+  })
+
+  it("makes a timeout an unknown outcome that says to look before repeating", async () => {
+    const { adapter, client } = await open()
+    client.forwardMessagesById.mockRejectedValueOnce(new MtTimeoutError(1000))
+
+    await expect(adapter.forward("-100500", "5", "1", {})).rejects.toMatchObject({
+      code: "outcome_unknown",
+      message: expect.stringContaining("look in the target chat"),
+    })
   })
 })
 

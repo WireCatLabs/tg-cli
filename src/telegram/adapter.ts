@@ -359,6 +359,31 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * mtcute draws the forward's `random_id` itself, so a retry could not be deduplicated: an unknown
+   * outcome says to look in the target chat first.
+   */
+  forward(fromChatId: string, messageId: string, toChatId: string, { silent }: { silent?: boolean }): Promise<Message> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      try {
+        const [copy] = await this.#client.forwardMessagesById({
+          fromChatId: Number(fromChatId),
+          messages: [id],
+          toChatId: Number(toChatId),
+          ...(silent ? { silent } : {}),
+        })
+        if (!copy) throw new CliError("provider_error", "Telegram answered the forward without the new message")
+        return toMessage(copy)
+      } catch (error) {
+        throw unknownIfUnanswered(
+          error,
+          "the message may have been forwarded — look in the target chat before repeating",
+        )
+      }
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()
