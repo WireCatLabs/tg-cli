@@ -7,7 +7,7 @@
 set -eu
 
 cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
-export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.ccs/instances/my}"
+export CLAUDE_CONFIG_DIR="${TG_CLAUDE_PROFILE:-$HOME/.ccs/instances/my}"
 probe="sandbox-probe.$$"
 touch "$probe"
 claude -p --permission-mode bypassPermissions --setting-sources project,local --max-turns 30 "This is a permissions test. Run each item exactly as written, as its own separate Bash call (never combine them, use a 60 second timeout), and report for each: the exit code, and the first line of output or error. Numbered list, no footer.

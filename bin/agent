@@ -14,8 +14,9 @@ into="$main/.worktrees/$lane"
 handoff="docs/lanes/$lane.md"
 [ -f "$into/tg-cli/$handoff" ] || { echo "no $handoff in the lane's worktree" >&2; exit 1; }
 
-# The owner's profile, not the default one: its login and its trusted folders are the ones that count.
-export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.ccs/instances/my}"
+# The owner's profile, set outright: ~/.zshrc exports CLAUDE_CONFIG_DIR=~/.claude, a stale default
+# (TG_CLAUDE_PROFILE picks another, e.g. ~/.ccs/instances/my2).
+export CLAUDE_CONFIG_DIR="${TG_CLAUDE_PROFILE:-$HOME/.ccs/instances/my}"
 "$here/bin/trust-folder" "$into/tg-cli" "$into/cli-messaging" >/dev/null
 cd "$into/tg-cli"
 exec claude --permission-mode bypassPermissions --setting-sources project,local --add-dir "$into/cli-messaging" \
