@@ -172,6 +172,20 @@ describe("contacts list", () => {
 })
 
 describe("messages", () => {
+  it("pin --notify tells the chat, a pin without it is quiet", async () => {
+    const asked: boolean[] = []
+    const adapter = scripted({
+      pin: async (_chat, _message, { notify }) => {
+        asked.push(notify)
+      },
+    })
+
+    for (const argv of [["--notify"], []]) {
+      expect((await tg(["messages", "pin", "Valencia", "42", ...argv], { adapter: () => adapter })).code).toBe(0)
+    }
+    expect(asked).toEqual([true, false])
+  })
+
   it("list asks Telegram for that many, older than a message", async () => {
     let asked: unknown
     const adapter = scripted({
@@ -325,6 +339,26 @@ describe("messages", () => {
     expect(code).toBe(0)
     expect(json(stdout).items).toHaveLength(1)
     expect(json(stdout).items[0].text).toContain("piso")
+  })
+})
+
+describe("chats members", () => {
+  it("list pages with --limit and --page, and --all asks for everyone", async () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      members: async (_chat, window) => {
+        asked.push(window)
+        return { items: [{ id: "7", name: "Ana", username: null }], hasMore: false, chatId: chat.id }
+      },
+    })
+
+    const paged = await tg(["chats", "members", "list", "Valencia", "--limit", "5", "--page", "2", "--json"], {
+      adapter: () => adapter,
+    })
+    const all = await tg(["chats", "members", "list", "Valencia", "--all", "--json"], { adapter: () => adapter })
+
+    expect([paged.code, all.code]).toEqual([0, 0])
+    expect(asked).toEqual([{ limit: 5, offset: 5 }, { offset: 0 }])
   })
 })
 

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**125 ✅ · 2 ⛔ · 0 ❌** — 57 commands, 70 options.
+**136 ✅ · 2 ⛔ · 0 ❌** — 63 commands, 75 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -27,6 +27,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats events` | `--since` | ✅ |  |
 | `chats events` | `--event` | ✅ |  |
 | `chats show` |  | ✅ |  |
+| `chats members list` |  | ✅ |  |
+| `chats members list` | `--limit` | ✅ |  |
+| `chats members list` | `--page` | ✅ |  |
+| `chats members list` | `--all` | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
 | `contacts list` | `--page` | ✅ |  |
@@ -34,6 +38,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts list` | `--order` | ✅ |  |
 | `contacts list` | `--search` | ✅ |  |
 | `contacts show` |  | ✅ |  |
+| `contacts lookup` |  | ✅ |  |
+| `contacts sync` |  | ✅ |  |
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--before` | ✅ |  |
@@ -47,6 +53,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
 | `messages send` | `--markdown` | ✅ |  |
+| `messages send` | `--at` | ✅ |  |
 | `messages reply` |  | ✅ |  |
 | `messages reply` | `--send-id` | ✅ |  |
 | `messages show` |  | ✅ |  |
@@ -62,6 +69,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
+| `messages pin` |  | ✅ |  |
+| `messages pin` | `--notify` | ✅ |  |
+| `messages unpin` |  | ✅ |  |
+| `messages scheduled` |  | ✅ |  |
 | `models audio list` |  | ✅ |  |
 | `models audio download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
