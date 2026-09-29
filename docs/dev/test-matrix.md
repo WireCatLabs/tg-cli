@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**100 ✅ · 2 ⛔ · 0 ❌** — 50 commands, 52 options.
+**105 ✅ · 2 ⛔ · 0 ❌** — 51 commands, 56 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -37,6 +37,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--regex` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
+| `messages send` | `--silent` | ✅ |  |
+| `messages send` | `--no-preview` | ✅ |  |
+| `messages send` | `--markdown` | ✅ |  |
 | `messages reply` |  | ✅ |  |
 | `messages reply` | `--send-id` | ✅ |  |
 | `messages show` |  | ✅ |  |
@@ -45,10 +48,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages context` | `--after` | ✅ |  |
 | `messages download` |  | ✅ |  |
 | `messages download` | `--output` | ✅ |  |
+| `messages edit` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
+| `inbox` | `--all` | ✅ |  |
 | `watch` |  | ✅ |  |
 | `watch` | `--events` | ✅ |  |
 | `serve` |  | ✅ |  |

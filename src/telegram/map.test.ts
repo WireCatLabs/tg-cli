@@ -146,19 +146,29 @@ describe("a chat", () => {
     })
   })
 
-  it("carries a dialog's unread count, last message time, and archived and pinned marks", () => {
+  it("carries a dialog's unread count, mentions, last message time, and muted, archived and pinned marks", () => {
     const dialog = {
       peer: peer({ type: "chat", chatType: "group" }),
+      isMuted: true,
       isArchived: true,
       isPinned: true,
       unreadCount: 4,
+      unreadMentionsCount: 1,
       lastMessage: { date: new Date("2026-09-27T10:00:00.000Z") },
     } as never
     expect(toChat(dialog)).toMatchObject({
       unreadCount: 4,
+      unreadMentions: 1,
       lastMessageAt: "2026-09-27T10:00:00.000Z",
-      providerMetadata: { archived: true, pinned: true },
+      muted: true,
+      archived: true,
+      providerMetadata: { pinned: true },
     })
+  })
+
+  it("leaves muted out when the chat follows the account's default", () => {
+    const dialog = { peer: peer({ type: "user" }), isMuted: null, isArchived: false, unreadMentionsCount: 0 } as never
+    expect(toChat(dialog)).not.toHaveProperty("muted")
   })
 
   it("an account keeps its id as a string", () => {

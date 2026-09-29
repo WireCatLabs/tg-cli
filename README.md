@@ -52,7 +52,8 @@ tg messages reply <chat> <id> [text]            # or: tg messages reply msg:tele
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
-tg inbox [--new | --since 2h] [--limit n]   # other people's unread messages; --new: what arrived since the last check
+tg inbox [--new | --since 2h] [--limit n] [--all]   # other people's unread messages; --new: what arrived since the last check;
+                                                    # muted and archived chats only when they mention you, or with --all
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg backfill <chat> --background   # the same as a job that outlives the command: backfill list|status [job]|cancel <job>

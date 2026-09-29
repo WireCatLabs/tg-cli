@@ -80,10 +80,14 @@ export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Cha
   }
 }
 
+/** `isMuted` is `null` when the chat follows the account's default, which the dialog does not carry. */
 export const toChat = (dialog: Dialog): Chat => ({
-  ...peerToChat(dialog.peer, { archived: dialog.isArchived || undefined, pinned: dialog.isPinned || undefined }),
+  ...peerToChat(dialog.peer, { pinned: dialog.isPinned || undefined }),
   unreadCount: dialog.unreadCount,
   lastMessageAt: dialog.lastMessage?.date.toISOString() ?? null,
+  ...(dialog.isMuted === null ? {} : { muted: dialog.isMuted }),
+  archived: dialog.isArchived,
+  unreadMentions: dialog.unreadMentionsCount,
 })
 
 export const toMessage = (message: TgMessage): Message => {
