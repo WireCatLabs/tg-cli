@@ -34,6 +34,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg messages send --at <time>`** hands the message to Telegram to send later — `2h`, `1d`, or
   `2026-10-01T09:00` in local time — and `tg messages scheduled <chat>` (MCP `tg_messages_scheduled`)
   lists what waits. A scheduled send is never repeated: `--send-id` is refused with it.
+- **`tg messages send --photo <path>` or `--file <path>`**, the text as the caption, and `photo` and
+  `file` on `tg_messages_send`. Hidden files and folders, `~/.ssh`, tg's own folders and the message
+  store are refused unless the owner adds `--allow-any-file`; over MCP there is no way around it. The
+  send journal records the attachment's kind and size, never its name. A retry with the same
+  `--send-id` sends one message (measured on a photo).
 
 ### Changed — may break scripts
 

@@ -57,6 +57,7 @@ class FakeClient {
     }
   }
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
+  sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
@@ -516,6 +517,34 @@ describe("sending", () => {
       ],
     })
     expect(options).toMatchObject({ silent: true, disableWebPreview: true })
+  })
+
+  it("**sends a photo with its caption and the same random_id**, a file as a document, one per message", async () => {
+    const { adapter, client } = await open()
+    const bytes = new Uint8Array([1, 2, 3])
+
+    const sent = await adapter.send("-100500", "look", {
+      sendId: "123456789012345",
+      attachments: [{ kind: "photo", name: "cat.png", bytes }],
+    })
+    await adapter.send("-100500", "", { sendId: "42", attachments: [{ kind: "file", name: "plan.pdf", bytes }] })
+
+    expect(sent.message.id).toBe("98")
+    const [[chat, photo, options], [, file]] = client.sendMedia.mock.calls as unknown[][] as [unknown[], unknown[]]
+    expect(chat).toBe(-100500)
+    expect(photo).toMatchObject({ type: "photo", file: bytes, fileName: "cat.png", caption: "look" })
+    expect(String((options as { randomId: unknown }).randomId)).toBe("123456789012345")
+    expect(file).toMatchObject({ type: "document", fileName: "plan.pdf" })
+    expect(client.sendText).not.toHaveBeenCalled()
+    expect(() =>
+      adapter.send("-100500", "", {
+        sendId: "42",
+        attachments: [
+          { kind: "photo", name: "a.png", bytes },
+          { kind: "photo", name: "b.png", bytes },
+        ],
+      }),
+    ).toThrow(/one file or photo/)
   })
 
   it("schedules with --at, and lists the queue soonest first, each with the time it goes", async () => {

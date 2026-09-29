@@ -12,10 +12,13 @@ import type {
   QuotedMessage,
   Reactions,
 } from "@leemour/cli-messaging"
+import type { Upload } from "@leemour/cli-messaging/sends"
 import {
   type DeleteMessageUpdate,
   type Dialog,
   getMarkedPeerId,
+  InputMedia,
+  type InputMediaLike,
   type MessageMedia,
   MessageReactions,
   type Peer,
@@ -260,3 +263,9 @@ export const toFormatted = (text: string, markup: Markup[]): TextWithEntities =>
   text,
   entities: markup.map(({ type, from, length }) => ({ _: ENTITIES[type], offset: from, length })),
 })
+
+/** A file goes as a document, so Telegram keeps it byte for byte; a photo is recompressed, as in the apps. */
+export const toInputMedia = ({ kind, name, bytes }: Upload, caption: string | TextWithEntities): InputMediaLike =>
+  kind === "photo"
+    ? InputMedia.photo(bytes, { fileName: name, caption })
+    : InputMedia.document(bytes, { fileName: name, caption })
