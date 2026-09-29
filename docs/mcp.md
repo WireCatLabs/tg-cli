@@ -116,6 +116,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
 | `tg_messages_list` | `tg messages list` | a chat's messages; marks nothing read |
 | `tg_messages_context` | `tg messages show`, `context` | one message and those either side |
+| `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; anything else is refused with the `tg messages download` command that saves it |
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
 | `tg_messages_send` | `tg messages send`, `reply` | send, only with `--allow-send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown |
 
