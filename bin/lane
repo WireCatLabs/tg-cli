@@ -37,7 +37,7 @@ fi
 [ ! -e "$into" ] || { echo "$into exists — bin/agent $lane starts it" >&2; exit 1; }
 for repo in "$main" "$messaging"; do
   git -C "$repo" fetch -q origin
-  git -C "$repo" worktree add -q -b "lane/$lane" "$into/$(basename "$repo")" origin/main
+  git -C "$repo" worktree add -q --no-track -b "lane/$lane" "$into/$(basename "$repo")" origin/main
   (cd "$into/$(basename "$repo")" && pnpm install --frozen-lockfile >/dev/null && pnpm build >/dev/null 2>&1)
 done
 node "$main/scripts/seed-worktree.ts" "$main" "$into/tg-cli"
