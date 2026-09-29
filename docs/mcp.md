@@ -112,6 +112,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point |
 | `tg_account_show` | `tg account show` | who the login is |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
+| `tg_chats_events` | `tg chats events`, `--since`, `--event` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since` |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |

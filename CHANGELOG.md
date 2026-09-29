@@ -5,6 +5,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg chats events <chat> [--since] [--event]`** and `tg_chats_events`: who joined, left, was added
+  or removed, and by whom — plus a chat created, renamed or a message pinned — from the chat's service
+  messages, seven days back by default. At most ten pages of history a run; `more` says there was more.
+
 ## 0.9.0 — 29.09.2026
 
 ### What's new

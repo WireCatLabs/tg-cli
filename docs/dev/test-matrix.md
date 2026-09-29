@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**123 ✅ · 4 ⛔ · 0 ❌** — 57 commands, 70 options.
+**125 ✅ · 2 ⛔ · 0 ❌** — 57 commands, 70 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -24,8 +24,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats list` | `--kind` | ✅ |  |
 | `chats list` | `--unread` | ✅ |  |
 | `chats events` |  | ✅ |  |
-| `chats events` | `--since` | ⛔ | arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests |
-| `chats events` | `--event` | ⛔ | arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests |
+| `chats events` | `--since` | ✅ |  |
+| `chats events` | `--event` | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |

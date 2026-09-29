@@ -41,6 +41,7 @@ tg session start --qr-file login.png   # the QR as a PNG for an agent to pass on
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
 tg chats list [--limit n] [--search text] [--kind dialog|group|channel|saved] [--unread]
+tg chats events <chat> [--since 1d] [--event join,leave,add,remove]   # who joined, left, was added or removed — 7 days back by default
 tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg contacts list [--order recent|name] [--search text]   # people you have a one-to-one chat with
 tg contacts show <person>        # their bio and the groups you share
