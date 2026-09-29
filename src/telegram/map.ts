@@ -188,6 +188,41 @@ const compact = (fields: Record<string, unknown>): ProviderMetadata | undefined 
   return kept.length > 0 ? Object.fromEntries(kept) : undefined
 }
 
+export interface EventOf {
+  event: string
+  by: number
+  people: number[]
+  title?: string
+}
+
+/** A service message as a change to who is in the chat, or to the chat itself; `null` for anything else. */
+export const eventOf = (message: TgMessage): EventOf | null => {
+  const { action } = message
+  const by = message.sender.id
+  switch (action?.type) {
+    case "users_added":
+      return { event: "add", by, people: [...action.users] }
+    case "user_left":
+      return { event: "leave", by, people: [by] }
+    case "user_removed":
+      return { event: "remove", by, people: [action.user] }
+    case "user_joined_link":
+      return { event: "join", by: action.inviter, people: [by] }
+    case "user_joined_approved":
+      return { event: "join", by, people: [by] }
+    case "chat_created":
+      return { event: "create", by, people: [...action.users], title: action.title }
+    case "channel_created":
+      return { event: "create", by, people: [], title: action.title }
+    case "title_changed":
+      return { event: "title", by, people: [], title: action.title }
+    case "message_pinned":
+      return { event: "pin", by, people: [] }
+    default:
+      return null
+  }
+}
+
 export const toMessageHit = (message: TgMessage): MessageHit => ({
   ...toMessage(message),
   chatTitle: peerToChat(message.chat).title,

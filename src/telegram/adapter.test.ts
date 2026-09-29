@@ -87,6 +87,7 @@ class FakeClient {
   }
   getFullUser = async () => ({ bio: "a bio" })
   getCommonChats = async () => [{ id: -100500 }]
+  getUsers = async (ids: number[]) => ids.map((id) => (id === 404 ? null : user(id, `User ${id}`)))
   getChatMembers = async () => {
     if (this.members instanceof Error) throw this.members
     return this.members
@@ -255,6 +256,47 @@ describe("reading", () => {
       { limit: 2, reverse: true, offset: { id: 11, date: 0 } },
       { limit: 5, reverse: true, offset: { id: 0, date: Date.parse("2026-09-27T10:30:00.000Z") / 1000 } },
     ])
+  })
+
+  it("reads chat events from service messages, oldest first, naming people it only has ids for", async () => {
+    const { adapter, client } = await open()
+    const at = (minute: number) => new Date(Date.UTC(2026, 8, 27, 10, minute))
+    client.peer = group(-100500, "Valencia expats")
+    client.history = [
+      { ...message(5), date: at(5), action: { type: "user_joined_link", inviter: 30 } },
+      { ...message(4), date: at(4), action: { type: "photo_changed" } },
+      { ...message(3), date: at(3), action: { type: "users_added", users: [31, 404] } },
+      { ...message(2), date: at(3) },
+      { ...message(1), date: at(0), action: { type: "user_left" } },
+    ]
+
+    const found = await adapter.chatEvents("-100500", { since: at(1).getTime() })
+
+    expect(found.events.map((one) => [one.messageId, one.event, one.by.name, one.people])).toEqual([
+      [
+        "3",
+        "add",
+        "Ana",
+        [
+          { id: "31", name: "User 31" },
+          { id: "404", name: null },
+        ],
+      ],
+      ["5", "join", "User 30", [{ id: "777", name: "Ana" }]],
+    ])
+    expect([found.chatId, found.more]).toEqual(["-100500", false])
+  })
+
+  it("stops chat events after ten pages and says there was more", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "Valencia expats")
+    client.history = [message(1)]
+    client.historyNext = {}
+
+    const found = await adapter.chatEvents("-100500", { since: 0 })
+
+    expect(found.more).toBe(true)
+    expect(client.calls.filter((call) => call.method === "getHistory")).toHaveLength(10)
   })
 
   it("refuses a --before that is not a message id before asking Telegram", async () => {
