@@ -40,11 +40,11 @@ tg session start [qr|phone] [--app browser|auto]   # QR by default
 tg session start --qr-file login.png   # the QR as a PNG for an agent to pass on; removed after the login
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
-tg chats list [--limit n]
+tg chats list [--limit n] [--search text] [--kind dialog|group|channel|saved] [--unread]
 tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg contacts list [--order recent|name] [--search text]   # people you have a one-to-one chat with
 tg contacts show <person>        # their bio and the groups you share
-tg messages list <chat> [--limit n] [--before id]
+tg messages list <chat> [--limit n] [--before id | --after id-or-time]
 tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
@@ -64,8 +64,8 @@ tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; -
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg backfill <chat> --background   # the same as a job that outlives the command: backfill list|status [job]|cancel <job>
 tg backfill <chat> --estimate     # what a full backfill would still cost, from the store; asks Telegram nothing
-tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`
-tg service install|uninstall|start|stop|status|logs   # serve as a systemd user unit or a launchd agent
+tg serve [--timeout 8h]          # keep the local store current until stopped
+tg server start|stop|restart|status|logs|install|uninstall   # serve in the background, or as a systemd / launchd unit
 tg sync status [chat]            # what the local store holds, per chat
 tg export <chat> --jsonl > chat.jsonl   # a chat's stored messages, oldest first
 tg export <chat> --format markdown > chat.md   # the same as a transcript a person reads
@@ -111,20 +111,21 @@ code, never a chat title or a message. A run that fails is kept without `--recor
 ## Keeping the archive current
 
 `tg serve` listens until stopped and keeps every new message, edit, deletion and reaction, catching up
-on what arrived while it was down. One runs per profile. Nothing starts it for you. To run it as a
-user service — a systemd user unit on Linux, a launchd agent on macOS:
+on what arrived while it was down. One runs per profile. Nothing starts it for you. `tg server start`
+runs it in the background; to run it as a user service — a systemd user unit on Linux, a launchd
+agent on macOS — install the unit first:
 
 ```sh
-tg service install     # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
-tg service start       # starts it now
-tg service status      # the unit, and who holds serve's lock
-tg service logs -n 50
+tg server install      # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
+tg server start        # starts it now — through the unit when there is one
+tg server status       # whether serve runs, since when, and who started it
+tg server logs -n 50
 systemctl --user enable tg-serve-default   # only if it should start at every login
 ```
 
 The unit runs the `node` and the `tg` that installed it, so reinstall it after moving either. It gets
 the profile and the `TG_*_DIR` and `MESSAGING_STORE` variables of the shell that installed it, and
-nothing else. **Check it once after `service start`:** `tg service logs`. A user service reads the
+nothing else. **Check it once after `server start`:** `tg server logs`. A user service reads the
 app credentials from the keyring; a keyring that stays locked until you log in will probably make it fail —
 the logs say why. Not yet checked on a real machine.
 

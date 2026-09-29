@@ -50,6 +50,8 @@ describe("the stdout contract", () => {
           uid: 1000,
           entry: ["/usr/bin/node", "/opt/tg/dist/bin/tg.js"],
           run: async () => ({ code: 0, stdout: "", stderr: "" }),
+          spawn: () => 1,
+          pause: async () => {},
         },
       })
 

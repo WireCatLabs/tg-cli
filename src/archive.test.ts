@@ -3,7 +3,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Message } from "@leemour/cli-messaging"
-import type { ServiceSystem } from "@leemour/cli-messaging/cli"
+import type { ServerSystem } from "@leemour/cli-messaging/cli"
 import { describe, expect, it } from "vitest"
 import { run } from "./program.js"
 import { scripted } from "./testing/scripted.js"
@@ -32,7 +32,7 @@ const telegram = scripted({
 })
 
 const ran: string[][] = []
-const system: ServiceSystem = {
+const system: ServerSystem = {
   platform: "linux",
   uid: 1000,
   entry: ["/usr/bin/node", "/opt/tg/dist/bin/tg.js"],
@@ -40,6 +40,10 @@ const system: ServiceSystem = {
     ran.push(argv)
     return { code: 0, stdout: argv[0] === "journalctl" ? "one\ntwo\n" : "", stderr: "" }
   },
+  spawn: () => {
+    throw new Error("the tests start no serve")
+  },
+  pause: async () => {},
 }
 
 const tg = async (argv: string[], store: string, env: NodeJS.ProcessEnv = {}) => {
@@ -133,22 +137,22 @@ describe("doctor report", () => {
   })
 })
 
-describe("service", () => {
+describe("server", () => {
   it("**installs a unit that runs this tg for the profile, and starts nothing**", async () => {
     const store = await backfilled()
     ran.length = 0
 
-    const installed = await tg(["archive", "service", "install", "--json"], store)
+    const installed = await tg(["archive", "server", "install", "--json"], store)
     const path = join(process.env.XDG_CONFIG_HOME ?? "", "systemd", "user", "tg-serve-archive.service")
     expect(installed.answer).toMatchObject({ unit: "tg-serve-archive.service", path })
     expect(ran).toEqual([])
     expect(readFileSync(path, "utf8")).toContain('Environment="TG_PROFILE=archive"')
 
-    const logs = await tg(["archive", "service", "logs", "--lines", "2", "--json"], store)
+    const logs = await tg(["archive", "server", "logs", "--lines", "2", "--json"], store)
     expect(logs.answer).toMatchObject({ lines: ["one", "two"] })
     expect(ran.at(-1)).toEqual(["journalctl", "--user", "-u", "tg-serve-archive.service", "-n", "2", "--no-pager"])
 
-    await tg(["archive", "service", "uninstall"], store)
+    await tg(["archive", "server", "uninstall"], store)
     expect(existsSync(path)).toBe(false)
   })
 })
