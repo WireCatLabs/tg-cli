@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.8.0 — 29.09.2026
+
 ### What's new
 
 - **`tg review`**: every message, yours too, in each chat that changed since `--since` (three days
