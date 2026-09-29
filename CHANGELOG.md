@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg messages download <chat> <id> [--output dir]`** saves a message's photo, file, video or
+  voice note into a folder — the current one unless `--output` names another — and answers its path
+  and size. A name the sender chose cannot leave the folder or hide the file, and a file already
+  there is never overwritten. The message is fetched again each time, so an old one still downloads.
+
 ## 0.4.0 — 29.09.2026
 
 ### What's new
