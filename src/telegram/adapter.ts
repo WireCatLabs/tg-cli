@@ -13,7 +13,7 @@ import {
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
-import type { Download } from "@leemour/cli-messaging/cli"
+import type { Download, SendOptions } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -225,7 +225,11 @@ export class TelegramAdapter {
    * One logical send carries one `random_id`, made before the request and repeated by a retry:
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).
    */
-  send(chatId: string, text: string, { sendId, replyTo }: { sendId: string; replyTo?: string }): Promise<Sent> {
+  send(chatId: string, text: string, { sendId, replyTo, silent, noPreview, markup }: SendOptions): Promise<Sent> {
+    // Refused rather than dropped: a message meant to arrive silently must not ring. Lane L3 wires them.
+    if (silent || noPreview || markup !== undefined) {
+      throw new CliError("validation_error", "tg cannot send with --silent, --no-preview or --markdown yet")
+    }
     const id = parseSendId(sendId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     return this.#call(async () => {
