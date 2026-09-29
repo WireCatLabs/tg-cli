@@ -93,6 +93,8 @@ because the scripted Telegram replaces the adapter.
 retry rule safe. A send with no answer returns `outcome_unknown` with its `--send-id`, and repeating
 it cannot create a second message. The same holds for MAX's `cid`, as max-cli measured. How long
 Telegram remembers a `random_id` is not measured: the two sends were seconds apart.
+Measured again on 2026-09-29 with the build on `main` (0.8.0, mtcute 0.32.3): same result — the
+second send came back with the first one's message id, and Saved Messages held one copy.
 
 ## Counts
 
