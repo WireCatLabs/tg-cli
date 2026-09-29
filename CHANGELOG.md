@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.7.0 — 29.09.2026
+
 ### What's new
 
 - **`tg messages transcribe <chat> <id>`** and the MCP tool `tg_messages_transcribe` turn a voice
