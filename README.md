@@ -37,6 +37,7 @@ Then the login itself: a QR code in the terminal, or `tg session start phone` fo
 
 ```sh
 tg session start [qr|phone] [--app browser|auto]   # QR by default
+tg session start --qr-file login.png   # the QR as a PNG for an agent to pass on; removed after the login
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
 tg chats list [--limit n]
@@ -50,12 +51,17 @@ tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
+tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n]   # other people's unread messages; --new: what arrived since the last check
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
+tg backfill <chat> --background   # the same as a job that outlives the command: backfill list|status [job]|cancel <job>
+tg backfill <chat> --estimate     # what a full backfill would still cost, from the store; asks Telegram nothing
 tg serve [--timeout 8h]          # keep the local store current until stopped; `tg serve status`
+tg service install|uninstall|start|stop|status|logs   # serve as a systemd user unit or a launchd agent
 tg sync status [chat]            # what the local store holds, per chat
 tg export <chat> --jsonl > chat.jsonl   # a chat's stored messages, oldest first
+tg export <chat> --format markdown > chat.md   # the same as a transcript a person reads
 tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
 tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first
@@ -65,6 +71,7 @@ tg commands                      # every command as JSON, with the output contra
 tg config show|set|unset         # the settings in force and where each came from
 tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
 tg doctor [--online]             # the installation's state; --online connects once
+tg doctor report create [--run id] [--output file]   # a problem report: no message text, every id a label
 tg update [--check]              # update with the package manager that installed tg; never runs by itself
 tg mcp [--allow-send [--confirm-send]]   # serve this profile to an agent over MCP — docs/mcp.md
 tg mcp config [the same flags]   # the entry for Claude Desktop, Cursor and others
@@ -97,23 +104,22 @@ code, never a chat title or a message. A run that fails is kept without `--recor
 ## Keeping the archive current
 
 `tg serve` listens until stopped and keeps every new message, edit, deletion and reaction, catching up
-on what arrived while it was down. One runs per profile. Nothing starts it for you; as a systemd user
-service, `~/.config/systemd/user/tg-serve.service`:
+on what arrived while it was down. One runs per profile. Nothing starts it for you. To run it as a
+user service — a systemd user unit on Linux, a launchd agent on macOS:
 
-```ini
-[Unit]
-Description=tg serve — keep the Telegram archive current
-
-[Service]
-ExecStart=%h/.local/bin/tg serve
-Restart=on-failure
-RestartSec=30
-
-[Install]
-WantedBy=default.target
+```sh
+tg service install     # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
+tg service start       # starts it now
+tg service status      # the unit, and who holds serve's lock
+tg service logs -n 50
+systemctl --user enable tg-serve-default   # only if it should start at every login
 ```
 
-Then `systemctl --user enable --now tg-serve`. The path is where `tg` is installed (`command -v tg`).
+The unit runs the `node` and the `tg` that installed it, so reinstall it after moving either. It gets
+the profile and the `TG_*_DIR` and `MESSAGING_STORE` variables of the shell that installed it, and
+nothing else. **Check it once after `service start`:** `tg service logs`. A user service reads the
+app credentials from the keyring; a keyring that stays locked until you log in will probably make it fail —
+the logs say why. Not yet checked on a real machine.
 
 ## Development
 

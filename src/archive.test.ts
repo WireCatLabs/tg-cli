@@ -1,0 +1,156 @@
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+import { captureStreams, memoryKeyring } from "@leemour/cli-core"
+import type { Message } from "@leemour/cli-messaging"
+import type { ServiceSystem } from "@leemour/cli-messaging/cli"
+import { describe, expect, it } from "vitest"
+import type { Adapter } from "./commands/context.js"
+import { run } from "./program.js"
+
+const CHAT = "1234567890"
+const message = (id: number, text: string): Message => ({
+  id: String(id),
+  chatId: CHAT,
+  senderId: "777",
+  senderName: "Ana",
+  timestamp: new Date(Date.UTC(2026, 8, 26, 10) + id * 60_000).toISOString(),
+  editedAt: null,
+  text,
+  outgoing: false,
+  attachments: [],
+  replyTo: null,
+  forwardedFrom: null,
+  reactions: null,
+})
+
+const telegram = {
+  self: () => "100",
+  close: async () => {},
+  history: async () => ({
+    items: [message(101, "invoice #7 paid"), message(102, "see you at 10"), message(103, "invoice #8 due")],
+    hasMore: true,
+  }),
+} as unknown as Adapter
+
+const ran: string[][] = []
+const system: ServiceSystem = {
+  platform: "linux",
+  uid: 1000,
+  entry: ["/usr/bin/node", "/opt/tg/dist/bin/tg.js"],
+  run: async (argv) => {
+    ran.push(argv)
+    return { code: 0, stdout: argv[0] === "journalctl" ? "one\ntwo\n" : "", stderr: "" }
+  },
+}
+
+const tg = async (argv: string[], store: string, env: NodeJS.ProcessEnv = {}) => {
+  const streams = captureStreams()
+  const code = await run(argv, {
+    streams,
+    tty: false,
+    keyring: memoryKeyring(),
+    env: { ...process.env, MESSAGING_STORE: store, TG_API_ID: "1", TG_API_HASH: "h", ...env },
+    adapter: () => telegram,
+    system,
+  })
+  const [first] = streams.stdout
+  return { code, stdout: streams.stdout, stderr: streams.stderr, answer: first ? tryJson(first) : undefined }
+}
+
+const tryJson = (text: string): unknown => {
+  try {
+    return JSON.parse(text)
+  } catch {
+    return undefined
+  }
+}
+
+const backfilled = async () => {
+  const store = join(mkdtempSync(join(tmpdir(), "tg-archive-")), "messages.db")
+  await tg(["archive", "backfill", CHAT, "--max", "3", "--pace", "1ms"], store)
+  return store
+}
+
+describe("the archive, from the store", () => {
+  it("**estimates what a full backfill would still cost** without asking Telegram", async () => {
+    const store = await backfilled()
+    const { code, answer } = await tg(["archive", "backfill", CHAT, "--estimate", "--json", "--offline"], store)
+
+    expect(code).toBe(0)
+    expect(answer).toMatchObject({ chat: CHAT, held: 3, ranges: [{ from: 101, to: 103 }], missing: 100 })
+  })
+
+  it("exports a chat as Markdown, and finds messages by a regular expression", async () => {
+    const store = await backfilled()
+
+    const transcript = await tg(["archive", "export", CHAT, "--format", "markdown"], store)
+    expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
+    expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
+
+    const found = await tg(["archive", "messages", "search", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
+    expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])
+  })
+})
+
+describe("doctor report", () => {
+  it("**explains itself, then writes a report with no message text in it**", async () => {
+    const store = await backfilled()
+    const explained = await tg(["archive", "doctor", "report", "--json"], store)
+    expect(explained.answer).toMatchObject({ sendTo: "https://github.com/leemour/tg-cli/issues/new" })
+
+    const runs = join(process.env.TG_STATE_DIR ?? "", "runs", "2026-09-29", "20260929T100000Z-chats-list-abc123")
+    mkdirSync(runs, { recursive: true })
+    writeFileSync(
+      join(runs, "run.json"),
+      JSON.stringify({
+        runId: "20260929T100000Z-chats-list-abc123",
+        command: "chats list",
+        profile: "archive",
+        startedAt: "2026-09-29T10:00:00.000Z",
+        status: "failed",
+        cliVersion: "0",
+      }),
+    )
+    const output = join(mkdtempSync(join(tmpdir(), "tg-report-")), "report.json")
+    const created = await tg(
+      [
+        "archive",
+        "doctor",
+        "report",
+        "create",
+        "--run",
+        "20260929T100000Z-chats-list-abc123",
+        "--output",
+        output,
+        "--json",
+      ],
+      store,
+    )
+
+    expect(created.answer).toMatchObject({ path: output, run: "20260929T100000Z-chats-list-abc123" })
+    const text = readFileSync(output, "utf8")
+    expect(text).not.toContain("invoice")
+    expect(text).not.toContain(CHAT)
+  })
+})
+
+describe("service", () => {
+  it("**installs a unit that runs this tg for the profile, and starts nothing**", async () => {
+    const store = await backfilled()
+    ran.length = 0
+
+    const installed = await tg(["archive", "service", "install", "--json"], store)
+    const path = join(process.env.XDG_CONFIG_HOME ?? "", "systemd", "user", "tg-serve-archive.service")
+    expect(installed.answer).toMatchObject({ unit: "tg-serve-archive.service", path })
+    expect(ran).toEqual([])
+    expect(readFileSync(path, "utf8")).toContain('Environment="TG_PROFILE=archive"')
+
+    const logs = await tg(["archive", "service", "logs", "--lines", "2", "--json"], store)
+    expect(logs.answer).toMatchObject({ lines: ["one", "two"] })
+    expect(ran.at(-1)).toEqual(["journalctl", "--user", "-u", "tg-serve-archive.service", "-n", "2", "--no-pager"])
+
+    await tg(["archive", "service", "uninstall"], store)
+    expect(existsSync(path)).toBe(false)
+  })
+})

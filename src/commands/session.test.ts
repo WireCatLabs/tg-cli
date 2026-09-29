@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, writeFileSync } from "node:fs"
-import { dirname } from "node:path"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { beforeEach, describe, expect, it, vi } from "vitest"
@@ -154,6 +155,44 @@ describe("session start", () => {
     expect(code).toBe(2)
     expect(stdout).toEqual([])
     expect(JSON.parse(stderr[0] ?? "").error.message).toContain("in a terminal")
+  })
+
+  it("**--qr-file writes the code as a PNG an agent can pass on**, with no terminal, and removes it after", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "qr-")), "login.png")
+    const during: { bytes?: Buffer; mode?: number } = {}
+    const { code, stderr } = await tg(["session", "start", "--qr-file", path, "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      stdin: Object.assign(Readable.from([]), { isTTY: false }),
+      adapter: () =>
+        ({
+          ...loginAdapter({}),
+          login: async (prompts: LoginPrompts) => {
+            prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
+            during.bytes = readFileSync(path)
+            during.mode = statSync(path).mode & 0o777
+            return { id: "1", name: "Owner", username: null }
+          },
+        }) as unknown as Adapter,
+    })
+
+    expect(code).toBe(0)
+    expect(during.bytes?.subarray(0, 8)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+    expect(during.mode).toBe(0o600)
+    expect(stderr.join("\n")).toContain(path)
+    expect(stderr.join("\n")).not.toContain("▀")
+    expect(existsSync(path)).toBe(false)
+  })
+
+  it("--qr-file without a terminal still refuses to ask for what it would have to ask", async () => {
+    const { code, stderr } = await tg(["session", "start", "--qr-file", join(tmpdir(), "never.png")], {
+      stdin: Object.assign(Readable.from([]), { isTTY: false }),
+      adapter: () => loginAdapter({}),
+    })
+
+    expect(code).toBe(2)
+    expect(JSON.parse(stderr.at(-1) ?? "").error.message).toContain("needs a terminal to ask for the App api_id")
+    const phone = await tg(["session", "start", "phone", "--qr-file", "x.png"], { adapter: () => loginAdapter({}) })
+    expect(JSON.parse(phone.stderr.at(-1) ?? "").error.message).toContain("--qr-file is for a QR login")
   })
 
   it("refuses a profile named like a command", async () => {
