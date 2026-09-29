@@ -37,6 +37,7 @@ class FakeClient {
   historyNext: unknown = undefined
   peer: unknown = undefined
   members: unknown = []
+  membersTotal: number | undefined
   found: unknown = null
   transcripts: { text: string; pending?: boolean }[] = []
   resolvePeer = async (peer: unknown) => ({ _: "inputPeerChannel", peer })
@@ -94,9 +95,12 @@ class FakeClient {
   getFullUser = async () => ({ bio: "a bio" })
   getCommonChats = async () => [{ id: -100500 }]
   getUsers = async (ids: number[]) => ids.map((id) => (id === 404 ? null : user(id, `User ${id}`)))
-  getChatMembers = async () => {
+  getChatMembers = async (...args: unknown[]) => {
+    this.#record("getChatMembers", args)
     if (this.members instanceof Error) throw this.members
-    return this.members
+    return Object.assign([...(this.members as unknown[])], {
+      total: this.membersTotal ?? (this.members as unknown[]).length,
+    })
   }
   connect = async () => this.#record("connect", [])
   startUpdatesLoop = async () => this.#record("startUpdatesLoop", [])
@@ -354,6 +358,29 @@ describe("reading", () => {
 
     client.members = new tl.RpcError(403, "CHAT_ADMIN_REQUIRED")
     expect(await adapter.admins("-100500")).toBeNull()
+  })
+
+  it("lists a group's members a page at a time, with role and last seen", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "Valencia expats")
+    client.members = [
+      { user: user(1, "Owner", { lastOnline: new Date("2026-09-27T10:00:00.000Z") }), status: "creator" },
+      { user: user(2, "Ana"), status: "member" },
+    ]
+    client.membersTotal = 5
+
+    const page = await adapter.members("-100500", { limit: 2, offset: 2 })
+
+    expect(page).toMatchObject({
+      chatId: "-100500",
+      hasMore: true,
+      items: [
+        { id: "1", role: "owner", lastSeenAt: "2026-09-27T10:00:00.000Z" },
+        { id: "2", role: "member", lastSeenAt: null },
+      ],
+    })
+    const asked = client.calls.filter((call) => call.method === "getChatMembers").map((call) => call.args[1])
+    expect(asked).toEqual([{ offset: 2, limit: 2 }])
   })
 
   it("shows a person with their bio and the chats in common", async () => {

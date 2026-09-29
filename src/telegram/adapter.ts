@@ -7,6 +7,7 @@ import {
   type Chat,
   type ChatCard,
   type ChatEvents,
+  type GroupMember,
   type Member,
   type Message,
   type MessageEvent,
@@ -38,6 +39,7 @@ import {
   toChat,
   toDeletions,
   toFormatted,
+  toGroupMember,
   toInputMedia,
   toMember,
   toMessage,
@@ -74,6 +76,8 @@ export interface Sent {
 }
 
 const SAVED = new Set(["me", "self", "saved"])
+/** Telegram's own cap on a group's member list. */
+const MEMBERS_MAX = 10_000
 /** Pages of 100 that `chats events` reads at most; the rest is `more`. */
 const EVENT_PAGES = 10
 
@@ -469,6 +473,34 @@ export class TelegramAdapter {
   async #inputOf(reference: string): Promise<InputPeerLike> {
     const peer = await this.#peerOf(reference)
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
+  }
+
+  /**
+   * A page of a group's members, 200 a request. Telegram gives at most `MEMBERS_MAX` of a big group,
+   * and a group that hides its list answers only its admins or refuses.
+   */
+  members(
+    reference: string,
+    { limit, offset }: { limit?: number; offset: number },
+  ): Promise<Page<GroupMember> & { chatId: string }> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const wanted = Math.min(limit ?? MEMBERS_MAX, MEMBERS_MAX - offset)
+      const found: GroupMember[] = []
+      let total = 0
+      while (found.length < wanted) {
+        const size = Math.min(200, wanted - found.length)
+        const page = await this.#client.getChatMembers(peer, { offset: offset + found.length, limit: size })
+        total = page.total
+        found.push(...page.map(toGroupMember))
+        if (page.length < size) break
+      }
+      return {
+        chatId: String((await this.#client.getPeer(peer)).id),
+        items: found,
+        hasMore: offset + found.length < Math.min(total, MEMBERS_MAX),
+      }
+    })
   }
 
   /**
