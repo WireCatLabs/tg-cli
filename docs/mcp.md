@@ -75,7 +75,7 @@ Without a flag the server **only reads**: there is no send tool in the list at a
 claude mcp add tg -- tg mcp --allow-send
 ```
 
-A send or an edit over MCP goes through the same checks as its command: a read-only profile, the
+A send, an edit or a forward over MCP goes through the same checks as its command: a read-only profile, the
 profile's `allow` list, the list of allowed recipients, the hourly limit, and the journal of sends
 (`tg sends list`). On top of that the tool is marked as dangerous: VS Code and Cursor ask before
 every call, and Claude Code, by its documentation, shows an approval dialog even where everything
@@ -122,6 +122,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
 | `tg_messages_send` | `tg messages send`, `reply` | send, only with `--allow-send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `markdown` as `--silent`, `--no-preview` and `--md` |
 | `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, only with `--allow-send` and permission `edit`; repeating it changes nothing |
+| `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), only with `--allow-send` and permission `forward`; on an unknown outcome look in that chat before repeating |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
 chat's messages `{ items, limit, hasMore }`, ids are strings. An error is

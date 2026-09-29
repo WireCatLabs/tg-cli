@@ -18,17 +18,22 @@ const configure = (profiles: Record<string, unknown>) => {
 const telegram = () => {
   const sent: string[] = []
   const edited: string[] = []
+  const forwarded: string[] = []
   const adapter = scripted({
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
       return { sendId, message: message(String(sent.length), { chatId, text, outgoing: true }) }
+    },
+    forward: async (_from, _id, toChatId, options) => {
+      forwarded.push(options.silent ? `${toChatId} silent` : toChatId)
+      return message("70", { chatId: toChatId, outgoing: true })
     },
     edit: async (chatId, messageId, text) => {
       edited.push(text)
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited }
+  return { adapter, sent, edited, forwarded }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -135,5 +140,30 @@ describe("the send guard in front of the other writes", () => {
     expect(code).toBe(5)
     expect(error.message).toContain("does not allow edit")
     expect(edited).toEqual([])
+  })
+
+  it("checks a forward against the chat it goes to, not the one it came from", async () => {
+    const { adapter, forwarded } = telegram()
+    mkdirSync(join(pathsFor().state, "profiles"), { recursive: true })
+    writeFileSync(
+      join(pathsFor().state, "profiles", "g-fwd.recipients.json"),
+      JSON.stringify({ chats: [{ id: chat.id, title: chat.title, addedAt: "2026-09-27T00:00:00Z" }] }),
+    )
+
+    const refused = await tg(["g-fwd", "messages", "forward", "Valencia", "5", "--to", "me"], adapter)
+
+    expect(refused.code).toBe(7)
+    expect(forwarded).toEqual([])
+    expect(journal("g-fwd")).toMatchObject([{ kind: "forward", outcome: "refused", chatId: "1" }])
+  })
+
+  it("forwards quietly with --silent and journals it as a forward", async () => {
+    const { adapter, forwarded } = telegram()
+
+    const { code } = await tg(["g-quiet", "messages", "forward", "Valencia", "5", "--to", "me", "--silent"], adapter)
+
+    expect(code).toBe(0)
+    expect(forwarded).toEqual(["1 silent"])
+    expect(journal("g-quiet")).toMatchObject([{ kind: "forward", outcome: "sent", chatId: "1", messageId: "70" }])
   })
 })
