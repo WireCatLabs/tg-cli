@@ -12,6 +12,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   and size. A name the sender chose cannot leave the folder or hide the file, and a file already
   there is never overwritten. The message is fetched again each time, so an old one still downloads.
 
+### Fixed
+
+- **`tg messages list --jsonl` and `tg messages search --jsonl` print one message per line**, as their
+  `--help` says. They printed the whole page as one JSON line; a script that read `.items` from it must
+  now read each line as a message.
+
 ## 0.4.0 — 29.09.2026
 
 ### What's new
