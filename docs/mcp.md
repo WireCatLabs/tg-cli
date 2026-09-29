@@ -111,11 +111,11 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_review` | `tg review`, `--since`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered |
 | `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point |
 | `tg_account_show` | `tg account show` | who the login is |
-| `tg_chats_list` | `tg chats list` | chats, newest first |
+| `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
-| `tg_messages_list` | `tg messages list` | a chat's messages; marks nothing read |
+| `tg_messages_list` | `tg messages list`, `--before`, `--after` | a chat's messages; `after` reads forward from a message id or a time; marks nothing read |
 | `tg_messages_context` | `tg messages show`, `context` | one message and those either side |
 | `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; anything else is refused with the `tg messages download` command that saves it |
 | `tg_messages_transcribe` | `tg messages transcribe` | a voice or video note as text, by Telegram's own recognition; `pending: true` means Telegram was not finished within a minute |

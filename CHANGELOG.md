@@ -5,6 +5,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg chats list --search <text> --kind <kind> --unread`**, and the same on `tg_chats_list`. The
+  filters combine over the newest 200 chats; `--search` takes at least 3 characters.
+- **`tg messages list --after <id-or-time>`** reads a chat forward: the oldest messages newer than a
+  message id, or than a time (`2h`, `1d`, ISO 8601). `after` on `tg_messages_list`.
+
+### Changed — may break scripts
+
+- **`tg service …` is now `tg server …`** — `start|stop|restart|status|logs|install|uninstall`, as in
+  max-cli — and `tg serve status` is gone: `tg server status` answers. `tg server start` without a unit
+  runs serve in the background. A unit written by `tg service install` is still found. From
+  cli-messaging 0.40.0.
+
 ## 0.8.0 — 29.09.2026
 
 ### What's new

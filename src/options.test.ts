@@ -83,6 +83,28 @@ describe("the global options", () => {
   })
 })
 
+describe("chats list", () => {
+  it("--search, --kind and --unread combine over the newest chats", async () => {
+    const chats = scripted({
+      chats: async () => ({
+        items: [
+          chat,
+          { ...chat, id: "2", title: "Valeting crew", unreadCount: 0 },
+          dialog("3", "Valeria", chat.lastMessageAt ?? ""),
+        ],
+        hasMore: false,
+      }),
+    })
+
+    const { code, stdout } = await tg(["chats", "list", "--search", "vale", "--kind", "group", "--unread", "--json"], {
+      adapter: () => chats,
+    })
+
+    expect(code).toBe(0)
+    expect(json(stdout).items.map((one: { id: string }) => one.id)).toEqual([chat.id])
+  })
+})
+
 describe("contacts list", () => {
   const people = scripted({
     chats: async () => ({
@@ -123,6 +145,24 @@ describe("messages", () => {
 
     expect(code).toBe(0)
     expect(asked).toEqual({ limit: 5, before: "40" })
+  })
+
+  it("list --after reads forward from a message id", async () => {
+    let asked: unknown
+    const forward = scripted({
+      historyAfter: async (_chat, window) => {
+        asked = window
+        return { items: [message("51")], hasMore: false }
+      },
+    })
+
+    const { code, stdout } = await tg(["messages", "list", "Valencia", "--after", "50", "--json"], {
+      adapter: () => forward,
+    })
+
+    expect(code).toBe(0)
+    expect(asked).toMatchObject({ after: { id: "50" } })
+    expect(json(stdout).items.map((one: { id: string }) => one.id)).toEqual(["51"])
   })
 
   it("context asks for that many either side of the message", async () => {
