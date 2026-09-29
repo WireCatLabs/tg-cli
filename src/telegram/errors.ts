@@ -21,6 +21,7 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
     "Telegram transcribes only for Premium accounts, or a few messages a week on the free trial, used up now",
   ],
   TRANSCRIPTION_FAILED: ["provider_error", "Telegram could not transcribe this voice message"],
+  PHONE_NOT_OCCUPIED: ["not_found", "nobody Telegram lets you find has this number"],
 }
 
 /**
