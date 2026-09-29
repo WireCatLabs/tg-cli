@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**114 ✅ · 2 ⛔ · 0 ❌** — 54 commands, 62 options.
+**118 ✅ · 2 ⛔ · 0 ❌** — 54 commands, 66 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -20,6 +20,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats list` | `--limit` | ✅ |  |
 | `chats list` | `--page` | ✅ |  |
 | `chats list` | `--all` | ✅ |  |
+| `chats list` | `--search` | ✅ |  |
+| `chats list` | `--kind` | ✅ |  |
+| `chats list` | `--unread` | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
@@ -31,6 +34,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--before` | ✅ |  |
+| `messages list` | `--after` | ✅ |  |
 | `messages search` |  | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
@@ -66,14 +70,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `watch` |  | ✅ |  |
 | `watch` | `--events` | ✅ |  |
 | `serve` |  | ✅ |  |
-| `serve status` |  | ✅ |  |
-| `service install` |  | ✅ |  |
-| `service uninstall` |  | ✅ |  |
-| `service start` |  | ✅ |  |
-| `service stop` |  | ✅ |  |
-| `service status` |  | ✅ |  |
-| `service logs` |  | ✅ |  |
-| `service logs` | `--lines` | ✅ |  |
+| `server start` |  | ✅ |  |
+| `server stop` |  | ✅ |  |
+| `server restart` |  | ✅ |  |
+| `server status` |  | ✅ |  |
+| `server logs` |  | ✅ |  |
+| `server logs` | `--lines` | ✅ |  |
+| `server install` |  | ✅ |  |
+| `server uninstall` |  | ✅ |  |
 | `sync status` |  | ✅ |  |
 | `export` |  | ✅ |  |
 | `export` | `--format` | ✅ |  |
