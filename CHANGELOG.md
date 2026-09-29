@@ -7,6 +7,21 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg service install|uninstall|start|stop|status|logs`** runs `tg serve` as a systemd user unit
+  (Linux) or a launchd agent (macOS), one per profile. `install` only writes the file; nothing starts
+  until `tg service start`.
+- **`tg backfill <chat> --background`** runs a backfill as a job that outlives the command;
+  `tg backfill list`, `status [job]` and `cancel <job>` follow it. Ctrl-C or `cancel` stop a backfill
+  after the page in hand, and it keeps that page.
+- **`tg backfill <chat> --estimate`** — how many messages, requests and seconds a full backfill would
+  still take, from the store; it asks Telegram nothing.
+- **`tg export <chat> --format markdown`** — a chat as a transcript a person reads.
+- **`tg messages search --regex '<pattern>'`** — a regular expression over the stored text.
+- **`tg doctor report create`** writes a problem report — versions, paths, the failed run, the recent
+  send attempts — with no message text, and every chat, message and account id replaced by a label.
+- **`tg session start --qr-file login.png`** writes the login QR code as a PNG instead of drawing it,
+  so an agent can pass it on, and removes it after the login. With the app already stored it needs
+  no terminal.
 - **`tg messages download <chat> <id> [--output dir]`** saves a message's photo, file, video or
   voice note into a folder — the current one unless `--output` names another — and answers its path
   and size. A name the sender chose cannot leave the folder or hide the file, and a file already

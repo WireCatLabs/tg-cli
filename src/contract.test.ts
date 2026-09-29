@@ -1,3 +1,5 @@
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { type CommandInfo, describeProgram } from "@leemour/cli-core/commands"
@@ -52,6 +54,11 @@ const PLACEHOLDER: Record<string, string> = {
   text: "hi",
 }
 
+/** Options a command needs so the suite writes nothing outside its sandbox. */
+const CONFINED: Record<string, string[]> = {
+  "doctor report create": ["--output", join(process.env.TG_TEST_SANDBOX ?? tmpdir(), "report.json")],
+}
+
 const leaves = (list: readonly CommandInfo[]): CommandInfo[] =>
   list.flatMap((one) => (one.commands.length > 0 ? leaves(one.commands) : [one]))
 
@@ -63,7 +70,7 @@ describe("the stdout contract", () => {
     async (_name, command) => {
       const streams = captureStreams()
       const args = command.arguments.map((one) => PLACEHOLDER[one.name] ?? "x")
-      const code = await run([...command.path, ...args, "--json"], {
+      const code = await run([...command.path, ...args, ...(CONFINED[command.path.join(" ")] ?? []), "--json"], {
         streams,
         tty: false,
         stdin: Object.assign(Readable.from(["hi"]), { isTTY: false }),
@@ -71,6 +78,12 @@ describe("the stdout contract", () => {
         env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
         adapter: () => telegram,
         update: { fetch: async () => new Response("{}", { status: 404 }), spawn: () => 1 },
+        system: {
+          platform: "linux",
+          uid: 1000,
+          entry: ["/usr/bin/node", "/opt/tg/dist/bin/tg.js"],
+          run: async () => ({ code: 0, stdout: "", stderr: "" }),
+        },
       })
 
       if (code === 0) {

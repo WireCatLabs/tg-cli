@@ -7,12 +7,13 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**85 ✅ · 2 ⛔ · 0 ❌** — 42 commands, 45 options.
+**100 ✅ · 2 ⛔ · 0 ❌** — 50 commands, 52 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
 | `session start` |  | ✅ |  |
 | `session start` | `--app` | ✅ |  |
+| `session start` | `--qr-file` | ✅ |  |
 | `session end` |  | ✅ |  |
 | `account show` |  | ✅ |  |
 | `chats list` |  | ✅ |  |
@@ -33,6 +34,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` |  | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
+| `messages search` | `--regex` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
 | `messages reply` |  | ✅ |  |
@@ -51,12 +53,21 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `watch` | `--events` | ✅ |  |
 | `serve` |  | ✅ |  |
 | `serve status` |  | ✅ |  |
+| `service install` |  | ✅ |  |
+| `service uninstall` |  | ✅ |  |
+| `service start` |  | ✅ |  |
+| `service stop` |  | ✅ |  |
+| `service status` |  | ✅ |  |
+| `service logs` |  | ✅ |  |
+| `service logs` | `--lines` | ✅ |  |
 | `sync status` |  | ✅ |  |
 | `export` |  | ✅ |  |
+| `export` | `--format` | ✅ |  |
 | `backfill` |  | ✅ |  |
 | `backfill` | `--max` | ✅ |  |
 | `backfill` | `--pace` | ✅ |  |
 | `backfill` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
+| `backfill` | `--estimate` | ✅ |  |
 | `backfill list` |  | ✅ |  |
 | `backfill status` |  | ✅ |  |
 | `backfill cancel` |  | ✅ |  |
@@ -77,6 +88,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `config unset` | `--defaults` | ✅ |  |
 | `doctor` |  | ✅ |  |
 | `doctor` | `--online` | ✅ |  |
+| `doctor report` |  | ✅ |  |
+| `doctor report create` |  | ✅ |  |
+| `doctor report create` | `--run` | ✅ |  |
+| `doctor report create` | `--output` | ✅ |  |
 | `commands` |  | ✅ |  |
 | `complete` |  | ✅ |  |
 | `update` |  | ✅ |  |

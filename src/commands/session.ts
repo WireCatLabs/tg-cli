@@ -1,7 +1,8 @@
-import { existsSync, rmSync } from "node:fs"
+import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
+import { resolve } from "node:path"
 import { CliError } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
-import { readSecret, terminalQr } from "@leemour/cli-messaging"
+import { qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
 import { commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
@@ -55,14 +56,26 @@ export const sessionCommand = () => {
         .choices(["browser", "auto"])
         .default("browser"),
     )
+    .option("--qr-file <png>", "write the QR code to this PNG instead of drawing it, for an agent to pass on")
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
-      const { app } = this.opts<{ app: "browser" | "auto" }>()
+      const { app, qrFile } = this.opts<{ app: "browser" | "auto"; qrFile?: string }>()
+      if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
       const input = context.stdin
-      if (!input.isTTY)
+      // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
+      if (!input.isTTY && qrFile === undefined)
         throw new CliError("validation_error", "`tg session start` asks questions — run it in a terminal")
-      const ask: Ask = (prompt, echo) => readSecret(prompt, { input, echo })
+      const ask: Ask = (prompt, echo) => {
+        if (!input.isTTY) {
+          throw new CliError(
+            "validation_error",
+            `\`tg session start\` needs a terminal to ask for the ${prompt.trim()}`,
+          )
+        }
+        return readSecret(prompt, { input, echo })
+      }
+      const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
       let typedPhone: string | undefined
       const phone = async () => {
         typedPhone ??= await ask("phone number, international format: ", true)
@@ -80,7 +93,13 @@ export const sessionCommand = () => {
             context.renderer.note(
               `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
             )
-            context.streams.diagnostic(terminalQr(url).text)
+            if (!qrPath) {
+              context.streams.diagnostic(terminalQr(url).text)
+              return
+            }
+            writeFileSync(qrPath, qrPng(url), { mode: 0o600 })
+            chmodSync(qrPath, 0o600)
+            context.renderer.note(`the QR code is in ${qrPath} — it is replaced when Telegram renews it`)
           },
           phone,
           code: () => ask("login code: ", true),
@@ -92,6 +111,8 @@ export const sessionCommand = () => {
         rememberAccount(TG, context.profile, account.id, context.env)
         context.renderer.result({ profile: context.profile, account })
       } finally {
+        // The image is a login token for as long as it is valid; it does not outlive the login.
+        if (qrPath) rmSync(qrPath, { force: true })
         await telegram.close()
       }
     })

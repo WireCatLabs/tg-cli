@@ -17,6 +17,8 @@ process.env.TG_STATE_DIR = join(sandbox, "state")
 process.env.TG_CACHE_DIR = join(sandbox, "cache")
 process.env.MESSAGING_STORE = join(sandbox, "messages.db")
 process.env.TMPDIR = sandbox
+// `tg service install` writes a systemd unit under it; the owner's own units are not the suite's.
+process.env.XDG_CONFIG_HOME = join(sandbox, "xdg")
 // Read before the keyring: exported in the shell, they would point the suite at a real app.
 delete process.env.TG_API_ID
 delete process.env.TG_API_HASH

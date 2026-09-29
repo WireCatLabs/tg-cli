@@ -59,6 +59,8 @@ file holds what the help cannot say: the traps and the boundaries.
 6. **`tg export` exports only what was kept**, and never asks Telegram. `tg sync status` says how
    much of each chat is kept.
 7. **`tg backfill` makes many requests from the owner's account.** Only when the owner asked.
+   `tg backfill <chat> --estimate` says what it would cost and asks Telegram nothing — show the owner
+   that first. A long one goes `--background`; `tg backfill status` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `messages search`. The message asked for carries `"anchor": true`.
 9. **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also change the keyring entry.** With them
@@ -75,7 +77,8 @@ file holds what the help cannot say: the traps and the boundaries.
     arriving between page one and page two moves someone across the boundary. A chat's messages do
     not have this: `--before` is exact.
 14. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
-    one lock per profile — start it only when the owner asked.
+    one lock per profile — start it only when the owner asked. The same goes for `tg service
+    start`; `tg service status` is safe to read.
 15. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since <time>`. `--since` takes a time, never a message id.
