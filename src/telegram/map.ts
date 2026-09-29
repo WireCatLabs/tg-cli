@@ -152,7 +152,7 @@ const reactionsOf = (reactions: MessageReactions): Reactions => {
   }
 }
 
-const attachmentsOf = (media: MessageMedia): Attachment[] => {
+export const attachmentsOf = (media: MessageMedia): Attachment[] => {
   if (!media) return []
   const read = <T>(name: string): T | undefined => {
     if (!(name in media)) return undefined
