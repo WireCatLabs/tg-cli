@@ -49,6 +49,7 @@ tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
+tg messages edit <chat> <id> [text]             # your own message; the other side may have read it already
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
