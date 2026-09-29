@@ -13,7 +13,7 @@ import {
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
-import type { Download, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
+import type { After, Download, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -154,6 +154,24 @@ export class TelegramAdapter {
       const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
       const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
       return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined && page.length === limit }
+    })
+  }
+
+  /**
+   * Forward from a message or a moment: `reverse` reads upwards from the offset, inclusive, so an id
+   * starts one past it. The filter keeps a date offset honest — Telegram places it, it does not cut at it.
+   */
+  historyAfter(reference: string, { limit, after }: { limit: number; after: After }): Promise<Page<Message>> {
+    const offset =
+      "id" in after
+        ? { id: messageNumber(after.id, "--after takes a message id or a time") + 1, date: 0 }
+        : { id: 0, date: Math.floor(after.time / 1000) }
+    const newer = (message: Message) =>
+      "id" in after ? Number(message.id) > Number(after.id) : Date.parse(message.timestamp) > after.time
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const page = await this.#client.getHistory(peer, { limit, reverse: true, offset })
+      return { items: page.map(toMessage).filter(newer), hasMore: page.length === limit }
     })
   }
 
