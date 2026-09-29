@@ -12,6 +12,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   store are refused unless the owner adds `--allow-any-file`; over MCP there is no way around it. The
   send journal records the attachment's kind and size, never its name. A retry with the same
   `--send-id` sends one message (measured on a photo).
+
+- **`tg update` restarts a running server with the new tg**, so it stops running the old code; a
+  serve started by hand is named, for you to restart. **`tg server status` says when the running serve
+  is older than tg**, as max-cli's does.
+
 - **`tg chats events <chat> [--since] [--event]`** and `tg_chats_events`: who joined, left, was added
   or removed, and by whom — plus a chat created, renamed or a message pinned — from the chat's service
   messages, seven days back by default. At most ten pages of history a run; `more` says there was more.

@@ -31,6 +31,9 @@ export const installer = ({ scriptPath }: UpdateEnvironment = {}): Installer =>
 export const latest = (environment: UpdateEnvironment = {}) =>
   latestVersion(PACKAGE, environment.fetch ?? fetch, { timeoutMs: 3000 })
 
+/** This install's own entry point — after an update, the new code at the same path. */
+export const tgScript = (): string => fileURLToPath(new URL("./bin/tg.js", import.meta.url))
+
 export const runUpdate = (argv: string[], environment: UpdateEnvironment = {}): number =>
   environment.spawn ? environment.spawn(argv) : runPackageManager(argv)
 

@@ -1,7 +1,8 @@
 import { isNewer, updateCommand } from "@leemour/cli-core/update"
-import { environmentOf, outputFor } from "@leemour/cli-messaging/cli"
+import { environmentOf, outputFor, servingProfiles } from "@leemour/cli-messaging/cli"
 import { Command } from "commander"
-import { installer, latest, PACKAGE, runUpdate } from "../update.js"
+import { TG } from "../app.js"
+import { installer, latest, PACKAGE, runUpdate, tgScript, type UpdateEnvironment } from "../update.js"
 import { VERSION } from "../version.js"
 import type { Environment } from "./context.js"
 
@@ -22,6 +23,7 @@ export const updateSelfCommand = (): Command =>
     .action(async function (this: Command, { check }: { check?: boolean }) {
       const { renderer, format } = outputFor(this)
       const environment = environmentOf<Environment>(this).update ?? {}
+      const env = environmentOf<Environment>(this).env ?? process.env
       const found = installer(environment)
       const argv = updateCommand(found, PACKAGE)
       const newest = await latest(environment)
@@ -45,7 +47,15 @@ export const updateSelfCommand = (): Command =>
       renderer.note(`running: ${argv.join(" ")}`)
       const code = runUpdate(argv, environment)
       if (code !== 0) throw new Error(`${argv[0]} exited with ${code}; tg is still ${VERSION}`)
-      renderer.result(format === "pretty" ? `tg ${VERSION} → ${newest}` : { ...answer, updated: true })
+      const { restarted, left } = restartServers(env, environment)
+      for (const profile of left) {
+        renderer.warn(`the server for profile ${profile} still runs tg ${VERSION} — \`tg ${profile} server restart\``)
+      }
+      const servers =
+        restarted.length > 0 ? `; restarted the server for ${restarted.map((p) => `profile ${p}`).join(", ")}` : ""
+      renderer.result(
+        format === "pretty" ? `tg ${VERSION} → ${newest}${servers}` : { ...answer, updated: true, restarted },
+      )
     })
 
 const summary = ({ current, latest, newer }: { current: string; latest: string | null; newer: boolean }) =>
@@ -54,3 +64,17 @@ const summary = ({ current, latest, newer }: { current: string; latest: string |
     : newer
       ? `tg ${latest} is out — you have ${current}`
       : `tg ${current} is the newest`
+
+/**
+ * A running serve keeps the code it started with; the update replaced the files under it. Each is
+ * restarted by the new tg — `server restart` refuses a serve started by hand, which is then named.
+ */
+const restartServers = (env: NodeJS.ProcessEnv, environment: UpdateEnvironment) => {
+  const restarted: string[] = []
+  const left: string[] = []
+  for (const profile of servingProfiles(TG, env)) {
+    const code = runUpdate([process.execPath, tgScript(), profile, "server", "restart"], environment)
+    ;(code === 0 ? restarted : left).push(profile)
+  }
+  return { restarted, left }
+}
