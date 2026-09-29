@@ -88,7 +88,9 @@ file holds what the help cannot say: the traps and the boundaries.
 The ids below are made up — use the real ones from the previous answer.
 
 ```sh
-tg inbox --json                                    # other people's unread messages, every chat
+tg inbox --json                                    # other people's unread messages; muted and archived chats
+                                                   # only when they mention the owner — `quiet` counts the rest
+tg inbox --all --json                              # every chat with unread messages, muted and archived too
 tg inbox --since 2h --json                         # everything that came in during the last two hours
 tg chats list --json                               # find a chat, take its id
 tg chats show -1001234567890 --json                # one chat and who is in it

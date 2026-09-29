@@ -108,7 +108,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | Tool | Command | What it does |
 |---|---|---|
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
-| `tg_inbox` | `tg inbox`, `--since` | what came in: the unread messages, or everything after a moment, in one call; marks nothing read and never moves `tg inbox --new`'s point |
+| `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point |
 | `tg_account_show` | `tg account show` | who the login is |
 | `tg_chats_list` | `tg chats list` | chats, newest first |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |

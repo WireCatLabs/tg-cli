@@ -183,6 +183,21 @@ describe("messages", () => {
     expect(json(stdout).sendId).toBe("987654321")
   })
 
+  it("send carries --silent, --no-preview and --markdown to the adapter", async () => {
+    let asked: unknown
+    const adapter = scripted({
+      send: async (_chatId, text, options) => {
+        asked = options
+        return { message: message("44", { text, outgoing: true }), sendId: options.sendId }
+      },
+    })
+    const argv = ["messages", "send", "Valencia", "**hola**", "--silent", "--no-preview", "--markdown", "--json"]
+    const { code } = await tg(argv, { adapter: () => adapter })
+
+    expect(code).toBe(0)
+    expect(asked).toMatchObject({ silent: true, noPreview: true, markup: [expect.anything()] })
+  })
+
   it("search finds what an earlier read kept, within one chat and up to --limit", async () => {
     const reads = scripted({
       history: async () => ({
@@ -220,6 +235,18 @@ describe("inbox", () => {
     expect(code).toBe(0)
     const answer = json(stdout)
     expect(answer.chats.flatMap((one: { messages: unknown[] }) => one.messages)).toHaveLength(1)
+  })
+
+  it("--all takes in the muted chats it otherwise leaves out", async () => {
+    const muted = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest, muted: true }], hasMore: false }),
+      history: async () => ({ items: [message("72", { timestamp: latest })], hasMore: false }),
+    })
+    const quiet = json((await tg(["inbox", "--since", "1h", "--json"], { adapter: () => muted })).stdout)
+    const all = json((await tg(["inbox", "--since", "1h", "--all", "--json"], { adapter: () => muted })).stdout)
+
+    expect([quiet.chats, quiet.quiet]).toEqual([[], 1])
+    expect(all.chats).toHaveLength(1)
   })
 
   it("--new starts the next check where this one ended", async () => {

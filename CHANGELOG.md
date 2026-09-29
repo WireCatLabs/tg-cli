@@ -5,6 +5,19 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg inbox` leaves out muted and archived chats** unless they mention you or reply to you; `--all`
+  (and `all` on `tg_inbox`) shows them too. On a busy account most unread chats are muted, and they took
+  the 20 chats `inbox` reads at once. The JSON's `quiet` counts what was left out.
+- **A chat carries `muted`, `archived` and `unreadMentions`** in `--json`. `archived` moved out of
+  `providerMetadata`; `muted` is absent when the chat follows the account's default.
+
+### Fixed
+
+- **`tg messages send --silent`, `--no-preview` and `--markdown` refuse the send** instead of sending
+  without them: they came with cli-messaging 0.32, and tg does not carry them to Telegram yet.
+
 ## 0.5.0 — 29.09.2026
 
 ### What's new
