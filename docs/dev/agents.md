@@ -32,16 +32,16 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | **Shell commands in the same folders** | the Bash sandbox ([`.claude/settings.json`](../../.claude/settings.json) `sandbox`): writes only to these three repositories, the pnpm and npm caches and `/tmp`. Local sockets are open (`allowAllUnixSockets`), so the keyring over D-Bus works — `gh` needs it. On Ubuntu 26.04 it needed [`bin/enable-sandbox`](../../bin/enable-sandbox) once, run by the owner |
 | **No way out of the sandbox** | [`.claude/hooks/sandbox-stays-on.sh`](../../.claude/hooks/sandbox-stays-on.sh) refuses any Bash call that asks for `dangerouslyDisableSandbox`, which bypass mode would otherwise grant unasked |
 | **The one command outside it** | a **plain** `bin/tg …` (`excludedCommands`) — Telegram connects to IP addresses over raw TCP, which the sandbox has no route for. Matched as typed: `bin/tg … \| jq`, `bin/tg … > file` or `cd x && bin/tg …` run *inside* and fail with `ENETUNREACH`. Run it alone and read the tool's output |
-| **Git** | over HTTPS with `gh` as the credential helper ([`bin/git-over-https`](../../bin/git-over-https), run once by the owner) — the sandbox does not let SSH read `~/.ssh`. The sandbox also masks `.git/config` in the working folder, so an agent cannot change a repository's git config |
+| **Git** | over SSH as always: the sandbox may read `~/.ssh/id_ed25519.pub` and `known_hosts` — never the private key — and the SSH agent's socket signs commits and carries pushes (**measured**: a commit signed and a branch pushed from inside the sandbox). The sandbox masks `.git/config` in the working folder, so nothing may write it: **push without `-u`** (`git push origin <branch>`), **branch with `--no-track`** (`git switch -c feat/x --no-track origin/main`) — otherwise git fails halfway and leaves the checkout half switched |
 | **Refused, in every mode** | `sudo` (`permissions.deny`) |
-| **Measured 2026-09-29**, headless, bypass | refused: shell writes to max-cli and `~`, `rm` of max-cli's `package.json`, a Write into max-cli, a Bash call asking to leave the sandbox, `sudo`; ran with no prompt: `rm` and `git branch -D` inside the project, `gh` (chained too), `git push --dry-run` over HTTPS, `pnpm test`, a plain `bin/tg account show` |
+| **Measured 2026-09-29**, headless, bypass | refused: shell writes to max-cli and `~`, `rm` of max-cli's `package.json`, a Write into max-cli, a Bash call asking to leave the sandbox, `sudo`; ran with no prompt: `rm` and `git branch -D` inside the project, `gh` (chained too), a signed commit and a push over SSH, `pnpm test`. **Not yet measured under these exact settings**: a plain `bin/tg` running outside the sandbox — it worked when the same exclusion came from `--settings`; [`bin/check-agents`](../../bin/check-agents), run from a terminal, settles it |
 | **The owner's real account** | project rule 1: live checks read, or send only to Saved Messages through the worktree's `bin/tg` |
 
 ## Rules for a lane
 
 - **Read your handoff, not HANDOFF.md.** `docs/lanes/<lane>.md` says what to read, in order.
 - **A branch and a PR per item**, off `origin/main`, in both repositories: `git switch -c feat/<item>
-  origin/main`. The worktree's own `lane/<lane>` branch is only where it parks.
+  --no-track origin/main`. The worktree's own `lane/<lane>` branch is only where it parks.
 - **Rebase-merge your PR once CI is green**, then start the next item without waiting.
 - **Release your own merged work** (NEED-10 → C): `git fetch`, `npm view @leemour/cli-messaging
   version`, a `chore: release` PR raising it from what is really published, `bin/release`. Another
