@@ -5,6 +5,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **The MCP tool `tg_messages_photo`** hands an agent a message's photo as an image to look at, up
+  to 512 KB. A larger photo, a file, a video or a voice note is refused with the
+  `tg messages download` command that saves it.
+
 ## 0.6.0 — 29.09.2026
 
 ### What's new
