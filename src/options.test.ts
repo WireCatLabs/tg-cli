@@ -210,7 +210,26 @@ describe("messages", () => {
     })
 
     expect(code).toBe(0)
-    expect(json(stdout)).toEqual({ messageId: "42", text: "hola", pending: false })
+    expect(json(stdout)).toEqual({ messageId: "42", text: "hola", pending: false, via: "telegram" })
+  })
+
+  it("**models audio list puts Parakeet first**, and transcribe --local or --model names the download instead of connecting", async () => {
+    const cache = mkdtempSync(join(tmpdir(), "tg-models-"))
+    const environment = {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", MESSAGING_CACHE_DIR: cache },
+      adapter: () => {
+        throw new Error("a missing model must not cost a connection")
+      },
+    }
+    const listed = await tg(["models", "audio", "list", "--json"], environment)
+    const local = await tg(["messages", "transcribe", "Valencia", "42", "--local"], environment)
+    const model = await tg(["messages", "transcribe", "Valencia", "42", "--model", "gigaam-v3"], environment)
+    const unknown = await tg(["models", "audio", "download", "whisper"], environment)
+
+    expect(json(listed.stdout).items[0]).toMatchObject({ id: "parakeet-v3", default: true, downloaded: false })
+    expect(local.stderr.join("")).toContain("tg models audio download parakeet-v3")
+    expect(model.stderr.join("")).toContain("tg models audio download gigaam-v3")
+    expect(unknown.stderr.join("")).toContain("whisper")
   })
 
   it("reply repeats a send with the --send-id it is given, and answers the message", async () => {

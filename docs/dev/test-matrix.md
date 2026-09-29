@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**118 ✅ · 2 ⛔ · 0 ❌** — 54 commands, 66 options.
+**123 ✅ · 4 ⛔ · 0 ❌** — 57 commands, 70 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -23,6 +23,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats list` | `--search` | ✅ |  |
 | `chats list` | `--kind` | ✅ |  |
 | `chats list` | `--unread` | ✅ |  |
+| `chats events` |  | ✅ |  |
+| `chats events` | `--since` | ⛔ | arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests |
+| `chats events` | `--event` | ⛔ | arrived with cli-messaging 0.41.0; lane L1's tg branch feat/chats-events adds the adapter and its tests |
 | `chats show` |  | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
@@ -53,10 +56,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages download` |  | ✅ |  |
 | `messages download` | `--output` | ✅ |  |
 | `messages transcribe` |  | ✅ |  |
+| `messages transcribe` | `--local` | ✅ |  |
+| `messages transcribe` | `--model` | ✅ |  |
 | `messages edit` |  | ✅ |  |
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
+| `models audio list` |  | ✅ |  |
+| `models audio download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since` | ✅ |  |
