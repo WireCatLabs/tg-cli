@@ -6,6 +6,7 @@ import {
   type Attachment,
   type Chat,
   type ChatCard,
+  type ChatEvents,
   type Member,
   type Message,
   type MessageEvent,
@@ -30,6 +31,8 @@ import { toCliError } from "./errors.js"
 import {
   type Account,
   attachmentsOf,
+  type EventOf,
+  eventOf,
   peerToChat,
   toAccount,
   toChat,
@@ -70,6 +73,8 @@ export interface Sent {
 }
 
 const SAVED = new Set(["me", "self", "saved"])
+/** Pages of 100 that `chats events` reads at most; the rest is `more`. */
+const EVENT_PAGES = 10
 
 /**
  * One Telegram account over one connection, speaking only the domain model above this line. Every
@@ -417,6 +422,56 @@ export class TelegramAdapter {
   async #inputOf(reference: string): Promise<InputPeerLike> {
     const peer = await this.#peerOf(reference)
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
+  }
+
+  /**
+   * Service messages back to `since`, newest page first, at most `EVENT_PAGES` of them — a busy
+   * group's week can be thousands. The people a message names only by id are looked up in one call.
+   */
+  chatEvents(reference: string, { since }: { since: number }): Promise<ChatEvents> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const found: { message: TgMessage; change: EventOf }[] = []
+      let offset: { id: number; date: number } | undefined
+      let more = false
+      for (let read = 1; ; read++) {
+        const page = await this.#client.getHistory(peer, { limit: 100, ...(offset ? { offset } : {}) })
+        for (const message of page) {
+          const change = message.date.getTime() > since ? eventOf(message) : null
+          if (change) found.push({ message, change })
+        }
+        const oldest = page.at(-1)
+        if (!page.next || !oldest || oldest.date.getTime() <= since) break
+        if (read >= EVENT_PAGES) {
+          more = true
+          break
+        }
+        offset = page.next
+      }
+
+      const names = new Map(found.map(({ message }) => [message.sender.id, message.sender.displayName || null]))
+      const unknown = [...new Set(found.flatMap(({ change }) => [change.by, ...change.people]))].filter(
+        (id) => !names.has(id),
+      )
+      if (unknown.length > 0) {
+        for (const user of await this.#client.getUsers(unknown)) if (user) names.set(user.id, user.displayName || null)
+      }
+      const person = (id: number) => ({ id: String(id), name: names.get(id) ?? null })
+
+      return {
+        chatId: String((await this.#client.getPeer(peer)).id),
+        since: new Date(since).toISOString(),
+        more,
+        events: found.reverse().map(({ message, change }) => ({
+          messageId: String(message.id),
+          timestamp: message.date.toISOString(),
+          event: change.event,
+          by: person(change.by),
+          people: change.people.map(person),
+          ...(change.title === undefined ? {} : { title: change.title }),
+        })),
+      }
+    })
   }
 
   /**
