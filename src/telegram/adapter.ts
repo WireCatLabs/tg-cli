@@ -22,6 +22,7 @@ import {
   type RawUpdateInfo,
   TelegramClient,
   type Message as TgMessage,
+  tl,
   type User,
 } from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
@@ -240,15 +241,11 @@ export class TelegramAdapter {
         })
         return { message: toMessage(message), sendId }
       } catch (error) {
-        const known = toCliError(error)
-        if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
-          throw new CliError(
-            "outcome_unknown",
-            `no answer from Telegram — the message may have been sent. Repeat with --send-id ${sendId}, never without it`,
-            { sendId, cause: known.code },
-          )
-        }
-        throw known
+        throw unknownIfUnanswered(
+          error,
+          `the message may have been sent. Repeat with --send-id ${sendId}, never without it`,
+          { sendId },
+        )
       }
     })
   }
@@ -324,6 +321,25 @@ export class TelegramAdapter {
     }
   }
 
+  /**
+   * An edit has no `random_id`, but setting the same text twice is harmless: Telegram answers the
+   * repeat with MESSAGE_NOT_MODIFIED, taken here as done — so a retry after an unknown outcome is safe.
+   */
+  edit(chatId: string, messageId: string, text: string): Promise<Message> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      try {
+        return toMessage(await this.#client.editMessage({ chatId: Number(chatId), message: id, text }))
+      } catch (error) {
+        if (tl.RpcError.is(error, "MESSAGE_NOT_MODIFIED")) {
+          const [current] = await this.#client.getMessages(Number(chatId), [id])
+          if (current) return toMessage(current)
+        }
+        throw unknownIfUnanswered(error, "the edit may have been made — repeating it is safe")
+      }
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()
@@ -371,4 +387,13 @@ const parseSendId = (typed: string): Long => {
   if (!/^-?\d{1,20}$/.test(typed))
     throw new CliError("validation_error", "--send-id is the number a failed send printed")
   return Long.fromString(typed)
+}
+
+/** No answer is not a refusal: the write may have reached Telegram. */
+const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
+  const known = toCliError(error)
+  if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
+    return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
+  }
+  return known
 }

@@ -17,13 +17,18 @@ const configure = (profiles: Record<string, unknown>) => {
 
 const telegram = () => {
   const sent: string[] = []
+  const edited: string[] = []
   const adapter = scripted({
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
       return { sendId, message: message(String(sent.length), { chatId, text, outgoing: true }) }
     },
+    edit: async (chatId, messageId, text) => {
+      edited.push(text)
+      return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
+    },
   })
-  return { adapter, sent }
+  return { adapter, sent, edited }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -99,5 +104,36 @@ describe("the send guard in front of messages send", () => {
     const { stdout } = await tg(["g-log", "sends", "list"], adapter)
 
     expect(JSON.parse(stdout[0] ?? "")).toHaveLength(2)
+  })
+})
+
+describe("the send guard in front of the other writes", () => {
+  it("**counts an edit toward the hourly limit**, and journals it as an edit without the text", async () => {
+    configure({ "g-edit": { sendsPerHour: 2 } })
+    const { adapter, edited } = telegram()
+
+    const done = await tg(["g-edit", "messages", "edit", "Valencia", "5", "the new text", "--json"], adapter)
+    await tg(["g-edit", "messages", "send", "Valencia", "one"], adapter)
+    const over = await tg(["g-edit", "messages", "edit", "Valencia", "5", "again"], adapter)
+
+    expect(done.code).toBe(0)
+    expect(JSON.parse(done.stdout[0] ?? "").message).toMatchObject({ id: "5", text: "the new text" })
+    expect(over.code).toBe(8)
+    expect(edited).toEqual(["the new text"])
+    expect(journal("g-edit").filter((entry) => entry.kind === "edit" && entry.outcome === "sent")).toMatchObject([
+      { chatId: chat.id, messageId: "5", length: 12 },
+    ])
+    expect(readFileSync(sendsPathFor(TG, "g-edit"), "utf8")).not.toContain("new text")
+  })
+
+  it("refuses an edit the profile's allow list leaves out", async () => {
+    configure({ "g-noedit": { allow: ["send"] } })
+    const { adapter, edited } = telegram()
+
+    const { code, error } = await tg(["g-noedit", "messages", "edit", "Valencia", "5", "x"], adapter)
+
+    expect(code).toBe(5)
+    expect(error.message).toContain("does not allow edit")
+    expect(edited).toEqual([])
   })
 })

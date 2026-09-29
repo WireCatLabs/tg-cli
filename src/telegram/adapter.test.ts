@@ -51,6 +51,7 @@ class FakeClient {
     }
   }
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
+  editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
 
   #record(method: string, args: unknown[]) {
     this.calls.push({ method, args })
@@ -404,6 +405,35 @@ describe("sending", () => {
     const { adapter, client } = await open()
     expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--send-id/)
     expect(client.sendText).not.toHaveBeenCalled()
+  })
+})
+
+describe("editing", () => {
+  it("edits by chat and message id and answers with the edited message", async () => {
+    const { adapter, client } = await open()
+
+    const edited = await adapter.edit("-100500", "5", "fixed")
+
+    expect(edited).toMatchObject({ id: "5" })
+    expect(client.editMessage).toHaveBeenCalledWith({ chatId: -100500, message: 5, text: "fixed" })
+  })
+
+  it("**takes an edit to the same text as done**, answering the message as it stands", async () => {
+    const { adapter, client } = await open()
+    client.editMessage.mockRejectedValueOnce(new tl.RpcError(400, "MESSAGE_NOT_MODIFIED"))
+    client.found = message(5)
+
+    await expect(adapter.edit("-100500", "5", "same")).resolves.toMatchObject({ id: "5" })
+    expect(client.calls.find((call) => call.method === "getMessages")?.args).toEqual([-100500, [5]])
+  })
+
+  it("makes a timeout an unknown outcome, and passes a refusal through", async () => {
+    const { adapter, client } = await open()
+    client.editMessage.mockRejectedValueOnce(new MtTimeoutError(1000))
+    client.editMessage.mockRejectedValueOnce(new tl.RpcError(403, "MESSAGE_AUTHOR_REQUIRED"))
+
+    await expect(adapter.edit("-100500", "5", "x")).rejects.toMatchObject({ code: "outcome_unknown" })
+    await expect(adapter.edit("-100500", "5", "x")).rejects.toMatchObject({ code: "permission_error" })
   })
 })
 
