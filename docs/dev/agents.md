@@ -4,14 +4,14 @@ Several Claude Code sessions work at once, each on a **lane** of
 [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), each in worktrees of
 its own, without asking the owner for permission. This file is how.
 
-## Before the first lane: SEC-24
+## SEC-24 (closed 2026-09-29)
 
 `bin/check-agents` (2026-09-29) found the private key `~/.ssh/id_ed25519` readable inside the
 sandbox. The sandbox reads the whole machine unless a path is in `denyRead`, and `allowRead` only
 re-opens paths inside a `denyRead` ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)),
 so nothing ever closed `~/.ssh`. Fix: [`bin/finish-agent-setup`](../../bin/finish-agent-setup), run
-by the owner from a terminal, adds `denyRead: ["~/.ssh"]` and then runs `bin/check-agents`: 6c must
-fail, 6 and 6b must still work.
+by the owner from a terminal, adds `denyRead: ["~/.ssh"]` and then runs `bin/check-agents`: 6c
+fails, 6 and 6b still work — measured.
 
 ## Start the lanes in parallel
 

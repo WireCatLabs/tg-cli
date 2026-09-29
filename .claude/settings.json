@@ -63,6 +63,9 @@
       "allowRead": [
         "~/.ssh/id_ed25519.pub",
         "~/.ssh/known_hosts"
+      ],
+      "denyRead": [
+        "~/.ssh"
       ]
     },
     "network": {
