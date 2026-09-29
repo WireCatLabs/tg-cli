@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg session start` says who logged in, where the session file is, where the app keys are read
+  from and what to run next**, in sentences; `--json` gains `session` and `appKeys` (`environment`,
+  `keyring` or `file` — never the keys).
 - **`tg chats list --search <text> --kind <kind> --unread`**, and the same on `tg_chats_list`. The
   filters combine over the newest 200 chats; `--search` takes at least 3 characters.
 - **`tg messages list --after <id-or-time>`** reads a chat forward: the oldest messages newer than a

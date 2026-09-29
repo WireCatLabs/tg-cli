@@ -80,11 +80,30 @@ describe("session start", () => {
     expect(JSON.parse(stdout[0] ?? "")).toEqual({
       profile: "default",
       account: { id: "1", name: "Owner", username: null },
+      session: join(process.env.TG_STATE_DIR ?? "", "sessions", "default.session"),
+      appKeys: "environment",
     })
     expect(seen.prompts?.method).toBe("qr")
     expect(seen.opened).toEqual({ id: 1, hash: "h" })
     expect(stderr.join("\n")).toContain("Link Desktop Device")
     expect(opened.urls).toEqual([])
+  })
+
+  it("tells a person who is logged in, where the session is, and where the app keys live", async () => {
+    const { stdout } = await tg(["session", "start"], {
+      tty: true,
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", HOME: process.env.TG_TEST_SANDBOX ?? "" },
+      adapter: () => loginAdapter({}),
+    })
+
+    expect(stdout.join("\n")).toBe(
+      [
+        "Logged in as Owner (id 1) — profile default.",
+        "Session:  ~/state/sessions/default.session",
+        "App keys: from TG_API_ID and TG_API_HASH",
+        "Next:     tg chats list · tg server install to keep the archive current",
+      ].join("\n"),
+    )
   })
 
   it("logs in by phone number, asking for it on the terminal", async () => {

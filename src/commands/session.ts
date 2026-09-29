@@ -2,12 +2,13 @@ import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
 import { CliError } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
-import { qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
+import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
 import { commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
+
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, forCommand } from "./context.js"
 
@@ -42,6 +43,32 @@ const appCredentials = async (
     id: parseApiId(await ask("App api_id: ", true)),
     hash: parseApiHash(await ask("App api_hash (not shown): ", false)),
   }
+}
+
+const KEYS_IN = {
+  environment: "from TG_API_ID and TG_API_HASH",
+  keyring: "in the keyring",
+  file: "in a file beside the config, where there is no keyring",
+} as const
+
+const loggedIn = (
+  {
+    profile,
+    account,
+    session,
+    appKeys,
+  }: { profile: string; account: Account; session: string; appKeys: keyof typeof KEYS_IN | null },
+  env: NodeJS.ProcessEnv,
+): string => {
+  const who = [account.username ? `@${account.username}` : undefined, `id ${account.id}`].filter(Boolean).join(", ")
+  const home = env.HOME
+  const shown = home && session.startsWith(`${home}/`) ? `~${session.slice(home.length)}` : session
+  return [
+    `Logged in as ${account.name ?? "you"} (${who}) — profile ${profile}.`,
+    `Session:  ${shown}`,
+    `App keys: ${appKeys ? KEYS_IN[appKeys] : "not stored"}`,
+    `Next:     tg chats list · tg server install to keep the archive current`,
+  ].join("\n")
 }
 
 export const sessionCommand = () => {
@@ -109,7 +136,10 @@ export const sessionCommand = () => {
         // Stored only once Telegram has accepted them: a keyring entry cannot be read back to check it.
         if (typed) context.credentials.write(typed)
         rememberAccount(TG, context.profile, account.id, context.env)
-        context.renderer.result({ profile: context.profile, account })
+        const appKeys = context.credentials.source() ?? null
+        const answer = { profile: context.profile, account, session: context.sessionPath, appKeys }
+        if (context.format !== "pretty") context.renderer.result(answer)
+        else context.streams.data(loggedIn(answer, context.env))
       } finally {
         // The image is a login token for as long as it is valid; it does not outlive the login.
         if (qrPath) rmSync(qrPath, { force: true })
