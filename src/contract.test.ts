@@ -50,7 +50,8 @@ describe("the stdout contract", () => {
           uid: 1000,
           entry: ["/usr/bin/node", "/opt/tg/dist/bin/tg.js"],
           run: async () => ({ code: 0, stdout: "", stderr: "" }),
-          spawn: () => 1,
+          // A PID nothing holds; PID 1 is alive, and `server` would take it for a serve still starting.
+          spawn: () => 2 ** 22 + 12345,
           pause: async () => {},
         },
       })

@@ -49,6 +49,12 @@ export const apiCredentials = ({ profile, env = process.env, keyring, warn }: Ap
       const { id, hash } = JSON.parse(stored.secret) as ApiCredentials
       return { id, hash }
     },
+    /** Where they are read from — never the values. */
+    source: (): "environment" | "keyring" | "file" | undefined => {
+      if (env.TG_API_ID && env.TG_API_HASH) return "environment"
+      const stored = store.read(account)
+      return stored ? (stored.source === "keyring" ? "keyring" : "file") : undefined
+    },
     write: (credentials: ApiCredentials): void => {
       store.write(account, JSON.stringify(credentials))
     },
