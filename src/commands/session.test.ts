@@ -7,7 +7,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
 import type { LoginPrompts } from "../telegram/adapter.js"
-import type { Adapter, Environment } from "./context.js"
+import { scripted } from "../testing/scripted.js"
+import type { Environment } from "./context.js"
 
 const answers = vi.hoisted(() => ({ queue: [] as string[], prompts: [] as string[] }))
 const opened = vi.hoisted(() => ({ urls: [] as string[] }))
@@ -46,19 +47,17 @@ beforeEach(() => {
 const terminal = () => Object.assign(Readable.from([]), { isTTY: true })
 
 const loginAdapter = (seen: { prompts?: LoginPrompts; opened?: unknown; loggedOut?: boolean }) =>
-  ({
-    login: async (prompts: LoginPrompts) => {
+  scripted({
+    login: async (prompts) => {
       seen.prompts = prompts
       prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
       if (prompts.method === "phone") await prompts.phone()
       return { id: "1", name: "Owner", username: null }
     },
-    self: () => "1",
     logout: async () => {
       seen.loggedOut = true
     },
-    close: async () => {},
-  }) as unknown as Adapter
+  })
 
 const tg = async (argv: string[], environment: Partial<Environment> = {}) => {
   const streams = captureStreams()
@@ -121,7 +120,7 @@ describe("session start", () => {
   it("stores nothing when the login fails", async () => {
     const keyring = memoryKeyring()
     answers.queue = ["12345", "abcdef"]
-    const failing = { ...loginAdapter({}), login: async () => Promise.reject(new Error("no")) } as unknown as Adapter
+    const failing = { ...loginAdapter({}), login: async () => Promise.reject(new Error("no")) }
     const { code } = await tg(["session", "start"], { keyring, adapter: () => failing })
 
     expect(code).not.toBe(0)
@@ -163,16 +162,15 @@ describe("session start", () => {
     const { code, stderr } = await tg(["session", "start", "--qr-file", path, "--json"], {
       env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
-      adapter: () =>
-        ({
-          ...loginAdapter({}),
-          login: async (prompts: LoginPrompts) => {
-            prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
-            during.bytes = readFileSync(path)
-            during.mode = statSync(path).mode & 0o777
-            return { id: "1", name: "Owner", username: null }
-          },
-        }) as unknown as Adapter,
+      adapter: () => ({
+        ...loginAdapter({}),
+        login: async (prompts: LoginPrompts) => {
+          prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
+          during.bytes = readFileSync(path)
+          during.mode = statSync(path).mode & 0o777
+          return { id: "1", name: "Owner", username: null }
+        },
+      }),
     })
 
     expect(code).toBe(0)

@@ -1,54 +1,14 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
-import type { Chat } from "@leemour/cli-messaging"
 import { listRuns, runsDirFor } from "@leemour/cli-messaging/cli"
 import { describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import type { Adapter } from "./commands/context.js"
 import { run } from "./program.js"
+import { scripted } from "./testing/scripted.js"
 
-const chat: Chat = {
-  id: "-1001234567890",
-  title: "Valencia expats",
-  kind: "group",
-  unreadCount: 0,
-  lastMessageAt: null,
-  participantsCount: 10,
-}
 const BODY = "the door code is 4321"
-
-const adapter = (overrides: Partial<Adapter> = {}): Adapter => ({
-  self: () => "1",
-  login: async () => ({ id: "1", name: null, username: null }),
-  me: async () => ({ id: "1", name: null, username: null }),
-  chats: async () => ({ items: [chat], hasMore: false }),
-  history: async () => ({ items: [], hasMore: false }),
-  chat: async () => ({ ...chat, members: null }),
-  contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
-  around: async () => [],
-  resolve: async () => chat,
-  send: async (chatId, text, { sendId }) => ({
-    sendId,
-    message: {
-      id: "99",
-      chatId,
-      senderId: "1",
-      senderName: null,
-      timestamp: new Date().toISOString(),
-      editedAt: null,
-      text,
-      outgoing: true,
-      attachments: [],
-      replyTo: null,
-      forwardedFrom: null,
-      reactions: null,
-    },
-  }),
-  logout: async () => {},
-  close: async () => {},
-  ...overrides,
-})
 
 const tg = async (argv: string[], overrides: Partial<Adapter> = {}) => {
   const streams = captureStreams()
@@ -57,7 +17,7 @@ const tg = async (argv: string[], overrides: Partial<Adapter> = {}) => {
     tty: false,
     keyring: memoryKeyring(),
     env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-    adapter: () => adapter(overrides),
+    adapter: () => scripted(overrides),
   })
   return { code, stdout: streams.stdout, stderr: streams.stderr }
 }

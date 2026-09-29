@@ -1,22 +1,13 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import type { Chat } from "@leemour/cli-messaging"
 import { SendJournal, sendsPathFor } from "@leemour/cli-messaging/sends"
 import { describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import type { Adapter } from "./commands/context.js"
 import { pathsFor } from "./paths.js"
 import { run } from "./program.js"
-
-const chat: Chat = {
-  id: "-1001234567890",
-  title: "Valencia expats",
-  kind: "group",
-  unreadCount: 0,
-  lastMessageAt: null,
-  participantsCount: 10,
-}
+import { chat, message, scripted } from "./testing/scripted.js"
 
 const configure = (profiles: Record<string, unknown>) => {
   const dir = pathsFor().config
@@ -26,39 +17,12 @@ const configure = (profiles: Record<string, unknown>) => {
 
 const telegram = () => {
   const sent: string[] = []
-  const adapter: Adapter = {
-    self: () => "1",
-    login: async () => ({ id: "1", name: null, username: null }),
-    me: async () => ({ id: "1", name: null, username: null }),
-    chats: async () => ({ items: [chat], hasMore: false }),
-    history: async () => ({ items: [], hasMore: false }),
-    chat: async () => ({ ...chat, members: null }),
-    contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
-    around: async () => [],
-    resolve: async () => chat,
+  const adapter = scripted({
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
-      return {
-        sendId,
-        message: {
-          id: String(sent.length),
-          chatId,
-          senderId: "1",
-          senderName: null,
-          timestamp: new Date().toISOString(),
-          editedAt: null,
-          text,
-          outgoing: true,
-          attachments: [],
-          replyTo: null,
-          forwardedFrom: null,
-          reactions: null,
-        },
-      }
+      return { sendId, message: message(String(sent.length), { chatId, text, outgoing: true }) }
     },
-    logout: async () => {},
-    close: async () => {},
-  }
+  })
   return { adapter, sent }
 }
 

@@ -1,65 +1,10 @@
 import { mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { Readable } from "node:stream"
-import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
-import { type Chat, type Message, pickChat } from "@leemour/cli-messaging"
+import { CliError } from "@leemour/cli-core"
+import { pickChat } from "@leemour/cli-messaging"
 import { describe, expect, it } from "vitest"
-import type { Adapter, Environment } from "./commands/context.js"
-import { run } from "./program.js"
-
-const chat: Chat = {
-  id: "-1001234567890",
-  title: "Valencia expats",
-  kind: "group",
-  unreadCount: 3,
-  lastMessageAt: "2026-09-26T10:00:00.000Z",
-  participantsCount: 5000,
-}
-
-const message: Message = {
-  id: "42",
-  chatId: "-1001234567890",
-  senderId: "777",
-  senderName: "Ana",
-  timestamp: "2026-09-26T10:00:00.000Z",
-  editedAt: null,
-  text: "empadronamiento renewal",
-  outgoing: false,
-  attachments: [],
-  replyTo: null,
-  forwardedFrom: null,
-  reactions: null,
-}
-
-const scripted = (overrides: Partial<Adapter> = {}): Adapter => ({
-  self: () => "1",
-  login: async () => ({ id: "1", name: "Owner", username: null }),
-  me: async () => ({ id: "1", name: "Owner", username: null }),
-  chats: async () => ({ items: [chat], hasMore: false }),
-  history: async () => ({ items: [message], hasMore: false }),
-  chat: async () => ({ ...chat, members: null }),
-  contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
-  around: async () => [],
-  resolve: async (reference) =>
-    reference === "me" ? { ...chat, id: "1", kind: "saved", title: "Saved Messages" } : chat,
-  send: async (_chat, text, { sendId }) => ({ message: { ...message, text, outgoing: true }, sendId }),
-  logout: async () => {},
-  close: async () => {},
-  ...overrides,
-})
-
-const tg = async (argv: string[], environment: Partial<Environment> = {}) => {
-  const streams = captureStreams()
-  const code = await run(argv, {
-    streams,
-    tty: false,
-    keyring: memoryKeyring(),
-    env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-    adapter: () => scripted(),
-    ...environment,
-  })
-  return { code, stdout: streams.stdout, stderr: streams.stderr }
-}
+import { chat, message, scripted, tg } from "./testing/scripted.js"
 
 describe("machine output", () => {
   it("writes one JSON value to stdout and nothing to stderr", async () => {
@@ -109,12 +54,12 @@ describe("machine output", () => {
   })
 
   it("prints one message per line with --jsonl", async () => {
-    const two = [message, { ...message, id: "2" }]
+    const two = [message("42"), message("2")]
     const { stdout } = await tg(["messages", "list", "Valencia", "--jsonl"], {
       adapter: () => scripted({ history: async () => ({ items: two, hasMore: false }) }),
     })
 
-    expect(stdout.map((line) => JSON.parse(line).id)).toEqual([message.id, "2"])
+    expect(stdout.map((line) => JSON.parse(line).id)).toEqual(["42", "2"])
   })
 
   it("says a failure on stderr as JSON, with the exit code for its kind", async () => {
@@ -151,7 +96,7 @@ describe("a person at a terminal", () => {
     expect(code).toBe(0)
     expect(printed.split("\n").length).toBeGreaterThan(1)
     expect(printed).not.toContain("\\x0a")
-    expect(printed).toContain("empadronamiento renewal")
+    expect(printed).toContain(message("42").text)
   })
 })
 

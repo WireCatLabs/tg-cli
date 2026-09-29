@@ -2,50 +2,13 @@ import { mkdirSync, mkdtempSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import type { Chat, Message } from "@leemour/cli-messaging"
 import { storePath } from "@leemour/cli-messaging/store"
 import { describe, expect, it } from "vitest"
-import type { Adapter } from "./commands/context.js"
 import { run } from "./program.js"
+import { chat, scripted, message as scriptedMessage } from "./testing/scripted.js"
 
-const chat: Chat = {
-  id: "-1001234567890",
-  title: "Valencia expats",
-  kind: "group",
-  unreadCount: 3,
-  lastMessageAt: "2026-09-26T10:00:00.000Z",
-  participantsCount: 5000,
-}
-
-const message: Message = {
-  id: "42",
-  chatId: chat.id,
-  senderId: "777",
-  senderName: "Ana",
-  timestamp: "2026-09-26T10:00:00.000Z",
-  editedAt: null,
-  text: "empadronamiento renewal",
-  outgoing: false,
-  attachments: [],
-  replyTo: null,
-  forwardedFrom: null,
-  reactions: null,
-}
-
-const telegram: Adapter = {
-  self: () => "100",
-  login: async () => ({ id: "100", name: "Owner", username: null }),
-  me: async () => ({ id: "100", name: "Owner", username: null }),
-  chats: async () => ({ items: [chat], hasMore: false }),
-  history: async () => ({ items: [message], hasMore: false }),
-  chat: async () => ({ ...chat, members: null }),
-  contact: async () => ({ id: "1", name: null, username: null, description: null, lastMessagedAt: null, chats: [] }),
-  around: async () => [],
-  resolve: async () => chat,
-  send: async (_chat, text, { sendId }) => ({ message: { ...message, text }, sendId }),
-  logout: async () => {},
-  close: async () => {},
-}
+const message = scriptedMessage("42")
+const telegram = scripted({ history: async () => ({ items: [message], hasMore: false }) })
 
 const unreachable = () => {
   throw new Error("--offline must never open Telegram")
@@ -85,7 +48,7 @@ describe("--offline", () => {
 
   it("finds Saved Messages as `me`", async () => {
     const store = freshStore()
-    const saved = { ...message, chatId: "100" }
+    const saved = { ...message, chatId: "1" }
     telegram.history = async () => ({ items: [saved], hasMore: false })
     try {
       await tg(["saved", "messages", "list", "me"], { store })

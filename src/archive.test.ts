@@ -5,8 +5,8 @@ import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Message } from "@leemour/cli-messaging"
 import type { ServiceSystem } from "@leemour/cli-messaging/cli"
 import { describe, expect, it } from "vitest"
-import type { Adapter } from "./commands/context.js"
 import { run } from "./program.js"
+import { scripted } from "./testing/scripted.js"
 
 const CHAT = "1234567890"
 const message = (id: number, text: string): Message => ({
@@ -24,14 +24,12 @@ const message = (id: number, text: string): Message => ({
   reactions: null,
 })
 
-const telegram = {
-  self: () => "100",
-  close: async () => {},
+const telegram = scripted({
   history: async () => ({
     items: [message(101, "invoice #7 paid"), message(102, "see you at 10"), message(103, "invoice #8 due")],
     hasMore: true,
   }),
-} as unknown as Adapter
+})
 
 const ran: string[][] = []
 const system: ServiceSystem = {
