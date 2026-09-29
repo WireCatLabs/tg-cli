@@ -34,6 +34,7 @@ import {
   toAccount,
   toChat,
   toDeletions,
+  toFormatted,
   toMember,
   toMessage,
   toMessageHit,
@@ -227,17 +228,15 @@ export class TelegramAdapter {
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).
    */
   send(chatId: string, text: string, { sendId, replyTo, silent, noPreview, markup }: SendOptions): Promise<Sent> {
-    // Refused rather than dropped: a message meant to arrive silently must not ring. Lane L3 wires them.
-    if (silent || noPreview || markup !== undefined) {
-      throw new CliError("validation_error", "tg cannot send with --silent, --no-preview or --markdown yet")
-    }
     const id = parseSendId(sendId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     return this.#call(async () => {
       try {
-        const message = await this.#client.sendText(Number(chatId), text, {
+        const message = await this.#client.sendText(Number(chatId), markup ? toFormatted(text, markup) : text, {
           randomId: id,
           ...(answering === undefined ? {} : { replyTo: answering }),
+          ...(silent ? { silent } : {}),
+          ...(noPreview ? { disableWebPreview: true } : {}),
         })
         return { message: toMessage(message), sendId }
       } catch (error) {
