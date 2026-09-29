@@ -144,6 +144,24 @@ describe("sending", () => {
     })
   })
 
+  it("schedules with --at and lists what waits in the chat", async () => {
+    const adapter = () =>
+      scripted({
+        send: async (_chat, text, options) => ({
+          message: message("43", { text, outgoing: true, scheduledFor: options.at }),
+          sendId: options.sendId,
+        }),
+        scheduled: async () => [message("43", { scheduledFor: "2030-01-01T09:00:00.000Z" })],
+      })
+
+    const sent = await tg(["messages", "send", "me", "later", "--at", "2h", "--json"], { adapter })
+    const queued = await tg(["messages", "scheduled", "me", "--json"], { adapter })
+
+    expect(sent.code).toBe(0)
+    expect(JSON.parse(sent.stdout[0] ?? "").scheduledFor).toMatch(/^\d{4}-/)
+    expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduledFor).toBe("2030-01-01T09:00:00.000Z")
+  })
+
   it("refuses an empty message before connecting", async () => {
     let opened = false
     const { code } = await tg(["messages", "send", "me"], {

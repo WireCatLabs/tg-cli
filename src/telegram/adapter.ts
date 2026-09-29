@@ -250,7 +250,7 @@ export class TelegramAdapter {
    * One logical send carries one `random_id`, made before the request and repeated by a retry:
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).
    */
-  send(chatId: string, text: string, { sendId, replyTo, silent, noPreview, markup }: SendOptions): Promise<Sent> {
+  send(chatId: string, text: string, { sendId, replyTo, silent, noPreview, markup, at }: SendOptions): Promise<Sent> {
     const id = parseSendId(sendId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     return this.#call(async () => {
@@ -260,6 +260,7 @@ export class TelegramAdapter {
           ...(answering === undefined ? {} : { replyTo: answering }),
           ...(silent ? { silent } : {}),
           ...(noPreview ? { disableWebPreview: true } : {}),
+          ...(at === undefined ? {} : { schedule: new Date(at) }),
         })
         return { message: toMessage(message), sendId }
       } catch (error) {
@@ -304,6 +305,13 @@ export class TelegramAdapter {
       client.onDeleteMessage.remove(deletion)
       client.onRawUpdate.remove(raw)
     }
+  }
+
+  scheduled(reference: string): Promise<Message[]> {
+    return this.#call(async () => {
+      const queued = await this.#client.getAllScheduledMessages(await this.#inputOf(reference))
+      return queued.map(toMessage).sort((a, b) => a.timestamp.localeCompare(b.timestamp))
+    })
   }
 
   /** The message is fetched again, never taken from the store: Telegram's file references expire. */

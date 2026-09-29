@@ -28,6 +28,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   filters combine over the newest 200 chats; `--search` takes at least 3 characters.
 - **`tg messages list --after <id-or-time>`** reads a chat forward: the oldest messages newer than a
   message id, or than a time (`2h`, `1d`, ISO 8601). `after` on `tg_messages_list`.
+- **`tg messages send --silent --no-preview --md`** — without a notification, without a link's preview
+  card, and with `**bold**`, `_italic_`, `~~struck~~` and `` `code` `` as Telegram formatting. The MCP
+  send tool takes `silent`, `no_preview` and `markdown`. The send journal still holds only the length.
+- **`tg messages send --at <time>`** hands the message to Telegram to send later — `2h`, `1d`, or
+  `2026-10-01T09:00` in local time — and `tg messages scheduled <chat>` (MCP `tg_messages_scheduled`)
+  lists what waits. A scheduled send is never repeated: `--send-id` is refused with it.
 
 ### Changed — may break scripts
 
@@ -58,9 +64,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **The MCP tool `tg_messages_photo`** hands an agent a message's photo as an image to look at, up
   to 512 KB. A larger photo, a file, a video or a voice note is refused with the
   `tg messages download` command that saves it.
-- **`tg messages send --silent --no-preview --md`** — without a notification, without a link's preview
-  card, and with `**bold**`, `_italic_`, `~~struck~~` and `` `code` `` as Telegram formatting. The MCP
-  send tool takes `silent`, `no_preview` and `markdown`. The send journal still holds only the length.
 
 ## 0.6.0 — 29.09.2026
 

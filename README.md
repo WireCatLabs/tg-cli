@@ -50,6 +50,8 @@ tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
 tg messages send <chat> [text] --silent --no-preview --md   # no notification, no link card, **bold** _italic_ ~~struck~~ `code`
+tg messages send <chat> [text] --at 2h          # Telegram sends it later, even with this machine off; or --at 2026-10-01T09:00
+tg messages scheduled <chat>     # what waits to be sent there, soonest first
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg messages edit <chat> <id> [text]             # your own message; the other side may have read it already
 tg messages forward <chat> <id> --to <chat> [--silent]   # checked against the chat it goes to
