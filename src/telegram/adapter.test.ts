@@ -60,6 +60,7 @@ class FakeClient {
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
+  sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
   pinMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
@@ -663,6 +664,27 @@ describe("pinning", () => {
     client.pinMessage.mockRejectedValueOnce(new tl.RpcError(403, "CHAT_ADMIN_REQUIRED"))
 
     await expect(adapter.pin("-100500", "5", { notify: true })).rejects.toMatchObject({ code: "permission_error" })
+  })
+})
+
+describe("reacting", () => {
+  it("sets one emoji, and null takes it off", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.react("-100500", "5", "👍")
+    await adapter.react("-100500", "5", null)
+
+    expect(client.sendReaction.mock.calls).toEqual([
+      [{ chatId: -100500, message: 5, emoji: "👍" }],
+      [{ chatId: -100500, message: 5, emoji: null }],
+    ])
+  })
+
+  it("passes an emoji the chat does not allow through as Telegram's refusal", async () => {
+    const { adapter, client } = await open()
+    client.sendReaction.mockRejectedValueOnce(new tl.RpcError(400, "REACTION_INVALID"))
+
+    await expect(adapter.react("-100500", "5", "🦄")).rejects.toMatchObject({ code: "provider_error" })
   })
 })
 

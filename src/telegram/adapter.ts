@@ -443,6 +443,17 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * Telegram sets the owner's reactions as a whole, so one emoji replaces what was there. An emoji the
+   * chat does not allow, or a second one without Premium, comes back as Telegram's refusal.
+   */
+  react(chatId: string, messageId: string, emoji: string | null): Promise<void> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      await this.#client.sendReaction({ chatId: Number(chatId), message: id, emoji })
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()
