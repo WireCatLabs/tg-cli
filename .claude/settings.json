@@ -76,6 +76,7 @@
       "allowAllUnixSockets": true
     },
     "excludedCommands": [
+      ".worktrees/*/tg-cli/bin/tg *",
       "bin/tg *"
     ]
   }
