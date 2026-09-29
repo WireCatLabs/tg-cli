@@ -1,3 +1,6 @@
+import { mkdtempSync, readFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
 import { describe, expect, it } from "vitest"
 import { chat, dialog, message, scripted, tg } from "./testing/scripted.js"
@@ -133,6 +136,31 @@ describe("messages", () => {
     await tg(["messages", "context", "Valencia", "42", "--before", "2", "--after", "3"], { adapter: () => adapter })
 
     expect(asked).toEqual({ id: "42", before: 2, after: 3 })
+  })
+
+  it("download saves the message's file into --output and answers its path", async () => {
+    const into = join(mkdtempSync(join(tmpdir(), "tg-download-")), "out")
+    const adapter = scripted({
+      download: async () => ({
+        files: [
+          {
+            kind: "voice",
+            mime: "audio/ogg",
+            async *bytes() {
+              yield new TextEncoder().encode("opus")
+            },
+          },
+        ],
+        skipped: [],
+      }),
+    })
+    const { code, stdout } = await tg(["messages", "download", "Valencia", "42", "--output", into, "--json"], {
+      adapter: () => adapter,
+    })
+
+    expect(code).toBe(0)
+    expect(json(stdout).items).toEqual([{ kind: "voice", path: join(into, "42-1.ogg"), bytes: 4 }])
+    expect(readFileSync(join(into, "42-1.ogg"), "utf8")).toBe("opus")
   })
 
   it("reply repeats a send with the --send-id it is given, and answers the message", async () => {

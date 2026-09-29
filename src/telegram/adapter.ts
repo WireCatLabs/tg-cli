@@ -3,6 +3,7 @@ import { dirname } from "node:path"
 import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import {
+  type Attachment,
   type Chat,
   type ChatCard,
   type Member,
@@ -12,8 +13,10 @@ import {
   type PersonCard,
   pickChat,
 } from "@leemour/cli-messaging"
+import type { Download } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
+  FileLocation,
   type InputPeerLike,
   Long,
   type RawUpdateInfo,
@@ -25,6 +28,7 @@ import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import {
   type Account,
+  attachmentsOf,
   peerToChat,
   toAccount,
   toChat,
@@ -277,6 +281,28 @@ export class TelegramAdapter {
       client.onDeleteMessage.remove(deletion)
       client.onRawUpdate.remove(raw)
     }
+  }
+
+  /** The message is fetched again, never taken from the store: Telegram's file references expire. */
+  download(reference: string, messageId: string): Promise<Download> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      const [found] = await this.#client.getMessages(await this.#inputOf(reference), id)
+      if (!found) throw new CliError("not_found", `no message ${id} in that chat`)
+      const media = found.media
+      if (!media) return { files: [], skipped: [] }
+      if (!(media instanceof FileLocation)) return { files: [], skipped: [media.type] }
+      const [{ kind, name, mime, size }] = attachmentsOf(media) as [Attachment]
+      const client = this.#client
+      async function* bytes() {
+        try {
+          yield* client.downloadAsIterable(media as FileLocation)
+        } catch (error) {
+          throw toCliError(error)
+        }
+      }
+      return { files: [{ kind, name, mime, size, bytes }], skipped: [] }
+    })
   }
 
   /** Forgets the session on Telegram's side too, so the device disappears from the account's list. */

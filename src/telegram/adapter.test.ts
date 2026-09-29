@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
-import { MtTimeoutError, tl } from "@mtcute/node"
+import { FileLocation, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { TelegramAdapter } from "./adapter.js"
 
@@ -37,6 +37,19 @@ class FakeClient {
   historyNext: unknown = undefined
   peer: unknown = undefined
   members: unknown = []
+  found: unknown = null
+  chunks: unknown[] = [new Uint8Array([1, 2]), new Uint8Array([3])]
+  getMessages = async (...args: unknown[]) => {
+    this.#record("getMessages", args)
+    return [this.found]
+  }
+  async *downloadAsIterable(file: unknown) {
+    this.#record("downloadAsIterable", [file])
+    for (const chunk of this.chunks) {
+      if (chunk instanceof Error) throw chunk
+      yield chunk
+    }
+  }
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
 
   #record(method: string, args: unknown[]) {
@@ -300,6 +313,52 @@ describe("reading", () => {
       throw new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")
     }
     await expect(adapter.me()).rejects.toMatchObject({ code: "authentication_error" })
+  })
+})
+
+describe("downloading", () => {
+  const document = () =>
+    Object.assign(new FileLocation(new Uint8Array()), {
+      type: "document",
+      fileName: "notes.pdf",
+      mimeType: "application/pdf",
+      fileSize: 3,
+    })
+  const read = async (file?: { bytes(): AsyncIterable<Uint8Array> }) => {
+    const chunks: number[] = []
+    for await (const chunk of file?.bytes() ?? []) chunks.push(...chunk)
+    return chunks
+  }
+
+  it("**fetches the message afresh** and hands over its file with the bytes to read", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(10), media: document() }
+
+    const { files, skipped } = await adapter.download("-100500", "10")
+
+    expect(client.calls.find((call) => call.method === "getMessages")?.args).toEqual([-100500, 10])
+    expect(files).toMatchObject([{ kind: "document", name: "notes.pdf", mime: "application/pdf", size: 3 }])
+    expect(await read(files[0])).toEqual([1, 2, 3])
+    expect(skipped).toEqual([])
+  })
+
+  it("names media that is not a file, and says not found for a missing message", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(10), media: { type: "poll" } }
+    expect(await adapter.download("-100500", "10")).toEqual({ files: [], skipped: ["poll"] })
+
+    client.found = null
+    await expect(adapter.download("-100500", "10")).rejects.toMatchObject({ code: "not_found" })
+  })
+
+  it("turns a failure mid-download into a typed error", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(10), media: document() }
+    client.chunks = [new tl.RpcError(400, "FILE_REFERENCE_EXPIRED")]
+
+    const { files } = await adapter.download("-100500", "10")
+
+    await expect(read(files[0])).rejects.toMatchObject({ code: "provider_error" })
   })
 })
 
