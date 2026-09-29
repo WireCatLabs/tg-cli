@@ -83,13 +83,14 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    edits outside those folders and edits to the guards, `sudo` denied; a plain `bin/tg …` runs
    outside the sandbox. **`bin/check-agents`** (owner, from a terminal) proved all of it on
    2026-09-29 — and found **SEC-24: the private key `~/.ssh/id_ed25519` is readable inside the
-   sandbox**, since `sandbox.filesystem.allowRead` of the public key and `known_hosts` (needed for
-   signed commits and SSH pushes) apparently opened all of `~/.ssh`. **Do not start the lanes until
-   it is closed.** Likely fix, to build and prove: drop `allowRead`; per repository (outside the
-   sandbox — it masks `.git/config`) set `user.signingkey` to the literal public key
-   (`key::ssh-ed25519 …`, not a secret) and `core.sshCommand` to `ssh -o UserKnownHostsFile=<a copy
-   of the GitHub lines inside tg-cli>`, as a `bin/` script the owner runs; then `bin/check-agents`
-   again, item 6c must fail. The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's —
+   sandbox**. ~~since `allowRead` apparently opened all of `~/.ssh`~~ — **поправка:** the sandbox
+   reads the whole machine by default and `allowRead` only re-opens paths inside a `denyRead`
+   ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)); nothing closed `~/.ssh`. **Do
+   not start the lanes until it is closed.** Fix built: `bin/finish-agent-setup` (owner, from a
+   terminal) adds `denyRead: ["~/.ssh"]` beside the existing `allowRead` of the public key and
+   `known_hosts`, then runs `bin/check-agents`: 6c must fail, 6 and 6b must still work. The same
+   shape (deny `~/.ssh`, re-open those two) was measured in a session sandbox: the private key
+   unreadable, `ssh-keygen -Y sign` through the agent still works. The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's —
    agents, this one included, cannot edit them. Details: [`docs/dev/agents.md`](docs/dev/agents.md).
    **Then start the lanes** — three terminals (or zellij tabs), one each: `bin/agent l1-reading`,
    `bin/agent l2-actions`, `bin/agent l3-sending`. L1 takes BUG-18 first: a one-shot tg command
