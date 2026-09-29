@@ -123,6 +123,27 @@ describe("sending", () => {
     expect(JSON.parse(stderr[0] ?? "").error.sendId).toBe("-9001")
   })
 
+  it("hands --silent, --no-preview and --md to the adapter, the marks taken out of the text", async () => {
+    const asked: unknown[] = []
+    const { code } = await tg(["messages", "send", "me", "**hola**", "--silent", "--no-preview", "--md"], {
+      adapter: () =>
+        scripted({
+          send: async (_chat, text, options) => {
+            asked.push({ text, ...options })
+            return { message: message("43", { text, outgoing: true }), sendId: options.sendId }
+          },
+        }),
+    })
+
+    expect(code).toBe(0)
+    expect(asked[0]).toMatchObject({
+      text: "hola",
+      silent: true,
+      noPreview: true,
+      markup: [{ type: "bold", from: 0, length: 4 }],
+    })
+  })
+
   it("refuses an empty message before connecting", async () => {
     let opened = false
     const { code } = await tg(["messages", "send", "me"], {

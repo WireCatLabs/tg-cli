@@ -73,13 +73,16 @@ file holds what the help cannot say: the traps and the boundaries.
     A send with `--offline` is always refused.
 12. **Multi-line text goes through stdin only.** Leave out the last argument and the text is read
     from input: `printf 'first\n\nthird' | tg messages send me`.
-13. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
+13. **`--md` reads `**bold**`, `_italic_`, `~~struck~~` and `` `code` ``; nothing else.** `_` and `*`
+    count only at a word's edge, so `file_name` stays as typed; `\*` keeps a mark literal. No links,
+    no headings. `--silent` sends without a notification, `--no-preview` without a link card.
+14. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
     not have this: `--before` is exact.
-14. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
+15. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
     one lock per profile — start it only when the owner asked. The same goes for `tg service
     start`; `tg service status` is safe to read.
-15. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
+16. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since <time>`. `--since` takes a time, never a message id.
 

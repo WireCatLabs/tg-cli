@@ -3,6 +3,7 @@ import type {
   Capabilities,
   Chat,
   ChatKind,
+  Markup,
   Member,
   Message,
   MessageChange,
@@ -20,7 +21,9 @@ import {
   type Peer,
   type PeerSender,
   type RawUpdateInfo,
+  type TextWithEntities,
   type Message as TgMessage,
+  type tl,
 } from "@mtcute/node"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
@@ -208,3 +211,16 @@ export const toReactionChange = ({ update, peers }: RawUpdateInfo): MessageChang
     reactions: reactionsOf(new MessageReactions(update.msgId, chatId, update.reactions, peers)),
   }
 }
+
+const ENTITIES = {
+  bold: "messageEntityBold",
+  italic: "messageEntityItalic",
+  strike: "messageEntityStrike",
+  code: "messageEntityCode",
+} as const satisfies Record<Markup["type"], tl.TypeMessageEntity["_"]>
+
+/** Both count in UTF-16 code units, so a span's place carries over unchanged. */
+export const toFormatted = (text: string, markup: Markup[]): TextWithEntities => ({
+  text,
+  entities: markup.map(({ type, from, length }) => ({ _: ENTITIES[type], offset: from, length })),
+})

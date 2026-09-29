@@ -27,6 +27,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **The MCP tool `tg_messages_photo`** hands an agent a message's photo as an image to look at, up
   to 512 KB. A larger photo, a file, a video or a voice note is refused with the
   `tg messages download` command that saves it.
+- **`tg messages send --silent --no-preview --md`** — without a notification, without a link's preview
+  card, and with `**bold**`, `_italic_`, `~~struck~~` and `` `code` `` as Telegram formatting. The MCP
+  send tool takes `silent`, `no_preview` and `markdown`. The send journal still holds only the length.
 
 ## 0.6.0 — 29.09.2026
 
