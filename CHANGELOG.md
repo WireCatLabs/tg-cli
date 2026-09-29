@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.9.0 — 29.09.2026
+
 ### What's new
 
 - **`tg session start` says who logged in, where the session file is, where the app keys are read
