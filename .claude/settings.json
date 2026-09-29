@@ -17,7 +17,8 @@
       "Bash(git push *)",
       "Bash(gh pr create *)",
       "Bash(gh pr merge *)"
-    ]
+    ],
+    "deny": ["Bash(sudo)", "Bash(sudo *)"]
   },
   "hooks": {
     "PreToolUse": [

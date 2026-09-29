@@ -160,9 +160,9 @@ Read in this order:
     only) and a deleted `dist`, from stale build info. A clean clone builds correctly — which is what
     the release workflow uses. Locally: `rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo` first.
 20. **File edits outside this project, cli-messaging and cli-core are refused by a hook**
-    (`.claude/hooks/writes-stay-inside.sh`), in every permission mode. **Shell commands are not
-    held** — the sandbox cannot start on this machine (Ubuntu 26.04 user-namespace restriction;
-    [`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
+    (`.claude/hooks/writes-stay-inside.sh`), in every permission mode; `sudo` is denied. Shell
+    commands are otherwise free — the sandbox was tried and turned off for the friction it caused
+    ([`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
 21. **A worktree is a lane's, never shared** (`.worktrees/<lane>/`, gitignored). It has its own copy
     of the login and an empty message store; never point it at the main checkout's `.tg/`.
 22. **Another session also changes the shared store** — migration 4 (`account_identities`,
