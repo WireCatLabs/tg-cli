@@ -237,6 +237,26 @@ describe("reading", () => {
     ])
   })
 
+  it("reads forward from one past a message id, or from a moment, keeping only what is newer", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(11), message(12)]
+
+    const byId = await adapter.historyAfter("-100500", { limit: 2, after: { id: "10" } })
+    client.history = [message(11), { ...message(12), date: new Date("2026-09-27T11:00:00.000Z") }]
+    const byTime = await adapter.historyAfter("-100500", {
+      limit: 5,
+      after: { time: Date.parse("2026-09-27T10:30:00.000Z") },
+    })
+
+    expect([byId.items.map((one) => one.id), byId.hasMore]).toEqual([["11", "12"], true])
+    expect([byTime.items.map((one) => one.id), byTime.hasMore]).toEqual([["12"], false])
+    const asked = client.calls.filter((call) => call.method === "getHistory").map((call) => call.args[1])
+    expect(asked).toEqual([
+      { limit: 2, reverse: true, offset: { id: 11, date: 0 } },
+      { limit: 5, reverse: true, offset: { id: 0, date: Date.parse("2026-09-27T10:30:00.000Z") / 1000 } },
+    ])
+  })
+
   it("refuses a --before that is not a message id before asking Telegram", async () => {
     const { adapter, client } = await open()
     await expect(adapter.history("me", { limit: 2, before: "abc" })).rejects.toMatchObject({
