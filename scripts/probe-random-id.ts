@@ -19,6 +19,7 @@ const { TelegramAdapter } = await import("../dist/telegram/adapter.js")
 const { apiCredentials } = await import("../dist/telegram/credentials.js")
 const { sessionFile } = await import("../dist/paths.js")
 const { resolveSettings } = await import("../dist/app.js")
+const { newSendId } = await import("@leemour/cli-messaging/sends")
 
 const { profile } = resolveSettings()
 const credentials = apiCredentials({ profile }).read()
@@ -33,7 +34,8 @@ const text = `tg-cli probe: random_id deduplication, ${new Date().toISOString()}
 const attempt = async (sendId?: string) => {
   const telegram = await open()
   try {
-    const sent = await telegram.send("me", text, sendId === undefined ? {} : { sendId })
+    const saved = await telegram.resolve("me")
+    const sent = await telegram.send(saved.id, text, { sendId: sendId ?? newSendId() })
     return { ok: true, sendId: sent.sendId, messageId: sent.message.id }
   } catch (error) {
     const { code, details } = error as { code?: string; details?: { providerError?: string } }

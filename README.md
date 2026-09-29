@@ -4,7 +4,7 @@ A local command line interface for a personal Telegram account, built for agents
 operation per call, one JSON value on stdout when piped, a typed error and a stable exit code on
 failure.
 
-**Status: 0.1.0, on npm.** Reads, sends through a guard, keeps a local searchable archive. The design
+**Status: on npm** — what each version changed is in [CHANGELOG.md](CHANGELOG.md). Reads, sends through a guard, keeps a local searchable archive. The design
 is [the platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md)
 in `cli-messaging`, which holds everything messenger-neutral. Telegram-specific code lives only in
 `src/telegram/`, and a lint rule keeps mtcute there.
