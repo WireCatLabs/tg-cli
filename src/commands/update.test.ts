@@ -1,12 +1,17 @@
+import { mkdirSync, rmSync, writeFileSync } from "node:fs"
+import { dirname, join } from "node:path"
 import { captureStreams } from "@leemour/cli-core"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, onTestFinished } from "vitest"
 import { run } from "../program.js"
 import type { UpdateEnvironment } from "../update.js"
 
 const PNPM =
   "/home/a/.local/share/pnpm/store/v11/links/@leemour/tg-cli/0.1.0/x/node_modules/@leemour/tg-cli/dist/update.js"
 
-const update = async (argv: string[], { latest = "99.0.0" as string | null, scriptPath = PNPM, exit = 0 } = {}) => {
+const update = async (
+  argv: string[],
+  { latest = "99.0.0" as string | null, scriptPath = PNPM, exit = 0, restartExit = 0 } = {},
+) => {
   const ran: string[][] = []
   const environment: UpdateEnvironment = {
     scriptPath,
@@ -14,7 +19,7 @@ const update = async (argv: string[], { latest = "99.0.0" as string | null, scri
       latest === null ? new Response("", { status: 503 }) : new Response(JSON.stringify({ version: latest })),
     spawn: (command) => {
       ran.push(command)
-      return exit
+      return command.includes("restart") ? restartExit : exit
     },
   }
   const streams = captureStreams()
@@ -70,5 +75,31 @@ describe("tg update", () => {
     expect(code).not.toBe(0)
     expect(result).toBeUndefined()
     expect(stderr).toContain("exited with 7")
+  })
+})
+
+describe("tg update and a running server", () => {
+  const serving = (profile: string) => {
+    const lock = join(process.env.TG_STATE_DIR ?? "", "serve", `${profile}.lock`)
+    mkdirSync(dirname(lock), { recursive: true })
+    writeFileSync(lock, JSON.stringify({ pid: process.pid, startedAt: "2026-09-29T10:00:00.000Z" }))
+    onTestFinished(() => rmSync(lock, { force: true }))
+  }
+
+  it("**restarts each running server with the new tg**, so it stops running the old code", async () => {
+    serving("work")
+    const { ran, result } = await update([])
+
+    expect(ran[1]).toEqual([process.execPath, expect.stringMatching(/bin\/tg\.js$/), "work", "server", "restart"])
+    expect(result).toMatchObject({ updated: true, restarted: ["work"] })
+  })
+
+  it("names a server it could not restart, and still reports the update", async () => {
+    serving("work")
+    const { code, result, stderr } = await update([], { restartExit: 2 })
+
+    expect(code).toBe(0)
+    expect(result).toMatchObject({ updated: true, restarted: [] })
+    expect(stderr).toContain("`tg work server restart`")
   })
 })

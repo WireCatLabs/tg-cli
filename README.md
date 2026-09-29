@@ -84,7 +84,7 @@ tg config show|set|unset         # the settings in force and where each came fro
 tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
 tg doctor [--online]             # the installation's state; --online connects once
 tg doctor report create [--run id] [--output file]   # a problem report: no message text, every id a label
-tg update [--check]              # update with the package manager that installed tg; never runs by itself
+tg update [--check]              # update with the package manager that installed tg, then restart a running server; never runs by itself
 tg mcp [--allow-send [--confirm-send]]   # serve this profile to an agent over MCP — docs/mcp.md
 tg mcp config [the same flags]   # the entry for Claude Desktop, Cursor and others
 tg skill show > ~/.claude/skills/tg-cli/SKILL.md   # the instructions for an agent that has a terminal
