@@ -7,8 +7,11 @@ its own, without asking the owner for permission. This file is how.
 ## Before the first lane: SEC-24
 
 `bin/check-agents` (2026-09-29) found the private key `~/.ssh/id_ed25519` readable inside the
-sandbox. Close it first — [`HANDOFF.md`](../../HANDOFF.md) §3b item 6 has the fix path — and rerun
-`bin/check-agents` until its item 6c fails.
+sandbox. The sandbox reads the whole machine unless a path is in `denyRead`, and `allowRead` only
+re-opens paths inside a `denyRead` ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)),
+so nothing ever closed `~/.ssh`. Fix: [`bin/finish-agent-setup`](../../bin/finish-agent-setup), run
+by the owner from a terminal, adds `denyRead: ["~/.ssh"]` and then runs `bin/check-agents`: 6c must
+fail, 6 and 6b must still work.
 
 ## Start the lanes in parallel
 
@@ -48,7 +51,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | **Shell commands in the same folders** | the Bash sandbox ([`.claude/settings.json`](../../.claude/settings.json) `sandbox`): writes only to these three repositories, the pnpm and npm caches and `/tmp`. Local sockets are open (`allowAllUnixSockets`), so the keyring over D-Bus works — `gh` needs it. On Ubuntu 26.04 it needed [`bin/enable-sandbox`](../../bin/enable-sandbox) once, run by the owner |
 | **No way out of the sandbox** | [`.claude/hooks/sandbox-stays-on.sh`](../../.claude/hooks/sandbox-stays-on.sh) refuses any Bash call that asks for `dangerouslyDisableSandbox`, which bypass mode would otherwise grant unasked |
 | **The one command outside it** | a **plain** `bin/tg …` (`excludedCommands`) — Telegram connects to IP addresses over raw TCP, which the sandbox has no route for. Matched as typed: `bin/tg … \| jq`, `bin/tg … > file` or `cd x && bin/tg …` run *inside* and fail with `ENETUNREACH`. Run it alone and read the tool's output |
-| **Git** | over SSH as always: the sandbox may read `~/.ssh/id_ed25519.pub` and `known_hosts` — never the private key — and the SSH agent's socket signs commits and carries pushes (**measured**: a commit signed and a branch pushed from inside the sandbox). The sandbox masks `.git/config` in the working folder, so nothing may write it: **push without `-u`** (`git push origin <branch>`), **branch with `--no-track`** (`git switch -c feat/x --no-track origin/main`) — otherwise git fails halfway and leaves the checkout half switched |
+| **Git** | over SSH as always: `~/.ssh` is in `denyRead` and only `~/.ssh/id_ed25519.pub` and `known_hosts` are re-opened — never the private key — and the SSH agent's socket signs commits and carries pushes (**measured**: a commit signed and a branch pushed from inside the sandbox). The sandbox masks `.git/config` in the working folder, so nothing may write it: **push without `-u`** (`git push origin <branch>`), **branch with `--no-track`** (`git switch -c feat/x --no-track origin/main`) — otherwise git fails halfway and leaves the checkout half switched |
 | **Refused, in every mode** | `sudo` (`permissions.deny`) |
 | **Measured 2026-09-29**, headless, bypass | refused: shell writes to max-cli and `~`, `rm` of max-cli's `package.json`, a Write into max-cli, a Bash call asking to leave the sandbox, `sudo`; ran with no prompt: `rm` and `git branch -D` inside the project, `gh` (chained too), a signed commit and a push over SSH, `pnpm test`. **Not yet measured under these exact settings**: a plain `bin/tg` running outside the sandbox — it worked when the same exclusion came from `--settings`; [`bin/check-agents`](../../bin/check-agents), run from a terminal, settles it |
 | **The owner's real account** | project rule 1: live checks read, or send only to Saved Messages through the worktree's `bin/tg` |
