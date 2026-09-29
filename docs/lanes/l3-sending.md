@@ -78,6 +78,6 @@ Each item: cli-messaging (command, options, tool, tests), tg (adapter, map, test
 
 ```sh
 pnpm lint && pnpm typecheck && pnpm test          # both worktrees
-bin/tg messages send me "L3 *check*" --md --silent --json | jq '.message.id'
-bin/tg sends list --json | jq '.items[:3] | map({kind, outcome, length})'
+bin/tg messages send me "L3 *check*" --md --silent --json   # alone, never piped
+bin/tg sends list --limit 3 --json
 ```

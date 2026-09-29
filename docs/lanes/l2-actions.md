@@ -81,6 +81,6 @@ Each item: command in cli-messaging, adapter method in tg, tool, tests both side
 
 ```sh
 pnpm lint && pnpm typecheck && pnpm test          # both worktrees
-bin/tg messages send me "L2 check" --json | jq '.message.id'   # then edit/pin/react/delete that id
-bin/tg sends list --json | jq '.items[:3] | map({kind, outcome})'
+bin/tg messages send me "L2 check" --json   # alone, never piped; then edit/pin/react/delete that id
+bin/tg sends list --limit 3 --json
 ```
