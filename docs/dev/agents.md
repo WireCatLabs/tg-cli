@@ -2,14 +2,23 @@
 
 Several Claude Code sessions work at once, each on a **lane** of
 [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), each in worktrees of
-its own. Each is an ordinary Claude Code session, started by the owner in the lane's folder, with the
-owner's own settings. This file is how.
+its own. Each is an ordinary Claude Code session the owner starts in the lane's folder; the guards in
+`.claude/` keep it inside. This file is how.
+
+## SEC-24 (closed 2026-09-29)
+
+`bin/check-agents` (2026-09-29) found the private key `~/.ssh/id_ed25519` readable inside the
+sandbox. The sandbox reads the whole machine unless a path is in `denyRead`, and `allowRead` only
+re-opens paths inside a `denyRead` ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)),
+so nothing ever closed `~/.ssh`. Fix: [`bin/finish-agent-setup`](../../bin/finish-agent-setup), run
+by the owner from a terminal, adds `denyRead: ["~/.ssh"]` and then runs `bin/check-agents`: 6c
+fails, 6 and 6b still work — measured.
 
 ## Start the lanes in parallel
 
-1. `bin/lane <lane>` for each lane, from the main checkout.
-2. One terminal or zellij tab per lane: `cd .worktrees/<lane>/tg-cli && claude`, and tell it to read
-   `docs/lanes/<lane>.md`.
+1. `bin/check-agents` — every item as its label says (6c must fail).
+2. `bin/lane <lane>` for each lane, then one terminal or zellij tab per lane:
+   `cd .worktrees/<lane>/tg-cli && claude`, told to read `docs/lanes/<lane>.md`.
 3. Each lane works through its handoff alone: PR per item, merge on green, release its own work.
    Watch GitHub, not the terminals. When one finishes, write the next lane's handoff (L4 media or
    L5 archive, [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md)) and
@@ -19,6 +28,7 @@ owner's own settings. This file is how.
 
 ```sh
 bin/lane l1-reading     # .worktrees/l1-reading/{tg-cli,cli-messaging}: install, build, copy the login in
+bin/trust-folder .worktrees/l1-reading/tg-cli .worktrees/l1-reading/cli-messaging   # from a terminal; or accept Claude's trust dialog
 cd .worktrees/l1-reading/tg-cli && claude   # then: "read docs/lanes/l1-reading.md and follow it"
 bin/lane --remove l1-reading   # at the end; refuses while either worktree has uncommitted work
 ```
@@ -34,9 +44,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
   the lane's cli-messaging and tries it, and `--undo` puts the release back. Never commit the
   `file:` path it writes.
 
-## What stops an agent
-
-The owner's guards in `.claude/`, which every session in this repository gets:
+## What an agent may do, and what stops it
 
 | | How |
 |---|---|
@@ -47,6 +55,7 @@ The owner's guards in `.claude/`, which every session in this repository gets:
 | **Git** | over SSH as always: `~/.ssh`, `~/.gnupg`, `~/.aws`, `~/.npmrc` and `~/.pypirc` are in `denyRead`; only `~/.ssh/id_ed25519.pub` and `known_hosts` are re-opened — never the private key — and the SSH agent's socket signs commits and carries pushes (**measured**: a commit signed and a branch pushed from inside the sandbox). The sandbox masks `.git/config` in the working folder, so nothing may write it: **push without `-u`** (`git push origin <branch>`), **branch with `--no-track`** (`git switch -c feat/x --no-track origin/main`) — otherwise git fails halfway and leaves the checkout half switched |
 | **Refused, in every mode** | `sudo` (`permissions.deny`) |
 | **A change to the guards** | inside the sandbox git cannot replace `.claude/settings.json` or `.claude/hooks` (they are locked), so a checkout whose guards differ from the target stops halfway with "unable to unlink". After merging a guard change, the owner runs [`bin/lanes-take-settings`](../../bin/lanes-take-settings) from a terminal and restarts the lanes it names |
+| **Measured 2026-09-29** by [`bin/check-agents`](../../bin/check-agents), headless, bypass | refused: shell writes to max-cli and `~`, `rm` of max-cli's `package.json`, a Write into max-cli, a Bash call asking to leave the sandbox, `sudo`; ran with no prompt: `rm` and `git branch -D` inside the project, `gh` (chained too), a signed commit and a push over SSH, `pnpm test`. **Not yet measured under these exact settings**: a plain `bin/tg` running outside the sandbox — it worked when the same exclusion came from `--settings`; [`bin/check-agents`](../../bin/check-agents), run from a terminal, settles it |
 | **The owner's real account** | project rule 1: live checks read, or send only to Saved Messages through the worktree's `bin/tg` |
 
 ## Rules for a lane

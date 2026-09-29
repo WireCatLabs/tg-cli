@@ -79,8 +79,9 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    then the owner starts `claude` in `.worktrees/<lane>/tg-cli`. The guards in `.claude/` (the Bash
    sandbox, the hooks refusing a sandbox escape and edits outside tg-cli, cli-messaging and cli-core,
    `sudo` denied) are the owner's; agents cannot edit them. A plain `bin/tg …` runs outside the
-   sandbox. Details: [`docs/dev/agents.md`](docs/dev/agents.md). The bypass-mode launcher
-   (`bin/agent`) was removed at the owner's request: it started sessions without the owner's settings.
+   sandbox. `bin/check-agents` (owner, from a terminal) proves the guards hold. Details:
+   [`docs/dev/agents.md`](docs/dev/agents.md). The bypass-mode launcher (`bin/agent`) was removed at
+   the owner's request: it started sessions without the owner's settings.
 7. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
 
 ### 3c. How to change things
