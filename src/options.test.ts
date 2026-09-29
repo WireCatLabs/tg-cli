@@ -176,13 +176,12 @@ describe("messages", () => {
 })
 
 describe("inbox", () => {
+  const ago = (ms: number) => new Date(Date.now() - ms).toISOString()
+  const [earlier, latest] = [ago(120_000), ago(60_000)]
   const unread = scripted({
-    chats: async () => ({ items: [{ ...chat, lastMessageAt: new Date().toISOString() }], hasMore: false }),
-    history: async () => ({
-      items: [
-        message("70", { timestamp: new Date(Date.now() - 60_000).toISOString() }),
-        message("71", { timestamp: new Date().toISOString() }),
-      ],
+    chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+    history: async (_chat, { limit }) => ({
+      items: [message("70", { timestamp: earlier }), message("71", { timestamp: latest })].slice(-limit),
       hasMore: false,
     }),
   })
