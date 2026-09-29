@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.5.0 — 29.09.2026
+
 ### What's new
 
 - **`tg service install|uninstall|start|stop|status|logs`** runs `tg serve` as a systemd user unit
