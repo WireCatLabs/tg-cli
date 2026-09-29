@@ -107,7 +107,7 @@ tg messages list -1001234567890 --before 4242 --json   # older ones
 tg messages list -1001234567890 --after 4242 --json    # newer ones, oldest first; --after 2h reads from a time
 tg messages context -1001234567890 4242 --before 3 --after 3 --json
 tg messages download -1001234567890 4242 --output /tmp/tg --json   # the message's file; answers its path
-tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute
+tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute; never download a model yourself
 tg messages search "invoice march" --json          # search what was kept
 tg watch --jsonl                                   # new messages as they arrive
 ```
