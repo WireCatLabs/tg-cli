@@ -1,6 +1,9 @@
 {
   "permissions": {
-    "additionalDirectories": ["/home/leemour/Projects/AI/cli-messaging", "/home/leemour/Projects/AI/cli-core"],
+    "additionalDirectories": [
+      "/home/leemour/Projects/AI/cli-messaging",
+      "/home/leemour/Projects/AI/cli-core"
+    ],
     "allow": [
       "Bash(pnpm typecheck)",
       "Bash(pnpm -s typecheck)",
@@ -18,14 +21,55 @@
       "Bash(gh pr create *)",
       "Bash(gh pr merge *)"
     ],
-    "deny": ["Bash(sudo)", "Bash(sudo *)"]
+    "deny": [
+      "Bash(sudo)",
+      "Bash(sudo *)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
       {
         "matcher": "Edit|Write|MultiEdit|NotebookEdit",
-        "hooks": [{ "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/writes-stay-inside.sh" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/writes-stay-inside.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/sandbox-stays-on.sh"
+          }
+        ]
       }
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "filesystem": {
+      "allowWrite": [
+        "/home/leemour/Projects/AI/tg-cli/**",
+        "/home/leemour/Projects/AI/cli-messaging/**",
+        "/home/leemour/Projects/AI/cli-core/**",
+        "~/.local/share/pnpm/**",
+        "~/.cache/**",
+        "~/.npm/**",
+        "/tmp/**"
+      ],
+      "allowRead": [
+        "~/.ssh/id_ed25519.pub",
+        "~/.ssh/known_hosts"
+      ]
+    },
+    "network": {
+      "allowAllUnixSockets": true
+    },
+    "excludedCommands": [
+      "bin/tg *"
     ]
   }
 }

@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 # Starts Claude Code for one lane, in its tg-cli worktree, with no permission prompts. What keeps it
-# inside: .claude/hooks/writes-stay-inside.sh refuses every file edit outside this project,
-# cli-messaging and cli-core (docs/dev/agents.md).
+# inside: the sandbox and the hooks in .claude/ (docs/dev/agents.md). Run it from a terminal.
 #
 #   bin/agent l1-reading
 set -eu
@@ -15,6 +14,9 @@ into="$main/.worktrees/$lane"
 handoff="docs/lanes/$lane.md"
 [ -f "$into/tg-cli/$handoff" ] || { echo "no $handoff in the lane's worktree" >&2; exit 1; }
 
+# The owner's profile, not the default one: its login and its trusted folders are the ones that count.
+export CLAUDE_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.ccs/instances/my}"
+"$here/bin/trust-folder" "$into/tg-cli" "$into/cli-messaging" >/dev/null
 cd "$into/tg-cli"
-exec claude --permission-mode bypassPermissions --add-dir "$into/cli-messaging" \
+exec claude --permission-mode bypassPermissions --setting-sources project,local --add-dir "$into/cli-messaging" \
   "You are lane $lane. Read $handoff and follow it: it is your handoff, read instead of HANDOFF.md."

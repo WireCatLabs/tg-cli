@@ -86,5 +86,5 @@ README, `docs/mcp.md`, `skills/tg-cli/SKILL.md`. Then release (docs/dev/agents.m
 # in each worktree
 pnpm lint && pnpm typecheck && pnpm test
 # tg, live and read-only, counts only
-bin/tg inbox --json | jq '{mode, chats: (.chats|length), skipped: (.skipped|length)}'
+bin/tg inbox --json            # alone, never piped: bin/tg runs outside the sandbox only as typed plainly
 ```
