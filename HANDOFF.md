@@ -85,13 +85,13 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    2026-09-29 — and found **SEC-24: the private key `~/.ssh/id_ed25519` is readable inside the
    sandbox**. ~~since `allowRead` apparently opened all of `~/.ssh`~~ — **поправка:** the sandbox
    reads the whole machine by default and `allowRead` only re-opens paths inside a `denyRead`
-   ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)); nothing closed `~/.ssh`. **Do
-   not start the lanes until it is closed.** Fix built: `bin/finish-agent-setup` (owner, from a
-   terminal) adds `denyRead: ["~/.ssh"]` beside the existing `allowRead` of the public key and
-   `known_hosts`, then runs `bin/check-agents`: 6c must fail, 6 and 6b must still work. The same
-   shape (deny `~/.ssh`, re-open those two) was measured in a session sandbox: the private key
-   unreadable, `ssh-keygen -Y sign` through the agent still works. The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's —
-   agents, this one included, cannot edit them. Details: [`docs/dev/agents.md`](docs/dev/agents.md).
+   ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)); nothing closed `~/.ssh`. Fix:
+   `bin/finish-agent-setup` (owner, from a terminal) adds `denyRead: ["~/.ssh"]` beside the existing `allowRead` of the public key and
+   `known_hosts`, then runs `bin/check-agents`. **Closed 2026-09-29 18:41**, measured by that run:
+   6c `No such file or directory`, 6b signs, SSH reaches GitHub, every other item as labelled. (Item 6
+   pushed to `main`, which is always rejected once `main` moves; it now targets an unused branch.)
+   The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's — agents, this one
+   included, cannot edit them. Details: [`docs/dev/agents.md`](docs/dev/agents.md).
    **Then start the lanes** — three terminals (or zellij tabs), one each: `bin/agent l1-reading`,
    `bin/agent l2-actions`, `bin/agent l3-sending`. L1 takes BUG-18 first: a one-shot tg command
    hangs forever when Telegram is unreachable (no default timeout).
