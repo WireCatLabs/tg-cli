@@ -2,7 +2,7 @@
 # A lane's own worktrees of tg-cli and cli-messaging, under .worktrees/<lane>/ of the main checkout.
 #
 #   bin/lane l1-reading            # creates, installs, builds, copies the owner's login in
-#   bin/agent l1-reading           # then starts Claude Code there
+#   cd .worktrees/l1-reading/tg-cli && claude   # then an ordinary Claude Code session there
 #   bin/lane --remove l1-reading   # at the end: worktrees, lane branches, the copied credentials
 #
 # Each worktree parks on branch lane/<lane>; a PR is a branch of its own off origin/main. The
@@ -34,11 +34,11 @@ if $remove; then
   exit 0
 fi
 
-[ ! -e "$into" ] || { echo "$into exists — bin/agent $lane starts it" >&2; exit 1; }
+[ ! -e "$into" ] || { echo "$into exists" >&2; exit 1; }
 for repo in "$main" "$messaging"; do
   git -C "$repo" fetch -q origin
   git -C "$repo" worktree add -q --no-track -b "lane/$lane" "$into/$(basename "$repo")" origin/main
   (cd "$into/$(basename "$repo")" && pnpm install --frozen-lockfile >/dev/null && pnpm build >/dev/null 2>&1)
 done
 node "$main/scripts/seed-worktree.ts" "$main" "$into/tg-cli"
-echo "ready: $into/tg-cli and $into/cli-messaging — bin/agent $lane"
+echo "ready: $into/tg-cli and $into/cli-messaging — cd $into/tg-cli && claude"
