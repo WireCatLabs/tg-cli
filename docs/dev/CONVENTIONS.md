@@ -29,8 +29,9 @@ for code and documents. This page lists only where `tg` differs or adds.
 [`CHANGELOG.md`](../../CHANGELOG.md), newest first:
 
 - `## Unreleased` on top while there is something unreleased; each version as
-  `## <version> — DD.MM.YYYY`. `bin/release` renames the heading when it has to take the next free
-  version.
+  `## <version> — DD.MM.YYYY`. When `bin/release` has to take the next free version, it renames the
+  prepared version's heading — or, if npm already has that version, dates `## Unreleased` as the new
+  one and leaves the published section alone.
 - Subheadings, each at most once: `What's new`, `Changed — may break scripts`, `Fixed`, `Security`,
   `Removed`. Anything that changes a command's output, an exit code, an option or a config key goes
   under `Changed — may break scripts`.

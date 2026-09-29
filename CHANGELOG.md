@@ -3,13 +3,6 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-### Changed — may break scripts
-
-- **The local message store is upgraded on first use** (from `@leemour/cli-messaging` 0.27.0):
-  people are now kept per account. An older `tg` cannot open the store afterwards.
-
 ## 0.4.0 — 29.09.2026
 
 ### What's new
