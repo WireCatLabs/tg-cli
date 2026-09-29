@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.6.0 — 29.09.2026
+
 ### What's new
 
 - **`tg inbox` leaves out muted and archived chats** unless they mention you or reply to you; `--all`
