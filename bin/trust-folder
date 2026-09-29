@@ -2,10 +2,10 @@
 # Marks folders as trusted in a Claude Code profile, as accepting its trust dialog once would. Without
 # it a new worktree's .claude/settings.json is partly ignored ("this workspace has not been trusted").
 #
-#   bin/trust-folder <folder>...        # profile: $CLAUDE_CONFIG_DIR, else ~/.ccs/instances/my
+#   bin/trust-folder <folder>...        # profile: $TG_CLAUDE_PROFILE, else ~/.ccs/instances/my
 set -eu
 
-profile="${CLAUDE_CONFIG_DIR:-$HOME/.ccs/instances/my}"
+profile="${TG_CLAUDE_PROFILE:-$HOME/.ccs/instances/my}"
 state="$profile/.claude.json"
 [ -f "$state" ] || { echo "no Claude profile at $profile — set CLAUDE_CONFIG_DIR" >&2; exit 1; }
 for folder in "$@"; do
