@@ -75,26 +75,12 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    PR adds its MCP tool in the same PR.** Live MCP check:
    the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
    `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
-6. **The agent setup — built, one security gap open (2026-09-29).** Lanes run unattended:
-   `bin/agent <lane>` = bypass mode, the owner's `ccs` profile (`TG_CLAUDE_PROFILE`, default
-   `~/.ccs/instances/my` — `~/.zshrc` exports a stale `~/.claude`), folders trusted first, the
-   owner's personal `ask` rules skipped. Enforced: the Bash sandbox (writes only to tg-cli,
-   cli-messaging, cli-core, caches, `/tmp`), a hook refusing any sandbox escape, a hook refusing file
-   edits outside those folders and edits to the guards, `sudo` denied; a plain `bin/tg …` runs
-   outside the sandbox. **`bin/check-agents`** (owner, from a terminal) proved all of it on
-   2026-09-29 — and found **SEC-24: the private key `~/.ssh/id_ed25519` is readable inside the
-   sandbox**. ~~since `allowRead` apparently opened all of `~/.ssh`~~ — **поправка:** the sandbox
-   reads the whole machine by default and `allowRead` only re-opens paths inside a `denyRead`
-   ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)); nothing closed `~/.ssh`. Fix:
-   `bin/finish-agent-setup` (owner, from a terminal) adds `denyRead: ["~/.ssh"]` beside the existing `allowRead` of the public key and
-   `known_hosts`, then runs `bin/check-agents`. **Closed 2026-09-29 18:41**, measured by that run:
-   6c `No such file or directory`, 6b signs, SSH reaches GitHub, every other item as labelled. (Item 6
-   pushed to `main`, which is always rejected once `main` moves; it now targets an unused branch.)
-   The guards (`.claude/settings.json`, `.claude/hooks/`) are the owner's — agents, this one
-   included, cannot edit them. Details: [`docs/dev/agents.md`](docs/dev/agents.md).
-   **Then start the lanes** — three terminals (or zellij tabs), one each: `bin/agent l1-reading`,
-   `bin/agent l2-actions`, `bin/agent l3-sending`. L1 takes BUG-18 first: a one-shot tg command
-   hangs forever when Telegram is unreachable (no default timeout).
+6. **Lanes are ordinary Claude Code sessions** (2026-09-29): `bin/lane <lane>` makes the worktrees,
+   then the owner starts `claude` in `.worktrees/<lane>/tg-cli`. The guards in `.claude/` (the Bash
+   sandbox, the hooks refusing a sandbox escape and edits outside tg-cli, cli-messaging and cli-core,
+   `sudo` denied) are the owner's; agents cannot edit them. A plain `bin/tg …` runs outside the
+   sandbox. Details: [`docs/dev/agents.md`](docs/dev/agents.md). The bypass-mode launcher
+   (`bin/agent`) was removed at the owner's request: it started sessions without the owner's settings.
 7. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
 
 ### 3c. How to change things
