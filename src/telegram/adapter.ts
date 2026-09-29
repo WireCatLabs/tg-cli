@@ -377,6 +377,26 @@ export class TelegramAdapter {
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
   }
 
+  /**
+   * A group's admins and its creator, for `review --unanswered`; `null` when the group hides them.
+   * A basic group ignores the `admins` filter and answers everyone, hence the status check.
+   */
+  admins(reference: string): Promise<string[] | null> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      try {
+        const members = await this.#client.getChatMembers(peer, { type: "admins", limit: 200 })
+        return members
+          .filter((member) => member.status === "creator" || member.status === "admin")
+          .map((member) => String(member.user.id))
+      } catch (error) {
+        const known = toCliError(error)
+        if (known instanceof CliError && known.code === "permission_error") return null
+        throw known
+      }
+    })
+  }
+
   /** `null` when the group hides its member list from us: that is an answer about the group, not a failure. */
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
     try {

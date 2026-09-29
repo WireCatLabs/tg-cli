@@ -272,6 +272,21 @@ describe("reading", () => {
     expect((await adapter.chat("-100500")).members).toBeNull()
   })
 
+  it("names a group's admins and creator, and a hidden list as null", async () => {
+    const { adapter, client } = await open()
+    client.dialogs = [dialog(group(-100500, "Valencia expats"))]
+    client.members = [
+      { user: user(1, "Owner"), status: "creator" },
+      { user: user(2, "Mod"), status: "admin" },
+      { user: user(3, "Ana"), status: "member" },
+    ]
+
+    expect(await adapter.admins("-100500")).toEqual(["1", "2"])
+
+    client.members = new tl.RpcError(403, "CHAT_ADMIN_REQUIRED")
+    expect(await adapter.admins("-100500")).toBeNull()
+  })
+
   it("shows a person with their bio and the chats in common", async () => {
     const { adapter, client } = await open()
     client.peer = user(777, "Ana")

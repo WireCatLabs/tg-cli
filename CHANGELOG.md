@@ -5,6 +5,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg review`**: every message, yours too, in each chat that changed since `--since` (three days
+  without it) — for sorting out who owes what. It ends by saying where the next review starts.
+  `--chat` reads one chat, `--unanswered [hours]` keeps the questions nobody answered — a group's
+  admins answer for it too — and `--all` takes in muted and archived chats. The MCP tool `tg_review`
+  and the `review` prompt do the same.
+
 ## 0.7.0 — 29.09.2026
 
 ### What's new

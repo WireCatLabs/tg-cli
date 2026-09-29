@@ -56,6 +56,8 @@ tg messages search <words…> [--chat c]   # search the local store: every word,
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n] [--all]   # other people's unread messages; --new: what arrived since the last check;
                                                     # muted and archived chats only when they mention you, or with --all
+tg review [--since 3d] [--chat c] [--unanswered [hours]] [--all]   # every message, yours too, in chats that changed —
+                                                    # for reviewing who owes what; ends with where the next review starts
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
 tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
 tg backfill <chat> --background   # the same as a job that outlives the command: backfill list|status [job]|cancel <job>
