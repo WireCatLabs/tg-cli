@@ -65,7 +65,11 @@
         "~/.ssh/known_hosts"
       ],
       "denyRead": [
-        "~/.ssh"
+        "~/.ssh",
+        "~/.gnupg",
+        "~/.aws",
+        "~/.npmrc",
+        "~/.pypirc"
       ]
     },
     "network": {
