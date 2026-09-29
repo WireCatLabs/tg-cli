@@ -268,6 +268,36 @@ describe("inbox", () => {
   })
 })
 
+describe("review", () => {
+  const ago = (hours: number) => new Date(Date.now() - hours * 3_600_000).toISOString()
+  const [asked, latest] = [ago(30), ago(1)]
+  const reviewed = scripted({
+    chats: async () => ({ items: [{ ...chat, lastMessageAt: latest, muted: true }], hasMore: false }),
+    history: async () => ({
+      items: [message("80", { timestamp: asked, text: "¿mañana?" }), message("81", { timestamp: latest })],
+      hasMore: false,
+    }),
+    admins: async () => ["5"],
+  })
+
+  it("--since and --all read every message of a muted chat since then, both sides", async () => {
+    const quiet = json((await tg(["review", "--since", "2d", "--json"], { adapter: () => reviewed })).stdout)
+    const all = json((await tg(["review", "--since", "2d", "--all", "--json"], { adapter: () => reviewed })).stdout)
+
+    expect([quiet.chats, quiet.quiet]).toEqual([[], 1])
+    expect(all.chats[0].messages.map((one: { id: string }) => one.id)).toEqual(["80", "81"])
+  })
+
+  it("--chat and --unanswered keep one chat's questions that its admins left open", async () => {
+    const { code, stdout } = await tg(["review", "--chat", "Valencia", "--unanswered", "12", "--json"], {
+      adapter: () => reviewed,
+    })
+
+    expect(code).toBe(0)
+    expect(json(stdout).chats[0]).toMatchObject({ answeredBy: "owner-and-admins", messages: [{ id: "80" }] })
+  })
+})
+
 describe("listening", () => {
   const events: MessageEvent[] = [
     { event: "message", message: { ...message("80"), chatTitle: chat.title } },

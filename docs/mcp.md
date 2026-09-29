@@ -108,6 +108,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | Tool | Command | What it does |
 |---|---|---|
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
+| `tg_review` | `tg review`, `--since`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered |
 | `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point |
 | `tg_account_show` | `tg account show` | who the login is |
 | `tg_chats_list` | `tg chats list` | chats, newest first |
@@ -139,9 +140,9 @@ The server offers three ready prompts — in Claude Code they are `/` commands:
 | `catch-up` | `since` — optional | calls `tg_inbox` once and summarises per chat; sends nothing |
 | `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
+| `review` | `since`, `groups` — optional | calls `tg_review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
 
-`reply` sends through `tg_messages_send`, so without `--allow-send` the agent only shows the draft.
-`review`, which max-cli has, comes with `tg review`.
+`reply` and `review` send through `tg_messages_send`, so without `--allow-send` the agent only shows the drafts.
 
 Chats are resources `tg://chat/<id>` — in Claude Code you can mention them with `@`. A resource is
 the chat and its recent messages. The list comes from the local store and never connects to

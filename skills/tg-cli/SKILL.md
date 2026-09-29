@@ -92,6 +92,9 @@ tg inbox --json                                    # other people's unread messa
                                                    # only when they mention the owner — `quiet` counts the rest
 tg inbox --all --json                              # every chat with unread messages, muted and archived too
 tg inbox --since 2h --json                         # everything that came in during the last two hours
+tg review --since 1d --json                        # every message, the owner's too, in chats that changed — who owes what;
+                                                   # when complete, the next review starts at until
+tg review --unanswered --json                      # questions to the owner or a group's admins nobody answered in 24 h
 tg chats list --json                               # find a chat, take its id
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
