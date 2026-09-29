@@ -17,4 +17,11 @@ export const UNTESTED: Untested[] = [
       "starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts " +
       "drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client",
   },
+  {
+    command: "backfill",
+    option: "--background",
+    reason:
+      "spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts " +
+      "drives it with a stand-in spawnJob, and lane L5 owns the live check",
+  },
 ]

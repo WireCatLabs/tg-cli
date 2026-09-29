@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**82 ✅ · 1 ⛔ · 0 ❌** — 39 commands, 44 options.
+**85 ✅ · 2 ⛔ · 0 ❌** — 42 commands, 45 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -56,6 +56,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `backfill` |  | ✅ |  |
 | `backfill` | `--max` | ✅ |  |
 | `backfill` | `--pace` | ✅ |  |
+| `backfill` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
+| `backfill list` |  | ✅ |  |
+| `backfill status` |  | ✅ |  |
+| `backfill cancel` |  | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
