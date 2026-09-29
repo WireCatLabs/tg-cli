@@ -20,6 +20,10 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test:coverage
       - run: pnpm build
+      # Every command and option has a test or a written reason; the page is rebuilt from this run's
+      # argv log, so the diff also catches a stale test-matrix.md.
+      - run: node --experimental-strip-types scripts/test-matrix.ts --check
+      - run: git diff --exit-code
       - run: pnpm docs:check
 
   bun:

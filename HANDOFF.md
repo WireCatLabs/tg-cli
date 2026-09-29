@@ -193,7 +193,7 @@ pnpm install
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 pnpm smoke:bun
 # tg-cli only
-pnpm test:coverage && pnpm docs:check
+pnpm test:coverage && pnpm test:matrix && pnpm docs:check
 # tg-cli, read-only against the owner's account
 bin/tg account show && bin/tg chats list --limit 3 && bin/tg messages list me --limit 2
 bin/tg doctor && bin/tg sync status
