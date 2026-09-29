@@ -271,7 +271,7 @@ describe("messages", () => {
   it("**models audio list puts Parakeet first**, and transcribe --local or --model names the download instead of connecting", async () => {
     const cache = mkdtempSync(join(tmpdir(), "tg-models-"))
     const environment = {
-      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", MESSAGING_CACHE_DIR: cache },
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", CLI_COMMON_CACHE_DIR: cache },
       adapter: () => {
         throw new Error("a missing model must not cost a connection")
       },

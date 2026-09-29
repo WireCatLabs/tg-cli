@@ -17,7 +17,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **Voice to text on this machine.** `tg models audio list` and `tg models audio download <id>`
   fetch a speech model once — Parakeet v3 (25 languages, the default), GigaAM v3 or GigaAM v3 CTC
-  (Russian) — into a folder every messenger CLI shares. `tg messages transcribe` asks Telegram first
+  (Russian) — into `~/.cache/cli-common/models/audio`, a folder every CLI of the family shares. `tg messages transcribe` asks Telegram first
   and falls back to the local model when the account has no Premium; `--local` or `--model <id>`
   skip Telegram. The profile's `transcribeWith` (`auto`, `messenger`, `local`) and `speechModel`
   set the defaults. Nothing downloads a model by itself.
