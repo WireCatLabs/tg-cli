@@ -56,6 +56,7 @@ tg messages send <chat> [caption] --photo cat.jpg   # or --file report.pdf; hidd
 tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
 tg messages edit <chat> <id> [text]             # your own message; the other side may have read it already
 tg messages forward <chat> <id> --to <chat> [--silent]   # checked against the chat it goes to
+tg messages pin <chat> <id> [--notify]           # quiet unless --notify; `messages unpin <chat> <id>` undoes it
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
 tg messages transcribe <chat> <id> [--local] [--model id]   # a voice note as text: Telegram, else a model on this machine
 tg models audio list | download <id>   # speech models for --local, in ~/.cache/cli-common; Parakeet (25 languages) is the default

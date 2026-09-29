@@ -428,6 +428,21 @@ export class TelegramAdapter {
     })
   }
 
+  /** In a one-to-one chat the pin is on the owner's side only; `notify` reaches groups alone, as Telegram has it. */
+  pin(chatId: string, messageId: string, { notify }: { notify: boolean }): Promise<void> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      await this.#client.pinMessage({ chatId: Number(chatId), message: id, notify })
+    })
+  }
+
+  unpin(chatId: string, messageId: string): Promise<void> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      await this.#client.unpinMessage({ chatId: Number(chatId), message: id })
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()

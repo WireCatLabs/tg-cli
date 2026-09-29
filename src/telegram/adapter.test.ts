@@ -62,6 +62,8 @@ class FakeClient {
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
+  pinMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  unpinMessage = vi.fn(async (..._args: unknown[]): Promise<void> => {})
 
   #record(method: string, args: unknown[]) {
     this.calls.push({ method, args })
@@ -642,6 +644,25 @@ describe("forwarding", () => {
       code: "outcome_unknown",
       message: expect.stringContaining("look in the target chat"),
     })
+  })
+})
+
+describe("pinning", () => {
+  it("pins quietly unless asked, and unpins by message id", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.pin("-100500", "5", { notify: false })
+    await adapter.unpin("-100500", "5")
+
+    expect(client.pinMessage).toHaveBeenCalledWith({ chatId: -100500, message: 5, notify: false })
+    expect(client.unpinMessage).toHaveBeenCalledWith({ chatId: -100500, message: 5 })
+  })
+
+  it("turns a missing admin right into a permission error", async () => {
+    const { adapter, client } = await open()
+    client.pinMessage.mockRejectedValueOnce(new tl.RpcError(403, "CHAT_ADMIN_REQUIRED"))
+
+    await expect(adapter.pin("-100500", "5", { notify: true })).rejects.toMatchObject({ code: "permission_error" })
   })
 })
 
