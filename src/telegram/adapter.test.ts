@@ -41,10 +41,21 @@ class FakeClient {
   found: unknown = null
   transcripts: { text: string; pending?: boolean }[] = []
   resolvePeer = async (peer: unknown) => ({ _: "inputPeerChannel", peer })
+  authorizations: unknown[] = []
+  phoneOwner: unknown = null
+  contacts: unknown[] = []
   call = async (request: { _: string }) => {
     this.#record("call", [request])
+    if (request._ === "account.getAuthorizations") return { authorizations: this.authorizations }
     return this.transcripts.shift() ?? { text: "", pending: true }
   }
+  resolvePhoneNumber = async (phone: string) => {
+    this.#record("resolvePhoneNumber", [phone])
+    if (!this.phoneOwner) throw new tl.RpcError(400, "PHONE_NOT_OCCUPIED")
+    this.peer = this.phoneOwner
+    return { _: "inputPeerUser" }
+  }
+  getContacts = async () => this.contacts
   chunks: unknown[] = [new Uint8Array([1, 2]), new Uint8Array([3])]
   getMessages = async (...args: unknown[]) => {
     this.#record("getMessages", args)
@@ -381,6 +392,49 @@ describe("reading", () => {
     })
     const asked = client.calls.filter((call) => call.method === "getChatMembers").map((call) => call.args[1])
     expect(asked).toEqual([{ offset: 2, limit: 2 }])
+  })
+
+  it("finds a person by phone, and says nobody is there without repeating the number", async () => {
+    const { adapter, client } = await open()
+    client.phoneOwner = user(21, "Adam", { username: "adam_k" })
+
+    expect(await adapter.lookup("34600123456")).toEqual({ id: "21", name: "Adam", username: "adam_k" })
+
+    client.phoneOwner = null
+    const missing = adapter.lookup("34600123456")
+    await expect(missing).rejects.toMatchObject({ code: "not_found" })
+    await expect(missing).rejects.not.toThrow(/600123456/)
+  })
+
+  it("lists the address book, and the sessions without their IP address", async () => {
+    const { adapter, client } = await open()
+    client.contacts = [user(21, "Adam")]
+    client.authorizations = [
+      {
+        current: true,
+        appName: "tg",
+        appVersion: "0.9.0",
+        deviceModel: "Linux",
+        platform: "",
+        systemVersion: "6.8",
+        region: "Valencia",
+        country: "Spain",
+        ip: "192.0.2.1",
+        dateActive: 1_790_000_000,
+        dateCreated: 0,
+      },
+    ]
+
+    expect(await adapter.addressBook()).toEqual([{ id: "21", name: "Adam", username: null }])
+    const [session] = await adapter.sessions()
+    expect(session).toEqual({
+      current: true,
+      client: "tg 0.9.0",
+      device: "Linux, 6.8",
+      location: "Valencia, Spain",
+      lastActiveAt: new Date(1_790_000_000_000).toISOString(),
+      createdAt: null,
+    })
   })
 
   it("shows a person with their bio and the chats in common", async () => {

@@ -1,4 +1,5 @@
 import type {
+  AccountSession,
   Attachment,
   Capabilities,
   Chat,
@@ -49,6 +50,17 @@ export interface Account {
   name: string | null
   username: string | null
 }
+
+const seconds = (at: number): string | null => (at > 0 ? new Date(at * 1000).toISOString() : null)
+
+export const toAccountSession = (session: tl.RawAuthorization): AccountSession => ({
+  current: session.current === true,
+  client: [session.appName, session.appVersion].filter(Boolean).join(" ") || null,
+  device: [session.deviceModel, session.platform, session.systemVersion].filter(Boolean).join(", ") || null,
+  location: [session.region, session.country].filter(Boolean).join(", ") || null,
+  lastActiveAt: seconds(session.dateActive),
+  createdAt: seconds(session.dateCreated),
+})
 
 /** Telegram gives a last-seen time only to someone offline whose privacy shows it. */
 export const toGroupMember = (member: ChatMember): GroupMember => ({

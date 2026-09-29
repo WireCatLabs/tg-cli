@@ -3,6 +3,7 @@ import { dirname } from "node:path"
 import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import {
+  type AccountSession,
   type Attachment,
   type Chat,
   type ChatCard,
@@ -36,6 +37,7 @@ import {
   eventOf,
   peerToChat,
   toAccount,
+  toAccountSession,
   toChat,
   toDeletions,
   toFormatted,
@@ -473,6 +475,24 @@ export class TelegramAdapter {
   async #inputOf(reference: string): Promise<InputPeerLike> {
     const peer = await this.#peerOf(reference)
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
+  }
+
+  /** Telegram answers only where the person's privacy lets the owner find them by number. */
+  lookup(phone: string): Promise<Member> {
+    return this.#call(async () => toMember(await this.#client.getPeer(await this.#client.resolvePhoneNumber(phone))))
+  }
+
+  /** The owner's Telegram contacts — the address book, not the chats. */
+  addressBook(): Promise<Member[]> {
+    return this.#call(async () => (await this.#client.getContacts()).map(toMember))
+  }
+
+  /** Every device and app logged in; the IP address Telegram also sends is left out. */
+  sessions(): Promise<AccountSession[]> {
+    return this.#call(async () => {
+      const { authorizations } = await this.#client.call({ _: "account.getAuthorizations" })
+      return authorizations.map(toAccountSession)
+    })
   }
 
   /**
