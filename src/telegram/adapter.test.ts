@@ -392,6 +392,14 @@ describe("sending", () => {
     await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({ code: "permission_error" })
   })
 
+  it("refuses --silent, --no-preview and --markdown rather than sending without them", async () => {
+    const { adapter, client } = await open()
+    for (const option of [{ silent: true }, { noPreview: true }, { markup: [] }]) {
+      expect(() => adapter.send("-100500", "hola", { sendId: "42", ...option })).toThrow(/cannot send with/)
+    }
+    expect(client.sendText).not.toHaveBeenCalled()
+  })
+
   it("refuses a send id that is not a number without sending", async () => {
     const { adapter, client } = await open()
     expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--send-id/)
