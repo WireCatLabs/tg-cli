@@ -1,8 +1,10 @@
-import { mkdirSync, writeFileSync } from "node:fs"
+import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Readable } from "node:stream"
 import { CliError } from "@leemour/cli-core"
 import { pickChat } from "@leemour/cli-messaging"
+import type { SendOptions } from "@leemour/cli-messaging/cli"
 import { describe, expect, it } from "vitest"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
@@ -160,6 +162,32 @@ describe("sending", () => {
     expect(sent.code).toBe(0)
     expect(JSON.parse(sent.stdout[0] ?? "").scheduledFor).toMatch(/^\d{4}-/)
     expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduledFor).toBe("2030-01-01T09:00:00.000Z")
+  })
+
+  it("attaches a --photo or a --file, and sends a hidden one only with --allow-any-file", async () => {
+    const root = mkdtempSync(join(tmpdir(), "tg-upload-"))
+    writeFileSync(join(root, "cat.png"), "png")
+    mkdirSync(join(root, ".private"))
+    writeFileSync(join(root, ".private", "notes.txt"), "n")
+    const asked: SendOptions[] = []
+    const adapter = () =>
+      scripted({
+        send: async (_chat, text, options) => {
+          asked.push(options)
+          return { message: message("43", { text, outgoing: true }), sendId: options.sendId }
+        },
+      })
+    const hidden = join(root, ".private", "notes.txt")
+
+    const photo = await tg(["messages", "send", "me", "look", "--photo", join(root, "cat.png")], { adapter })
+    const refused = await tg(["messages", "send", "me", "--file", hidden], { adapter })
+    const allowed = await tg(["messages", "send", "me", "--file", hidden, "--allow-any-file"], { adapter })
+
+    expect([photo.code, refused.code, allowed.code]).toEqual([0, 2, 0])
+    expect(asked.map((one) => one.attachments?.map(({ kind, name }) => [kind, name]))).toEqual([
+      [["photo", "cat.png"]],
+      [["file", "notes.txt"]],
+    ])
   })
 
   it("refuses an empty message before connecting", async () => {

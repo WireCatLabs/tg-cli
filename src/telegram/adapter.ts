@@ -38,6 +38,7 @@ import {
   toChat,
   toDeletions,
   toFormatted,
+  toInputMedia,
   toMember,
   toMessage,
   toMessageHit,
@@ -250,18 +251,30 @@ export class TelegramAdapter {
    * One logical send carries one `random_id`, made before the request and repeated by a retry:
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).
    */
-  send(chatId: string, text: string, { sendId, replyTo, silent, noPreview, markup, at }: SendOptions): Promise<Sent> {
+  send(
+    chatId: string,
+    text: string,
+    { sendId, replyTo, silent, noPreview, markup, at, attachments = [] }: SendOptions,
+  ): Promise<Sent> {
     const id = parseSendId(sendId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
+    if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
+    const body = markup ? toFormatted(text, markup) : text
+    const common = {
+      randomId: id,
+      ...(answering === undefined ? {} : { replyTo: answering }),
+      ...(silent ? { silent } : {}),
+      ...(at === undefined ? {} : { schedule: new Date(at) }),
+    }
     return this.#call(async () => {
       try {
-        const message = await this.#client.sendText(Number(chatId), markup ? toFormatted(text, markup) : text, {
-          randomId: id,
-          ...(answering === undefined ? {} : { replyTo: answering }),
-          ...(silent ? { silent } : {}),
-          ...(noPreview ? { disableWebPreview: true } : {}),
-          ...(at === undefined ? {} : { schedule: new Date(at) }),
-        })
+        const [attachment] = attachments
+        const message = attachment
+          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body), common)
+          : await this.#client.sendText(Number(chatId), body, {
+              ...common,
+              ...(noPreview ? { disableWebPreview: true } : {}),
+            })
         return { message: toMessage(message), sendId }
       } catch (error) {
         throw unknownIfUnanswered(

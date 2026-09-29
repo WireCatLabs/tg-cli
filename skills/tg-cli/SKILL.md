@@ -79,13 +79,17 @@ file holds what the help cannot say: the traps and the boundaries.
 14. **`--at 2h` or `--at 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
     It is never repeated: `--send-id` is refused with it, and after exit `14` look in
     `tg messages scheduled <chat>` — a second send would be a second message. Cancel one in the app.
-15. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
+15. **`--photo <path>` or `--file <path>` attaches one file, the text as its caption.** A photo is
+    recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
+    folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
+    the same `--send-id` is safe here too (measured 2026-09-29).
+16. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
     not have this: `--before` is exact.
-16. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
+17. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
     one lock per profile — start it only when the owner asked. The same goes for `tg server
     start`; `tg server status` is safe to read.
-17. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
+18. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since <time>`. `--since` takes a time, never a message id.
 
