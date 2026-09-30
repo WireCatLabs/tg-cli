@@ -12,7 +12,7 @@ order.
 | [usage.md](usage.md) | How do I log in, read, page, send, and use it from a script — in that order? |
 | [sessions.md](sessions.md) | How does login work: QR or phone, the app from my.telegram.org, the keyring, profiles, logout? |
 | [configuration.md](configuration.md) | What can I set, with which variable, and which value wins? |
-| [store.md](store.md) | What does the local store keep, how do I fill it, search it, export it and keep it current? |
+| [store.md](store.md) | What does the local store keep, how do I fill it, search it, export it, keep it current and back it up? |
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
 | [remote.md](remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |

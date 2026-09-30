@@ -123,7 +123,8 @@ An agent connects to `tg` in one of two ways:
   that go out even with this computer off, edits, forwards, pins, reactions, polls, deletion — for
   you or for everyone.
 - **Keep an archive.** Fetch a chat's history into the local store, in the background if it is long;
-  keep the store current with `tg serve`, as a systemd or launchd service.
+  keep the store current with `tg serve`, as a systemd or launchd service; back it up and restore it
+  while it is in use.
 - **Groups and channels.** Members with their role, who joined and left, forum topics, where an
   invite link leads.
 - **The account.** Who you are logged in as, and every device and app logged in to the account.
@@ -376,7 +377,7 @@ In full — what reaches the disk, what goes over the network and what the tool 
 | [usage.md](docs/usage.md) | login, profiles, reading, paging, sending, scripts — in order |
 | [sessions.md](docs/sessions.md) | QR and phone login, the app from my.telegram.org, the keyring, profiles, logout |
 | [configuration.md](docs/configuration.md) | every setting and variable, and which one wins |
-| [store.md](docs/store.md) | the local store: fetch, status, export, search, `--offline`, `serve` as a service |
+| [store.md](docs/store.md) | the local store: fetch, status, export, search, `--offline`, `serve` as a service, backup |
 | [mcp.md](docs/mcp.md) | Claude Desktop, Cursor and other clients without a terminal |
 | [remote.md](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |
@@ -417,7 +418,6 @@ What is coming, in the order it is likely to arrive:
   topic.
 - **Running groups** — creating a group, joining and leaving, members and admins, invite links,
   folders, contacts, your profile, and moderation rules checked on your say-so.
-- **The local store** — backup and restore.
 
 ## Licence
 
