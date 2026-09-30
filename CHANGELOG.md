@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.13.0 — 30.09.2026
+
 ### Changed — may break scripts
 
 - **The shared message store moves to version 6** (cli-messaging 0.49.0). The first `tg` run upgrades
