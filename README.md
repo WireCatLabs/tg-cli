@@ -40,11 +40,15 @@ tg session start [qr|phone] [--app browser|auto]   # QR by default
 tg session start --qr-file login.png   # the QR as a PNG for an agent to pass on; removed after the login
 tg session end                   # logs out on Telegram's side and deletes the session here
 tg account show
+tg account sessions list         # every device and app logged in to the account; ends nothing
 tg chats list [--limit n] [--search text] [--kind dialog|group|channel|saved] [--unread]
 tg chats events <chat> [--since 1d] [--event join,leave,add,remove]   # who joined, left, was added or removed — 7 days back by default
+tg chats members list <chat> [--limit n] [--page n] [--all]   # everyone in a group, with role and last seen
 tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg contacts list [--order recent|name] [--search text]   # people you have a one-to-one chat with
 tg contacts show <person>        # their bio and the groups you share
+tg contacts lookup               # who has a phone number: piped in or typed when asked, never an argument
+tg contacts sync                 # your Telegram contacts into the local store; counts only
 tg messages list <chat> [--limit n] [--before id | --after id-or-time]
 tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
