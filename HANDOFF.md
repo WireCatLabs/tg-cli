@@ -51,7 +51,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 ### 3b. Open right now
 
 1. **tg is on npm: `@leemour/tg-cli@0.2.0`** (2026-09-28), released from GitHub by `bin/release`
-   (trusted publishing works; the workflow publishes and tags). 0.2.0 added `tg update [--check]` (now `tg upgrade`)
+   (trusted publishing works; the workflow publishes and tags). 0.2.0 added what is now `tg upgrade [--check]`
    and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
    `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
    pnpm and bun paths are covered only by the path patterns in `@leemour/cli-core/update`.
@@ -152,7 +152,7 @@ Read in this order:
     (`listen`); one-shot commands keep `disableUpdates: true`. A busy account produces messages every
     few seconds — a live check that expects silence is wrong. `serve` holds a lock file per profile.
 14. **Telegram rate limits:** walking every dialog (`chats list --all`) right after other calls hit
-    FLOOD_WAIT once; `store fetch` (then `backfill`) of 5,000 messages at one page a second did not.
+    FLOOD_WAIT once; `store fetch` of 5,000 messages at one page a second did not.
 15. **A typed chat is often a title.** A run event never names what was typed.
 16. **zsh copies stdout into a pipe** (`cmd 2>&1 >/dev/null | …`, its `MULTIOS`) — check stream
     separation under `sh -c`. zsh also does not split `$var` into words; write multi-step live checks

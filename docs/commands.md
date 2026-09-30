@@ -169,14 +169,14 @@ tg chats members list <chat> [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
-### `tg chats read`
+### `tg chats mark-read`
 
 mark a chat read; the other side sees that you read it
 
 **Changes something in Telegram.**
 
 ```sh
-tg chats read <chat> [options]
+tg chats mark-read <chat> [options]
 ```
 
 | Argument | | What it is |
@@ -260,15 +260,15 @@ tg messages list <chat> [options]
 
 ### `tg messages search`
 
-search the local store — what was read, backfilled or kept by serve; never asks the messenger
+search the local store — what was read, fetched or kept by serve; never asks the messenger
 
 ```sh
-tg messages search <words> [options]
+tg messages search <text> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `words` | required | every word must appear, as a word or the start of one: квартир finds квартира. |
+| `text` | required | every word must appear, as a word or the start of one: квартир finds квартира. |
 
 | Option | What it does |
 |---|---|
@@ -293,6 +293,7 @@ tg messages send <chat> [text] [options]
 
 | Option | What it does |
 |---|---|
+| `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
@@ -301,26 +302,6 @@ tg messages send <chat> [text] [options]
 | `--photo <path>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
 | `--at <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
-
-### `tg messages reply`
-
-answer one message; without [text], the text is read from stdin
-
-**Changes something in Telegram.**
-
-```sh
-tg messages reply <chat> [message] [text] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
-| `message` | optional | the message id to answer. |
-| `text` | optional | the reply. |
-
-| Option | What it does |
-|---|---|
-| `--send-id <id>` | repeat a reply whose outcome was unknown, without risking a second copy. |
 
 ### `tg messages show`
 
@@ -370,7 +351,7 @@ tg messages download <chat> [message] [options]
 |---|---|
 | `--output <dir>` | where to save them; created if missing. Default: `.`. |
 | `--all` | every file of the chat, newest first; run it again to continue where it stopped. |
-| `--pace <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
+| `--pause <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
 
 ### `tg messages transcribe`
 
@@ -786,44 +767,28 @@ remove this profile's unit; stop it first
 tg server uninstall
 ```
 
-## `tg sync`
+## `tg store`
 
-what the local store holds
+the local store of messages
 
-### `tg sync status`
+### `tg store status`
 
 per chat: messages stored, the oldest and newest, and the stretches held completely
 
 ```sh
-tg sync status [chat]
+tg store status [chat]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
-## `tg export`
-
-a chat's stored messages as JSON lines, oldest first; never asks the messenger
-
-```sh
-tg export <chat> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
-
-## `tg backfill`
+### `tg store fetch`
 
 fetch a chat's history into the local store, newest first; run it again to continue
 
 ```sh
-tg backfill <chat> [options]
+tg store fetch <chat> [options]
 ```
 
 | Argument | | What it is |
@@ -833,41 +798,62 @@ tg backfill <chat> [options]
 | Option | What it does |
 |---|---|
 | `--max <n>` | at most this many messages in this run. Default: `1000`. |
-| `--pace <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
-| `--background` | run as a job that outlives this command; `backfill status` follows it. |
-| `--estimate` | how many messages, requests and minutes a full backfill would still take — from the store, no request. |
+| `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
+| `--since <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
+| `--background` | run as a job that outlives this command; `store jobs show` follows it. |
+| `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
 
-### `tg backfill list`
+### `tg store jobs`
 
-background backfill jobs, newest first
+background fetch jobs
+
+#### `tg store jobs list`
+
+background fetch jobs, newest first
 
 ```sh
-tg backfill list
+tg store jobs list
 ```
 
-### `tg backfill status`
+#### `tg store jobs show`
 
 one background job — the newest when none is named — and what the store now holds of its chat
 
 ```sh
-tg backfill status [job]
+tg store jobs show [job]
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `job` | optional | the job id `backfill --background` printed. |
+| `job` | optional | the job id `store fetch --background` printed. |
 
-### `tg backfill cancel`
+#### `tg store jobs cancel`
 
-stop a running background job after its current page; a later backfill resumes where it stopped
+stop a running background job after its current page; a later fetch resumes where it stopped
 
 ```sh
-tg backfill cancel <job>
+tg store jobs cancel <job>
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `job` | required | the job id. |
+
+### `tg store export`
+
+a chat's stored messages as JSON lines, oldest first; never asks the messenger
+
+```sh
+tg store export <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
 
 ## `tg recipients`
 
@@ -909,14 +895,14 @@ tg recipients remove <chat>
 |---|---|---|
 | `chat` | required | chat id, or the title as the list shows it. |
 
-### `tg recipients off`
+### `tg recipients clear`
 
-turn the list off: this profile may send to any chat again
+delete the list, which turns it off: this profile may send to any chat again
 
 **Changes something in Telegram.**
 
 ```sh
-tg recipients off
+tg recipients clear
 ```
 
 ## `tg sends`
@@ -1073,12 +1059,12 @@ tg complete [words]
 |---|---|---|
 | `words` | optional |  |
 
-## `tg update`
+## `tg upgrade`
 
-update tg with the package manager that installed it; --check only looks
+upgrade tg with the package manager that installed it; --check only looks
 
 ```sh
-tg update [options]
+tg upgrade [options]
 ```
 
 | Option | What it does |

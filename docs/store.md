@@ -41,16 +41,20 @@ gaps; `store fetch` closes them.
 tg store fetch "Book club" --estimate    # what a full fetch would still cost; asks Telegram nothing
 tg store fetch "Book club"               # fetch it, newest to oldest
 tg store fetch "Book club"               # run again to continue where it stopped
+tg store fetch "Book club" --since 30d   # only back to 30 days ago
+tg store fetch "Book club" --max 5000    # up to 5000 messages in this run
 ```
 
 `store fetch` reads a chat's history page by page, newest first, and saves it. **It is resumable**:
 after every page it records what it now holds, so a stop loses nothing. Ctrl-C, `--timeout`, the
-page cap and a long wait from Telegram all stop it, and the next run skips what is already held.
+`--max` cap, `--since` and a long wait from Telegram all stop it, and the next run skips what is
+already held.
 
-**Every page is a request from your account.** A run is capped by `--max-pages`, and `--pause`
-spaces the pages out (`1s`, `30s`, `2m`). When Telegram asks to wait longer than a few minutes, the
-run stops rather than sitting it out; run it again later. Look at `--estimate` first: it counts from
-what the store already holds and sends no request.
+**Every page is a request from your account**, of up to 100 messages. A run stops after `--max`
+messages (1000 by default), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s`,
+`2m`). A short wait asked by Telegram is sat out; one longer than five minutes stops the run, and
+you run it again later. Look at `--estimate` first: it counts from what the store already holds and
+sends no request.
 
 ### In the background
 
