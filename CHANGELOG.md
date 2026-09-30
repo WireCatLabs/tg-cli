@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.12.0 — 30.09.2026
+
 ### What's new
 
 - **`tg chats inspect <link>`** and `tg_chats_inspect`: what an invite or public link leads to — title,
