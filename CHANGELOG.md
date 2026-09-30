@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.18.0 — 30.09.2026
+
 ### Fixed
 
 - **A supergroup or channel first seen through one of its messages no longer loses messages to a deletion
