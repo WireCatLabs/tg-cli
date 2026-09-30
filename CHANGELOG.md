@@ -5,6 +5,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Fixed
+
+- **A message deleted in a private chat or a basic group no longer marks other chats' messages deleted**
+  (cli-messaging 0.52.0). Telegram reports such a deletion without the chat, and the local store marked
+  every stored message with that number deleted — channel and supergroup messages included. Messages
+  already marked that way stay marked; their text is kept.
+
 ## 0.15.0 — 30.09.2026
 
 ### Fixed
