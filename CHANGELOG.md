@@ -5,7 +5,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
-### Added
+### What's new
 
 - **A message's sender keeps their @username in the local store**, so `--from @name` and the coming
   conversation view can match a mention to the person. Takes effect with cli-messaging 0.57.0 or later;
