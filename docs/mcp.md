@@ -6,6 +6,7 @@ stdout, with no network port. The server comes with `tg`; there is nothing else 
 **When you need it.** In Claude Code, Codex and other agents with a terminal, `tg` itself is enough
 — it costs the same tokens and can do the same things. MCP is for clients without a terminal, such
 as Claude Desktop or Cursor's chat, and for anyone who wants the client to ask before each send.
+ChatGPT or Claude **in the browser** need more than this — see [remote.md](remote.md).
 
 This server is copied from max-cli's (`max mcp`) and behaves the same way.
 
