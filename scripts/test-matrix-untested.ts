@@ -25,6 +25,13 @@ export const UNTESTED: Untested[] = [
       "drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments",
   },
   {
+    command: "mcp",
+    option: "--allow-delete",
+    reason:
+      "starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts " +
+      "drives the server with allowDelete, and mcp config below shows the flag reaching the server's arguments",
+  },
+  {
     command: "backfill",
     option: "--background",
     reason:

@@ -17,6 +17,7 @@ const configure = (profiles: Record<string, unknown>) => {
 
 const telegram = () => {
   const sent: string[] = []
+  const deleted: string[] = []
   const marked: string[] = []
   const edited: string[] = []
   const reacted: string[] = []
@@ -25,6 +26,9 @@ const telegram = () => {
   const adapter = scripted({
     markRead: async (_chat, until) => {
       marked.push(until ?? "all")
+    },
+    delete: async (_chat, ids, { forEveryone }) => {
+      deleted.push(`${ids.join(",")}${forEveryone ? " everyone" : ""}`)
     },
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
@@ -48,7 +52,7 @@ const telegram = () => {
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited, forwarded, pinned, reacted, marked }
+  return { adapter, sent, edited, forwarded, pinned, reacted, marked, deleted }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -221,5 +225,21 @@ describe("the send guard in front of the other writes", () => {
     expect(refused.code).toBe(5)
     expect(marked).toEqual(["9"])
     expect(journal("g-read")).toMatchObject([{ kind: "read", outcome: "sent", messageId: "9" }])
+  })
+
+  it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
+    configure({ "g-del": { sendsPerHour: 2 } })
+    const { adapter, deleted } = telegram()
+
+    const unasked = await tg(["g-del", "messages", "delete", "Valencia", "5"], adapter)
+    const done = await tg(["g-del", "messages", "delete", "Valencia", "5", "6", "--allow-dangerous", "--json"], adapter)
+    const over = await tg(
+      ["g-del", "messages", "delete", "Valencia", "7", "--for-everyone", "--allow-dangerous"],
+      adapter,
+    )
+
+    expect([unasked.code, done.code, over.code]).toEqual([7, 0, 8])
+    expect(JSON.parse(done.stdout[0] ?? "")).toEqual({ chatId: chat.id, deleted: ["5", "6"], forEveryone: false })
+    expect(deleted).toEqual(["5,6"])
   })
 })

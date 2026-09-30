@@ -89,6 +89,10 @@ turn on: the other side sees that you read it, and an agent reading on your beha
 that away. `tg_chats_read` goes through the same guard as a send, and never counts toward the
 hourly limit.
 
+**Deleting is a flag of its own too**, `--allow-delete`. `tg_messages_delete` removes up to 10
+messages from **your** view only; deleting for everyone is left to the command, typed by you. In a
+supergroup or a channel Telegram has no "for me only", so there the tool is refused.
+
 ### A confirmation form from the server itself
 
 ```sh
@@ -106,7 +110,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 - The yes is bound to what the form showed: if the agent changes the chat, the text or the tool
   after confirming, nothing is sent.
 - A yes works once, for 5 minutes. Replaying the same answer sends nothing.
-- Without `--allow-send` or `--allow-mark-read` the flag is a startup error.
+- Without `--allow-send`, `--allow-mark-read` or `--allow-delete` the flag is a startup error.
 
 ## Tools
 
@@ -133,6 +137,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_messages_send` | `tg messages send`, `reply` | send, only with `--allow-send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `markdown` as `--silent`, `--no-preview` and `--md`; `at` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
 | `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, only with `--allow-send` and permission `edit`; repeating it changes nothing |
 | `tg_chats_read` | `tg chats read` | mark a chat read, to its newest message or `until` one; only with `--allow-mark-read` and permission `read` — the other side sees it |
+| `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view; only with `--allow-delete` and permission `delete`; never for everyone; each counts toward the hourly limit |
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message; only with `--allow-send` and permission `reaction`; the confirmation form shows the emoji |
 | `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), only with `--allow-send` and permission `forward`; on an unknown outcome look in that chat before repeating |
 | `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`; only with `--allow-send` and permission `pin` |
