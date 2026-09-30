@@ -1,0 +1,1154 @@
+<!-- Generated from the command tree by scripts/commands.ts. Do not edit; run `pnpm generate`. -->
+
+# Commands
+
+Every command, option and exit code. This page is **generated from the program itself**, so it
+cannot describe a version that does not exist. For the same list as JSON, run `tg commands --json`.
+
+How a command line is built:
+
+```sh
+tg [profile] [options] <resource> <verb> [arguments]
+```
+
+**The first word is the profile** when it is not a command: `tg work chats list` lists the chats of
+profile `work`, and `tg chats list` those of the default profile. `TG_PROFILE` does the same for a
+whole shell session; without either, the profile is `default`.
+
+## Options for every command
+
+| Option | What it does |
+|---|---|
+| `-V, --version` | output the version number. |
+| `-v, --verbose` | more detail in what is shown: -v ids, -vv everything we know. Default: `0`. |
+| `--json` | machine-readable output: one JSON value on stdout, nothing else. |
+| `--jsonl` | machine-readable output: one JSON object per line, for streaming and jq. |
+| `--quiet` | diagnostics off; a failure is still said. |
+| `--trace` | the connection's own log lines on stderr — never message content. |
+| `--timeout <duration>` | give up on the whole command after this — 30s, 2m, 500ms. |
+| `--offline` | answer from what was recorded and never connect; fails if nothing was. |
+| `--record` | keep this run — ids and timings, never message content. |
+| `--no-record` | do not keep it, whatever the configuration says. |
+
+## `tg session`
+
+log this profile in to Telegram, or out
+
+### `tg session start`
+
+log in by QR code (default) or by phone number, code and 2FA password
+
+```sh
+tg session start [method] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `method` | optional | how to log in. One of: `qr`, `phone`. Default: `qr`. |
+
+| Option | What it does |
+|---|---|
+| `--app <how>` | the first time only: how to get this profile's app from my.telegram.org. One of: `browser`, `auto`. Default: `browser`. |
+| `--qr-file <png>` | write the QR code to this PNG instead of drawing it, for an agent to pass on. |
+
+### `tg session end`
+
+log this profile out on Telegram's side and forget the session here
+
+**Changes something in Telegram.**
+
+```sh
+tg session end
+```
+
+## `tg account`
+
+the logged-in account
+
+### `tg account show`
+
+who this profile is logged in as
+
+```sh
+tg account show
+```
+
+### `tg account sessions`
+
+where else this account is logged in — not `tg session`, which is this tool's own login
+
+#### `tg account sessions list`
+
+every device and app logged in to this account; nothing is ended
+
+```sh
+tg account sessions list
+```
+
+## `tg chats`
+
+the account's chats
+
+### `tg chats list`
+
+chats, newest first, archived ones included
+
+```sh
+tg chats list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+| `--search <text>` | only chats whose name contains this; at least 3 characters. |
+| `--kind <kind>` | only chats of this kind: dialog, group, channel, saved. |
+| `--unread` | only chats with unread messages. |
+
+### `tg chats events`
+
+who joined, left, was added or removed, and by whom — from the chat's service messages
+
+```sh
+tg chats events <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--event <names>` | only these, comma-separated: join, leave, add, remove, create, title, pin. |
+
+### `tg chats inspect`
+
+what an invite or public link leads to, without joining it
+
+```sh
+tg chats inspect <link>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `link` | required | an invite link or a public one. |
+
+### `tg chats show`
+
+one chat: its kind, unread count, last message time and who is in it
+
+```sh
+tg chats show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+### `tg chats members`
+
+who is in a group
+
+#### `tg chats members list`
+
+everyone in a group, a page at a time, with their role and when they were last seen
+
+```sh
+tg chats members list <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+
+### `tg chats read`
+
+mark a chat read; the other side sees that you read it
+
+**Changes something in Telegram.**
+
+```sh
+tg chats read <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--until <message>` | only up to this message id; the newest by default. |
+
+## `tg contacts`
+
+people this account has a one-to-one chat with
+
+### `tg contacts list`
+
+people you have a one-to-one chat with
+
+```sh
+tg contacts list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+| `--order <recent\|name>` | newest conversation first, or alphabetical. Default: `recent`. |
+| `--search <text>` | only people whose name or @username contains this. |
+
+### `tg contacts show`
+
+one person and the chats you share with them
+
+```sh
+tg contacts show <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+
+### `tg contacts lookup`
+
+who has this phone number — asks for it, or reads it from stdin; never an argument
+
+```sh
+tg contacts lookup
+```
+
+### `tg contacts sync`
+
+take the whole contact list from the messenger into the local store
+
+```sh
+tg contacts sync
+```
+
+## `tg messages`
+
+read and send messages
+
+### `tg messages list`
+
+a chat's messages, oldest to newest
+
+```sh
+tg messages list <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many. |
+| `--before <id>` | only messages older than this message id. |
+| `--after <id-or-time>` | only messages newer than this message id, ISO 8601 time, or 2h / 1d ago. |
+| `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
+
+### `tg messages search`
+
+search the local store — what was read, backfilled or kept by serve; never asks the messenger
+
+```sh
+tg messages search <words> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `words` | required | every word must appear, as a word or the start of one: квартир finds квартира. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--limit <n>` | how many. |
+| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
+
+### `tg messages send`
+
+send a text message; without [text], the text is read from stdin
+
+**Changes something in Telegram.**
+
+```sh
+tg messages send <chat> [text] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `text` | optional | the message. |
+
+| Option | What it does |
+|---|---|
+| `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
+| `--silent` | deliver without a notification. |
+| `--no-preview` | no preview card for a link in the text. |
+| `--md, --markdown` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--file <path>` | attach a file; the text becomes its caption. |
+| `--photo <path>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
+| `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
+| `--at <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
+
+### `tg messages reply`
+
+answer one message; without [text], the text is read from stdin
+
+**Changes something in Telegram.**
+
+```sh
+tg messages reply <chat> [message] [text] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id to answer. |
+| `text` | optional | the reply. |
+
+| Option | What it does |
+|---|---|
+| `--send-id <id>` | repeat a reply whose outcome was unknown, without risking a second copy. |
+
+### `tg messages show`
+
+one message, by its chat and id or by its msg: locator
+
+```sh
+tg messages show <chat> [message]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id. |
+
+### `tg messages context`
+
+a message and what came either side of it, oldest first
+
+```sh
+tg messages context <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--before <n>` | how many before it. Default: `5`. |
+| `--after <n>` | how many after it. Default: `5`. |
+
+### `tg messages download`
+
+save a message's photos, files, videos and voice notes to a folder — or a whole chat's with --all
+
+```sh
+tg messages download <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | optional | the message id; left out with --all. |
+
+| Option | What it does |
+|---|---|
+| `--output <dir>` | where to save them; created if missing. Default: `.`. |
+| `--all` | every file of the chat, newest first; run it again to continue where it stopped. |
+| `--pace <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
+
+### `tg messages transcribe`
+
+a voice message as text — by Telegram where it can, else by a model on this machine
+
+```sh
+tg messages transcribe <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of a voice message. |
+
+| Option | What it does |
+|---|---|
+| `--local` | use the model on this machine, never the messenger. |
+| `--model <id>` | which downloaded model; implies --local (`models audio list`). |
+
+### `tg messages edit`
+
+change the text of your own message; the other side may have read it already
+
+**Changes something in Telegram.**
+
+```sh
+tg messages edit <chat> <message> [text]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of your own message. |
+| `text` | optional | the new text; without it, read from stdin. |
+
+### `tg messages delete`
+
+delete messages for you only; with --for-everyone, for everyone in the chat
+
+**Changes something in Telegram.**
+
+```sh
+tg messages delete <chat> <messages> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `messages` | required | the message ids, at most 10. |
+
+| Option | What it does |
+|---|---|
+| `--for-everyone` | delete for everyone in the chat, not only for you — they cannot get it back. |
+| `--allow-dangerous` | yes, delete — it cannot be undone. |
+
+### `tg messages forward`
+
+forward one message to another chat
+
+**Changes something in Telegram.**
+
+```sh
+tg messages forward <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | the chat the message is in: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--to <chat>` | where it goes: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--silent` | deliver it without a notification. |
+
+### `tg messages pin`
+
+pin a message in a chat, quietly unless --notify
+
+**Changes something in Telegram.**
+
+```sh
+tg messages pin <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--notify` | tell the chat's members about the pin. |
+
+### `tg messages unpin`
+
+unpin a message in a chat
+
+**Changes something in Telegram.**
+
+```sh
+tg messages unpin <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+
+### `tg messages scheduled`
+
+messages waiting to be sent later in a chat, soonest first; cancel one in the app
+
+```sh
+tg messages scheduled <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+## `tg reactions`
+
+react to messages
+
+### `tg reactions add`
+
+put your reaction on a message; it replaces the one you had
+
+**Changes something in Telegram.**
+
+```sh
+tg reactions add <chat> <message> <emoji>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+| `emoji` | required | one emoji, for example 👍. |
+
+### `tg reactions remove`
+
+take your reaction off a message
+
+**Changes something in Telegram.**
+
+```sh
+tg reactions remove <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+
+## `tg polls`
+
+read a poll, vote in it, close your own, create one
+
+### `tg polls show`
+
+a poll and its answer ids, as the message carries it now
+
+```sh
+tg polls show <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of the message that carries the poll. |
+
+### `tg polls vote`
+
+vote in a poll, or take your vote back; the others see it unless the poll is anonymous
+
+**Changes something in Telegram.**
+
+```sh
+tg polls vote <chat> <message> [answers] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of the message that carries the poll. |
+| `answers` | optional | answer ids, as `polls show` prints them. |
+
+| Option | What it does |
+|---|---|
+| `--retract` | take your vote back. |
+
+### `tg polls close`
+
+close your own poll; nobody can vote after that, and it cannot be reopened
+
+**Changes something in Telegram.**
+
+```sh
+tg polls close <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of your own message that carries the poll. |
+
+### `tg polls create`
+
+send a poll to a chat, as a message of its own; public unless --anonymous
+
+**Changes something in Telegram.**
+
+```sh
+tg polls create <chat> <question> <answers> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `question` | required | the question. |
+| `answers` | required | two answers or more. |
+
+| Option | What it does |
+|---|---|
+| `--multiple` | people may pick several answers. |
+| `--anonymous` | nobody sees who voted for what. |
+| `--silent` | send without a notification. |
+| `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
+
+## `tg models`
+
+models that run on this machine
+
+### `tg models audio`
+
+speech models for transcribing voice messages
+
+#### `tg models audio list`
+
+the speech models, most suitable first, which are downloaded, and which one is the default
+
+```sh
+tg models audio list
+```
+
+#### `tg models audio download`
+
+download a speech model once, checked against the sha256 this version expects
+
+```sh
+tg models audio download <model>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `model` | required | a model id from `models audio list`. |
+
+## `tg inbox`
+
+other people's unread messages in every chat; --new for what arrived since the last check
+
+```sh
+tg inbox [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--new` | what arrived since the last check, each message once — for scheduled runs. |
+| `--since <time>` | what arrived after this ISO 8601 time, or 2h / 1d ago; the saved point stays put. |
+| `--limit <n>` | at most this many per chat, the newest. |
+| `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
+| `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
+
+## `tg review`
+
+every message, yours too, in chats that changed since a point — for reviewing who owes what
+
+```sh
+tg review [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--since <time>` | where the last review ended — ISO 8601, or 2h / 1d ago; 3 days ago if not given. |
+| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--unanswered [hours]` | only questions to you or a group's admins that nobody answered, asked at least this long ago; 24 hours if not given. |
+| `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
+
+## `tg topics`
+
+the topics of a forum group
+
+### `tg topics list`
+
+a forum group's topics, newest activity first
+
+```sh
+tg topics list <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+
+### `tg topics search`
+
+a forum group's topics whose title matches
+
+```sh
+tg topics search <chat> <text> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `text` | required | words from the topic's title. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+
+## `tg watch`
+
+print new messages as they arrive, until Ctrl-C or --timeout (either ends it normally)
+
+```sh
+tg watch [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--events` | also edits, deletions and reactions; every line then names its event. |
+
+## `tg serve`
+
+keep the local store current until stopped — what a systemd or launchd unit runs
+
+```sh
+tg serve
+```
+
+## `tg server`
+
+`tg serve` in the background: start, stop, restart, status, logs; install adds a systemd or launchd unit
+
+### `tg server start`
+
+start serve in the background — through the unit if one is installed — and answer once it listens
+
+```sh
+tg server start
+```
+
+### `tg server stop`
+
+stop the serve that `server start` or the unit started
+
+```sh
+tg server stop
+```
+
+### `tg server restart`
+
+stop it and start it again
+
+```sh
+tg server restart
+```
+
+### `tg server status`
+
+whether serve runs for this profile, since when, who started it, and the unit if there is one
+
+```sh
+tg server status
+```
+
+### `tg server logs`
+
+serve's latest log lines — from the journal under systemd, else its log file
+
+```sh
+tg server logs [options]
+```
+
+| Option | What it does |
+|---|---|
+| `-n, --lines <n>` | how many lines. Default: `50`. |
+
+### `tg server install`
+
+write a systemd user unit or a launchd agent for this profile; starts nothing
+
+```sh
+tg server install
+```
+
+### `tg server uninstall`
+
+remove this profile's unit; stop it first
+
+```sh
+tg server uninstall
+```
+
+## `tg sync`
+
+what the local store holds
+
+### `tg sync status`
+
+per chat: messages stored, the oldest and newest, and the stretches held completely
+
+```sh
+tg sync status [chat]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+## `tg export`
+
+a chat's stored messages as JSON lines, oldest first; never asks the messenger
+
+```sh
+tg export <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
+
+## `tg backfill`
+
+fetch a chat's history into the local store, newest first; run it again to continue
+
+```sh
+tg backfill <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--max <n>` | at most this many messages in this run. Default: `1000`. |
+| `--pace <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
+| `--background` | run as a job that outlives this command; `backfill status` follows it. |
+| `--estimate` | how many messages, requests and minutes a full backfill would still take — from the store, no request. |
+
+### `tg backfill list`
+
+background backfill jobs, newest first
+
+```sh
+tg backfill list
+```
+
+### `tg backfill status`
+
+one background job — the newest when none is named — and what the store now holds of its chat
+
+```sh
+tg backfill status [job]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `job` | optional | the job id `backfill --background` printed. |
+
+### `tg backfill cancel`
+
+stop a running background job after its current page; a later backfill resumes where it stopped
+
+```sh
+tg backfill cancel <job>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `job` | required | the job id. |
+
+## `tg recipients`
+
+the chats this profile may send to, when the list is on
+
+### `tg recipients list`
+
+the chats on the list; empty and off until the first add
+
+```sh
+tg recipients list
+```
+
+### `tg recipients add`
+
+allow sending to this chat; the first add turns the list on
+
+**Changes something in Telegram.**
+
+```sh
+tg recipients add <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+### `tg recipients remove`
+
+stop allowing this chat; the list stays on
+
+**Changes something in Telegram.**
+
+```sh
+tg recipients remove <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | chat id, or the title as the list shows it. |
+
+### `tg recipients off`
+
+turn the list off: this profile may send to any chat again
+
+**Changes something in Telegram.**
+
+```sh
+tg recipients off
+```
+
+## `tg sends`
+
+every attempt to send from this profile — never the text
+
+### `tg sends list`
+
+attempts to send, newest first: sent, refused, failed, or not known
+
+```sh
+tg sends list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+
+## `tg runs`
+
+recorded runs — what this tool did, and when
+
+### `tg runs list`
+
+recorded runs, newest first
+
+```sh
+tg runs list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. Default: `20`. |
+
+### `tg runs show`
+
+one run: what it was, and one line per operation
+
+```sh
+tg runs show <run-id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `run-id` | required | an id from `tg runs list`. |
+
+### `tg runs path`
+
+the directory holding one run
+
+```sh
+tg runs path <run-id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `run-id` | required | an id from `tg runs list`. |
+
+## `tg config`
+
+the settings in force, and where each one came from
+
+### `tg config show`
+
+the profile, the profiles that exist, and each setting with where it came from
+
+```sh
+tg config show
+```
+
+### `tg config set`
+
+save a setting to the configuration file
+
+**Changes something in Telegram.**
+
+```sh
+tg config set <setting> <value> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+| `value` | required | a number, true or false, or for allow a list like send,reaction. |
+
+| Option | What it does |
+|---|---|
+| `--defaults` | change what every profile gets, rather than this profile. |
+
+### `tg config unset`
+
+remove a setting from the configuration file
+
+**Changes something in Telegram.**
+
+```sh
+tg config unset <setting> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+
+| Option | What it does |
+|---|---|
+| `--defaults` | change what every profile gets, rather than this profile. |
+
+## `tg doctor`
+
+the state this installation is in, without connecting unless --online
+
+```sh
+tg doctor [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--online` | also connect once and read the account; sends nothing. |
+
+### `tg doctor report`
+
+what a problem report holds; writes nothing
+
+#### `tg doctor report create`
+
+write a problem report to a file, and say where to send it
+
+```sh
+tg doctor report create [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--run <id>` | the run the report is about; the newest failed one if not given. |
+| `--output <file>` | where to write it; a new file in this directory if not given. |
+
+## `tg commands`
+
+every command, option and exit code as JSON — what an agent reads instead of --help
+
+```sh
+tg commands
+```
+
+## `tg complete`
+
+shell completion: `tg complete zsh` prints the script to source
+
+```sh
+tg complete [words]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `words` | optional |  |
+
+## `tg update`
+
+update tg with the package manager that installed it; --check only looks
+
+```sh
+tg update [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--check` | say whether a newer version exists, and install nothing. |
+
+## `tg mcp`
+
+serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg mcp`
+
+```sh
+tg mcp [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--allow-send` | offer the send tool; without it the server can only read. |
+| `--confirm-send` | show the owner every send in a form from the server first. |
+| `--allow-mark-read` | offer the tool that marks a chat read; the other side sees it. |
+| `--allow-delete` | offer the tool that deletes the owner's own copy of messages; never for everyone. |
+
+### `tg mcp config`
+
+print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes nothing
+
+```sh
+tg mcp config [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--allow-send` | offer the send tool; without it the server can only read. |
+| `--confirm-send` | show the owner every send in a form from the server first. |
+| `--allow-mark-read` | offer the tool that marks a chat read; the other side sees it. |
+| `--allow-delete` | offer the tool that deletes the owner's own copy of messages; never for everyone. |
+
+## `tg skill`
+
+the instructions an agent is given for this tool
+
+### `tg skill show`
+
+print SKILL.md — redirect it into \~/.claude/skills/tg-cli/SKILL.md for Claude Code, or \~/.agents/skills/tg-cli/SKILL.md for Codex and Gemini CLI
+
+```sh
+tg skill show
+```
+
+## Exit codes
+
+Branch on the code, not on the text: the text can change, the code does not.
+
+| Code | When |
+|---|---|
+| `0` | it worked |
+| `2` | `validation_error` |
+| `3` | `configuration_error` |
+| `4` | `authentication_error` |
+| `5` | `permission_error` |
+| `6` | `not_found` |
+| `7` | `confirmation_required` |
+| `8` | `rate_limited` |
+| `9` | `timeout` |
+| `10` | `network_error` |
+| `11` | `provider_error` |
+| `12` | `provider_unavailable` |
+| `13` | `invalid_response` |
+| `14` | `outcome_unknown` |
+| `130` | `cancelled` |
+| `1` | anything else |
+
+`0` and only `0` means the operation was done. `14` (`outcome_unknown`) means a message **may**
+have gone: repeat it only with the same `--send-id`, which Telegram uses to drop a second copy.
