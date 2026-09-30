@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.19.0 — 30.09.2026
+
 ### Fixed
 
 - **tg always exits once a command has finished.** Once, a download printed its answer and then stayed
