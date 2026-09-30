@@ -1,16 +1,16 @@
 # Lane L4 · media — handoff
 
 **Read this instead of [`HANDOFF.md`](../../HANDOFF.md).** Standard:
-[`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot 2026-09-29.
+[`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot **2026-09-30**: items 1–5
+released (tg 0.11.0, cli-messaging 0.47.0); what is left is §4.
 
 ## 1. What this is
 
 `tg` is a CLI for the owner's personal Telegram account, for agents first; everything
-messenger-neutral lives in `@leemour/cli-messaging` (your worktree `../cli-messaging`). Today tg
-reads a message's attachments as metadata only. This lane lets it **fetch** them — save a file, hand
-an agent a photo, turn a voice message into text — each command with its MCP tool, as max-cli has
-them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), row L4
-(from a worktree: `../cli-messaging/docs/plans/2026-09-29-parity-lanes.md`).
+messenger-neutral lives in `@leemour/cli-messaging` (your worktree `../cli-messaging`). This lane
+lets tg **fetch** a message's media — save its file, hand an agent a photo, turn a voice message
+into text by Telegram or by a speech model on this machine — each with its MCP tool, as max-cli has
+them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), row L4.
 
 ## 2. Entry points
 
@@ -18,68 +18,92 @@ them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity
 |---|---|
 | How agents work here: worktrees, the sandbox, releasing, collisions | [`docs/dev/agents.md`](../dev/agents.md) — **read first** |
 | The path a new adapter method takes, and what bites project-wide | [`HANDOFF.md`](../../HANDOFF.md) §3c and §4 |
-| What max-cli does, to copy | `/home/leemour/Projects/AI/max-cli/src/download.ts`, `src/commands/messages.ts` (`download`, `transcribe`), `src/transcribe/` (`index.ts`, `models.ts`, `install.ts`, `speech.ts`), `src/commands/models.ts`, `src/commands/hearing.ts`, `src/mcp/tools.ts` (`max_messages_photo`, `max_messages_transcribe`, `heardIn`) — read only |
-| Rulings | [`HANDOFF.md`](../../HANDOFF.md) §5; voice to text is **NEED-20 → A**: Telegram's own transcription when the account has Premium, the local model otherwise, **configurable** |
+| What each command and tool does, for a user | [`README.md`](../../README.md), [`docs/mcp.md`](../mcp.md) |
+| What shipped when, and why | the changelogs: tg 0.5.0–0.11.0, cli-messaging 0.30.0–0.47.0 |
+| Rulings | [`HANDOFF.md`](../../HANDOFF.md) §5; voice to text is **NEED-20 → A**: Telegram first, the local model otherwise, configurable. The owner's later calls: Parakeet first by default, a CLI may put its own model first (max-cli: GigaAM); models in `~/.cache/cli-common` |
 
-## 3. What to read for this lane, in order
+## 3. What to read for the work left, in order
 
-1. `../cli-messaging/src/domain/models.ts` `Attachment` — what a message already says about its
-   files; a download needs a handle to fetch it again.
-2. `../cli-messaging/src/cli/messenger/port.ts` — a new method is optional (`download?`,
-   `transcribe?`), reached with `capability()`.
-3. `src/telegram/map.ts` — where mtcute's media become `Attachment`s; the file id you will need.
-4. `/home/leemour/Projects/AI/max-cli/src/download.ts` and `src/transcribe/index.ts` — the shape
-   and the limits to copy.
-5. `../cli-messaging/src/mcp/tools/messages.ts` and `../cli-messaging/src/mcp/tool.ts` — how a tool
-   answers; the photo tool answers **image content**, not JSON (`Picture` in max-cli's `tools.ts`).
+1. `../cli-messaging/src/speech/recognize.ts`, `openRecognizer` — **why quiet speech is lost**: the
+   voice detector's settings (`threshold`, `minSilenceDuration`, `maxSpeechDuration`) and the half
+   second of silence put ahead of the audio.
+2. `../cli-messaging/src/speech/transcribe.ts` — **how a voice message reaches a model**: `choose`
+   (flag → profile → CLI order), `hearOnline` (Telegram, or the bytes), `hearLocally`.
+3. `../cli-messaging/src/speech/hearing.ts` — **how lists hear many at once**: the two-minute
+   budget, what is kept and where (`openKept`).
+4. `../cli-messaging/src/cli/messenger/download-command.ts` — **how a file is saved**: safe names,
+   never overwriting; item 6 builds on `save`.
+5. `src/telegram/adapter.ts`, `download` and `transcribe` — **what tg asks Telegram**: the message
+   fetched afresh, `downloadAsIterable`, the raw `messages.transcribeAudio` polled until finished.
 
-## 4. The work, in order
+## 4. The work left
 
-| # | Item | Done when | max-cli source |
-|---|---|---|---|
-| 1 | `messages download <chat> <message> [--output dir]` — every attachment of one message, to a folder | files land where asked, named safely; the answer lists paths and sizes, never contents | `download.ts`, `download.test.ts` |
-| 2 | the MCP photo tool (`<cli>_messages_photo`): one photo as image content, ≤ 512 KB; anything else refused with the command that saves it | a Telegram photo reaches an MCP client as an image; the file's link is never in the answer | `max_messages_photo` |
-| 3 | voice to text through **Telegram**: `messages transcribe <chat> <message>` + tool, via the raw `messages.transcribeAudio` call (mtcute has no high-level method; `User.isPremium` says whether it is allowed) | a Premium account gets the text; a non-Premium one gets a clear refusal naming the local model | `commands/messages.ts` `transcribe` |
-| 4 | voice to text **on this machine**: `models audio list\|download`, the local model as in max-cli, and a setting choosing `telegram`, `local` or `auto` (NEED-20 → A) | `auto` uses Telegram on Premium and the local model otherwise; a missing model is a refusal naming `models audio download`, never a download | `transcribe/`, `models.ts` |
-| 5 | `--transcribe` on `messages list` and `inbox`, and `transcript` on voice messages already heard | as max-cli's `hearingFields`: `unheard` lists what was not heard | `hearing.ts` |
-| 6 | later: `messages download --all <chat>` (bulk, tgcli has one-message only) | paged, resumable, FLOOD_WAIT-aware | — |
-
-Each item: cli-messaging (command, tool, tests), tg (adapter, map, tests), README, `docs/mcp.md`,
-`skills/tg-cli/SKILL.md`. Then release your own work ([`docs/dev/agents.md`](../dev/agents.md)).
+| # | Item | Done when |
+|---|---|---|
+| 1–5 | download, the photo tool, Telegram transcription, local models, `--transcribe` on lists | **released** — tg #61, #71, #75, #84, #97; cli-messaging #71, #90, #95, #106, #119, #134 |
+| A | **Local models drop quiet speech.** Saved Messages 126508 (19 s): Telegram hears all of it; Parakeet and GigaAM both skip the middle. Same stretch in both → the voice detector, not the model | `tg messages transcribe me 126508 --model gigaam-v3` holds the middle part Telegram hears (`… прыщик небольшой … Скажи что-нибудь …`); a test on the fixture that the setting keeps quiet speech |
+| B | `messages download --all <chat>` — every file of a chat | paged, resumable, FLOOD_WAIT-aware; the file names as in item 1 |
 
 ## 5. Decisions you will make yourself
 
-- Where a transcript is kept: in the store (a column or a table — a **migration**, next free number
-  in the lanes plan §4, announced first) or a cache file. The store is a system of record; a
-  transcript is derived, so a cache may be enough.
-- The default `--output`: the current folder, as max-cli, or the CLI's cache. Say why in the PR.
-- The setting's name and default for the transcription source (`auto` is the ruling's spirit).
+- For A: which detector setting moves (lower `threshold`, longer `minSilenceDuration`), and whether
+  it becomes a profile setting or stays a constant. Measure on 126508 before and after.
+- For B: where a resumable download remembers how far it got (a file beside the output, or the
+  store — a store migration is announced first, lanes plan §4, and storage phase 1 is rewriting the
+  store now).
 
 ## 6. What will bite
 
-1. **The sandbox allows writes only to tg-cli, cli-messaging, cli-core, the caches and `/tmp`.** A
-   live `messages download` from your session must write under `$TMPDIR`, never `~/Downloads`.
-2. **Never download a speech model yourself** — hundreds of MB, and the choice is the owner's
-   (max-cli's rule). Test the local path with a fake model; tell the owner the command.
-3. **Only a plain `bin/tg …` runs outside the sandbox** (Telegram's raw TCP). Do not pipe it or
-   redirect it: read the tool's output.
-4. **A file name comes from other people.** Sanitise it (no `/`, no `..`, no leading `.`), as
-   max-cli's `download.ts` does.
-5. **Media ids expire** (Telegram file references). Fetch from the message, not from a stored id,
-   or refresh the reference on `FILE_REFERENCE_EXPIRED`.
-6. **The owner's account is busy**: live checks on Saved Messages only — send yourself a photo and a
-   voice note there (a send: only in Saved Messages, HANDOFF.md §4.9).
+1. **A plain `bin/tg` runs the main checkout's build, not yours**: the shell starts in the main
+   checkout for every command. The lane's build reaches Telegram only when typed exactly as
+   `.worktrees/l4-media/tg-cli/bin/tg …` — the owner's **uncommitted** exception in the main
+   checkout's `.claude/settings.json` (NEED-5 → B: it stays local). `cd … && bin/tg`, a pipe or
+   an absolute path run inside the sandbox and fail with `ENETUNREACH`.
+2. **Always pass `--timeout`** to a live `bin/tg`: without Telegram, tg retries forever (BUG-18, lane L1).
+3. **Telegram's transcription answers "pending" first**, and the finished text comes as an update a
+   one-shot connection never gets. A repeat call returns it — measured 2026-09-29, pending twice then
+   the text — so the adapter polls every 2 s for up to a minute. The account is Premium; a
+   non-Premium one gets a weekly trial and `PREMIUM_ACCOUNT_REQUIRED`, which `auto` falls back on.
+4. **Never download a model unasked** — hundreds of MB, the owner's call. Installed now in
+   `~/.cache/cli-common/models/audio` (`CLI_COMMON_CACHE_DIR`): `parakeet-v3`, `gigaam-v3`. The
+   owner's real profile sets `speechModel: gigaam-v3` (`~/.config/tg-cli/config.json`).
+5. **Transcripts are kept per profile** in `<app cache>/transcripts-<profile>.db` — for `bin/tg`,
+   the checkout's `.tg/cache`. A test must give its app a `<PREFIX>_CACHE_DIR`, or one test's
+   transcript shows up in another (cli-messaging's `src/testing/sandbox.ts` does it for the test apps).
+6. **Fake an installed model with a sparse file** (`truncateSync`), never real zeros: 670 MB per test
+   pushed two tests past the 5 s limit on GitHub and failed a release (cli-messaging #123).
+7. **Every lane releases, often minutes apart.** Name branches `l4/…`, check
+   `git ls-remote origin refs/heads/<branch>` before creating a release branch — reusing another
+   lane's name opened a stray PR once (cli-messaging #111). `main` may already carry the next
+   version, and a release run may fail "already on npm" because another lane published it: check npm.
+8. **A rebase can file a changelog entry under a version already released** — tg 0.9.0 listed local
+   speech it did not have (fixed in #92). After a rebase, read the `## Unreleased` section.
+9. **Bumping cli-messaging brings other lanes' commands** whose tg tests are not written yet, and
+   `pnpm test:matrix` fails. Wait for that lane's tg PR, or name the lane in
+   `scripts/test-matrix-untested.ts` and tell it.
+10. **cli-messaging's tests write to the real home folder in one place** (`program.test.ts`, the
+    `--timeout` test): inside the sandbox run them as `HOME=$TMPDIR pnpm test:coverage`.
+11. **The main checkout cannot `git pull`**: the owner's uncommitted `.claude/settings.json` collides
+    with `main`'s. Build in a worktree; never stash or touch that file.
+12. **Telegram calls a voice message `voice`, MAX `audio`** — `isVoice` matches `voice` or `audio/ogg`.
+13. **Never `git stash`**: every worktree of a repository shares one stash list, and a `pop` can take
+    another lane's work (it happened 2026-09-30). Park work in a temporary commit instead.
 
 ## 7. What not to read or touch
 
-- `/home/leemour/Projects/AI/max-cli` beyond the files named; never edit it.
+- `/home/leemour/Projects/AI/max-cli` — read only; never edit it.
 - The main checkout (`/home/leemour/Projects/AI/tg-cli`, outside `.worktrees/`) and other lanes'
   worktrees. `.tg/` — the copied login.
 - The guards (`.claude/settings.json`, `.claude/hooks/`) — the owner's; the hook refuses them.
+- The downloaded models — never delete or re-download them to "test" something.
 
 ## 8. How to check
 
 ```sh
-pnpm lint && pnpm typecheck && pnpm test          # both worktrees
-bin/tg messages download me <id> --output "$TMPDIR" --json
+pnpm lint && pnpm typecheck && pnpm test && pnpm test:matrix     # tg worktree
+HOME=$TMPDIR pnpm test:coverage && pnpm docs:check                # cli-messaging worktree
+.worktrees/l4-media/tg-cli/bin/tg messages transcribe me 126508 --model gigaam-v3 --json --timeout 120s
+.worktrees/l4-media/tg-cli/bin/tg messages list me --limit 8 --transcribe --json --timeout 180s
 ```
+
+Live checks read, or send only to Saved Messages (project rule 1).
