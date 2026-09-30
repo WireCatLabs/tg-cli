@@ -5,6 +5,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+- **The shared message store moves to version 6** (cli-messaging 0.49.0). The first `tg` run upgrades
+  `messages.db`; a `max` older than the one released the same day then refuses it and asks to be
+  upgraded — `npm install -g @leemour/max-cli@latest`. Nothing in `tg`'s own commands changes.
+
 ## 0.12.0 — 30.09.2026
 
 ### What's new
