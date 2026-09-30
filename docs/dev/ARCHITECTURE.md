@@ -35,7 +35,7 @@ not import the mapping or the error translation (`biome.json`, `noRestrictedImpo
 - `keyring` — `memoryKeyring()` from cli-core, so no test reaches the OS keychain.
 - `streams`, `tty`, `stdin` — captured output and a pretend terminal.
 - `signal` — ends `watch` and `serve` instead of Ctrl-C.
-- `update` — the package manager and npm answers for `tg update` and the daily notice.
+- `update` — the package manager and npm answers for `tg upgrade` and the daily notice.
 
 `TelegramAdapter` itself is tested against a stand-in `TelegramClient` (`src/telegram/adapter.test.ts`
 mocks the class and keeps mtcute's real helpers).

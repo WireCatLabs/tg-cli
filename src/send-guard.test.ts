@@ -243,8 +243,8 @@ describe("the send guard in front of the other writes", () => {
     configure({ "g-ro-read": { readOnly: true } })
     const { adapter, marked } = telegram()
 
-    const done = await tg(["g-read", "chats", "read", "Valencia", "--until", "9", "--json"], adapter)
-    const refused = await tg(["g-ro-read", "chats", "read", "Valencia"], adapter)
+    const done = await tg(["g-read", "chats", "mark-read", "Valencia", "--until", "9", "--json"], adapter)
+    const refused = await tg(["g-ro-read", "chats", "mark-read", "Valencia"], adapter)
 
     expect(JSON.parse(done.stdout[0] ?? "")).toEqual({ chatId: chat.id, until: "9" })
     expect(refused.code).toBe(5)

@@ -46,7 +46,7 @@ tg chats events <chat> [--since 1d] [--event join,leave,add,remove]   # who join
 tg chats members list <chat> [--limit n] [--page n] [--all]   # everyone in a group, with role and last seen
 tg chats inspect <link>          # what an invite or public link leads to, without joining
 tg topics list|search <chat> [text]   # a forum group's topics and their ids (a message's threadId)
-tg chats read <chat> [--until id]   # mark it read; the other side sees it
+tg chats mark-read <chat> [--until id]   # mark it read; the other side sees it
 tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg contacts list [--order recent|name] [--search text]   # people you have a one-to-one chat with
 tg contacts show <person>        # their bio and the groups you share
@@ -60,7 +60,7 @@ tg messages send <chat> [text] --silent --no-preview --md   # no notification, n
 tg messages send <chat> [text] --at 2h          # Telegram sends it later, even with this machine off; or --at 2026-10-01T09:00
 tg messages scheduled <chat>     # what waits to be sent there, soonest first
 tg messages send <chat> [caption] --photo cat.jpg   # or --file report.pdf; hidden files and tg's own folders need --allow-any-file
-tg messages reply <chat> <id> [text]            # or: tg messages reply msg:telegram/… [text]
+tg messages send <chat> [text] --reply-to <id>   # answer a message; every send option works with it
 tg messages edit <chat> <id> [text]             # your own message; the other side may have read it already
 tg messages forward <chat> <id> --to <chat> [--silent]   # checked against the chat it goes to
 tg messages pin <chat> <id> [--notify]           # quiet unless --notify; `messages unpin <chat> <id>` undoes it
@@ -74,22 +74,22 @@ tg polls show <chat> <id>                        # a poll and its answer ids
 tg polls vote <chat> <id> <answer id…> | --retract   # by answer id, never by position
 tg polls create <chat> <question> <answer…> [--multiple] [--anonymous] [--silent]   # public unless --anonymous
 tg polls close <chat> <id>                       # your own poll; it cannot be reopened
-tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
+tg messages search <text…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n] [--all] [--transcribe]   # other people's unread messages; --new: what arrived since the last check;
                                                     # muted and archived chats only when they mention you, or with --all
 tg review [--since 3d] [--chat c] [--unanswered [hours]] [--all]   # every message, yours too, in chats that changed —
                                                     # for reviewing who owes what; ends with where the next review starts
 tg watch [--jsonl] [--events] [--timeout 60s]   # new messages as they arrive; --events adds edits, deletions, reactions
-tg backfill <chat> [--max n] [--pace 1s]   # a chat's history into the local store; run again to continue
-tg backfill <chat> --background   # the same as a job that outlives the command: backfill list|status [job]|cancel <job>
-tg backfill <chat> --estimate     # what a full backfill would still cost, from the store; asks Telegram nothing
+tg store fetch <chat> [--max n] [--pause 1s] [--since 1d]   # a chat's history into the local store; run again to continue
+tg store fetch <chat> --background   # the same as a job that outlives the command: store jobs list|show [job]|cancel <job>
+tg store fetch <chat> --estimate     # only estimate what a full fetch would still cost, from the store; asks Telegram nothing
 tg serve [--timeout 8h]          # keep the local store current until stopped
 tg server start|stop|restart|status|logs|install|uninstall   # serve in the background, or as a systemd / launchd unit
-tg sync status [chat]            # what the local store holds, per chat
-tg export <chat> --jsonl > chat.jsonl   # a chat's stored messages, oldest first
-tg export <chat> --format markdown > chat.md   # the same as a transcript a person reads
-tg recipients list|add|remove|off   # the chats this profile may send to, once the list is on
+tg store status [chat]           # what the local store holds, per chat
+tg store export <chat> --jsonl > chat.jsonl   # a chat's stored messages, oldest first
+tg store export <chat> --format markdown > chat.md   # the same as a transcript a person reads
+tg recipients list|add|remove|clear   # the chats this profile may send to, once the list is on
 tg sends list                    # every attempt to send, never the text
 tg runs list [--limit n]         # recorded runs, newest first
 tg runs show <run-id>            # one run: its outcome and one line per Telegram call
@@ -99,7 +99,7 @@ tg config show|set|unset         # the settings in force and where each came fro
 tg complete zsh|bash|fish|powershell   # shell completion: source <(tg complete zsh)
 tg doctor [--online]             # the installation's state; --online connects once
 tg doctor report create [--run id] [--output file]   # a problem report: no message text, every id a label
-tg update [--check]              # update with the package manager that installed tg, then restart a running server; never runs by itself
+tg upgrade [--check]             # upgrade with the package manager that installed tg, then restart a running server; never runs by itself
 tg mcp [--allow-send [--confirm-send]]   # serve this profile to an agent over MCP — docs/mcp.md
 tg mcp config [the same flags]   # the entry for Claude Desktop, Cursor and others
 tg skill show > ~/.claude/skills/tg-cli/SKILL.md   # the instructions for an agent that has a terminal

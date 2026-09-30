@@ -32,7 +32,7 @@ export const UNTESTED: Untested[] = [
       "drives the server with allowDelete, and mcp config below shows the flag reaching the server's arguments",
   },
   {
-    command: "backfill",
+    command: "store fetch",
     option: "--background",
     reason:
       "spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts " +

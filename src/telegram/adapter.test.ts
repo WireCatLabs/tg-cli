@@ -683,12 +683,13 @@ describe("sending", () => {
     expect(options).toMatchObject({ silent: true, disableWebPreview: true })
   })
 
-  it("**sends a photo with its caption and the same random_id**, a file as a document, one per message", async () => {
+  it("**sends a photo with its caption, the same random_id and the reply**, a file as a document, one per message", async () => {
     const { adapter, client } = await open()
     const bytes = new Uint8Array([1, 2, 3])
 
     const sent = await adapter.send("-100500", "look", {
       sendId: "123456789012345",
+      replyTo: "7",
       attachments: [{ kind: "photo", name: "cat.png", bytes }],
     })
     await adapter.send("-100500", "", { sendId: "42", attachments: [{ kind: "file", name: "plan.pdf", bytes }] })
@@ -698,6 +699,7 @@ describe("sending", () => {
     expect(chat).toBe(-100500)
     expect(photo).toMatchObject({ type: "photo", file: bytes, fileName: "cat.png", caption: "look" })
     expect(String((options as { randomId: unknown }).randomId)).toBe("123456789012345")
+    expect(options).toMatchObject({ replyTo: 7 })
     expect(file).toMatchObject({ type: "document", fileName: "plan.pdf" })
     expect(client.sendText).not.toHaveBeenCalled()
     expect(() =>

@@ -13,12 +13,12 @@ const BY_HAND: Record<string, string> = {
 }
 
 /**
- * Updates `tg` with the package manager that installed it. Never runs by itself: this program
+ * Upgrades `tg` with the package manager that installed it. Never runs by itself: this program
  * holds the session of a personal account, and code that replaces itself unasked is not wanted here.
  */
-export const updateSelfCommand = (): Command =>
-  new Command("update")
-    .description("update tg with the package manager that installed it; --check only looks")
+export const upgradeCommand = (): Command =>
+  new Command("upgrade")
+    .description("upgrade tg with the package manager that installed it; --check only looks")
     .option("--check", "say whether a newer version exists, and install nothing")
     .action(async function (this: Command, { check }: { check?: boolean }) {
       const { renderer, format } = outputFor(this)

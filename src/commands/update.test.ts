@@ -23,12 +23,12 @@ const update = async (
     },
   }
   const streams = captureStreams()
-  const code = await run(["update", ...argv, "--json"], { streams, tty: false, update: environment })
+  const code = await run(["upgrade", ...argv, "--json"], { streams, tty: false, update: environment })
   const [out] = streams.stdout
   return { code, ran, result: out ? JSON.parse(out) : undefined, stderr: streams.stderr.join("\n") }
 }
 
-describe("tg update", () => {
+describe("tg upgrade", () => {
   it("--check says what it would run and runs nothing", async () => {
     const { code, ran, result } = await update(["--check"])
     expect(code).toBe(0)
@@ -78,7 +78,7 @@ describe("tg update", () => {
   })
 })
 
-describe("tg update and a running server", () => {
+describe("tg upgrade and a running server", () => {
   const serving = (profile: string) => {
     const lock = join(process.env.TG_STATE_DIR ?? "", "serve", `${profile}.lock`)
     mkdirSync(dirname(lock), { recursive: true })

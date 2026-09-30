@@ -2,7 +2,6 @@ import { appendFileSync } from "node:fs"
 import { processStreams } from "@leemour/cli-core"
 import {
   accountCommand,
-  backfillCommand,
   chatsCommand,
   commandsCommand,
   completeCommand,
@@ -10,7 +9,6 @@ import {
   contactsCommand,
   createProgram as create,
   doctorCommand,
-  exportCommand,
   inboxCommand,
   mcpCommand,
   messagesCommand,
@@ -26,7 +24,7 @@ import {
   serveCommand,
   serverCommand,
   skillCommand,
-  syncCommand,
+  storeCommand,
   topicsCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
@@ -34,7 +32,7 @@ import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { type Environment, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
-import { updateSelfCommand } from "./commands/update.js"
+import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
 
 const definition: ProgramDefinition = {
@@ -56,9 +54,7 @@ const definition: ProgramDefinition = {
       watchCommand(TELEGRAM),
       serveCommand(TELEGRAM),
       serverCommand(TELEGRAM),
-      syncCommand(TELEGRAM),
-      exportCommand(TELEGRAM),
-      backfillCommand(TELEGRAM),
+      storeCommand(TELEGRAM),
       recipientsCommand(TELEGRAM),
       sendsCommand(TELEGRAM),
       runsCommand(TG),
@@ -66,7 +62,7 @@ const definition: ProgramDefinition = {
       doctorCommand(TELEGRAM),
       commandsCommand(TG),
       completeCommand(TELEGRAM, CONFIG),
-      updateSelfCommand(),
+      upgradeCommand(),
       mcpCommand(TELEGRAM),
       skillCommand(TG, new URL("../skills/tg-cli/SKILL.md", import.meta.url)),
     ]),

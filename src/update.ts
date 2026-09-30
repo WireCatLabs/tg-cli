@@ -15,7 +15,7 @@ import { VERSION } from "./version.js"
 
 export const PACKAGE = "@leemour/tg-cli"
 
-/** npm, the clock, the terminal and the package manager as `tg update` sees them — faked in a test. */
+/** npm, the clock, the terminal and the package manager as `tg upgrade` sees them — faked in a test. */
 export interface UpdateEnvironment {
   fetch?: FetchLike
   now?: () => number
@@ -50,7 +50,9 @@ export const updateNotice = (
   }: { tty?: boolean; environment?: UpdateEnvironment; env?: NodeJS.ProcessEnv },
 ): Promise<string | undefined> => {
   try {
+    if (argv.includes("upgrade")) return Promise.resolve(undefined)
     const pretty = !argv.includes("--json") && !argv.includes("--jsonl") && (tty ?? process.stdout.isTTY === true)
+    // cli-core 0.8 names the command `update` in its line; tg's is `upgrade`.
     return sharedNotice({
       argv,
       packageName: PACKAGE,
@@ -66,7 +68,7 @@ export const updateNotice = (
       installer: installer(environment),
       env,
       offVariables: ["TG_NO_UPDATE_CHECK"],
-    })
+    }).then((line) => line?.replace("`tg update`", "`tg upgrade`"))
   } catch {
     return Promise.resolve(undefined)
   }

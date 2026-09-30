@@ -42,7 +42,7 @@ describe("the daily line about a newer version", () => {
     const streams = captureStreams()
     const code = await run(["commands"], { streams, tty: true, env, update: environment })
     expect(code).toBe(0)
-    expect(streams.stderr.at(-1)).toMatch(/tg 99\.0\.0 is out — you have .+ `tg update` installs it/)
+    expect(streams.stderr.at(-1)).toMatch(/tg 99\.0\.0 is out — you have .+ `tg upgrade` installs it/)
     expect(streams.stdout.join("\n")).not.toContain("99.0.0")
   })
 
@@ -89,11 +89,11 @@ describe("the daily line about a newer version", () => {
     expect(asked()).toBe(0)
   })
 
-  it("never runs for a Tab or for tg update itself", async () => {
+  it("never runs for a Tab or for tg upgrade itself", async () => {
     const { notice, asked } = setup()
     expect(await notice(["complete", "--", "ch"])).toBeUndefined()
-    expect(await notice(["update"])).toBeUndefined()
-    expect(await notice(["--timeout", "30s", "update"])).toBeUndefined()
+    expect(await notice(["upgrade"])).toBeUndefined()
+    expect(await notice(["--timeout", "30s", "upgrade"])).toBeUndefined()
     expect(asked()).toBe(0)
   })
 })
