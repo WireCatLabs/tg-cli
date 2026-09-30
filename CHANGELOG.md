@@ -5,6 +5,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg messages download <chat> --all`** saves every file of a chat — photos, documents, videos,
+  voice notes — into `--output`, newest first. Cut short by `--timeout` or Ctrl-C, it continues where
+  it stopped the next time, and picks up newer messages too; where it got to is kept in a
+  `.download-<chat>.json` beside the files. Telegram's "wait N seconds" is sat out up to five minutes,
+  and `--pace` (1 s) spaces the pages. A file name another message already took gets the message id in
+  front; nothing is overwritten. (cli-messaging 0.53.0)
+
 ## 0.16.0 — 30.09.2026
 
 ### Fixed
