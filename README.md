@@ -69,6 +69,10 @@ tg messages download <chat> <id> [--output dir]   # the message's file, into a f
 tg messages transcribe <chat> <id> [--local] [--model id]   # a voice note as text: Telegram, else a model on this machine
 tg models audio list | download <id>   # speech models for --local, in ~/.cache/cli-common; Parakeet (25 languages) is the default
 tg reactions add <chat> <id> <emoji>             # replaces your reaction; `reactions remove <chat> <id>` takes it off
+tg polls show <chat> <id>                        # a poll and its answer ids
+tg polls vote <chat> <id> <answer id…> | --retract   # by answer id, never by position
+tg polls create <chat> <question> <answer…> [--multiple] [--anonymous] [--silent]   # public unless --anonymous
+tg polls close <chat> <id>                       # your own poll; it cannot be reopened
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
 tg inbox [--new | --since 2h] [--limit n] [--all] [--transcribe]   # other people's unread messages; --new: what arrived since the last check;

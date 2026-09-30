@@ -15,8 +15,20 @@ const configure = (profiles: Record<string, unknown>) => {
   writeFileSync(join(dir, "config.json"), JSON.stringify({ profiles }))
 }
 
+const poll = (chatId: string, messageId: string) => ({
+  chatId,
+  messageId,
+  question: "Friday?",
+  answers: [{ id: "MA", text: "yes", voters: null, chosen: false }],
+  closed: false,
+  multiple: false,
+  anonymous: false,
+  voters: null,
+})
+
 const telegram = () => {
   const sent: string[] = []
+  const polled: string[] = []
   const deleted: string[] = []
   const marked: string[] = []
   const edited: string[] = []
@@ -29,6 +41,19 @@ const telegram = () => {
     },
     delete: async (_chat, ids, { forEveryone }) => {
       deleted.push(`${ids.join(",")}${forEveryone ? " everyone" : ""}`)
+    },
+    poll: async (chatId, messageId) => poll(chatId, messageId),
+    vote: async (chatId, messageId, ids) => {
+      polled.push(`vote ${ids.join(",") || "none"}`)
+      return poll(chatId, messageId)
+    },
+    closePoll: async (chatId, messageId) => {
+      polled.push("close")
+      return { ...poll(chatId, messageId), closed: true }
+    },
+    createPoll: async (chatId, created, { sendId, silent }) => {
+      polled.push(`create ${created.answers.length} ${created.multiple} ${created.anonymous} ${silent === true}`)
+      return { sendId, message: message("80", { chatId, outgoing: true }) }
     },
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
@@ -52,7 +77,7 @@ const telegram = () => {
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited, forwarded, pinned, reacted, marked, deleted }
+  return { adapter, sent, edited, forwarded, pinned, reacted, marked, deleted, polled }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -241,5 +266,41 @@ describe("the send guard in front of the other writes", () => {
     expect([unasked.code, done.code, over.code]).toEqual([7, 0, 8])
     expect(JSON.parse(done.stdout[0] ?? "")).toEqual({ chatId: chat.id, deleted: ["5", "6"], forEveryone: false })
     expect(deleted).toEqual(["5,6"])
+  })
+
+  it("reads a poll, votes by id and takes it back, closes it, and creates one with every option", async () => {
+    const { adapter, polled } = telegram()
+
+    const shown = await tg(["g-poll", "polls", "show", "Valencia", "3", "--json"], adapter)
+    await tg(["g-poll", "polls", "vote", "Valencia", "3", "MA"], adapter)
+    await tg(["g-poll", "polls", "vote", "Valencia", "3", "--retract"], adapter)
+    await tg(["g-poll", "polls", "close", "Valencia", "3"], adapter)
+    const created = await tg(
+      [
+        "g-poll",
+        "polls",
+        "create",
+        "Valencia",
+        "Where?",
+        "a",
+        "b",
+        "--multiple",
+        "--anonymous",
+        "--silent",
+        "--send-id",
+        "5",
+        "--json",
+      ],
+      adapter,
+    )
+
+    expect(JSON.parse(shown.stdout[0] ?? "").answers[0].id).toBe("MA")
+    expect(JSON.parse(created.stdout[0] ?? "")).toMatchObject({ sendId: "5", message: { id: "80" } })
+    expect(polled).toEqual(["vote MA", "vote none", "close", "create 2 true true true"])
+    expect(
+      journal("g-poll")
+        .filter((entry) => entry.outcome === "sent")
+        .map((entry) => entry.kind),
+    ).toEqual(["reaction", "reaction", "edit", "message"])
   })
 })
