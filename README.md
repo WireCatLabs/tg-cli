@@ -50,7 +50,7 @@ tg contacts list [--order recent|name] [--search text]   # people you have a one
 tg contacts show <person>        # their bio and the groups you share
 tg contacts lookup               # who has a phone number: piped in or typed when asked, never an argument
 tg contacts sync                 # your Telegram contacts into the local store; counts only
-tg messages list <chat> [--limit n] [--before id | --after id-or-time]
+tg messages list <chat> [--limit n] [--before id | --after id-or-time] [--transcribe]
 tg messages show <chat> <id>     # or: tg messages show msg:telegram/<account>/<chat>/<id>
 tg messages context <chat> <id> [--before n] [--after n]   # a message and what came around it
 tg messages send <chat> [text] [--send-id id]   # text from stdin when omitted
@@ -68,7 +68,7 @@ tg models audio list | download <id>   # speech models for --local, in ~/.cache/
 tg reactions add <chat> <id> <emoji>             # replaces your reaction; `reactions remove <chat> <id>` takes it off
 tg messages search <words…> [--chat c]   # search the local store: every word, as the start of a word
 tg messages search --regex '<pattern>' [--chat c] [--limit n]   # a regular expression over the stored text
-tg inbox [--new | --since 2h] [--limit n] [--all]   # other people's unread messages; --new: what arrived since the last check;
+tg inbox [--new | --since 2h] [--limit n] [--all] [--transcribe]   # other people's unread messages; --new: what arrived since the last check;
                                                     # muted and archived chats only when they mention you, or with --all
 tg review [--since 3d] [--chat c] [--unanswered [hours]] [--all]   # every message, yours too, in chats that changed —
                                                     # for reviewing who owes what; ends with where the next review starts

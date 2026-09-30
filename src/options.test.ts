@@ -258,6 +258,25 @@ describe("messages", () => {
     expect(readFileSync(join(into, "42-1.ogg"), "utf8")).toBe("opus")
   })
 
+  it("list --transcribe hears the chat's voice messages, and a later list shows them without asking", async () => {
+    let asked = 0
+    const voiced = scripted({
+      history: async () => ({ items: [message("74", { attachments: [{ kind: "voice" }] })], hasMore: false }),
+      transcribe: async () => {
+        asked++
+        return { text: "adiós", pending: false }
+      },
+    })
+    const heard = json(
+      (await tg(["messages", "list", "Valencia", "--transcribe", "--json"], { adapter: () => voiced })).stdout,
+    )
+    const later = json((await tg(["messages", "list", "Valencia", "--json"], { adapter: () => voiced })).stdout)
+
+    expect(heard.items[0].transcript).toBe("adiós")
+    expect(later.items[0].transcript).toBe("adiós")
+    expect(asked).toBe(1)
+  })
+
   it("transcribe answers a voice message's text", async () => {
     const adapter = scripted({ transcribe: async () => ({ text: "hola", pending: false }) })
     const { code, stdout } = await tg(["messages", "transcribe", "Valencia", "42", "--json"], {
@@ -379,6 +398,23 @@ describe("inbox", () => {
     expect(code).toBe(0)
     const answer = json(stdout)
     expect(answer.chats.flatMap((one: { messages: unknown[] }) => one.messages)).toHaveLength(1)
+  })
+
+  it("--transcribe hears the voice messages it shows", async () => {
+    const voiced = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+      history: async () => ({
+        items: [message("73", { timestamp: latest, attachments: [{ kind: "voice", mime: "audio/ogg" }] })],
+        hasMore: false,
+      }),
+      transcribe: async () => ({ text: "hola", pending: false }),
+    })
+    const answer = json(
+      (await tg(["inbox", "--since", "1h", "--transcribe", "--json"], { adapter: () => voiced })).stdout,
+    )
+
+    expect(answer.chats[0].messages[0].transcript).toBe("hola")
+    expect(answer.unheard).toEqual([])
   })
 
   it("--all takes in the muted chats it otherwise leaves out", async () => {

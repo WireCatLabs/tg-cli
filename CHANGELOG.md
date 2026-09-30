@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Voice messages carry their text in `tg messages list` and `tg inbox`.** A transcript heard once
+  is kept per profile in tg's cache and shows on every later read — `transcript` in `--json`,
+  `🎤 …` under the text for a person. `--transcribe` hears the rest, by Telegram or the model on
+  this machine, within two minutes for the whole list; what is left is in `unheard`. The same as
+  `transcribe` on `tg_messages_list` and `tg_inbox`.
 - **`tg chats members list <chat>`** and `tg_chats_members`: a group's members, paged, each with a role
   and when Telegram last saw them — up to Telegram's own 10 000.
 - **`tg contacts lookup`**: who has a phone number, where their privacy lets you find them. The number is

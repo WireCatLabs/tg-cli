@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**145 ✅ · 3 ⛔ · 0 ❌** — 67 commands, 81 options.
+**148 ✅ · 3 ⛔ · 0 ❌** — 68 commands, 83 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -27,6 +27,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats events` |  | ✅ |  |
 | `chats events` | `--since` | ✅ |  |
 | `chats events` | `--event` | ✅ |  |
+| `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `chats members list` |  | ✅ |  |
 | `chats members list` | `--limit` | ✅ |  |
@@ -47,6 +48,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--before` | ✅ |  |
 | `messages list` | `--after` | ✅ |  |
+| `messages list` | `--transcribe` | ✅ |  |
 | `messages search` |  | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
@@ -88,6 +90,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `inbox` | `--since` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
 | `inbox` | `--all` | ✅ |  |
+| `inbox` | `--transcribe` | ✅ |  |
 | `review` |  | ✅ |  |
 | `review` | `--since` | ✅ |  |
 | `review` | `--chat` | ✅ |  |
