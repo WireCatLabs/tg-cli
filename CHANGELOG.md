@@ -5,6 +5,32 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+Changing messages other people see — each through the send guard, as `messages send` is: a
+read-only profile refuses, `allow` must name the permission, the recipient list and the hourly limit
+apply where they count, and `tg sends list` records it without the text.
+
+- **`tg messages edit <chat> <id> [text]`**: the new text of your own message. Repeating the same edit
+  changes nothing. `tg_messages_edit` with `mcp --allow-send`.
+- **`tg messages forward <chat> <id> --to <chat> [--silent]`**, checked against the chat it goes to.
+  After an unknown outcome, look in that chat before forwarding again. `tg_messages_forward`.
+- **`tg messages pin|unpin <chat> <id>`**, quiet unless `--notify`; in a one-to-one chat the pin is on
+  your side only. `tg_messages_pin` and `tg_messages_unpin`.
+- **`tg reactions add <chat> <id> <emoji>`** and **`tg reactions remove <chat> <id>`**; a reaction
+  never counts toward the hourly limit. `tg_reactions_add` and `tg_reactions_remove`.
+- **`tg chats read <chat> [--until id]`** marks a chat read — the other side sees it. Its tool,
+  `tg_chats_read`, comes only with the new **`tg mcp --allow-mark-read`**, which `--allow-send` does not
+  turn on.
+- **`tg messages delete <chat> <id…> --allow-dangerous [--for-everyone]`**: at most 10, for you only
+  unless `--for-everyone`, and nothing without `--allow-dangerous`. In a supergroup or a channel
+  Telegram has no "for me only", so there it needs `--for-everyone`. The new **`tg mcp --allow-delete`**
+  offers `tg_messages_delete`, which only ever deletes your own copy.
+- **`tg polls show|vote|close|create`**: a poll with its answer ids, a vote by those ids (never by
+  position) or `--retract`, closing your own poll, and a new one — public unless `--anonymous`, with
+  `--send-id` for a safe retry. `tg_polls_show` reads; `tg_polls_vote`, `_close` and `_create` come with
+  `--allow-send`.
+
 ## 0.13.0 — 30.09.2026
 
 ### Changed — may break scripts
