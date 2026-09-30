@@ -5,6 +5,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Fixed
+
+- **A speech model on this machine no longer drops quietly spoken words.** A quiet stretch in the
+  middle of a voice message was taken for silence and left out of the text; now it is heard, by
+  Parakeet and GigaAM alike. Voice messages a local model heard before are heard again the next time
+  `--transcribe` asks for them; Telegram's transcripts stay. (cli-messaging 0.51.0)
+
 ## 0.14.0 — 30.09.2026
 
 ### What's new

@@ -12,8 +12,8 @@ importers:
         specifier: 0.8.0
         version: 0.8.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.50.0
-        version: 0.50.0(better-sqlite3@12.11.1)(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
+        specifier: 0.51.0
+        version: 0.51.0(better-sqlite3@12.11.1)(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -178,8 +178,8 @@ packages:
       commander:
         optional: true
 
-  '@leemour/cli-messaging@0.50.0':
-    resolution: {integrity: sha512-R1FzxUHscwZukfa8ARR9JzDiSVFi6foq7c3Pn7lz/+mnDepJtiqeXZ3gGKkENSMKv4neH+lx3xGvk7BToO+EKw==}
+  '@leemour/cli-messaging@0.51.0':
+    resolution: {integrity: sha512-LfBrRZ+x8KvMxi0dbHtys/blGM46fVVQXpXo7ezYBrv4XdoChc+DqMcQwKCiQLseR6rNhtX+mNqsUTBezI16Aw==}
     engines: {node: '>=22'}
     peerDependencies:
       commander: '>=15'
@@ -1430,7 +1430,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@leemour/cli-messaging@0.50.0(better-sqlite3@12.11.1)(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
+  '@leemour/cli-messaging@0.51.0(better-sqlite3@12.11.1)(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@leemour/cli-core': 0.8.0(commander@15.0.0)(typescript@7.0.2)
