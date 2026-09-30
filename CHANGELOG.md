@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.14.0 — 30.09.2026
+
 ### What's new
 
 Changing messages other people see — each through the send guard, as `messages send` is: a
