@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.15.0 — 30.09.2026
+
 ### Fixed
 
 - **A speech model on this machine no longer drops quietly spoken words.** A quiet stretch in the
