@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
-import { FileLocation, MtTimeoutError, tl } from "@mtcute/node"
+import { FileLocation, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
 
@@ -56,6 +56,22 @@ class FakeClient {
     return { _: "inputPeerUser" }
   }
   getContacts = async () => this.contacts
+  preview: unknown = null
+  fullChat: unknown = null
+  topics: unknown[] = []
+  getChatPreview = async (link: string) => {
+    this.#record("getChatPreview", [link])
+    if (!this.preview) throw new MtPeerNotFoundError("You have already joined this chat!")
+    return this.preview
+  }
+  getFullChat = async (reference: unknown) => {
+    this.#record("getFullChat", [reference])
+    return this.fullChat
+  }
+  async *iterForumTopics(...args: unknown[]) {
+    this.#record("iterForumTopics", args)
+    yield* this.topics
+  }
   chunks: unknown[] = [new Uint8Array([1, 2]), new Uint8Array([3])]
   getMessages = async (...args: unknown[]) => {
     this.#record("getMessages", args)
@@ -394,6 +410,48 @@ describe("reading", () => {
     })
     const asked = client.calls.filter((call) => call.method === "getChatMembers").map((call) => call.args[1])
     expect(asked).toEqual([{ offset: 2, limit: 2 }])
+  })
+
+  it("previews an invite without joining, and reads a joined invite or a public link as the chat", async () => {
+    const { adapter, client } = await open()
+    const chat = {
+      chatType: "supergroup",
+      title: "Pisos",
+      id: -100500,
+      username: "pisos_vlc",
+      membersCount: 40,
+      bio: "",
+      isMember: true,
+    }
+    client.preview = { type: "supergroup", title: "Pisos", memberCount: 40, withApproval: true }
+
+    expect(await adapter.inspect("https://t.me/+abc")).toMatchObject({ id: null, member: false, approvalNeeded: true })
+
+    client.preview = null
+    client.fullChat = chat
+    expect(await adapter.inspect("https://t.me/+abc")).toMatchObject({ id: "-100500", member: true, description: null })
+    expect(await adapter.inspect("https://t.me/pisos_vlc?start=1")).toMatchObject({ username: "pisos_vlc" })
+    const read = client.calls.filter((call) => call.method === "getFullChat").map((call) => call.args[0])
+    expect(read).toEqual(["https://t.me/+abc", "pisos_vlc"])
+  })
+
+  it("lists a forum's topics a page at a time, passing a search on as Telegram's query", async () => {
+    const { adapter, client } = await open()
+    const topic = (id: number) => ({
+      id,
+      title: `Topic ${id}`,
+      isClosed: false,
+      isPinned: id === 1,
+      unreadCount: 0,
+      lastMessage: { date: new Date("2026-09-27T10:00:00.000Z") },
+      date: new Date("2026-09-01T10:00:00.000Z"),
+    })
+    client.topics = [topic(1), topic(2), topic(3)]
+
+    const page = await adapter.topics("-100500", { search: "pis", limit: 1, offset: 1 })
+
+    expect(page).toMatchObject({ hasMore: true, items: [{ id: "2", title: "Topic 2", pinned: false }] })
+    expect(client.calls.find((call) => call.method === "iterForumTopics")?.args[1]).toEqual({ limit: 3, query: "pis" })
   })
 
   it("finds a person by phone, and says nobody is there without repeating the number", async () => {

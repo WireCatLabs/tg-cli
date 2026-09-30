@@ -26,6 +26,7 @@ import {
   serverCommand,
   skillCommand,
   syncCommand,
+  topicsCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
@@ -49,6 +50,7 @@ const definition: ProgramDefinition = {
       modelsCommand(TELEGRAM),
       inboxCommand(TELEGRAM),
       reviewCommand(TELEGRAM),
+      topicsCommand(TELEGRAM),
       watchCommand(TELEGRAM),
       serveCommand(TELEGRAM),
       serverCommand(TELEGRAM),

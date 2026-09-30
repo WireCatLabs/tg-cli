@@ -5,6 +5,7 @@ import type {
   Chat,
   ChatKind,
   GroupMember,
+  LinkTarget,
   Markup,
   Member,
   Message,
@@ -13,12 +14,16 @@ import type {
   ProviderMetadata,
   QuotedMessage,
   Reactions,
+  Topic,
 } from "@leemour/cli-messaging"
 import type { Upload } from "@leemour/cli-messaging/sends"
 import {
   type ChatMember,
+  type ChatPreview,
   type DeleteMessageUpdate,
   type Dialog,
+  type ForumTopic,
+  type FullChat,
   getMarkedPeerId,
   InputMedia,
   type InputMediaLike,
@@ -60,6 +65,38 @@ export const toAccountSession = (session: tl.RawAuthorization): AccountSession =
   location: [session.region, session.country].filter(Boolean).join(", ") || null,
   lastActiveAt: seconds(session.dateActive),
   createdAt: seconds(session.dateCreated),
+})
+
+export const toTopic = (topic: ForumTopic): Topic => ({
+  id: String(topic.id),
+  title: topic.title,
+  closed: topic.isClosed,
+  pinned: topic.isPinned,
+  unreadCount: topic.unreadCount,
+  lastMessageAt: topic.lastMessage?.date.toISOString() ?? null,
+  createdAt: topic.date.toISOString(),
+})
+
+/** A private invite as its preview describes it: no id until the owner joins. */
+export const toInvitePreview = (preview: ChatPreview): LinkTarget => ({
+  kind: preview.type === "channel" ? "channel" : "group",
+  title: preview.title,
+  id: null,
+  username: null,
+  participantsCount: preview.memberCount,
+  description: null,
+  member: false,
+  approvalNeeded: preview.withApproval,
+})
+
+export const toLinkChat = (chat: FullChat): LinkTarget => ({
+  kind: chat.chatType === "channel" ? "channel" : "group",
+  title: chat.title,
+  id: String(chat.id),
+  username: chat.username,
+  participantsCount: chat.membersCount,
+  description: chat.bio || null,
+  member: chat.isMember,
 })
 
 /** Telegram gives a last-seen time only to someone offline whose privacy shows it. */
