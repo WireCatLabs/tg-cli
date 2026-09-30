@@ -51,8 +51,9 @@ Still open:
   whether one goes in, or a synthetic one is found.
 - **One `tg messages download` printed its answer and never exited** (2026-09-30, stopped after 30
   minutes), although it was given `--timeout 60s` — so something stayed open after the command had
-  finished (a connection or a timer), not a slow request. Three later ones exited at once. Not
-  reproduced; project rule 3.
+  finished, not a slow request. Not reproduced in five more runs. Since tg #125, tg names what is still
+  open five seconds after a command finishes (`tg: finished, but … stayed open`) and exits: if that line
+  ever shows up, it is the evidence for the cause.
 - **`--all` can save a named file twice.** When a run is cut after a file is saved but before the
   progress file records it, the next run finds the plain name taken and saves `<id>-<n>-<name>` beside
   it. Only unnamed files (photos, voice notes) are recognised as `existing`. At most one file per cut.

@@ -5,6 +5,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Fixed
+
+- **tg always exits once a command has finished.** Once, a download printed its answer and then stayed
+  running for half an hour, `--timeout` or not. If anything is still open five seconds after a command
+  is done, tg now names it on stderr and exits with the command's own exit code. Output still being
+  written is waited for.
+
 ## 0.18.0 — 30.09.2026
 
 ### Fixed
