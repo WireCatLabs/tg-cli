@@ -10,6 +10,8 @@ for code and documents. This page lists only where `tg` differs or adds.
 - **Biome** formats and lints (`pnpm lint`): 2 spaces, double quotes, no semicolons, 120 columns.
 - **mtcute stays in `src/telegram/`**, and its objects become domain models in `map.ts` alone
   ([ARCHITECTURE.md](ARCHITECTURE.md#1-most-of-tg-is-not-in-this-repository)).
+- **Command and option names** follow max-cli's [Command names](https://github.com/leemour/max-cli/blob/main/docs/dev/CONVENTIONS.md#command-names)
+  — one standard for both CLIs; a new verb is added there first.
 - **Messenger-neutral code goes to cli-messaging**, not here. If a change would help `max` too, it
   belongs there.
 - **Never a message, a token, a phone number or a real chat id** in a log, a fixture, a test or a
