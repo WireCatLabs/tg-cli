@@ -87,7 +87,7 @@ profile whose `allow` does not name `send` shows no send tool. The read tools ar
 
 **Marking a chat read is a flag of its own**, `--allow-mark-read`, which `--allow-send` does not
 turn on: the other side sees that you read it, and an agent reading on your behalf should not give
-that away. `tg_chats_read` goes through the same guard as a send, and never counts toward the
+that away. `tg_chats_mark_read` goes through the same guard as a send, and never counts toward the
 hourly limit.
 
 **Deleting is a flag of its own too**, `--allow-delete`. `tg_messages_delete` removes up to 10
@@ -139,7 +139,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
 | `tg_messages_send` | `tg messages send`, `reply` | send, only with `--allow-send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `markdown` as `--silent`, `--no-preview` and `--md`; `at` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
 | `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, only with `--allow-send` and permission `edit`; repeating it changes nothing |
-| `tg_chats_read` | `tg chats read` | mark a chat read, to its newest message or `until` one; only with `--allow-mark-read` and permission `read` — the other side sees it |
+| `tg_chats_mark_read` | `tg chats mark-read` | mark a chat read, to its newest message or `until` one; only with `--allow-mark-read` and permission `read` — the other side sees it |
 | `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view; only with `--allow-delete` and permission `delete`; never for everyone; each counts toward the hourly limit |
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message; only with `--allow-send` and permission `reaction`; the confirmation form shows the emoji |
 | `tg_polls_show` | `tg polls show` | a poll and its answer ids; a read tool |

@@ -28,7 +28,7 @@ file holds what the help cannot say: the traps and the boundaries.
 - **A refusal with exit code `5`, `7` or `8` on a send is the owner's decision, not a fault.** Do
   not work around it: do not change settings, do not call `tg recipients add`, do not wait and
   retry. Tell the owner the send did not go, and why.
-- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats read` is
+- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` is
   the one command that marks a chat read, and the other side sees it: only when the owner asked.
 - **Not for:** mass mailing, auto-replies, other people's accounts.
 - **Message text goes to the owner only.** Not into logs, files or commits.
@@ -60,12 +60,12 @@ file holds what the help cannot say: the traps and the boundaries.
    second message to a person.
 5. **`tg messages search` searches only what this machine has kept** — what was read, backfilled,
    or kept by `tg serve` — and never asks Telegram. Empty does not mean "never said". Read the chat
-   with `tg messages list <chat>` first, or ask the owner about `tg backfill`.
-6. **`tg export` exports only what was kept**, and never asks Telegram. `tg sync status` says how
+   with `tg messages list <chat>` first, or ask the owner about `tg store fetch`.
+6. **`tg store export` exports only what was kept**, and never asks Telegram. `tg store status` says how
    much of each chat is kept.
-7. **`tg backfill` makes many requests from the owner's account.** Only when the owner asked.
-   `tg backfill <chat> --estimate` says what it would cost and asks Telegram nothing — show the owner
-   that first. A long one goes `--background`; `tg backfill status` follows it.
+7. **`tg store fetch` makes many requests from the owner's account.** Only when the owner asked.
+   `tg store fetch <chat> --estimate` says what it would cost and asks Telegram nothing — show the owner
+   that first. A long one goes `--background`; `tg store jobs show` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `messages search`. The message asked for carries `"anchor": true`.
 9. **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also change the keyring entry.** With them

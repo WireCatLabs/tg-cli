@@ -5,11 +5,26 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+Commands follow one naming standard, a noun then a verb (cli-messaging 0.55.0). The old names are gone,
+with no aliases, and now fail as unknown commands.
+
+- **`tg backfill <chat>` is `tg store fetch <chat>`**, and `backfill list|status|cancel` is
+  `store jobs list|show|cancel`. `--pace` is `--pause`, on `store fetch` and on
+  `messages download --all`. New: `--since 1d` stops at the page that reaches that time.
+- **`tg export` is `tg store export`**, and **`tg sync status` is `tg store status`**.
+- **`tg messages reply <chat> <id> [text]` is `tg messages send <chat> [text] --reply-to <id>`**.
+- **`tg chats read` is `tg chats mark-read`**; the MCP tool `tg_chats_read` is `tg_chats_mark_read`.
+- **`tg recipients off` is `tg recipients clear`**.
+- **A deleted message loses its text in the local store**, and voice transcripts move into the shared
+  store: each voice note is heard once more.
+
 ### What's new
 
 - **A message's sender keeps their @username in the local store**, so `--from @name` and the coming
   conversation view can match a mention to the person. Takes effect with cli-messaging 0.57.0 or later;
-  history already downloaded gains it the next time it is fetched.
+  history already downloaded gains it the next time it is fetched. Active from this version.
 
 ## 0.19.0 — 30.09.2026
 

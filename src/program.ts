@@ -2,7 +2,6 @@ import { appendFileSync } from "node:fs"
 import { processStreams } from "@leemour/cli-core"
 import {
   accountCommand,
-  backfillCommand,
   chatsCommand,
   commandsCommand,
   completeCommand,
@@ -10,7 +9,6 @@ import {
   contactsCommand,
   createProgram as create,
   doctorCommand,
-  exportCommand,
   inboxCommand,
   mcpCommand,
   messagesCommand,
@@ -26,7 +24,7 @@ import {
   serveCommand,
   serverCommand,
   skillCommand,
-  syncCommand,
+  storeCommand,
   topicsCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
@@ -56,9 +54,7 @@ const definition: ProgramDefinition = {
       watchCommand(TELEGRAM),
       serveCommand(TELEGRAM),
       serverCommand(TELEGRAM),
-      syncCommand(TELEGRAM),
-      exportCommand(TELEGRAM),
-      backfillCommand(TELEGRAM),
+      storeCommand(TELEGRAM),
       recipientsCommand(TELEGRAM),
       sendsCommand(TELEGRAM),
       runsCommand(TG),

@@ -322,7 +322,7 @@ describe("messages", () => {
       }),
     })
     const { code, stdout } = await tg(
-      ["messages", "download", "Valencia", "--all", "--pace", "1ms", "--output", into, "--json"],
+      ["messages", "download", "Valencia", "--all", "--pause", "1ms", "--output", into, "--json"],
       { adapter: () => adapter },
     )
 
@@ -381,7 +381,7 @@ describe("messages", () => {
     expect(unknown.stderr.join("")).toContain("whisper")
   })
 
-  it("reply repeats a send with the --send-id it is given, and answers the message", async () => {
+  it("send --reply-to repeats a send with the --send-id it is given, and answers the message", async () => {
     let asked: unknown
     const adapter = scripted({
       send: async (chatId, text, options) => {
@@ -390,7 +390,7 @@ describe("messages", () => {
       },
     })
     const { code, stdout } = await tg(
-      ["messages", "reply", "Valencia", "42", "hola", "--send-id", "987654321", "--json"],
+      ["messages", "send", "Valencia", "hola", "--reply-to", "42", "--send-id", "987654321", "--json"],
       {
         adapter: () => adapter,
       },
@@ -572,8 +572,8 @@ describe("listening", () => {
   })
 })
 
-describe("backfill", () => {
-  it("walks back a page at a time until --max, pausing --pace between pages", async () => {
+describe("store fetch", () => {
+  it("walks back a page at a time until --max, pausing --pause between pages", async () => {
     const asked: unknown[] = []
     const pages = scripted({
       history: async (_chat, window) => {
@@ -582,13 +582,30 @@ describe("backfill", () => {
         return { items: [message(String(top - 1)), message(String(top))], hasMore: true }
       },
     })
-    const { code, stdout } = await tg(["backfill", "Valencia", "--max", "3", "--pace", "1ms", "--json"], {
+    const { code, stdout } = await tg(["store", "fetch", "Valencia", "--max", "3", "--pause", "1ms", "--json"], {
       adapter: () => pages,
     })
 
     expect(code).toBe(0)
     expect(json(stdout)).toMatchObject({ chat: chat.id, fetched: 4, complete: false })
     expect(asked).toEqual([undefined, "99"])
+  })
+
+  it("stops after the page that reaches a message older than --since", async () => {
+    const asked: unknown[] = []
+    const pages = scripted({
+      history: async (_chat, window) => {
+        asked.push(window.before)
+        return { items: [message("98"), message("99")], hasMore: true }
+      },
+    })
+    const { code, stdout } = await tg(["store", "fetch", "Valencia", "--since", "2026-09-27T00:00:00Z", "--json"], {
+      adapter: () => pages,
+    })
+
+    expect(code).toBe(0)
+    expect(json(stdout)).toMatchObject({ reachedSince: true })
+    expect(asked).toEqual([undefined])
   })
 })
 

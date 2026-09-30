@@ -70,14 +70,14 @@ const tryJson = (text: string): unknown => {
 
 const backfilled = async () => {
   const store = join(mkdtempSync(join(tmpdir(), "tg-archive-")), "messages.db")
-  await tg(["archive", "backfill", CHAT, "--max", "3", "--pace", "1ms"], store)
+  await tg(["archive", "store", "fetch", CHAT, "--max", "3", "--pause", "1ms"], store)
   return store
 }
 
 describe("the archive, from the store", () => {
   it("**estimates what a full backfill would still cost** without asking Telegram", async () => {
     const store = await backfilled()
-    const { code, answer } = await tg(["archive", "backfill", CHAT, "--estimate", "--json", "--offline"], store)
+    const { code, answer } = await tg(["archive", "store", "fetch", CHAT, "--estimate", "--json", "--offline"], store)
 
     expect(code).toBe(0)
     expect(answer).toMatchObject({ chat: CHAT, held: 3, ranges: [{ from: 101, to: 103 }], missing: 100 })
@@ -86,7 +86,7 @@ describe("the archive, from the store", () => {
   it("exports a chat as Markdown, and finds messages by a regular expression", async () => {
     const store = await backfilled()
 
-    const transcript = await tg(["archive", "export", CHAT, "--format", "markdown"], store)
+    const transcript = await tg(["archive", "store", "export", CHAT, "--format", "markdown"], store)
     expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
     expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
 
