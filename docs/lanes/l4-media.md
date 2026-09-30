@@ -3,7 +3,7 @@
 **Read this instead of [`HANDOFF.md`](../../HANDOFF.md).** Standard:
 [`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot **2026-09-30**: every item
 released — 1–5 (tg 0.11.0, cli-messaging 0.47.0), A (tg 0.15.0, cli-messaging 0.51.0), B (cli-messaging
-0.53.0, tg with the next release). What is still open is under §4.
+0.53.0, tg 0.17.0). What is still open is under §4.
 
 ## 1. What this is
 
@@ -43,14 +43,23 @@ them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity
 |---|---|---|
 | 1–5 | download, the photo tool, Telegram transcription, local models, `--transcribe` on lists | **released** — tg #61, #71, #75, #84, #97; cli-messaging #71, #90, #95, #106, #119, #134 |
 | A | quiet speech kept by local models: the voice detector's threshold 0.5 → 0.3 | **released** — cli-messaging #147 (0.51.0), tg #111 (0.15.0) |
-| B | `messages download <chat> --all`: paged, resumable (`.download-<chat>.json` beside the files), rate-limit aware | **released** — cli-messaging #154 (0.53.0), tg #117 |
+| B | `messages download <chat> --all`: paged, resumable (`.download-<chat>.json` beside the files), rate-limit aware | **released** — cli-messaging #154 (0.53.0), tg #117 (0.17.0) |
 
 Still open:
 - **A has no test on real speech.** The detector needs a speech recording in the repository, and the
   only ones measured are the owner's own voice (Saved Messages 126507, 126508). The owner decides
   whether one goes in, or a synthetic one is found.
 - **One `tg messages download` printed its answer and never exited** (2026-09-30, stopped after 30
-  minutes); three later ones exited at once. Not reproduced; project rule 3.
+  minutes), although it was given `--timeout 60s` — so something stayed open after the command had
+  finished (a connection or a timer), not a slow request. Three later ones exited at once. Not
+  reproduced; project rule 3.
+- **`--all` can save a named file twice.** When a run is cut after a file is saved but before the
+  progress file records it, the next run finds the plain name taken and saves `<id>-<n>-<name>` beside
+  it. Only unnamed files (photos, voice notes) are recognised as `existing`. At most one file per cut.
+- **`bin/release` renames a released changelog heading.** When the version it prepares is already on
+  npm, it renames `## <old> —` to the next number — and if another lane released `<old>` first, that
+  heading is the other lane's released section (cli-messaging `beb54e9` turned 0.51.0 into 0.52.0;
+  repaired in #155). Fix idea: add a new heading, never rename one.
 
 ## 5. Decisions you will make yourself
 
