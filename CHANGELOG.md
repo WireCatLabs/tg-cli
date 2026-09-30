@@ -5,6 +5,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Fixed
+
+- **A supergroup or channel first seen through one of its messages no longer loses messages to a deletion
+  in a private chat** (cli-messaging 0.54.0). 0.16.0 left such a chat exposed because the store did not know
+  its kind yet; its `-100…` id now says enough.
+- **Messages a deletion elsewhere marked deleted by mistake come back** the next time their chat is read
+  (`messages list`, `messages context`, or an edit arriving live). A deletion newer than the read stays.
+
 ## 0.17.0 — 30.09.2026
 
 ### What's new
