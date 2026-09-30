@@ -16,7 +16,7 @@ also connects once and reads the account.
 ## `tg` is not found after installing
 
 The folder npm installs commands into is not on your `PATH`. `npm prefix -g` prints its parent; add
-its `bin` folder to `PATH` in your shell's startup file. With pnpm, `pnpm setup` does it.
+its `bin` folder to `PATH` in your shell's startup file.
 
 ## "no session for profile "default" — run `tg session start`"
 
