@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.16.0 — 30.09.2026
+
 ### Fixed
 
 - **A message deleted in a private chat or a basic group no longer marks other chats' messages deleted**
