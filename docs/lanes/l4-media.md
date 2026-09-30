@@ -42,13 +42,10 @@ them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity
 | # | Item | Done when |
 |---|---|---|
 | 1–5 | download, the photo tool, Telegram transcription, local models, `--transcribe` on lists | **released** — tg #61, #71, #75, #84, #97; cli-messaging #71, #90, #95, #106, #119, #134 |
-| A | quiet speech kept by local models: the voice detector's threshold 0.5 → 0.3 | **released** — cli-messaging #147 (0.51.0), tg #111 (0.15.0) |
+| A | quiet speech kept by local models: the voice detector's threshold 0.5 → 0.3 | **released** — cli-messaging #147 (0.51.0), tg #111 (0.15.0); its test on public-domain speech: cli-messaging #187 |
 | B | `messages download <chat> --all`: paged, resumable (`.download-<chat>.json` beside the files), rate-limit aware | **released** — cli-messaging #154 (0.53.0), tg #117 (0.17.0) |
 
 Still open:
-- **A has no test on real speech.** The detector needs a speech recording in the repository, and the
-  only ones measured are the owner's own voice (Saved Messages 126507, 126508). The owner decides
-  whether one goes in, or a synthetic one is found.
 - **One `tg messages download` printed its answer and never exited** (2026-09-30, stopped after 30
   minutes), although it was given `--timeout 60s` — so something stayed open after the command had
   finished, not a slow request. Not reproduced in five more runs. Since tg #125, tg names what is still
