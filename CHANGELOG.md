@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.11.0 — 30.09.2026
+
 ### What's new
 
 - **Voice messages carry their text in `tg messages list` and `tg inbox`.** A transcript heard once
