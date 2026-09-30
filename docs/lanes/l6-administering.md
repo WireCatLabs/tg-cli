@@ -4,6 +4,11 @@
 [`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot 2026-09-30. **Not started** —
 written ahead, to be picked up once L2–L4 have finished (three lanes at once).
 
+
+**Correction 2026-09-30:** replaced by the parity plan's **P2** (max-cli's private
+`docs_ai/plans/parity/p2-admin.md`): the same commands, built once in cli-messaging — port groups,
+services, shared commands and MCP tools — with this repository's adapter; `chats check` is named
+`chats moderate`. The traps in §6 below still hold.
 ## 1. What this is
 
 `tg` is a CLI for the owner's personal Telegram account, for agents first; everything
