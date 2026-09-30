@@ -155,6 +155,25 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
 - `tg server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 
+## Its health, a backup, a restore
+
+```sh
+tg store info                          # where the file is, its size, its schema, how many rows; changes nothing
+tg store check                         # integrity, search indexes, disk, and which chats are behind; changes nothing
+tg store backup ~/tg-store.db          # a copy of the store, while it is in use
+tg store restore ~/tg-store.db         # put a backup in place of the store
+tg store migrate                       # bring the store up to this version's schema
+```
+
+- **`backup` never overwrites a file**: name a new one. It copies while other commands and `serve`
+  keep using the store.
+- **`restore` keeps the store it replaces** beside it and says where. It refuses while `serve` runs
+  for any profile — `tg server stop` first — and checks that the backup is a readable, undamaged
+  store. Afterwards, restart every `serve` and `mcp` of either CLI that was running, so they read the
+  restored store.
+- **`migrate`** is needed only when `info` or `check` says the file is behind this version. Take a
+  backup first. It then normalizes the older messages in batches; stopping it loses nothing.
+
 ## The store and other versions
 
 The store's layout has a version. A newer `tg` or another CLI may upgrade the file; an older `tg`
