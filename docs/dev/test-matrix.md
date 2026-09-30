@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**171 ✅ · 4 ⛔ · 0 ❌** — 75 commands, 100 options.
+**171 ✅ · 4 ⛔ · 0 ❌** — 74 commands, 101 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -33,8 +33,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
 | `chats members list` | `--all` | ✅ |  |
-| `chats read` |  | ✅ |  |
-| `chats read` | `--until` | ✅ |  |
+| `chats mark-read` |  | ✅ |  |
+| `chats mark-read` | `--until` | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
 | `contacts list` | `--page` | ✅ |  |
@@ -54,6 +54,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--limit` | ✅ |  |
 | `messages search` | `--regex` | ✅ |  |
 | `messages send` |  | ✅ |  |
+| `messages send` | `--reply-to` | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
@@ -62,8 +63,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--photo` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
 | `messages send` | `--at` | ✅ |  |
-| `messages reply` |  | ✅ |  |
-| `messages reply` | `--send-id` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
 | `messages context` | `--before` | ✅ |  |
@@ -71,7 +70,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages download` |  | ✅ |  |
 | `messages download` | `--output` | ✅ |  |
 | `messages download` | `--all` | ✅ |  |
-| `messages download` | `--pace` | ✅ |  |
+| `messages download` | `--pause` | ✅ |  |
 | `messages transcribe` |  | ✅ |  |
 | `messages transcribe` | `--local` | ✅ |  |
 | `messages transcribe` | `--model` | ✅ |  |
@@ -129,21 +128,22 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `server logs` | `--lines` | ✅ |  |
 | `server install` |  | ✅ |  |
 | `server uninstall` |  | ✅ |  |
-| `sync status` |  | ✅ |  |
-| `export` |  | ✅ |  |
-| `export` | `--format` | ✅ |  |
-| `backfill` |  | ✅ |  |
-| `backfill` | `--max` | ✅ |  |
-| `backfill` | `--pace` | ✅ |  |
-| `backfill` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
-| `backfill` | `--estimate` | ✅ |  |
-| `backfill list` |  | ✅ |  |
-| `backfill status` |  | ✅ |  |
-| `backfill cancel` |  | ✅ |  |
+| `store status` |  | ✅ |  |
+| `store fetch` |  | ✅ |  |
+| `store fetch` | `--max` | ✅ |  |
+| `store fetch` | `--pause` | ✅ |  |
+| `store fetch` | `--since` | ✅ |  |
+| `store fetch` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
+| `store fetch` | `--estimate` | ✅ |  |
+| `store jobs list` |  | ✅ |  |
+| `store jobs show` |  | ✅ |  |
+| `store jobs cancel` |  | ✅ |  |
+| `store export` |  | ✅ |  |
+| `store export` | `--format` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
-| `recipients off` |  | ✅ |  |
+| `recipients clear` |  | ✅ |  |
 | `sends list` |  | ✅ |  |
 | `sends list` | `--limit` | ✅ |  |
 | `runs list` |  | ✅ |  |
@@ -163,8 +163,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `doctor report create` | `--output` | ✅ |  |
 | `commands` |  | ✅ |  |
 | `complete` |  | ✅ |  |
-| `update` |  | ✅ |  |
-| `update` | `--check` | ✅ |  |
+| `upgrade` |  | ✅ |  |
+| `upgrade` | `--check` | ✅ |  |
 | `mcp` |  | ✅ |  |
 | `mcp` | `--allow-send` | ⛔ | starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client |
 | `mcp` | `--confirm-send` | ✅ |  |

@@ -10,6 +10,27 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **A message's sender keeps their @username in the local store**, so `--from @name` and the coming
   conversation view can match a mention to the person. Takes effect with cli-messaging 0.57.0 or later;
   history already downloaded gains it the next time it is fetched.
+- **`tg store fetch <chat> --since <time>`** stops once it reaches messages older than the time:
+  `2026-09-01`, or `2h` / `1d` ago.
+
+### Changed — may break scripts
+
+Commands follow one naming standard: a noun, then a verb. The old names are gone, with no aliases —
+a script that uses one now fails with "unknown command" or "unknown option".
+
+- **`tg export <chat>` is `tg store export <chat>`**, **`tg sync status [chat]` is
+  `tg store status [chat]`**, **`tg backfill <chat>` is `tg store fetch <chat>`**, and
+  **`tg backfill list|status|cancel` is `tg store jobs list|show|cancel`**. `store fetch` fetches by
+  default; `--estimate` only estimates. `--pace` is **`--pause`** there and in
+  `tg messages download --all`. `--max` keeps its name: it counts messages.
+- **`tg messages reply` is gone**: `tg messages send <chat> [text] --reply-to <id>` answers a message,
+  and every send option (`--file`, `--photo`, `--silent`, `--at`, …) now works with it. The
+  `msg:telegram/…` form has no replacement; give the chat and the message id.
+- **`tg chats read` is `tg chats mark-read`**; the MCP tool `tg_chats_read` is `tg_chats_mark_read`.
+- **`tg recipients off` is `tg recipients clear`.**
+- **`tg update [--check]` is `tg upgrade [--check]`**, and the daily line about a newer version names
+  `tg upgrade`.
+- **`tg messages search <words…>` names its argument `<text…>`**; the search is unchanged.
 
 ## 0.19.0 — 30.09.2026
 

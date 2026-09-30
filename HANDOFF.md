@@ -36,12 +36,12 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.27.0`**. What it does now: login (`session`), `update`, `account show`,
-`chats list|show`, `contacts list|show`, `messages list|show|context|send|reply|search`, `watch
-[--events]`, `serve`, `backfill`, `sync status`, `export`, `recipients`, `sends`, `runs`, `config`,
+`tg` uses **`@leemour/cli-messaging@0.27.0`**. What it does now: login (`session`), `upgrade`, `account show`,
+`chats list|show`, `contacts list|show`, `messages list|show|context|send|search`, `watch
+[--events]`, `serve`, `store fetch|status|export|jobs`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
-`--offline` answers the list and show commands from it; `search`, `sync status` and `export` only
-ever read it.
+`--offline` answers the list and show commands from it; `search`, `store status` and `store export`
+only ever read it.
 
 The split: **everything messenger-neutral is in cli-messaging** — the commands, saving to the store,
 `--offline`, run records, the send guard, the store and its migrations. tg describes Telegram once —
@@ -51,7 +51,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 ### 3b. Open right now
 
 1. **tg is on npm: `@leemour/tg-cli@0.2.0`** (2026-09-28), released from GitHub by `bin/release`
-   (trusted publishing works; the workflow publishes and tags). 0.2.0 added `tg update [--check]`
+   (trusted publishing works; the workflow publishes and tags). 0.2.0 added `tg update [--check]` (now `tg upgrade`)
    and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
    `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
    pnpm and bun paths are covered only by the path patterns in `@leemour/cli-core/update`.
@@ -152,7 +152,7 @@ Read in this order:
     (`listen`); one-shot commands keep `disableUpdates: true`. A busy account produces messages every
     few seconds — a live check that expects silence is wrong. `serve` holds a lock file per profile.
 14. **Telegram rate limits:** walking every dialog (`chats list --all`) right after other calls hit
-    FLOOD_WAIT once; `backfill` of 5,000 messages at one page a second did not.
+    FLOOD_WAIT once; `store fetch` (then `backfill`) of 5,000 messages at one page a second did not.
 15. **A typed chat is often a title.** A run event never names what was typed.
 16. **zsh copies stdout into a pipe** (`cmd 2>&1 >/dev/null | …`, its `MULTIOS`) — check stream
     separation under `sh -c`. zsh also does not split `$var` into words; write multi-step live checks
@@ -203,7 +203,7 @@ pnpm smoke:bun
 pnpm test:coverage && pnpm test:matrix && pnpm docs:check
 # tg-cli, read-only against the owner's account
 bin/tg account show && bin/tg chats list --limit 3 && bin/tg messages list me --limit 2
-bin/tg doctor && bin/tg sync status
+bin/tg doctor && bin/tg store status
 ```
 
 Conventional commits, a branch and a PR per change, rebase-merge after CI; the owner has asked for

@@ -15,7 +15,7 @@ file holds what the help cannot say: the traps and the boundaries.
 
 ## Boundaries
 
-- **Send nothing the owner did not ask for.** `tg messages send`, `reply`, `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
+- **Send nothing the owner did not ask for.** `tg messages send` (also with `--reply-to`), `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
   owner asked for this exact text in this exact chat. A draft, "we should probably answer", a conclusion
   drawn from what you read — none of these is a request.
 - **A vote in a public poll shows the owner's name to everyone in the chat.** Vote only as the owner
@@ -28,7 +28,7 @@ file holds what the help cannot say: the traps and the boundaries.
 - **A refusal with exit code `5`, `7` or `8` on a send is the owner's decision, not a fault.** Do
   not work around it: do not change settings, do not call `tg recipients add`, do not wait and
   retry. Tell the owner the send did not go, and why.
-- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats read` is
+- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` is
   the one command that marks a chat read, and the other side sees it: only when the owner asked.
 - **Not for:** mass mailing, auto-replies, other people's accounts.
 - **Message text goes to the owner only.** Not into logs, files or commits.
@@ -37,8 +37,10 @@ file holds what the help cannot say: the traps and the boundaries.
 
 - **In a pipe or with `--json`, stdout carries data only**: one JSON value. Everything else,
   warnings included, goes to stderr. An error goes to stderr too, and stdout is then empty.
-- **A list is an object, not an array**: `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`.
-  A chat's messages are `{ "items": [...], "limit": 20, "hasMore": true }`.
+- **Most lists are an object, not an array**: `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`.
+  A chat's messages are `{ "items": [...], "limit": 20, "hasMore": true }`. Five lists of what this
+  machine keeps print a plain array instead: `tg runs list`, `tg sends list`, `tg recipients list`,
+  `tg store status` and `tg store jobs list`.
 - **`--jsonl`**: one object per line, for `jq`. Whether there is more is said on stderr only.
 - **Branch on the exit code, not on the text**: `0` success, `2` bad input, `4` not logged in, `5`
   the profile may not do this (`readOnly` or `allow`; the error names which — do not work around
@@ -58,14 +60,14 @@ file holds what the help cannot say: the traps and the boundaries.
 4. **Repeat a send only with the same `--send-id`.** Exit `14` means the message may have gone. The
    error carries `--send-id <id>`; Telegram drops a repeat with it, and a repeat without it is a
    second message to a person.
-5. **`tg messages search` searches only what this machine has kept** — what was read, backfilled,
+5. **`tg messages search` searches only what this machine has kept** — what was read, fetched,
    or kept by `tg serve` — and never asks Telegram. Empty does not mean "never said". Read the chat
-   with `tg messages list <chat>` first, or ask the owner about `tg backfill`.
-6. **`tg export` exports only what was kept**, and never asks Telegram. `tg sync status` says how
-   much of each chat is kept.
-7. **`tg backfill` makes many requests from the owner's account.** Only when the owner asked.
-   `tg backfill <chat> --estimate` says what it would cost and asks Telegram nothing — show the owner
-   that first. A long one goes `--background`; `tg backfill status` follows it.
+   with `tg messages list <chat>` first, or ask the owner about `tg store fetch`.
+6. **`tg store export` exports only what was kept**, and never asks Telegram. `tg store status` says
+   how much of each chat is kept.
+7. **`tg store fetch` makes many requests from the owner's account.** Only when the owner asked.
+   `tg store fetch <chat> --estimate` only estimates what it would cost and asks Telegram nothing —
+   show the owner that first. A long one goes `--background`; `tg store jobs show` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `messages search`. The message asked for carries `"anchor": true`.
 9. **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also change the keyring entry.** With them

@@ -43,7 +43,7 @@ Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes
 | 2 | `messages forward` + tool (`--silent`) | guarded as `forward` against the *target* chat | same |
 | 3 | `messages pin\|unpin` + tools | groups and channels; `--notify` off by default | same |
 | 4 | `reactions add\|remove` + tools | permission `reaction`; the emoji is shown in the confirm form | `reactions.ts`, `reply-and-react.test.ts` |
-| 5 | `chats read` + MCP `--allow-mark-read` | the other side sees it — a separate flag, not implied by `--allow-send` | `chats.ts`, `mark-read.test.ts` |
+| 5 | `chats mark-read` + MCP `--allow-mark-read` | the other side sees it — a separate flag, not implied by `--allow-send` | `chats.ts`, `mark-read.test.ts` |
 | 6 | `messages delete` (owner only by default, `--for-everyone`, `--allow-dangerous`) + MCP `--allow-delete` | at most 10 at once; each counts in `sendsPerHour` | `messages.ts`, `delete-messages.test.ts` |
 | 7 | `polls vote\|create\|close` + tools | options by id, not position | `polls.ts`, `polls.test.ts` |
 
