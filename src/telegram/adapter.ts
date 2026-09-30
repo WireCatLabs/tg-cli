@@ -9,12 +9,14 @@ import {
   type ChatCard,
   type ChatEvents,
   type GroupMember,
+  type LinkTarget,
   type Member,
   type Message,
   type MessageEvent,
   type Page,
   type PersonCard,
   pickChat,
+  type Topic,
 } from "@leemour/cli-messaging"
 import type { After, Download, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
 import {
@@ -22,6 +24,7 @@ import {
   FileLocation,
   type InputPeerLike,
   Long,
+  MtPeerNotFoundError,
   type RawUpdateInfo,
   TelegramClient,
   type Message as TgMessage,
@@ -43,10 +46,13 @@ import {
   toFormatted,
   toGroupMember,
   toInputMedia,
+  toInvitePreview,
+  toLinkChat,
   toMember,
   toMessage,
   toMessageHit,
   toReactionChange,
+  toTopic,
 } from "./map.js"
 import { openSessionStorage } from "./storage.js"
 
@@ -76,6 +82,13 @@ export interface Sent {
   /** Telegram's `random_id` for this send, as a string. Repeat it with `--send-id` after an unknown outcome. */
   sendId: string
 }
+
+/** `https://t.me/name`, `t.me/name` or `@name`, as the name alone. */
+const publicName = (link: string): string =>
+  link
+    .replace(/^(https?:\/\/)?(t\.me|telegram\.me)\//, "")
+    .replace(/^@/, "")
+    .replace(/[/?].*$/, "")
 
 const SAVED = new Set(["me", "self", "saved"])
 /** Telegram's own cap on a group's member list. */
@@ -501,6 +514,42 @@ export class TelegramAdapter {
   async #inputOf(reference: string): Promise<InputPeerLike> {
     const peer = await this.#peerOf(reference)
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
+  }
+
+  /** An invite is previewed; one the owner already joined, or a public link, is read as the chat. Nothing joins. */
+  inspect(link: string): Promise<LinkTarget> {
+    const typed = link.trim()
+    const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
+    return this.#call(async () => {
+      if (invite) {
+        try {
+          return toInvitePreview(await this.#client.getChatPreview(typed))
+        } catch (error) {
+          if (!(error instanceof MtPeerNotFoundError)) throw error
+        }
+      }
+      return toLinkChat(await this.#client.getFullChat(invite ? typed : publicName(typed)))
+    })
+  }
+
+  /** A forum's topics, newest activity first; Telegram matches `search` against their titles. */
+  topics(
+    reference: string,
+    { search, limit, offset }: { search?: string; limit?: number; offset: number },
+  ): Promise<Page<Topic>> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const items: Topic[] = []
+      const wanted = limit === undefined ? {} : { limit: offset + limit + 1 }
+      for await (const topic of this.#client.iterForumTopics(peer, {
+        ...wanted,
+        ...(search ? { query: search } : {}),
+      })) {
+        items.push(toTopic(topic))
+      }
+      const end = limit === undefined ? items.length : offset + limit
+      return { items: items.slice(offset, end), hasMore: items.length > end }
+    })
   }
 
   /** Telegram answers only where the person's privacy lets the owner find them by number. */
