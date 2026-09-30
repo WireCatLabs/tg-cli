@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/leemour/tg-cli/main/docs/design/logo_text.png" alt="Tg CLI" width="480">
+</p>
+
 # tg-cli
 
 Your personal Telegram account in the terminal and in AI agents. `tg` is a command line tool and an
