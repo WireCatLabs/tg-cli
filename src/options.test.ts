@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync } from "node:fs"
+import { mkdtempSync, readdirSync, readFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
@@ -297,6 +297,40 @@ describe("messages", () => {
     expect(code).toBe(0)
     expect(json(stdout).items).toEqual([{ kind: "voice", path: join(into, "42-1.ogg"), bytes: 4 }])
     expect(readFileSync(join(into, "42-1.ogg"), "utf8")).toBe("opus")
+  })
+
+  it("download --all saves every file of the chat and keeps where it got to, for the next run", async () => {
+    const into = join(mkdtempSync(join(tmpdir(), "tg-download-")), "out")
+    const adapter = scripted({
+      history: async () => ({
+        items: [
+          message("43", { attachments: [{ kind: "photo" }] }),
+          message("42", { attachments: [{ kind: "webpage" }] }),
+        ],
+        hasMore: false,
+      }),
+      download: async () => ({
+        files: [
+          {
+            kind: "photo",
+            async *bytes() {
+              yield new TextEncoder().encode("jpeg")
+            },
+          },
+        ],
+        skipped: [],
+      }),
+    })
+    const { code, stdout } = await tg(
+      ["messages", "download", "Valencia", "--all", "--pace", "1ms", "--output", into, "--json"],
+      { adapter: () => adapter },
+    )
+
+    expect(code).toBe(0)
+    expect(json(stdout)).toMatchObject({ items: [{ path: join(into, "43-1.jpg") }], saved: 1, complete: true })
+    expect(readdirSync(into, { withFileTypes: true }).filter((one) => one.name.startsWith(".download-"))).toHaveLength(
+      1,
+    )
   })
 
   it("list --transcribe hears the chat's voice messages, and a later list shows them without asking", async () => {

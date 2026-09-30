@@ -1,8 +1,9 @@
 # Lane L4 · media — handoff
 
 **Read this instead of [`HANDOFF.md`](../../HANDOFF.md).** Standard:
-[`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot **2026-09-30**: items 1–5
-released (tg 0.11.0, cli-messaging 0.47.0); what is left is §4.
+[`docs/dev/handoff-standard.md`](../dev/handoff-standard.md). Snapshot **2026-09-30**: every item
+released — 1–5 (tg 0.11.0, cli-messaging 0.47.0), A (tg 0.15.0, cli-messaging 0.51.0), B (cli-messaging
+0.53.0, tg with the next release). What is still open is under §4.
 
 ## 1. What this is
 
@@ -41,8 +42,15 @@ them. Plan: [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity
 | # | Item | Done when |
 |---|---|---|
 | 1–5 | download, the photo tool, Telegram transcription, local models, `--transcribe` on lists | **released** — tg #61, #71, #75, #84, #97; cli-messaging #71, #90, #95, #106, #119, #134 |
-| A | **Local models drop quiet speech.** Saved Messages 126508 (19 s): Telegram hears all of it; Parakeet and GigaAM both skip the middle. Same stretch in both → the voice detector, not the model | `tg messages transcribe me 126508 --model gigaam-v3` holds the middle part Telegram hears (`… прыщик небольшой … Скажи что-нибудь …`); a test on the fixture that the setting keeps quiet speech |
-| B | `messages download --all <chat>` — every file of a chat | paged, resumable, FLOOD_WAIT-aware; the file names as in item 1 |
+| A | quiet speech kept by local models: the voice detector's threshold 0.5 → 0.3 | **released** — cli-messaging #147 (0.51.0), tg #111 (0.15.0) |
+| B | `messages download <chat> --all`: paged, resumable (`.download-<chat>.json` beside the files), rate-limit aware | **released** — cli-messaging #154 (0.53.0), tg #117 |
+
+Still open:
+- **A has no test on real speech.** The detector needs a speech recording in the repository, and the
+  only ones measured are the owner's own voice (Saved Messages 126507, 126508). The owner decides
+  whether one goes in, or a synthetic one is found.
+- **One `tg messages download` printed its answer and never exited** (2026-09-30, stopped after 30
+  minutes); three later ones exited at once. Not reproduced; project rule 3.
 
 ## 5. Decisions you will make yourself
 

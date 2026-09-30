@@ -66,6 +66,7 @@ tg messages forward <chat> <id> --to <chat> [--silent]   # checked against the c
 tg messages pin <chat> <id> [--notify]           # quiet unless --notify; `messages unpin <chat> <id>` undoes it
 tg messages delete <chat> <id…> --allow-dangerous [--for-everyone]   # at most 10; for you only by default — in a supergroup or channel only --for-everyone works
 tg messages download <chat> <id> [--output dir]   # the message's file, into a folder (default: here); never overwrites
+tg messages download <chat> --all [--output dir]   # every file of the chat, newest first; run it again to continue
 tg messages transcribe <chat> <id> [--local] [--model id]   # a voice note as text: Telegram, else a model on this machine
 tg models audio list | download <id>   # speech models for --local, in ~/.cache/cli-common; Parakeet (25 languages) is the default
 tg reactions add <chat> <id> <emoji>             # replaces your reaction; `reactions remove <chat> <id>` takes it off
