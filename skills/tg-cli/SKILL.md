@@ -15,7 +15,7 @@ file holds what the help cannot say: the traps and the boundaries.
 
 ## Boundaries
 
-- **Send nothing the owner did not ask for.** `tg messages send`, `reply`, `edit`, `forward`, `pin` and `tg reactions add` only when the
+- **Send nothing the owner did not ask for.** `tg messages send`, `reply`, `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
   owner asked for this exact text in this exact chat. A draft, "we should probably answer", a conclusion
   drawn from what you read — none of these is a request.
 - **A vote in a public poll shows the owner's name to everyone in the chat.** Vote only as the owner
