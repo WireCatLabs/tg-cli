@@ -68,6 +68,7 @@ class FakeClient {
       yield chunk
     }
   }
+  readHistory = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
@@ -766,6 +767,26 @@ describe("reacting", () => {
     client.sendReaction.mockRejectedValueOnce(new tl.RpcError(400, "REACTION_INVALID"))
 
     await expect(adapter.react("-100500", "5", "🦄")).rejects.toMatchObject({ code: "provider_error" })
+  })
+})
+
+describe("marking read", () => {
+  it("reads everything, or up to a message", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.markRead("-100500")
+    await adapter.markRead("-100500", "9")
+
+    expect(client.readHistory.mock.calls).toEqual([
+      [-100500, {}],
+      [-100500, { maxId: 9 }],
+    ])
+  })
+
+  it("refuses an --until that is not a message id before asking Telegram", async () => {
+    const { adapter, client } = await open()
+    expect(() => adapter.markRead("-100500", "yesterday")).toThrow(/--until/)
+    expect(client.readHistory).not.toHaveBeenCalled()
   })
 })
 

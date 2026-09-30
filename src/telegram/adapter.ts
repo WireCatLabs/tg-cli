@@ -460,6 +460,14 @@ export class TelegramAdapter {
     })
   }
 
+  /** Up to `until`, or everything; mentions stay, as Telegram's own clients leave them until they are seen. */
+  markRead(chatId: string, until?: string): Promise<void> {
+    const maxId = until === undefined ? undefined : messageNumber(until, "--until takes a message id")
+    return this.#call(async () => {
+      await this.#client.readHistory(Number(chatId), maxId === undefined ? {} : { maxId })
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()

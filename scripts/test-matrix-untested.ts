@@ -18,6 +18,13 @@ export const UNTESTED: Untested[] = [
       "drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client",
   },
   {
+    command: "mcp",
+    option: "--allow-mark-read",
+    reason:
+      "starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts " +
+      "drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments",
+  },
+  {
     command: "backfill",
     option: "--background",
     reason:
