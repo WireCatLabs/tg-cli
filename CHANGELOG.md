@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.17.0 — 30.09.2026
+
 ### What's new
 
 - **`tg messages download <chat> --all`** saves every file of a chat — photos, documents, videos,
