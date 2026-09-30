@@ -11,11 +11,13 @@ import type {
   Message,
   MessageChange,
   MessageHit,
+  Poll,
   ProviderMetadata,
   QuotedMessage,
   Reactions,
   Topic,
 } from "@leemour/cli-messaging"
+import type { NewPoll } from "@leemour/cli-messaging/cli"
 import type { Upload } from "@leemour/cli-messaging/sends"
 import {
   type ChatMember,
@@ -34,6 +36,7 @@ import {
   type RawUpdateInfo,
   type TextWithEntities,
   type Message as TgMessage,
+  type Poll as TgPoll,
   type tl,
 } from "@mtcute/node"
 
@@ -327,3 +330,29 @@ export const toInputMedia = ({ kind, name, bytes }: Upload, caption: string | Te
   kind === "photo"
     ? InputMedia.photo(bytes, { fileName: name, caption })
     : InputMedia.document(bytes, { fileName: name, caption })
+
+/** An answer's id is its option bytes as base64url: Telegram's own, and not a position a person could guess. */
+export const answerId = (data: Uint8Array): string => Buffer.from(data).toString("base64url")
+
+/** Voters are counted only once the owner voted or the poll closed; before that Telegram says nothing. */
+export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll => {
+  const counted = poll.isClosed || poll.answers.some((answer) => answer.chosen)
+  return {
+    chatId,
+    messageId,
+    question: poll.question,
+    answers: poll.answers.map((answer) => ({
+      id: answerId(answer.data),
+      text: answer.text,
+      voters: counted ? answer.voters : null,
+      chosen: answer.chosen,
+    })),
+    closed: poll.isClosed,
+    multiple: poll.isMultiple,
+    anonymous: !poll.isPublic,
+    voters: counted ? poll.voters : null,
+  }
+}
+
+export const toInputPoll = ({ question, answers, multiple, anonymous }: NewPoll): InputMediaLike =>
+  InputMedia.poll({ question, answers, multiple, public: !anonymous })

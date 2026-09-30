@@ -86,6 +86,8 @@ class FakeClient {
   }
   readHistory = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   deleteMessagesById = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  sendVote = vi.fn(async (..._args: unknown[]): Promise<unknown> => fakePoll({ chosen: 1 }))
+  closePoll = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ ...fakePoll({}), isClosed: true }))
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
@@ -177,6 +179,24 @@ const dialog = (peer: unknown, lastMessageAt = "2026-09-27T10:00:00.000Z") => ({
   unreadCount: 2,
   lastMessage: { date: new Date(lastMessageAt) },
 })
+
+function fakePoll({ chosen }: { chosen?: number }) {
+  const answer = (data: string, text: string, voters: number, index: number) => ({
+    data: new TextEncoder().encode(data),
+    text,
+    voters,
+    chosen: index === chosen,
+  })
+  return {
+    type: "poll",
+    question: "Friday?",
+    answers: [answer("0", "yes", 4, 0), answer("1", "no", 1, 1)],
+    isClosed: false,
+    isMultiple: false,
+    isPublic: true,
+    voters: 5,
+  }
+}
 
 function message(id: number) {
   return {
@@ -873,6 +893,62 @@ describe("deleting", () => {
     await adapter.delete("-1001234567890", ["5"], { forEveryone: true })
 
     expect(client.deleteMessagesById).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("polls", () => {
+  it("**names each answer by its own bytes**, and counts voters only once they are known", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(3), media: fakePoll({}) }
+
+    const poll = await adapter.poll("-100500", "3")
+
+    expect(poll.answers).toEqual([
+      { id: "MA", text: "yes", voters: null, chosen: false },
+      { id: "MQ", text: "no", voters: null, chosen: false },
+    ])
+    expect(poll).toMatchObject({ question: "Friday?", anonymous: false, closed: false, voters: null })
+  })
+
+  it("**votes with the answer's bytes, not its position**, and refuses an id the poll does not have", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(3), media: fakePoll({}) }
+
+    const voted = await adapter.vote("-100500", "3", ["MQ"])
+    await expect(adapter.vote("-100500", "3", ["1"])).rejects.toMatchObject({
+      code: "validation_error",
+      message: expect.stringContaining("MA, MQ"),
+    })
+    await adapter.vote("-100500", "3", [])
+
+    expect(voted.answers.map((answer) => answer.voters)).toEqual([4, 1])
+    const [first, retract] = client.sendVote.mock.calls.map(([params]) => params as { options: unknown })
+    expect(first?.options).toEqual([new Uint8Array([0x31])])
+    expect(retract?.options).toBeNull()
+  })
+
+  it("says a message without a poll is not found", async () => {
+    const { adapter, client } = await open()
+    client.found = message(3)
+
+    await expect(adapter.poll("-100500", "3")).rejects.toMatchObject({ code: "not_found" })
+  })
+
+  it("closes a poll, and creates one with the send's random_id, public unless anonymous", async () => {
+    const { adapter, client } = await open()
+    client.sendMedia.mockClear()
+
+    expect((await adapter.closePoll("-100500", "3")).closed).toBe(true)
+    await adapter.createPoll(
+      "-100500",
+      { question: "Where?", answers: ["here", "there"], multiple: true, anonymous: false },
+      { sendId: "77" },
+    )
+
+    const [chat, media, options] = client.sendMedia.mock.calls[0] ?? []
+    expect(chat).toBe(-100500)
+    expect(media).toMatchObject({ type: "poll", question: "Where?", multiple: true, public: true })
+    expect(String((options as { randomId: unknown }).randomId)).toBe("77")
   })
 })
 

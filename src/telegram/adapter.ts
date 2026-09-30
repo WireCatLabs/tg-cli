@@ -15,10 +15,11 @@ import {
   type MessageEvent,
   type Page,
   type PersonCard,
+  type Poll,
   pickChat,
   type Topic,
 } from "@leemour/cli-messaging"
-import type { After, Download, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
+import type { After, Download, NewPoll, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -28,6 +29,7 @@ import {
   type RawUpdateInfo,
   TelegramClient,
   type Message as TgMessage,
+  type Poll as TgPoll,
   tl,
   type User,
 } from "@mtcute/node"
@@ -35,6 +37,7 @@ import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import {
   type Account,
+  answerId,
   attachmentsOf,
   type EventOf,
   eventOf,
@@ -46,11 +49,13 @@ import {
   toFormatted,
   toGroupMember,
   toInputMedia,
+  toInputPoll,
   toInvitePreview,
   toLinkChat,
   toMember,
   toMessage,
   toMessageHit,
+  toPoll,
   toReactionChange,
   toTopic,
 } from "./map.js"
@@ -497,6 +502,63 @@ export class TelegramAdapter {
       }
       await this.#client.deleteMessagesById(peer, ids, { revoke: forEveryone })
     })
+  }
+
+  poll(chatId: string, messageId: string): Promise<Poll> {
+    return this.#call(async () => toPoll(chatId, messageId, await this.#pollOf(chatId, messageId)))
+  }
+
+  /** Votes by the answers' own bytes, never by index: mtcute would fetch the poll and pick by position. */
+  vote(chatId: string, messageId: string, answerIds: string[]): Promise<Poll> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () => {
+      const current = await this.#pollOf(chatId, messageId)
+      const known = new Map(current.answers.map((answer) => [answerId(answer.data), answer.data]))
+      const unknown = answerIds.filter((answer) => !known.has(answer))
+      if (unknown.length > 0) {
+        throw new CliError(
+          "validation_error",
+          `${unknown.join(", ")} ${unknown.length === 1 ? "is" : "are"} not an answer of this poll — its answers are ${[...known.keys()].join(", ")}`,
+        )
+      }
+      const options = answerIds.length === 0 ? null : answerIds.map((answer) => known.get(answer) as Uint8Array)
+      return toPoll(chatId, messageId, await this.#client.sendVote({ chatId: Number(chatId), message: id, options }))
+    })
+  }
+
+  closePoll(chatId: string, messageId: string): Promise<Poll> {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(async () =>
+      toPoll(chatId, messageId, await this.#client.closePoll({ chatId: Number(chatId), message: id })),
+    )
+  }
+
+  /** One `random_id` per logical create, as a send has: a retry repeats it and Telegram keeps one poll. */
+  createPoll(chatId: string, poll: NewPoll, { sendId, silent }: { sendId: string; silent?: boolean }): Promise<Sent> {
+    const randomId = parseSendId(sendId)
+    return this.#call(async () => {
+      try {
+        const message = await this.#client.sendMedia(Number(chatId), toInputPoll(poll), {
+          randomId,
+          ...(silent ? { silent } : {}),
+        })
+        return { message: toMessage(message), sendId }
+      } catch (error) {
+        throw unknownIfUnanswered(
+          error,
+          `the poll may have been sent. Repeat with --send-id ${sendId}, never without it`,
+          { sendId },
+        )
+      }
+    })
+  }
+
+  async #pollOf(chatId: string, messageId: string): Promise<TgPoll> {
+    const id = messageNumber(messageId, "a message id is a number")
+    const [found] = await this.#client.getMessages(Number(chatId), [id])
+    if (!found) throw new CliError("not_found", `no message ${id} in that chat`)
+    if (found.media?.type !== "poll") throw new CliError("not_found", `message ${id} carries no poll`)
+    return found.media
   }
 
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
