@@ -5,6 +5,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **Every write has its own id, `operationId`.** A send, edit, forward, deletion, pin, reaction,
+  mark-read and poll vote prints it in its `--json` answer and MCP result, and the send journal and
+  `--trace` name it, so one write can be followed from the answer to the log. A send's
+  `operationId` is its `sendId`.
+- **About 16 MB less to install**: cli-messaging 0.60.0 bundles its database layer instead of
+  depending on it.
+
+### Changed — may break scripts
+
+- **`tg polls vote` and `tg polls close --json` print `{ operationId, poll }`** instead of the poll
+  alone; read the poll from `.poll`. The MCP tools `tg_polls_vote` and `tg_polls_close` answer the same.
+
 ## 0.20.0 — 30.09.2026
 
 ### What's new
