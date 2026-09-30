@@ -124,6 +124,8 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
 | `tg_chats_events` | `tg chats events`, `--since`, `--event` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
+| `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
+| `tg_topics_list` | `tg topics list`, `tg topics search` | a forum group's topics with their ids; `search` matches titles |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
