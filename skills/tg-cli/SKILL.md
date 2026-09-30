@@ -112,6 +112,8 @@ tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
 tg chats events -1001234567890 --since 7d --json     # who joined, left, was added or removed
 tg chats members list -1001234567890 --json          # a group's members, paged
+tg chats inspect https://t.me/+AbCd --json           # where an invite leads, without joining
+tg topics list -1001234567890 --json                 # a forum's topics; a message's threadId is one of them
 echo "$PHONE" | tg contacts lookup --json            # a number through stdin, never as an argument
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them

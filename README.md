@@ -44,6 +44,8 @@ tg account sessions list         # every device and app logged in to the account
 tg chats list [--limit n] [--search text] [--kind dialog|group|channel|saved] [--unread]
 tg chats events <chat> [--since 1d] [--event join,leave,add,remove]   # who joined, left, was added or removed — 7 days back by default
 tg chats members list <chat> [--limit n] [--page n] [--all]   # everyone in a group, with role and last seen
+tg chats inspect <link>          # what an invite or public link leads to, without joining
+tg topics list|search <chat> [text]   # a forum group's topics and their ids (a message's threadId)
 tg chats read <chat> [--until id]   # mark it read; the other side sees it
 tg chats show <chat>             # one chat and who is in it (up to 200; null for channels)
 tg contacts list [--order recent|name] [--search text]   # people you have a one-to-one chat with

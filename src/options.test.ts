@@ -146,6 +146,47 @@ describe("chats events", () => {
   })
 })
 
+describe("topics", () => {
+  const forum = () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      topics: async (_chat, window) => {
+        asked.push(window)
+        const topic = {
+          id: "4",
+          title: "Pisos",
+          closed: false,
+          pinned: false,
+          unreadCount: 0,
+          lastMessageAt: null,
+          createdAt: null,
+        }
+        return { items: [topic], hasMore: false }
+      },
+    })
+    return { adapter, asked }
+  }
+
+  it("list and search page like every listing: --limit, --page, --all", async () => {
+    const { adapter, asked } = forum()
+    for (const argv of [
+      ["topics", "list", "Valencia", "--limit", "2", "--page", "2", "--json"],
+      ["topics", "list", "Valencia", "--all", "--json"],
+      ["topics", "search", "Valencia", "pisos", "--limit", "2", "--page", "3", "--json"],
+      ["topics", "search", "Valencia", "pisos", "--all", "--json"],
+    ]) {
+      expect((await tg(argv, { adapter: () => adapter })).code).toBe(0)
+    }
+
+    expect(asked).toEqual([
+      { limit: 2, offset: 2 },
+      { offset: 0 },
+      { limit: 2, offset: 4, search: "pisos" },
+      { offset: 0, search: "pisos" },
+    ])
+  })
+})
+
 describe("contacts list", () => {
   const people = scripted({
     chats: async () => ({

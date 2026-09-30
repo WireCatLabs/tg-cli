@@ -5,6 +5,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg chats inspect <link>`** and `tg_chats_inspect`: what an invite or public link leads to — title,
+  members, description, whether you are in it and whether joining needs approval — without joining.
+- **`tg topics list <chat>` and `tg topics search <chat> <text>`**, and `tg_topics_list`: a forum
+  group's topics, paged, with the id each message in a topic carries as `threadId`.
+
 ## 0.11.0 — 30.09.2026
 
 ### What's new
