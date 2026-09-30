@@ -14,6 +14,7 @@ order.
 | [configuration.md](configuration.md) | What can I set, with which variable, and which value wins? |
 | [store.md](store.md) | What does the local store keep, how do I fill it, search it, export it and keep it current? |
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
+| [remote.md](remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |
 | [diagnostics.md](diagnostics.md) | What did a command do, and what is never recorded? |
 | [security.md](security.md) | What reaches the disk, what never does, and what stops a send going to the wrong place? |

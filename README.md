@@ -42,6 +42,7 @@ through the profile's limits: read-only, allowed actions, allowed recipients and
 | [configuration.md](docs/configuration.md) | every setting and variable, and which one wins |
 | [store.md](docs/store.md) | the local store: fetch, status, export, search, `--offline`, `serve` as a service |
 | [mcp.md](docs/mcp.md) | Claude Desktop, Cursor and other clients without a terminal |
+| [remote.md](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |
 | [diagnostics.md](docs/diagnostics.md) | `--trace`, `--record`, `runs`, `doctor report` — and what is never recorded |
 | [security.md](docs/security.md) | what reaches the disk and what never does; the send guard |
