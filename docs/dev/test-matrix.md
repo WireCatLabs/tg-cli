@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**141 ✅ · 2 ⛔ · 0 ❌** — 65 commands, 78 options.
+**142 ✅ · 2 ⛔ · 0 ❌** — 66 commands, 78 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -16,6 +16,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `session start` | `--qr-file` | ✅ |  |
 | `session end` |  | ✅ |  |
 | `account show` |  | ✅ |  |
+| `account sessions list` |  | ✅ |  |
 | `chats list` |  | ✅ |  |
 | `chats list` | `--limit` | ✅ |  |
 | `chats list` | `--page` | ✅ |  |

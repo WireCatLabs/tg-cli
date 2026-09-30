@@ -108,6 +108,8 @@ tg review --unanswered --json                      # questions to the owner or a
 tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
 tg chats events -1001234567890 --since 7d --json     # who joined, left, was added or removed
+tg chats members list -1001234567890 --json          # a group's members, paged
+echo "$PHONE" | tg contacts lookup --json            # a number through stdin, never as an argument
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
 tg messages list -1001234567890 --limit 20 --json  # the latest messages, oldest first

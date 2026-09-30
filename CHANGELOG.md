@@ -5,6 +5,17 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg chats members list <chat>`** and `tg_chats_members`: a group's members, paged, each with a role
+  and when Telegram last saw them — up to Telegram's own 10 000.
+- **`tg contacts lookup`**: who has a phone number, where their privacy lets you find them. The number is
+  piped in or typed when asked, never an argument. Also `tg_contacts_lookup`.
+- **`tg contacts sync`**: your Telegram contacts into the local store, answering how many were new or
+  changed.
+- **`tg account sessions list`** and `tg_account_sessions`: every device and app logged in to the account,
+  without their IP addresses. It ends nothing.
+
 ## 0.10.0 — 29.09.2026
 
 ### What's new
