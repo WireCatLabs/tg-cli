@@ -17,11 +17,15 @@ const configure = (profiles: Record<string, unknown>) => {
 
 const telegram = () => {
   const sent: string[] = []
+  const marked: string[] = []
   const edited: string[] = []
   const reacted: string[] = []
   const forwarded: string[] = []
   const pinned: string[] = []
   const adapter = scripted({
+    markRead: async (_chat, until) => {
+      marked.push(until ?? "all")
+    },
     send: async (chatId, text, { sendId }) => {
       sent.push(text)
       return { sendId, message: message(String(sent.length), { chatId, text, outgoing: true }) }
@@ -44,7 +48,7 @@ const telegram = () => {
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
-  return { adapter, sent, edited, forwarded, pinned, reacted }
+  return { adapter, sent, edited, forwarded, pinned, reacted, marked }
 }
 
 const tg = async (argv: string[], adapter: Adapter) => {
@@ -204,5 +208,18 @@ describe("the send guard in front of the other writes", () => {
     expect(JSON.parse(added.stdout[0] ?? "")).toEqual({ chatId: chat.id, messageId: "5", reaction: "👍" })
     expect(reacted).toEqual(["5 👍", "5 null"])
     expect(sent).toEqual([])
+  })
+
+  it("marks a chat read through the guard, refused on a read-only profile", async () => {
+    configure({ "g-ro-read": { readOnly: true } })
+    const { adapter, marked } = telegram()
+
+    const done = await tg(["g-read", "chats", "read", "Valencia", "--until", "9", "--json"], adapter)
+    const refused = await tg(["g-ro-read", "chats", "read", "Valencia"], adapter)
+
+    expect(JSON.parse(done.stdout[0] ?? "")).toEqual({ chatId: chat.id, until: "9" })
+    expect(refused.code).toBe(5)
+    expect(marked).toEqual(["9"])
+    expect(journal("g-read")).toMatchObject([{ kind: "read", outcome: "sent", messageId: "9" }])
   })
 })

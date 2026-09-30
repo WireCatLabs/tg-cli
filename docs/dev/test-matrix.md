@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**142 ✅ · 2 ⛔ · 0 ❌** — 66 commands, 78 options.
+**145 ✅ · 3 ⛔ · 0 ❌** — 67 commands, 81 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -32,6 +32,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
 | `chats members list` | `--all` | ✅ |  |
+| `chats read` |  | ✅ |  |
+| `chats read` | `--until` | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
 | `contacts list` | `--page` | ✅ |  |
@@ -141,9 +143,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp` |  | ✅ |  |
 | `mcp` | `--allow-send` | ⛔ | starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client |
 | `mcp` | `--confirm-send` | ✅ |  |
+| `mcp` | `--allow-mark-read` | ⛔ | starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--confirm-send` | ✅ |  |
+| `mcp config` | `--allow-mark-read` | ✅ |  |
 | `skill show` |  | ✅ |  |
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |

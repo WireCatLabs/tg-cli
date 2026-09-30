@@ -552,4 +552,13 @@ describe("mcp", () => {
     expect(code).toBe(0)
     expect(JSON.stringify(json(stdout))).toContain('"mcp","--allow-send","--confirm-send"')
   })
+
+  it("config carries --allow-mark-read on its own, without --allow-send", async () => {
+    const { code, stdout } = await tg(["mcp", "config", "--allow-mark-read", "--json"], {
+      mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
+    } as never)
+
+    expect(code).toBe(0)
+    expect(JSON.stringify(json(stdout))).toContain('"mcp","--allow-mark-read"]')
+  })
 })
