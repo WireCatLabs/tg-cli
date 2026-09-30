@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.20.0 — 30.09.2026
+
 ### What's new
 
 - **A message's sender keeps their @username in the local store**, so `--from @name` and the coming
