@@ -157,7 +157,7 @@ Every read is saved to the local store, as a command's is, and each call can be 
 
 ## Prompts, and chats by `@`
 
-The server offers three ready prompts — in Claude Code they are `/` commands:
+The server offers four ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
