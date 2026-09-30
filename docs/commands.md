@@ -855,6 +855,54 @@ tg store export <chat> [options]
 |---|---|
 | `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
 
+### `tg store info`
+
+the store file: where it is, its size, its schema and how many rows it holds; changes nothing
+
+```sh
+tg store info
+```
+
+### `tg store check`
+
+whether the store is healthy — integrity, search indexes, disk, and which chats are behind
+
+```sh
+tg store check
+```
+
+### `tg store migrate`
+
+bring the store up to this build's schema, then normalize the messages stored before it
+
+```sh
+tg store migrate
+```
+
+### `tg store backup`
+
+copy the store into a new file, while it is in use; never overwrites a file
+
+```sh
+tg store backup <file>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `file` | required | the new file. |
+
+### `tg store restore`
+
+put a backup in place of the store; the store it replaces is kept beside it, never deleted
+
+```sh
+tg store restore <file>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `file` | required | a file `store backup` wrote. |
+
 ## `tg recipients`
 
 the chats this profile may send to, when the list is on

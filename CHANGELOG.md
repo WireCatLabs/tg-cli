@@ -7,6 +7,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Looking after the message store: `tg store info`, `check`, `migrate`, `backup`, `restore`.**
+  `info` says where `messages.db` is, its size, its schema and how many rows it holds. `check`
+  reports whether it is healthy — integrity, foreign keys, the search indexes, free disk — and names
+  every chat whose stored history stops before the chat's newest message; it repairs nothing.
+  `migrate` brings the file up to this version and normalizes the messages stored before it.
+  `backup <file>` copies the store while it is in use, readable by you alone, never over a file.
+  `restore <file>` puts a backup in place and keeps the store it replaces beside it; it refuses while
+  `tg serve` runs or any process has the store open. The same file serves max-cli, so restart any
+  running `serve` or `mcp` of either CLI afterwards.
 - **Every write has its own id, `operationId`.** A send, edit, forward, deletion, pin, reaction,
   mark-read and poll vote prints it in its `--json` answer and MCP result, and the send journal and
   `--trace` name it, so one write can be followed from the answer to the log. A send's
