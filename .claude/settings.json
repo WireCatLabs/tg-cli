@@ -1,4 +1,5 @@
 {
+  "crossSessionInbound": "accept",
   "permissions": {
     "additionalDirectories": [
       "/home/leemour/Projects/AI/cli-messaging",
