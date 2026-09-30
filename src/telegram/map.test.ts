@@ -2,7 +2,7 @@ import type { DeleteMessageUpdate, Message as TgMessage } from "@mtcute/node"
 import { describe, expect, it } from "vitest"
 import { peerToChat, toAccount, toChat, toDeletions, toMessage, toMessageHit, toReactionChange } from "./map.js"
 
-const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: string }) =>
+const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: string; username?: string }) =>
   ({
     id: 7,
     chat: { id: -1001234567890 },
@@ -27,6 +27,14 @@ describe("a Telegram message", () => {
   it("**says when its author is a chat**, so the store makes no person of a channel", () => {
     expect(toMessage(tgMessage({ type: "chat", id: -1001234567890, displayName: "News" })).senderIsChat).toBe(true)
     expect(toMessage(tgMessage({ type: "user", id: 777, displayName: "Ana" }))).not.toHaveProperty("senderIsChat")
+  })
+
+  it("carries a person's username, so a mention can be matched to them, and a channel's none", () => {
+    const person = { type: "user", id: 777, displayName: "Ana", username: "ana_v" } as const
+    expect(toMessage(tgMessage(person))).toHaveProperty("senderUsername", "ana_v")
+    expect(toMessage(tgMessage({ type: "user", id: 778, displayName: "Luis" }))).not.toHaveProperty("senderUsername")
+    const channel = { type: "chat", id: -1001234567890, displayName: "News", username: "news" } as const
+    expect(toMessage(tgMessage(channel))).not.toHaveProperty("senderUsername")
   })
 })
 
