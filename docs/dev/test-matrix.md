@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**148 ✅ · 3 ⛔ · 0 ❌** — 68 commands, 83 options.
+**152 ✅ · 4 ⛔ · 0 ❌** — 69 commands, 87 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -74,6 +74,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages transcribe` | `--local` | ✅ |  |
 | `messages transcribe` | `--model` | ✅ |  |
 | `messages edit` |  | ✅ |  |
+| `messages delete` |  | ✅ |  |
+| `messages delete` | `--for-everyone` | ✅ |  |
+| `messages delete` | `--allow-dangerous` | ✅ |  |
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
@@ -147,10 +150,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp` | `--allow-send` | ⛔ | starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client |
 | `mcp` | `--confirm-send` | ✅ |  |
 | `mcp` | `--allow-mark-read` | ⛔ | starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` | `--allow-delete` | ⛔ | starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDelete, and mcp config below shows the flag reaching the server's arguments |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--confirm-send` | ✅ |  |
 | `mcp config` | `--allow-mark-read` | ✅ |  |
+| `mcp config` | `--allow-delete` | ✅ |  |
 | `skill show` |  | ✅ |  |
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |

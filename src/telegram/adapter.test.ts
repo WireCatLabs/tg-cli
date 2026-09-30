@@ -69,6 +69,7 @@ class FakeClient {
     }
   }
   readHistory = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  deleteMessagesById = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
@@ -787,6 +788,33 @@ describe("marking read", () => {
     const { adapter, client } = await open()
     expect(() => adapter.markRead("-100500", "yesterday")).toThrow(/--until/)
     expect(client.readHistory).not.toHaveBeenCalled()
+  })
+})
+
+describe("deleting", () => {
+  it("**always says whether for everyone**, since mtcute's default is yes", async () => {
+    const { adapter, client } = await open()
+    client.resolvePeer = async (peer) => ({ _: "inputPeerUser", peer })
+
+    await adapter.delete("1", ["5", "6"], { forEveryone: false })
+    await adapter.delete("1", ["7"], { forEveryone: true })
+
+    expect(client.deleteMessagesById.mock.calls).toEqual([
+      [{ _: "inputPeerUser", peer: 1 }, [5, 6], { revoke: false }],
+      [{ _: "inputPeerUser", peer: 1 }, [7], { revoke: true }],
+    ])
+  })
+
+  it("**refuses a delete for me in a supergroup**, where Telegram deletes for everyone", async () => {
+    const { adapter, client } = await open()
+
+    await expect(adapter.delete("-1001234567890", ["5"], { forEveryone: false })).rejects.toMatchObject({
+      code: "validation_error",
+      message: expect.stringContaining("--for-everyone"),
+    })
+    await adapter.delete("-1001234567890", ["5"], { forEveryone: true })
+
+    expect(client.deleteMessagesById).toHaveBeenCalledTimes(1)
   })
 })
 

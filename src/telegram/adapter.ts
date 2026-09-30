@@ -468,6 +468,24 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * mtcute deletes for everyone unless told otherwise, so `revoke` is always passed. In a supergroup or
+   * a channel Telegram has no "for me": a deletion there is for everyone, and without `forEveryone` it is refused.
+   */
+  delete(chatId: string, messageIds: string[], { forEveryone }: { forEveryone: boolean }): Promise<void> {
+    const ids = messageIds.map((id) => messageNumber(id, "a message id is a number"))
+    return this.#call(async () => {
+      const peer = await this.#client.resolvePeer(Number(chatId))
+      if (peer._ === "inputPeerChannel" && !forEveryone) {
+        throw new CliError(
+          "validation_error",
+          "in a supergroup or a channel Telegram deletes for everyone — add --for-everyone if that is what you want",
+        )
+      }
+      await this.#client.deleteMessagesById(peer, ids, { revoke: forEveryone })
+    })
+  }
+
   /** A name is matched against the dialogs and answered as the chat it found; anything else goes to Telegram as it is. */
   async #peerOf(reference: string): Promise<InputPeerLike | Chat> {
     const trimmed = reference.trim()
