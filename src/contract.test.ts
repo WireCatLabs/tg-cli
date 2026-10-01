@@ -19,6 +19,8 @@ const PLACEHOLDER: Record<string, string> = {
   person: "Ana",
   "run-id": "none",
   text: "hi",
+  // `store backup x` wrote a real store file into the checkout, and it was committed once.
+  file: join(process.env.TG_TEST_SANDBOX ?? tmpdir(), "store-backup.db"),
 }
 
 /** Options a command needs so the suite writes nothing outside its sandbox. */
