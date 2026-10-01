@@ -59,7 +59,8 @@ check("doctor answers one JSON value with no login", doctor.stdout !== "" && JSO
 // Every failure is kept as a run, so the unknown option above left one: the run directory and its
 // atomic writes work under this runtime.
 const runs = tg("runs", "list", "--json")
-const [kept] = runs.status === 0 ? (JSON.parse(runs.stdout) as { runId: string; errorCode?: string }[]) : []
+const [kept] =
+  runs.status === 0 ? (JSON.parse(runs.stdout) as { items: { runId: string; errorCode?: string }[] }).items : []
 check("runs list finds the failure that was kept", kept?.errorCode === "validation_error")
 check(
   "runs show answers with that run",

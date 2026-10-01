@@ -82,7 +82,7 @@ describe("run records", () => {
     const { code, stdout } = await tg(["runs", "list", "--json"])
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "").some((one: { profile: string }) => one.profile === "listed")).toBe(true)
+    expect(JSON.parse(stdout[0] ?? "").items.some((one: { profile: string }) => one.profile === "listed")).toBe(true)
     expect(listRuns(runsDirFor(TG))).toHaveLength(before)
   })
 })

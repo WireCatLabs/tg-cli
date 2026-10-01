@@ -36,6 +36,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **`tg polls vote` and `tg polls close --json` print `{ operationId, poll }`** instead of the poll
   alone; read the poll from `.poll`. The MCP tools `tg_polls_vote` and `tg_polls_close` answer the same.
+- **`tg runs list`, `tg sends list` and `tg recipients list --json` print `{ items, page, limit, hasMore }`**
+  instead of a bare array, as every other list does; read the rows from `.items`. `--jsonl` is unchanged.
 
 ## 0.20.0 — 30.09.2026
 
