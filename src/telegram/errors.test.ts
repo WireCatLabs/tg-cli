@@ -52,11 +52,20 @@ describe("Telegram's refusals", () => {
   })
 })
 
+describe("refusals a person has to act on", () => {
+  it("says to send the invite link when someone who left cannot be added back", () => {
+    const known = toCliError(new tl.RpcError(400, "USER_NOT_MUTUAL_CONTACT"))
+    expect(known).toMatchObject({ code: "permission_error" })
+    expect((known as Error).message).toContain("chats link show")
+  })
+})
+
 describe("mtcute's own errors", () => {
   it("makes a chat it cannot find not found, without what was typed", () => {
     const known = toCliError(new MtPeerNotFoundError('Chat "Mum\'s birthday" was not found'))
     expect(known).toMatchObject({ code: "not_found" })
     expect((known as Error).message).not.toContain("birthday")
+    expect((known as Error).message).toContain("@username")
   })
 
   it("makes a missing message not found, by its id", () => {

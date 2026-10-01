@@ -34,6 +34,12 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   ],
   TRANSCRIPTION_FAILED: ["provider_error", "Telegram could not transcribe this voice message"],
   PHONE_NOT_OCCUPIED: ["not_found", "nobody Telegram lets you find has this number"],
+  USER_NOT_MUTUAL_CONTACT: [
+    "permission_error",
+    "Telegram lets you add someone who left or was removed only if you are each other's contacts — " +
+      "send them the invite link instead (`tg chats link show <chat>`)",
+  ],
+  USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
 }
 
 /** mtcute's argument errors by the start of their text, which may go on to quote what was typed. */
@@ -83,7 +89,14 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
   if (error instanceof MtTimeoutError) return new CliError("timeout", "Telegram did not answer in time")
   // mtcute builds these messages from what was typed — a chat title can be somebody's text — so none is passed on.
   if (error instanceof MtArgumentError) return new CliError("validation_error", argumentKind(error.message))
-  if (error instanceof MtPeerNotFoundError) return new CliError("not_found", "Telegram does not know that chat or user")
+  // Measured 2026-10-01: a bare user id fails until this session has seen the person somewhere.
+  if (error instanceof MtPeerNotFoundError) {
+    return new CliError(
+      "not_found",
+      "Telegram does not know that chat or user — a person's id works only once this account has seen them; " +
+        "name them by @username, or read a chat they are in first",
+    )
+  }
   if (error instanceof MtMessageNotFoundError) {
     return new CliError("not_found", `there is no message ${error.messageId} in that chat`)
   }

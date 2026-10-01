@@ -125,6 +125,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Two refusals say what to do.** Adding back someone who left or was removed, when you are not
+  each other's contacts, now says to send them the invite link (`tg chats link show <chat>`);
+  naming a person by an id this account has never seen now says to use an @username, or to read a
+  chat they are in first.
 - **An argument Telegram's library refused no longer repeats what you typed.** The error said the
   library's own words, which could quote a chat's title or a link. It now says what kind of input
   was wrong where tg can tell — a chat you have not joined, a message or invite link, a phone
