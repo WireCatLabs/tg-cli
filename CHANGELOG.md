@@ -64,6 +64,18 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **Options say what kind of value they take**, the same in tg and max. The old names stop working:
+  - `--since` → `--since-time` in `inbox`, `review`, `chats events`, `store fetch`, `store export`;
+  - `messages list --before` → `--before-id`; `--after` → `--after-id` or `--after-time`;
+  - `messages context --before`/`--after` → `--before-n`/`--after-n`;
+  - `store fetch --max-pages` → `--limit`, messages in one run (1000 by default), and
+    `--page-size`, messages per request (100 by default);
+  - `messages download --output` → `--output-dir`; `chats events --event` → `--type`;
+  - `review --unanswered` takes a duration: `4h`, not `4`;
+  - `--markdown` is gone; `--md` stays.
+- **Every list prints `{ items, page, limit, hasMore }` with `--json`.** `store status` and
+  `store jobs list` printed a bare list; `chats events` printed `events` and `server logs` printed
+  `lines` — both are `items` now.
 - **A `.mp4` or `.mov` sent with `--file` plays in the chat as a video**; it arrived as a file
   before. Add `--as-file` to keep it a file to download.
 - **`tg mcp` offers tools by the profile's permissions, not by flags.** With the default settings an
