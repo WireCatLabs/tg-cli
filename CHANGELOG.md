@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg contacts add|remove|block|unblock|rename|import`** and **`tg account update`**,
+  **`tg account sessions end --others`**, with the MCP tools `tg_contacts_add|remove|block|unblock|rename`
+  and `tg_account_update`. `contacts import` reads `number, name` lines from a file and prints only
+  counts and who Telegram knew. Ending other sessions logs your phone out too: it asks first, and no
+  agent is ever offered it.
 - **`tg chats folders list|create|update|delete`**, with the MCP tools
   `tg_chats_folders_list|create|update|delete`. Changing a folder's chats keeps the others in it;
   "All chats" is not listed, since nobody can change it.
@@ -37,7 +42,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg store fetch --last <n>`** stops once the newest n messages of the chat are held, so a later
   run with the same `--last` asks Telegram for one page and stops.
 - **`tg polls create --revote`** lets people change their vote.
-- **`tg store export --output <file> --since <time>`.** The export goes into a new file only you can
+- **`tg store export --output <file> --since-time <time>`.** The export goes into a new file only you can
   read, never over one, and can start from a time.
 - **`tg account show` prints the phone's last four digits**, and the whole number with
   `--show-phone`. The MCP tool `tg_account_show` always prints only the last four.
@@ -64,6 +69,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **Options name the kind of value they take.** The old names are refused as unknown options; there
+  are no aliases. The MCP tools' arguments do not change.
+  - `tg messages list --before` is now `--before-id`; `--after` is `--after-id` for a message id and
+    `--after-time` for a time, so an id is never read as a time.
+  - `tg messages context --before` and `--after` are now `--before-n` and `--after-n`.
+  - `--since` is now `--since-time` in `tg inbox`, `tg review`, `tg chats events` and
+    `tg store fetch`.
+  - `tg messages download --output` is now `--output-dir`.
+  - `tg chats events --event` is now `--type`.
+- **`tg review --unanswered` takes a duration** — `4h`, `1d` — not bare hours; `--unanswered 4` is
+  refused. Without a value it is 24 hours, as before. MCP's `tg_review` still takes hours.
+- **`tg chats events --json` prints `{ items, page, limit, hasMore, chatId, since }`**: `events` moved
+  to `items` and `more` to `hasMore`. **`tg server logs --json`** moved `lines` to `items`. `--jsonl`
+  is unchanged.
 - **A `.mp4` or `.mov` sent with `--file` plays in the chat as a video**; it arrived as a file
   before. Add `--as-file` to keep it a file to download.
 - **`tg mcp` offers tools by the profile's permissions, not by flags.** With the default settings an
@@ -73,8 +92,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   now and print a warning; `--confirm-send` still shows every write in a form.
 - **`tg messages delete` asks** in the terminal when `--allow-dangerous` is missing, instead of
   refusing; with no terminal it is refused as before.
-- **`tg store fetch --max <n>` is gone; `--max-pages <n>` caps a run instead**, in pages of 100 (10 by
-  default, so 1000 messages, as before). The same names as max-cli's. `--max` is not kept as an alias.
+- **`tg store fetch --max <n>` is gone; `--limit <n>` caps a run instead**, in messages (1000 by
+  default, as before), and `--page-size <n>` sets how many one request asks for (100 by default). The
+  same names as max-cli's. `--max` is not kept as an alias.
 - **A poll made without `--revote` no longer lets people change their vote**, as in max-cli; Telegram
   allowed it by default. Add `--revote` to keep the old behaviour.
 - **`tg polls vote` and `tg polls close --json` print `{ operationId, poll }`** instead of the poll

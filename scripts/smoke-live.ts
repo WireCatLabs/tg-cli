@@ -105,7 +105,7 @@ try {
       const deadline = Date.now() + 180_000
       while (Date.now() < deadline) {
         await new Promise((done) => setTimeout(done, 15_000))
-        const fired = tg("messages", "list", SAVED, "--after", stamp, "--limit", "50").items ?? []
+        const fired = tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []
         const found = fired.filter((message) => message.text === "tg-cli smoke scheduled")
         if (found.length > 0) {
           for (const message of found) created.push(String(message.id))
@@ -125,7 +125,7 @@ try {
 
   // A pin leaves a service message behind in a private chat; count what is left, never show it.
   await step("nothing left since the start", () => {
-    const left = (tg("messages", "list", SAVED, "--after", stamp, "--limit", "50").items ?? []).filter(
+    const left = (tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []).filter(
       (message) => !created.includes(String(message.id)),
     )
     if (left.length > 0) throw new Error(`${left.length} message(s) since the start — look in Saved Messages`)

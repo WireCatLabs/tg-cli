@@ -93,13 +93,13 @@ file holds what the help cannot say: the traps and the boundaries.
     the same `--send-id` is safe here too (measured 2026-09-29).
 16. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
-    not have this: `--before` is exact.
+    not have this: `--before-id` is exact.
 17. **`tg watch` starts from now; `tg serve` catches up.** `serve` runs until stopped and holds
     one lock per profile — start it only when the owner asked. The same goes for `tg server
     start`; `tg server status` is safe to read.
 18. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
-    `tg inbox --since <time>`. `--since` takes a time, never a message id.
+    `tg inbox --since-time <time>`. `--since-time` takes a time, never a message id.
 
 ## The usual path
 
@@ -109,13 +109,13 @@ The ids below are made up — use the real ones from the previous answer.
 tg inbox --json                                    # other people's unread messages; muted and archived chats
                                                    # only when they mention the owner — `quiet` counts the rest
 tg inbox --all --json                              # every chat with unread messages, muted and archived too
-tg inbox --since 2h --json                         # everything that came in during the last two hours
-tg review --since 1d --json                        # every message, the owner's too, in chats that changed — who owes what;
+tg inbox --since-time 2h --json                    # everything that came in during the last two hours
+tg review --since-time 1d --json                   # every message, the owner's too, in chats that changed — who owes what;
                                                    # when complete, the next review starts at until
 tg review --unanswered --json                      # questions to the owner or a group's admins nobody answered in 24 h
 tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
-tg chats events -1001234567890 --since 7d --json     # who joined, left, was added or removed
+tg chats events -1001234567890 --since-time 7d --json   # who joined, left, was added or removed
 tg chats members list -1001234567890 --json          # a group's members, paged
 tg chats inspect https://t.me/+AbCd --json           # where an invite leads, without joining
 tg topics list -1001234567890 --json                 # a forum's topics; a message's threadId is one of them
@@ -123,11 +123,11 @@ echo "$PHONE" | tg contacts lookup --json            # a number through stdin, n
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them
 tg messages list -1001234567890 --limit 20 --json  # the latest messages, oldest first
-tg messages list -1001234567890 --before 4242 --json   # older ones
-tg messages list -1001234567890 --after 4242 --json    # newer ones, oldest first; --after 2h reads from a time
-tg messages context -1001234567890 4242 --before 3 --after 3 --json
-tg messages download -1001234567890 4242 --output /tmp/tg --json   # the message's file; answers its path
-tg messages download -1001234567890 --all --output /tmp/tg --jsonl --timeout 10m   # every file of the chat; run it again to continue
+tg messages list -1001234567890 --before-id 4242 --json   # older ones
+tg messages list -1001234567890 --after-id 4242 --json    # newer ones, oldest first; --after-time 2h reads from a time
+tg messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
+tg messages download -1001234567890 4242 --output-dir /tmp/tg --json   # the message's file; answers its path
+tg messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m   # every file of the chat; run it again to continue
 tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute; never download a model yourself
 tg messages search "invoice march" --json          # search what was kept
 tg watch --jsonl                                   # new messages as they arrive

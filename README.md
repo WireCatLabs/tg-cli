@@ -79,7 +79,7 @@ requests, a schedule and limits: [docs/recipes.md](docs/recipes.md).
 
 ```sh
 tg review --chat "Hiking" --unanswered            # questions nobody answered in 24 hours
-tg chats events "Hiking" --since 7d               # who joined, left, was added or removed, and by whom
+tg chats events "Hiking" --since-time 7d          # who joined, left, was added or removed, and by whom
 tg chats members list "Hiking" --all              # everyone, with their role and when they were last seen
 tg topics list "Hiking"                           # a forum group's topics, newest activity first
 tg chats inspect https://t.me/+AbCdEf             # where an invite link leads, without joining
@@ -263,14 +263,14 @@ tg messages list "Book club" --limit 20
 tg messages send "Book club" "Call at 3?" --reply-to <id>
 tg reactions add "Book club" <id> 👍
 tg messages send me "Call mum" --at 2h            # a reminder in Saved Messages in two hours
-tg review --since 1d                              # a day of messages: who promised what
+tg review --since-time 1d                         # a day of messages: who promised what
 ```
 
 **Files and voice:**
 
 ```sh
 tg messages send "Book club" "The minutes" --file minutes.pdf
-tg messages download "Book club" <id> --output ~/Downloads
+tg messages download "Book club" <id> --output-dir ~/Downloads
 tg messages transcribe "Book club" <id>           # a voice message as text
 ```
 
@@ -415,7 +415,7 @@ before the pull request.
 
 What is coming, in the order it is likely to arrive:
 
-- **Running groups** — contacts, your profile, and moderation rules checked on your say-so.
+- **Running groups** — moderation rules checked on your say-so.
 - **Richer sending** — several photos in one message, sending into a forum topic.
 
 ## Licence

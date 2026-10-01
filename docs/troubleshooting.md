@@ -137,11 +137,10 @@ costs half a day. Fix it by hand, or remove it with `tg config unset <setting>`
 Exit code `2`. The same for `--page`. Without this check, a value that is not a number would quietly
 cut the list to nothing.
 
-## "--after takes an ISO 8601 time or 30m, 2h, 1d ago"
+## "--after-time takes an ISO 8601 time or 30m, 2h, 1d ago"
 
-Exit code `2`. `--since` says the same about itself. They take an ISO 8601 time (`2026-09-20T09:00`) or "this long
-ago" (`30m`, `2h`, `1d`). `messages list --after` also takes a message id, and `--before` takes only a
-message id. A bare number is always a message id.
+Exit code `2`. `--since-time` says the same about itself. They take an ISO 8601 time (`2026-09-20T09:00`) or "this long
+ago" (`30m`, `2h`, `1d`). A message id goes to `--after-id` or `--before-id` instead.
 
 ## "--at takes a time like 2026-09-25T09:00 or a delay like 30m, 2h, 1d"
 

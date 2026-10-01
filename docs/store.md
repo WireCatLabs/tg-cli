@@ -38,22 +38,23 @@ gaps; `store fetch` closes them.
 ## Fetch a chat's history
 
 ```sh
-tg store fetch "Book club" --estimate    # what a full fetch would still cost; asks Telegram nothing
-tg store fetch "Book club"               # fetch it, newest to oldest
-tg store fetch "Book club"               # run again to continue where it stopped
-tg store fetch "Book club" --since 30d   # only back to 30 days ago
-tg store fetch "Book club" --last 5000   # only until the newest 5000 are held
-tg store fetch "Book club" --max-pages 50   # up to 50 pages in this run
+tg store fetch "Book club" --estimate         # what a full fetch would still cost; asks Telegram nothing
+tg store fetch "Book club"                    # fetch it, newest to oldest
+tg store fetch "Book club"                    # run again to continue where it stopped
+tg store fetch "Book club" --since-time 30d   # only back to 30 days ago
+tg store fetch "Book club" --last 5000        # only until the newest 5000 are held
+tg store fetch "Book club" --limit 5000       # up to 5000 messages in this run
 ```
 
 `store fetch` reads a chat's history page by page, newest first, and saves it. **It is resumable**:
 after every page it records what it now holds, so a stop loses nothing. Ctrl-C, `--timeout`, the
-`--max-pages` cap, `--since`, `--last` and a long wait from Telegram all stop it, and the next run
-skips what is already held. `--since` and `--last` say how far back to go, so give one of them, not
+`--limit` cap, `--since-time`, `--last` and a long wait from Telegram all stop it, and the next run
+skips what is already held. `--since-time` and `--last` say how far back to go, so give one of them, not
 both.
 
 **Every page is a request from your account**, of up to 100 messages. A run stops after
-`--max-pages` pages (10 by default, so 1000 messages), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s`,
+`--limit` messages (1000 by default); `--page-size` sets how many one request asks for (100 by
+default), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s`,
 `2m`). A short wait asked by Telegram is sat out; one longer than five minutes stops the run, and
 you run it again later. Look at `--estimate` first: it counts from what the store already holds and
 sends no request.
@@ -94,7 +95,7 @@ tg messages context msg:telegram/<account>/<chat>/<id>
 tg store export "Book club" --jsonl > book-club.jsonl       # one message per line, oldest first
 tg store export "Book club" --json > book-club.json         # { "items": [...] }
 tg store export "Book club" --format markdown > book-club.md   # a transcript: a heading per day, replies and forwards quoted
-tg store export "Book club" --output book-club.jsonl --since 7d          # the last week, into a file only you can read
+tg store export "Book club" --output book-club.jsonl --since-time 7d     # the last week, into a file only you can read
 ```
 
 Export writes only what the store holds and never asks Telegram. Check `tg store status` first, and
@@ -102,7 +103,7 @@ fetch the history if you need all of it.
 
 `--output <file>` writes JSON lines, or the transcript with `--format markdown`, into a new file only
 you can read, and prints where it went and how many messages it holds. It never overwrites a file.
-`--since` takes an ISO 8601 time or `30m`, `2h`, `1d` ago.
+`--since-time` takes an ISO 8601 time or `30m`, `2h`, `1d` ago.
 
 ## Answering without connecting: `--offline`
 

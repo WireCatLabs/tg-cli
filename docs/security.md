@@ -67,7 +67,7 @@ visible to every process on the machine in `ps`, and would stay in your shell hi
 | background fetch jobs | the state directory | the chat, the progress, the outcome | `0600` |
 | `serve`'s log and lock | `serve/<profile>.log`, or the systemd journal | what `serve` did | `0600` |
 | a systemd unit or launchd agent — only `tg server install` | your user's unit folder | the command line that starts `serve` | `0644` |
-| downloaded files — only `tg messages download` | `--output`, or the current folder | the files of the messages you named | `0600` |
+| downloaded files — only `tg messages download` | `--output-dir`, or the current folder | the files of the messages you named | `0600` |
 | an export — only `tg store export` | `--output`, or wherever you redirect it | the messages of one chat | `0600` with `--output`; your shell decides otherwise |
 | a backup — only `tg store backup` | the file you name | a copy of the whole store | `0600` |
 | a problem report — only `tg doctor report create` | `--output`, or the current folder | ids replaced by labels, no text | `0600` |

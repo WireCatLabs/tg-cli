@@ -34,7 +34,7 @@
     "test:slow": "vitest run --reporter=json --outputFile=coverage/tests.json >/dev/null; node --experimental-strip-types scripts/slow-tests.ts",
     "smoke:bun": "bun run scripts/smoke.ts",
     "docs:check": "node --experimental-strip-types scripts/docs-check.ts",
-    "docs:commands": "pnpm build && node --experimental-strip-types scripts/docs-commands.ts",
+    "docs:commands": "pnpm build && node dist/bin/tg.js commands --json | cli-messaging-parity tg --pages README.md docs/*.md",
     "parity:check": "node dist/bin/tg.js commands --json | cli-messaging-parity tg",
     "smoke:live": "pnpm build && node --experimental-strip-types scripts/smoke-live.ts",
     "release:check": "pnpm build && node --experimental-strip-types scripts/release-check.ts",
@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.9.0",
-    "@leemour/cli-messaging": "0.84.0",
+    "@leemour/cli-messaging": "0.87.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0"
   },
