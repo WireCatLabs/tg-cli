@@ -59,6 +59,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg runs list`, `tg sends list` and `tg recipients list --json` print `{ items, page, limit, hasMore }`**
   instead of a bare array, as every other list does; read the rows from `.items`. `--jsonl` is unchanged.
 
+### Fixed
+
+- **A conversation reads in English.** Your own messages are `you`, and day headings read
+  `26 September 2026`; they were Russian.
+
 ## 0.20.0 — 30.09.2026
 
 ### What's new

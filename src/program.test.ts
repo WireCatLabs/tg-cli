@@ -2,6 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Readable } from "node:stream"
+import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import { pickChat } from "@leemour/cli-messaging"
 import type { SendOptions } from "@leemour/cli-messaging/cli"
@@ -110,6 +111,19 @@ describe("a person at a terminal", () => {
     expect(printed.split("\n").length).toBeGreaterThan(1)
     expect(printed).not.toContain("\\x0a")
     expect(printed).toContain(message("42").text)
+  })
+
+  it("reads the feed in English: the day heading and you", async () => {
+    const mine = message("43", { outgoing: true, replyTo: { ...message("42"), outgoing: true } })
+    const adapter = () => scripted({ history: async () => ({ items: [mine], hasMore: false }) })
+    const printed = stripVTControlCharacters(
+      (await tg(["messages", "list", "Valencia"], { tty: true, adapter })).stdout.join("\n"),
+    )
+
+    expect(printed).toContain("26 September 2026")
+    expect(printed).toMatch(/\d\d:\d\d:\d\d {2}you/)
+    expect(printed).toContain("↳ you: ")
+    expect(printed).not.toMatch(/вы|сентября/)
   })
 })
 
