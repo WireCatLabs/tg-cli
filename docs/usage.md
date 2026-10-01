@@ -327,9 +327,10 @@ carries a `--send-id`. Repeat with it, and Telegram drops the second copy:
 
 ```sh
 tg messages send "Book club" "See you at 7" --send-id <id from the error>
+tg messages forward "Book club" 4242 --to me --send-id <id from the error>
 ```
 
-A repeat without it is a second message to a person. A message sent with `--at` is never repeated:
+A forward and a poll carry one too. A repeat without it is a second message to a person. A message sent with `--at` is never repeated:
 look in `tg messages scheduled <chat>` instead.
 
 ### Editing, forwarding, pinning, deleting

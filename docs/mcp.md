@@ -144,7 +144,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message; only with `--allow-send` and permission `reaction`; the confirmation form shows the emoji |
 | `tg_polls_show` | `tg polls show` | a poll and its answer ids; a read tool |
 | `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (permission `reaction`), close the owner's own poll (`edit`), create one (`send`, with `send_id` for a retry); only with `--allow-send` |
-| `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), only with `--allow-send` and permission `forward`; on an unknown outcome look in that chat before repeating |
+| `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), only with `--allow-send` and permission `forward`; `send_id` repeats a forward whose outcome was unknown |
 | `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`; only with `--allow-send` and permission `pin` |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
