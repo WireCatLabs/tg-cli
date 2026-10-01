@@ -1,7 +1,7 @@
 /**
  * tg-cli's side of the release checks: its changelog headings, its pages and what its package may
  * ship. The checks themselves are `@leemour/cli-core/release`; `scripts/release-check.ts` and
- * `scripts/docs-check.ts` run them.
+ * `cli-dev docs-check --rules scripts/release/checks.ts` run them.
  */
 import { join, sep } from "node:path"
 import { type ChangelogRules, type DocsRules, JOURNAL_IDS, markdownFiles } from "@leemour/cli-core/release"
