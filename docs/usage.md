@@ -551,7 +551,7 @@ store current, including what came in while this machine was off, use `serve`, i
 as a system service ([store.md](store.md#keeping-it-current-serve)):
 
 ```sh
-tg server start           # serve in the background; answers once it listens
+tg server start           # serve in the background; answers once it is connected
 tg server status
 tg server install         # a systemd user unit or a launchd agent; starts nothing
 ```
