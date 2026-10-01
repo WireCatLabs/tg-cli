@@ -357,8 +357,20 @@ describe("reading", () => {
 
     expect(chats.items.map((chat) => chat.title)).toEqual(["chat 2", "chat 3"])
     expect(chats.hasMore).toBe(true)
-    expect(client.calls.find((call) => call.method === "iterDialogs")?.args[0]).toEqual({ limit: 4, archived: "keep" })
+    expect(client.calls.find((call) => call.method === "iterDialogs")?.args[0]).toEqual({ archived: "keep" })
     expect((await adapter.chats({ offset: 0 })).items).toHaveLength(4)
+  })
+
+  it("lists a pinned chat once when Telegram's pages bring it again, and finds it by title", async () => {
+    const { adapter, client } = await open()
+    const pinned = dialog(group(-1, "Valencia expats"))
+    client.dialogs = [pinned, dialog(group(-2, "chat 2")), pinned, dialog(group(-3, "chat 3"))]
+
+    expect((await adapter.chats({ offset: 0 })).items.map((chat) => chat.id)).toEqual(["-1", "-2", "-3"])
+    const page = await adapter.chats({ limit: 2, offset: 0 })
+    expect(page.items.map((chat) => chat.id)).toEqual(["-1", "-2"])
+    expect(page.hasMore).toBe(true)
+    expect((await adapter.chat("Valencia")).id).toBe("-1")
   })
 
   it("reads history oldest first, from before a message id, by chat id or @username", async () => {
