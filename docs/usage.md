@@ -39,7 +39,8 @@ to every process on the machine in `ps`, and stays in your shell history.
 For CI, `TG_API_ID` and `TG_API_HASH` give the app without the keyring; they win over it.
 
 ```sh
-tg account show                # who this profile is logged in as
+tg account show                # who this profile is logged in as; the phone as its last four digits
+tg account show --show-phone   # the whole phone number
 tg account sessions list       # every device and app logged in to the account; ends nothing
 tg session end                 # log out on Telegram's side, and delete the session here
 ```

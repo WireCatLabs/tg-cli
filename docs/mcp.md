@@ -120,7 +120,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
 | `tg_review` | `tg review`, `--since`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered |
 | `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages |
-| `tg_account_show` | `tg account show` | who the login is |
+| `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
 | `tg_chats_events` | `tg chats events`, `--since`, `--event` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since` |
