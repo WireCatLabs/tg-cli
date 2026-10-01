@@ -12,7 +12,7 @@ them. This page puts two free tools between them and `tg`:
 - **[Tailscale Funnel](https://tailscale.com/kb/1223/funnel)** gives your computer a public HTTPS
   address, such as `https://laptop.tail1234.ts.net`. You do not need to buy a domain.
 
-```
+```text
 ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ mcp-auth-proxy (password) ──▶ tg mcp ──▶ Telegram
 ```
 

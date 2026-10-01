@@ -25,7 +25,6 @@ What it can do, how agents use it and how it differs from other tools: the
 
 ## Where to go next
 
-
 | Page | Answers |
 |---|---|
 | [installation.md](installation.md) | What does it need, where do its files go, how do I upgrade or remove it? |

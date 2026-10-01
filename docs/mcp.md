@@ -137,7 +137,7 @@ claude mcp add tg -- tg mcp --confirm-send
 The server shows a form before a change whose level is `ask`, and with `--confirm-send` before
 every change, whatever its level. A send's form shows **which chat** — the title and id the
 agent's name resolved to — and **the whole text**. The change goes only after Accept; the form has
-no fields, just the one button. The client's own window shows the arguments as the model wrote them
+no fields, only the one button. The client's own window shows the arguments as the model wrote them
 (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna Petrova (123456)").
 
 - Decline, or closing the form: nothing is changed, and the agent gets `confirmation_required` and

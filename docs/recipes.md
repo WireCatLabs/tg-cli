@@ -79,6 +79,7 @@ the agent opened a chat.
 
   The keyring is open while you are logged in to the computer. Run the first one by hand and read the
   log. About `-p` mode: [Claude's documentation](https://code.claude.com/docs/en/headless).
+
 - **Inside an open Claude Code session**: `/loop`, or "remind me at 15:00". It works while the
   session is open ([Claude's documentation](https://code.claude.com/docs/en/scheduled-tasks)).
 
@@ -93,7 +94,7 @@ Writes to Telegram: **no**. Allow: `Bash(tg inbox:*)`.
 > one line at the end.
 
 `--new` shows each message once: `tg` remembers where it stopped, and the next run starts there. The
-very first run looks back 24 hours.
+first run looks back 24 hours.
 
 ## Weekly report on a chat
 
