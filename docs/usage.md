@@ -276,7 +276,7 @@ tg messages send "Book club" "**Bold** and _italic_" --md  # bold, italic, struc
 
 `--md` reads bold (`**`), italic (`_`), struck (two tildes) and code (backticks), nothing else. A mark
 counts only at a word's edge, so `file_name` stays as typed; `\` keeps a mark literal. Without it,
-the text goes as typed.
+the text goes as typed. `messages edit` takes `--md` too.
 
 ### Text from stdin
 
@@ -336,7 +336,7 @@ look in `tg messages scheduled <chat>` instead.
 ### Editing, forwarding, pinning, deleting
 
 ```sh
-tg messages edit "Book club" 4242 "the corrected text"      # your own message
+tg messages edit "Book club" 4242 "the corrected text"      # your own message; --md as in a send
 tg messages forward "Book club" 4242 --to me                # checked against the chat it goes to
 tg messages pin "Book club" 4242                            # quiet unless --notify
 tg messages unpin "Book club" 4242
