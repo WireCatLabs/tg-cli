@@ -133,6 +133,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg chats list` no longer lists a pinned chat twice.** With archived chats included, Telegram's
+  pages brought the pinned chats again further down; on one account 8 of 1361 chats appeared twice.
+  A pinned chat's title also matched itself as two chats, so typing it could be refused as
+  ambiguous.
+
 - **`tg server stop` and Ctrl-C end `serve` and `watch` cleanly.** The serve went down before it could
   clean up, so `tg server status` reported a leftover lock (`stale`) after every stop.
 - **`tg server` in a development checkout leaves the installed tg's systemd unit alone.** A checkout

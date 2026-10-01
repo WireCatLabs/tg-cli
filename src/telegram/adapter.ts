@@ -187,10 +187,7 @@ export class TelegramAdapter {
   chats({ limit, offset }: { limit?: number; offset: number }): Promise<Page<Chat>> {
     return this.#call(async () => {
       const wanted = limit === undefined ? Number.POSITIVE_INFINITY : offset + limit + 1
-      const items: Chat[] = []
-      for await (const dialog of this.#client.iterDialogs({ limit: wanted, archived: "keep" })) {
-        items.push(toChat(dialog))
-      }
+      const items = await this.#dialogs(wanted)
       const end = limit === undefined ? items.length : offset + limit
       return { items: items.slice(offset, end), hasMore: items.length > end }
     })
@@ -609,9 +606,25 @@ export class TelegramAdapter {
     if (/^-?\d+$/.test(trimmed)) return Number(trimmed)
     if (trimmed.startsWith("@")) return trimmed.slice(1)
 
+    return pickChat(trimmed, await this.#dialogs(Number.POSITIVE_INFINITY))
+  }
+
+  /**
+   * Each chat once, up to `wanted`. With archived chats kept, Telegram's dialog pages bring the
+   * pinned chats again further down: 8 of 1361 were listed twice on 2026-10-01, and a pinned chat's
+   * title then matched itself as two chats.
+   */
+  async #dialogs(wanted: number): Promise<Chat[]> {
+    const seen = new Set<string>()
     const chats: Chat[] = []
-    for await (const dialog of this.#client.iterDialogs({ archived: "keep" })) chats.push(toChat(dialog))
-    return pickChat(trimmed, chats)
+    for await (const dialog of this.#client.iterDialogs({ archived: "keep" })) {
+      const chat = toChat(dialog)
+      if (seen.has(chat.id)) continue
+      seen.add(chat.id)
+      chats.push(chat)
+      if (chats.length >= wanted) break
+    }
+    return chats
   }
 
   async #inputOf(reference: string): Promise<InputPeerLike> {
