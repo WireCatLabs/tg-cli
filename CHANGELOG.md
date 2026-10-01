@@ -84,6 +84,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **An argument Telegram's library refused no longer repeats what you typed.** The error said the
+  library's own words, which could quote a chat's title or a link. It now says what kind of input
+  was wrong where tg can tell — a chat you have not joined, a message or invite link, a phone
+  number, a login code or password — and otherwise that Telegram refused an argument.
 - **A conversation reads in English.** Your own messages are `you`, and day headings read
   `26 September 2026`; they were Russian.
 - **A chat or message tg cannot find is `not_found`**, and a chat of the wrong kind for the command

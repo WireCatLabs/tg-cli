@@ -1,4 +1,5 @@
 import {
+  MtArgumentError,
   MtcuteError,
   MtInvalidPeerTypeError,
   MtMessageNotFoundError,
@@ -75,5 +76,20 @@ describe("mtcute's own errors", () => {
     expect(toCliError(new MtUnsupportedError("File ref expired!"))).toMatchObject({ code: "provider_error" })
     expect(toCliError(new MtTypeAssertionError("message", "messageEmpty"))).toMatchObject({ code: "invalid_response" })
     expect(toCliError(new MtcuteError("anything"))).toMatchObject({ code: "provider_error" })
+  })
+
+  it("names the kind of argument mtcute refused, without what was typed", () => {
+    const known = toCliError(new MtArgumentError(`You haven't joined "Mum's birthday"`))
+    expect(known).toMatchObject({ code: "validation_error", message: "you are not a member of that chat" })
+    expect((known as Error).message).not.toContain("birthday")
+  })
+
+  it("makes an argument error it does not recognise a generic one, without what was typed", () => {
+    const unknown = toCliError(new MtArgumentError("Could not find folder Mum's birthday"))
+    expect(unknown).toMatchObject({
+      code: "validation_error",
+      message: "Telegram refused an argument this command passed",
+    })
+    expect((unknown as Error).message).not.toContain("birthday")
   })
 })
