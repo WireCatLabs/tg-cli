@@ -1794,6 +1794,177 @@ chats this bot has seen on this machine — not a complete list from Telegram
 tg bot chats list
 ```
 
+#### `tg bot chats show`
+
+one chat from Telegram, and remember it
+
+```sh
+tg bot chats show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+
+#### `tg bot chats leave`
+
+take the bot out of a chat; only an admin of the chat can bring it back
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats leave <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, or the title of a chat this bot has seen. |
+
+#### `tg bot chats action`
+
+show what the bot is doing in a chat — typing, sending a photo — for a few seconds
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats action <chat> <action>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `action` | required | what the chat sees. One of: `typing`, `photo`, `video`, `voice`, `file`. |
+
+### `tg bot messages`
+
+the messages in the chats this bot is in
+
+#### `tg bot messages send`
+
+send a message as the bot; without [text], the text is read from stdin
+
+**Changes something in Telegram.**
+
+```sh
+tg bot messages send <chat> [text] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `text` | optional | the message. |
+
+| Option | What it does |
+|---|---|
+| `--reply-to <message>` | answer this message, by its id in the same chat. |
+| `--silent` | deliver without a notification. |
+| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
+| `--file <file>` | attach a file; the text becomes its caption. |
+| `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
+| `--as-file` | send the --file as a file to download, a video included. |
+| `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
+| `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
+
+#### `tg bot messages list`
+
+the latest messages in a chat; where Telegram gives a bot no history, and with --offline, the ones this bot has seen on this machine
+
+```sh
+tg bot messages list <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+
+#### `tg bot messages show`
+
+one message by its id in a chat
+
+```sh
+tg bot messages show <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `message` | required | message id. |
+
+#### `tg bot messages edit`
+
+replace the text of a message the bot sent
+
+**Changes something in Telegram.**
+
+```sh
+tg bot messages edit <chat> <message> <text> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `message` | required | message id. |
+| `text` | required | the new text. |
+
+| Option | What it does |
+|---|---|
+| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
+
+#### `tg bot messages delete`
+
+delete messages in a chat the bot can delete in; it cannot be undone
+
+**Changes something in Telegram.**
+
+```sh
+tg bot messages delete <chat> <messages> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `messages` | required | message ids. |
+
+| Option | What it does |
+|---|---|
+| `--allow-dangerous` | delete without asking. |
+
+#### `tg bot messages pin`
+
+pin a message in a chat; quietly unless --notify
+
+**Changes something in Telegram.**
+
+```sh
+tg bot messages pin <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `message` | required | message id. |
+
+| Option | What it does |
+|---|---|
+| `--notify` | tell the chat's members. |
+
+#### `tg bot messages unpin`
+
+unpin a message in a chat
+
+**Changes something in Telegram.**
+
+```sh
+tg bot messages unpin <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+| `message` | required | message id. |
+
 ### `tg bot recipients`
 
 the chats this bot may write to; with no list, every chat — `clear` removes the list
