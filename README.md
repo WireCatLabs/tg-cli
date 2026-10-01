@@ -24,14 +24,8 @@ tg messages send "Book club" "Running 15 minutes late"
 ## The personal account
 
 `tg` works with your own account, as one more of your devices: every chat, its history, groups,
-channels and contacts. It is not a bot.
-
-> ⚠️ **tg-cli is an unofficial Telegram client.** It talks to Telegram over MTProto, the API
-> Telegram publishes for third-party clients, with an app you register yourself. Telegram allows
-> such clients, but watches accounts that use them for spam or automation, and can limit or ban
-> them ([Telegram API Terms of Service](https://core.telegram.org/api/terms)). You use tg-cli at your
-> own risk; the authors and contributors are not responsible for banned accounts, lost data or any
-> other consequence.
+channels and contacts. It is not a bot: it talks to Telegram over MTProto, Telegram's own API for
+client apps, with an app you register yourself.
 
 ```sh
 tg chats list --limit 5
