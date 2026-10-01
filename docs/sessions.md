@@ -75,6 +75,17 @@ tg session end               # log out on Telegram's side, and delete the sessio
 the app. It does not delete the app id and hash from the keyring, and it leaves the local store as
 it is.
 
+## How long a session lives
+
+Until it is ended: by `tg session end`, from the list of devices in a Telegram app, or by Telegram
+itself once the session has gone unused for longer than the account's limit for inactive sessions
+(`authorization_ttl_days` in
+[Telegram's API](https://core.telegram.org/method/account.setAuthorizationTTL)), which the apps let
+you set in the list of devices. A profile that runs every day never reaches it. When a session has
+ended, every command answers "not logged in, or the session was ended" with exit code `4`; log in
+again with `tg session start`
+([troubleshooting.md](troubleshooting.md#not-logged-in-or-the-session-was-ended--run-tg-session-start)).
+
 ## Profiles
 
 A profile is a separate login: its own session, app, settings, recipients and runs. It is named by
