@@ -1007,10 +1007,22 @@ describe("polls", () => {
       { question: "Where?", answers: ["here", "there"], multiple: true, anonymous: false },
       { sendId: "77" },
     )
+    await adapter.createPoll(
+      "-100500",
+      { question: "Again?", answers: ["yes", "no"], multiple: false, anonymous: true, revote: true },
+      { sendId: "78" },
+    )
 
     const [chat, media, options] = client.sendMedia.mock.calls[0] ?? []
     expect(chat).toBe(-100500)
-    expect(media).toMatchObject({ type: "poll", question: "Where?", multiple: true, public: true })
+    expect(media).toMatchObject({
+      type: "poll",
+      question: "Where?",
+      multiple: true,
+      public: true,
+      disableRevoting: true,
+    })
+    expect(client.sendMedia.mock.calls[1]?.[1]).toMatchObject({ public: false, disableRevoting: false })
     expect(String((options as { randomId: unknown }).randomId)).toBe("77")
   })
 })

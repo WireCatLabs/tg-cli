@@ -355,5 +355,5 @@ export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll =>
   }
 }
 
-export const toInputPoll = ({ question, answers, multiple, anonymous }: NewPoll): InputMediaLike =>
-  InputMedia.poll({ question, answers, multiple, public: !anonymous })
+export const toInputPoll = ({ question, answers, multiple, anonymous, revote }: NewPoll): InputMediaLike =>
+  InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true })

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**181 ✅ · 4 ⛔ · 0 ❌** — 79 commands, 106 options.
+**184 ✅ · 4 ⛔ · 0 ❌** — 79 commands, 109 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -97,6 +97,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` |  | ✅ |  |
 | `polls create` | `--multiple` | ✅ |  |
 | `polls create` | `--anonymous` | ✅ |  |
+| `polls create` | `--revote` | ✅ |  |
 | `polls create` | `--silent` | ✅ |  |
 | `polls create` | `--send-id` | ✅ |  |
 | `models audio list` |  | ✅ |  |
@@ -133,9 +134,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `server uninstall` |  | ✅ |  |
 | `store status` |  | ✅ |  |
 | `store fetch` |  | ✅ |  |
-| `store fetch` | `--max` | ✅ |  |
+| `store fetch` | `--max-pages` | ✅ |  |
 | `store fetch` | `--pause` | ✅ |  |
 | `store fetch` | `--since` | ✅ |  |
+| `store fetch` | `--last` | ✅ |  |
 | `store fetch` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `store fetch` | `--estimate` | ✅ |  |
 | `store jobs list` |  | ✅ |  |
@@ -194,5 +196,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--trace` | ✅ |  |
 | *global* | `--timeout` | ✅ |  |
 | *global* | `--offline` | ✅ |  |
+| *global* | `--yes` | ✅ |  |
 | *global* | `--record` | ✅ |  |
 | *global* | `--no-record` | ✅ |  |

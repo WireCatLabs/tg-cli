@@ -584,13 +584,17 @@ describe("store fetch", () => {
         return { items: [message(String(top - 1)), message(String(top))], hasMore: true }
       },
     })
-    const { code, stdout } = await tg(["store", "fetch", "Valencia", "--max", "3", "--pause", "1ms", "--json"], {
+    const { code, stdout } = await tg(["store", "fetch", "Valencia", "--max-pages", "2", "--pause", "1ms", "--json"], {
+      adapter: () => pages,
+    })
+    const deep = await tg(["store", "fetch", "Valencia", "--last", "3", "--pause", "1ms", "--json"], {
       adapter: () => pages,
     })
 
     expect(code).toBe(0)
     expect(json(stdout)).toMatchObject({ chat: chat.id, fetched: 4, complete: false })
-    expect(asked).toEqual([undefined, "99"])
+    expect(asked.slice(0, 2)).toEqual([undefined, "99"])
+    expect(json(deep.stdout)).toMatchObject({ reachedLast: true })
   })
 
   it("--since stops after the first page older than the time", async () => {
