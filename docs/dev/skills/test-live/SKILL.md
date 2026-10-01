@@ -39,7 +39,7 @@ is not run.
 
 ```sh
 pnpm build
-node --experimental-strip-types scripts/seed-worktree.ts <main checkout> .   # a worktree, once
+node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"   # a worktree, once
 bin/tg account show --json
 ```
 

@@ -11,7 +11,7 @@ first. This skill orders them for tg and adds what is tg's.
 
 **tg releases without asking**: no signed report, no sign-off. You merge and publish yourself once
 every step below holds. The one exception is the live smoke, which sends real messages and needs the
-owner's yes each time.
+owner's yes each time: a release that changes a write waits for that yes and the run.
 
 ## 0. What changed
 
@@ -59,11 +59,12 @@ code. Each one gets **holds** or **broken**, with `path:line`.
 ## 5. Live
 
 - **The change touches a write** (an adapter write in `src/telegram/adapter.ts`, a write command, a
-  cli-messaging release that changes one): ask the owner for a yes to `pnpm smoke:live`, then run it
+  cli-messaging release that changes one): ask the owner for a yes to `pnpm smoke:live`, then run it.
+  **The release waits for that answer** — the one thing in a tg release that does; run it
   in the release worktree. Seed the worktree first, never with `session start`:
 
   ```sh
-  node --experimental-strip-types scripts/seed-worktree.ts <main checkout> .
+  node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"
   pnpm smoke:live
   ```
 

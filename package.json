@@ -35,6 +35,7 @@
     "smoke:bun": "bun run scripts/smoke.ts",
     "docs:check": "node --experimental-strip-types scripts/docs-check.ts",
     "parity:check": "node dist/bin/tg.js commands --json | cli-messaging-parity tg",
+    "smoke:live": "pnpm build && node --experimental-strip-types scripts/smoke-live.ts",
     "release:check": "pnpm build && node --experimental-strip-types scripts/release-check.ts",
     "version:check": "node --experimental-strip-types scripts/version.ts",
     "version:sync": "node --experimental-strip-types scripts/version.ts --sync",
