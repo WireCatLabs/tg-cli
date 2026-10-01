@@ -92,10 +92,15 @@ tg messages context msg:telegram/<account>/<chat>/<id>
 tg store export "Book club" --jsonl > book-club.jsonl       # one message per line, oldest first
 tg store export "Book club" --json > book-club.json         # { "items": [...] }
 tg store export "Book club" --format markdown > book-club.md   # a transcript: a heading per day, replies and forwards quoted
+tg store export "Book club" --output book-club.jsonl --since 7d          # the last week, into a file only you can read
 ```
 
 Export writes only what the store holds and never asks Telegram. Check `tg store status` first, and
 fetch the history if you need all of it.
+
+`--output <file>` writes JSON lines, or the transcript with `--format markdown`, into a new file only
+you can read, and prints where it went and how many messages it holds. It never overwrites a file.
+`--since` takes an ISO 8601 time or `30m`, `2h`, `1d` ago.
 
 ## Answering without connecting: `--offline`
 
