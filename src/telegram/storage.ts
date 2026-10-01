@@ -1,3 +1,4 @@
+import { chmodSync, closeSync, existsSync, openSync } from "node:fs"
 import { type CacheDatabase, openCache, type SqlValue } from "@leemour/cli-messaging/store"
 import { BaseSqliteStorage, BaseSqliteStorageDriver, type ISqliteDatabase, type ISqliteStatement } from "@mtcute/node"
 
@@ -51,5 +52,13 @@ class RuntimeSqliteDriver extends BaseSqliteStorageDriver {
   }
 }
 
-export const openSessionStorage = async (path: string): Promise<BaseSqliteStorage> =>
-  new BaseSqliteStorage(new RuntimeSqliteDriver(await openCache(path)))
+/** The session is a login: owner-only, -wal and -shm included. */
+export const openSessionStorage = async (path: string): Promise<BaseSqliteStorage> => {
+  // SQLite gives -wal and -shm the database file's mode and writes them while it opens, so the file
+  // is 0600 before that. The chmod puts right a session made before this was so.
+  closeSync(openSync(path, "a", 0o600))
+  for (const file of [path, `${path}-wal`, `${path}-shm`]) {
+    if (existsSync(file)) chmodSync(file, 0o600)
+  }
+  return new BaseSqliteStorage(new RuntimeSqliteDriver(await openCache(path)))
+}

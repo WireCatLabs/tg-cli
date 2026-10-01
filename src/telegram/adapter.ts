@@ -77,6 +77,8 @@ export interface AdapterOptions {
   listen?: boolean
   /** Fetch what arrived while nothing listened — `serve` only; a watch starts from now. */
   catchUp?: boolean
+  /** How to log in on this profile, for the error a dropped session gives. */
+  login?: string
 }
 
 export interface LoginPrompts {
@@ -115,13 +117,11 @@ const EVENT_PAGES = 10
 export class TelegramAdapter {
   readonly #client: TelegramClient
   readonly #sessionPath: string
+  readonly #login: string | undefined
 
   /** Async because the runtime's SQLite module is imported on demand (cli-messaging `openCache`). */
   static async open(options: AdapterOptions): Promise<TelegramAdapter> {
     mkdirSync(dirname(options.sessionPath), { recursive: true, mode: 0o700 })
-    // The session file and its -wal and -shm companions are all created by SQLite; a umask is the one
-    // setting that reaches all three.
-    process.umask(0o077)
     const adapter = new TelegramAdapter(options, await openSessionStorage(options.sessionPath))
     // Loads the logged-in user from the session before anything else. mtcute does it on the first
     // request, but sendText reads that user before making one — measured 2026-09-27: "User info is
@@ -131,10 +131,11 @@ export class TelegramAdapter {
   }
 
   private constructor(
-    { credentials, sessionPath, diagnostic, verbose = false, listen = false, catchUp = false }: AdapterOptions,
+    { credentials, sessionPath, diagnostic, verbose = false, listen = false, catchUp = false, login }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
     this.#sessionPath = sessionPath
+    this.#login = login
     this.#client = new TelegramClient({
       apiId: credentials.id,
       apiHash: credentials.hash,
@@ -372,11 +373,12 @@ export class TelegramAdapter {
       if (!(media instanceof FileLocation)) return { files: [], skipped: [media.type] }
       const [{ kind, name, mime, size }] = attachmentsOf(media) as [Attachment]
       const client = this.#client
+      const login = this.#login
       async function* bytes() {
         try {
           yield* client.downloadAsIterable(media as FileLocation)
         } catch (error) {
-          throw toCliError(error)
+          throw toCliError(error, login)
         }
       }
       return { files: [{ kind, name, mime, size, bytes }], skipped: [] }
@@ -745,7 +747,7 @@ export class TelegramAdapter {
           .filter((member) => member.status === "creator" || member.status === "admin")
           .map((member) => String(member.user.id))
       } catch (error) {
-        const known = toCliError(error)
+        const known = toCliError(error, this.#login)
         if (known instanceof CliError && known.code === "permission_error") return null
         throw known
       }
@@ -876,7 +878,7 @@ export class TelegramAdapter {
       const members = await this.#client.getChatMembers(peer, { limit: 200 })
       return members.map((member) => toMember(member.user))
     } catch (error) {
-      const known = toCliError(error)
+      const known = toCliError(error, this.#login)
       if (known instanceof CliError && known.code === "permission_error") return null
       throw known
     }
@@ -886,7 +888,7 @@ export class TelegramAdapter {
     try {
       return await work()
     } catch (error) {
-      throw toCliError(error)
+      throw toCliError(error, this.#login)
     }
   }
 }
@@ -914,11 +916,11 @@ const parseSendId = (typed: string): Long => {
   return Long.fromString(typed)
 }
 
-/** No answer is not a refusal: the write may have reached Telegram. */
+/** No answer is not a refusal: the write may have reached Telegram. Anything else is left for `#call` to map. */
 const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
   const known = toCliError(error)
   if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
     return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
   }
-  return known
+  return error
 }

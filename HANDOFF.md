@@ -36,7 +36,8 @@ the backlog.
 
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
-`tg` uses **`@leemour/cli-messaging@0.27.0`**. What it does now: login (`session`), `upgrade`, `account show`,
+`tg` uses **`@leemour/cli-messaging`** (**Correction 2026-10-01:** the version is the pin in
+`package.json`, not one written here). What it does now: login (`session`), `upgrade`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|search`, `watch
 [--events]`, `serve`, `store fetch|status|export|jobs`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
@@ -70,7 +71,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    (**Correction 2026-10-01:** since cli-messaging 0.77.0 the profile's `permissions` levels decide
    which tools an agent gets; `--allow-send`, `--allow-mark-read` and `--allow-delete` only warn)
    ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
-   `tg inbox` shipped (tg 0.4.0). **Parity now runs in parallel lanes** — the plan:
+   `tg inbox` shipped (**Correction 2026-10-01:** the version stamp is dropped, see `CHANGELOG.md`). **Parity now runs in parallel lanes** — the plan:
    [`2026-09-29-parity-lanes.md`](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md); how agents
    run them: [`docs/dev/agents.md`](docs/dev/agents.md); each lane's handoff: [`docs/lanes/`](docs/lanes/)
    (standard: [`docs/dev/handoff-standard.md`](docs/dev/handoff-standard.md)). **Every parity command
@@ -90,8 +91,9 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 **A new adapter method** takes the path `around`, `chat`, `contact` and `watch` took:
 `MessengerAdapter` in `../cli-messaging/src/cli/messenger/port.ts` → a line in `observed.ts` (run
-events) and `stored.ts` (saving) → the store if it should work `--offline` → a command in
-`commands.ts` → `TelegramAdapter` and its mapping in `map.ts` → the test fakes in tg
+events) and `stored.ts` (saving) → the store if it should work `--offline` → a command in its
+resource's `<resource>-command.ts` (**Correction 2026-10-01:** `commands.ts` was split per resource
+on 2026-09-29, cli-messaging 3eb944b) → `TelegramAdapter` and its mapping in `map.ts` → the test fakes in tg
 (`src/program.test.ts`, `src/runs.test.ts`, `src/send-guard.test.ts`, `src/offline.test.ts`,
 `src/contract.test.ts`).
 
@@ -109,7 +111,8 @@ Read in this order:
 | `src/commands/context.ts` | what only Telegram has (credentials, the session file, `connect`) and the `TELEGRAM` description |
 | `../cli-messaging/src/cli/messenger/context.ts` | how a shared command connects inside `--timeout`, saves to the store and answers `--offline` |
 | `../cli-messaging/src/cli/messenger/port.ts` | `MessengerAdapter` — what an adapter must do for the shared commands |
-| `../cli-messaging/src/cli/messenger/commands.ts` | the shared commands; `sendText` is the shape of a write: resolve → guard.check → send → guard.record; `listenUntilStopped` is how `watch` and `serve` end |
+| `../cli-messaging/src/cli/messenger/messages-command.ts` | the shared message commands; `sendText` is the shape of a write: resolve → guard.check → send → guard.record. **Correction 2026-10-01:** `commands.ts` was split into one `<resource>-command.ts` per resource on 2026-09-29 (cli-messaging 3eb944b) |
+| `../cli-messaging/src/cli/messenger/watch-command.ts` | `listenUntilStopped` — how `watch` and `serve` end |
 | `../cli-messaging/src/cli/messenger/stored.ts` | which reads and events are saved, and why `resolve` and `chat` are not |
 | `../cli-messaging/src/cli/messenger/observed.ts` | which ids and counts a run record names per adapter call |
 | `src/telegram/adapter.ts` | the only door to Telegram |

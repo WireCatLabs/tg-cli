@@ -1,6 +1,7 @@
 # Architecture
 
-**Status 2026-09-29, tg 0.4.0 on `@leemour/cli-messaging` 0.27.0.** This page is the map of `tg`'s own
+**Status 2026-09-29.** (**Correction 2026-10-01:** the versions stamped here went stale within days;
+the cli-messaging version tg builds on is the pin in `package.json`.) This page is the map of `tg`'s own
 code and its seams. What the project is and what is open lives in [HANDOFF.md](../../HANDOFF.md);
 the shared design lives in cli-messaging and in
 [max-cli's ARCHITECTURE.md](https://github.com/leemour/max-cli/blob/main/docs/dev/ARCHITECTURE.md),
