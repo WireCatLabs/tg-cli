@@ -38,13 +38,15 @@ claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg inbox:*)"
 **Limit what the profile may do.** This holds for any agent:
 
 ```sh
-tg config set readOnly true              # the profile sends nothing
-tg config set sendsPerHour 5             # or: at most five sends an hour
-tg recipients add "Book club"            # and only to the chats on this list
+tg config set permissions.messages readonly    # no sends, edits or deletions
+tg config set permissions.messages.send ask    # or: a yes or no before each send
+tg config set sendsPerHour 5                   # or: at most five sends an hour
+tg recipients add "Book club"                  # and only to the chats on this list
 ```
 
-`readOnly` stops your own sends too, until you turn it off: `tg config unset readOnly`. Every attempt
-to send, refused ones included, is in `tg sends list`. The limits are described in
+`permissions` limits your own commands too, until you change it back:
+`tg config unset permissions.messages`. To limit only the agent, give it a profile of its own. Every
+attempt to send, refused ones included, is in `tg sends list`. The limits are described in
 [security.md](security.md#the-send-guard).
 
 **Reading gives nothing away.** No command in the recipes below marks anything read: nobody sees that
@@ -146,5 +148,5 @@ schedule.
 > question. Do not send it — show me the text.
 
 Once you agree, the agent sends it: `tg messages send @example_user "…"`. An agent without a terminal
-connects with `tg mcp --allow-send --confirm-send`: before each send you see the chat and the text and
-answer yes or no ([mcp.md](mcp.md)).
+connects with `tg mcp --confirm-send`: before each send you see the chat and the text and answer yes
+or no ([mcp.md](mcp.md)).

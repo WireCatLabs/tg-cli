@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**184 ✅ · 4 ⛔ · 0 ❌** — 79 commands, 109 options.
+**183 ✅ · 7 ⛔ · 0 ❌** — 79 commands, 111 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -177,14 +177,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `complete` |  | ✅ |  |
 | `upgrade` |  | ✅ |  |
 | `upgrade` | `--check` | ✅ |  |
-| `mcp` |  | ✅ |  |
-| `mcp` | `--allow-send` | ⛔ | starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client |
-| `mcp` | `--confirm-send` | ✅ |  |
-| `mcp` | `--allow-mark-read` | ⛔ | starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments |
-| `mcp` | `--allow-delete` | ⛔ | starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDelete, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` |  | ⛔ | serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check |
+| `mcp` | `--confirm-send` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with confirmSend, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDangerous, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |
+| `mcp` | `--allow-mark-read` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
+| `mcp` | `--allow-delete` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
 | `mcp config` |  | ✅ |  |
-| `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--confirm-send` | ✅ |  |
+| `mcp config` | `--allow-dangerous` | ✅ |  |
+| `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--allow-mark-read` | ✅ |  |
 | `mcp config` | `--allow-delete` | ✅ |  |
 | `skill show` |  | ✅ |  |

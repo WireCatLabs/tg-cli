@@ -67,6 +67,8 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    `--allow-send` / `--confirm-send`, the `reply` and `find` prompts, the `tg://chat/{id}` resource
    (`../cli-messaging/src/mcp/`; a write tool carries `permission` and goes through `guardedSend` in
    `messages-command.ts`; user docs in [`docs/mcp.md`](docs/mcp.md)), and `tg skill show`
+   (**Correction 2026-10-01:** since cli-messaging 0.77.0 the profile's `permissions` levels decide
+   which tools an agent gets; `--allow-send`, `--allow-mark-read` and `--allow-delete` only warn)
    ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
    `tg inbox` shipped (tg 0.4.0). **Parity now runs in parallel lanes** — the plan:
    [`2026-09-29-parity-lanes.md`](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md); how agents

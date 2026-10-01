@@ -7,12 +7,12 @@ never keeps, and what stands between an agent and a message to a real person.
 
 It protects against:
 
-- **an agent talked into sending** by a message it read. The MCP server offers no tool that writes
-  until a flag turns it on, and with `--confirm-send` it shows you a form before each send. A yes in
-  that form counts once, for five minutes, and only for the chat and the text it showed
-  ([mcp.md](mcp.md#a-confirmation-form-from-the-server-itself)). Every read tool tells the model that
-  message text is data, never instructions.
-- **a send the profile does not allow.** Read-only, the allowed actions, the recipient list and the
+- **an agent talked into sending** by a message it read. The profile's `permissions` decide what an
+  agent may do: a level of `ask` shows you a form before the change, and `--confirm-send` shows one
+  before every change. A yes in that form counts once, for five minutes, and only for the chat and
+  the text it showed ([mcp.md](mcp.md#a-confirmation-form-from-the-server-itself)). Every read tool
+  tells the model that message text is data, never instructions.
+- **a change the profile does not allow.** The profile's `permissions`, the recipient list and the
   hourly limit are checked by every command and every MCP tool, and every attempt is written to a
   journal without its text ([below](#the-send-guard)).
 - **an agent stepping outside its profile, or sending your keys.** `TG_PROFILE_LOCK` pins the
@@ -98,8 +98,10 @@ End the session from another device: in the Telegram app, Settings → Devices, 
   send|edit|delete|forward|pin|unpin`, `reactions add|remove`, `polls vote|close|create`,
   `chats mark-read`, and `session end` — each does only what the line says. `tg commands --json` marks
   them `mutates`, together with the commands that change `tg`'s own settings and recipient list.
-- **Delete without an explicit word.** `tg messages delete` needs `--allow-dangerous`; deleting for
-  everyone needs `--for-everyone` too. A deletion cannot be undone.
+- **Delete without an explicit word.** `tg messages delete` asks first, and `--allow-dangerous`
+  answers yes for you; deleting for everyone needs `--for-everyone` too. A deletion cannot be
+  undone. An agent over MCP never deletes for everyone and never ends your other sessions, whatever
+  the settings say.
 - **Take a phone number on the command line.** `contacts lookup` asks for it or reads it from stdin.
   No error, journal or record holds one.
 - **Write a message into a log.** Not shortened, not hashed ([diagnostics.md](diagnostics.md)).
@@ -115,15 +117,14 @@ poll, a deletion, marking a chat read — goes through the same checks, in this 
 
 | Check | Turn it on | Refusal |
 |---|---|---|
-| **`readOnly`** — the profile changes nothing | `tg config set readOnly true` | exit code `5`, before connecting |
-| **`allow`** — only the actions it names: `send`, `forward`, `reaction`, `edit`, `pin`, `read`, `delete`, and more | `tg config set allow send,reaction` | exit code `5`; the error says how to allow it |
+| **`permissions`** — per command: `deny`, `readonly`, `ask` or `allow` ([configuration.md](configuration.md#what-a-profile-may-do)) | `tg config set permissions.messages.send ask` | `deny` and `readonly`: exit code `5`, before anything is sent; `ask` with nobody to answer: exit code `7` |
 | **the recipient list** — only the chats on it | `tg recipients add <chat>`; off again with `tg recipients clear` | exit code `7` |
 | **`sendsPerHour`** — the most sends in any hour, 30 by default | `tg config set sendsPerHour 10` | exit code `8`; the error says when the next send is possible |
 | **the journal** — every attempt, never its text | always; `tg sends list` | — |
 
 ```sh
-tg config set readOnly true                  # nothing changes in Telegram from this profile
-tg config set allow send,reaction            # only these
+tg config set permissions.messages readonly  # no change to messages from this profile
+tg config set permissions.messages.send ask  # a question before each send
 tg recipients add "Book club"                # the first add turns the list on
 tg recipients list
 tg recipients remove "Book club"             # the list stays on
@@ -138,6 +139,10 @@ each holds its place from the check until Telegram answers.
 
 The recipient list is optional: until something is added, any chat is allowed. A forward is checked
 against the chat it goes to. Over MCP, every tool goes through the same guard as the command.
+
+By default every change is allowed, except deleting messages and ending sessions, which ask. Older
+settings still work: `readOnly: true` makes everything read-only, and an `allow` list allows only
+the actions it names.
 
 **A refusal is the owner's decision, not a fault.** An agent that meets exit code `5`, `7` or `8`
 should stop and say so, not change the settings or retry. The skill file tells agents exactly that.
@@ -160,9 +165,9 @@ When you choose that boundary:
   those live there. `--allow-any-file` lifts it for one command; it is meant for you, not for an
   agent. Over MCP there is no way around it. Anything else your user can read can be sent; the journal
   keeps only its kind and size.
-- **An agent rule like "ask before `tg messages send`"** does not see the form with a profile,
-  `tg work messages send`. It is safer to limit the profile itself — `readOnly`, `allow` or the
-  recipient list — and not to keep an unlimited profile with a live session beside it.
+- **An agent rule like "ask before `tg messages send`"** does not see the form with a profile, `tg
+  work messages send`. It is safer to limit the profile itself — `permissions` or the recipient list
+  — and not to keep an unlimited profile with a live session beside it.
 
 ## Other people's text on your screen
 
@@ -251,5 +256,5 @@ Every login adds a device to the list in the Telegram app: Settings → Devices.
 
 - [diagnostics.md](diagnostics.md) — what exactly is recorded, and what never is
 - [sessions.md](sessions.md) — the app, the keyring, profiles, logging out
-- [mcp.md](mcp.md) — what an agent can do over MCP, and what each flag turns on
-- [configuration.md](configuration.md) — `readOnly`, `allow` and `sendsPerHour`
+- [mcp.md](mcp.md) — what an agent can do over MCP, and what each level and flag changes
+- [configuration.md](configuration.md) — `permissions` and `sendsPerHour`

@@ -20,9 +20,10 @@ ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ mcp-auth-pro
 
 - **Anyone who gets past the password can read your Telegram.** Use a long password that you use
   nowhere else. Never set it up without the password, and never with a tunnel that has no login.
-- **Reading only, by default.** `tg mcp` without `--allow-send` cannot send anything. Add it only
-  when you want the AI app to send, and read [mcp.md](mcp.md) first: `--confirm-send` and the
-  recipients list still apply.
+- **By default the AI app can send.** With the default settings `tg mcp` lets it send, edit,
+  react, forward, pin, vote and mark chats read. Serve a profile set to `readonly` if it should only
+  read, or start the server with `--confirm-send` to answer yes or no before each change. The
+  recipient list and the hourly limit still apply ([mcp.md](mcp.md#what-an-agent-may-do)).
 - **The computer that runs `tg` must be on.** To use it from a phone or a laptop with nothing
   installed, run all of this on a small always-on server instead, and log in to `tg` there
   (`tg session start`). Then only a browser is needed on your side.

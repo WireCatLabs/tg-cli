@@ -1143,10 +1143,11 @@ tg mcp [options]
 
 | Option | What it does |
 |---|---|
-| `--allow-send` | offer the send tool; without it the server can only read. |
-| `--confirm-send` | show the owner every send in a form from the server first. |
-| `--allow-mark-read` | offer the tool that marks a chat read; the other side sees it. |
-| `--allow-delete` | offer the tool that deletes the owner's own copy of messages; never for everyone. |
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-mark-read` | no longer used — the profile's permissions decide. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
 
 ### `tg mcp config`
 
@@ -1158,10 +1159,11 @@ tg mcp config [options]
 
 | Option | What it does |
 |---|---|
-| `--allow-send` | offer the send tool; without it the server can only read. |
-| `--confirm-send` | show the owner every send in a form from the server first. |
-| `--allow-mark-read` | offer the tool that marks a chat read; the other side sees it. |
-| `--allow-delete` | offer the tool that deletes the owner's own copy of messages; never for everyone. |
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-mark-read` | no longer used — the profile's permissions decide. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
 
 ## `tg skill`
 

@@ -71,9 +71,9 @@ Agent:  Draft: "Boris, hi! How is the mock-up going?" Send it?
 You:    Yes.
 ```
 
-The agent can send only if you allowed it, and with `--confirm-send` each message waits for your
-yes. Reading marks nothing read. How to set an agent up for each job — ready requests, a schedule
-and limits: [docs/recipes.md](docs/recipes.md).
+The profile's `permissions` decide what the agent may do; set sending to `ask` and each message
+waits for your yes. Reading marks nothing read. How to set an agent up for each job — ready
+requests, a schedule and limits: [docs/recipes.md](docs/recipes.md).
 
 ## Groups you run
 
@@ -307,9 +307,10 @@ How these agents find skills: [Codex](https://learn.chatgpt.com/docs/build-skill
 ### An MCP server for agents without a terminal
 
 Claude Desktop, Cursor and other MCP clients connect to `tg mcp` and work with the same account.
-Without `--allow-send` the agent only reads. With `--confirm-send` you see the chat and the text
-before each send, and answer yes or no. `--allow-mark-read` and `--allow-delete` turn on their own
-tools. In full: [docs/mcp.md](docs/mcp.md).
+The profile's `permissions` decide which tools it gets: by default it can send, react and mark
+read, and you see a form before each deletion. Set a level to `readonly` to keep the agent from
+changing it, or to `ask` to answer yes or no each time; `--confirm-send` asks before every change.
+In full: [docs/mcp.md](docs/mcp.md).
 
 ```sh
 claude mcp add tg -- tg mcp         # Claude Code
@@ -354,8 +355,9 @@ every exit code. All codes: [docs/commands.md](docs/commands.md#exit-codes).
   unencrypted; only whole-disk encryption protects it from a stolen disk. It stays after logging out.
 - Before each send, from a command or over MCP, `tg` checks the profile's limits and writes a line to
   the journal — without the message's text.
-- The MCP server with `--confirm-send` shows you every send before it goes. `--file` refuses keys and
-  hidden files unless you add `--allow-any-file`, and over MCP there is no way around it.
+- A level of `ask` in `permissions`, or the MCP server's `--confirm-send`, shows you a change before
+  it goes. Deleting asks by default. `--file` refuses keys and hidden files unless you add
+  `--allow-any-file`, and over MCP there is no way around it.
 - The limits protect against an agent talked into sending by a message it read, not against one
   that sets out to get round them: against that you need a boundary outside — a sandbox or a
   separate user.

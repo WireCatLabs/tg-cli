@@ -58,7 +58,7 @@ are in [installation.md](installation.md#where-files-go)).
   },
   "profiles": {
     "default": { "limit": 50 },
-    "work": { "allow": ["send", "reaction"], "record": true }
+    "work": { "permissions": { "messages": "readonly", "messages.send": "allow" }, "record": true }
   }
 }
 ```
@@ -71,8 +71,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `senderColors` | `false` | a colour per sender in the table view of messages |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)); `--record` and `--no-record` override it |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept |
-| `readOnly` | `false` | the profile sends nothing and changes nothing in Telegram |
-| `allow` | everything | only these actions: `send`, `forward`, `reaction`, `edit`, `pin`, `read`, `delete`, `groups`, `contacts`, `profile`, `folders`, `sessions` |
+| `permissions` | everything allowed; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) |
 | `sendsPerHour` | `30` | the most sends in any hour ([security.md](security.md#the-send-guard)) |
 | `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` |
 | `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) |
@@ -81,17 +80,74 @@ are in [installation.md](installation.md#where-files-go)).
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
 names one.
 
-`allow` has no "everything" value: leaving it out allows every action, and a list allows only what it
-names. `read` is marking a chat read; reading itself is never limited.
+## What a profile may do
+
+`permissions` is an object: each key is a command path, each value a level.
+
+```json
+{ "profiles": { "work": { "permissions": { "messages": "readonly", "messages.send": "allow" } } } }
+```
+
+| Level | What happens |
+|---|---|
+| `deny` | nothing, not even reading: refused with exit code `5` before connecting |
+| `readonly` | reading works; a change is refused with exit code `5` |
+| `ask` | a y/N question in the terminal, no by default ([below](#a-question-before-a-change)) |
+| `allow` | it goes ahead and never asks |
+
+**A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
+`polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
+starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts` or
+`account` — or it is refused. **The most specific key you set wins**: with the example above,
+`messages.send` is allowed and every other change to messages is refused. There is no wildcard:
+`messages: readonly` does not touch `reactions`, `polls` or `chats`.
+
+`inbox`, `review`, `watch`, `serve` and `store fetch`, `export` and `search` show messages, so they
+count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
+`mcp` and the store's own upkeep are never limited.
+
+**The defaults allow everything except two things that cannot be undone**: `messages.delete` and
+`account.sessions.end` are `ask`. A built-in default only tightens: `messages: readonly` still
+refuses a deletion, and `messages: allow` keeps the question before a deletion until you set
+`messages.delete` itself.
+
+```sh
+tg config set permissions.messages.delete allow     # delete without the question
+tg config set permissions.messages.send ask         # ask before every send
+tg config unset permissions.messages.delete         # back to the default
+```
+
+To make a profile read-only — here the profile `agent` — set each resource:
+
+```sh
+for key in messages reactions polls topics chats contacts account; do
+  tg agent config set permissions.$key readonly
+done
+```
+
+### A question before a change
+
+At level `ask`, `tg` shows what will change and asks `go ahead? [y/N]`. An answer other than `y`
+does nothing and ends with exit code `130`. A flag answers yes for you: `--allow-dangerous` for a
+deletion, the global `--yes` for any other change. With no terminal, or under `--json` or
+`--jsonl`, nobody can answer: the change is refused with exit code `7`, `confirmation_required`,
+and the error names the flag.
+
+### Older settings that still work
+
+`readOnly: true` reads as every resource `readonly`. A list in `allow` (`send`, `forward`,
+`reaction`, `edit`, `pin`, `read`, `delete`, `groups`, `contacts`, `profile`, `folders`,
+`sessions`) reads as those actions `allow` and the rest `readonly`; deleting still asks. A key in
+`permissions` wins over both.
 
 ## Change it without opening the file
 
 ```sh
 tg config set limit 50                        # this profile
-tg work config set allow send,reaction        # profile "work"; a list is comma-separated
+tg work config set permissions.contacts readonly   # profile "work"; one key at a time
 tg config set sendsPerHour 10 --defaults      # every profile
 tg config set updateCheck false --defaults    # a setting that exists only under defaults
-tg config unset readOnly                      # back to the default
+tg config unset sendsPerHour                  # back to the default
 ```
 
 `config set` checks the value against the same rules the reader uses, so it never writes a file
@@ -106,7 +162,8 @@ config.json is not a valid config:
   profiles.default.limt: unknown setting — the known ones are limit, timeoutMs, …
 ```
 
-A misspelled setting that was silently ignored would run with the default and never say why.
+A misspelled setting that was silently ignored would run with the default and never say why. The
+same holds for a key in `permissions` that does not start with a resource.
 
 ## Environment variables
 
@@ -138,5 +195,5 @@ Without `MESSAGING_STORE`, what that login reads still goes into your usual loca
 
 ## Next
 
-- [security.md](security.md) — what `readOnly`, `allow`, the recipient list and `sendsPerHour` protect
+- [security.md](security.md) — what `permissions`, the recipient list and `sendsPerHour` protect
 - [diagnostics.md](diagnostics.md) — `record` and `keepRunsForDays`
