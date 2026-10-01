@@ -415,6 +415,10 @@ tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people ad
 tg chats create "Trail news" --channel             # a channel; people join it by its link
 tg chats join https://t.me/+AbCdEf                 # by an invite link, or a public one
 tg chats leave "Hiking 2027"
+tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and dates"
+tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
+tg chats link show "Hiking 2027"                   # the invite link, if you may see it
+tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
@@ -422,8 +426,10 @@ in the answer under `providerMetadata.notAdded`; the group is made anyway. A gro
 approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
 
-Members, admins, invite links and moderation rules are not in `tg` yet
-([roadmap](../README.md#roadmap)). What there is for a group you run: [groups.md](groups.md).
+`chats update` changes the title, the description and the two settings Telegram has, in one go; the
+answer is the group as it stands, and `chats show` shows the same settings. Members, admins and
+moderation rules are not in `tg` yet ([roadmap](../README.md#roadmap)). What there is for a group
+you run: [groups.md](groups.md).
 
 ## For scripts and agents
 

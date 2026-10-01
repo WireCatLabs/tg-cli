@@ -9,6 +9,7 @@ import {
   type ChatCard,
   type ChatEvents,
   type GroupCard,
+  type GroupChange,
   type GroupMember,
   type LinkTarget,
   type Markup,
@@ -44,6 +45,7 @@ import {
   attachmentsOf,
   type EventOf,
   eventOf,
+  GROUP_SETTINGS,
   peerToChat,
   toAccount,
   toAccountSession,
@@ -821,6 +823,54 @@ export class TelegramAdapter {
     })
   }
 
+  group(reference: string): Promise<GroupCard> {
+    return this.#call(async () => toGroupCard(await this.#client.getFullChat(await this.#inputOf(reference))))
+  }
+
+  /**
+   * Telegram keeps what members may do as rights taken away, and sets them all at once: the current
+   * ones are read first, and only the switches asked for change.
+   */
+  updateGroup(chatId: string, { title, description, settings = {} }: GroupChange): Promise<GroupCard> {
+    const missing = Object.keys(settings).filter((key) => !(GROUP_SETTINGS as readonly string[]).includes(key))
+    if (missing.length > 0) {
+      throw new CliError("validation_error", `Telegram has no group setting ${missing.join(", ")}`)
+    }
+    const peer = Number(chatId)
+    return this.#call(async () => {
+      try {
+        if (title !== undefined) await this.#client.setChatTitle(peer, title)
+        if (description !== undefined) await this.#client.setChatDescription(peer, description)
+        const { allCanPin, onlyAdminsAdd } = settings
+        if (typeof allCanPin === "boolean" || typeof onlyAdminsAdd === "boolean") {
+          const current = (await this.#client.getFullChat(peer)).defaultPermissions?.raw
+          const { _: _kind, untilDate: _until, ...taken } = current ?? { _: "chatBannedRights", untilDate: 0 }
+          await this.#client.setChatDefaultPermissions(peer, {
+            ...taken,
+            ...(typeof allCanPin === "boolean" ? { pinMessages: !allCanPin } : {}),
+            ...(typeof onlyAdminsAdd === "boolean" ? { inviteUsers: onlyAdminsAdd } : {}),
+          })
+        }
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the group may have changed in part; check `tg chats show`")
+      }
+      return toGroupCard(await this.#client.getFullChat(peer))
+    })
+  }
+
+  /** A new primary link for the owner; the old one stops working. */
+  resetInviteLink(chatId: string): Promise<GroupCard> {
+    const peer = Number(chatId)
+    return this.#call(async () => {
+      try {
+        await this.#client.exportInviteLink(peer)
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the link may or may not have been replaced; check `tg chats link show`")
+      }
+      return toGroupCard(await this.#client.getFullChat(peer))
+    })
+  }
+
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
     try {
       const members = await this.#client.getChatMembers(peer, { limit: 200 })
@@ -840,6 +890,8 @@ export class TelegramAdapter {
     }
   }
 }
+
+export { GROUP_SETTINGS }
 
 export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000

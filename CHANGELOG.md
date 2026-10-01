@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats update <chat>`** — `--title`, `--description`, `--all-can-pin on|off`,
+  `--only-admins-add on|off` — and **`tg chats link show|reset`**, with the MCP tools
+  `tg_chats_update`, `tg_chats_link_show`, `tg_chats_link_reset`. `tg chats show` adds a group's
+  description, invite link and settings.
 - **`tg chats create <title> [person...]`, `tg chats join <link>`, `tg chats leave <chat>`**, and
   the MCP tools `tg_chats_create`, `tg_chats_join`, `tg_chats_leave`. A new group is always a
   supergroup (`--channel` makes a channel); people who cannot be added are listed in the answer.

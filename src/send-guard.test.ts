@@ -345,6 +345,58 @@ describe("the send guard in front of the other writes", () => {
     ])
   })
 
+  it("**changes a group and its link through the guard**", async () => {
+    const card = {
+      ...chat,
+      description: null,
+      link: "https://t.me/+old",
+      settings: {
+        allCanPin: false,
+        onlyAdminsAdd: true,
+        onlyAdminsCall: null,
+        onlyOwnerEditsInfo: null,
+        membersSeeLink: null,
+      },
+    }
+    const changed: unknown[] = []
+    const adapter = scripted({
+      group: async () => card,
+      updateGroup: async (chatId, change) => {
+        changed.push([chatId, change])
+        return card
+      },
+      resetInviteLink: async () => ({ ...card, link: "https://t.me/+new" }),
+    })
+
+    const updated = await tg(
+      [
+        "g-group",
+        "chats",
+        "update",
+        "Valencia",
+        "--title",
+        "Pisos",
+        "--description",
+        "rooms",
+        "--all-can-pin",
+        "on",
+        "--only-admins-add",
+        "off",
+        "--json",
+      ],
+      adapter,
+    )
+    const shown = await tg(["g-group", "chats", "link", "show", "Valencia", "--json"], adapter)
+    const reset = await tg(["g-group", "chats", "link", "reset", "Valencia", "--json"], adapter)
+
+    expect([updated.code, shown.code, reset.code]).toEqual([0, 0, 0])
+    expect(changed).toEqual([
+      [chat.id, { title: "Pisos", description: "rooms", settings: { allCanPin: true, onlyAdminsAdd: false } }],
+    ])
+    expect(JSON.parse(shown.stdout[0] ?? "")).toMatchObject({ link: "https://t.me/+old" })
+    expect(journal("g-group").map((entry) => entry.action)).toEqual(["update", "link.reset"])
+  })
+
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
     configure({ "g-del": { sendsPerHour: 2 } })
     const { adapter, deleted } = telegram()

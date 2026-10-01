@@ -239,6 +239,57 @@ tg chats leave <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
+### `tg chats update`
+
+rename a group or channel, change its description, or turn one of its settings on or off
+
+**Changes something in Telegram.**
+
+```sh
+tg chats update <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--title <title>` | the new name. |
+| `--description <text>` | the new description. |
+| `--all-can-pin <on\|off>` | every member may pin messages. |
+| `--only-admins-add <on\|off>` | only admins may add members. |
+
+### `tg chats link`
+
+a group's invite link
+
+#### `tg chats link show`
+
+the invite link, if you may see it
+
+```sh
+tg chats link show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg chats link reset`
+
+replace the invite link; the old one stops working
+
+**Changes something in Telegram.**
+
+```sh
+tg chats link reset <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
 ## `tg contacts`
 
 people this account has a one-to-one chat with
