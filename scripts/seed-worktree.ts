@@ -13,7 +13,7 @@
  * child's environment.
  */
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs"
-import { join } from "node:path"
+import { join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 import { Credentials } from "@leemour/cli-core"
 
@@ -31,9 +31,10 @@ const copyDirectory = (from: string, to: string): void => {
 
 const credentialsIn = (config: string) => new Credentials({ configDir: config, service: SERVICE, isolated: true })
 
+// Absolute, because the keyring entry is keyed by the config path and bin/tg reads it by the absolute one.
 export const seed = (main: string, worktree: string, force = false): string => {
-  const from = join(main, ".tg")
-  const to = join(worktree, ".tg")
+  const from = join(resolve(main), ".tg")
+  const to = join(resolve(worktree), ".tg")
   if (existsSync(join(to, "state", "sessions")) && !force) return "already seeded (--force copies again)"
   if (!existsSync(join(from, "state", "sessions"))) return `no login in ${from} — run bin/tg session start there first`
 
@@ -56,7 +57,8 @@ export const seed = (main: string, worktree: string, force = false): string => {
 }
 
 /** Takes a worktree's copies of the app credentials out of the keyring, before the worktree goes. */
-export const unseed = (worktree: string): string => {
+export const unseed = (relativeOrAbsolute: string): string => {
+  const worktree = resolve(relativeOrAbsolute)
   const sessions = join(worktree, ".tg", "state", "sessions")
   const profiles = existsSync(sessions)
     ? readdirSync(sessions)
