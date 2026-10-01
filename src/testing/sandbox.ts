@@ -31,6 +31,9 @@ delete process.env.TG_PROFILE_LOCK
 delete process.env.TG_TIMEOUT
 // At a terminal the daily update check would otherwise ask npm from inside the suite.
 process.env.TG_NO_UPDATE_CHECK = "1"
+// Run by an agent, the suite would see the owner's skill copy under ~/.claude and print a hint to install it.
+delete process.env.CLAUDECODE
+delete process.env.AI_AGENT
 process.env.TG_TEST_SANDBOX = sandbox
 process.env.TG_TEST_ARGV_LOG = ARGV_LOG
 

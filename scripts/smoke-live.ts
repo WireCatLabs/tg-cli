@@ -94,7 +94,7 @@ try {
   if (poll) await step("close the poll", () => tg("polls", "close", SAVED, poll))
 
   const scheduled = await step("schedule a send", () =>
-    tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at", "1m"),
+    tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "1m"),
   )
   if (scheduled) {
     await step("list the scheduled", () => {
@@ -125,9 +125,8 @@ try {
 
   // A pin leaves a service message behind in a private chat; count what is left, never show it.
   await step("nothing left since the start", () => {
-    const left = (tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []).filter(
-      (message) => !created.includes(String(message.id)),
-    )
+    // Its own messages count too: a deletion refused for the hour leaves them behind.
+    const left = tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []
     if (left.length > 0) throw new Error(`${left.length} message(s) since the start — look in Saved Messages`)
   })
 } finally {

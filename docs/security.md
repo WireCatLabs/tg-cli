@@ -94,9 +94,10 @@ End the session from another device: in the Telegram app, Settings → Devices, 
 
 - **Mark anything read without being asked.** Reading a chat and marking it read are two different
   requests to Telegram. Only `tg chats mark-read` sends the second.
-- **Send or change anything you did not type.** Only these change something: `messages
-  send|edit|delete|forward|pin|unpin`, `reactions add|remove`, `polls vote|close|create`,
-  `chats mark-read`, and `session end` — each does only what the line says. `tg commands --json` marks
+- **Send or change anything you did not type.** Only the commands `docs/commands.md` marks
+  "Changes something in Telegram" do: sending and changing messages, reactions, polls, marking read,
+  administering groups and folders, `account update`, `contacts` writes, `account sessions end` and
+  `session end` — each does only what the line says. `tg commands --json` marks
   them `mutates`, together with the commands that change `tg`'s own settings and recipient list.
 - **Delete without an explicit word.** `tg messages delete` asks first, and `--allow-dangerous`
   answers yes for you; deleting for everyone needs `--for-everyone` too. A deletion cannot be
@@ -132,8 +133,8 @@ tg recipients clear                          # the list is gone: any chat again
 tg sends list                                # every attempt: sent, refused, failed, or not known
 ```
 
-**What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, and each
-deleted message. A reaction, a vote, a quiet pin and marking a chat read do not. A scheduled message
+**What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, each
+deleted message, a new group, and each person added to one. A reaction, a vote, a quiet pin and marking a chat read do not. A scheduled message
 counts in the hour Telegram sends it. Two commands started at once cannot get past the limit together:
 each holds its place from the check until Telegram answers.
 

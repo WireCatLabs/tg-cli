@@ -83,7 +83,7 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 
 | Command | What it does |
 |---|---|
-| `tg review --chat <chat> --unanswered [hours]` | questions you and the admins have not answered for that long (24 hours by default) |
+| `tg review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
 | `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
 | `tg topics list\|search <chat>` | a forum group's topics |

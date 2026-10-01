@@ -29,8 +29,8 @@ file holds what the help cannot say: the traps and the boundaries.
 - **A refusal with exit code `5`, `7` or `8` on a change is the owner's decision, not a fault.** Do
   not work around it: do not change settings, do not call `tg recipients add`, do not wait and
   retry. Tell the owner the send did not go, and why.
-- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` is
-  the one command that marks a chat read, and the other side sees it: only when the owner asked.
+- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` and
+  `tg messages list --mark-read` mark a chat read, and the other side sees it: only when the owner asked.
 - **Not for:** mass mailing, auto-replies, other people's accounts.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 
@@ -39,9 +39,7 @@ file holds what the help cannot say: the traps and the boundaries.
 - **In a pipe or with `--json`, stdout carries data only**: one JSON value. Everything else,
   warnings included, goes to stderr. An error goes to stderr too, and stdout is then empty.
 - **Most lists are an object, not an array**: `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`.
-  A chat's messages are `{ "items": [...], "limit": 20, "hasMore": true }`. Five lists of what this
-  machine keeps print a plain array instead: `tg runs list`, `tg sends list`, `tg recipients list`,
-  `tg store status` and `tg store jobs list`.
+  A chat's messages are `{ "items": [...], "limit": 20, "hasMore": true }`.
 - **`--jsonl`**: one object per line, for `jq`. Whether there is more is said on stderr only.
 - **Branch on the exit code, not on the text**: `0` success, `2` bad input, `4` not logged in, `5`
   the profile may not do this (its `permissions`; the error names the key — do not work around it),
@@ -84,7 +82,7 @@ file holds what the help cannot say: the traps and the boundaries.
 13. **`--md` reads `**bold**`, `_italic_`, `~~struck~~` and `` `code` ``; nothing else.** `_` and `*`
     count only at a word's edge, so `file_name` stays as typed; `\*` keeps a mark literal. No links,
     no headings. `--silent` sends without a notification, `--no-preview` without a link card.
-14. **`--at 2h` or `--at 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
+14. **`--at-time 2h` or `--at-time 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
     It is never repeated: `--send-id` is refused with it, and after exit `14` look in
     `tg messages scheduled <chat>` — a second send would be a second message. Cancel one in the app.
 15. **`--photo <path>` or `--file <path>` attaches one file, the text as its caption.** A photo is
