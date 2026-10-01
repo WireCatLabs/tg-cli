@@ -100,16 +100,43 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 An agent without a terminal gets the reading half as MCP tools: `tg_review` with `unanswered`,
 `tg_chats_events`, `tg_chats_members`, `tg_chats_inspect` ([mcp.md](mcp.md)).
 
-`create`, `join`, `leave`, `update`, `link reset`, `members` and `admins` change something the group's members see: a new group tells the people
-added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
+`create`, `join`, `leave`, `update`, `link reset`, `members` and `admins` change something the
+group's members see: a new group tells the people added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
 send guard, and each person added counts toward the hourly limit
 ([security.md](security.md#the-send-guard)).
 
-## Coming
+## Rules
 
-Moderation rules that delete
-spam or remove people only as far as you allow. They are on the [roadmap](../README.md#roadmap), and
-this page grows with them.
+A group's rules say what `tg chats moderate` looks for and what it may do about it. They live in a
+file of this profile, never in Telegram, and nothing watches the group in the background: a rule acts
+only when you run `chats moderate`.
+
+```sh
+tg chats rules show "Hiking"                       # the defaults, marked not saved, until the first change
+tg chats rules set "Hiking" links delete           # a message with a link is deleted
+tg chats rules set "Hiking" blocked 12345,67890    # these people…
+tg chats rules set "Hiking" blockedPeople remove   # …are removed when they write or join
+tg chats rules set "Hiking" consent.delete allow   # delete without asking
+tg chats moderate "Hiking" --dry-run               # what it would do, doing nothing
+tg chats moderate "Hiking"                         # judge what is new since the last run, and act
+```
+
+| Rule | What it looks for |
+|---|---|
+| `links`, `invites`, `forwards` | a message with a link, an invite link to another group, a forwarded message |
+| `blocked`, `blockedNames`, `blockedPeople` | people by id or by part of their name, and what to do with them |
+| `flood.messages`, `flood.minutes`, `flood.action` | more than so many messages from one person within so many minutes |
+| `trusted` | people never acted on; the group's admins and you never are either |
+
+Each rule's action is `report`, `delete` or `remove`. Whether a `delete` or a `remove` really happens
+is the group's level for it, `consent.delete` and `consent.remove`: `deny` never, `readonly` only
+reports, `ask` asks you about each one (the default; `--allow-dangerous` says yes to all), `allow`
+does it. Every action still goes through the send guard and its hourly limit, and a run stops after
+`--max-actions` (10). The next run starts where this one stopped; `--since-time` looks at a moment
+of your own and leaves that point where it is.
+
+Over MCP, `tg_chats_moderate` acts only where a level is `allow`; what asks is listed for you, not
+done. `newAccount` is not offered: Telegram does not say how old an account is.
 
 ## Limits
 

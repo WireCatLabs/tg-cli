@@ -461,9 +461,9 @@ approve who joins answers that the request was sent. Each goes through the guard
 and each person added counts toward the hourly limit.
 
 `chats update` changes the title, the description and the two settings Telegram has, in one go; the
-answer is the group as it stands, and `chats show` shows the same settings. Moderation rules are not
-in `tg` yet ([roadmap](../README.md#roadmap)). What there is for a group you run:
-[groups.md](groups.md).
+answer is the group as it stands, and `chats show` shows the same settings. Moderation rules —
+`chats rules` and `chats moderate` — are in [groups.md](groups.md#rules), with everything else there
+is for a group you run.
 
 ## For scripts and agents
 

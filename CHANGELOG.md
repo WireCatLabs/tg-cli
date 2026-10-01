@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats rules show|set|unset` and `tg chats moderate`**, with the MCP tools
+  `tg_chats_rules_show` and `tg_chats_moderate`: a group's rules say what to look for — links, invite
+  links, forwards, floods, blocked people — and how far a run may go: deny, report only, ask (the
+  default), or act. Nothing runs in the background. See [groups](docs/groups.md#rules).
 - **`tg messages list --before-time`** reads back from a moment: ISO 8601, or `2h` / `1d` ago.
 - **`tg contacts add|remove|block|unblock|rename|import`** and **`tg account update`**,
   **`tg account sessions end --others`**, with the MCP tools `tg_contacts_add|remove|block|unblock|rename`
