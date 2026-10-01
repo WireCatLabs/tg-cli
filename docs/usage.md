@@ -302,14 +302,19 @@ down to the minute. Less than a minute from now, or more than a year, is refused
 scheduled message in the hour Telegram sends it. **Cancel or change one in the Telegram app**; `tg`
 does not.
 
-### Files and photos
+### Files, photos and voice messages
 
 ```sh
 tg messages send "Book club" "The agenda" --file agenda.pdf   # byte for byte; the text is the caption
 tg messages send "Book club" --photo picture.jpg              # recompressed by Telegram
+tg messages send "Book club" --file trip.mp4                  # a video plays in the chat
+tg messages send "Book club" --file trip.mp4 --as-file        # the same video as a file to download
+tg messages send "Book club" --voice note.ogg                 # a voice message, alone, with no text
 ```
 
-`--photo` takes a `.jpg`, `.png` or `.webp`. Hidden files and folders, `~/.ssh`, `tg`'s own folders
+`--photo` takes a `.jpg`, `.png` or `.webp`. A `.mp4` or `.mov` given with `--file` goes as a video
+unless you add `--as-file`. `--voice` takes an Ogg Opus file (`.ogg`, `.oga`, `.opus`) and goes alone:
+no text, no other file. Hidden files and folders, `~/.ssh`, `tg`'s own folders
 and the local store are refused unless you add `--allow-any-file` — that is where keys and tokens
 live.
 
