@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Message } from "@leemour/cli-messaging"
 import { unitScope } from "@leemour/cli-messaging/background"
@@ -48,7 +49,7 @@ const system: ServerSystem = {
   pause: async () => {},
 }
 
-const tg = async (argv: string[], store: string, env: NodeJS.ProcessEnv = {}) => {
+const tg = async (argv: string[], store: string, env: NodeJS.ProcessEnv = {}, stdin = "") => {
   const streams = captureStreams()
   const code = await run(argv, {
     streams,
@@ -57,6 +58,7 @@ const tg = async (argv: string[], store: string, env: NodeJS.ProcessEnv = {}) =>
     env: { ...process.env, MESSAGING_STORE: store, TG_API_ID: "1", TG_API_HASH: "h", ...env },
     adapter: () => telegram,
     system,
+    stdin: Object.assign(Readable.from([stdin]), { isTTY: false }),
   })
   const [first] = streams.stdout
   return { code, stdout: streams.stdout, stderr: streams.stderr, answer: first ? tryJson(first) : undefined }
@@ -108,6 +110,21 @@ describe("the archive, from the store", () => {
       store,
     )
     expect(next.code).toBe(0)
+  })
+
+  it("**stores the agent's answer** read from stdin, and drops one model's answers", async () => {
+    const store = await backfilled()
+    const next = await tg(["archive", "conversations", "batches", "next", "--chat", CHAT, "--json"], store)
+    const { batch } = next.answer as { batch: string }
+    const answer = JSON.stringify({ model: "m", answers: [{ message: "103", parent: "101", confidence: 0.9 }] })
+
+    const added = await tg(["archive", "conversations", "links", "add", "--batch", batch, "--json"], store, {}, answer)
+    expect(added.answer).toEqual({ chat: CHAT, stored: 1 })
+    const cleared = await tg(
+      ["archive", "conversations", "links", "clear", "--chat", CHAT, "--model", "m", "--json"],
+      store,
+    )
+    expect(cleared.answer).toEqual({ chat: CHAT, cleared: 1 })
   })
 
   it("installs the agents' guide under the home it is given", async () => {

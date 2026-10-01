@@ -121,6 +121,13 @@ tg messages links "Valencia Expats" 4521                 # why that message is w
 Nothing is built until you run `build`, and a new `build` replaces the last one. `tg store check` names
 the chats built with older rules. A mention by name, with no @username, counts as a mention too.
 
+Your own AI agent can link what the rules leave open. `tg skill show link-conversations` is its
+guide: it says how much text it would read and waits for your yes, then answers the chat a batch at a
+time (`tg conversations batches next`, `tg conversations links add`). tg calls no model itself. The
+agent's answers come before the rules' guesses and after Telegram's own replies;
+`tg conversations links clear --chat <chat>` drops them. The permission `conversations.links` decides
+whether a profile may store them.
+
 ## Answering without connecting: `--offline`
 
 ```sh

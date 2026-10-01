@@ -1344,6 +1344,14 @@ bring the store up to this build's schema, then normalize the messages stored be
 tg store migrate
 ```
 
+### `tg store reindex`
+
+rebuild the word index and its typo vocabulary from the stored messages; loses no message
+
+```sh
+tg store reindex
+```
+
 ### `tg store backup`
 
 copy the store into a new file, while it is in use; never overwrites a file
@@ -1440,6 +1448,35 @@ tg conversations batches next [options]
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--size <n>` | messages to answer per batch, 10–200; 50 by default. |
+
+### `tg conversations links`
+
+your agent's answers: which earlier message each message of a batch answers
+
+#### `tg conversations links add`
+
+store your agent's answer to a batch, read as JSON from stdin: { "model", "answers": [{ "message", "parent", "confidence" }] }; all or nothing
+
+```sh
+tg conversations links add [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--batch <id>` | the batch id `conversations batches next` printed. |
+
+#### `tg conversations links clear`
+
+drop your agent's answers for a chat, or only one model's; messages are never touched
+
+```sh
+tg conversations links clear [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--model <model>` | only the answers this model gave. |
 
 ## `tg recipients`
 
@@ -1759,7 +1796,7 @@ tg bot chats list
 
 ### `tg bot recipients`
 
-the chats this bot may write to; with no list, every chat — `off` removes the list
+the chats this bot may write to; with no list, every chat — `clear` removes the list
 
 #### `tg bot recipients list`
 
@@ -1828,8 +1865,12 @@ the instructions an agent is given for this tool
 print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it
 
 ```sh
-tg skill show
+tg skill show [name]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | optional | one of the skills shipped for a task: link-conversations. |
 
 ### `tg skill install`
 

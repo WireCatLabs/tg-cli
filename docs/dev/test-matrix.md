@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**269 ✅ · 11 ⛔ · 0 ❌** — 123 commands, 157 options.
+**275 ✅ · 11 ⛔ · 0 ❌** — 126 commands, 160 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -209,6 +209,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |
 | `store migrate` |  | ✅ |  |
+| `store reindex` |  | ✅ |  |
 | `store backup` |  | ✅ |  |
 | `store restore` |  | ✅ |  |
 | `conversations build` |  | ✅ |  |
@@ -224,6 +225,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations batches next` |  | ✅ |  |
 | `conversations batches next` | `--chat` | ✅ |  |
 | `conversations batches next` | `--size` | ✅ |  |
+| `conversations links add` |  | ✅ |  |
+| `conversations links add` | `--batch` | ✅ |  |
+| `conversations links clear` |  | ✅ |  |
+| `conversations links clear` | `--chat` | ✅ |  |
+| `conversations links clear` | `--model` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |

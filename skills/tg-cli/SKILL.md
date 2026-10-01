@@ -128,6 +128,8 @@ tg messages download -1001234567890 4242 --output-dir /tmp/tg --json   # the mes
 tg messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m   # every file of the chat; run it again to continue
 tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute; never download a model yourself
 tg messages search "invoice march" --json          # search what was kept
+tg conversations build --chat -1001234567890 --json   # the threads inside a group, from what was kept; then list | show
+tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
 tg watch --jsonl                                   # new messages as they arrive
 ```
 
