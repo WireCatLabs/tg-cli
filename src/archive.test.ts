@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
@@ -92,6 +92,19 @@ describe("the archive, from the store", () => {
 
     const found = await tg(["archive", "messages", "search", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
     expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])
+  })
+
+  it("exports into a new file only the owner can read, from --since on", async () => {
+    const store = await backfilled()
+    const file = join(mkdtempSync(join(tmpdir(), "tg-export-")), "chat.jsonl")
+
+    const written = await tg(
+      ["archive", "store", "export", CHAT, "--output", file, "--since", "2000-01-01", "--json"],
+      store,
+    )
+
+    expect(written.answer).toMatchObject({ path: file, format: "jsonl", count: 3 })
+    expect(statSync(file).mode & 0o777).toBe(0o600)
   })
 })
 

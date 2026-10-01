@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg store export --output <file> --since <time>`.** The export goes into a new file only you can
+  read, never over one, and can start from a time.
+- **`tg account show` prints the phone's last four digits**, and the whole number with
+  `--show-phone`. The MCP tool `tg_account_show` always prints only the last four.
 - **`tg messages forward --send-id`.** A forward that got no answer is repeated with the send id from
   the error, and Telegram keeps one copy, as with a send. The `--json` answer carries `sendId`; MCP's
   `tg_messages_forward` takes `send_id`.

@@ -163,8 +163,12 @@ export class TelegramAdapter {
     return cached ? String(cached.userId) : null
   }
 
+  /** Only here the phone: `account show` masks it, and a login's answer is printed as it is. */
   me(): Promise<Account> {
-    return this.#call(async () => toAccount(await this.#client.getMe()))
+    return this.#call(async () => {
+      const user = await this.#client.getMe()
+      return { ...toAccount(user), phone: user.phoneNumber }
+    })
   }
 
   /** Telegram lists dialogs by position, so a page is the dialogs up to its end, cut; `limit` unset is every one. */

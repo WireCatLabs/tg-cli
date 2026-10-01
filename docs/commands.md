@@ -67,11 +67,15 @@ the logged-in account
 
 ### `tg account show`
 
-who this profile is logged in as
+who this profile is logged in as; the phone number shows its last four digits
 
 ```sh
-tg account show
+tg account show [options]
 ```
+
+| Option | What it does |
+|---|---|
+| `--show-phone` | print the whole phone number. |
 
 ### `tg account sessions`
 
@@ -859,6 +863,8 @@ tg store export <chat> [options]
 | Option | What it does |
 |---|---|
 | `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
+| `--since <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
+| `--output <file>` | write JSON lines, or the transcript, to this new file, readable only by you. |
 
 ### `tg store info`
 

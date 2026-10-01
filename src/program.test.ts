@@ -55,6 +55,17 @@ describe("machine output", () => {
     expect(typeof item.chatId).toBe("string")
   })
 
+  it("prints the phone's last four digits, and the whole number only with --show-phone", async () => {
+    const adapter = () =>
+      scripted({ me: async () => ({ id: "1", name: "Owner", username: null, phone: "0000001234" }) })
+
+    const masked = await tg(["account", "show", "--json"], { adapter })
+    const whole = await tg(["account", "show", "--show-phone", "--json"], { adapter })
+
+    expect(JSON.parse(masked.stdout[0] ?? "").phone).toBe("***1234")
+    expect(JSON.parse(whole.stdout[0] ?? "").phone).toBe("0000001234")
+  })
+
   it("prints one message per line with --jsonl", async () => {
     const two = [message("42"), message("2")]
     const { stdout } = await tg(["messages", "list", "Valencia", "--jsonl"], {
