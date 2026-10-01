@@ -105,6 +105,22 @@ fetch the history if you need all of it.
 you can read, and prints where it went and how many messages it holds. It never overwrites a file.
 `--since-time` takes an ISO 8601 time or `30m`, `2h`, `1d` ago.
 
+## Conversations in a group
+
+A busy group mixes several conversations at once. `tg conversations` finds them in the stored messages,
+by replies, mentions and who wrote next, without asking Telegram and without any AI:
+
+```sh
+tg conversations build --chat "Valencia Expats"          # find them; run it again after fetching more
+tg conversations list --chat "Valencia Expats" --since-time 7d
+tg conversations show 91                                 # one conversation, oldest first
+tg conversations show "Valencia Expats" 4521             # the conversation message 4521 is in
+tg messages links "Valencia Expats" 4521                 # why that message is where it is
+```
+
+Nothing is built until you run `build`, and a new `build` replaces the last one. `tg store check` names
+the chats built with older rules. A mention by name, with no @username, counts as a mention too.
+
 ## Answering without connecting: `--offline`
 
 ```sh

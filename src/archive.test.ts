@@ -75,6 +75,23 @@ const backfilled = async () => {
 }
 
 describe("the archive, from the store", () => {
+  it("**builds a chat's conversations** from what was fetched, and says why a message is in one", async () => {
+    const store = await backfilled()
+
+    const built = await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+    expect(built.answer).toMatchObject({ chat: CHAT, messages: 3, conversations: 1 })
+    const listed = await tg(
+      ["archive", "conversations", "list", "--chat", CHAT, "--since-time", "2026-09-01", "--limit", "5", "--json"],
+      store,
+    )
+    const [first] = (listed.answer as { items: { id: string; messageCount: number }[] }).items
+    expect(first).toMatchObject({ messageCount: 3 })
+    const shown = await tg(["archive", "conversations", "show", String(first?.id), "--json"], store)
+    expect((shown.answer as { messages: { id: string }[] }).messages.map(({ id }) => id)).toEqual(["101", "102", "103"])
+    const links = await tg(["archive", "messages", "links", CHAT, "103", "--json"], store)
+    expect(links.answer).toMatchObject({ chain: ["102", "101"] })
+  })
+
   it("**estimates what a full fetch would still cost** without asking Telegram", async () => {
     const store = await backfilled()
     const { code, answer } = await tg(["archive", "store", "fetch", CHAT, "--estimate", "--json", "--offline"], store)

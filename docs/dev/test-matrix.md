@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**239 ✅ · 11 ⛔ · 0 ❌** — 105 commands, 145 options.
+**247 ✅ · 11 ⛔ · 0 ❌** — 109 commands, 149 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -139,6 +139,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages pin` | `--notify` | ✅ |  |
 | `messages unpin` |  | ✅ |  |
 | `messages scheduled` |  | ✅ |  |
+| `messages links` |  | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |
@@ -207,6 +208,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store migrate` |  | ✅ |  |
 | `store backup` |  | ✅ |  |
 | `store restore` |  | ✅ |  |
+| `conversations build` |  | ✅ |  |
+| `conversations build` | `--chat` | ✅ |  |
+| `conversations list` |  | ✅ |  |
+| `conversations list` | `--chat` | ✅ |  |
+| `conversations list` | `--since-time` | ✅ |  |
+| `conversations list` | `--limit` | ✅ |  |
+| `conversations show` |  | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |

@@ -10,6 +10,7 @@ const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: str
     date: new Date("2026-09-27T10:00:00.000Z"),
     editDate: null,
     text: "hello",
+    entities: [],
     isOutgoing: false,
     media: null,
     replyToMessage: null,
@@ -56,6 +57,17 @@ describe("a deletion", () => {
 describe("a message's details", () => {
   const base = tgMessage({ type: "user", id: 777, displayName: "Ana" }) as unknown as Record<string, unknown>
   const with_ = (fields: Record<string, unknown>) => ({ ...base, ...fields }) as unknown as TgMessage
+
+  it("keeps whom it mentions by name, once each, and nothing for an @username or a link", () => {
+    const entities = [
+      { params: { kind: "text_mention", userId: 42 } },
+      { params: { kind: "mention" } },
+      { params: { kind: "text_mention", userId: 42 } },
+      { params: { kind: "text_link", url: "https://example.com" } },
+    ]
+    expect(toMessage(with_({ entities })).mentions).toEqual(["42"])
+    expect(toMessage(with_({})).mentions).toBeUndefined()
+  })
 
   it("describes a document's attachment in the domain type's field order", () => {
     const media = { type: "document", fileName: "a.pdf", mimeType: "application/pdf", fileSize: 10, width: null }
