@@ -152,7 +152,7 @@ describe("the send guard in front of messages send", () => {
     await tg(["g-log", "messages", "send", "Valencia", "two"], adapter)
     const { stdout } = await tg(["g-log", "sends", "list"], adapter)
 
-    expect(JSON.parse(stdout[0] ?? "")).toHaveLength(2)
+    expect(JSON.parse(stdout[0] ?? "").items).toHaveLength(2)
   })
 })
 

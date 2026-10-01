@@ -105,13 +105,13 @@ If no failed run is kept, run the failing command again; its failure is kept by 
 
 ## What to do with runs
 
-The records are JSON, so `jq` answers questions about them. `tg runs list --json` is an array of the
-runs' `run.json`, newest first:
+The records are JSON, so `jq` answers questions about them. `tg runs list --json` answers
+`{ items, page, limit, hasMore }`, and `items` are the runs' `run.json`, newest first:
 
 ```sh
-tg runs list --limit 100 --json | jq '[.[] | select(.status == "failed") | {command, errorCode}]'
-tg runs list --limit 100 --json | jq '[.[] | .durationMs] | add / length'    # average duration
-tg runs list --limit 100 --json | jq '[.[] | select(.requests > 10) | {command, requests}]'
+tg runs list --limit 100 --json | jq '[.items[] | select(.status == "failed") | {command, errorCode}]'
+tg runs list --limit 100 --json | jq '[.items[] | .durationMs] | add / length'    # average duration
+tg runs list --limit 100 --json | jq '[.items[] | select(.requests > 10) | {command, requests}]'
 ```
 
 `tg runs show <run-id>` prints the same events as a table, without the fields every line repeats.

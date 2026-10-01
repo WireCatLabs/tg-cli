@@ -77,7 +77,9 @@ describe("the global options", () => {
     await tg(["unkept", "account", "show", "--no-record"], { adapter: () => failing })
     await tg(["kept", "account", "show"], { adapter: () => failing })
 
-    const profiles = json((await tg(["runs", "list", "--json"])).stdout).map((run: { profile: string }) => run.profile)
+    const profiles = json((await tg(["runs", "list", "--json"])).stdout).items.map(
+      (run: { profile: string }) => run.profile,
+    )
     expect(profiles).toContain("kept")
     expect(profiles).not.toContain("unkept")
   })
@@ -606,18 +608,18 @@ describe("store fetch", () => {
 describe("the journals", () => {
   it("sends list --limit shows only the newest attempts", async () => {
     for (const text of ["uno", "dos"]) await tg(["journal", "messages", "send", "Valencia", text])
-    const all = json((await tg(["journal", "sends", "list", "--json"])).stdout)
+    const all = json((await tg(["journal", "sends", "list", "--json"])).stdout).items
     const newest = json((await tg(["journal", "sends", "list", "--limit", "1", "--json"])).stdout)
 
     expect(all).toHaveLength(2)
-    expect(newest).toEqual([all[0]])
+    expect(newest).toMatchObject({ items: [all[0]], hasMore: true })
   })
 
   it("runs list --limit shows only the newest runs", async () => {
     for (const _ of [1, 2]) await tg(["limited", "chats", "list", "--record"])
     const { stdout } = await tg(["limited", "runs", "list", "--limit", "1", "--json"])
 
-    expect(json(stdout)).toHaveLength(1)
+    expect(json(stdout)).toMatchObject({ items: [expect.anything()], hasMore: true })
   })
 })
 
