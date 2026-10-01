@@ -687,17 +687,20 @@ tg messages list <chat> [options]
 search the local store — what was read, fetched or kept by serve; never asks the messenger
 
 ```sh
-tg messages search <text> [options]
+tg messages search <query> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `text` | required | every word must appear, as a word or the start of one: квартир finds квартира. |
+| `query` | required | every word must appear, best match first; "a phrase", -word, a OR b, and the filters from: chat: after: before: has: in: — a typo is corrected, and a word that matches nothing falls back to any word, then to a piece of a word. |
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every account of this messenger held in the store, or all of them — the same as in: in the query. |
 | `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
 | `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
 
 ### `tg messages send`
@@ -1055,6 +1058,34 @@ tg models audio download <model>
 | Argument | | What it is |
 |---|---|---|
 | `model` | required | a model id from `models audio list`. |
+
+### `tg models text`
+
+embedding models for searching conversations by meaning
+
+#### `tg models text list`
+
+the embedding models, most suitable first, which are downloaded, and which one is the default
+
+```sh
+tg models text list
+```
+
+#### `tg models text download`
+
+download an embedding model once, checked against the sha256 this version expects
+
+```sh
+tg models text download <model> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `model` | required | a model id from `models text list`. |
+
+| Option | What it does |
+|---|---|
+| `--accept-terms` | accept the model's licence terms, for a model that has its own. |
 
 ## `tg inbox`
 
@@ -1780,7 +1811,7 @@ tg bot list [options]
 
 | Option | What it does |
 |---|---|
-| `--check` | ask Telegram who each bot is. |
+| `--check` | ask the messenger who each bot is, with its token. |
 
 ### `tg bot chats`
 
@@ -2104,6 +2135,123 @@ what this bot sent, edited and deleted from this machine — ids and outcomes, n
 ```sh
 tg bot sends list
 ```
+
+### `tg bot watch`
+
+print new messages as they arrive and keep them, until Ctrl-C or --timeout (either ends it normally)
+
+```sh
+tg bot watch [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--events` | also edits, deletions, buttons pressed and people coming and going; every line names its event. |
+| `--types <types>` | only these update types, comma-separated, in the messenger's words. |
+
+### `tg bot callbacks`
+
+answers to the buttons people press under the bot's messages
+
+#### `tg bot callbacks answer`
+
+answer a pressed button by its callback id: --notification shows the person a one-time note, --text replaces the message the button was on
+
+**Changes something in Telegram.**
+
+```sh
+tg bot callbacks answer <callback> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `callback` | required | the callback id `bot watch` printed. |
+
+| Option | What it does |
+|---|---|
+| `--text <text>` | the message's new text. |
+| `--notification <text>` | a note only the person who pressed sees. |
+
+### `tg bot commands`
+
+the bot's command menu — what people see after /
+
+#### `tg bot commands list`
+
+the commands in the menu now
+
+```sh
+tg bot commands list
+```
+
+#### `tg bot commands set`
+
+replace the whole menu: each command as name=description, e.g. start=Begin
+
+**Changes something in Telegram.**
+
+```sh
+tg bot commands set <commands>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `commands` | required | name=description, one per command. |
+
+#### `tg bot commands clear`
+
+empty the menu
+
+**Changes something in Telegram.**
+
+```sh
+tg bot commands clear
+```
+
+### `tg bot webhooks`
+
+where the messenger pushes this bot's updates — while one is set, `bot watch` gets nothing
+
+#### `tg bot webhooks list`
+
+the webhooks this bot has
+
+```sh
+tg bot webhooks list
+```
+
+#### `tg bot webhooks set`
+
+send this bot's updates to an HTTPS address; refused while another is set
+
+**Changes something in Telegram.**
+
+```sh
+tg bot webhooks set <url> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `url` | required | the HTTPS address. |
+
+| Option | What it does |
+|---|---|
+| `--types <types>` | only these update types, comma-separated, in the messenger's words. |
+| `--secret-stdin` | a secret the messenger sends back with each update — asked for, or read from a pipe. |
+
+#### `tg bot webhooks delete`
+
+stop sending updates to this address; with none left, `bot watch` works again
+
+**Changes something in Telegram.**
+
+```sh
+tg bot webhooks delete <url>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `url` | required | the address. |
 
 ## `tg skill`
 

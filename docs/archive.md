@@ -74,15 +74,28 @@ tg store jobs cancel <job>                  # stops after the current page; a la
 ## Search
 
 ```sh
-tg messages search "invoice march"                  # every word, as a word or the start of one
+tg messages search "invoice march"                  # every word, best match first
 tg messages search invoice --chat "Book club" --limit 50
+tg messages search invoice --newest                 # newest first instead
+tg messages search invoice --context 3              # three messages either side of each hit
+tg messages search 'from:@anna after:7d "the contract" -draft'
+tg messages search invoice --source all             # every account and messenger in the store
 tg messages search --regex 'inv(oice)?\s+\d+'       # a regular expression, case-insensitive
 ```
 
 **Search reads only the store and never asks Telegram.** An empty answer means "not kept here", not
 "never said". Read the chat first (`tg messages list <chat>`), or fetch its history.
 
-Words match the start of a word, so `invoi` finds `invoice`. Every word must appear. Each result
+Every word must appear, as a word or the start of one, so `invoi` finds `invoice`. The best match
+comes first. A typo is corrected, and stderr says what it changed. When no message has every word,
+the search takes any of them, then a piece of a word.
+
+The query also takes `"a phrase"`, `-word` to leave a word out, `a OR b`, and filters: `from:` (a
+name, `@username` or `me`), `chat:`, `after:` and `before:` (a day, or `7d`), `has:` (an attachment
+kind, `attachment` or `link`). A search reads the account it runs as. `in:max`, `in:all` or
+`--source` read the other accounts kept in the same store, MAX ones too. A MAX hit opens in `max`.
+
+The JSON says how complete the store is for each chat searched (`completeness`). Each result
 carries a `msg:` locator that `messages show` and `messages context` accept:
 
 ```sh

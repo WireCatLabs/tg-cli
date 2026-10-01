@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**306 ✅ · 11 ⛔ · 0 ❌** — 140 commands, 177 options.
+**319 ✅ · 18 ⛔ · 0 ❌** — 150 commands, 187 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -101,7 +101,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--mark-read` | ✅ |  |
 | `messages search` |  | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
+| `messages search` | `--source` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
+| `messages search` | `--newest` | ✅ |  |
+| `messages search` | `--context` | ✅ |  |
 | `messages search` | `--regex` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -154,6 +157,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--send-id` | ✅ |  |
 | `models audio list` |  | ✅ |  |
 | `models audio download` |  | ✅ |  |
+| `models text list` |  | ✅ |  |
+| `models text download` |  | ✅ |  |
+| `models text download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-messaging's tests drive it offline |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since-time` | ✅ |  |
@@ -314,6 +320,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot recipients remove` |  | ✅ |  |
 | `bot recipients clear` |  | ✅ |  |
 | `bot sends list` |  | ✅ |  |
+| `bot watch` |  | ✅ |  |
+| `bot watch` | `--events` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot watch` | `--types` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot callbacks answer` |  | ✅ |  |
+| `bot callbacks answer` | `--text` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot callbacks answer` | `--notification` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot commands list` |  | ✅ |  |
+| `bot commands set` |  | ✅ |  |
+| `bot commands clear` |  | ✅ |  |
+| `bot webhooks list` |  | ✅ |  |
+| `bot webhooks set` |  | ✅ |  |
+| `bot webhooks set` | `--types` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot webhooks set` | `--secret-stdin` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot webhooks delete` |  | ✅ |  |
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |
