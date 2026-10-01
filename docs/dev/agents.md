@@ -40,6 +40,11 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
   session files and moves the app credentials keyring to keyring in-process; a `session start` per
   worktree would be a new device on the owner's account. The **message store is not copied**: a
   branch build may migrate it, so each lane starts with an empty one and reads fill it.
+- **The skills are linked, never tracked.** `release`, `test-live` and `add-command` live in
+  [`docs/dev/skills/`](skills/); `bin/lane` links them as `.claude/skills`, and any other checkout
+  needs `ln -s ../docs/dev/skills .claude/skills` once, from a terminal. A tracked `.claude/skills`
+  breaks every checkout that lacks it: inside the sandbox git cannot create it and refuses the
+  switch ("Device or resource busy", measured 2026-10-01).
 - **The two worktrees of a lane sit side by side**, so `bin/try-messaging` in the tg worktree packs
   the lane's cli-messaging and tries it, and `--undo` puts the release back. Never commit the
   `file:` path it writes.
