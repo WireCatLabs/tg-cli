@@ -25,6 +25,7 @@ process.env.XDG_CONFIG_HOME = join(sandbox, "xdg")
 // Read before the keyring: exported in the shell, they would point the suite at a real app.
 delete process.env.TG_API_ID
 delete process.env.TG_API_HASH
+delete process.env.TG_BOT_TOKEN
 delete process.env.TG_PROFILE
 delete process.env.TG_PROFILE_LOCK
 delete process.env.TG_TIMEOUT

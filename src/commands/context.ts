@@ -14,6 +14,7 @@ import {
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
+import type { FetchLike } from "../bot/transport.js"
 import { isolated, sessionFile } from "../paths.js"
 import { ADMIN_RIGHTS, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
@@ -28,6 +29,8 @@ export interface Environment extends BaseEnvironment {
   ) => Adapter | Promise<Adapter>
   /** Tests hand in a machine for `service`, so no test runs systemctl or launchctl. */
   system?: ServerSystem
+  /** Tests hand in a stand-in for Telegram's Bot API. */
+  botFetch?: FetchLike
 }
 
 export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">

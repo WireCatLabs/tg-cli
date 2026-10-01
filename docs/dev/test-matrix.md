@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**258 ✅ · 11 ⛔ · 0 ❌** — 113 commands, 156 options.
+**269 ✅ · 11 ⛔ · 0 ❌** — 123 commands, 157 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -266,6 +266,17 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--allow-mark-read` | ✅ |  |
 | `mcp config` | `--allow-delete` | ✅ |  |
+| `bot auth set` |  | ✅ |  |
+| `bot auth show` |  | ✅ |  |
+| `bot auth remove` |  | ✅ |  |
+| `bot list` |  | ✅ |  |
+| `bot list` | `--check` | ✅ |  |
+| `bot chats list` |  | ✅ |  |
+| `bot recipients list` |  | ✅ |  |
+| `bot recipients add` |  | ✅ |  |
+| `bot recipients remove` |  | ✅ |  |
+| `bot recipients clear` |  | ✅ |  |
+| `bot sends list` |  | ✅ |  |
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |

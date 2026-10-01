@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg bot`** — a Telegram bot, through the official Bot API and its token: `bot auth set|show|remove`,
+  `bot list [--check]`, `bot chats list`, `bot recipients list|add|remove|clear` and `bot sends list`,
+  the same commands `max bot` has. Several bots, each under its own name; the token lives in the
+  keyring as `bot:<name>`, or in `TG_BOT_TOKEN`. See [the bot page](docs/bot.md).
 - **`tg conversations batches status|next --chat <chat> [--size <n>]`**: a group chat in batches for
   your own AI agent to link into conversations. `status` says how many messages and batches are left
   before you start; `next` prints the next batch. tg itself calls no model.
