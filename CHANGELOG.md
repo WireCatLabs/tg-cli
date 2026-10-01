@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg store clear --left`** deletes the chats you have left from the local store, with their
+  messages. It asks for `--allow-dangerous` and otherwise says how much it would delete.
 - **`tg conversations build|list|show`** and **`tg messages links`**, with the MCP tools
   `tg_conversations_list` and `tg_conversations_show`: the conversations inside a group, found in the
   stored messages by replies, mentions and who wrote next — no Telegram request, no AI. Nothing is built
@@ -125,10 +127,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **A chat you have left no longer shows in `chats list --offline`.** It drops out the next time
+  `tg chats list` reads your whole chat list; its messages stay until `tg store clear --left`, and a
+  chat you rejoin comes back.
+
 - **Two refusals say what to do.** Adding back someone who left or was removed, when you are not
   each other's contacts, now says to send them the invite link (`tg chats link show <chat>`);
   naming a person by an id this account has never seen now says to use an @username, or to read a
   chat they are in first.
+
 - **An argument Telegram's library refused no longer repeats what you typed.** The error said the
   library's own words, which could quote a chat's title or a link. It now says what kind of input
   was wrong where tg can tell — a chat you have not joined, a message or invite link, a phone
