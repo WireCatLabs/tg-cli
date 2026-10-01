@@ -9,9 +9,6 @@ export interface Untested {
   reason: string
 }
 
-const BOT_UNTIL_206 =
-  'tg\'s bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry'
-
 export const UNTESTED: Untested[] = [
   {
     command: "chats moderate",
@@ -84,74 +81,5 @@ export const UNTESTED: Untested[] = [
     reason:
       "spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts " +
       "drives it with a stand-in spawnJob, and lane L5 owns the live check",
-  },
-  {
-    command: "bot chats action",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--reply-to",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--silent",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--md",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--html",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--file",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--photo",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--as-file",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--voice",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages send",
-    option: "--allow-any-file",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages edit",
-    option: "--md",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages edit",
-    option: "--html",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages delete",
-    option: "--allow-dangerous",
-    reason: BOT_UNTIL_206,
-  },
-  {
-    command: "bot messages pin",
-    option: "--notify",
-    reason: BOT_UNTIL_206,
   },
 ]
