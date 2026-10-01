@@ -453,6 +453,74 @@ tg chats folders delete <folder>
 |---|---|---|
 | `folder` | required | folder id, or its title exactly. |
 
+### `tg chats rules`
+
+what `chats moderate` judges a group by, kept in a file of this profile
+
+#### `tg chats rules show`
+
+the group's rules; the defaults, marked not saved, if it has none yet
+
+```sh
+tg chats rules show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg chats rules set`
+
+change one rule; the group's first change writes every rule with its default
+
+**Changes something in Telegram.**
+
+```sh
+tg chats rules set <chat> <key> <value>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `key` | required | one of: trusted, blocked, blockedNames, links, invites, forwards, blockedPeople, flood.messages, flood.minutes, flood.action, newAccount.days, newAccount.action, consent.delete, consent.remove. |
+| `value` | required | the new value; a list is comma-separated. |
+
+#### `tg chats rules unset`
+
+put one rule back to its default
+
+**Changes something in Telegram.**
+
+```sh
+tg chats rules unset <chat> <key>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `key` | required | one of: trusted, blocked, blockedNames, links, invites, forwards, blockedPeople, flood.messages, flood.minutes, flood.action, newAccount.days, newAccount.action, consent.delete, consent.remove. |
+
+### `tg chats moderate`
+
+judge a group's new messages and members by its rules, and act as they allow
+
+**Changes something in Telegram.**
+
+```sh
+tg chats moderate <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | judge what came after this ISO 8601 time, or 2h / 1d ago; the saved point stays. |
+| `--dry-run` | judge and plan; do nothing. |
+| `--allow-dangerous` | yes to every action whose level in the group's rules is ask. |
+| `--max-actions <n>` | at most this many actions in one run; 10 if not given. |
+
 ## `tg contacts`
 
 people this account has a one-to-one chat with
@@ -607,6 +675,7 @@ tg messages list <chat> [options]
 |---|---|
 | `--limit <n>` | how many. |
 | `--before-id <id>` | only messages older than this message id. |
+| `--before-time <time>` | only messages older than this ISO 8601 time, or 2h / 1d ago. |
 | `--after-id <id>` | only messages newer than this message id. |
 | `--after-time <time>` | only messages newer than this ISO 8601 time, or 2h / 1d ago. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
@@ -658,7 +727,7 @@ tg messages send <chat> [text] [options]
 | `--as-file` | send the --file as a file to download, a video included. |
 | `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
-| `--at <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
+| `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
 
 ### `tg messages show`
 
@@ -1388,8 +1457,12 @@ the settings in force, and where each one came from
 the profile, the profiles that exist, and each setting with where it came from
 
 ```sh
-tg config show
+tg config show [options]
 ```
+
+| Option | What it does |
+|---|---|
+| `--bot` | the settings a bot command on this profile gets, rather than the personal account's. |
 
 ### `tg config set`
 
@@ -1403,12 +1476,14 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
 |---|---|
 | `--defaults` | change what every profile gets, rather than this profile. |
+| `--personal` | only for personal accounts — the personal section of the file. |
+| `--bot` | only for bots — the bot section of the file. |
 
 ### `tg config unset`
 
@@ -1422,11 +1497,13 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck. |
 
 | Option | What it does |
 |---|---|
 | `--defaults` | change what every profile gets, rather than this profile. |
+| `--personal` | only for personal accounts — the personal section of the file. |
+| `--bot` | only for bots — the bot section of the file. |
 
 ## `tg doctor`
 

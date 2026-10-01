@@ -280,6 +280,23 @@ describe("messages", () => {
     expect(asked).toMatchObject({ after: { time: Date.parse("2026-09-20T00:00:00Z") } })
   })
 
+  it("list --before-time reads back from a moment", async () => {
+    let asked: unknown
+    const back = scripted({
+      historyBefore: async (_chat, window) => {
+        asked = window
+        return { items: [message("49")], hasMore: false }
+      },
+    })
+
+    const { code } = await tg(["messages", "list", "Valencia", "--before-time", "2026-09-27T10:00:00Z", "--json"], {
+      adapter: () => back,
+    })
+
+    expect(code).toBe(0)
+    expect(asked).toMatchObject({ time: Date.parse("2026-09-27T10:00:00Z") })
+  })
+
   it("context asks for that many either side of the message", async () => {
     let asked: unknown
     const adapter = scripted({
@@ -753,6 +770,22 @@ describe("config", () => {
 
     expect((await tg(["config", "unset", "--defaults", "limit"])).code).toBe(0)
     expect(await limit("anyone")).not.toMatchObject({ value: 7 })
+  })
+
+  it("--bot and --personal write and read their own section of the profile", async () => {
+    const limitIn = async (...flags: string[]) =>
+      json((await tg(["config", "show", ...flags, "--json"])).stdout).settings.find(
+        (one: { setting: string }) => one.setting === "limit",
+      )
+
+    expect((await tg(["config", "set", "--bot", "limit", "7"])).code).toBe(0)
+    expect((await tg(["config", "set", "--personal", "limit", "9"])).code).toBe(0)
+    expect(await limitIn("--bot")).toMatchObject({ value: 7, from: "config file: bot.profiles.default" })
+    expect(await limitIn()).toMatchObject({ value: 9, from: "config file: personal.profiles.default" })
+
+    expect((await tg(["config", "unset", "--bot", "limit"])).code).toBe(0)
+    expect((await tg(["config", "unset", "--personal", "limit"])).code).toBe(0)
+    expect(await limitIn()).not.toMatchObject({ value: 9 })
   })
 
   it("--defaults is refused in a process locked to one profile", async () => {

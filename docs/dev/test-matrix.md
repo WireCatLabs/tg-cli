@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**229 ✅ · 7 ⛔ · 0 ❌** — 101 commands, 135 options.
+**239 ✅ · 11 ⛔ · 0 ❌** — 105 commands, 145 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -67,6 +67,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats folders update` | `--add` | ✅ |  |
 | `chats folders update` | `--remove` | ✅ |  |
 | `chats folders delete` |  | ✅ |  |
+| `chats rules show` |  | ✅ |  |
+| `chats rules set` |  | ✅ |  |
+| `chats rules unset` |  | ✅ |  |
+| `chats moderate` |  | ✅ |  |
+| `chats moderate` | `--since-time` | ⛔ | P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
+| `chats moderate` | `--dry-run` | ⛔ | P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
+| `chats moderate` | `--allow-dangerous` | ⛔ | P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
+| `chats moderate` | `--max-actions` | ⛔ | P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
 | `contacts list` | `--page` | ✅ |  |
@@ -85,6 +93,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--before-id` | ✅ |  |
+| `messages list` | `--before-time` | ✅ |  |
 | `messages list` | `--after-id` | ✅ |  |
 | `messages list` | `--after-time` | ✅ |  |
 | `messages list` | `--transcribe` | ✅ |  |
@@ -105,7 +114,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--as-file` | ✅ |  |
 | `messages send` | `--voice` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
-| `messages send` | `--at` | ✅ |  |
+| `messages send` | `--at-time` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
 | `messages context` | `--before-n` | ✅ |  |
@@ -209,10 +218,15 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `runs show` |  | ✅ |  |
 | `runs path` |  | ✅ |  |
 | `config show` |  | ✅ |  |
+| `config show` | `--bot` | ✅ |  |
 | `config set` |  | ✅ |  |
 | `config set` | `--defaults` | ✅ |  |
+| `config set` | `--personal` | ✅ |  |
+| `config set` | `--bot` | ✅ |  |
 | `config unset` |  | ✅ |  |
 | `config unset` | `--defaults` | ✅ |  |
+| `config unset` | `--personal` | ✅ |  |
+| `config unset` | `--bot` | ✅ |  |
 | `doctor` |  | ✅ |  |
 | `doctor` | `--online` | ✅ |  |
 | `doctor report` |  | ✅ |  |
