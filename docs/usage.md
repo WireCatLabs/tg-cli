@@ -512,7 +512,7 @@ Everything `tg` reads is kept on this machine, so that it can answer without the
 tg chats list --offline                           # only from the store, never connect
 tg store fetch "Project Alpha" --since 2026-01-01 --estimate   # how much a fetch would take
 tg store fetch "Project Alpha" --background       # a chat's history, as a job
-tg store export "Project Alpha" --format markdown > alpha.md
+tg store export "Project Alpha" --format markdown --output alpha.md
 tg store backup ~/tg-store.db                     # a copy of the store, while it is in use
 ```
 
