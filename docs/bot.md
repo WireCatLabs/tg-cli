@@ -82,8 +82,8 @@ If the connection breaks while a message is going, `tg` does not send it again: 
 know whether the message arrived (exit code 14). Check the chat before you send it again.
 
 **Telegram gives a bot no history.** A bot cannot ask Telegram for a chat's messages, or for one
-message. So `messages list` and `messages show` answer from what the bot has sent and received on
-this computer, and say so:
+message. So `messages list` and `messages show` answer from what the bot has sent, and what
+`bot watch` received, on this computer, and say so:
 
 ```sh
 tg sales bot messages list "Team"
@@ -134,11 +134,37 @@ never the text:
 tg sales bot sends list
 ```
 
-## Coming next
+## What happens in the bot's chats
 
-Button answers, the command menu, webhooks and `bot watch` come next, as the
-same commands `max bot` has. `bot watch` is what fills the bot's history with what other people
-write.
+```sh
+tg sales bot watch                       # new messages, until Ctrl-C or --timeout
+tg sales bot watch --events --jsonl      # and the rest: edits, buttons pressed, people joining and leaving
+tg sales bot watch --types message,callback_query
+```
+
+`watch` keeps what arrives before it prints it: messages in the bot's history on this computer,
+buttons pressed for `callbacks answer`. The next run starts after the last update it kept. Telegram
+keeps a bot's updates for 24 hours, so a bot watched less often than that misses some. With
+`--events`, every line names its event: `message`, `edit`, `callback`, `joined`, `left`, `added`,
+`removed`, `other`. Telegram tells a bot who joins and leaves only when the bot is an admin of the
+chat. `--types` takes Telegram's update names.
+
+## Buttons, the menu, webhooks
+
+```sh
+tg sales bot callbacks answer <callback> --notification "Done"   # a note only the person who pressed sees
+tg sales bot callbacks answer <callback> --text "Confirmed"      # replaces the message the button was on
+tg sales bot commands set start=Begin "report=Today's report"    # the menu people see after /
+tg sales bot commands list
+tg sales bot commands clear
+tg sales bot webhooks set https://bot.example.com/telegram --secret-stdin
+tg sales bot webhooks list
+tg sales bot webhooks delete https://bot.example.com/telegram
+```
+
+`--text` replaces the message of a button `bot watch` saw pressed. A Telegram command needs a
+description. A bot holds one webhook; while it is set, `bot watch` gets nothing, and `webhooks set`
+refuses a second address until the first is deleted.
 
 The settings for a bot live in the `bot` section of the configuration file:
 `tg sales config set --bot sendsPerHour 200` ([configuration.md](configuration.md)).

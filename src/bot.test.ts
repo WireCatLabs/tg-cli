@@ -1,7 +1,7 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { beforeEach, describe, expect, it } from "vitest"
-import type { FetchLike } from "./bot/transport.js"
+import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"
 import { run } from "./program.js"
 
 const TOKEN = "123456789:AAsecretSECRETsecretSECRETsecret0"
@@ -114,6 +114,25 @@ describe("Telegram's refusals", () => {
     const limited = await tg(["sales", "bot", "auth", "show", "--json"], telegram({ getMe: flood }))
 
     expect(JSON.parse(limited.err).error).toMatchObject({ code: "rate_limited", retryAfterMs: 5000 })
+  })
+})
+
+describe("the long poll", () => {
+  it("**waits past the transport's timeout when the call gives its own**, and times out without one", async () => {
+    const slow: FetchLike = async (_url, init) => {
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(resolve, 150)
+        init.signal?.addEventListener("abort", () => {
+          clearTimeout(timer)
+          reject(Object.assign(new Error("aborted"), { name: "TimeoutError" }))
+        })
+      })
+      return new Response(JSON.stringify({ ok: true, result: [] }))
+    }
+    const transport = new TelegramBotTransport({ token: TOKEN, fetch: slow, timeoutMs: 50 })
+
+    expect(await transport.call("getUpdates", { timeout: 1 }, { timeoutMs: 1_000 })).toEqual([])
+    await expect(transport.call("getUpdates", { timeout: 1 })).rejects.toMatchObject({ code: "timeout" })
   })
 })
 

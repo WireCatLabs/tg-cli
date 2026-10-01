@@ -1,5 +1,5 @@
 import type { AdminRight, Attachment, Chat, ChatKind, Markup, Message, QuotedMessage } from "@leemour/cli-messaging"
-import type { BotChatAdmin } from "@leemour/cli-messaging/cli"
+import type { BotChatAdmin, BotEvent } from "@leemour/cli-messaging/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
 export interface User {
@@ -177,3 +177,81 @@ export const toAdmin = ({ status, user, custom_title, ...rights }: TgAdmin): Bot
   rights: BOT_ADMIN_RIGHTS.filter((right) => status === "creator" || rights[ADMIN_RIGHT_FIELDS[right]] === true),
   title: custom_title ?? null,
 })
+
+/** Telegram's [ChatMember](https://core.telegram.org/bots/api#chatmember), the fields read here. */
+interface TgChatMember {
+  status: "creator" | "administrator" | "member" | "restricted" | "left" | "kicked"
+  user: User
+  is_member?: boolean
+}
+
+/** Telegram's [Update](https://core.telegram.org/bots/api#update), the kinds decoded here. */
+export interface TgUpdate {
+  update_id: number
+  message?: TgMessage
+  edited_message?: TgMessage
+  channel_post?: TgMessage
+  edited_channel_post?: TgMessage
+  callback_query?: { id: string; from: User; message?: TgMessage; data?: string }
+  chat_member?: { chat: TgChat; from: User; date: number; old_chat_member: TgChatMember; new_chat_member: TgChatMember }
+  [kind: string]: unknown
+}
+
+/**
+ * Asked for every time, because Telegram keeps the last list it was given (RISK-95): without
+ * `chat_member`, nobody joining or leaving would ever arrive.
+ */
+export const UPDATE_TYPES = [
+  "message",
+  "edited_message",
+  "channel_post",
+  "edited_channel_post",
+  "callback_query",
+  "my_chat_member",
+  "chat_member",
+]
+
+const inChat = ({ status, is_member }: TgChatMember) =>
+  status === "creator" ||
+  status === "administrator" ||
+  status === "member" ||
+  (status === "restricted" && is_member === true)
+
+const personOf = (user: User) => ({ id: String(user.id), name: nameOf(user), username: user.username ?? null })
+
+/** One update in the shared words; a kind not decoded here is `other`, under Telegram's own name. */
+export const toEvent = (update: TgUpdate, selfId: string | undefined): BotEvent => {
+  const created = update.message ?? update.channel_post
+  if (created) return { event: "message", message: { ...toMessage(created, selfId), chatTitle: null } }
+  const edited = update.edited_message ?? update.edited_channel_post
+  if (edited) return { event: "edit", message: { ...toMessage(edited, selfId), chatTitle: null } }
+  const press = update.callback_query
+  if (press) {
+    return {
+      event: "callback",
+      callbackId: press.id,
+      chatId: press.message ? String(press.message.chat.id) : null,
+      messageId: press.message ? String(press.message.message_id) : null,
+      from: personOf(press.from),
+      data: press.data ?? "",
+    }
+  }
+  const change = update.chat_member
+  if (change) {
+    const was = inChat(change.old_chat_member)
+    const is = inChat(change.new_chat_member)
+    const person = change.new_chat_member.user
+    const self = change.from.id === person.id
+    if (was !== is) {
+      return {
+        event: is ? (self ? "joined" : "added") : self ? "left" : "removed",
+        chatId: String(change.chat.id),
+        person: personOf(person),
+        at: iso(change.date),
+      }
+    }
+  }
+  const kind = Object.keys(update).find((key) => key !== "update_id") ?? "unknown"
+  const chat = (update[kind] as { chat?: TgChat } | undefined)?.chat
+  return { event: "other", type: kind, chatId: chat ? String(chat.id) : null }
+}

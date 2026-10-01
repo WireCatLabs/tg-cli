@@ -14,9 +14,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   [the archive](docs/archive.md#search).
 - **`tg models text list|download`**: the models a later search by meaning will use, downloaded once
   into the folder the speech models share. Nothing uses them yet.
-- **`tg bot watch`, `bot callbacks answer`, `bot commands list|set|clear` and `bot webhooks
-  list|set|delete`** are listed, and each says a Telegram bot cannot do it yet; the next release
-  makes them work.
+- **`tg bot watch`**: what happens in the bot's chats as it arrives, kept in the bot's history on this
+  computer before it is printed; `--events` for edits, buttons and people joining and leaving.
+  **`tg bot callbacks answer`**, **`tg bot commands list|set|clear`** and **`tg bot webhooks
+  list|set|delete`**, the same commands `max bot` has. See [the bot page](docs/bot.md).
 - **`tg bot chats admins list|add|remove`** and **`tg bot chats members remove [--block]`**: the bot's
   admins with their rights and title, making one with `--can` and `--title`, taking the rights back,
   and taking a person out of a chat, for good with `--block`. See [the bot page](docs/bot.md).
