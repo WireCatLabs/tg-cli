@@ -31,7 +31,7 @@ test replaces mtcute's `TelegramClient` with a stand-in. A test that could open 
 ## The live smoke, before a release
 
 ```sh
-node --experimental-strip-types scripts/seed-worktree.ts <main checkout> .   # a worktree, once
+node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"   # a worktree, once
 pnpm smoke:live
 ```
 
