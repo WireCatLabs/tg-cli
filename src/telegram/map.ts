@@ -2,7 +2,6 @@ import { extname } from "node:path"
 import type {
   AccountSession,
   Attachment,
-  Capabilities,
   Chat,
   ChatKind,
   Folder,
@@ -44,17 +43,6 @@ import {
 } from "@mtcute/node"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
-
-export const TELEGRAM_CAPABILITIES: Capabilities = {
-  history: true,
-  chatList: "server",
-  realtime: "push",
-  send: true,
-  edit: true,
-  delete: true,
-  react: true,
-  threads: true,
-}
 
 export interface Account {
   id: string

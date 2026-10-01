@@ -7,6 +7,16 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages search` takes a query language**: `"a phrase"`, `-word`, `a OR b`, and the filters
+  `from:`, `chat:`, `after:`/`before:` and `has:`. A typo is corrected, and stderr says so.
+  `--context <n>` shows the messages around each hit (2 in the terminal). `in:max`, `in:all` or
+  `--source` also search the other accounts kept in the same store, MAX ones included. See
+  [the archive](docs/archive.md#search).
+- **`tg models text list|download`**: the models a later search by meaning will use, downloaded once
+  into the folder the speech models share. Nothing uses them yet.
+- **`tg bot watch`, `bot callbacks answer`, `bot commands list|set|clear` and `bot webhooks
+  list|set|delete`** are listed, and each says a Telegram bot cannot do it yet; the next release
+  makes them work.
 - **`tg bot chats admins list|add|remove`** and **`tg bot chats members remove [--block]`**: the bot's
   admins with their rights and title, making one with `--can` and `--title`, taking the rights back,
   and taking a person out of a chat, for good with `--block`. See [the bot page](docs/bot.md).
@@ -24,6 +34,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg messages search` puts the best match first**, not the newest; `--newest` gives the old order.
+  When no message has every word, it now takes any of them, then a piece of a word. The JSON keeps
+  `items`, `limit` and `hasMore`, and adds `match` and `score` to each hit, plus `corrections`,
+  `completeness` (per chat: held in full or not) and `wordsReady`. A query of one or two letters is
+  searched instead of refused.
 - **tg needs Node 22.16 or newer** (or Bun, as before). When a Linux Node uses a system SQLite too old
   for the message store, `tg` restarts itself on its own SQLite from `@leemour/cli-messaging-sqlite`,
   before it reads or sends anything. Official Node and Bun builds notice nothing.

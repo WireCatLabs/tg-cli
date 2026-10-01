@@ -506,6 +506,29 @@ describe("messages", () => {
     expect(json(stdout).items).toHaveLength(1)
     expect(json(stdout).items[0].text).toContain("piso")
   })
+
+  it("search --newest --context --source orders by time, shows neighbours and reads only telegram accounts", async () => {
+    const reads = scripted({
+      history: async () => ({
+        items: [
+          message("71", { text: "atico en Ruzafa" }),
+          message("72", { text: "hola" }),
+          message("73", { text: "otro atico" }),
+        ],
+        hasMore: false,
+      }),
+    })
+    await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads })
+
+    const argv = ["searching", "messages", "search", "atico", "--newest", "--context", "1", "--source", "telegram"]
+    const { code, stdout } = await tg([...argv, "--json"], { adapter: () => reads })
+
+    const { items } = json(stdout)
+    expect(code).toBe(0)
+    expect(items.map((hit: { id: string }) => hit.id)).toEqual(["73", "71"])
+    expect(items[0].context.map((neighbour: { id: string }) => neighbour.id)).toContain("72")
+    expect(items.every((hit: { locator: string }) => hit.locator.startsWith("msg:telegram/"))).toBe(true)
+  })
 })
 
 describe("chats members", () => {
