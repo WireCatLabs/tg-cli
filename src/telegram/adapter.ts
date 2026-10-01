@@ -223,6 +223,16 @@ export class TelegramAdapter {
     })
   }
 
+  /** Back from a moment, newest first as Telegram reads, answered oldest first. The filter cuts at the moment itself. */
+  historyBefore(reference: string, { limit, time }: { limit: number; time: number }): Promise<Page<Message>> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const page = await this.#client.getHistory(peer, { limit, offset: { id: 0, date: Math.floor(time / 1000) } })
+      const older = page.map(toMessage).filter((message) => Date.parse(message.timestamp) < time)
+      return { items: older.reverse(), hasMore: page.length === limit }
+    })
+  }
+
   /** The chat as its dialog describes it, and for a group, who is in it — at most 200, Telegram's cap. */
   chat(reference: string): Promise<ChatCard> {
     return this.#call(async () => {

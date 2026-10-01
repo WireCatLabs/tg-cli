@@ -262,7 +262,7 @@ tg inbox                                          # unread in every chat, nothin
 tg messages list "Book club" --limit 20
 tg messages send "Book club" "Call at 3?" --reply-to <id>
 tg reactions add "Book club" <id> 👍
-tg messages send me "Call mum" --at 2h            # a reminder in Saved Messages in two hours
+tg messages send me "Call mum" --at-time 2h       # a reminder in Saved Messages in two hours
 tg review --since-time 1d                         # a day of messages: who promised what
 ```
 

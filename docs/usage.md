@@ -258,6 +258,7 @@ tg messages list "Book club" --before-id 4242   # older than message 4242
 tg messages list "Book club" --after-id 4242    # newer than 4242, oldest first
 tg messages list "Book club" --after-time 2h    # what came in during the last two hours
 tg messages list "Book club" --after-time 2026-09-20T09:00
+tg messages list "Book club" --before-time 1d   # what came before this time yesterday
 ```
 
 In the terminal, the line that names the next page goes to stderr. `--before-id` and `--after-id` take
@@ -311,12 +312,12 @@ tg messages send "Book club" < note.txt
 ### Sending later
 
 ```sh
-tg messages send "Book club" "Tomorrow" --at 2026-10-01T09:00   # local time
-tg messages send "Book club" "In two hours" --at 2h             # or 30m, 1d from now
+tg messages send "Book club" "Tomorrow" --at-time 2026-10-01T09:00   # local time
+tg messages send "Book club" "In two hours" --at-time 2h        # or 30m, 1d from now
 tg messages scheduled "Book club"                               # what waits to be sent there
 ```
 
-`--at` hands the message to Telegram, which sends it even with this machine off. The time is rounded
+`--at-time` hands the message to Telegram, which sends it even with this machine off. The time is rounded
 down to the minute. Less than a minute from now, or more than a year, is refused. The guard counts a
 scheduled message in the hour Telegram sends it. **Cancel or change one in the Telegram app**; `tg`
 does not.
@@ -355,7 +356,7 @@ tg messages send "Book club" "See you at 7" --send-id <id from the error>
 tg messages forward "Book club" 4242 --to me --send-id <id from the error>
 ```
 
-A forward and a poll carry one too. A repeat without it is a second message to a person. A message sent with `--at` is never repeated:
+A forward and a poll carry one too. A repeat without it is a second message to a person. A message sent with `--at-time` is never repeated:
 look in `tg messages scheduled <chat>` instead.
 
 ### Editing, forwarding, pinning, deleting

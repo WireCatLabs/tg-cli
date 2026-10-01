@@ -142,9 +142,9 @@ cut the list to nothing.
 Exit code `2`. `--since-time` says the same about itself. They take an ISO 8601 time (`2026-09-20T09:00`) or "this long
 ago" (`30m`, `2h`, `1d`). A message id goes to `--after-id` or `--before-id` instead.
 
-## "--at takes a time like 2026-09-25T09:00 or a delay like 30m, 2h, 1d"
+## "--at-time takes a time like 2026-09-25T09:00 or a delay like 30m, 2h, 1d"
 
-Exit code `2`. `--at` is a local time, or a delay from now in minutes, hours or days — not seconds. It
+Exit code `2`. `--at-time` is a local time, or a delay from now in minutes, hours or days — not seconds. It
 must be at least a minute from now and at most a year.
 
 ## "--timeout takes a duration with a unit — 30s, 2m or 500ms"
@@ -241,7 +241,7 @@ Telegram drops the second copy:
 tg messages send <chat> "<the same text>" --send-id <id from the error>
 ```
 
-After `--at`, look in `tg messages scheduled <chat>` instead: a scheduled send is never repeated.
+After `--at-time`, look in `tg messages scheduled <chat>` instead: a scheduled send is never repeated.
 
 ## A command hangs
 

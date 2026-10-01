@@ -7,6 +7,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages list --before-time`** reads back from a moment: ISO 8601, or `2h` / `1d` ago.
 - **`tg contacts add|remove|block|unblock|rename|import`** and **`tg account update`**,
   **`tg account sessions end --others`**, with the MCP tools `tg_contacts_add|remove|block|unblock|rename`
   and `tg_account_update`. `contacts import` reads `number, name` lines from a file and prints only
@@ -69,6 +70,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg messages send --at` is now `--at-time`**, as every option that takes a time names it.
+- **The MCP tools' arguments carry their option's name**: `tg_messages_list` takes `before_id`,
+  `before_time`, `after_id`, `after_time`; `tg_messages_context` `before_n`, `after_n`; `since` is
+  `since_time` in `tg_inbox`, `tg_review` and `tg_chats_events`, whose `event` is `type`;
+  `tg_messages_send` takes `md` and `at_time`.
 - **Options name the kind of value they take.** The old names are refused as unknown options; there
   are no aliases. The MCP tools' arguments do not change.
   - `tg messages list --before` is now `--before-id`; `--after` is `--after-id` for a message id and

@@ -397,6 +397,22 @@ describe("reading", () => {
     ])
   })
 
+  it("reads back from a moment, oldest first, keeping only what is older", async () => {
+    const { adapter, client } = await open()
+    const at = (id: number, time: string) => ({ ...message(id), date: new Date(time) })
+    client.history = [
+      at(12, "2026-09-27T11:00:00.000Z"),
+      at(11, "2026-09-27T09:00:00.000Z"),
+      at(10, "2026-09-27T08:00:00.000Z"),
+    ]
+
+    const page = await adapter.historyBefore("-100500", { limit: 3, time: Date.parse("2026-09-27T10:00:00.000Z") })
+
+    expect([page.items.map((one) => one.id), page.hasMore]).toEqual([["10", "11"], true])
+    const asked = client.calls.filter((call) => call.method === "getHistory").map((call) => call.args[1])
+    expect(asked).toEqual([{ limit: 3, offset: { id: 0, date: Date.parse("2026-09-27T10:00:00.000Z") / 1000 } }])
+  })
+
   it("reads chat events from service messages, oldest first, naming people it only has ids for", async () => {
     const { adapter, client } = await open()
     const at = (minute: number) => new Date(Date.UTC(2026, 8, 27, 10, minute))

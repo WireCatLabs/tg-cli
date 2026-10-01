@@ -11,6 +11,34 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "chats moderate",
+    option: "--since-time",
+    reason:
+      "P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test " +
+      "comes with P2's Telegram moderation work",
+  },
+  {
+    command: "chats moderate",
+    option: "--dry-run",
+    reason:
+      "P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test " +
+      "comes with P2's Telegram moderation work",
+  },
+  {
+    command: "chats moderate",
+    option: "--allow-dangerous",
+    reason:
+      "P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test " +
+      "comes with P2's Telegram moderation work",
+  },
+  {
+    command: "chats moderate",
+    option: "--max-actions",
+    reason:
+      "P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test " +
+      "comes with P2's Telegram moderation work",
+  },
+  {
     command: "mcp",
     reason:
       "serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives " +
