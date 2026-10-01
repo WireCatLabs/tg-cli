@@ -97,4 +97,33 @@ describe("saving to the store", () => {
   it("points at the test sandbox, never the owner's store", () => {
     expect(storePath()).toContain(process.env.TG_TEST_SANDBOX ?? "no sandbox")
   })
+
+  it("**hides a chat the account left, and `store clear --left` deletes it** only with --allow-dangerous", async () => {
+    const store = freshStore()
+    const left = scripted({ history: async () => ({ items: [message], hasMore: false }) })
+    const other = { ...chat, id: "-1009", title: "Other" }
+    const tgWith = async (argv: string[], adapter: typeof left) => {
+      const streams = captureStreams()
+      const code = await run(argv, {
+        streams,
+        tty: false,
+        keyring: memoryKeyring(),
+        env: { ...process.env, MESSAGING_STORE: store, TG_API_ID: "1", TG_API_HASH: "h" },
+        adapter: () => adapter,
+      })
+      return { code, stdout: streams.stdout, stderr: streams.stderr }
+    }
+    await tgWith(["gone", "messages", "list", "Valencia"], left)
+    await tgWith(["gone", "chats", "list"], left)
+    left.chats = async () => ({ items: [other], hasMore: false })
+    await tgWith(["gone", "chats", "list"], left)
+
+    const offline = await tg(["gone", "chats", "list", "--json", "--offline"], { store, online: false })
+    expect(JSON.parse(offline.stdout[0] ?? "").items.map((one: { id: string }) => one.id)).toEqual(["-1009"])
+
+    const unconfirmed = await tgWith(["gone", "store", "clear", "--left"], left)
+    expect(unconfirmed.code).not.toBe(0)
+    const cleared = await tgWith(["gone", "store", "clear", "--left", "--allow-dangerous", "--json"], left)
+    expect(JSON.parse(cleared.stdout[0] ?? "")).toEqual({ cleared: true, chats: 1, messages: 1 })
+  })
 })

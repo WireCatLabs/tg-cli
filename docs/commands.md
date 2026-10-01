@@ -1307,6 +1307,19 @@ tg store export <chat> [options]
 | `--since-time <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
 | `--output <file>` | write JSON lines, or the transcript, to this new file, readable only by you. |
 
+### `tg store clear`
+
+delete from the store the chats this account has left, with their messages
+
+```sh
+tg store clear [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--left` | the chats this account has left — the only thing this clears. |
+| `--allow-dangerous` | yes, delete — it cannot be undone, and a chat you left cannot be fetched again. |
+
 ### `tg store info`
 
 the store file: where it is, its size, its schema and how many rows it holds; changes nothing

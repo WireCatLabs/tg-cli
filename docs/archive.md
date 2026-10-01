@@ -187,6 +187,7 @@ tg store check                         # integrity, search indexes, disk, and wh
 tg store backup ~/tg-store.db          # a copy of the store, while it is in use
 tg store restore ~/tg-store.db         # put a backup in place of the store
 tg store migrate                       # bring the store up to this version's schema
+tg store clear --left --allow-dangerous  # delete the chats you have left, with their messages
 ```
 
 - **`backup` never overwrites a file**: name a new one. It copies while other commands and `serve`
@@ -195,6 +196,10 @@ tg store migrate                       # bring the store up to this version's sc
   for any profile — `tg server stop` first — and checks that the backup is a readable, undamaged
   store. Afterwards, restart every `serve` and `mcp` of either CLI that was running, so they read the
   restored store.
+- **A chat you have left drops out of `chats list --offline`** the next time `tg chats list` reads
+  your whole chat list; its messages stay in the store. If you rejoin it, it comes back.
+  **`store clear --left`** deletes those chats and their messages. Without `--allow-dangerous` it
+  only says how many chats and messages it would delete. A chat you left cannot be fetched again.
 - **`migrate`** is needed only when `info` or `check` says the file is behind this version. Take a
   backup first. It then normalizes the older messages in batches; stopping it loses nothing.
 

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**247 ✅ · 11 ⛔ · 0 ❌** — 109 commands, 149 options.
+**250 ✅ · 11 ⛔ · 0 ❌** — 110 commands, 151 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -203,6 +203,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store export` | `--format` | ✅ |  |
 | `store export` | `--since-time` | ✅ |  |
 | `store export` | `--output` | ✅ |  |
+| `store clear` |  | ✅ |  |
+| `store clear` | `--left` | ✅ |  |
+| `store clear` | `--allow-dangerous` | ✅ |  |
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |
 | `store migrate` |  | ✅ |  |
