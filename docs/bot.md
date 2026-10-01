@@ -56,6 +56,48 @@ this computer**. It is not a full list.
 tg sales bot chats list
 ```
 
+## Messages
+
+A chat is its id, `user:<id>` for a person, or the title of a chat the bot has seen. A message is
+always named with its chat: Telegram numbers messages inside each chat.
+
+```sh
+tg sales bot messages send "Team" "Build is ready"
+tg sales bot messages send user:4815162342 "Hello"
+tg sales bot messages send "Team" "**Weekly** report" --md       # or --html
+tg sales bot messages send "Team" "Report" --file report.pdf     # the text becomes the caption
+echo "From a pipe" | tg sales bot messages send "Team"
+tg sales bot messages edit "Team" 512 "Fixed text"
+tg sales bot messages delete "Team" 512 513 --allow-dangerous
+tg sales bot messages pin "Team" 512 --notify
+tg sales bot messages unpin "Team" 512
+```
+
+`--photo` sends a picture as a photo, `--voice` an Ogg Opus file as a voice message, `--as-file` a
+video as a file. A file from a hidden folder or from `tg`'s own folders is refused unless you add
+`--allow-any-file`. A bot sends one file per message. Telegram deletes only messages under 48 hours
+old.
+
+If the connection breaks while a message is going, `tg` does not send it again: it says it does not
+know whether the message arrived (exit code 14). Check the chat before you send it again.
+
+**Telegram gives a bot no history.** A bot cannot ask Telegram for a chat's messages, or for one
+message. So `messages list` and `messages show` answer from what the bot has sent and received on
+this computer, and say so:
+
+```sh
+tg sales bot messages list "Team"
+tg sales bot messages show "Team" 512
+```
+
+## A chat
+
+```sh
+tg sales bot chats show -1001234567890    # from Telegram; the bot remembers its title
+tg sales bot chats action "Team" typing   # typing, photo, video, voice, file — a few seconds
+tg sales bot chats leave "Team"           # only an admin can bring the bot back
+```
+
 ## Who the bot may write to
 
 Each bot has its own list of chats it may write to. With no list, it may write anywhere.
@@ -77,10 +119,9 @@ tg sales bot sends list
 
 ## Coming next
 
-Sending, editing and deleting messages, pins, admins, button answers, the command menu, webhooks
-and `bot watch` come next, as the same commands `max bot` has. A bot cannot read a chat's history
-from Telegram — there is no such method — so its history is what `bot watch` keeps on this
-computer.
+Admins and members, button answers, the command menu, webhooks and `bot watch` come next, as the
+same commands `max bot` has. `bot watch` is what fills the bot's history with what other people
+write.
 
 The settings for a bot live in the `bot` section of the configuration file:
 `tg sales config set --bot sendsPerHour 200` ([configuration.md](configuration.md)).

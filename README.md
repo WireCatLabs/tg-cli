@@ -33,6 +33,7 @@ under a name you choose, and that name is the first word of the command.
 tg sales bot auth set                    # the token, at a hidden prompt; Telegram checks it first
 tg sales bot auth show                   # which bot it is
 tg sales bot recipients add user:<id>    # the bot may write only here
+tg sales bot messages send "Team" "Build is ready" --file report.pdf
 tg bot list --check                      # every bot on this computer
 ```
 
@@ -40,9 +41,11 @@ tg bot list --check                      # every bot on this computer
   for CI. The token is never printed — not in an error, not with `--trace`, not in a run record.
 - **Recipients and a journal.** Each bot has its own list of chats it may write to, and a journal
   of what it did, without the text.
-- **Coming next:** sending, editing and deleting messages, pins, admins, button answers, the
-  command menu, webhooks and `bot watch` — the same commands `max bot` has. A Telegram bot cannot
-  read a chat's history; its history is what `bot watch` keeps on this computer.
+- **Messages and chats.** Send, edit, delete and pin, to a chat by id or by title, or to a person
+  as `user:<id>`; `--md`, `--html`, a file or a photo. A Telegram bot cannot read a chat's history:
+  `messages list` shows what this bot sent and received on this computer.
+- **Coming next:** admins, button answers, the command menu, webhooks and `bot watch` — the same
+  commands `max bot` has.
 
 In full: [docs/bot.md](docs/bot.md).
 
