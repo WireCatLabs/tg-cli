@@ -31,6 +31,7 @@ coverage/
 /.claude/launch.json
 /.claude/loop.md
 /.claude/output-styles
+/.claude/skills
 /.claude/routines
 /.claude/scheduled_tasks.json
 /.claude/workflows

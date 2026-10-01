@@ -8,10 +8,10 @@ description: Test a tg-cli change against the real Telegram before it ships — 
 The rules are shared with max-cli: cli-messaging's
 [RELEASING.md, "Live checks"](https://github.com/leemour/cli-messaging/blob/main/docs/dev/RELEASING.md#live-checks).
 Read them first. **This is the owner's real Telegram account**: a mistake sends a message to a
-person ([CLAUDE.md](../../../CLAUDE.md), rule 1).
+person ([CLAUDE.md](../../../../CLAUDE.md), rule 1).
 
 The scenarios are public, by role:
-[docs/dev/live-scenarios.md](../../../docs/dev/live-scenarios.md). The cast is private and never goes
+[docs/dev/live-scenarios.md](../../live-scenarios.md). The cast is private and never goes
 into this repository: the real test group, the second account, their ids and the profile names. It
 lives in `docs_ai/live-cast.md` of the main checkout, which git ignores. Without it, only the Saved
 Messages scenarios can run. Say so, and do not guess a chat.
@@ -47,7 +47,7 @@ bin/tg account show --json
 branch build can migrate it. **Never `session start`**: that is a new device on the real account.
 From an agent inside this repository's sandbox, only a **plain** `bin/tg …` call reaches Telegram.
 `bin/tg … | jq` and a script that starts `bin/tg` run inside the sandbox and get `ENETUNREACH`
-([agents.md](../../../docs/dev/agents.md#what-an-agent-may-do-and-what-stops-it)). Run the call on its
+([agents.md](../../agents.md#what-an-agent-may-do-and-what-stops-it)). Run the call on its
 own and read the shape from its output, or ask the owner to run a script from a terminal.
 
 Pace the writes: Telegram answers a burst with `FLOOD_WAIT`, and three sessions share one account's

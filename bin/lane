@@ -41,4 +41,6 @@ for repo in "$main" "$messaging"; do
   (cd "$into/$(basename "$repo")" && pnpm install --frozen-lockfile >/dev/null && pnpm build >/dev/null 2>&1)
 done
 node "$main/scripts/seed-worktree.ts" "$main" "$into/tg-cli"
+# Not tracked: inside the sandbox git cannot create .claude/skills, so a tracked one stops every switch.
+ln -s ../docs/dev/skills "$into/tg-cli/.claude/skills"
 echo "ready: $into/tg-cli and $into/cli-messaging — cd $into/tg-cli && claude"

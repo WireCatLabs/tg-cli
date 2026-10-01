@@ -39,7 +39,7 @@ judgement.
 
 Draft `## Unreleased` from the merged pull requests (RELEASING.md, "The changelog") under tg's
 headings, each at most once: `What's new`, `Changed — may break scripts`, `Fixed`, `Security`,
-`Removed` ([CONVENTIONS.md](../../../docs/dev/CONVENTIONS.md#the-changelog)). A new cli-messaging
+`Removed` ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)). A new cli-messaging
 version gets the entries a tg user notices, said in tg's words. No internal ids, no file paths.
 
 ## 3. The docs against the diff
@@ -51,7 +51,7 @@ which `tg skill show` prints. `docs/commands.md` and `docs/dev/test-matrix.md` a
 ## 4. The rules
 
 RELEASING.md, "Reviewing against the rules", against the five rules in
-[CLAUDE.md](../../../CLAUDE.md). Rule 1 (nothing sends unless asked; live checks only in Saved
+[CLAUDE.md](../../../../CLAUDE.md). Rule 1 (nothing sends unless asked; live checks only in Saved
 Messages and only through `bin/tg`), rule 3 (every command closes its connection in a `finally`) and
 rule 5 (no session or app credential in a log, a fixture or a document) are read in the changed
 code. Each one gets **holds** or **broken**, with `path:line`.
@@ -67,7 +67,9 @@ code. Each one gets **holds** or **broken**, with `path:line`.
   pnpm smoke:live
   ```
 
-  Any `FAIL` stops the release until the owner rules on it.
+  Inside this repository's sandbox a script gets no network for the `bin/tg` it starts: ask the
+  owner to run it from a terminal and paste the `ok` / `FAIL` lines. Any `FAIL` stops the release
+  until the owner rules on it.
 - **A command only a live run checks** (the ⛔ rows of `docs/dev/test-matrix.md`) changed: the
   `test-live` skill, with the owner's yes.
 - **Neither**: say so in the release pull request. No live run.
