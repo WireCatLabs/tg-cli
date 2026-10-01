@@ -10,6 +10,8 @@ pnpm build && pnpm smoke:bun                        # the built command, execute
 
 CI runs all of them ([ci.yml](../../.github/workflows/ci.yml)). Windows and macOS run by hand before
 a release: Actions → Windows and macOS → Run workflow ([windows.yml](../../.github/workflows/windows.yml)).
+What only the real Telegram can check, and how, is [live-scenarios.md](live-scenarios.md); the
+`release`, `test-live` and `add-command` skills in `.claude/skills/` walk an agent through it.
 The reasons behind each rule below are in
 [max-cli's TESTING.md](https://github.com/leemour/max-cli/blob/main/docs/dev/TESTING.md), where they
 were learnt.

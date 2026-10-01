@@ -33,5 +33,4 @@ coverage/
 /.claude/output-styles
 /.claude/routines
 /.claude/scheduled_tasks.json
-/.claude/skills
 /.claude/workflows
