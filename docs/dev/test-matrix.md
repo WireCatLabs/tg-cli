@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**206 ✅ · 7 ⛔ · 0 ❌** — 89 commands, 124 options.
+**214 ✅ · 7 ⛔ · 0 ❌** — 93 commands, 128 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -52,6 +52,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats admins add` |  | ✅ |  |
 | `chats admins add` | `--can` | ✅ |  |
 | `chats admins remove` |  | ✅ |  |
+| `chats folders list` |  | ✅ |  |
+| `chats folders create` |  | ✅ |  |
+| `chats folders create` | `--chat` | ✅ |  |
+| `chats folders update` |  | ✅ |  |
+| `chats folders update` | `--title` | ✅ |  |
+| `chats folders update` | `--add` | ✅ |  |
+| `chats folders update` | `--remove` | ✅ |  |
+| `chats folders delete` |  | ✅ |  |
 | `contacts list` |  | ✅ |  |
 | `contacts list` | `--limit` | ✅ |  |
 | `contacts list` | `--page` | ✅ |  |

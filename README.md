@@ -180,8 +180,8 @@ There are good tools for a personal Telegram account already. Choose what fits t
 | forum topics: list and search | ✅ | ✅ |
 | groups: create | ✅ | — |
 | groups: join, leave | ✅ | ✅ |
-| groups: rename, add and remove members, invite links | — | ✅ |
-| folders | — | ✅ |
+| groups: rename, add and remove members, invite links | ✅ | ✅ |
+| folders | ✅ | ✅ |
 | your own tags, aliases and notes on chats and contacts | — | ✅ |
 | install with Homebrew or Docker | — | ✅ |
 
@@ -415,8 +415,7 @@ before the pull request.
 
 What is coming, in the order it is likely to arrive:
 
-- **Running groups** — a group's title and settings, members and admins, invite links, folders,
-  contacts, your profile, and moderation rules checked on your say-so.
+- **Running groups** — contacts, your profile, and moderation rules checked on your say-so.
 - **Richer sending** — several photos in one message, sending into a forum topic.
 
 ## Licence

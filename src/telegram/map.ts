@@ -5,6 +5,7 @@ import type {
   Capabilities,
   Chat,
   ChatKind,
+  Folder,
   GroupCard,
   GroupMember,
   LinkTarget,
@@ -406,5 +407,19 @@ export const toGroupCard = (full: FullChat): GroupCard => {
       onlyOwnerEditsInfo: null,
       membersSeeLink: null,
     },
+  }
+}
+
+/**
+ * A folder as `chats folders` answers it; `null` for "All chats", which Telegram lists among the
+ * folders but nobody can change. Pinned chats are in the folder too, so they count as added.
+ */
+export const toFolder = (filter: tl.TypeDialogFilter): Folder | null => {
+  if (filter._ === "dialogFilterDefault") return null
+  const peers = [...filter.pinnedPeers, ...filter.includePeers]
+  return {
+    id: String(filter.id),
+    title: filter.title.text,
+    chatIds: [...new Set(peers.map((peer) => String(getMarkedPeerId(peer))))],
   }
 }

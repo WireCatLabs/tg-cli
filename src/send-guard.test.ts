@@ -433,6 +433,60 @@ describe("the send guard in front of the other writes", () => {
     ])
   })
 
+  it("**changes chat folders through the guard**", async () => {
+    const done: string[] = []
+    const adapter = scripted({
+      folders: async () => [{ id: "2", title: "Work", chatIds: [] }],
+      createFolder: async (title, chatIds) => {
+        done.push(`create ${title} ${chatIds.join(",")}`)
+        return { id: "3", title, chatIds }
+      },
+      updateFolder: async (id, change) => {
+        done.push(`update ${id} ${JSON.stringify(change)}`)
+        return { id, title: "Work", chatIds: [] }
+      },
+      deleteFolder: async (id) => {
+        done.push(`delete ${id}`)
+      },
+    })
+
+    const codes = [
+      (await tg(["g-folders", "chats", "folders", "list"], adapter)).code,
+      (await tg(["g-folders", "chats", "folders", "create", "Home", "--chat", "Valencia"], adapter)).code,
+      (
+        await tg(
+          [
+            "g-folders",
+            "chats",
+            "folders",
+            "update",
+            "Work",
+            "--title",
+            "Job",
+            "--add",
+            "Valencia",
+            "--remove",
+            "Valencia",
+          ],
+          adapter,
+        )
+      ).code,
+      (await tg(["g-folders", "chats", "folders", "delete", "Work"], adapter)).code,
+    ]
+
+    expect(codes).toEqual([0, 0, 0, 0])
+    expect(done).toEqual([
+      `create Home ${chat.id}`,
+      `update 2 {"title":"Job","add":["${chat.id}"],"remove":["${chat.id}"]}`,
+      "delete 2",
+    ])
+    expect(journal("g-folders").map((entry) => entry.action)).toEqual([
+      "folder-create",
+      "folder-update",
+      "folder-delete",
+    ])
+  })
+
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
     configure({ "g-del": { sendsPerHour: 2 } })
     const { adapter, deleted } = telegram()

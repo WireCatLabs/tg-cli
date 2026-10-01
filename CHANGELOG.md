@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats folders list|create|update|delete`**, with the MCP tools
+  `tg_chats_folders_list|create|update|delete`. Changing a folder's chats keeps the others in it;
+  "All chats" is not listed, since nobody can change it.
 - **`tg chats members add|remove`** and **`tg chats admins add|remove`**, with the MCP tools
   `tg_chats_members_add|remove` and `tg_chats_admins_add|remove`. `--can` takes members, admins,
   info, pin, link, post, edit and delete; Telegram has no separate right to read. Adding answers who

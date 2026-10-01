@@ -109,6 +109,22 @@ class FakeClient {
   exportInviteLink = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ link: "https://t.me/+new" }))
   kickChatMember = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editAdminRights = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  filters: unknown[] = []
+  getFolders = vi.fn(async () => ({ _: "messages.dialogFilters", filters: this.filters }))
+  createFolder = vi.fn(
+    async (folder: Record<string, unknown>): Promise<unknown> => ({
+      _: "dialogFilter",
+      id: 3,
+      pinnedPeers: [],
+      excludePeers: [],
+      ...folder,
+    }),
+  )
+  editFolder = vi.fn(async (params: { folder: Record<string, unknown>; modification: Record<string, unknown> }) => ({
+    ...params.folder,
+    ...params.modification,
+  }))
+  deleteFolder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
@@ -1066,6 +1082,50 @@ describe("making, joining and leaving groups", () => {
 
     expect(await adapter.leave("-100500")).toEqual({ chatId: "-100500" })
     expect(client.leaveChat).toHaveBeenCalledOnce()
+  })
+})
+
+describe("chat folders", () => {
+  const user7 = { _: "inputPeerUser", userId: 7, accessHash: 0 }
+  const user8 = { _: "inputPeerUser", userId: 8, accessHash: 0 }
+  const work = {
+    _: "dialogFilter",
+    id: 2,
+    title: { _: "textWithEntities", text: "Work", entities: [] },
+    pinnedPeers: [user8],
+    includePeers: [user7],
+    excludePeers: [],
+  }
+
+  it("**lists the folders, leaving out All chats**, pinned chats counted as in the folder", async () => {
+    const { adapter, client } = await open()
+    client.filters = [{ _: "dialogFilterDefault" }, work]
+
+    expect(await adapter.folders()).toEqual([{ id: "2", title: "Work", chatIds: ["8", "7"] }])
+  })
+
+  it("**changes only the chats asked for**, keeping the rest of the folder", async () => {
+    const { adapter, client } = await open()
+    client.filters = [work]
+    client.resolvePeer = (async (peer: unknown) => ({ _: "inputPeerUser", userId: peer, accessHash: 0 })) as never
+
+    const changed = await adapter.updateFolder("2", { title: "Job", add: ["9", "7"], remove: ["7"] })
+
+    expect(client.editFolder.mock.calls[0]?.[0]).toMatchObject({
+      folder: work,
+      modification: { title: { text: "Job" }, includePeers: [{ userId: 9 }, { userId: 7 }] },
+    })
+    expect(changed.title).toBe("Job")
+    await expect(adapter.updateFolder("5", { title: "x" })).rejects.toMatchObject({ code: "not_found" })
+  })
+
+  it("creates a folder with its chats, and deletes one by id", async () => {
+    const { adapter, client } = await open()
+    client.resolvePeer = (async (peer: unknown) => ({ _: "inputPeerUser", userId: peer, accessHash: 0 })) as never
+
+    expect(await adapter.createFolder("Home", ["7"])).toEqual({ id: "3", title: "Home", chatIds: ["7"] })
+    await adapter.deleteFolder("3")
+    expect(client.deleteFolder.mock.calls).toEqual([[3]])
   })
 })
 

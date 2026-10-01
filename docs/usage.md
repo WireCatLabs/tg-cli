@@ -388,10 +388,22 @@ tg messages list "Book club" --mark-read     # read it, and mark it read up to t
 The other side sees that you read it. It goes through the guard as the action `read`, and does not
 count toward the hourly limit.
 
+### Folders
+
+```sh
+tg chats folders list                              # your folders, in the order the app shows them
+tg chats folders create "Trips" --chat "Hiking" --chat @kate
+tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
+tg chats folders delete "Travel"                   # the chats stay
+```
+
+A folder is named by its id or its title exactly. Only you see your folders; each change still goes
+through the guard, as an `account` change.
+
 ### Not in tg yet
 
-Several photos in one message, sending into a forum topic; managing contacts, your profile and
-folders. They are on the [roadmap](../README.md#roadmap).
+Several photos in one message, sending into a forum topic; managing contacts and your profile. They
+are on the [roadmap](../README.md#roadmap).
 
 ## Groups and channels
 
