@@ -140,6 +140,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   session made every file tg wrote afterwards readable only by you. The session file and its
   companions stay owner-only.
 
+### Fixed
+
+- **Two refusals say what to do.** Adding back someone who left or was removed, when you are not
+  each other's contacts, now says to send them the invite link (`tg chats link show <chat>`);
+  naming a person by an id this account has never seen now says to use an @username, or to read a
+  chat they are in first.
+
 ## 0.20.0 — 30.09.2026
 
 ### What's new
