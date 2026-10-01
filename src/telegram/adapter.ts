@@ -9,6 +9,8 @@ import {
   type Chat,
   type ChatCard,
   type ChatEvents,
+  type Folder,
+  type FolderChange,
   type GroupCard,
   type GroupChange,
   type GroupMember,
@@ -27,6 +29,7 @@ import type { After, Download, NewPoll, SendOptions, Transcript } from "@leemour
 import {
   type DeleteMessageUpdate,
   FileLocation,
+  getMarkedPeerId,
   type InputPeerLike,
   Long,
   MtPeerNotFoundError,
@@ -53,6 +56,7 @@ import {
   toAccountSession,
   toChat,
   toDeletions,
+  toFolder,
   toFormatted,
   toGroupCard,
   toGroupMember,
@@ -929,6 +933,55 @@ export class TelegramAdapter {
         throw unknownIfUnanswered(error, "the rights may or may not have changed; check `tg chats members list`")
       }
     })
+  }
+
+  folders(): Promise<Folder[]> {
+    return this.#call(async () => (await this.#filters()).map(toFolder).filter((one): one is Folder => one !== null))
+  }
+
+  createFolder(title: string, chatIds: string[]): Promise<Folder> {
+    return this.#call(async () => {
+      const includePeers = await Promise.all(chatIds.map((id) => this.#client.resolvePeer(Number(id))))
+      const made = await this.#client.createFolder({
+        title: { _: "textWithEntities", text: title, entities: [] },
+        includePeers,
+      })
+      return toFolder(made) as Folder
+    })
+  }
+
+  /** Telegram replaces a folder's chats as a list, so the ones it has are read and only the asked ones change. */
+  updateFolder(folderId: string, { title, add = [], remove = [] }: FolderChange): Promise<Folder> {
+    return this.#call(async () => {
+      const current = (await this.#filters()).find(
+        (one) => one._ !== "dialogFilterDefault" && String(one.id) === folderId,
+      )
+      if (!current || current._ === "dialogFilterDefault") throw new CliError("not_found", `no folder ${folderId}`)
+      const gone = new Set(remove)
+      const kept = current.includePeers.filter((peer) => !gone.has(String(getMarkedPeerId(peer))))
+      const held = new Set(kept.map((peer) => String(getMarkedPeerId(peer))))
+      const added = await Promise.all(
+        add.filter((id) => !held.has(id)).map((id) => this.#client.resolvePeer(Number(id))),
+      )
+      const changed = await this.#client.editFolder({
+        folder: current._ === "dialogFilter" ? current : current.id,
+        modification: {
+          ...(title === undefined ? {} : { title: { _: "textWithEntities", text: title, entities: [] } }),
+          ...(add.length > 0 || remove.length > 0 ? { includePeers: [...kept, ...added] } : {}),
+        },
+      })
+      return toFolder(changed) as Folder
+    })
+  }
+
+  deleteFolder(folderId: string): Promise<void> {
+    return this.#call(async () => {
+      await this.#client.deleteFolder(Number(folderId))
+    })
+  }
+
+  async #filters(): Promise<tl.TypeDialogFilter[]> {
+    return (await this.#client.getFolders()).filters
   }
 
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {

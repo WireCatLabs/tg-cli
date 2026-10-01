@@ -358,6 +358,70 @@ tg chats admins remove <chat> <person>
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `person` | required | an id, or part of a name. |
 
+### `tg chats folders`
+
+your chat folders
+
+#### `tg chats folders list`
+
+your chat folders, in the order the app shows them
+
+```sh
+tg chats folders list
+```
+
+#### `tg chats folders create`
+
+create a chat folder
+
+**Changes something in Telegram.**
+
+```sh
+tg chats folders create <title> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `title` | required | the folder's name; the app may refuse a long one. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat to put in it, by id or name; repeat it for more. |
+
+#### `tg chats folders update`
+
+rename a folder, or change which chats are in it
+
+**Changes something in Telegram.**
+
+```sh
+tg chats folders update <folder> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `folder` | required | folder id, or its title exactly. |
+
+| Option | What it does |
+|---|---|
+| `--title <title>` | a new name. |
+| `--add <chat>` | put a chat in it; repeat it for more. |
+| `--remove <chat>` | take a chat out of it; repeat it for more. |
+
+#### `tg chats folders delete`
+
+delete a folder; the chats in it stay
+
+**Changes something in Telegram.**
+
+```sh
+tg chats folders delete <folder>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `folder` | required | folder id, or its title exactly. |
+
 ## `tg contacts`
 
 people this account has a one-to-one chat with
