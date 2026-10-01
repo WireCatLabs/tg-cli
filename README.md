@@ -23,6 +23,29 @@ tg messages send "Book club" "Running 15 minutes late"
 [![npm downloads](https://img.shields.io/npm/dm/@leemour/tg-cli)](https://www.npmjs.com/package/@leemour/tg-cli)
 [![License: MIT](https://img.shields.io/npm/l/@leemour/tg-cli)](LICENSE)
 
+## The bot
+
+`tg bot` works with a bot through Telegram's **official** [Bot API](https://core.telegram.org/bots/api)
+and its token from [@BotFather](https://t.me/BotFather). You can keep several bots: each is kept
+under a name you choose, and that name is the first word of the command.
+
+```sh
+tg sales bot auth set                    # the token, at a hidden prompt; Telegram checks it first
+tg sales bot auth show                   # which bot it is
+tg sales bot recipients add user:<id>    # the bot may write only here
+tg bot list --check                      # every bot on this computer
+```
+
+- **One token per name, in the keyring.** `bot:<name>`, apart from your own login; `TG_BOT_TOKEN`
+  for CI. The token is never printed — not in an error, not with `--trace`, not in a run record.
+- **Recipients and a journal.** Each bot has its own list of chats it may write to, and a journal
+  of what it did, without the text.
+- **Coming next:** sending, editing and deleting messages, pins, admins, button answers, the
+  command menu, webhooks and `bot watch` — the same commands `max bot` has. A Telegram bot cannot
+  read a chat's history; its history is what `bot watch` keeps on this computer.
+
+In full: [docs/bot.md](docs/bot.md).
+
 ## The personal account
 
 `tg` works with your own account, as one more of your devices: every chat, its history, groups,
@@ -200,6 +223,7 @@ mode.
 
 ## Contents
 
+- [The bot](#the-bot)
 - [The personal account](#the-personal-account)
 - [Groups you run](#groups-you-run)
 - [Install](#install)
