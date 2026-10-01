@@ -390,8 +390,8 @@ count toward the hourly limit.
 
 ### Not in tg yet
 
-Voice notes and videos as such, several photos in one message, sending into a forum topic; managing
-contacts, your profile and folders. They are on the [roadmap](../README.md#roadmap).
+Several photos in one message, sending into a forum topic; managing contacts, your profile and
+folders. They are on the [roadmap](../README.md#roadmap).
 
 ## Groups and channels
 
@@ -423,7 +423,7 @@ approve who joins answers that the request was sent. Each goes through the guard
 and each person added counts toward the hourly limit.
 
 Members, admins, invite links and moderation rules are not in `tg` yet
-([roadmap](../README.md#roadmap)).
+([roadmap](../README.md#roadmap)). What there is for a group you run: [groups.md](groups.md).
 
 ## For scripts and agents
 

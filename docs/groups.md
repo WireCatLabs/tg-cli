@@ -1,0 +1,106 @@
+# Groups you run
+
+`tg` helps the admin of a group: it shows the questions nobody answered, who joined and who added
+them, and what a week in the group came to. It reads without marking anything read, so checking on a
+group does not tell its members you looked.
+
+Everything here works from your personal account. The commands in full:
+[usage.md](usage.md#groups-and-channels); every option: [commands.md](commands.md).
+
+## With an agent
+
+An agent with a terminal (Claude Code, Codex) needs the [skill](../README.md#a-skill-for-agents-with-a-terminal);
+one without (Claude Desktop, Cursor) needs the [MCP server](mcp.md). Below: what you say, what the
+agent calls, and what you get back.
+
+### An admin's morning: who is waiting for an answer
+
+```text
+You:    What is still unanswered in "Hiking"?
+Agent:  (tg review --chat "Hiking" --unanswered 4 --json)
+        Unanswered for more than 4 hours — 3 questions:
+        · Lena, 08:12 — "What time do we leave on Saturday?"
+        · Artem, yesterday 22:40 — a reply to your post about the route: "Are the tents shared?"
+        · Ira, yesterday 19:05 — "Who brings the pot?"
+        You or the admins answered the rest.
+```
+
+A question is a message with `?` in it, or a reply to you or to an admin; a `?` inside a link does not
+count. It is answered when you or an admin replied to it, or were the next to speak after the person
+who asked. When Telegram does not say who the group's admins are, only your answers count, and the
+command says so.
+
+### Newcomers this week
+
+```text
+You:    Who joined "Hiking" this week?
+Agent:  (tg chats events "Hiking" --event join,add --json)
+        Five people:
+        · Kate — added by Lena, Tuesday
+        · Oleg — joined by the link, Wednesday
+        · …
+```
+
+`chats events` reads the group's service messages, so it sees what Telegram kept in the chat's
+history: who joined, left, was added or removed, and by whom. `tg chats members list` gives everyone
+in the group with their role and when they were last seen.
+
+### A weekly report
+
+```text
+You:    Sum up the week in "Hiking".
+Agent:  (tg review --chat "Hiking" --since 2026-09-20T00:00 --json)
+        Decided: we leave on 4 October, at 7:00 from the station.
+        Taken on: Lena — food, Artem — tents.
+        Open: who brings the pot — asked three times, no answer.
+```
+
+### On a schedule
+
+No agent is needed for a list of open questions: it is an ordinary command.
+
+```cron
+0 9,21 * * * tg review --chat "Hiking" --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
+```
+
+cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot reach the keyring:
+[recipes.md](recipes.md#running-on-a-schedule).
+
+## What there is
+
+| Command | What it does |
+|---|---|
+| `tg review --chat <chat> --unanswered [hours]` | questions you and the admins have not answered for that long (24 hours by default) |
+| `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
+| `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
+| `tg topics list\|search <chat>` | a forum group's topics |
+| `tg chats inspect <link>` | where an invite or public link leads; joins nothing |
+| `tg chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
+| `tg chats join <link>`, `tg chats leave <chat>` | join by a link, leave |
+| `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
+
+An agent without a terminal gets the reading half as MCP tools: `tg_review` with `unanswered`,
+`tg_chats_events`, `tg_chats_members`, `tg_chats_inspect` ([mcp.md](mcp.md)).
+
+`create`, `join` and `leave` change something the group's members see: a new group tells the people
+added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
+send guard, and each person added counts toward the hourly limit
+([security.md](security.md#the-send-guard)).
+
+## Coming
+
+A group's title and settings, members and admins, invite links, and moderation rules that delete
+spam or remove people only as far as you allow. They are on the [roadmap](../README.md#roadmap), and
+this page grows with them.
+
+## Limits
+
+- **Telegram's history is the record.** `chats events` and `review` see what the chat's history still
+  holds; a service message an admin deleted is gone for them too.
+- **Admins are known only where Telegram says.** Without them, `review --unanswered` counts only your
+  answers, and says so.
+- **Nothing watches a group by itself.** A check runs when you, an agent at your request, or your
+  schedule runs it.
+- **Telegram's rate limits apply.** Reading every member of a large group is many requests; a
+  `FLOOD_WAIT` answer says how long to wait
+  ([troubleshooting.md](troubleshooting.md#telegram-asks-to-wait-n-s-before-the-next-request)).

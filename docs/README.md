@@ -16,6 +16,7 @@ order.
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
 | [remote.md](remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |
+| [groups.md](groups.md) | How do I keep up with a group I run — open questions, newcomers, a weekly report? |
 | [diagnostics.md](diagnostics.md) | What did a command do, and what is never recorded? |
 | [security.md](security.md) | What reaches the disk, what never does, and what stops a send going to the wrong place? |
 | [troubleshooting.md](troubleshooting.md) | Something does not work: what the screen says, and what to do |
