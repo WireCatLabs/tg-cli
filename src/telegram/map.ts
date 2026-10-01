@@ -374,6 +374,21 @@ export const toInputPoll = ({ question, answers, multiple, anonymous, revote }: 
 export const GROUP_SETTINGS = ["allCanPin", "onlyAdminsAdd"] as const
 
 /**
+ * max's admin rights in Telegram's words. Telegram has no right to read: an admin always reads, so
+ * `read` is not offered.
+ */
+export const ADMIN_RIGHT_FIELDS = {
+  members: "banUsers",
+  admins: "addAdmins",
+  info: "changeInfo",
+  pin: "pinMessages",
+  link: "inviteUsers",
+  post: "postMessages",
+  edit: "editMessages",
+  delete: "deleteMessages",
+} as const
+
+/**
  * A group as `chats create` and `chats join` answer it. Telegram has two of max's five switches —
  * whether members may pin, and whether they may add people — as default member permissions; the
  * other three are `null`.

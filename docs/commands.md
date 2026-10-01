@@ -174,6 +174,36 @@ tg chats members list <chat> [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
+#### `tg chats members add`
+
+add people; they are told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats members add <chat> <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `person` | required | an id, or part of a name. |
+
+#### `tg chats members remove`
+
+remove people; their messages stay
+
+**Changes something in Telegram.**
+
+```sh
+tg chats members remove <chat> <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `person` | required | an id, or part of a name. |
+
 ### `tg chats mark-read`
 
 mark a chat read; the other side sees that you read it
@@ -289,6 +319,44 @@ tg chats link reset <chat>
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+### `tg chats admins`
+
+give or take back a member's admin rights
+
+#### `tg chats admins add`
+
+make a member an admin with these rights
+
+**Changes something in Telegram.**
+
+```sh
+tg chats admins add <chat> <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `person` | required | an id, or part of a name. |
+
+| Option | What it does |
+|---|---|
+| `--can <rights>` | what they may do, comma-separated: members, admins, info, pin, link, post, edit, delete. |
+
+#### `tg chats admins remove`
+
+take an admin's rights back; they stay a member
+
+**Changes something in Telegram.**
+
+```sh
+tg chats admins remove <chat> <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `person` | required | an id, or part of a name. |
 
 ## `tg contacts`
 

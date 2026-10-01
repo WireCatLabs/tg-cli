@@ -107,6 +107,8 @@ class FakeClient {
   setChatDescription = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   setChatDefaultPermissions = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   exportInviteLink = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ link: "https://t.me/+new" }))
+  kickChatMember = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  editAdminRights = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
@@ -1029,6 +1031,33 @@ describe("making, joining and leaving groups", () => {
     expect(await adapter.group("-100700")).toMatchObject({ link: "https://t.me/+old", settings: { allCanPin: false } })
     await adapter.resetInviteLink("-100700")
     expect(client.exportInviteLink.mock.calls).toEqual([[-100700]])
+  })
+
+  it("**adds people, naming who could not be added**, and refuses history per person", async () => {
+    const { adapter, client } = await open()
+    client.addChatMembers.mockResolvedValueOnce([{ userId: 92 }])
+
+    expect(await adapter.addMembers("-100700", ["91", "92"], {})).toEqual({ notAdded: ["92"] })
+    expect(client.addChatMembers.mock.calls).toEqual([[-100700, [91, 92], {}]])
+    expect(() => adapter.addMembers("-100700", ["91"], { history: true })).toThrow(/group's setting/)
+  })
+
+  it("removes people one at a time, and gives or takes admin rights in Telegram's words", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.removeMembers("-100700", ["91", "92"])
+    await adapter.addAdmin("-100700", "91", ["pin", "members", "link"])
+    await adapter.removeAdmin("-100700", "91")
+
+    expect(client.kickChatMember.mock.calls).toEqual([
+      [{ chatId: -100700, userId: 91 }],
+      [{ chatId: -100700, userId: 92 }],
+    ])
+    expect(client.editAdminRights.mock.calls).toEqual([
+      [{ chatId: -100700, userId: 91, rights: { pinMessages: true, banUsers: true, inviteUsers: true } }],
+      [{ chatId: -100700, userId: 91, rights: {} }],
+    ])
+    expect(() => adapter.addAdmin("-100700", "91", ["read"])).toThrow(/no admin right read/)
   })
 
   it("leaves, answering the chat's id", async () => {

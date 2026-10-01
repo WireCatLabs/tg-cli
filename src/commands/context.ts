@@ -15,7 +15,7 @@ import {
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
 import { isolated, sessionFile } from "../paths.js"
-import { GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
+import { ADMIN_RIGHTS, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import type { UpdateEnvironment } from "../update.js"
 
@@ -94,6 +94,8 @@ export const TELEGRAM: Messenger = {
   connect: (command, base, options) => telegramOf(command, base).connect(options),
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   groupSettings: GROUP_SETTINGS,
+  addsWithHistory: false,
+  adminRights: ADMIN_RIGHTS,
   // Saved Messages is the chat with yourself, so its id is the account's.
   savedChatId: (account) => account.account,
   diagnose: async (command, base) => {

@@ -91,20 +91,23 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
 | `tg chats join <link>`, `tg chats leave <chat>` | join by a link, leave |
 | `tg chats update <chat>` | the title, the description, and whether members may pin (`--all-can-pin`) or add people (`--only-admins-add`) |
+| `tg chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
+| `tg chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
+| `tg chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
 | `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
 | `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 
 An agent without a terminal gets the reading half as MCP tools: `tg_review` with `unanswered`,
 `tg_chats_events`, `tg_chats_members`, `tg_chats_inspect` ([mcp.md](mcp.md)).
 
-`create`, `join`, `leave`, `update` and `link reset` change something the group's members see: a new group tells the people
+`create`, `join`, `leave`, `update`, `link reset`, `members` and `admins` change something the group's members see: a new group tells the people
 added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
 send guard, and each person added counts toward the hourly limit
 ([security.md](security.md#the-send-guard)).
 
 ## Coming
 
-Members and admins, and moderation rules that delete
+Moderation rules that delete
 spam or remove people only as far as you allow. They are on the [roadmap](../README.md#roadmap), and
 this page grows with them.
 

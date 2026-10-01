@@ -419,6 +419,10 @@ tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and da
 tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 tg chats link show "Hiking 2027"                   # the invite link, if you may see it
 tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
+tg chats members add "Hiking 2027" @kate 67890     # they are told
+tg chats members remove "Hiking 2027" @kate        # their messages stay
+tg chats admins add "Hiking 2027" @kate --can pin,delete
+tg chats admins remove "Hiking 2027" @kate
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
@@ -427,9 +431,9 @@ approve who joins answers that the request was sent. Each goes through the guard
 and each person added counts toward the hourly limit.
 
 `chats update` changes the title, the description and the two settings Telegram has, in one go; the
-answer is the group as it stands, and `chats show` shows the same settings. Members, admins and
-moderation rules are not in `tg` yet ([roadmap](../README.md#roadmap)). What there is for a group
-you run: [groups.md](groups.md).
+answer is the group as it stands, and `chats show` shows the same settings. Moderation rules are not
+in `tg` yet ([roadmap](../README.md#roadmap)). What there is for a group you run:
+[groups.md](groups.md).
 
 ## For scripts and agents
 

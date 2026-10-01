@@ -397,6 +397,42 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-group").map((entry) => entry.action)).toEqual(["update", "link.reset"])
   })
 
+  it("**adds and removes members and admins through the guard**", async () => {
+    const done: string[] = []
+    const adapter = scripted({
+      people: async (references) => references.map((_, index) => String(91 + index)),
+      addMembers: async (_chat, people) => {
+        done.push(`add ${people.join(",")}`)
+        return { notAdded: [] }
+      },
+      removeMembers: async (_chat, people) => {
+        done.push(`remove ${people.join(",")}`)
+      },
+      addAdmin: async (_chat, person, rights) => {
+        done.push(`admin ${person} ${rights.join(",")}`)
+      },
+      removeAdmin: async (_chat, person) => {
+        done.push(`unadmin ${person}`)
+      },
+    })
+
+    const codes = [
+      (await tg(["g-members", "chats", "members", "add", "Valencia", "Ivan", "Olga"], adapter)).code,
+      (await tg(["g-members", "chats", "members", "remove", "Valencia", "Ivan"], adapter)).code,
+      (await tg(["g-members", "chats", "admins", "add", "Valencia", "Ivan", "--can", "pin,delete"], adapter)).code,
+      (await tg(["g-members", "chats", "admins", "remove", "Valencia", "Ivan"], adapter)).code,
+    ]
+
+    expect(codes).toEqual([0, 0, 0, 0])
+    expect(done).toEqual(["add 91,92", "remove 91", "admin 91 pin,delete", "unadmin 91"])
+    expect(journal("g-members").map((entry) => entry.action)).toEqual([
+      "members.add",
+      "members.remove",
+      "admins.add",
+      "admins.remove",
+    ])
+  })
+
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
     configure({ "g-del": { sendsPerHour: 2 } })
     const { adapter, deleted } = telegram()
