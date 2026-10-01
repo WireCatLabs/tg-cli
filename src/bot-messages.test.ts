@@ -15,6 +15,9 @@ let keyring: ReturnType<typeof memoryKeyring>
 let requests: { method: string; params: Record<string, unknown>; file?: string }[]
 let next: number
 let refusing: string | undefined
+let pages: unknown[][]
+let stop: AbortController
+let webhook: string
 
 const ok = (result: unknown) => new Response(JSON.stringify({ ok: true, result }))
 
@@ -72,6 +75,15 @@ const telegram: FetchLike = async (url, init) => {
       return ok({ ...message(params.text), message_id: Number(params.message_id), edit_date: 1_759_312_900 })
     case "getChat":
       return ok(GROUP)
+    case "getMyCommands":
+      return ok([{ command: "start", description: "Begin" }])
+    case "getWebhookInfo":
+      return ok({ url: webhook, ...(webhook ? { allowed_updates: ["message"] } : {}) })
+    case "getUpdates": {
+      const page = pages.shift()
+      if (!page) stop.abort()
+      return ok(page ?? [])
+    }
     case "getChatAdministrators":
       return ok([
         { status: "creator", user: { id: 1, first_name: "Olga" }, is_anonymous: false },
@@ -96,10 +108,11 @@ const tg = async (argv: string[], stdin = "") => {
     tty: false,
     keyring,
     botFetch: telegram,
+    signal: stop.signal,
     stdin: Object.assign(Readable.from([stdin]), { isTTY: false }),
   })
-  const out = streams.stdout.join("\n")
-  return { code, answer: out ? JSON.parse(out) : undefined, err: streams.stderr.join("\n") }
+  const lines = streams.stdout.map((line) => JSON.parse(line))
+  return { code, answer: lines.length === 1 ? lines[0] : undefined, lines, err: streams.stderr.join("\n") }
 }
 
 beforeEach(async () => {
@@ -107,6 +120,9 @@ beforeEach(async () => {
   requests = []
   next = 500
   refusing = undefined
+  pages = []
+  stop = new AbortController()
+  webhook = ""
   await tg(["sales", "bot", "auth", "set"], TOKEN)
   await tg(["sales", "bot", "chats", "show", String(GROUP.id)])
   requests = []
@@ -330,5 +346,108 @@ describe("tg bot chats admins and members", () => {
 
     expect(failed.code).not.toBe(0)
     expect(failed.err).toContain("91 is out of the chat and still blocked, but")
+  })
+})
+
+const ANN = { id: 42, is_bot: false, first_name: "Ann" }
+
+describe("tg bot watch", () => {
+  it("**asks from the next update every time, with the full list of kinds**, and keeps what came", async () => {
+    pages = [
+      [
+        { update_id: 7, message: { message_id: 600, chat: GROUP, from: ANN, date: 1_759_312_800, text: "hi bot" } },
+        {
+          update_id: 8,
+          chat_member: {
+            chat: GROUP,
+            from: ANN,
+            date: 1_759_312_801,
+            old_chat_member: { status: "left", user: ANN },
+            new_chat_member: { status: "member", user: ANN },
+          },
+        },
+      ],
+    ]
+    const watched = await tg(["sales", "bot", "watch", "--events", "--jsonl"])
+
+    const polls = requests.filter(({ method }) => method === "getUpdates").map(({ params }) => params)
+    expect(polls[0]).toMatchObject({
+      timeout: 25,
+      allowed_updates: expect.arrayContaining(["chat_member", "callback_query"]),
+    })
+    expect(polls[0]).not.toHaveProperty("offset")
+    expect(polls[1]).toMatchObject({ offset: 9 })
+    expect(watched.code).toBe(0)
+    expect(watched.lines.map((line: { event: string }) => line.event)).toEqual(["message", "joined"])
+    const kept = await tg(["sales", "bot", "messages", "show", "Team", "600", "--offline", "--json"])
+    expect(kept.answer).toMatchObject({ text: "hi bot", senderId: "42" })
+  })
+
+  it("asks Telegram for only the --types given", async () => {
+    await tg(["sales", "bot", "watch", "--types", "message,callback_query", "--jsonl"])
+    expect(requests.find(({ method }) => method === "getUpdates")?.params).toMatchObject({
+      allowed_updates: ["message", "callback_query"],
+    })
+  })
+
+  it("**replaces the pressed message from the press `bot watch` kept**, after answering the button", async () => {
+    pages = [
+      [
+        {
+          update_id: 9,
+          callback_query: {
+            id: "cq-1",
+            from: ANN,
+            data: "yes",
+            message: { message_id: 601, chat: GROUP, date: 1_759_312_800 },
+          },
+        },
+      ],
+    ]
+    await tg(["sales", "bot", "watch", "--jsonl"])
+    requests = []
+    await tg(["sales", "bot", "callbacks", "answer", "cq-1", "--notification", "Done", "--text", "Confirmed"])
+
+    expect(requests.map(({ method, params }) => [method, params])).toEqual([
+      ["answerCallbackQuery", { callback_query_id: "cq-1", text: "Done" }],
+      ["editMessageText", { chat_id: String(GROUP.id), message_id: 601, text: "Confirmed" }],
+    ])
+    expect((await tg(["sales", "bot", "callbacks", "answer", "cq-unseen", "--text", "x"])).code).toBe(2)
+  })
+
+  it("sets the menu, refuses a command without a description, and clears it", async () => {
+    await tg(["sales", "bot", "commands", "set", "start=Begin", "help=Help"])
+    expect((await tg(["sales", "bot", "commands", "set", "start"])).code).toBe(2)
+    await tg(["sales", "bot", "commands", "clear"])
+    const listed = await tg(["sales", "bot", "commands", "list", "--json"])
+
+    expect(requests.map(({ method }) => method)).toEqual(["setMyCommands", "deleteMyCommands", "getMyCommands"])
+    expect(listed.answer.items).toEqual([{ name: "start", description: "Begin" }])
+  })
+
+  it("**sets a webhook only while none is set**, deletes only the address set, and watch refuses meanwhile", async () => {
+    await tg(["sales", "bot", "webhooks", "set", "https://a.example/hook"])
+    expect(requests.find(({ method }) => method === "setWebhook")?.params).toMatchObject({
+      url: "https://a.example/hook",
+      allowed_updates: expect.arrayContaining(["chat_member"]),
+    })
+    requests = []
+    await tg(
+      ["sales", "bot", "webhooks", "set", "https://a.example/hook", "--types", "message", "--secret-stdin"],
+      "s3cret",
+    )
+    expect(requests.find(({ method }) => method === "setWebhook")?.params).toEqual({
+      url: "https://a.example/hook",
+      allowed_updates: ["message"],
+      secret_token: "s3cret",
+    })
+    webhook = "https://a.example/hook"
+    expect((await tg(["sales", "bot", "webhooks", "set", "https://b.example/hook"])).code).toBe(7)
+    expect((await tg(["sales", "bot", "webhooks", "set", "https://b.example/hook", "--add"])).code).not.toBe(0)
+    expect((await tg(["sales", "bot", "watch", "--jsonl"])).code).toBe(2)
+    expect((await tg(["sales", "bot", "webhooks", "delete", "https://b.example/hook"])).code).toBe(6)
+    requests = []
+    await tg(["sales", "bot", "webhooks", "delete", "https://a.example/hook"])
+    expect(requests.map(({ method }) => method)).toContain("deleteWebhook")
   })
 })

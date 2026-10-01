@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**319 ✅ · 18 ⛔ · 0 ❌** — 150 commands, 187 options.
+**325 ✅ · 12 ⛔ · 0 ❌** — 150 commands, 187 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -321,18 +321,18 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot recipients clear` |  | ✅ |  |
 | `bot sends list` |  | ✅ |  |
 | `bot watch` |  | ✅ |  |
-| `bot watch` | `--events` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
-| `bot watch` | `--types` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot watch` | `--events` | ✅ |  |
+| `bot watch` | `--types` | ✅ |  |
 | `bot callbacks answer` |  | ✅ |  |
-| `bot callbacks answer` | `--text` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
-| `bot callbacks answer` | `--notification` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot callbacks answer` | `--text` | ✅ |  |
+| `bot callbacks answer` | `--notification` | ✅ |  |
 | `bot commands list` |  | ✅ |  |
 | `bot commands set` |  | ✅ |  |
 | `bot commands clear` |  | ✅ |  |
 | `bot webhooks list` |  | ✅ |  |
 | `bot webhooks set` |  | ✅ |  |
-| `bot webhooks set` | `--types` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
-| `bot webhooks set` | `--secret-stdin` | ⛔ | P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR |
+| `bot webhooks set` | `--types` | ✅ |  |
+| `bot webhooks set` | `--secret-stdin` | ✅ |  |
 | `bot webhooks delete` |  | ✅ |  |
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |

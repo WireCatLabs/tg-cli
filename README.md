@@ -44,8 +44,10 @@ tg bot list --check                      # every bot on this computer
 - **Messages and chats.** Send, edit, delete and pin, to a chat by id or by title, or to a person
   as `user:<id>`; `--md`, `--html`, a file or a photo. A Telegram bot cannot read a chat's history:
   `messages list` shows what this bot sent and received on this computer.
-- **Coming next:** admins, button answers, the command menu, webhooks and `bot watch` — the same
-  commands `max bot` has.
+- **Admins, members, buttons, the menu, webhooks.** `bot chats admins`, `bot chats members remove`,
+  `bot callbacks answer`, `bot commands`, `bot webhooks` — the same commands `max bot` has.
+- **`bot watch`** prints what happens in the bot's chats as it arrives, and keeps it: that is the
+  bot's history on this computer.
 
 In full: [docs/bot.md](docs/bot.md).
 

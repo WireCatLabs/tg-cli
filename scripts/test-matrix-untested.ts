@@ -83,36 +83,6 @@ export const UNTESTED: Untested[] = [
       "drives it with a stand-in spawnJob, and lane L5 owns the live check",
   },
   {
-    command: "bot watch",
-    option: "--events",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
-    command: "bot watch",
-    option: "--types",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
-    command: "bot callbacks answer",
-    option: "--text",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
-    command: "bot callbacks answer",
-    option: "--notification",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
-    command: "bot webhooks set",
-    option: "--types",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
-    command: "bot webhooks set",
-    option: "--secret-stdin",
-    reason: "P8 B4's shared command; tg's Telegram bot adapter, and its tests, come in the next tg PR",
-  },
-  {
     command: "models text download",
     option: "--accept-terms",
     reason:

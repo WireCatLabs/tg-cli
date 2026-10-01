@@ -52,15 +52,20 @@ export class TelegramBotTransport {
   /**
    * `reads: false` for a write, so a write that got no answer is `outcome_unknown`, never retried by
    * anyone. `file` goes up in the same request, as multipart: Telegram has no upload step of its own.
+   * `timeoutMs` replaces the transport's for one call — a long poll waits longer than any other request.
    */
   async call(
     method: string,
     params: Record<string, unknown> = {},
-    { reads = true, file }: { reads?: boolean; file?: OutgoingFile } = {},
+    {
+      reads = true,
+      file,
+      timeoutMs = this.#timeoutMs,
+    }: { reads?: boolean; file?: OutgoingFile; timeoutMs?: number } = {},
   ): Promise<unknown> {
     this.#events?.({ event: "request", operation: method })
     const started = performance.now()
-    const signals = [AbortSignal.timeout(this.#timeoutMs), ...(this.#signal ? [this.#signal] : [])]
+    const signals = [AbortSignal.timeout(timeoutMs), ...(this.#signal ? [this.#signal] : [])]
     let response: Response
     try {
       response = await this.#fetch(`${this.#baseUrl}/bot${this.#token}/${method}`, {
@@ -74,7 +79,7 @@ export class TelegramBotTransport {
         signal: AbortSignal.any(signals),
       })
     } catch (error) {
-      const failure = this.#unanswered(method, error, reads)
+      const failure = this.#unanswered(method, error, reads, timeoutMs)
       this.#events?.({ event: "response", operation: method, outcome: "error", errorCode: failure.code })
       throw failure
     }
@@ -106,7 +111,7 @@ export class TelegramBotTransport {
     throw refusal
   }
 
-  #unanswered(method: string, error: unknown, reads: boolean): CliError {
+  #unanswered(method: string, error: unknown, reads: boolean, timeoutMs: number): CliError {
     const timedOut = (error as { name?: string })?.name === "TimeoutError"
     if (this.#signal?.aborted && (this.#signal.reason as { name?: string })?.name !== "TimeoutError") {
       return new CliError("cancelled", `${method} was cancelled`, { operation: method })
@@ -120,7 +125,7 @@ export class TelegramBotTransport {
     }
     return new CliError(
       timedOut ? "timeout" : "network_error",
-      timedOut ? `${method} got no answer within ${this.#timeoutMs} ms` : `${method} could not reach Telegram`,
+      timedOut ? `${method} got no answer within ${timeoutMs} ms` : `${method} could not reach Telegram`,
       { operation: method, retryable: true },
     )
   }

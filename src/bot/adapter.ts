@@ -7,9 +7,12 @@ import {
   type TgAdmin,
   type TgChat,
   type TgMessage,
+  type TgUpdate,
   toAdmin,
   toChat,
+  toEvent,
   toMessage,
+  UPDATE_TYPES,
   type User,
 } from "./map.js"
 import type { OutgoingFile, TelegramBotTransport } from "./transport.js"
@@ -167,6 +170,82 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
     },
 
     // Telegram removes only by banning; without --block the ban is lifted at once, so the link lets them back.
+    menu: async () =>
+      ((await transport.call("getMyCommands")) as { command: string; description: string }[]).map(
+        ({ command, description }) => ({ name: command, description: description || null }),
+      ),
+
+    setMenu: async (entries) => {
+      if (entries.length === 0) {
+        await transport.call("deleteMyCommands", {}, { reads: false })
+        return
+      }
+      const bare = entries.find((entry) => !entry.description)
+      if (bare) throw new CliError("validation_error", `a Telegram command needs a description: ${bare.name}=…`)
+      await transport.call(
+        "setMyCommands",
+        { commands: entries.map(({ name, description }) => ({ command: name, description })) },
+        { reads: false },
+      )
+    },
+
+    // Telegram's answer cannot change the message; --text is a second call, to the press `bot watch` kept.
+    answer: async (callbackId, { notification, text, press }) => {
+      if (text !== undefined && !press) {
+        throw new CliError(
+          "validation_error",
+          "a Telegram bot can replace the message only for a press `bot watch` saw — run it, then answer",
+        )
+      }
+      await transport.call(
+        "answerCallbackQuery",
+        { callback_query_id: callbackId, ...(notification === undefined ? {} : { text: notification }) },
+        { reads: false },
+      )
+      if (text === undefined || !press) return
+      await transport
+        .call("editMessageText", { chat_id: press.chatId, message_id: Number(press.messageId), text }, { reads: false })
+        .catch((error: unknown) => halfDone("the button was answered", error))
+    },
+
+    webhooks: async () => {
+      const info = (await transport.call("getWebhookInfo")) as { url?: string; allowed_updates?: string[] }
+      return info.url ? [{ url: info.url, types: info.allowed_updates ?? null }] : []
+    },
+
+    setWebhook: async (url, { types, secret }) => {
+      await transport.call(
+        "setWebhook",
+        { url, allowed_updates: types ?? UPDATE_TYPES, ...(secret ? { secret_token: secret } : {}) },
+        { reads: false },
+      )
+    },
+
+    // Telegram's deleteWebhook names no address: refuse one that is not the address set.
+    deleteWebhook: async (url) => {
+      const info = (await transport.call("getWebhookInfo")) as { url?: string }
+      if (info.url !== url) throw new CliError("not_found", `this bot's webhook is not ${url}`)
+      await transport.call("deleteWebhook", {}, { reads: false })
+    },
+
+    updates: async (cursor, { types, waitSeconds }) => {
+      if (self === undefined) await me()
+      const updates = (await transport.call(
+        "getUpdates",
+        {
+          ...(cursor ? { offset: Number(cursor) } : {}),
+          timeout: waitSeconds,
+          allowed_updates: types ?? UPDATE_TYPES,
+        },
+        { timeoutMs: (waitSeconds + 15) * 1000 },
+      )) as TgUpdate[]
+      const last = updates.at(-1)
+      return {
+        events: updates.map((update) => toEvent(update, self)),
+        cursor: last ? String(last.update_id + 1) : cursor,
+      }
+    },
+
     removeMember: async (chat, person, { block }) => {
       const target = { chat_id: chatIdOf(chat), user_id: Number(person) }
       await transport.call("banChatMember", target, { reads: false })
