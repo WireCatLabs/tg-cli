@@ -66,14 +66,14 @@ const telegram = () => {
       pinned.push(`${messageId} off`)
     },
     forward: async (_from, _id, toChatId, options) => {
-      forwarded.push(options.silent ? `${toChatId} silent` : toChatId)
+      forwarded.push(`${options.silent ? `${toChatId} silent` : toChatId} ${options.sendId}`)
       return message("70", { chatId: toChatId, outgoing: true })
     },
     react: async (_chat, messageId, emoji) => {
       reacted.push(`${messageId} ${emoji}`)
     },
-    edit: async (chatId, messageId, text) => {
-      edited.push(text)
+    edit: async (chatId, messageId, text, options) => {
+      edited.push(options?.markup ? `${text} ${JSON.stringify(options.markup)}` : text)
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })
@@ -207,8 +207,31 @@ describe("the send guard in front of the other writes", () => {
     const { code } = await tg(["g-quiet", "messages", "forward", "Valencia", "5", "--to", "me", "--silent"], adapter)
 
     expect(code).toBe(0)
-    expect(forwarded).toEqual(["1 silent"])
+    expect(forwarded).toEqual([expect.stringMatching(/^1 silent \S+$/)])
     expect(journal("g-quiet")).toMatchObject([{ kind: "forward", outcome: "sent", chatId: "1", messageId: "70" }])
+  })
+
+  it("repeats a forward with the --send-id it is given, and journals that id", async () => {
+    const { adapter, forwarded } = telegram()
+
+    const { code, stdout } = await tg(
+      ["g-fwd-id", "messages", "forward", "Valencia", "5", "--to", "me", "--send-id", "9001", "--json"],
+      adapter,
+    )
+
+    expect(code).toBe(0)
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ sendId: "9001", operationId: "9001" })
+    expect(forwarded).toEqual(["1 9001"])
+    expect(journal("g-fwd-id")).toMatchObject([{ kind: "forward", outcome: "sent", sendId: "9001" }])
+  })
+
+  it("edits with --markdown as formatting, the marks taken out", async () => {
+    const { adapter, edited } = telegram()
+
+    const { code } = await tg(["g-edit-md", "messages", "edit", "Valencia", "5", "**new** text", "--markdown"], adapter)
+
+    expect(code).toBe(0)
+    expect(edited).toEqual(['new text [{"type":"bold","from":0,"length":3}]'])
   })
 
   it("pins quietly past the hourly limit, but not with --notify", async () => {

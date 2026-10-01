@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**176 ✅ · 4 ⛔ · 0 ❌** — 79 commands, 101 options.
+**178 ✅ · 4 ⛔ · 0 ❌** — 79 commands, 103 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -75,12 +75,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages transcribe` | `--local` | ✅ |  |
 | `messages transcribe` | `--model` | ✅ |  |
 | `messages edit` |  | ✅ |  |
+| `messages edit` | `--markdown` | ✅ |  |
 | `messages delete` |  | ✅ |  |
 | `messages delete` | `--for-everyone` | ✅ |  |
 | `messages delete` | `--allow-dangerous` | ✅ |  |
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
+| `messages forward` | `--send-id` | ✅ |  |
 | `messages pin` |  | ✅ |  |
 | `messages pin` | `--notify` | ✅ |  |
 | `messages unpin` |  | ✅ |  |

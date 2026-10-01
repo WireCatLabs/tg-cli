@@ -10,6 +10,7 @@ import {
   type ChatEvents,
   type GroupMember,
   type LinkTarget,
+  type Markup,
   type Member,
   type Message,
   type MessageEvent,
@@ -26,9 +27,10 @@ import {
   type InputPeerLike,
   Long,
   MtPeerNotFoundError,
+  PeersIndex,
   type RawUpdateInfo,
   TelegramClient,
-  type Message as TgMessage,
+  Message as TgMessage,
   type Poll as TgPoll,
   tl,
   type User,
@@ -412,11 +414,12 @@ export class TelegramAdapter {
    * An edit has no `random_id`, but setting the same text twice is harmless: Telegram answers the
    * repeat with MESSAGE_NOT_MODIFIED, taken here as done — so a retry after an unknown outcome is safe.
    */
-  edit(chatId: string, messageId: string, text: string): Promise<Message> {
+  edit(chatId: string, messageId: string, text: string, { markup }: { markup?: Markup[] } = {}): Promise<Message> {
     const id = messageNumber(messageId, "a message id is a number")
+    const body = markup ? toFormatted(text, markup) : text
     return this.#call(async () => {
       try {
-        return toMessage(await this.#client.editMessage({ chatId: Number(chatId), message: id, text }))
+        return toMessage(await this.#client.editMessage({ chatId: Number(chatId), message: id, text: body }))
       } catch (error) {
         if (tl.RpcError.is(error, "MESSAGE_NOT_MODIFIED")) {
           const [current] = await this.#client.getMessages(Number(chatId), [id])
@@ -428,25 +431,36 @@ export class TelegramAdapter {
   }
 
   /**
-   * mtcute draws the forward's `random_id` itself, so a retry could not be deduplicated: an unknown
-   * outcome says to look in the target chat first.
+   * The raw call, because mtcute's `forwardMessagesById` draws the `random_id` itself: a retry has to
+   * repeat the first one for Telegram to keep one copy, as a send does.
    */
-  forward(fromChatId: string, messageId: string, toChatId: string, { silent }: { silent?: boolean }): Promise<Message> {
+  forward(
+    fromChatId: string,
+    messageId: string,
+    toChatId: string,
+    { sendId, silent }: { sendId: string; silent?: boolean },
+  ): Promise<Message> {
     const id = messageNumber(messageId, "a message id is a number")
+    const randomId = parseSendId(sendId)
     return this.#call(async () => {
       try {
-        const [copy] = await this.#client.forwardMessagesById({
-          fromChatId: Number(fromChatId),
-          messages: [id],
-          toChatId: Number(toChatId),
+        const updates = await this.#client.call({
+          _: "messages.forwardMessages",
+          fromPeer: await this.#client.resolvePeer(Number(fromChatId)),
+          toPeer: await this.#client.resolvePeer(Number(toChatId)),
+          id: [id],
+          randomId: [randomId],
           ...(silent ? { silent } : {}),
         })
+        this.#client.handleClientUpdate(updates, true)
+        const copy = forwardedCopy(updates)
         if (!copy) throw new CliError("provider_error", "Telegram answered the forward without the new message")
         return toMessage(copy)
       } catch (error) {
         throw unknownIfUnanswered(
           error,
-          "the message may have been forwarded — look in the target chat before repeating",
+          `the message may have been forwarded. Repeat with --send-id ${sendId}, never without it`,
+          { sendId },
         )
       }
     })
@@ -758,6 +772,12 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 const messageNumber = (id: string, rule = "--before takes a message id"): number => {
   if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
   return Number(id)
+}
+
+const forwardedCopy = (updates: tl.TypeUpdates): TgMessage | undefined => {
+  if (updates._ !== "updates" && updates._ !== "updatesCombined") return undefined
+  const update = updates.updates.find((one) => one._ === "updateNewMessage" || one._ === "updateNewChannelMessage")
+  return update && "message" in update ? new TgMessage(update.message, PeersIndex.from(updates)) : undefined
 }
 
 const parseSendId = (typed: string): Long => {

@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
-import { FileLocation, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
+import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
 
@@ -44,9 +44,15 @@ class FakeClient {
   authorizations: unknown[] = []
   phoneOwner: unknown = null
   contacts: unknown[] = []
+  forwardAnswer: unknown = forwarded(60)
+  handleClientUpdate = vi.fn()
   call = async (request: { _: string }) => {
     this.#record("call", [request])
     if (request._ === "account.getAuthorizations") return { authorizations: this.authorizations }
+    if (request._ === "messages.forwardMessages") {
+      if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
+      return this.forwardAnswer
+    }
     return this.transcripts.shift() ?? { text: "", pending: true }
   }
   resolvePhoneNumber = async (phone: string) => {
@@ -195,6 +201,43 @@ function fakePoll({ chosen }: { chosen?: number }) {
     isMultiple: false,
     isPublic: true,
     voters: 5,
+  }
+}
+
+/** What Telegram answers a forward with: the copy, in a supergroup, among the users and chats it names. */
+function forwarded(id: number) {
+  return {
+    _: "updates",
+    updates: [
+      {
+        _: "updateNewChannelMessage",
+        message: {
+          _: "message",
+          id,
+          peerId: { _: "peerChannel", channelId: 500 },
+          fromId: { _: "peerUser", userId: 1 },
+          date: 1790000000,
+          message: "synthetic copy",
+          out: true,
+        },
+        pts: 1,
+        ptsCount: 1,
+      },
+    ],
+    users: [{ _: "user", id: 1, firstName: "Owner", self: true }],
+    chats: [
+      {
+        _: "channel",
+        id: 500,
+        title: "Valencia expats",
+        megagroup: true,
+        accessHash: Long.ZERO,
+        photo: { _: "chatPhotoEmpty" },
+        date: 0,
+      },
+    ],
+    date: 1790000000,
+    seq: 0,
   }
 }
 
@@ -766,6 +809,18 @@ describe("editing", () => {
     expect(client.editMessage).toHaveBeenCalledWith({ chatId: -100500, message: 5, text: "fixed" })
   })
 
+  it("sends an edit's markup as Telegram entities", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.edit("-100500", "5", "fixed now", { markup: [{ type: "bold", from: 0, length: 5 }] })
+
+    expect(client.editMessage).toHaveBeenCalledWith({
+      chatId: -100500,
+      message: 5,
+      text: { text: "fixed now", entities: [{ _: "messageEntityBold", offset: 0, length: 5 }] },
+    })
+  })
+
   it("**takes an edit to the same text as done**, answering the message as it stands", async () => {
     const { adapter, client } = await open()
     client.editMessage.mockRejectedValueOnce(new tl.RpcError(400, "MESSAGE_NOT_MODIFIED"))
@@ -789,24 +844,23 @@ describe("forwarding", () => {
   it("forwards one message by id, quietly when asked, and answers the copy", async () => {
     const { adapter, client } = await open()
 
-    const copy = await adapter.forward("-100500", "5", "1", { silent: true })
+    const copy = await adapter.forward("-100500", "5", "-1001", { sendId: "123456789012345", silent: true })
 
-    expect(copy).toMatchObject({ id: "60" })
-    expect(client.forwardMessagesById).toHaveBeenCalledWith({
-      fromChatId: -100500,
-      messages: [5],
-      toChatId: 1,
-      silent: true,
-    })
+    expect(copy).toMatchObject({ id: "60", text: "synthetic copy", outgoing: true })
+    const request = client.calls.find((call) => call.method === "call")?.args[0] as Record<string, unknown>
+    expect(request).toMatchObject({ _: "messages.forwardMessages", id: [5], silent: true })
+    expect(String((request.randomId as unknown[])[0])).toBe("123456789012345")
+    expect(client.handleClientUpdate).toHaveBeenCalledOnce()
   })
 
-  it("makes a timeout an unknown outcome that says to look before repeating", async () => {
+  it("makes a timeout an unknown outcome that names the send id to repeat with", async () => {
     const { adapter, client } = await open()
-    client.forwardMessagesById.mockRejectedValueOnce(new MtTimeoutError(1000))
+    client.forwardAnswer = new MtTimeoutError(1000)
 
-    await expect(adapter.forward("-100500", "5", "1", {})).rejects.toMatchObject({
+    await expect(adapter.forward("-100500", "5", "1", { sendId: "77" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      message: expect.stringContaining("look in the target chat"),
+      message: expect.stringContaining("--send-id 77"),
+      details: { sendId: "77" },
     })
   })
 })
