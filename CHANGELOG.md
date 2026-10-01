@@ -16,6 +16,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   answers the chat a batch at a time (`tg conversations batches next`, `tg conversations links add`);
   `tg conversations links clear` drops its answers. tg calls no model itself. See
   [the archive](docs/archive.md).
+- **`tg mcp` serves this tool's guide as the resource `tg://skill`**, and names it in what it tells
+  the agent on connecting, so an agent can read it without running `tg skill show`.
 
 ### Fixed
 
