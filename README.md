@@ -415,7 +415,6 @@ before the pull request.
 
 What is coming, in the order it is likely to arrive:
 
-- **Running groups** — moderation rules checked on your say-so.
 - **Richer sending** — several photos in one message, sending into a forum topic.
 
 ## Licence
