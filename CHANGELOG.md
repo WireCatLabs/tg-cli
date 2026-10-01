@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats members add|remove`** and **`tg chats admins add|remove`**, with the MCP tools
+  `tg_chats_members_add|remove` and `tg_chats_admins_add|remove`. `--can` takes members, admins,
+  info, pin, link, post, edit and delete; Telegram has no separate right to read. Adding answers who
+  could not be added; each person added counts toward the hourly limit.
 - **`tg chats update <chat>`** — `--title`, `--description`, `--all-can-pin on|off`,
   `--only-admins-add on|off` — and **`tg chats link show|reset`**, with the MCP tools
   `tg_chats_update`, `tg_chats_link_show`, `tg_chats_link_reset`. `tg chats show` adds a group's

@@ -4,6 +4,7 @@ import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import {
   type AccountSession,
+  type AdminRight,
   type Attachment,
   type Chat,
   type ChatCard,
@@ -41,6 +42,7 @@ import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import {
   type Account,
+  ADMIN_RIGHT_FIELDS,
   answerId,
   attachmentsOf,
   type EventOf,
@@ -873,6 +875,62 @@ export class TelegramAdapter {
     })
   }
 
+  /** A supergroup shows new members its history by its own setting, never per person: `history` is refused. */
+  addMembers(chatId: string, people: string[], { history }: { history?: boolean }): Promise<{ notAdded: string[] }> {
+    if (history)
+      throw new CliError(
+        "validation_error",
+        "Telegram shows new members the history by the group's setting, not per person",
+      )
+    return this.#call(async () => {
+      try {
+        const missing = await this.#client.addChatMembers(Number(chatId), people.map(Number), {})
+        return { notAdded: missing.map((one) => String(one.userId)) }
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the people may or may not have been added; check `tg chats members list`")
+      }
+    })
+  }
+
+  /** One request per person, in turn: Telegram rate-limits these hard. */
+  removeMembers(chatId: string, people: string[]): Promise<void> {
+    return this.#call(async () => {
+      for (const person of people) {
+        try {
+          await this.#client.kickChatMember({ chatId: Number(chatId), userId: Number(person) })
+        } catch (error) {
+          throw unknownIfUnanswered(
+            error,
+            `${person} may or may not have been removed; check \`tg chats members list\``,
+          )
+        }
+      }
+    })
+  }
+
+  addAdmin(chatId: string, person: string, rights: AdminRight[]): Promise<void> {
+    const missing = rights.filter((right) => !(right in ADMIN_RIGHT_FIELDS))
+    if (missing.length > 0) throw new CliError("validation_error", `Telegram has no admin right ${missing.join(", ")}`)
+    const fields = Object.fromEntries(
+      rights.map((right) => [ADMIN_RIGHT_FIELDS[right as keyof typeof ADMIN_RIGHT_FIELDS], true]),
+    )
+    return this.#editAdmin(chatId, person, fields)
+  }
+
+  removeAdmin(chatId: string, person: string): Promise<void> {
+    return this.#editAdmin(chatId, person, {})
+  }
+
+  #editAdmin(chatId: string, person: string, rights: Omit<tl.RawChatAdminRights, "_">): Promise<void> {
+    return this.#call(async () => {
+      try {
+        await this.#client.editAdminRights({ chatId: Number(chatId), userId: Number(person), rights })
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the rights may or may not have changed; check `tg chats members list`")
+      }
+    })
+  }
+
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
     try {
       const members = await this.#client.getChatMembers(peer, { limit: 200 })
@@ -894,6 +952,9 @@ export class TelegramAdapter {
 }
 
 export { GROUP_SETTINGS }
+
+/** The rights `tg chats admins add --can` offers: max's, less `read`. */
+export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
 
 export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000
