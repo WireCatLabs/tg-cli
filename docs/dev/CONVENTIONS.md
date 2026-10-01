@@ -29,7 +29,7 @@ for code and documents. This page lists only where `tg` differs or adds.
 - **Link, do not copy.** A link to a sibling repository uses its GitHub URL, so it works for a
   reader who has only this one; `pnpm docs:check` checks every link inside this repository.
 - **Every option a user page names exists**, or the parity manifest plans it for that command (docs
-  come first). `pnpm docs:commands` checks every `tg <command> --option` on the user pages; a change
+  come first). `pnpm parity:check` checks every `tg <command> --option` on the user pages; a change
   that drops an option fails until its pages stop naming it.
 
 ## The changelog
