@@ -47,7 +47,7 @@ tg account show           # who you are logged in as
 ```sh
 tg chats list --limit 5
 tg messages list "Book club" --limit 20
-tg messages send me "Call mum" --at 2h            # a reminder in Saved Messages in two hours
+tg messages send me "Call mum" --at-time 2h       # a reminder in Saved Messages in two hours
 tg review --since-time 1d                         # a day of messages: who promised what
 tg messages search "contract"                     # everything kept, without connecting
 tg chats list --json | jq -r '.items[].id'        # one JSON value on stdout, nothing else
