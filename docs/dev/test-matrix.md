@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**183 ✅ · 7 ⛔ · 0 ❌** — 79 commands, 111 options.
+**190 ✅ · 7 ⛔ · 0 ❌** — 79 commands, 118 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -50,6 +50,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--before` | ✅ |  |
 | `messages list` | `--after` | ✅ |  |
 | `messages list` | `--transcribe` | ✅ |  |
+| `messages list` | `--model` | ✅ |  |
+| `messages list` | `--mark-read` | ✅ |  |
 | `messages search` |  | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
@@ -62,6 +64,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--markdown` | ✅ |  |
 | `messages send` | `--file` | ✅ |  |
 | `messages send` | `--photo` | ✅ |  |
+| `messages send` | `--as-file` | ✅ |  |
+| `messages send` | `--voice` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
 | `messages send` | `--at` | ✅ |  |
 | `messages show` |  | ✅ |  |
@@ -108,11 +112,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `inbox` | `--limit` | ✅ |  |
 | `inbox` | `--all` | ✅ |  |
 | `inbox` | `--transcribe` | ✅ |  |
+| `inbox` | `--model` | ✅ |  |
 | `review` |  | ✅ |  |
 | `review` | `--since` | ✅ |  |
 | `review` | `--chat` | ✅ |  |
 | `review` | `--unanswered` | ✅ |  |
 | `review` | `--all` | ✅ |  |
+| `review` | `--transcribe` | ✅ |  |
+| `review` | `--model` | ✅ |  |
 | `topics list` |  | ✅ |  |
 | `topics list` | `--limit` | ✅ |  |
 | `topics list` | `--page` | ✅ |  |

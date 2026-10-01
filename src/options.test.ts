@@ -354,6 +354,42 @@ describe("messages", () => {
     expect(asked).toBe(1)
   })
 
+  it("list --model hears on this machine, never asks Telegram, and is refused without --transcribe", async () => {
+    let asked = 0
+    const voiced = scripted({
+      history: async () => ({ items: [message("75", { attachments: [{ kind: "voice" }] })], hasMore: false }),
+      transcribe: async () => {
+        asked++
+        return { text: "hola", pending: false }
+      },
+    })
+    const picked = await tg(["messages", "list", "Valencia", "--transcribe", "--model", "gigaam-v3", "--json"], {
+      adapter: () => voiced,
+    })
+    const alone = await tg(["messages", "list", "Valencia", "--model", "gigaam-v3"], { adapter: () => voiced })
+
+    expect(json(picked.stdout).unheard).toMatchObject([{ messageId: "75" }])
+    expect(asked).toBe(0)
+    expect(alone.code).toBe(2)
+  })
+
+  it("list marks the chat read only with --mark-read, up to the newest message shown", async () => {
+    const marked: unknown[] = []
+    const reading = scripted({
+      history: async () => ({ items: [message("76"), message("77")], hasMore: false }),
+      markRead: async (chatId, until) => {
+        marked.push([chatId, until])
+      },
+    })
+    await tg(["messages", "list", "Valencia", "--json"], { adapter: () => reading })
+    expect(marked).toEqual([])
+
+    const { stdout } = await tg(["messages", "list", "Valencia", "--mark-read", "--json"], { adapter: () => reading })
+
+    expect(marked).toEqual([[chat.id, "77"]])
+    expect(json(stdout).markedRead).toMatchObject({ until: "77" })
+  })
+
   it("transcribe answers a voice message's text", async () => {
     const adapter = scripted({ transcribe: async () => ({ text: "hola", pending: false }) })
     const { code, stdout } = await tg(["messages", "transcribe", "Valencia", "42", "--json"], {
@@ -494,6 +530,27 @@ describe("inbox", () => {
     expect(answer.unheard).toEqual([])
   })
 
+  it("--model beside --transcribe hears on this machine, never asks Telegram", async () => {
+    let asked = 0
+    const voiced = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+      history: async () => ({
+        items: [message("78", { timestamp: latest, attachments: [{ kind: "voice", mime: "audio/ogg" }] })],
+        hasMore: false,
+      }),
+      transcribe: async () => {
+        asked++
+        return { text: "hola", pending: false }
+      },
+    })
+    const { stdout } = await tg(["inbox", "--since", "1h", "--transcribe", "--model", "gigaam-v3", "--json"], {
+      adapter: () => voiced,
+    })
+
+    expect(json(stdout).unheard).toMatchObject([{ messageId: "78" }])
+    expect(asked).toBe(0)
+  })
+
   it("--all takes in the muted chats it otherwise leaves out", async () => {
     const muted = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest, muted: true }], hasMore: false }),
@@ -542,6 +599,36 @@ describe("review", () => {
 
     expect(code).toBe(0)
     expect(json(stdout).chats[0]).toMatchObject({ answeredBy: "owner-and-admins", messages: [{ id: "80" }] })
+  })
+
+  it("--transcribe hears a review's voice messages; with --model only on this machine", async () => {
+    let asked = 0
+    const voiced = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+      history: async () => ({
+        items: [message("82", { timestamp: latest, attachments: [{ kind: "voice", mime: "audio/ogg" }] })],
+        hasMore: false,
+      }),
+      transcribe: async () => {
+        asked++
+        return { text: "hola", pending: false }
+      },
+    })
+    const local = json(
+      (
+        await tg(["review", "--since", "2d", "--transcribe", "--model", "gigaam-v3", "--json"], {
+          adapter: () => voiced,
+        })
+      ).stdout,
+    )
+    expect([local.unheard, asked]).toMatchObject([[{ messageId: "82" }], 0])
+
+    const heard = json(
+      (await tg(["review", "--since", "2d", "--transcribe", "--json"], { adapter: () => voiced })).stdout,
+    )
+
+    expect(heard.chats[0].messages[0].transcript).toBe("hola")
+    expect(asked).toBe(1)
   })
 })
 
