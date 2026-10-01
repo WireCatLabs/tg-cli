@@ -1,4 +1,5 @@
-import type { Attachment, Chat, ChatKind, Markup, Message, QuotedMessage } from "@leemour/cli-messaging"
+import type { AdminRight, Attachment, Chat, ChatKind, Markup, Message, QuotedMessage } from "@leemour/cli-messaging"
+import type { BotChatAdmin } from "@leemour/cli-messaging/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
 export interface User {
@@ -122,3 +123,57 @@ export const toChat = (chat: TgChat): Chat => ({
 /** Markup is in UTF-16 positions, which is what Telegram's [entities](https://core.telegram.org/bots/api#messageentity) count. */
 export const entitiesOf = (markup: readonly Markup[]) =>
   markup.map(({ type, from, length }) => ({ type: ENTITY[type], offset: from, length }))
+
+/**
+ * The shared admin rights in [promoteChatMember](https://core.telegram.org/bots/api#promotechatmember)'s
+ * words, as tg's personal account maps them. Telegram has no right to read: an admin always reads.
+ */
+export const ADMIN_RIGHT_FIELDS = {
+  members: "can_restrict_members",
+  admins: "can_promote_members",
+  info: "can_change_info",
+  pin: "can_pin_messages",
+  link: "can_invite_users",
+  post: "can_post_messages",
+  edit: "can_edit_messages",
+  delete: "can_delete_messages",
+} as const satisfies Partial<Record<AdminRight, string>>
+
+export const BOT_ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as (keyof typeof ADMIN_RIGHT_FIELDS)[]
+
+/** Every right promoteChatMember takes; all of them false demotes. */
+export const PROMOTE_FIELDS = [
+  "is_anonymous",
+  "can_manage_chat",
+  "can_delete_messages",
+  "can_manage_video_chats",
+  "can_restrict_members",
+  "can_promote_members",
+  "can_change_info",
+  "can_invite_users",
+  "can_post_stories",
+  "can_edit_stories",
+  "can_delete_stories",
+  "can_post_messages",
+  "can_edit_messages",
+  "can_pin_messages",
+  "can_manage_topics",
+  "can_send_welcome_messages",
+] as const
+
+/** Telegram's [ChatMemberOwner](https://core.telegram.org/bots/api#chatmemberowner) or ChatMemberAdministrator. */
+export interface TgAdmin {
+  status: "creator" | "administrator"
+  user: User
+  custom_title?: string
+  [right: string]: unknown
+}
+
+export const toAdmin = ({ status, user, custom_title, ...rights }: TgAdmin): BotChatAdmin => ({
+  id: String(user.id),
+  name: nameOf(user),
+  username: user.username ?? null,
+  role: status === "creator" ? "owner" : "admin",
+  rights: BOT_ADMIN_RIGHTS.filter((right) => status === "creator" || rights[ADMIN_RIGHT_FIELDS[right]] === true),
+  title: custom_title ?? null,
+})

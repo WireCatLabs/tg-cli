@@ -1,6 +1,7 @@
 import { type BotMessenger, BotTokenStore, environmentOf } from "@leemour/cli-messaging/cli"
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
+import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
 import { TelegramBotTransport } from "../bot/transport.js"
 import type { Environment } from "./context.js"
 
@@ -9,6 +10,7 @@ export const TELEGRAM_BOT: BotMessenger = {
   app: TG,
   provider: "telegram-bot",
   name: "Telegram",
+  adminRights: BOT_ADMIN_RIGHTS,
   resolveSettings,
   connect: async (command, token, { stop, events } = {}) => {
     const { botFetch } = environmentOf<Environment>(command)

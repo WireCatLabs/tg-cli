@@ -98,6 +98,23 @@ tg sales bot chats action "Team" typing   # typing, photo, video, voice, file â€
 tg sales bot chats leave "Team"           # only an admin can bring the bot back
 ```
 
+## Admins and members
+
+The bot must be an admin of the chat, with the right to add admins or to remove members. A person is
+their user id.
+
+```sh
+tg sales bot chats admins list "Team"                                  # who runs it, and what each may do
+tg sales bot chats admins add "Team" 4815162342 --can pin,delete --title Mod
+tg sales bot chats admins remove "Team" 4815162342                     # they stay in the chat
+tg sales bot chats members remove "Team" 4815162342                    # they may come back by the link
+tg sales bot chats members remove "Team" 4815162342 --block            # they may not
+```
+
+`--can` takes members, admins, info, pin, link, post, edit and delete. Telegram has no right to read:
+an admin always reads. Promoting works in supergroups and channels, and the title only in
+supergroups. Telegram's Bot API cannot list a chat's members or add people.
+
 ## Who the bot may write to
 
 Each bot has its own list of chats it may write to. With no list, it may write anywhere.
@@ -119,7 +136,7 @@ tg sales bot sends list
 
 ## Coming next
 
-Admins and members, button answers, the command menu, webhooks and `bot watch` come next, as the
+Button answers, the command menu, webhooks and `bot watch` come next, as the
 same commands `max bot` has. `bot watch` is what fills the bot's history with what other people
 write.
 

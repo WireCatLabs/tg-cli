@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg bot chats admins list|add|remove`** and **`tg bot chats members remove [--block]`**: the bot's
+  admins with their rights and title, making one with `--can` and `--title`, taking the rights back,
+  and taking a person out of a chat, for good with `--block`. See [the bot page](docs/bot.md).
 - **`tg bot messages send|list|show|edit|delete|pin|unpin`** and **`tg bot chats show|leave|action`**
   — the bot writes to a chat by id or title, or to a person as `user:<id>`, with `--md`, `--html`, a
   file or a photo. Telegram gives a bot no history, so `list` and `show` answer from what this bot

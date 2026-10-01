@@ -1,10 +1,27 @@
-import { CliError } from "@leemour/cli-core"
+import { CliError, isCliError } from "@leemour/cli-core"
 import type { BotAction, BotAdapter, BotChatRef, BotSendOptions } from "@leemour/cli-messaging/cli"
-import { entitiesOf, type TgChat, type TgMessage, toChat, toMessage, type User } from "./map.js"
+import {
+  ADMIN_RIGHT_FIELDS,
+  entitiesOf,
+  PROMOTE_FIELDS,
+  type TgAdmin,
+  type TgChat,
+  type TgMessage,
+  toAdmin,
+  toChat,
+  toMessage,
+  type User,
+} from "./map.js"
 import type { OutgoingFile, TelegramBotTransport } from "./transport.js"
 
 /** `user:<id>` is the dialog with that person: Telegram's chat id for a dialog is the person's id. */
 const chatIdOf = (chat: BotChatRef): string => (chat.startsWith("user:") ? chat.slice("user:".length) : chat)
+
+/** The second of two calls failed: say what the first already did, keeping the second's code. */
+const halfDone = (done: string, error: unknown): never => {
+  if (!isCliError(error)) throw error
+  throw new CliError(error.code, `${done}, but ${error.message}`, error.details)
+}
 
 /** [sendChatAction](https://core.telegram.org/bots/api#sendchataction)'s words. */
 const ACTIONS: Record<BotAction, string> = {
@@ -112,6 +129,51 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
 
     action: async (chat, action) => {
       await transport.call("sendChatAction", { chat_id: chatIdOf(chat), action: ACTIONS[action] }, { reads: false })
+    },
+
+    admins: async (chat) =>
+      ((await transport.call("getChatAdministrators", { chat_id: chatIdOf(chat) })) as TgAdmin[]).map(toAdmin),
+
+    addAdmin: async (chat, person, rights, { title }) => {
+      const granted = new Set<string>(
+        rights.map((right) => {
+          if (!(right in ADMIN_RIGHT_FIELDS))
+            throw new CliError("validation_error", `a Telegram bot cannot grant ${right}`)
+          return ADMIN_RIGHT_FIELDS[right as keyof typeof ADMIN_RIGHT_FIELDS]
+        }),
+      )
+      const target = { chat_id: chatIdOf(chat), user_id: Number(person) }
+      await transport.call(
+        "promoteChatMember",
+        { ...target, ...Object.fromEntries(PROMOTE_FIELDS.map((field) => [field, granted.has(field)])) },
+        { reads: false },
+      )
+      if (title === undefined) return
+      await transport
+        .call("setChatAdministratorCustomTitle", { ...target, custom_title: title }, { reads: false })
+        .catch((error: unknown) => halfDone(`${person} is an admin now`, error))
+    },
+
+    removeAdmin: async (chat, person) => {
+      await transport.call(
+        "promoteChatMember",
+        {
+          chat_id: chatIdOf(chat),
+          user_id: Number(person),
+          ...Object.fromEntries(PROMOTE_FIELDS.map((field) => [field, false])),
+        },
+        { reads: false },
+      )
+    },
+
+    // Telegram removes only by banning; without --block the ban is lifted at once, so the link lets them back.
+    removeMember: async (chat, person, { block }) => {
+      const target = { chat_id: chatIdOf(chat), user_id: Number(person) }
+      await transport.call("banChatMember", target, { reads: false })
+      if (block) return
+      await transport
+        .call("unbanChatMember", { ...target, only_if_banned: true }, { reads: false })
+        .catch((error: unknown) => halfDone(`${person} is out of the chat and still blocked`, error))
     },
   }
 }
