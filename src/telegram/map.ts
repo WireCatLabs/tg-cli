@@ -1,3 +1,4 @@
+import { extname } from "node:path"
 import type {
   AccountSession,
   Attachment,
@@ -327,10 +328,20 @@ export const toFormatted = (text: string, markup: Markup[]): TextWithEntities =>
 })
 
 /** A file goes as a document, so Telegram keeps it byte for byte; a photo is recompressed, as in the apps. */
-export const toInputMedia = ({ kind, name, bytes }: Upload, caption: string | TextWithEntities): InputMediaLike =>
-  kind === "photo"
-    ? InputMedia.photo(bytes, { fileName: name, caption })
+const VIDEO: Record<string, string> = { ".mp4": "video/mp4", ".m4v": "video/mp4", ".mov": "video/quicktime" }
+
+/** A video plays in the chat unless `asFile`; a `document` is always a file to download (`forceFile`). */
+export const toInputMedia = (
+  { kind, name, bytes, asFile }: Upload,
+  caption: string | TextWithEntities,
+): InputMediaLike => {
+  if (kind === "photo") return InputMedia.photo(bytes, { fileName: name, caption })
+  if (kind === "voice") return InputMedia.voice(bytes, { fileMime: "audio/ogg", caption })
+  const video = VIDEO[extname(name).toLowerCase()]
+  return video && !asFile
+    ? InputMedia.video(bytes, { fileName: name, fileMime: video, caption, supportsStreaming: true })
     : InputMedia.document(bytes, { fileName: name, caption })
+}
 
 /** An answer's id is its option bytes as base64url: Telegram's own, and not a position a person could guess. */
 export const answerId = (data: Uint8Array): string => Buffer.from(data).toString("base64url")
