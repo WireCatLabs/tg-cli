@@ -274,7 +274,7 @@ tg messages transcribe "Book club" <id>           # a voice message as text
 
 ```sh
 tg messages search "contract"                     # everything kept, without connecting
-tg store fetch "Project Alpha" --max 5000 --background
+tg store fetch "Project Alpha" --last 5000 --background
 tg store export "Project Alpha" --format markdown --output alpha.md
 tg server install                                 # keep the store current as a service
 ```
