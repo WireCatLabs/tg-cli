@@ -8,6 +8,7 @@ import {
   type Chat,
   type ChatCard,
   type ChatEvents,
+  type GroupCard,
   type GroupMember,
   type LinkTarget,
   type Markup,
@@ -49,6 +50,7 @@ import {
   toChat,
   toDeletions,
   toFormatted,
+  toGroupCard,
   toGroupMember,
   toInputMedia,
   toInputPoll,
@@ -749,6 +751,76 @@ export class TelegramAdapter {
   }
 
   /** `null` when the group hides its member list from us: that is an answer about the group, not a failure. */
+  /** Each reference as a user id, in order; a group or a channel is not a person and is refused. */
+  people(references: string[]): Promise<string[]> {
+    return this.#call(async () => {
+      const ids: string[] = []
+      for (const reference of references) {
+        const peer = await this.#client.getPeer(await this.#inputOf(reference))
+        if (peer.type !== "user") throw new CliError("validation_error", `${reference} is a chat, not a person`)
+        ids.push(String(peer.id))
+      }
+      return ids
+    })
+  }
+
+  /**
+   * Always a supergroup, never a legacy group: a legacy group turns into a supergroup on some changes
+   * and its id changes with it. The people are added after, so a group exists even if some cannot be.
+   */
+  createGroup(title: string, people: string[], { channel }: { channel: boolean }): Promise<GroupCard> {
+    return this.#call(async () => {
+      try {
+        const made = channel
+          ? await this.#client.createChannel({ title })
+          : await this.#client.createSupergroup({ title })
+        const missing = people.length > 0 ? await this.#client.addChatMembers(made.id, people.map(Number), {}) : []
+        const card = toGroupCard(await this.#client.getFullChat(made.id))
+        if (missing.length === 0) return card
+        const notAdded = missing.map((one) => String(one.userId))
+        return { ...card, providerMetadata: { ...card.providerMetadata, notAdded } }
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the group may or may not have been made; check `tg chats list`")
+      }
+    })
+  }
+
+  /** An invite link, or a public one; a group that asks its admins first is refused, with the request sent. */
+  join(link: string): Promise<GroupCard> {
+    const typed = link.trim()
+    const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
+    return this.#call(async () => {
+      let joined: Awaited<ReturnType<TelegramClient["joinChat"]>>
+      try {
+        joined = await this.#client.joinChat(invite ? typed : publicName(typed))
+      } catch (error) {
+        throw unknownIfUnanswered(error, "you may or may not have joined; check `tg chats list`")
+      }
+      if (joined.status !== "ok") {
+        throw new CliError(
+          "provider_error",
+          joined.status === "request_sent"
+            ? "this group lets admins approve who joins; the request is sent — nothing to repeat"
+            : "this group asks a bot to check who joins, which only the Telegram app can show",
+        )
+      }
+      return toGroupCard(await this.#client.getFullChat(joined.chat.id))
+    })
+  }
+
+  leave(reference: string): Promise<{ chatId: string }> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(reference)
+      const chatId = String((await this.#client.getPeer(peer)).id)
+      try {
+        await this.#client.leaveChat(peer)
+      } catch (error) {
+        throw unknownIfUnanswered(error, "you may or may not have left; check `tg chats list`")
+      }
+      return { chatId }
+    })
+  }
+
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
     try {
       const members = await this.#client.getChatMembers(peer, { limit: 200 })

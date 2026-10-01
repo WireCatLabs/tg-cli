@@ -192,6 +192,53 @@ tg chats mark-read <chat> [options]
 |---|---|
 | `--until <message>` | only up to this message id; the newest by default. |
 
+### `tg chats create`
+
+create a group or a channel; the people added are told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats create <title> [person] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `title` | required | the group's name. |
+| `person` | optional | people to add: an id, or part of a name. |
+
+| Option | What it does |
+|---|---|
+| `--channel` | a private channel instead of a group; people join it by its link. |
+
+### `tg chats join`
+
+join a group or channel by its link; the others in it see that you joined
+
+**Changes something in Telegram.**
+
+```sh
+tg chats join <link>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `link` | required | an invite link, or a public one. |
+
+### `tg chats leave`
+
+leave a group or channel; the others in it see that you left
+
+**Changes something in Telegram.**
+
+```sh
+tg chats leave <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
 ## `tg contacts`
 
 people this account has a one-to-one chat with

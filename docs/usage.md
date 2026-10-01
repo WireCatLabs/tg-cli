@@ -408,8 +408,22 @@ tg review --chat "Hiking" --unanswered             # questions nobody answered
 All of these only read. `events` reads the chat's service messages: who did what, and to whom. The
 names are `join`, `leave`, `add`, `remove`, `create`, `title` and `pin`.
 
-Creating a group, joining and leaving, members, admins, invite links and moderation rules are not in
-`tg` yet ([roadmap](../README.md#roadmap)).
+These change something, and the people in the chat see it:
+
+```sh
+tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people added are told
+tg chats create "Trail news" --channel             # a channel; people join it by its link
+tg chats join https://t.me/+AbCdEf                 # by an invite link, or a public one
+tg chats leave "Hiking 2027"
+```
+
+A new group is always a supergroup. Someone whose privacy settings stop them being added is named
+in the answer under `providerMetadata.notAdded`; the group is made anyway. A group whose admins
+approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
+and each person added counts toward the hourly limit.
+
+Members, admins, invite links and moderation rules are not in `tg` yet
+([roadmap](../README.md#roadmap)).
 
 ## For scripts and agents
 

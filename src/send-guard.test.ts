@@ -307,6 +307,44 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-read")).toMatchObject([{ kind: "read", outcome: "sent", messageId: "9" }])
   })
 
+  it("**creates a channel and a group with people through the guard**, journaling how many were added", async () => {
+    const made: unknown[] = []
+    const card = (id: string, title: string) => ({
+      ...chat,
+      id,
+      title,
+      description: null,
+      link: null,
+      settings: {
+        allCanPin: null,
+        onlyAdminsAdd: null,
+        onlyAdminsCall: null,
+        onlyOwnerEditsInfo: null,
+        membersSeeLink: null,
+      },
+    })
+    const adapter = scripted({
+      people: async (references) => references.map((_, index) => String(91 + index)),
+      createGroup: async (title, people, options) => {
+        made.push([title, people, options])
+        return card(people.length ? "-100701" : "-100702", title)
+      },
+    })
+
+    const group = await tg(["g-admin", "chats", "create", "Plans", "Ivan", "Olga", "--json"], adapter)
+    const channel = await tg(["g-admin", "chats", "create", "News", "--channel", "--json"], adapter)
+
+    expect([group.code, channel.code]).toEqual([0, 0])
+    expect(made).toEqual([
+      ["Plans", ["91", "92"], { channel: false }],
+      ["News", [], { channel: true }],
+    ])
+    expect(journal("g-admin")).toMatchObject([
+      { kind: "chat", action: "create", chatId: "-100701", people: 2, outcome: "sent" },
+      { kind: "chat", action: "create", chatId: "-100702", outcome: "sent" },
+    ])
+  })
+
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
     configure({ "g-del": { sendsPerHour: 2 } })
     const { adapter, deleted } = telegram()
