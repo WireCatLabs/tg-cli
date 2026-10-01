@@ -1,6 +1,9 @@
 #!/usr/bin/env node
-import { run } from "../program.js"
+import { ensureSqlite } from "@leemour/cli-messaging/sqlite-runtime"
 
+await ensureSqlite()
+// A static import would load the whole program, and its SQLite, before ensureSqlite could swap it.
+const { run } = await import("../program.js")
 process.exitCode = await run(process.argv.slice(2))
 
 // A one-shot command exits (project rule 3). Once a download printed its answer and stayed alive for
