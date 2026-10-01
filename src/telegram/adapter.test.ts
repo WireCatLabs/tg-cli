@@ -98,6 +98,11 @@ class FakeClient {
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
+  createSupergroup = vi.fn(async (params: { title: string }): Promise<unknown> => group(-100700, params.title))
+  createChannel = vi.fn(async (params: { title: string }): Promise<unknown> => group(-100701, params.title))
+  addChatMembers = vi.fn(async (..._args: unknown[]): Promise<{ userId: number }[]> => [])
+  joinChat = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ status: "ok", chat: group(-100702, "Joined") }))
+  leaveChat = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
@@ -928,6 +933,75 @@ describe("reacting", () => {
     client.sendReaction.mockRejectedValueOnce(new tl.RpcError(400, "REACTION_INVALID"))
 
     await expect(adapter.react("-100500", "5", "🦄")).rejects.toMatchObject({ code: "provider_error" })
+  })
+})
+
+describe("making, joining and leaving groups", () => {
+  const full = (id: number, title: string) => ({
+    ...group(id, title),
+    bio: "",
+    inviteLink: null,
+    defaultPermissions: { canPinMessages: false, canInviteUsers: true },
+  })
+
+  it("**makes a supergroup, never a legacy group**, adds the people after, and says who could not be added", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = full(-100700, "Plans")
+    client.addChatMembers.mockResolvedValueOnce([{ userId: 92 }])
+
+    const card = await adapter.createGroup("Plans", ["91", "92"], { channel: false })
+
+    expect(client.createSupergroup.mock.calls).toEqual([[{ title: "Plans" }]])
+    expect(client.addChatMembers.mock.calls).toEqual([[-100700, [91, 92], {}]])
+    expect(card).toMatchObject({
+      id: "-100700",
+      title: "Plans",
+      description: null,
+      settings: { allCanPin: false, onlyAdminsAdd: false, onlyAdminsCall: null },
+      providerMetadata: { notAdded: ["92"] },
+    })
+  })
+
+  it("makes a channel with --channel, and adds nobody when nobody was named", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = full(-100701, "News")
+
+    await adapter.createGroup("News", [], { channel: true })
+
+    expect(client.createChannel).toHaveBeenCalledOnce()
+    expect(client.addChatMembers).not.toHaveBeenCalled()
+  })
+
+  it("**turns references into user ids**, and refuses a chat where a person was expected", async () => {
+    const { adapter, client } = await open()
+    client.peer = user(91, "Ivan")
+    expect(await adapter.people(["@ivan"])).toEqual(["91"])
+
+    client.peer = group(-100500, "Book club")
+    await expect(adapter.people(["@books"])).rejects.toMatchObject({ code: "validation_error" })
+  })
+
+  it("joins by link, and says a join that waits for admins was only requested", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = full(-100702, "Joined")
+
+    expect(await adapter.join("https://t.me/+abc")).toMatchObject({ id: "-100702" })
+    expect(client.joinChat.mock.calls[0]).toEqual(["https://t.me/+abc"])
+
+    client.joinChat.mockResolvedValueOnce({ status: "request_sent" })
+    await expect(adapter.join("https://t.me/pisos_vlc")).rejects.toMatchObject({
+      code: "provider_error",
+      message: expect.stringContaining("request is sent"),
+    })
+    expect(client.joinChat.mock.calls[1]).toEqual(["pisos_vlc"])
+  })
+
+  it("leaves, answering the chat's id", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "Book club")
+
+    expect(await adapter.leave("-100500")).toEqual({ chatId: "-100500" })
+    expect(client.leaveChat).toHaveBeenCalledOnce()
   })
 })
 

@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats create <title> [person...]`, `tg chats join <link>`, `tg chats leave <chat>`**, and
+  the MCP tools `tg_chats_create`, `tg_chats_join`, `tg_chats_leave`. A new group is always a
+  supergroup (`--channel` makes a channel); people who cannot be added are listed in the answer.
+  See [usage](docs/usage.md#groups-and-channels).
 - **Permissions: one level per command, for you and for an AI agent alike.** A profile's
   `permissions` setting gives each command path a level: `deny` (not even reading), `readonly`, `ask`
   or `allow`; the most specific key wins — `tg config set permissions.messages.delete allow`. By

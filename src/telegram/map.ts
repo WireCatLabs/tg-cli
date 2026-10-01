@@ -5,6 +5,7 @@ import type {
   Capabilities,
   Chat,
   ChatKind,
+  GroupCard,
   GroupMember,
   LinkTarget,
   Markup,
@@ -368,3 +369,24 @@ export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll =>
 
 export const toInputPoll = ({ question, answers, multiple, anonymous, revote }: NewPoll): InputMediaLike =>
   InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true })
+
+/**
+ * A group as `chats create` and `chats join` answer it. Telegram has two of max's five switches —
+ * whether members may pin, and whether they may add people — as default member permissions; the
+ * other three are `null`.
+ */
+export const toGroupCard = (full: FullChat): GroupCard => {
+  const defaults = full.defaultPermissions
+  return {
+    ...peerToChat(full),
+    description: full.bio || null,
+    link: full.inviteLink?.link ?? null,
+    settings: {
+      allCanPin: defaults ? defaults.canPinMessages : null,
+      onlyAdminsAdd: defaults ? !defaults.canInviteUsers : null,
+      onlyAdminsCall: null,
+      onlyOwnerEditsInfo: null,
+      membersSeeLink: null,
+    },
+  }
+}
