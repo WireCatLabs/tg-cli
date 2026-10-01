@@ -13,6 +13,13 @@ For each setting, the first of these that is set:
 4. `defaults` in the config file, shared by every profile
 5. the built-in default
 
+```sh
+tg chats list --limit 5     # 5: the option
+# "limit": 50 in the profile's entry — when there is no option
+# "limit": 30 in "defaults" — when the profile has none either
+# 20 — when nothing is set
+```
+
 Not every setting has all five. The table below says which ones exist.
 
 ## What is in force now
@@ -23,9 +30,19 @@ tg work config show
 ```
 
 It lists the profile, where the profile name came from, the profiles the file names, the path of
-the file, and every setting with its value and **where that value came from**: `flag`, `config
-file`, `config defaults` or `default`. When `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set,
-it says so on stderr, since that also changes which login is found ([sessions.md](sessions.md#where-the-parts-are-kept)).
+the file and whether it exists, and every setting with its value and **where that value came from**:
+`flag`, an environment variable, `config file`, `config defaults` or `default`. `--json` gives the
+same as one object, for a script.
+
+The list ends with `commandTimeoutMs`: the bound on a whole command from `--timeout` or `TG_TIMEOUT`.
+It is not a setting of the file.
+
+When `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set, it says so on stderr, since that also
+changes which login is found ([sessions.md](sessions.md#where-the-parts-are-kept)).
+
+⚠ **It is not a health check.** It reads files: it opens no store, asks no keyring and does not
+connect. Whether the session still works is a question for `tg doctor --online`
+([troubleshooting.md](troubleshooting.md#first-tg-doctor)).
 
 ## The file
 
@@ -49,7 +66,7 @@ are in [installation.md](installation.md#where-files-go)).
 | Setting | Default | What it does |
 |---|---|---|
 | `limit` | `20` | rows per page of a list; `--limit` overrides it |
-| `timeoutMs` | none | how long one request to Telegram may wait, in milliseconds |
+| `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` |
 | `color` | from the terminal | colour in the table view; `NO_COLOR` also turns it off |
 | `senderColors` | `false` | a colour per sender in the table view of messages |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)); `--record` and `--no-record` override it |
