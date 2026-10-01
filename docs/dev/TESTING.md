@@ -6,6 +6,7 @@ pnpm test:matrix                                    # every command and option h
 pnpm docs:check                                     # links, anchors, user pages, the changelog's shape
 pnpm test:slow                                      # the 20 slowest tests and the 10 slowest files
 pnpm build && pnpm smoke:bun                        # the built command, executed under Bun
+pnpm release:check                                  # all of the above and the release's own checks
 ```
 
 CI runs all of them ([ci.yml](../../.github/workflows/ci.yml)). Windows and macOS run by hand before
@@ -26,6 +27,21 @@ entry. **A new variable that can point at something real goes there.**
 Telegram is never contacted: command tests hand `run()` a scripted adapter, and the adapter's own
 test replaces mtcute's `TelegramClient` with a stand-in. A test that could open a browser
 (`session start --app browser`) or reach my.telegram.org (`--app auto`) mocks that module.
+
+## The live smoke, before a release
+
+```sh
+node --experimental-strip-types scripts/seed-worktree.ts <main checkout> .   # a worktree, once
+pnpm smoke:live
+```
+
+`scripts/smoke-live.ts` does every write once against the real Telegram, **in Saved Messages only**:
+send, Markdown, reply, edit, react and unreact, forward, pin and unpin, a photo, a file, a poll and
+its close, a scheduled send. Then it deletes everything it made. It runs `bin/tg`, the checkout's own
+build with its own `.tg/`, and prints one `ok` or `FAIL` line per step, never a message, a name or
+an id. CI never runs it, and nobody runs it without the owner's yes, each time. Run it from a
+terminal: an agent inside this repository's sandbox gets no network for a `bin/tg` that a script
+starts ([agents.md](agents.md#what-an-agent-may-do-and-what-stops-it)).
 
 ## No test waits for real
 
