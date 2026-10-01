@@ -378,7 +378,7 @@ change the text of your own message; the other side may have read it already
 **Changes something in Telegram.**
 
 ```sh
-tg messages edit <chat> <message> [text]
+tg messages edit <chat> <message> [text] [options]
 ```
 
 | Argument | | What it is |
@@ -386,6 +386,10 @@ tg messages edit <chat> <message> [text]
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the id of your own message. |
 | `text` | optional | the new text; without it, read from stdin. |
+
+| Option | What it does |
+|---|---|
+| `--md, --markdown` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
 
 ### `tg messages delete`
 
@@ -426,6 +430,7 @@ tg messages forward <chat> <message> [options]
 |---|---|
 | `--to <chat>` | where it goes: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--silent` | deliver it without a notification. |
+| `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
 
 ### `tg messages pin`
 
