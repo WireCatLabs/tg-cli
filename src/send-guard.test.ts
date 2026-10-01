@@ -247,10 +247,10 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-fwd-id")).toMatchObject([{ kind: "forward", outcome: "sent", sendId: "9001" }])
   })
 
-  it("edits with --markdown as formatting, the marks taken out", async () => {
+  it("edits with --md as formatting, the marks taken out", async () => {
     const { adapter, edited } = telegram()
 
-    const { code } = await tg(["g-edit-md", "messages", "edit", "Valencia", "5", "**new** text", "--markdown"], adapter)
+    const { code } = await tg(["g-edit-md", "messages", "edit", "Valencia", "5", "**new** text", "--md"], adapter)
 
     expect(code).toBe(0)
     expect(edited).toEqual(['new text [{"type":"bold","from":0,"length":3}]'])

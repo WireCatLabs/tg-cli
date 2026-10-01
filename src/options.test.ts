@@ -439,7 +439,7 @@ describe("messages", () => {
     expect(json(stdout).sendId).toBe("987654321")
   })
 
-  it("send carries --silent, --no-preview and --markdown to the adapter", async () => {
+  it("send carries --silent, --no-preview and --md to the adapter", async () => {
     let asked: unknown
     const adapter = scripted({
       send: async (_chatId, text, options) => {
@@ -447,7 +447,7 @@ describe("messages", () => {
         return { message: message("44", { text, outgoing: true }), sendId: options.sendId }
       },
     })
-    const argv = ["messages", "send", "Valencia", "**hola**", "--silent", "--no-preview", "--markdown", "--json"]
+    const argv = ["messages", "send", "Valencia", "**hola**", "--silent", "--no-preview", "--md", "--json"]
     const { code } = await tg(argv, { adapter: () => adapter })
 
     expect(code).toBe(0)
