@@ -45,6 +45,19 @@ Agent:  (tg chats events "Hiking" --event join,add --json)
 history: who joined, left, was added or removed, and by whom. `tg chats members list` gives everyone
 in the group with their role and when they were last seen.
 
+### A link that leaked
+
+```text
+You:    The invite link to "Hiking" ended up in a public chat. Replace it, and stop members adding people.
+Agent:  (tg chats link reset "Hiking" --json)
+        (tg chats update "Hiking" --only-admins-add on --json)
+        Done: the old link no longer works, the new one is https://t.me/+…, and only admins can add
+        people now.
+```
+
+`link reset` answers the group as it now stands, new link included; `chats update` answers the same,
+so the agent can say what changed without reading the group again.
+
 ### A weekly report
 
 ```text
@@ -77,19 +90,21 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats inspect <link>` | where an invite or public link leads; joins nothing |
 | `tg chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
 | `tg chats join <link>`, `tg chats leave <chat>` | join by a link, leave |
+| `tg chats update <chat>` | the title, the description, and whether members may pin (`--all-can-pin`) or add people (`--only-admins-add`) |
+| `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
 | `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 
 An agent without a terminal gets the reading half as MCP tools: `tg_review` with `unanswered`,
 `tg_chats_events`, `tg_chats_members`, `tg_chats_inspect` ([mcp.md](mcp.md)).
 
-`create`, `join` and `leave` change something the group's members see: a new group tells the people
+`create`, `join`, `leave`, `update` and `link reset` change something the group's members see: a new group tells the people
 added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
 send guard, and each person added counts toward the hourly limit
 ([security.md](security.md#the-send-guard)).
 
 ## Coming
 
-A group's title and settings, members and admins, invite links, and moderation rules that delete
+Members and admins, and moderation rules that delete
 spam or remove people only as far as you allow. They are on the [roadmap](../README.md#roadmap), and
 this page grows with them.
 
