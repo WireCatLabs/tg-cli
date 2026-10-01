@@ -80,6 +80,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg server status --json` answers the fields both tools share**: `since` is `startedAt`,
+  `listening` is `connected`, `listeningSince` is `connectedAt`; new are `cliVersion`, `log`, and
+  `stale` when a `serve` that is gone left its lock behind. `tg server start` answers `startedAt`
+  and `connectedAt` the same way, and `tg server stop` says who had started it (`by`). The lines say
+  "connected" where they said "listening".
 - **`tg messages send --at` is now `--at-time`**, as every option that takes a time names it.
 - **The MCP tools' arguments carry their option's name**: `tg_messages_list` takes `before_id`,
   `before_time`, `after_id`, `after_time`; `tg_messages_context` `before_n`, `after_n`; `since` is

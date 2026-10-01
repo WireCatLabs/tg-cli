@@ -1157,7 +1157,7 @@ tg serve
 
 ### `tg server start`
 
-start serve in the background — through the unit if one is installed — and answer once it listens
+start serve in the background — through the unit if one is installed — and answer once it connects
 
 ```sh
 tg server start
@@ -1165,7 +1165,7 @@ tg server start
 
 ### `tg server stop`
 
-stop the serve that `server start` or the unit started
+stop this profile's serve — through the unit if it runs under one
 
 ```sh
 tg server stop
