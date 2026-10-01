@@ -14,6 +14,7 @@ const GROUP = { id: -1001234567890, type: "supergroup", title: "Team" }
 let keyring: ReturnType<typeof memoryKeyring>
 let requests: { method: string; params: Record<string, unknown>; file?: string }[]
 let next: number
+let refusing: string | undefined
 
 const ok = (result: unknown) => new Response(JSON.stringify({ ok: true, result }))
 
@@ -29,6 +30,9 @@ const telegram: FetchLike = async (url, init) => {
     }
   } else params = JSON.parse(String(init.body ?? "{}"))
   requests.push({ method, params, ...(file ? { file } : {}) })
+  if (method === refusing) {
+    return new Response(JSON.stringify({ ok: false, error_code: 400, description: "Bad Request: not enough rights" }))
+  }
   const chat = String(params.chat_id).startsWith("-")
     ? GROUP
     : { id: Number(params.chat_id), type: "private", first_name: "Ann" }
@@ -68,6 +72,18 @@ const telegram: FetchLike = async (url, init) => {
       return ok({ ...message(params.text), message_id: Number(params.message_id), edit_date: 1_759_312_900 })
     case "getChat":
       return ok(GROUP)
+    case "getChatAdministrators":
+      return ok([
+        { status: "creator", user: { id: 1, first_name: "Olga" }, is_anonymous: false },
+        {
+          status: "administrator",
+          user: { id: 91, first_name: "Ivan", username: "ivan" },
+          custom_title: "Mod",
+          can_pin_messages: true,
+          can_restrict_members: true,
+          can_manage_chat: true,
+        },
+      ])
     default:
       return ok(true)
   }
@@ -90,6 +106,7 @@ beforeEach(async () => {
   keyring = memoryKeyring()
   requests = []
   next = 500
+  refusing = undefined
   await tg(["sales", "bot", "auth", "set"], TOKEN)
   await tg(["sales", "bot", "chats", "show", String(GROUP.id)])
   requests = []
@@ -242,12 +259,76 @@ describe("tg bot chats", () => {
 })
 
 describe("tg bot chats admins and members", () => {
-  it("**refuses what tg's bot cannot do yet**, before asking Telegram anything", async () => {
-    const admin = await tg(["sales", "bot", "chats", "admins", "add", "Team", "42", "--can", "pin", "--title", "Mod"])
-    const remove = await tg(["sales", "bot", "chats", "members", "remove", "Team", "42", "--block"])
+  it("**lists the admins with their rights in the shared words**; the owner has every right", async () => {
+    const listed = await tg(["sales", "bot", "chats", "admins", "list", "Team", "--json"])
 
-    expect([admin.code, remove.code]).toEqual([2, 2])
-    expect(admin.err).toContain("a Telegram bot cannot make an admin")
-    expect(requests.filter(({ method }) => method !== "getMe")).toEqual([])
+    expect(listed.answer.items).toEqual([
+      {
+        id: "1",
+        name: "Olga",
+        username: null,
+        role: "owner",
+        rights: ["members", "admins", "info", "pin", "link", "post", "edit", "delete"],
+        title: null,
+      },
+      { id: "91", name: "Ivan", username: "ivan", role: "admin", rights: ["members", "pin"], title: "Mod" },
+    ])
+  })
+
+  it("**promotes with exactly the rights asked**, then sets the title; demotes with every right false", async () => {
+    await tg(["sales", "bot", "chats", "admins", "add", "Team", "91", "--can", "pin,members", "--title", "Mod"])
+    await tg(["sales", "bot", "chats", "admins", "remove", "Team", "91"])
+
+    const [promote, title, demote] = requests
+    expect(promote?.params).toMatchObject({
+      chat_id: String(GROUP.id),
+      user_id: 91,
+      can_pin_messages: true,
+      can_restrict_members: true,
+      can_delete_messages: false,
+      can_manage_chat: false,
+    })
+    expect(title).toEqual({
+      method: "setChatAdministratorCustomTitle",
+      params: { chat_id: String(GROUP.id), user_id: 91, custom_title: "Mod" },
+    })
+    expect(demote?.method).toBe("promoteChatMember")
+    expect(Object.values(demote?.params ?? {}).filter((value) => value === true)).toEqual([])
+  })
+
+  it("**offers no read right**: Telegram's admins always read", async () => {
+    const refused = await tg(["sales", "bot", "chats", "admins", "add", "Team", "91", "--can", "read"])
+
+    expect(refused.code).toBe(2)
+    expect(refused.err).toContain("--can takes rights from: members, admins")
+    expect(requests).toEqual([])
+  })
+
+  it("**says the person is an admin when only the title failed**", async () => {
+    refusing = "setChatAdministratorCustomTitle"
+    const failed = await tg(["sales", "bot", "chats", "admins", "add", "Team", "91", "--can", "pin", "--title", "Mod"])
+
+    expect(failed.code).not.toBe(0)
+    expect(failed.err).toContain("91 is an admin now, but")
+    expect(failed.err).not.toContain(TOKEN)
+  })
+
+  it("**removes by a ban lifted at once**, and keeps the ban with --block", async () => {
+    await tg(["sales", "bot", "chats", "members", "remove", "Team", "91"])
+    await tg(["sales", "bot", "chats", "members", "remove", "Team", "92", "--block"])
+
+    expect(requests.map(({ method, params }) => [method, params])).toEqual([
+      ["banChatMember", { chat_id: String(GROUP.id), user_id: 91 }],
+      ["unbanChatMember", { chat_id: String(GROUP.id), user_id: 91, only_if_banned: true }],
+      ["banChatMember", { chat_id: String(GROUP.id), user_id: 92 }],
+    ])
+  })
+
+  it("**says the person is still blocked when lifting the ban failed**", async () => {
+    refusing = "unbanChatMember"
+    const failed = await tg(["sales", "bot", "chats", "members", "remove", "Team", "91"])
+
+    expect(failed.code).not.toBe(0)
+    expect(failed.err).toContain("91 is out of the chat and still blocked, but")
   })
 })

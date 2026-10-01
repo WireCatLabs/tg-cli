@@ -1868,7 +1868,7 @@ tg bot chats admins add <chat> <person> [options]
 
 | Option | What it does |
 |---|---|
-| `--can <rights>` | what they may do, comma-separated: read, members, admins, info, pin, link, post, edit, delete. |
+| `--can <rights>` | what they may do, comma-separated: members, admins, info, pin, link, post, edit, delete. |
 | `--title <title>` | the title shown beside their name. |
 
 #### `tg bot chats admins remove`
