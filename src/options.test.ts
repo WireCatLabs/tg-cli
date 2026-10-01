@@ -665,37 +665,25 @@ describe("doctor --online", () => {
 })
 
 describe("mcp", () => {
-  it("refuses --confirm-send without --allow-send before it serves anything", async () => {
-    const { code, stderr } = await tg(["mcp", "--confirm-send"])
-
-    expect(code).toBe(2)
-    expect(JSON.parse(stderr[0] ?? "").error.message).toContain("--allow-send")
-  })
-
-  it("config carries --allow-send and --confirm-send into the server's arguments", async () => {
-    const { code, stdout } = await tg(["mcp", "config", "--allow-send", "--confirm-send", "--json"], {
+  it("config carries --confirm-send and --allow-dangerous into the server's arguments", async () => {
+    const { code, stdout } = await tg(["mcp", "config", "--confirm-send", "--allow-dangerous", "--json"], {
       mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
     } as never)
 
     expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp","--allow-send","--confirm-send"')
+    expect(JSON.stringify(json(stdout))).toContain('"mcp","--confirm-send","--allow-dangerous"]')
   })
 
-  it("config carries --allow-mark-read on its own, without --allow-send", async () => {
-    const { code, stdout } = await tg(["mcp", "config", "--allow-mark-read", "--json"], {
-      mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
-    } as never)
+  it("config warns that the --allow-* flags decide nothing now, and leaves them out", async () => {
+    const { code, stdout, stderr } = await tg(
+      ["mcp", "config", "--allow-send", "--allow-mark-read", "--allow-delete", "--json"],
+      {
+        mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
+      } as never,
+    )
 
     expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp","--allow-mark-read"]')
-  })
-
-  it("config carries --allow-delete on its own, without --allow-send", async () => {
-    const { code, stdout } = await tg(["mcp", "config", "--allow-delete", "--json"], {
-      mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
-    } as never)
-
-    expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp","--allow-delete"]')
+    expect(JSON.stringify(json(stdout))).toContain('"mcp"]')
+    expect(stderr.join("\n")).toContain("the profile's permissions do")
   })
 })

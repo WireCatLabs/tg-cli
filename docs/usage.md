@@ -354,8 +354,8 @@ tg messages delete me 4242 --allow-dangerous --for-everyone
 
 An edit reaches people who may have read the old text already. A forward is a new message: it goes
 through the same guard as a send, against the chat it goes to. A deletion cannot be undone, which is
-why it needs `--allow-dangerous`. In a supergroup or a channel Telegram deletes only for everyone,
-so there only `--for-everyone` works.
+why it asks first: answer `y`, or add `--allow-dangerous` to skip the question. In a supergroup or a
+channel Telegram deletes only for everyone, so there only `--for-everyone` works.
 
 **What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, and each
 deleted message. A reaction and a quiet pin do not.
@@ -537,15 +537,15 @@ environment variable → the profile in the file → the file's defaults → bui
 ```sh
 tg config show                                 # every setting, and where it came from
 tg config set limit 50
-tg work config set allow send,reaction         # profile "work" may only send and react
-tg config set readOnly true                    # nothing changes in Telegram from this profile
+tg work config set permissions.messages readonly   # profile "work" changes no messages
+tg config set permissions.messages.send ask        # a yes or no before each send
 tg config set sendsPerHour 10
 ```
 
-`allow` names what a profile may do: `send`, `forward`, `reaction`, `edit`, `pin`, `read`, `delete`,
-and more. Leaving it out allows everything; a refusal is exit code `5`, before connecting, and the
-error names the command that allows it. **The file has no field for a secret.** Every setting and
-variable: [configuration.md](configuration.md).
+`permissions` says what a profile may do, per command: `deny`, `readonly`, `ask` or `allow`. By
+default everything is allowed, and deleting messages and ending sessions ask first. A refusal is
+exit code `5`, and the error names the command that allows it. **The file has no field for a
+secret.** Every setting and variable: [configuration.md](configuration.md).
 
 ## Next
 

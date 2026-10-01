@@ -7,6 +7,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Permissions: one level per command, for you and for an AI agent alike.** A profile's
+  `permissions` setting gives each command path a level: `deny` (not even reading), `readonly`, `ask`
+  or `allow`; the most specific key wins — `tg config set permissions.messages.delete allow`. By
+  default everything is allowed except deleting messages and ending other sessions, which ask. `ask`
+  asks y/N in the terminal; `--allow-dangerous` (deleting) or the new `--yes` (any other write) says
+  yes in a script. `readOnly` and `allow` still work. See [security](docs/security.md).
 - **`tg store fetch --last <n>`** stops once the newest n messages of the chat are held, so a later
   run with the same `--last` asks Telegram for one page and stops.
 - **`tg polls create --revote`** lets people change their vote.
@@ -37,6 +43,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg mcp` offers tools by the profile's permissions, not by flags.** With the default settings an
+  agent can now send, edit, forward, react, vote and mark read without `--allow-send`, and without a
+  form; deleting shows you a form first (`tg mcp --allow-dangerous` skips it). To keep an agent
+  read-only, give it a profile with `readOnly` — [mcp](docs/mcp.md) shows how. `--allow-send`, `--allow-mark-read` and `--allow-delete` decide nothing
+  now and print a warning; `--confirm-send` still shows every write in a form.
+- **`tg messages delete` asks** in the terminal when `--allow-dangerous` is missing, instead of
+  refusing; with no terminal it is refused as before.
 - **`tg store fetch --max <n>` is gone; `--max-pages <n>` caps a run instead**, in pages of 100 (10 by
   default, so 1000 messages, as before). The same names as max-cli's. `--max` is not kept as an alias.
 - **A poll made without `--revote` no longer lets people change their vote**, as in max-cli; Telegram

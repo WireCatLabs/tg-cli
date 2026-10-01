@@ -58,7 +58,7 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 
 | Id | What | Commands | Puts back |
 |---|---|---|---|
-| X1 | the MCP tools per flag set | `tg mcp`, `--allow-send`, `--allow-mark-read`, `--allow-delete`: the count and names of the tools through a scratch MCP client | nothing changed |
+| X1 | the MCP tools per permission level | `tg mcp` on a profile with the default `permissions`, then with `permissions.messages` set to `readonly` and to `deny`: the count and names of the tools, prompts and resources through a scratch MCP client (**Correction 2026-10-01:** was per `--allow-*` flag, which decide nothing since cli-messaging 0.77.0) | the profile's `permissions` restored |
 | X2 | an agent's send is guarded | `tg_messages_send` to `me` through MCP, and a refusal on a read-only profile | deleted after |
 
 ## Not run, and why

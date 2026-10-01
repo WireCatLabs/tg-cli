@@ -12,9 +12,9 @@ numbers are in [commands.md](commands.md#exit-codes).
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-session-start) |
-| `5` | `permission_error` | the profile's settings refused it, or Telegram did | [read-only](#profile--is-read-only-or-profile--does-not-allow-), [Telegram refused](#telegram-refused-) |
+| `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
-| `7` | `confirmation_required` | the chat is not on the recipient list | [recipient list](#chat--is-not-on-the-recipient-list-of-profile-) |
+| `7` | `confirmation_required` | the chat is not on the recipient list, or the change asks first and nobody could answer | [recipient list](#chat--is-not-on-the-recipient-list-of-profile-), [asks first](#-asks-before-it-acts) |
 | `8` | `rate_limited` | the hourly limit, or Telegram asks you to wait | [hourly limit](#profile--has-sent-n-messages-in-the-hour-), [FLOOD_WAIT](#telegram-asks-to-wait-n-s-before-the-next-request) |
 | `9` | `timeout` | Telegram did not answer in time, or `--timeout` ended the command | [a command hangs](#a-command-hangs) |
 | `10` | `network_error` | Telegram cannot be reached from here | [cannot reach](#cannot-reach-telegram-) |
@@ -22,7 +22,7 @@ numbers are in [commands.md](commands.md#exit-codes).
 | `12` | `provider_unavailable` | Telegram failed on its side | [Telegram failed](#telegram-failed-) |
 | `13` | `invalid_response` | an answer `tg` cannot read — so far only from my.telegram.org | [my.telegram.org](#mytelegramorg-says-the-app-was-created-but-its-page-shows-none) |
 | `14` | `outcome_unknown` | the connection broke after a message left: it may have gone | [outcome unknown](#outcome_unknown-after-a-send) |
-| `130` | `cancelled` | you pressed Ctrl-C | [Ctrl-C](#ctrl-c) |
+| `130` | `cancelled` | you pressed Ctrl-C, or answered no to a question | [Ctrl-C](#ctrl-c) |
 
 ## First: `tg doctor`
 
@@ -195,11 +195,19 @@ the next send is possible. Raise the limit only if you meant to send that many:
 Exit code `7`. The recipient list is on, and this chat is not on it. Add it yourself if you want to
 allow it: `tg recipients add <chat>`. An agent should stop here and ask you.
 
-## "profile … is read-only" or "profile … does not allow …"
+## "profile … does not let … write" or "profile … denies …"
 
-Exit code `5`, before anything is sent to Telegram. `readOnly` or `allow` in the settings refused it.
-The error says which setting, where it was set, and the command that allows it
-([configuration.md](configuration.md)). An agent should stop and ask you, not change the setting.
+Exit code `5`, before anything is sent to Telegram. The profile's `permissions` refused it: `deny`
+stops reading too, `readonly` stops a change. The error says which key, where it was set, and the
+command that allows it ([configuration.md](configuration.md#what-a-profile-may-do)). An agent should
+stop and ask you, not change the setting.
+
+## "… asks before it acts"
+
+Exit code `7`. The command's level is `ask`, and nobody could answer: there is no terminal, or the
+command ran with `--json` or `--jsonl`. The error names the flag that answers yes:
+`--allow-dangerous` for a deletion, `--yes` for any other change. Add it only if you meant it. An
+agent should stop and ask you.
 
 ## "Telegram refused: …"
 
@@ -258,6 +266,8 @@ that line. `watch`, `serve` and `mcp` are meant to run until stopped.
 Exit code `130`. The command stopped where it was and closed its connection. If you pressed it during
 a send, the message may have gone: look at the chat (`tg messages list <chat> --limit 3`) before you
 send it again. A background `store fetch` keeps running: stop it with `tg store jobs cancel <job>`.
+
+An answer other than `y` to a question before a change ends the same way: nothing was done.
 
 ## "the message store was written by a newer version …"
 

@@ -12,24 +12,40 @@ export interface Untested {
 export const UNTESTED: Untested[] = [
   {
     command: "mcp",
+    reason:
+      "serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives " +
+      "the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check",
+  },
+  {
+    command: "mcp",
+    option: "--confirm-send",
+    reason:
+      "serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with confirmSend, " +
+      "and mcp config below shows the flag reaching the server's arguments",
+  },
+  {
+    command: "mcp",
+    option: "--allow-dangerous",
+    reason:
+      "serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDangerous, " +
+      "and mcp config below shows the flag reaching the server's arguments",
+  },
+  {
+    command: "mcp",
     option: "--allow-send",
     reason:
-      "starts serving MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts " +
-      "drives the server with allowSend, and HANDOFF.md §3b names the live check with a scratch MCP client",
+      "decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; " +
+      "mcp config below shows the warning",
   },
   {
     command: "mcp",
     option: "--allow-mark-read",
-    reason:
-      "starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts " +
-      "drives the server with allowMarkRead, and mcp config below shows the flag reaching the server's arguments",
+    reason: "decides nothing, as --allow-send; mcp config below shows the warning",
   },
   {
     command: "mcp",
     option: "--allow-delete",
-    reason:
-      "starts serving MCP on the process's own stdin, as --allow-send does; cli-messaging's src/mcp/mcp.test.ts " +
-      "drives the server with allowDelete, and mcp config below shows the flag reaching the server's arguments",
+    reason: "decides nothing, as --allow-send; mcp config below shows the warning",
   },
   {
     command: "store fetch",
