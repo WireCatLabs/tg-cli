@@ -10,7 +10,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg conversations build|list|show`** and **`tg messages links`**, with the MCP tools
   `tg_conversations_list` and `tg_conversations_show`: the conversations inside a group, found in the
   stored messages by replies, mentions and who wrote next — no Telegram request, no AI. Nothing is built
-  until you run `build`. See [the store](docs/store.md#conversations-in-a-group).
+  until you run `build`. See [the store](docs/archive.md#conversations-in-a-group).
 - **A mention by name is kept**: when someone is mentioned by name rather than by @username, the stored
   message remembers whom, so conversations follow it.
 - **`tg chats rules show|set|unset` and `tg chats moderate`**, with the MCP tools
