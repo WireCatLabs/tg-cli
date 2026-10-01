@@ -33,6 +33,7 @@ What it can do, how agents use it and how it differs from other tools: the
 | [sessions.md](sessions.md) | How does login work, where are the keys, how do profiles work? |
 | [archive.md](archive.md) | What does the local store keep, and how do I fill, search, export and back it up? |
 | [groups.md](groups.md) | How do I keep up with a group I run? |
+| [bot.md](bot.md) | How do I run a Telegram bot from the command line? |
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
 | [remote.md](remote.md) | How do I reach it from ChatGPT or Claude in the browser? |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |

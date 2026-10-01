@@ -2,6 +2,7 @@ import { appendFileSync } from "node:fs"
 import { processStreams } from "@leemour/cli-core"
 import {
   accountCommand,
+  botCommand,
   chatsCommand,
   commandsCommand,
   completeCommand,
@@ -31,6 +32,7 @@ import {
 } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
+import { TELEGRAM_BOT } from "./commands/bot.js"
 import { type Environment, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
 import { upgradeCommand } from "./commands/update.js"
@@ -66,6 +68,7 @@ const definition: ProgramDefinition = {
       completeCommand(TELEGRAM, CONFIG),
       upgradeCommand(),
       mcpCommand(TELEGRAM),
+      botCommand(TELEGRAM_BOT),
       skillCommand(TG, new URL("../skills/tg-cli/SKILL.md", import.meta.url)),
     ]),
 }
