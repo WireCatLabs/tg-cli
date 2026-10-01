@@ -11,6 +11,41 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "account update",
+    option: "--first-name",
+    reason:
+      "tg's Telegram adapter has no profile editing yet (P2), so the shared command refuses it in tg; " +
+      "cli-messaging's admin tests drive it through the port",
+  },
+  {
+    command: "account update",
+    option: "--last-name",
+    reason:
+      "tg's Telegram adapter has no profile editing yet (P2), so the shared command refuses it in tg; " +
+      "cli-messaging's admin tests drive it through the port",
+  },
+  {
+    command: "account update",
+    option: "--description",
+    reason:
+      "tg's Telegram adapter has no profile editing yet (P2), so the shared command refuses it in tg; " +
+      "cli-messaging's admin tests drive it through the port",
+  },
+  {
+    command: "account update",
+    option: "--photo",
+    reason:
+      "tg's Telegram adapter has no profile editing yet (P2), so the shared command refuses it in tg; " +
+      "cli-messaging's admin tests drive it through the port",
+  },
+  {
+    command: "account sessions end",
+    option: "--others",
+    reason:
+      "tg's Telegram adapter has no profile editing yet (P2), so the shared command refuses it in tg; " +
+      "cli-messaging's admin tests drive it through the port",
+  },
+  {
     command: "mcp",
     reason:
       "serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives " +

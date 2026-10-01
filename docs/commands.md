@@ -78,6 +78,23 @@ tg account show [options]
 |---|---|
 | `--show-phone` | print the whole phone number. |
 
+### `tg account update`
+
+change the name, the description or the photo everyone sees on your profile
+
+**Changes something in Telegram.**
+
+```sh
+tg account update [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--first-name <name>` | your first name. |
+| `--last-name <name>` | your last name. |
+| `--description <text>` | about you. |
+| `--photo <file>` | a new profile photo — an image file. |
+
 ### `tg account sessions`
 
 where else this account is logged in — not `tg session`, which is this tool's own login
@@ -89,6 +106,20 @@ every device and app logged in to this account; nothing is ended
 ```sh
 tg account sessions list
 ```
+
+#### `tg account sessions end`
+
+log out every other device, your phone included; this one stays
+
+**Changes something in Telegram.**
+
+```sh
+tg account sessions end [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--others` | every session but this one. |
 
 ## `tg chats`
 
@@ -125,8 +156,8 @@ tg chats events <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--since <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--event <names>` | only these, comma-separated: join, leave, add, remove, create, title, pin. |
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--type <names>` | only these, comma-separated: join, leave, add, remove, create, title, pin. |
 
 ### `tg chats inspect`
 
@@ -470,6 +501,92 @@ take the whole contact list from the messenger into the local store
 tg contacts sync
 ```
 
+### `tg contacts add`
+
+add a person to your contacts — `contacts list` still shows only people you have a dialog with
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts add <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | person id — `contacts lookup` finds one — or part of a known name. |
+
+### `tg contacts remove`
+
+remove a person from your contacts; the chat stays, a name you gave them may not
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts remove <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | person id — `contacts lookup` finds one — or part of a known name. |
+
+### `tg contacts block`
+
+stop a person from writing to you — they need not be a contact
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts block <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | person id — `contacts lookup` finds one — or part of a known name. |
+
+### `tg contacts unblock`
+
+let a blocked person write to you again
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts unblock <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | person id — `contacts lookup` finds one — or part of a known name. |
+
+### `tg contacts rename`
+
+give a person a name of your own — they do not see it
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts rename <person> <first-name> [last-name]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | person id — `contacts lookup` finds one — or part of a known name. |
+| `first-name` | required | the name you want to see for them. |
+| `last-name` | optional |  |
+
+### `tg contacts import`
+
+upload phone numbers and add the people the messenger has under them
+
+**Changes something in Telegram.**
+
+```sh
+tg contacts import <file>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `file` | required | one person per line: number, then a comma, a tab or a semicolon, then the name. |
+
 ## `tg messages`
 
 read and send messages
@@ -489,8 +606,9 @@ tg messages list <chat> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--before <id>` | only messages older than this message id. |
-| `--after <id-or-time>` | only messages newer than this message id, ISO 8601 time, or 2h / 1d ago. |
+| `--before-id <id>` | only messages older than this message id. |
+| `--after-id <id>` | only messages newer than this message id. |
+| `--after-time <time>` | only messages newer than this ISO 8601 time, or 2h / 1d ago. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
@@ -534,11 +652,11 @@ tg messages send <chat> [text] [options]
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
-| `--md, --markdown` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
-| `--file <path>` | attach a file; the text becomes its caption. |
-| `--photo <path>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
+| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--file <file>` | attach a file; the text becomes its caption. |
+| `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--as-file` | send the --file as a file to download, a video included. |
-| `--voice <path>` | send an Ogg Opus file as a voice message, alone, with no text. |
+| `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
 | `--at <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
 
@@ -570,8 +688,8 @@ tg messages context <chat> [message] [options]
 
 | Option | What it does |
 |---|---|
-| `--before <n>` | how many before it. Default: `5`. |
-| `--after <n>` | how many after it. Default: `5`. |
+| `--before-n <n>` | how many before it. Default: `5`. |
+| `--after-n <n>` | how many after it. Default: `5`. |
 
 ### `tg messages download`
 
@@ -588,7 +706,7 @@ tg messages download <chat> [message] [options]
 
 | Option | What it does |
 |---|---|
-| `--output <dir>` | where to save them; created if missing. Default: `.`. |
+| `--output-dir <dir>` | where to save them; created if missing. Default: `.`. |
 | `--all` | every file of the chat, newest first; run it again to continue where it stopped. |
 | `--pause <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
 
@@ -628,7 +746,7 @@ tg messages edit <chat> <message> [text] [options]
 
 | Option | What it does |
 |---|---|
-| `--md, --markdown` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
 
 ### `tg messages delete`
 
@@ -867,7 +985,7 @@ tg inbox [options]
 | Option | What it does |
 |---|---|
 | `--new` | what arrived since the last check, each message once — for scheduled runs. |
-| `--since <time>` | what arrived after this ISO 8601 time, or 2h / 1d ago; the saved point stays put. |
+| `--since-time <time>` | what arrived after this ISO 8601 time, or 2h / 1d ago; the saved point stays put. |
 | `--limit <n>` | at most this many per chat, the newest. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
@@ -883,9 +1001,9 @@ tg review [options]
 
 | Option | What it does |
 |---|---|
-| `--since <time>` | where the last review ended — ISO 8601, or 2h / 1d ago; 3 days ago if not given. |
+| `--since-time <time>` | where the last review ended — ISO 8601, or 2h / 1d ago; 3 days ago if not given. |
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--unanswered [hours]` | only questions to you or a group's admins that nobody answered, asked at least this long ago; 24 hours if not given. |
+| `--unanswered [duration]` | only questions to you or a group's admins that nobody answered, asked at least this long ago — 4h, 1d; 24h if not given. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
@@ -1045,9 +1163,10 @@ tg store fetch <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--max-pages <n>` | at most this many pages of 100 in this run. Default: `10`. |
+| `--limit <n>` | at most this many messages in this run; 1000 if not given. |
+| `--page-size <n>` | how many messages one request asks for; 100 if not given. |
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
-| `--since <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
+| `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
 | `--last <n>` | stop once the newest n messages are held. |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
 | `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
@@ -1102,8 +1221,8 @@ tg store export <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--format <format>` | markdown: a transcript with a heading per day, replies and forwards quoted. |
-| `--since <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
+| `--format <format>` | jsonl (the default): one message per line; markdown: a transcript with a heading per day, replies and forwards quoted. |
+| `--since-time <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
 | `--output <file>` | write JSON lines, or the transcript, to this new file, readable only by you. |
 
 ### `tg store info`
