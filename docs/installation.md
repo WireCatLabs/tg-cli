@@ -6,7 +6,7 @@ background by itself either.
 
 ## What it needs
 
-- **Node 22 or newer.** CI runs on Node 24; 22 is the floor written in `package.json`. CI also runs
+- **Node 22.16 or newer.** CI runs on Node 24; 22.16 is the floor written in `package.json`. CI also runs
   the built command under Bun.
 - Linux, macOS or Windows.
 - **Your own Telegram app** from [my.telegram.org](https://my.telegram.org/apps). `tg` asks for it at

@@ -257,9 +257,10 @@ npm install -g @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli, bun add -g
 tg --version
 ```
 
-It needs **Node 22 or newer**, or **Bun** — CI runs the built command under both — on macOS, Linux
+It needs **Node 22.16 or newer**, or **Bun** — CI runs the built command under both — on macOS, Linux
 or Windows. SQLite comes from the
-runtime itself, so there is nothing to compile. `tg doctor` says where its files are and whether a
+runtime itself, or from tg's own copy when a Linux Node's system SQLite is too old, so there is
+nothing to compile. `tg doctor` says where its files are and whether a
 login exists, without connecting. Details, variables and where the files go:
 [docs/installation.md](docs/installation.md).
 

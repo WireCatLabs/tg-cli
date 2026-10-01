@@ -22,6 +22,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg mcp` serves this tool's guide as the resource `tg://skill`**, and names it in what it tells
   the agent on connecting, so an agent can read it without running `tg skill show`.
 
+### Changed — may break scripts
+
+- **tg needs Node 22.16 or newer** (or Bun, as before). When a Linux Node uses a system SQLite too old
+  for the message store, `tg` restarts itself on its own SQLite from `@leemour/cli-messaging-sqlite`,
+  before it reads or sends anything. Official Node and Bun builds notice nothing.
+
 ### Fixed
 
 - **Commands that change only this computer no longer say they change Telegram.** `config set` and

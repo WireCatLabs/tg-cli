@@ -17,7 +17,7 @@ tg inbox                  # other people's unread messages, in every chat; nothi
 tg messages list me       # Saved Messages, the latest 20
 ```
 
-It needs Node 22 or newer, or Bun ([installation.md](installation.md)). The first login asks for your
+It needs Node 22.16 or newer, or Bun ([installation.md](installation.md)). The first login asks for your
 own Telegram app; `tg` can register it for you ([sessions.md](sessions.md)).
 
 What it can do, how agents use it and how it differs from other tools: the
