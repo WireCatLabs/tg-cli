@@ -733,6 +733,25 @@ describe("sending", () => {
     expect(options).toMatchObject({ silent: true, disableWebPreview: true })
   })
 
+  it("sends a voice message as voice, and a video as a video unless asFile", async () => {
+    const { adapter, client } = await open()
+    const bytes = new Uint8Array([1, 2, 3])
+    client.sendMedia.mockClear()
+
+    await adapter.send("-100500", "", { sendId: "1", attachments: [{ kind: "voice", name: "note.ogg", bytes }] })
+    await adapter.send("-100500", "", { sendId: "2", attachments: [{ kind: "file", name: "trip.mp4", bytes }] })
+    await adapter.send("-100500", "", {
+      sendId: "3",
+      attachments: [{ kind: "file", name: "trip.mp4", bytes, asFile: true }],
+    })
+
+    expect(client.sendMedia.mock.calls.map((call) => call[1])).toMatchObject([
+      { type: "voice", fileMime: "audio/ogg" },
+      { type: "video", fileName: "trip.mp4", fileMime: "video/mp4" },
+      { type: "document", fileName: "trip.mp4" },
+    ])
+  })
+
   it("**sends a photo with its caption, the same random_id and the reply**, a file as a document, one per message", async () => {
     const { adapter, client } = await open()
     const bytes = new Uint8Array([1, 2, 3])

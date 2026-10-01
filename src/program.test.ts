@@ -215,6 +215,30 @@ describe("sending", () => {
     ])
   })
 
+  it("sends a --voice alone, and a --file video as a file with --as-file", async () => {
+    const root = mkdtempSync(join(tmpdir(), "tg-upload-"))
+    writeFileSync(join(root, "note.ogg"), "ogg")
+    writeFileSync(join(root, "trip.mp4"), "mp4")
+    const asked: SendOptions[] = []
+    const adapter = () =>
+      scripted({
+        send: async (_chat, text, options) => {
+          asked.push(options)
+          return { message: message("44", { text, outgoing: true }), sendId: options.sendId }
+        },
+      })
+
+    const voice = await tg(["messages", "send", "me", "--voice", join(root, "note.ogg")], { adapter })
+    const file = await tg(["messages", "send", "me", "--file", join(root, "trip.mp4"), "--as-file"], { adapter })
+    const talking = await tg(["messages", "send", "me", "hi", "--voice", join(root, "note.ogg")], { adapter })
+
+    expect([voice.code, file.code, talking.code]).toEqual([0, 0, 2])
+    expect(asked.map((one) => one.attachments)).toMatchObject([
+      [{ kind: "voice", name: "note.ogg" }],
+      [{ kind: "file", name: "trip.mp4", asFile: true }],
+    ])
+  })
+
   it("refuses an empty message before connecting", async () => {
     let opened = false
     const { code } = await tg(["messages", "send", "me"], {
