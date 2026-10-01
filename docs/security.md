@@ -98,7 +98,8 @@ End the session from another device: in the Telegram app, Settings → Devices, 
   "Changes something in Telegram" do: sending and changing messages, reactions, polls, marking read,
   administering groups and folders, `account update`, `contacts` writes, `account sessions end` and
   `session end` — each does only what the line says. `tg commands --json` marks
-  them `mutates`, together with the commands that change `tg`'s own settings and recipient list.
+  them `mutates`, together with the commands marked "Changes something on this computer only": the
+  settings, the recipient lists, group rules and the bot token.
 - **Delete without an explicit word.** `tg messages delete` asks first, and `--allow-dangerous`
   answers yes for you; deleting for everyone needs `--for-everyone` too. A deletion cannot be
   undone. An agent over MCP never deletes for everyone and never ends your other sessions, whatever

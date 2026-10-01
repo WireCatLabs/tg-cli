@@ -473,7 +473,7 @@ tg chats rules show <chat>
 
 change one rule; the group's first change writes every rule with its default
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg chats rules set <chat> <key> <value>
@@ -489,7 +489,7 @@ tg chats rules set <chat> <key> <value>
 
 put one rule back to its default
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg chats rules unset <chat> <key>
@@ -1494,7 +1494,7 @@ tg recipients list
 
 allow sending to this chat; the first add turns the list on
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg recipients add <chat>
@@ -1508,7 +1508,7 @@ tg recipients add <chat>
 
 stop allowing this chat; the list stays on
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg recipients remove <chat>
@@ -1522,7 +1522,7 @@ tg recipients remove <chat>
 
 delete the list, which turns it off: this profile may send to any chat again
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg recipients clear
@@ -1604,7 +1604,7 @@ tg config show [options]
 
 save a setting to the configuration file
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg config set <setting> <value> [options]
@@ -1625,7 +1625,7 @@ tg config set <setting> <value> [options]
 
 remove a setting from the configuration file
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg config unset <setting> [options]
@@ -1746,7 +1746,7 @@ the bot token this profile uses
 
 check a bot token with Telegram, then keep it — typed at a hidden prompt or piped on stdin
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg bot auth set
@@ -1764,7 +1764,7 @@ tg bot auth show
 
 forget this profile's bot token
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg bot auth remove
@@ -1835,6 +1835,80 @@ tg bot chats action <chat> <action>
 | `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
 | `action` | required | what the chat sees. One of: `typing`, `photo`, `video`, `voice`, `file`. |
 
+#### `tg bot chats admins`
+
+the admins of a chat the bot is an admin in
+
+#### `tg bot chats admins list`
+
+the chat's admins and what each may do
+
+```sh
+tg bot chats admins list <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, or the title of a chat this bot has seen. |
+
+#### `tg bot chats admins add`
+
+make a member an admin with these rights
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats admins add <chat> <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, or the title of a chat this bot has seen. |
+| `person` | required | the person's user id. |
+
+| Option | What it does |
+|---|---|
+| `--can <rights>` | what they may do, comma-separated: read, members, admins, info, pin, link, post, edit, delete. |
+| `--title <title>` | the title shown beside their name. |
+
+#### `tg bot chats admins remove`
+
+take an admin's rights back; they stay a member
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats admins remove <chat> <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, or the title of a chat this bot has seen. |
+| `person` | required | the person's user id. |
+
+#### `tg bot chats members`
+
+the people in a chat the bot is an admin in
+
+#### `tg bot chats members remove`
+
+take a person out of a chat; their messages stay
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats members remove <chat> <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat id, or the title of a chat this bot has seen. |
+| `person` | required | the person's user id. |
+
+| Option | What it does |
+|---|---|
+| `--block` | also keep them from coming back by the chat's link. |
+
 ### `tg bot messages`
 
 the messages in the chats this bot is in
@@ -1871,12 +1945,16 @@ tg bot messages send <chat> [text] [options]
 the latest messages in a chat; where Telegram gives a bot no history, and with --offline, the ones this bot has seen on this machine
 
 ```sh
-tg bot messages list <chat>
+tg bot messages list <chat> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many, the newest. |
 
 #### `tg bot messages show`
 
@@ -1981,7 +2059,7 @@ tg bot recipients list
 
 allow a chat: its id, `user:<id>`, or the title of a chat this bot has seen
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg bot recipients add <chat>
@@ -1995,7 +2073,7 @@ tg bot recipients add <chat>
 
 take a chat off the list
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg bot recipients remove <chat>
@@ -2009,7 +2087,7 @@ tg bot recipients remove <chat>
 
 remove the list: the bot may write to any chat again
 
-**Changes something in Telegram.**
+**Changes something on this computer only.**
 
 ```sh
 tg bot recipients clear
