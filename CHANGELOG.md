@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg bot messages send|list|show|edit|delete|pin|unpin`** and **`tg bot chats show|leave|action`**
+  — the bot writes to a chat by id or title, or to a person as `user:<id>`, with `--md`, `--html`, a
+  file or a photo. Telegram gives a bot no history, so `list` and `show` answer from what this bot
+  sent and received on this computer. A delete asks first; `--allow-dangerous` answers.
+
 ## 0.21.0 — 01.10.2026
 
 ### What's new

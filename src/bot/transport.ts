@@ -49,8 +49,15 @@ export class TelegramBotTransport {
     this.#events = options.events
   }
 
-  /** `reads: false` for a write, so a write that got no answer is `outcome_unknown`, never retried by anyone. */
-  async call(method: string, params: Record<string, unknown> = {}, { reads = true } = {}): Promise<unknown> {
+  /**
+   * `reads: false` for a write, so a write that got no answer is `outcome_unknown`, never retried by
+   * anyone. `file` goes up in the same request, as multipart: Telegram has no upload step of its own.
+   */
+  async call(
+    method: string,
+    params: Record<string, unknown> = {},
+    { reads = true, file }: { reads?: boolean; file?: OutgoingFile } = {},
+  ): Promise<unknown> {
     this.#events?.({ event: "request", operation: method })
     const started = performance.now()
     const signals = [AbortSignal.timeout(this.#timeoutMs), ...(this.#signal ? [this.#signal] : [])]
@@ -58,8 +65,12 @@ export class TelegramBotTransport {
     try {
       response = await this.#fetch(`${this.#baseUrl}/bot${this.#token}/${method}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(params),
+        ...(file
+          ? { headers: { Accept: "application/json" }, body: multipart(params, file) }
+          : {
+              headers: { "Content-Type": "application/json", Accept: "application/json" },
+              body: JSON.stringify(params),
+            }),
         signal: AbortSignal.any(signals),
       })
     } catch (error) {
@@ -113,6 +124,23 @@ export class TelegramBotTransport {
       { operation: method, retryable: true },
     )
   }
+}
+
+/** A file sent with a method — `photo` for sendPhoto, `document`, `voice`. */
+export interface OutgoingFile {
+  field: string
+  name: string
+  bytes: Uint8Array
+}
+
+/** A field that is not a string goes as JSON, as Telegram reads `reply_parameters` and `caption_entities` from a form. */
+const multipart = (params: Record<string, unknown>, file: OutgoingFile): FormData => {
+  const form = new FormData()
+  for (const [name, value] of Object.entries(params)) {
+    if (value !== undefined) form.append(name, typeof value === "string" ? value : JSON.stringify(value))
+  }
+  form.append(file.field, new Blob([file.bytes]), file.name)
+  return form
 }
 
 /**
