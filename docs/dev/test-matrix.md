@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**250 ✅ · 11 ⛔ · 0 ❌** — 110 commands, 151 options.
+**258 ✅ · 11 ⛔ · 0 ❌** — 113 commands, 156 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -218,6 +218,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations list` | `--since-time` | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
+| `conversations batches status` |  | ✅ |  |
+| `conversations batches status` | `--chat` | ✅ |  |
+| `conversations batches status` | `--size` | ✅ |  |
+| `conversations batches next` |  | ✅ |  |
+| `conversations batches next` | `--chat` | ✅ |  |
+| `conversations batches next` | `--size` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
@@ -261,6 +267,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp config` | `--allow-mark-read` | ✅ |  |
 | `mcp config` | `--allow-delete` | ✅ |  |
 | `skill show` |  | ✅ |  |
+| `skill install` |  | ✅ |  |
+| `skill install` | `--for` | ✅ |  |
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |
 | *global* | `--json` | ✅ |  |

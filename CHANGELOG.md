@@ -7,6 +7,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg conversations batches status|next --chat <chat> [--size <n>]`**: a group chat in batches for
+  your own AI agent to link into conversations. `status` says how many messages and batches are left
+  before you start; `next` prints the next batch. tg itself calls no model.
+- **`tg skill install [--for claude|agents|all]`** writes tg's guide for AI agents where Claude Code
+  and other agents look for it. When an agent runs tg and no copy is installed, tg says so once a day
+  on stderr; `tg config set skillHint false --defaults` turns that off.
 - **`tg store clear --left`** deletes the chats you have left from the local store, with their
   messages. It asks for `--allow-dangerous` and otherwise says how much it would delete.
 - **`tg conversations build|list|show`** and **`tg messages links`**, with the MCP tools
@@ -127,6 +133,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg server stop` and Ctrl-C end `serve` and `watch` cleanly.** The serve went down before it could
+  clean up, so `tg server status` reported a leftover lock (`stale`) after every stop.
+- **`tg server` in a development checkout leaves the installed tg's systemd unit alone.** A checkout
+  with its own `TG_STATE_DIR` or store gets a unit of its own name; the installed tg keeps
+  `tg-serve-<profile>.service`.
 - **A chat you have left no longer shows in `chats list --offline`.** It drops out the next time
   `tg chats list` reads your whole chat list; its messages stay until `tg store clear --left`, and a
   chat you rejoin comes back.

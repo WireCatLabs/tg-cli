@@ -3,8 +3,10 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Message } from "@leemour/cli-messaging"
+import { unitScope } from "@leemour/cli-messaging/background"
 import type { ServerSystem } from "@leemour/cli-messaging/cli"
 import { describe, expect, it } from "vitest"
+import { TG } from "./app.js"
 import { run } from "./program.js"
 import { scripted } from "./testing/scripted.js"
 
@@ -92,6 +94,29 @@ describe("the archive, from the store", () => {
     expect(links.answer).toMatchObject({ chain: ["102", "101"] })
   })
 
+  it("**hands a chat to the user's agent in batches**: how much is left, then the next batch", async () => {
+    const store = await backfilled()
+    await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+
+    const status = await tg(
+      ["archive", "conversations", "batches", "status", "--chat", CHAT, "--size", "10", "--json"],
+      store,
+    )
+    expect(status.code).toBe(0)
+    const next = await tg(
+      ["archive", "conversations", "batches", "next", "--chat", CHAT, "--size", "10", "--json"],
+      store,
+    )
+    expect(next.code).toBe(0)
+  })
+
+  it("installs the agents' guide under the home it is given", async () => {
+    const home = mkdtempSync(join(tmpdir(), "home-"))
+    const { code } = await tg(["skill", "install", "--for", "claude", "--json"], await backfilled(), { HOME: home })
+    expect(code).toBe(0)
+    expect(existsSync(join(home, ".claude", "skills", "tg-cli", "SKILL.md"))).toBe(true)
+  })
+
   it("**estimates what a full fetch would still cost** without asking Telegram", async () => {
     const store = await backfilled()
     const { code, answer } = await tg(["archive", "store", "fetch", CHAT, "--estimate", "--json", "--offline"], store)
@@ -173,14 +198,15 @@ describe("server", () => {
     ran.length = 0
 
     const installed = await tg(["archive", "server", "install", "--json"], store)
-    const path = join(process.env.XDG_CONFIG_HOME ?? "", "systemd", "user", "tg-serve-archive.service")
-    expect(installed.answer).toMatchObject({ unit: "tg-serve-archive.service", path })
+    const unit = `tg-serve-${unitScope(TG, "archive", { ...process.env, MESSAGING_STORE: store })}.service`
+    const path = join(process.env.XDG_CONFIG_HOME ?? "", "systemd", "user", unit)
+    expect(installed.answer).toMatchObject({ unit, path })
     expect(ran).toEqual([])
     expect(readFileSync(path, "utf8")).toContain('Environment="TG_PROFILE=archive"')
 
     const logs = await tg(["archive", "server", "logs", "--lines", "2", "--json"], store)
     expect(logs.answer).toMatchObject({ items: ["one", "two"] })
-    expect(ran.at(-1)).toEqual(["journalctl", "--user", "-u", "tg-serve-archive.service", "-n", "2", "--no-pager"])
+    expect(ran.at(-1)).toEqual(["journalctl", "--user", "-u", unit, "-n", "2", "--no-pager"])
 
     await tg(["archive", "server", "uninstall"], store)
     expect(existsSync(path)).toBe(false)
