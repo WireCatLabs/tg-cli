@@ -36,6 +36,23 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   PHONE_NOT_OCCUPIED: ["not_found", "nobody Telegram lets you find has this number"],
 }
 
+/** mtcute's argument errors by the start of their text, which may go on to quote what was typed. */
+const ARGUMENT_KINDS: [RegExp, string][] = [
+  [/^You haven't joined /, "you are not a member of that chat"],
+  [/^Invalid message link/, "that is not a message link Telegram understands"],
+  [/^Invalid invite link/, "that is not an invite link Telegram understands"],
+  [
+    /^Invalid phone number|^phone should only contain digits|is an invalid test phone number$/,
+    "that phone number is not valid",
+  ],
+  [/^Provided code was invalid/, "the login code was wrong"],
+  [/^Provided password was invalid/, "the two-step verification password was wrong"],
+  [/^You can forward no more than 100 messages/, "Telegram forwards at most 100 messages at once"],
+]
+
+const argumentKind = (message: string) =>
+  ARGUMENT_KINDS.find(([pattern]) => pattern.test(message))?.[1] ?? "Telegram refused an argument this command passed"
+
 /**
  * Telegram's refusals as the closed list of codes a script branches on. Only the error's name
  * travels into the message — never a parameter the caller passed, which may be somebody's text.
@@ -64,8 +81,8 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
     return new CliError("provider_error", `Telegram refused: ${error.text}`, details)
   }
   if (error instanceof MtTimeoutError) return new CliError("timeout", "Telegram did not answer in time")
-  if (error instanceof MtArgumentError) return new CliError("validation_error", error.message)
   // mtcute builds these messages from what was typed — a chat title can be somebody's text — so none is passed on.
+  if (error instanceof MtArgumentError) return new CliError("validation_error", argumentKind(error.message))
   if (error instanceof MtPeerNotFoundError) return new CliError("not_found", "Telegram does not know that chat or user")
   if (error instanceof MtMessageNotFoundError) {
     return new CliError("not_found", `there is no message ${error.messageId} in that chat`)
