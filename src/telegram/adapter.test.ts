@@ -602,6 +602,13 @@ describe("reading", () => {
     })
   })
 
+  it("answers who this is with the phone, which only me() carries", async () => {
+    const { adapter, client } = await open()
+    client.getMe = async () => user(1, "Owner", { isSelf: true, phoneNumber: "0000001234" })
+
+    expect(await adapter.me()).toEqual({ id: "1", name: "Owner", username: null, phone: "0000001234" })
+  })
+
   it("turns Telegram's refusal into a typed error", async () => {
     const { adapter, client } = await open()
     client.getMe = async () => {
