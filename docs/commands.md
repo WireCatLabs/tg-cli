@@ -1411,6 +1411,36 @@ tg conversations show <conversation> [message]
 | `conversation` | required | a conversation id from `conversations list`; or a chat: its title or part of it, its id, @username, or `me` for Saved Messages, with a message. |
 | `message` | optional | a message id in that chat: show the conversation it is in. |
 
+### `tg conversations batches`
+
+windows of a chat for your own AI agent to link: which earlier message each one answers
+
+#### `tg conversations batches status`
+
+how many messages still wait for an answer, in how many batches, and how much text
+
+```sh
+tg conversations batches status [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--size <n>` | messages to answer per batch, 10–200; 50 by default. |
+
+#### `tg conversations batches next`
+
+the next window to answer, with the messages before it; message text goes to stdout only
+
+```sh
+tg conversations batches next [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--size <n>` | messages to answer per batch, 10–200; 50 by default. |
+
 ## `tg recipients`
 
 the chats this profile may send to, when the list is on
@@ -1545,7 +1575,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck, skillHint. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -1566,7 +1596,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, readOtherBots, updateCheck, skillHint. |
 
 | Option | What it does |
 |---|---|
@@ -1673,11 +1703,23 @@ the instructions an agent is given for this tool
 
 ### `tg skill show`
 
-print SKILL.md — redirect it into \~/.claude/skills/tg-cli/SKILL.md for Claude Code, or \~/.agents/skills/tg-cli/SKILL.md for Codex and Gemini CLI
+print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it
 
 ```sh
 tg skill show
 ```
+
+### `tg skill install`
+
+write SKILL.md to \~/.claude/skills/tg-cli/ (Claude Code) and \~/.agents/skills/tg-cli/ (Codex, Gemini CLI)
+
+```sh
+tg skill install [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--for <agents>` | which agents to install for. One of: `claude`, `agents`, `all`. Default: `all`. |
 
 ## Exit codes
 
