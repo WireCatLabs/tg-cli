@@ -150,3 +150,27 @@ schedule.
 Once you agree, the agent sends it: `tg messages send @example_user "…"`. An agent without a terminal
 connects with `tg mcp --confirm-send`: before each send you see the chat and the text and answer yes
 or no ([mcp.md](mcp.md)).
+
+## A group you run
+
+Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg chats events:*)`,
+`Bash(tg chats members list:*)`.
+
+> Run `tg review --chat "Hiking" --unanswered 4 --json` and `tg chats events "Hiking" --since 7d
+> --json`. Briefly: which questions wait for an answer, from whom and since when; who joined or was
+> added this week, and by whom. Do not answer anyone — list what I should reply to.
+
+Every scenario for a group: [groups.md](groups.md).
+
+## Similar collections
+
+Other people's recipes for Telegram and an agent. Their requests work with `tg` once the tools are
+replaced by commands:
+
+- [Telegram MCP: the complete guide](https://mcp.directory/blog/telegram-mcp-complete-guide-2026) —
+  a morning pass over the inbox, draft replies, a channel digest, a search across several chats.
+- [pioh/tg](https://github.com/pioh/tg) — Claude Code and Codex with a personal Telegram account: a
+  digest every N minutes, "remind me if I have not answered mum in 15 minutes", watching people and
+  chats.
+- [Gorgias MCP cookbook](https://github.com/gorgias/mcp-cookbook) — recipes for customer support, but
+  well made: each says whether it writes anything, and what to change for yourself.
