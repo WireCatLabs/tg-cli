@@ -1,0 +1,26 @@
+{
+  "title": "tg",
+  "pages": [
+    "---Start---",
+    "index",
+    "installation",
+    "---Guides---",
+    "usage",
+    "sessions",
+    "archive",
+    "groups",
+    "mcp",
+    "remote",
+    "recipes",
+    "---Reference---",
+    "commands",
+    "configuration",
+    "---When something goes wrong---",
+    "diagnostics",
+    "troubleshooting",
+    "security",
+    "---Project---",
+    "changelog",
+    "roadmap"
+  ]
+}

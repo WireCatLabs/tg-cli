@@ -69,7 +69,7 @@ Three directories per the conventions of the operating system, plus two shared o
   sends (`sends/`), the list of allowed recipients (`profiles/`), `inbox --new`'s saved point
   (`inbox/`), background fetch jobs, and `serve`'s log and lock.
 - **the local store** is shared with other messenger CLIs built on the same library, such as
-  [max-cli](https://github.com/leemour/max-cli). It is described in [store.md](store.md).
+  [max-cli](https://github.com/leemour/max-cli). It is described in [archive.md](archive.md).
 - **speech models** are downloaded only when you ask (`tg models audio download`), for
   `messages transcribe --local`.
 

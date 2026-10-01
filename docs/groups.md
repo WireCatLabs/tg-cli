@@ -9,7 +9,7 @@ Everything here works from your personal account. The commands in full:
 
 ## With an agent
 
-An agent with a terminal (Claude Code, Codex) needs the [skill](../README.md#a-skill-for-agents-with-a-terminal);
+An agent with a terminal (Claude Code, Codex) needs the [skill](recipes.md#once-first);
 one without (Claude Desktop, Cursor) needs the [MCP server](mcp.md). Below: what you say, what the
 agent calls, and what you get back.
 

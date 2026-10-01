@@ -8,11 +8,12 @@ order.
 
 | Page | Answers |
 |---|---|
+| [index.md](index.md) | What is `tg`, what can it do, and how does it differ from other tools? |
 | [installation.md](installation.md) | How do I install it, what does it need, where do its files go, how do I upgrade or remove it? |
 | [usage.md](usage.md) | How do I log in, read, page, send, and use it from a script — in that order? |
 | [sessions.md](sessions.md) | How does login work: QR or phone, the app from my.telegram.org, the keyring, profiles, logout? |
 | [configuration.md](configuration.md) | What can I set, with which variable, and which value wins? |
-| [store.md](store.md) | What does the local store keep, how do I fill it, search it, export it, keep it current and back it up? |
+| [archive.md](archive.md) | What does the local store keep, how do I fill it, search it, export it, keep it current and back it up? |
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
 | [remote.md](remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |
@@ -21,8 +22,13 @@ order.
 | [security.md](security.md) | What reaches the disk, what never does, and what stops a send going to the wrong place? |
 | [troubleshooting.md](troubleshooting.md) | Something does not work: what the screen says, and what to do |
 | [commands.md](commands.md) | Every command, option and exit code — **generated** from the program |
+| [roadmap.md](roadmap.md) | What is coming next? |
 
 What changed between versions: [CHANGELOG.md](../CHANGELOG.md).
+
+[meta.json](meta.json) is the sidebar of the docs portal: every page above, in order. It follows
+[the shared page structure](https://github.com/leemour/cli-docs/blob/main/docs/STRUCTURE.md); a new
+page goes into it too. This index is for contributors and stays out of the portal.
 
 ## The reference is generated
 
