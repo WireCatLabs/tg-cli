@@ -278,7 +278,7 @@ tg messages search "invoice.*(march|april)" --regex
 
 A search needs **at least three characters**. `messages search` looks for every word, as a word or
 the start of one — `invoic` finds "invoice". It never connects to Telegram: it answers from what was
-read, fetched or kept by `serve` ([store.md](store.md#search)). Once you have the chat, use its id.
+read, fetched or kept by `serve` ([archive.md](archive.md#search)). Once you have the chat, use its id.
 
 ## Sending
 
@@ -421,7 +421,7 @@ through the guard, as an `account` change.
 ### Not in tg yet
 
 Several photos in one message, sending into a forum topic. They are on the
-[roadmap](../README.md#roadmap).
+[roadmap](roadmap.md).
 
 ## Groups and channels
 
@@ -548,7 +548,7 @@ chat or a small group, so such a line has no chat.
 
 **`watch` starts from now.** What arrived while nothing was listening is not shown. To keep the local
 store current, including what came in while this machine was off, use `serve`, in the background or
-as a system service ([store.md](store.md#keeping-it-current-serve)):
+as a system service ([archive.md](archive.md#keeping-it-current-serve)):
 
 ```sh
 tg server start           # serve in the background; answers once it is connected
@@ -581,7 +581,7 @@ tg store backup ~/tg-store.db                     # a copy of the store, while i
 
 An ordinary command still asks Telegram. `--offline` is for when there is no network, or when
 connecting is not wanted; a send with `--offline` is refused. Fetching, export, search, backup and
-the service: [store.md](store.md).
+the service: [archive.md](archive.md).
 
 ## Settings, and what a profile may do
 
@@ -603,7 +603,7 @@ secret.** Every setting and variable: [configuration.md](configuration.md).
 
 ## Next
 
-- [store.md](store.md) — the local store: search, fetch a chat's history, export, backup
+- [archive.md](archive.md) — the local store: search, fetch a chat's history, export, backup
 - [configuration.md](configuration.md) — settings, and what a profile may do
 - [security.md](security.md) — what reaches the disk, and the send guard
 - [recipes.md](recipes.md) — daily work for an agent

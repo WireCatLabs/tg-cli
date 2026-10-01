@@ -271,7 +271,7 @@ An answer other than `y` to a question before a change ends the same way: nothin
 ## "the message store was written by a newer version …"
 
 Exit code `3`. Another CLI, or a newer `tg`, upgraded the local store in a way this version cannot
-read. Run `tg upgrade`. Nothing in the store is lost ([store.md](store.md#the-store-and-other-versions)).
+read. Run `tg upgrade`. Nothing in the store is lost ([archive.md](archive.md#the-store-and-other-versions)).
 
 ## "nothing recorded for profile … yet — run the command once without --offline"
 
@@ -283,7 +283,7 @@ example `tg chats list`.
 
 Search reads only what this machine has kept, never Telegram. An empty answer means "not kept", not
 "never said". Read the chat (`tg messages list <chat>`), or fetch its history with `tg store fetch`,
-then search again ([store.md](store.md#search)). `tg store check` says which chats are behind.
+then search again ([archive.md](archive.md#search)). `tg store check` says which chats are behind.
 
 ## "tg serve is already running for profile …"
 
@@ -294,7 +294,7 @@ Exit code `2`. One `serve` per profile. `tg server status` says which process an
 
 `tg server logs` says why. Under a service, the usual reason is the keyring: a service starts before
 the keyring is open, or without `XDG_RUNTIME_DIR`. After moving Node or `tg`, run
-`tg server install` again: the unit runs the paths that installed it ([store.md](store.md#as-a-service)).
+`tg server install` again: the unit runs the paths that installed it ([archive.md](archive.md#as-a-service)).
 
 ## `npx @leemour/tg-cli` runs an old version
 

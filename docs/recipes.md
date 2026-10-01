@@ -137,7 +137,7 @@ Writes to Telegram: **no**. Allow: `Bash(tg messages search:*)`, `Bash(tg messag
 > `tg messages context <locator> --json` and tell me who said what, and when.
 
 Search reads only what this machine has kept. For a chat's whole history, fetch it first — that is a
-request from your account, so do it yourself: `tg store fetch <chat>` ([store.md](store.md)).
+request from your account, so do it yourself: `tg store fetch <chat>` ([archive.md](archive.md)).
 
 ## Draft a reply
 
