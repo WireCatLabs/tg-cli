@@ -70,7 +70,7 @@ const tryJson = (text: string): unknown => {
 
 const backfilled = async () => {
   const store = join(mkdtempSync(join(tmpdir(), "tg-archive-")), "messages.db")
-  await tg(["archive", "store", "fetch", CHAT, "--max-pages", "1", "--pause", "1ms"], store)
+  await tg(["archive", "store", "fetch", CHAT, "--limit", "100", "--pause", "1ms"], store)
   return store
 }
 
@@ -94,12 +94,12 @@ describe("the archive, from the store", () => {
     expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])
   })
 
-  it("exports into a new file only the owner can read, from --since on", async () => {
+  it("exports into a new file only the owner can read, from --since-time on", async () => {
     const store = await backfilled()
     const file = join(mkdtempSync(join(tmpdir(), "tg-export-")), "chat.jsonl")
 
     const written = await tg(
-      ["archive", "store", "export", CHAT, "--output", file, "--since", "2000-01-01", "--json"],
+      ["archive", "store", "export", CHAT, "--output", file, "--since-time", "2000-01-01", "--json"],
       store,
     )
 
@@ -162,7 +162,7 @@ describe("server", () => {
     expect(readFileSync(path, "utf8")).toContain('Environment="TG_PROFILE=archive"')
 
     const logs = await tg(["archive", "server", "logs", "--lines", "2", "--json"], store)
-    expect(logs.answer).toMatchObject({ lines: ["one", "two"] })
+    expect(logs.answer).toMatchObject({ items: ["one", "two"] })
     expect(ran.at(-1)).toEqual(["journalctl", "--user", "-u", "tg-serve-archive.service", "-n", "2", "--no-pager"])
 
     await tg(["archive", "server", "uninstall"], store)

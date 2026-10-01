@@ -1,4 +1,5 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { SendJournal, sendsPathFor } from "@leemour/cli-messaging/sends"
@@ -485,6 +486,48 @@ describe("the send guard in front of the other writes", () => {
       "folder-update",
       "folder-delete",
     ])
+  })
+
+  it("**changes the profile and ends other sessions through the guard**", async () => {
+    const photo = join(mkdtempSync(join(tmpdir(), "tg-photo-")), "me.jpg")
+    writeFileSync(photo, new Uint8Array([0xff, 0xd8]))
+    const done: string[] = []
+    const adapter = scripted({
+      updateProfile: async (change) => {
+        done.push(`profile ${Object.keys(change).join(",")}`)
+        return { id: "1", name: "New", username: null }
+      },
+      endOtherSessions: async () => {
+        done.push("end")
+        return []
+      },
+    })
+
+    const codes = [
+      (
+        await tg(
+          [
+            "g-profile",
+            "account",
+            "update",
+            "--first-name",
+            "New",
+            "--last-name",
+            "Name",
+            "--description",
+            "hi",
+            "--photo",
+            photo,
+          ],
+          adapter,
+        )
+      ).code,
+      (await tg(["g-profile", "account", "sessions", "end", "--others", "--yes"], adapter)).code,
+    ]
+
+    expect(codes).toEqual([0, 0])
+    expect(done).toEqual(["profile firstName,lastName,description,photo", "end"])
+    expect(journal("g-profile").map((entry) => entry.action)).toEqual(["profile", "sessions-end"])
   })
 
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {

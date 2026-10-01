@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**214 ✅ · 7 ⛔ · 0 ❌** — 93 commands, 128 options.
+**229 ✅ · 7 ⛔ · 0 ❌** — 101 commands, 135 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -17,7 +17,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `session end` |  | ✅ |  |
 | `account show` |  | ✅ |  |
 | `account show` | `--show-phone` | ✅ |  |
+| `account update` |  | ✅ |  |
+| `account update` | `--first-name` | ✅ |  |
+| `account update` | `--last-name` | ✅ |  |
+| `account update` | `--description` | ✅ |  |
+| `account update` | `--photo` | ✅ |  |
 | `account sessions list` |  | ✅ |  |
+| `account sessions end` |  | ✅ |  |
+| `account sessions end` | `--others` | ✅ |  |
 | `chats list` |  | ✅ |  |
 | `chats list` | `--limit` | ✅ |  |
 | `chats list` | `--page` | ✅ |  |
@@ -26,8 +33,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats list` | `--kind` | ✅ |  |
 | `chats list` | `--unread` | ✅ |  |
 | `chats events` |  | ✅ |  |
-| `chats events` | `--since` | ✅ |  |
-| `chats events` | `--event` | ✅ |  |
+| `chats events` | `--since-time` | ✅ |  |
+| `chats events` | `--type` | ✅ |  |
 | `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `chats members list` |  | ✅ |  |
@@ -69,10 +76,17 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts show` |  | ✅ |  |
 | `contacts lookup` |  | ✅ |  |
 | `contacts sync` |  | ✅ |  |
+| `contacts add` |  | ✅ |  |
+| `contacts remove` |  | ✅ |  |
+| `contacts block` |  | ✅ |  |
+| `contacts unblock` |  | ✅ |  |
+| `contacts rename` |  | ✅ |  |
+| `contacts import` |  | ✅ |  |
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
-| `messages list` | `--before` | ✅ |  |
-| `messages list` | `--after` | ✅ |  |
+| `messages list` | `--before-id` | ✅ |  |
+| `messages list` | `--after-id` | ✅ |  |
+| `messages list` | `--after-time` | ✅ |  |
 | `messages list` | `--transcribe` | ✅ |  |
 | `messages list` | `--model` | ✅ |  |
 | `messages list` | `--mark-read` | ✅ |  |
@@ -85,7 +99,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--send-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
-| `messages send` | `--markdown` | ✅ |  |
+| `messages send` | `--md` | ✅ |  |
 | `messages send` | `--file` | ✅ |  |
 | `messages send` | `--photo` | ✅ |  |
 | `messages send` | `--as-file` | ✅ |  |
@@ -94,17 +108,17 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--at` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
-| `messages context` | `--before` | ✅ |  |
-| `messages context` | `--after` | ✅ |  |
+| `messages context` | `--before-n` | ✅ |  |
+| `messages context` | `--after-n` | ✅ |  |
 | `messages download` |  | ✅ |  |
-| `messages download` | `--output` | ✅ |  |
+| `messages download` | `--output-dir` | ✅ |  |
 | `messages download` | `--all` | ✅ |  |
 | `messages download` | `--pause` | ✅ |  |
 | `messages transcribe` |  | ✅ |  |
 | `messages transcribe` | `--local` | ✅ |  |
 | `messages transcribe` | `--model` | ✅ |  |
 | `messages edit` |  | ✅ |  |
-| `messages edit` | `--markdown` | ✅ |  |
+| `messages edit` | `--md` | ✅ |  |
 | `messages delete` |  | ✅ |  |
 | `messages delete` | `--for-everyone` | ✅ |  |
 | `messages delete` | `--allow-dangerous` | ✅ |  |
@@ -132,13 +146,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models audio download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
-| `inbox` | `--since` | ✅ |  |
+| `inbox` | `--since-time` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
 | `inbox` | `--all` | ✅ |  |
 | `inbox` | `--transcribe` | ✅ |  |
 | `inbox` | `--model` | ✅ |  |
 | `review` |  | ✅ |  |
-| `review` | `--since` | ✅ |  |
+| `review` | `--since-time` | ✅ |  |
 | `review` | `--chat` | ✅ |  |
 | `review` | `--unanswered` | ✅ |  |
 | `review` | `--all` | ✅ |  |
@@ -165,9 +179,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `server uninstall` |  | ✅ |  |
 | `store status` |  | ✅ |  |
 | `store fetch` |  | ✅ |  |
-| `store fetch` | `--max-pages` | ✅ |  |
+| `store fetch` | `--limit` | ✅ |  |
+| `store fetch` | `--page-size` | ✅ |  |
 | `store fetch` | `--pause` | ✅ |  |
-| `store fetch` | `--since` | ✅ |  |
+| `store fetch` | `--since-time` | ✅ |  |
 | `store fetch` | `--last` | ✅ |  |
 | `store fetch` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `store fetch` | `--estimate` | ✅ |  |
@@ -176,7 +191,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store jobs cancel` |  | ✅ |  |
 | `store export` |  | ✅ |  |
 | `store export` | `--format` | ✅ |  |
-| `store export` | `--since` | ✅ |  |
+| `store export` | `--since-time` | ✅ |  |
 | `store export` | `--output` | ✅ |  |
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |

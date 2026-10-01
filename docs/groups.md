@@ -17,7 +17,7 @@ agent calls, and what you get back.
 
 ```text
 You:    What is still unanswered in "Hiking"?
-Agent:  (tg review --chat "Hiking" --unanswered 4 --json)
+Agent:  (tg review --chat "Hiking" --unanswered 4h --json)
         Unanswered for more than 4 hours — 3 questions:
         · Lena, 08:12 — "What time do we leave on Saturday?"
         · Artem, yesterday 22:40 — a reply to your post about the route: "Are the tents shared?"
@@ -34,7 +34,7 @@ command says so.
 
 ```text
 You:    Who joined "Hiking" this week?
-Agent:  (tg chats events "Hiking" --event join,add --json)
+Agent:  (tg chats events "Hiking" --type join,add --json)
         Five people:
         · Kate — added by Lena, Tuesday
         · Oleg — joined by the link, Wednesday
@@ -62,7 +62,7 @@ so the agent can say what changed without reading the group again.
 
 ```text
 You:    Sum up the week in "Hiking".
-Agent:  (tg review --chat "Hiking" --since 2026-09-20T00:00 --json)
+Agent:  (tg review --chat "Hiking" --since-time 2026-09-20T00:00 --json)
         Decided: we leave on 4 October, at 7:00 from the station.
         Taken on: Lena — food, Artem — tents.
         Open: who brings the pot — asked three times, no answer.

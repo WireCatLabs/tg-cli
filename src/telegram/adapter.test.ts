@@ -125,6 +125,16 @@ class FakeClient {
     ...params.modification,
   }))
   deleteFolder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  addContact = vi.fn(
+    async (params: { userId: unknown; firstName: string; lastName?: string }): Promise<unknown> =>
+      user(Number(params.userId), [params.firstName, params.lastName].filter(Boolean).join(" ")),
+  )
+  deleteContacts = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [])
+  blockUser = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  unblockUser = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  importContacts = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ imported: [{ userId: 91 }] }))
+  updateProfile = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
+  setMyProfilePhoto = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
@@ -1126,6 +1136,56 @@ describe("chat folders", () => {
     expect(await adapter.createFolder("Home", ["7"])).toEqual({ id: "3", title: "Home", chatIds: ["7"] })
     await adapter.deleteFolder("3")
     expect(client.deleteFolder.mock.calls).toEqual([[3]])
+  })
+})
+
+describe("the address book and the profile", () => {
+  it("**adds a person under the name they show**, renames, removes, blocks and unblocks by id", async () => {
+    const { adapter, client } = await open()
+    client.peer = user(91, "Ivan Petrov", { firstName: "Ivan", lastName: "Petrov" })
+
+    expect(await adapter.addContact("91")).toMatchObject({ id: "91" })
+    await adapter.renameContact("91", "Vanya")
+    await adapter.removeContact("91")
+    await adapter.block("91")
+    await adapter.unblock("91")
+
+    expect(client.addContact.mock.calls).toEqual([
+      [{ userId: 91, firstName: "Ivan", lastName: "Petrov" }],
+      [{ userId: 91, firstName: "Vanya" }],
+    ])
+    expect(client.deleteContacts.mock.calls).toEqual([[[91]]])
+    expect(client.blockUser.mock.calls).toEqual([[91]])
+    expect(client.unblockUser.mock.calls).toEqual([[91]])
+  })
+
+  it("imports numbers with a plus, the name split at its first space, and answers who Telegram knew", async () => {
+    const { adapter, client } = await open()
+
+    const known = await adapter.importContacts([{ phone: "34600111222", name: "Ivan de la Cruz" }])
+
+    expect(client.importContacts.mock.calls).toEqual([
+      [[{ phone: "+34600111222", firstName: "Ivan", lastName: "de la Cruz" }]],
+    ])
+    expect(known).toMatchObject([{ id: "91" }])
+  })
+
+  it("**calls the description the bio**, puts a photo up, and ends other sessions with Telegram's own call", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.updateProfile({
+      firstName: "New",
+      description: "hi",
+      photo: { kind: "photo", name: "me.jpg", bytes: new Uint8Array([1]) },
+    })
+    await adapter.endOtherSessions()
+
+    expect(client.updateProfile.mock.calls).toEqual([[{ firstName: "New", bio: "hi" }]])
+    expect(client.setMyProfilePhoto.mock.calls[0]?.[0]).toMatchObject({ type: "photo" })
+    expect(client.calls.filter((one) => one.method === "call").map((one) => (one.args[0] as { _: string })._)).toEqual([
+      "auth.resetAuthorizations",
+      "account.getAuthorizations",
+    ])
   })
 })
 

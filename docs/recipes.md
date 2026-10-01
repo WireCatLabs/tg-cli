@@ -99,7 +99,7 @@ very first run looks back 24 hours.
 
 Writes to Telegram: **no**. Allow: `Bash(tg messages list:*)`.
 
-> Read the last 7 days of the chat "Book club": `tg messages list "Book club" --after 7d --limit 200
+> Read the last 7 days of the chat "Book club": `tg messages list "Book club" --after-time 7d --limit 200
 > --json`. If the answer says `"hasMore": true`, read on. Write a report: what was decided, who took
 > on what and by when, which questions are still open. Give each point its date and author.
 
@@ -108,10 +108,10 @@ Writes to Telegram: **no**. Allow: `Bash(tg messages list:*)`.
 Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg messages context:*)`,
 `Bash(tg messages search:*)`.
 
-> Run `tg review --since <where the last review ended> --json` (without `--since`, the last 3 days).
+> Run `tg review --since-time <where the last review ended> --json` (without `--since-time`, the last 3 days).
 > Sort it into three lists: what I owe, what I wait for from others, what needs clarifying. Give each
 > point its chat, date and the message ids it rests on; a deadline only if one was named. Before you
-> call something overdue, check whether it was done later. At the end, say which `--since` the next
+> call something overdue, check whether it was done later. At the end, say which `--since-time` the next
 > review starts from, and list the open points.
 
 The next review is the same request plus the open points from the last one. In an MCP client it is
@@ -119,7 +119,7 @@ the `review` prompt.
 
 ## What you have not answered
 
-The shortest form is `tg review --since 7d --unanswered --json`: questions nobody answered — to you
+The shortest form is `tg review --since-time 7d --unanswered --json`: questions nobody answered — to you
 in one-to-one chats, to you or to the admins in groups. The recipe below is wider: it also catches
 requests without a question mark.
 
@@ -156,7 +156,7 @@ or no ([mcp.md](mcp.md)).
 Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg chats events:*)`,
 `Bash(tg chats members list:*)`.
 
-> Run `tg review --chat "Hiking" --unanswered 4 --json` and `tg chats events "Hiking" --since 7d
+> Run `tg review --chat "Hiking" --unanswered 4h --json` and `tg chats events "Hiking" --since-time 7d
 > --json`. Briefly: which questions wait for an answer, from whom and since when; who joined or was
 > added this week, and by whom. Do not answer anyone — list what I should reply to.
 

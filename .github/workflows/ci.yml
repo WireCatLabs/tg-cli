@@ -31,7 +31,7 @@ jobs:
       - run: git diff --exit-code
       - run: pnpm docs:check
       # dist/ is built above; the script reads the command tree from it.
-      - run: node --experimental-strip-types scripts/docs-commands.ts
+      - run: node dist/bin/tg.js commands --json | pnpm exec cli-messaging-parity tg --pages README.md docs/*.md
       - run: pnpm parity:check
 
   bun:

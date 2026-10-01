@@ -21,11 +21,12 @@ import {
   type MessageEvent,
   type Page,
   type PersonCard,
+  type PhoneBookEntry,
   type Poll,
   pickChat,
   type Topic,
 } from "@leemour/cli-messaging"
-import type { After, Download, NewPoll, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
+import type { After, Download, MessengerAdapter, NewPoll, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -211,7 +212,7 @@ export class TelegramAdapter {
   historyAfter(reference: string, { limit, after }: { limit: number; after: After }): Promise<Page<Message>> {
     const offset =
       "id" in after
-        ? { id: messageNumber(after.id, "--after takes a message id or a time") + 1, date: 0 }
+        ? { id: messageNumber(after.id, "--after-id takes a message id") + 1, date: 0 }
         : { id: 0, date: Math.floor(after.time / 1000) }
     const newer = (message: Message) =>
       "id" in after ? Number(message.id) > Number(after.id) : Date.parse(message.timestamp) > after.time
@@ -984,6 +985,99 @@ export class TelegramAdapter {
     return (await this.#client.getFolders()).filters
   }
 
+  /** Under the name they show; `renameContact` gives one of the owner's own. */
+  addContact(personId: string): Promise<Member> {
+    return this.#call(async () => {
+      const peer = await this.#client.getPeer(Number(personId))
+      if (peer.type !== "user") throw new CliError("validation_error", `${personId} is a chat, not a person`)
+      return toMember(
+        await this.#client.addContact({
+          userId: peer.id,
+          firstName: peer.firstName,
+          ...(peer.lastName ? { lastName: peer.lastName } : {}),
+        }),
+      )
+    })
+  }
+
+  removeContact(personId: string): Promise<void> {
+    return this.#call(async () => {
+      await this.#client.deleteContacts([Number(personId)])
+    })
+  }
+
+  block(personId: string): Promise<void> {
+    return this.#call(async () => {
+      await this.#client.blockUser(Number(personId))
+    })
+  }
+
+  unblock(personId: string): Promise<void> {
+    return this.#call(async () => {
+      await this.#client.unblockUser(Number(personId))
+    })
+  }
+
+  renameContact(personId: string, firstName: string, lastName?: string): Promise<Member> {
+    return this.#call(async () =>
+      toMember(
+        await this.#client.addContact({ userId: Number(personId), firstName, ...(lastName ? { lastName } : {}) }),
+      ),
+    )
+  }
+
+  /** The name is split at its first space into Telegram's first and last name. */
+  importContacts(entries: PhoneBookEntry[]): Promise<Member[]> {
+    return this.#call(async () => {
+      const result = await this.#client.importContacts(
+        entries.map(({ phone, name }) => {
+          const [firstName = name, ...rest] = name.split(" ")
+          return { phone: `+${phone}`, firstName, lastName: rest.join(" ") }
+        }),
+      )
+      const found = new Set(result.imported.map((one) => String(one.userId)))
+      const users = await this.#client.getUsers([...found].map(Number))
+      return users.filter((user): user is User => user !== null).map(toMember)
+    })
+  }
+
+  /** Telegram calls the description the bio. A photo goes up as a new profile photo. */
+  updateProfile({
+    firstName,
+    lastName,
+    description,
+    photo,
+  }: Parameters<NonNullable<MessengerAdapter["updateProfile"]>>[0]): Promise<Account> {
+    return this.#call(async () => {
+      if (firstName !== undefined || lastName !== undefined || description !== undefined) {
+        await this.#client.updateProfile({
+          ...(firstName === undefined ? {} : { firstName }),
+          ...(lastName === undefined ? {} : { lastName }),
+          ...(description === undefined ? {} : { bio: description }),
+        })
+      }
+      if (photo) await this.#client.setMyProfilePhoto({ type: "photo", media: photo.bytes })
+      const user = await this.#client.getMe()
+      return { ...toAccount(user), phone: user.phoneNumber }
+    })
+  }
+
+  /** mtcute has no call of its own for it; this is Telegram's `auth.resetAuthorizations`. */
+  endOtherSessions(): Promise<AccountSession[]> {
+    return this.#call(async () => {
+      try {
+        await this.#client.call({ _: "auth.resetAuthorizations" })
+      } catch (error) {
+        throw unknownIfUnanswered(
+          error,
+          "the other devices may or may not have been logged out; check `tg account sessions list`",
+        )
+      }
+      const { authorizations } = await this.#client.call({ _: "account.getAuthorizations" })
+      return authorizations.map(toAccountSession)
+    })
+  }
+
   async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
     try {
       const members = await this.#client.getChatMembers(peer, { limit: 200 })
@@ -1013,7 +1107,7 @@ export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const messageNumber = (id: string, rule = "--before takes a message id"): number => {
+const messageNumber = (id: string, rule = "--before-id takes a message id"): number => {
   if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
   return Number(id)
 }

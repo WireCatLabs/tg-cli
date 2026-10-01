@@ -107,7 +107,7 @@ tg messages list "Book club"                    # the latest 20, oldest first
 tg messages list "Book club" --limit 50
 tg messages show "Book club" 4242               # one message
 tg messages context "Book club" 4242            # it, and 5 messages either side
-tg messages context "Book club" 4242 --before 2 --after 10
+tg messages context "Book club" 4242 --before-n 2 --after-n 10
 ```
 
 In `context`, the message you asked for is marked `◀` in the terminal and `"anchor": true` in JSON.
@@ -116,7 +116,7 @@ In `context`, the message you asked for is marked `◀` in the terminal and `"an
 
 ```sh
 tg inbox                     # other people's unread messages, in every chat
-tg inbox --since 2h          # everything that came in during the last two hours
+tg inbox --since-time 2h     # everything that came in during the last two hours
 tg inbox --new               # what arrived since the last --new — for scheduled runs
 tg inbox --new --jsonl       # the same for a script: one message per line
 ```
@@ -127,7 +127,7 @@ stderr how many it left out.
 
 **`inbox --new` moves a saved point.** The next `--new` starts from where this one stopped, so each
 message is shown once. The very first `--new` looks back 24 hours. `inbox` without `--new`, and
-`inbox --since`, leave the point where it is. Plain `inbox` answers the same until the messages are
+`inbox --since-time`, leave the point where it is. Plain `inbox` answers the same until the messages are
 read in the app, since it marks nothing read.
 
 One run reads at most 20 chats; the rest are named on stderr and in `skipped`, with the command that
@@ -138,16 +138,16 @@ how to read the rest.
 
 ```sh
 tg review                                  # the last 3 days
-tg review --since 2026-09-23T09:00         # from where the last review ended
+tg review --since-time 2026-09-23T09:00    # from where the last review ended
 tg review --chat "Book club" --json
 ```
 
-Every message — yours and other people's — in every chat where something happened since `--since`.
+Every message — yours and other people's — in every chat where something happened since `--since-time`.
 It is for working out what you promised, what you are waiting for and what is still unclear; sorting
 it is your job or an agent's. It marks nothing read.
 
 The command ends with a line on stderr: from when to when it read. **Start the next review from
-that `--since`**, and nothing falls between two reviews. When the review is incomplete — too many
+that `--since-time`**, and nothing falls between two reviews. When the review is incomplete — too many
 chats at once, or a chat cut short to its newest 300 messages — it says so, and it is better not to
 move the boundary. It reads at most 20 chats in one run.
 
@@ -155,7 +155,7 @@ move the boundary. It reads at most 20 chats in one run.
 
 ```sh
 tg review --unanswered                     # questions nobody answered in 24 hours
-tg review --chat "Neighbours" --unanswered 4
+tg review --chat "Neighbours" --unanswered 4h
 ```
 
 `--unanswered [hours]` keeps only questions waiting for you or for a group's admins. A question is a
@@ -197,8 +197,8 @@ so asking again answers at once. `--transcribe` can take minutes.
 ### Files
 
 ```sh
-tg messages download "Book club" 4242 --output ~/Downloads       # one message's files
-tg messages download "Book club" --all --output ~/tg-files       # every file of the chat, newest first
+tg messages download "Book club" 4242 --output-dir ~/Downloads   # one message's files
+tg messages download "Book club" --all --output-dir ~/tg-files   # every file of the chat, newest first
 ```
 
 Photos, files, videos and voice notes are saved; the folder is created if it is missing. A file
@@ -221,6 +221,22 @@ tg contacts sync                       # your whole Telegram contact list into t
 your Telegram contact list too. `contacts lookup` never takes the number as an argument: pipe it in,
 or type it when asked.
 
+Changing the address book and your profile:
+
+```sh
+tg contacts add @example_user          # under the name they show
+tg contacts rename @example_user Ann "from work"   # a name only you see
+tg contacts remove @example_user       # the chat stays
+tg contacts block @example_user        # they need not be a contact
+tg contacts unblock @example_user
+tg contacts import people.txt          # one "number, name" per line; never numbers as arguments
+tg account update --first-name Ann --description "about me" --photo me.jpg
+tg account sessions end --others       # logs out every other device, your phone too; asks first
+```
+
+`contacts import` answers how many it sent and who Telegram knew, never a number. `account sessions
+end` asks before it goes; `--yes` answers in a script.
+
 ### Pages
 
 A list shows `limit` rows (20 by default). `chats list`, `contacts list`, `chats members list` and
@@ -235,18 +251,19 @@ tg contacts list --all                 # every row, no paging
 ⚠ **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
 that arrives between page one and page two moves someone across the border.
 
-**A chat's messages have no pages: they have `--before` and `--after`**, which page exactly:
+**A chat's messages have no pages: they have `--before-id`, `--after-id` and `--after-time`**, which page exactly:
 
 ```sh
-tg messages list "Book club" --before 4242      # older than message 4242
-tg messages list "Book club" --after 4242       # newer than 4242, oldest first
-tg messages list "Book club" --after 2h         # what came in during the last two hours
-tg messages list "Book club" --after 2026-09-20T09:00
+tg messages list "Book club" --before-id 4242   # older than message 4242
+tg messages list "Book club" --after-id 4242    # newer than 4242, oldest first
+tg messages list "Book club" --after-time 2h    # what came in during the last two hours
+tg messages list "Book club" --after-time 2026-09-20T09:00
 ```
 
-In the terminal, the line that names the next page goes to stderr. A bare number is always a message
-id. A time is ISO 8601, or "this long ago": `30m`, `2h`, `1d`. In `messages context`, `--before` and
-`--after` are counts of messages instead: there the point is already the message.
+In the terminal, the line that names the next page goes to stderr. `--before-id` and `--after-id` take
+a message id. `--after-time` takes ISO 8601, or "this long ago": `30m`, `2h`, `1d`. In
+`messages context`, `--before-n` and `--after-n` are counts of messages: there the point is already
+the message.
 
 ### Find a chat, then write to it
 
@@ -402,8 +419,8 @@ through the guard, as an `account` change.
 
 ### Not in tg yet
 
-Several photos in one message, sending into a forum topic; managing contacts and your profile. They
-are on the [roadmap](../README.md#roadmap).
+Several photos in one message, sending into a forum topic. They are on the
+[roadmap](../README.md#roadmap).
 
 ## Groups and channels
 
@@ -411,7 +428,7 @@ are on the [roadmap](../README.md#roadmap).
 tg chats inspect https://t.me/+AbCdEf              # where an invite or public link leads; does not join
 tg chats members list "Hiking" --all               # everyone, with their role and when last seen
 tg chats events "Hiking"                           # who joined, left, was added or removed — 7 days
-tg chats events "Hiking" --event join,leave --since 2026-09-01T00:00
+tg chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
 tg topics list "Hiking"                            # a forum group's topics, newest activity first
 tg topics search "Hiking" "gear"
 tg review --chat "Hiking" --unanswered             # questions nobody answered
@@ -555,7 +572,7 @@ Everything `tg` reads is kept on this machine, so that it can answer without the
 
 ```sh
 tg chats list --offline                           # only from the store, never connect
-tg store fetch "Project Alpha" --since 2026-01-01 --estimate   # how much a fetch would take
+tg store fetch "Project Alpha" --estimate      # how much a fetch would take
 tg store fetch "Project Alpha" --background       # a chat's history, as a job
 tg store export "Project Alpha" --format markdown --output alpha.md
 tg store backup ~/tg-store.db                     # a copy of the store, while it is in use
