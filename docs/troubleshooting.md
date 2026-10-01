@@ -147,10 +147,10 @@ ago" (`30m`, `2h`, `1d`). A message id goes to `--after-id` or `--before-id` ins
 Exit code `2`. `--at-time` is a local time, or a delay from now in minutes, hours or days — not seconds. It
 must be at least a minute from now and at most a year.
 
-## "--timeout takes a duration with a unit — 30s, 2m or 500ms"
+## "--timeout takes a duration with a unit — 500ms, 30s, 2m, 4h or 1d"
 
-Exit code `2`. `--timeout` and `TG_TIMEOUT` take `ms`, `s` or `m`. There is no `h`: write `120m` for
-two hours.
+Exit code `2`. `--timeout` and `TG_TIMEOUT` take a number with `ms`, `s`, `m`, `h` or `d`; a bare
+number is refused.
 
 ## "--all and --page ask for different things; use one or the other"
 

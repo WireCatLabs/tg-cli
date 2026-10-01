@@ -202,8 +202,8 @@ per call, the same shape of answer every time, a limit on what an agent may send
 searchable offline, and nothing marked read by reading.
 
 **Bots.** A Telegram bot, through the [Bot API](https://core.telegram.org/bots/api), sees only the
-chats it was added to and speaks as the bot. `tg` is you: your chats, in your name. It has no bot
-mode.
+chats it was added to and speaks as the bot. `tg` is you: your chats, in your name. `tg bot` drives a bot of
+yours through that API ([bot.md](docs/bot.md)).
 
 ## Contents
 

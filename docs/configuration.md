@@ -76,6 +76,8 @@ are in [installation.md](installation.md#where-files-go)).
 | `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` |
 | `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) |
 | `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` |
+| `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` |
+| `readOtherBots` | `false` | a bot profile only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bot.md](bot.md)) |
 
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
 names one.
@@ -97,8 +99,8 @@ names one.
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
 `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
-starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts` or
-`account` — or it is refused. **The most specific key you set wins**: with the example above,
+starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`
+or `bot` — or it is refused. **The most specific key you set wins**: with the example above,
 `messages.send` is allowed and every other change to messages is refused. There is no wildcard:
 `messages: readonly` does not touch `reactions`, `polls` or `chats`.
 

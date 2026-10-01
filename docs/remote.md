@@ -94,4 +94,5 @@ proxy again.
   login page. If it does not, Funnel is not running or not enabled for the tailnet.
 - **It connects but lists no tools:** run `tg mcp` alone once in a terminal; a login that has
   expired shows there (`tg session start`).
-- Everything `tg mcp` does is recorded like any other command: `tg runs list`.
+- `tg mcp` keeps a failed call as a run, like any other command, and every call with `--record`
+  or `record: true`: `tg runs list`.

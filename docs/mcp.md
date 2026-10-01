@@ -157,7 +157,7 @@ no fields, just the one button. The client's own window shows the arguments as t
 | `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
-| `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since` |
+| `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
 | `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
 | `tg_topics_list` | `tg topics list`, `tg topics search` | a forum group's topics with their ids; `search` matches titles |
@@ -172,7 +172,7 @@ no fields, just the one button. The client's own window shows the arguments as t
 | `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
 | `tg_messages_send` | `tg messages send`, `--reply-to` | send, by `messages.send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
-| `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `markdown` as `--md`; repeating it changes nothing |
+| `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `md` as `--md`; repeating it changes nothing |
 | `tg_chats_mark_read` | `tg chats mark-read` | mark a chat read, to its newest message or `until` one, by `chats.mark-read` — the other side sees it |
 | `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view, by `messages.delete` — a form first by default; never for everyone; each counts toward the hourly limit |
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message, by `reactions`; the confirmation form shows the emoji |
@@ -180,6 +180,16 @@ no fields, just the one button. The client's own window shows the arguments as t
 | `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (`polls.vote`), close the owner's own poll (`polls.close`), create one (`polls.create`, with `send_id` for a retry and `revote` to let people change their vote) |
 | `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), by `messages.forward`; `send_id` repeats a forward whose outcome was unknown |
 | `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`, by `messages.pin` and `messages.unpin` |
+| `tg_chats_create`, `tg_chats_join`, `tg_chats_leave` | `tg chats create`, `join`, `leave` | make a group or channel with these people, join one by its link, leave one — the others see each |
+| `tg_chats_update` | `tg chats update` | rename a group or channel, change its description or settings; its members see the change |
+| `tg_chats_link_show`, `tg_chats_link_reset` | `tg chats link show`, `reset` | a group's invite link; a new one, after which the old one stops working |
+| `tg_chats_members_add`, `tg_chats_members_remove` | `tg chats members add`, `remove` | add people to a group (each is told), or remove them; their messages stay |
+| `tg_chats_admins_add`, `tg_chats_admins_remove` | `tg chats admins add`, `remove` | make a member an admin with these rights, or take them back |
+| `tg_chats_folders_list`, `_create`, `_update`, `_delete` | `tg chats folders …` | the owner's chat folders; create one, rename it or change its chats, delete it — the chats stay |
+| `tg_chats_rules_show`, `tg_chats_moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
+| `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
+| `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
+| `tg_conversations_list`, `tg_conversations_show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
 chat's messages `{ items, limit, hasMore }`, ids are strings. An error is
