@@ -71,7 +71,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    (**Correction 2026-10-01:** since cli-messaging 0.77.0 the profile's `permissions` levels decide
    which tools an agent gets; `--allow-send`, `--allow-mark-read` and `--allow-delete` only warn)
    ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
-   `tg inbox` shipped. **Parity now runs in parallel lanes** — the plan:
+   `tg inbox` shipped (**Correction 2026-10-01:** the version stamp is dropped, see `CHANGELOG.md`). **Parity now runs in parallel lanes** — the plan:
    [`2026-09-29-parity-lanes.md`](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md); how agents
    run them: [`docs/dev/agents.md`](docs/dev/agents.md); each lane's handoff: [`docs/lanes/`](docs/lanes/)
    (standard: [`docs/dev/handoff-standard.md`](docs/dev/handoff-standard.md)). **Every parity command

@@ -42,7 +42,7 @@ describe("the session storage over the runtime's own SQLite", () => {
     await second.driver.destroy?.()
   })
 
-  it("keeps the session and its -wal and -shm owner-only", async () => {
+  it.skipIf(process.platform === "win32")("keeps the session and its -wal and -shm owner-only", async () => {
     const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
     const storage = await opened(path)
     storage.authKeys.set(2, new Uint8Array(256))
@@ -55,7 +55,7 @@ describe("the session storage over the runtime's own SQLite", () => {
     await storage.driver.destroy?.()
   })
 
-  it("makes a session left readable by others owner-only again", async () => {
+  it.skipIf(process.platform === "win32")("makes a session left readable by others owner-only again", async () => {
     const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
     writeFileSync(path, "", { mode: 0o644 })
     const storage = await opened(path)
