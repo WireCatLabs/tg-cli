@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages forward --send-id`.** A forward that got no answer is repeated with the send id from
+  the error, and Telegram keeps one copy, as with a send. The `--json` answer carries `sendId`; MCP's
+  `tg_messages_forward` takes `send_id`.
+- **`tg messages edit --md`** formats the new text as `messages send --md` does; MCP's
+  `tg_messages_edit` takes `markdown`.
 - **Looking after the message store: `tg store info`, `check`, `migrate`, `backup`, `restore`.**
   `info` says where `messages.db` is, its size, its schema and how many rows it holds. `check`
   reports whether it is healthy — integrity, foreign keys, the search indexes, free disk — and names
