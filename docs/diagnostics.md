@@ -29,20 +29,42 @@ tg runs show <run-id>        # one run: its outcome, and one line per operation
 tg runs path <run-id>        # the directory that holds it
 ```
 
-A run is a directory under `runs/` in the state directory (`~/.local/share/tg-cli/runs/` on Linux),
-one per day, with two files:
+A run is a directory under `runs/<day>/` in the state directory (`~/.local/share/tg-cli/runs/` on
+Linux), named by its time and its command, with two files:
 
 - `run.json` — the command, the profile, the version of `tg`, Node and the system, when it started
   and ended, how many requests it made, the outcome and the error code;
 - `events.jsonl` — the same operations `--trace` shows, one per line.
 
-To record every run of a profile: `tg config set record true`.
+## A failed run is always kept
 
-**A failed run is always kept**, recorded or not, so the failure can still be looked at afterwards.
-`--no-record` turns that off for one command. A failure before the command even started, such as a
-bad option or a config file that does not load, is kept too, as a run named `tg`.
+When a command ends in an error, its run is kept even without `--record`, marked
+`"keptBecauseFailed": true` in `run.json`. That holds for every command and every error: a bad
+option, an unknown command, a check before any work, commands that never connect (`models`,
+`server`, `upgrade`). A failure before the command even started, such as a config file that does not
+load, is kept as a run named `tg`. The record holds only the command's words, such as
+`messages list`, never what followed them.
 
-Runs older than `keepRunsForDays` (30 by default) are removed when the next one is kept.
+A run that worked leaves nothing unless you asked. So a problem report always has a failure to
+attach, and a history of what you read does not build up. `--no-record`, or `"record": false` in the
+settings, turns this off too.
+
+## When to record every run
+
+```sh
+tg config set record true          # this profile
+tg --no-record chats list          # but not this one
+```
+
+Then every run is kept. The default is the other way round on purpose: a run that worked is not
+written until you ask. A messenger that keeps a folder of whom you read and when would be a diary
+of your life nobody asked for.
+
+## How long it lives
+
+**30 days**, or `keepRunsForDays` in the settings. Old runs are removed only when a new one is kept:
+a tool that writes nothing has no reason to walk the folder. They are removed a whole day at a time,
+by the folder's name, so nothing has to be opened to decide.
 
 ## What is never in a record
 
@@ -83,12 +105,17 @@ If no failed run is kept, run the failing command again; its failure is kept by 
 
 ## What to do with runs
 
-The records are JSON, so `jq` answers questions about them:
+The records are JSON, so `jq` answers questions about them. `tg runs list --json` is an array of the
+runs' `run.json`, newest first:
 
 ```sh
 tg runs list --limit 100 --json | jq '[.[] | select(.status == "failed") | {command, errorCode}]'
 tg runs list --limit 100 --json | jq '[.[] | .durationMs] | add / length'    # average duration
+tg runs list --limit 100 --json | jq '[.[] | select(.requests > 10) | {command, requests}]'
 ```
+
+`tg runs show <run-id>` prints the same events as a table, without the fields every line repeats.
+The whole file is in the folder `tg runs path <run-id>` prints.
 
 ## Next
 
