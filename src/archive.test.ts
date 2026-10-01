@@ -70,7 +70,7 @@ const tryJson = (text: string): unknown => {
 
 const backfilled = async () => {
   const store = join(mkdtempSync(join(tmpdir(), "tg-archive-")), "messages.db")
-  await tg(["archive", "store", "fetch", CHAT, "--max", "3", "--pause", "1ms"], store)
+  await tg(["archive", "store", "fetch", CHAT, "--max-pages", "1", "--pause", "1ms"], store)
   return store
 }
 

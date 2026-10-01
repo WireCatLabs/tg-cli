@@ -52,7 +52,9 @@ const telegram = () => {
       return { ...poll(chatId, messageId), closed: true }
     },
     createPoll: async (chatId, created, { sendId, silent }) => {
-      polled.push(`create ${created.answers.length} ${created.multiple} ${created.anonymous} ${silent === true}`)
+      polled.push(
+        `create ${created.answers.length} ${created.multiple} ${created.anonymous} ${silent === true}${created.revote ? " revote" : ""}`,
+      )
       return { sendId, message: message("80", { chatId, outgoing: true }) }
     },
     send: async (chatId, text, { sendId }) => {
@@ -112,9 +114,29 @@ describe("the send guard in front of messages send", () => {
     const { code, error } = await tg(["g-ro", "messages", "send", "Valencia", "hi"], adapter)
 
     expect(code).toBe(5)
-    expect(error.message).toContain("read-only")
+    expect(error.message).toContain("does not let messages.send write")
     expect(sent).toEqual([])
     expect(journal("g-ro")).toMatchObject([{ outcome: "refused", errorCode: "permission_error" }])
+  })
+
+  it("**asks before a send its permission level is ask for**, and goes ahead with --yes", async () => {
+    configure({ "g-ask": { permissions: { "messages.send": "ask" } } })
+    const { adapter, sent } = telegram()
+
+    const unanswered = await tg(["g-ask", "messages", "send", "Valencia", "hi", "--json"], adapter)
+    const agreed = await tg(["g-ask", "messages", "send", "Valencia", "hi", "--yes", "--json"], adapter)
+
+    expect(unanswered.error.code).toBe("confirmation_required")
+    expect(agreed.code).toBe(0)
+    expect(sent).toEqual(["hi"])
+  })
+
+  it("creates a poll that allows a changed vote only with --revote", async () => {
+    const { adapter, polled } = telegram()
+
+    await tg(["g-revote", "polls", "create", "Valencia", "Friday?", "yes", "no", "--revote"], adapter)
+
+    expect(polled).toEqual(["create 2 false false false revote"])
   })
 
   it("sends only to chats on the recipient list once it is on", async () => {
@@ -182,7 +204,7 @@ describe("the send guard in front of the other writes", () => {
     const { code, error } = await tg(["g-noedit", "messages", "edit", "Valencia", "5", "x"], adapter)
 
     expect(code).toBe(5)
-    expect(error.message).toContain("does not allow edit")
+    expect(error.message).toContain("does not let messages.edit write")
     expect(edited).toEqual([])
   })
 

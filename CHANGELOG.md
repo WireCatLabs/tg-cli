@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg store fetch --last <n>`** stops once the newest n messages of the chat are held, so a later
+  run with the same `--last` asks Telegram for one page and stops.
+- **`tg polls create --revote`** lets people change their vote.
 - **`tg store export --output <file> --since <time>`.** The export goes into a new file only you can
   read, never over one, and can start from a time.
 - **`tg account show` prints the phone's last four digits**, and the whole number with
@@ -34,6 +37,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg store fetch --max <n>` is gone; `--max-pages <n>` caps a run instead**, in pages of 100 (10 by
+  default, so 1000 messages, as before). The same names as max-cli's. `--max` is not kept as an alias.
+- **A poll made without `--revote` no longer lets people change their vote**, as in max-cli; Telegram
+  allowed it by default. Add `--revote` to keep the old behaviour.
 - **`tg polls vote` and `tg polls close --json` print `{ operationId, poll }`** instead of the poll
   alone; read the poll from `.poll`. The MCP tools `tg_polls_vote` and `tg_polls_close` answer the same.
 - **`tg runs list`, `tg sends list` and `tg recipients list --json` print `{ items, page, limit, hasMore }`**

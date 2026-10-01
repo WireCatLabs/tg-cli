@@ -27,6 +27,7 @@ whole shell session; without either, the profile is `default`.
 | `--trace` | the connection's own log lines on stderr — never message content. |
 | `--timeout <duration>` | give up on the whole command after this — 30s, 2m, 500ms. |
 | `--offline` | answer from what was recorded and never connect; fails if nothing was. |
+| `--yes` | go ahead without the question an ask level puts before a write. |
 | `--record` | keep this run — ids and timings, never message content. |
 | `--no-record` | do not keep it, whatever the configuration says. |
 
@@ -413,7 +414,7 @@ tg messages delete <chat> <messages> [options]
 | Option | What it does |
 |---|---|
 | `--for-everyone` | delete for everyone in the chat, not only for you — they cannot get it back. |
-| `--allow-dangerous` | yes, delete — it cannot be undone. |
+| `--allow-dangerous` | go ahead without the question an ask level puts before a deletion. |
 
 ### `tg messages forward`
 
@@ -589,6 +590,7 @@ tg polls create <chat> <question> <answers> [options]
 |---|---|
 | `--multiple` | people may pick several answers. |
 | `--anonymous` | nobody sees who voted for what. |
+| `--revote` | people may change their vote. |
 | `--silent` | send without a notification. |
 | `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
 
@@ -806,9 +808,10 @@ tg store fetch <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--max <n>` | at most this many messages in this run. Default: `1000`. |
+| `--max-pages <n>` | at most this many pages of 100 in this run. Default: `10`. |
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
 | `--since <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
+| `--last <n>` | stop once the newest n messages are held. |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
 | `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
 
@@ -1044,7 +1047,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, updateCheck. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -1063,7 +1066,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, sendsPerHour, transcribeWith, speechModel, updateCheck. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, updateCheck. |
 
 | Option | What it does |
 |---|---|
