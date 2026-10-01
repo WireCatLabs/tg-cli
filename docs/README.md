@@ -8,7 +8,7 @@ order.
 
 | Page | Answers |
 |---|---|
-| [index.md](index.md) | What is `tg`, what can it do, and how does it differ from other tools? |
+| [index.md](index.md) | The docs site's start page: what `tg` is, the first minute, where to go next |
 | [installation.md](installation.md) | How do I install it, what does it need, where do its files go, how do I upgrade or remove it? |
 | [usage.md](usage.md) | How do I log in, read, page, send, and use it from a script — in that order? |
 | [sessions.md](sessions.md) | How does login work: QR or phone, the app from my.telegram.org, the keyring, profiles, logout? |
