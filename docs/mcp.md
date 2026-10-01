@@ -143,7 +143,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view; only with `--allow-delete` and permission `delete`; never for everyone; each counts toward the hourly limit |
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message; only with `--allow-send` and permission `reaction`; the confirmation form shows the emoji |
 | `tg_polls_show` | `tg polls show` | a poll and its answer ids; a read tool |
-| `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (permission `reaction`), close the owner's own poll (`edit`), create one (`send`, with `send_id` for a retry); only with `--allow-send` |
+| `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (permission `reaction`), close the owner's own poll (`edit`), create one (`send`, with `send_id` for a retry and `revote` to let people change their vote); only with `--allow-send` |
 | `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), only with `--allow-send` and permission `forward`; `send_id` repeats a forward whose outcome was unknown |
 | `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`; only with `--allow-send` and permission `pin` |
 
