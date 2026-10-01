@@ -10,6 +10,19 @@ are shared with max-cli: cli-messaging's
 name roles. The cast (which group, which account, their ids, the profile names) and the dated
 results live in `docs_ai/live-cast.md` of the main checkout, which git ignores.
 
+## Running them from a worktree
+
+`bin/tg-live` runs the worktree's own build with the main checkout's logins — `default` for the
+owner, `tgtest` for B — so an agent in any worktree runs a scenario without logging in:
+
+```sh
+pnpm build
+bin/tg-live tgtest account show --json        # B
+bin/tg-live chats show <Group id> --json      # the owner
+```
+
+The message store stays the worktree's own; a branch build never migrates the main checkout's.
+
 ## The cast, by role
 
 | Role | What it is | May a scenario write there? |

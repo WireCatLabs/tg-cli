@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+# Runs this checkout's build of `tg` with the live-check logins of the main checkout — the owner's dev
+# login (`default`) and the test account B (`tgtest`), named in its docs_ai/live-cast.md — so any
+# worktree's agent can run docs/dev/live-scenarios.md without logging in again.
+#
+#   pnpm build
+#   bin/tg-live tgtest account show
+#   bin/tg-live chats list --limit 5
+#
+# Config, state and sessions are the main checkout's, so the keyring entry is the same one its
+# `bin/tg session start` wrote. The message store and the cache stay in this checkout's .tg/: a
+# branch build may migrate a store forward, and must not do that to the main checkout's.
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+[ -f "$root/dist/bin/tg.js" ] || { echo "no build in $root — run pnpm build first" >&2; exit 1; }
+main=$(CDPATH='' cd -- "$(git -C "$root" rev-parse --git-common-dir)/.." && pwd)
+[ -d "$main/.tg/state/sessions" ] || { echo "no logins in $main/.tg — run bin/tg session start there first" >&2; exit 1; }
+
+export TG_CONFIG_DIR="$main/.tg/config" TG_STATE_DIR="$main/.tg/state" TG_CACHE_DIR="$root/.tg/cache"
+export MESSAGING_STORE="$root/.tg/messages.db"
+exec node "$root/dist/bin/tg.js" "$@"

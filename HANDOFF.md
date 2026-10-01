@@ -177,7 +177,10 @@ Read in this order:
     commands are otherwise free — the sandbox was tried and turned off for the friction it caused
     ([`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
 21. **A worktree is a lane's, never shared** (`.worktrees/<lane>/`, gitignored). It has its own copy
-    of the login and an empty message store; never point it at the main checkout's `.tg/`.
+    of the login and an empty message store; never point it at the main checkout's `.tg/`. **Correction 2026-10-01:** for the live
+    checks, `bin/tg-live` runs a worktree's build with the main checkout's logins (`default`, and the
+    test account `tgtest`) and the worktree's own store — no second login per worktree.
+
 22. **Another session also changes the shared store** — migration 4 (`account_identities`,
     cli-messaging #48, a breaking `savePeople`) came from max-cli's side on 2026-09-29, and max-cli's
     personal accounts move into the store next. Fetch before a store change; the next migration
