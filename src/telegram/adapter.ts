@@ -252,7 +252,8 @@ export class TelegramAdapter {
         this.#client.getCommonChats(peer),
       ])
       const dialogs = common.length > 0 ? await this.#client.getPeerDialogs(common.map((chat) => chat.id)) : []
-      const chats = dialogs
+      // Telegram's common chats are groups only; the one-to-one chat is shared with them too.
+      const chats = [dialog ?? null, ...dialogs]
         .filter((one) => one !== null)
         .map(toChat)
         .map(({ id, title, kind, lastMessageAt }) => ({ id, title, kind, lastMessageAt }))

@@ -27,6 +27,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   group-rules file, the recipient lists or the keyring. The [command reference](docs/commands.md) now
   says "Changes something on this computer only." under them. They are still listed as writes in
   `tg commands`. `chats moderate` and `session end` still say they change Telegram.
+- **`tg contacts show` lists the one-to-one chat with the person** among the chats you share, newest
+  first. Before, it listed only the groups, because Telegram's list of common chats holds groups only.
 
 ## 0.21.0 — 01.10.2026
 
