@@ -9,7 +9,7 @@ for your own Telegram account: read your chats, find what was said, and answer â
 through Claude, Codex, Cursor and other agents, within limits you set. In the groups you run, see
 which questions nobody answered and who joined.
 
-It runs on Windows, macOS and Linux.
+It runs on Windows, macOS and Linux. Documentation: [wirecat.dev/en/docs/tg](https://wirecat.dev/en/docs/tg).
 
 ```sh
 tg inbox                                          # other people's unread messages, in every chat
