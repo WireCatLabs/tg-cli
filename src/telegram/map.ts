@@ -188,7 +188,14 @@ export const toMessage = (message: TgMessage): Message => {
     reactions: message.reactions ? reactionsOf(message.reactions) : null,
     ...(message.isScheduled ? { scheduledFor: message.date.toISOString() } : {}),
     ...(metadata ? { providerMetadata: metadata } : {}),
+    ...mentionsOf(message),
   }
+}
+
+/** A mention by name has no `@handle` in the text; the entity carries the person's id. */
+const mentionsOf = (message: TgMessage): { mentions?: string[] } => {
+  const ids = message.entities.flatMap(({ params }) => (params.kind === "text_mention" ? [String(params.userId)] : []))
+  return ids.length > 0 ? { mentions: [...new Set(ids)] } : {}
 }
 
 /** Only public chats and supergroups have links; mtcute throws for the rest, and that is not an error here. */

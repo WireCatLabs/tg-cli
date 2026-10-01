@@ -904,6 +904,19 @@ tg messages scheduled <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
+### `tg messages links`
+
+why a message is in its conversation: each link it has, and the chain of answers back to the start
+
+```sh
+tg messages links <chat> <message>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+
 ## `tg reactions`
 
 react to messages
@@ -1341,6 +1354,49 @@ tg store restore <file>
 | Argument | | What it is |
 |---|---|---|
 | `file` | required | a file `store backup` wrote. |
+
+## `tg conversations`
+
+the conversations inside a chat, found in the stored messages by replies, mentions and who wrote next
+
+### `tg conversations build`
+
+find a chat's conversations in what the store holds, replacing the last build; never asks the messenger
+
+```sh
+tg conversations build [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+### `tg conversations list`
+
+a chat's conversations, the newest first: when, how many messages, how many people
+
+```sh
+tg conversations list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--since-time <time>` | only those that started at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
+| `--limit <n>` | how many. |
+
+### `tg conversations show`
+
+one conversation's messages, oldest first — by its id, or the one a message is in
+
+```sh
+tg conversations show <conversation> [message]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `conversation` | required | a conversation id from `conversations list`; or a chat: its title or part of it, its id, @username, or `me` for Saved Messages, with a message. |
+| `message` | optional | a message id in that chat: show the conversation it is in. |
 
 ## `tg recipients`
 

@@ -286,6 +286,7 @@ function message(id: number) {
     date: new Date("2026-09-27T10:00:00.000Z"),
     editDate: null,
     text: `message ${id}`,
+    entities: [],
     isOutgoing: false,
     media: null,
     replyToMessage: null,
