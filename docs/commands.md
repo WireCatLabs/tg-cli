@@ -1697,6 +1697,128 @@ tg mcp config [options]
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
 
+## `tg bot`
+
+a Telegram bot, through the official Bot API and a bot token — not your personal account
+
+### `tg bot auth`
+
+the bot token this profile uses
+
+#### `tg bot auth set`
+
+check a bot token with Telegram, then keep it — typed at a hidden prompt or piped on stdin
+
+**Changes something in Telegram.**
+
+```sh
+tg bot auth set
+```
+
+#### `tg bot auth show`
+
+where this profile's bot token comes from, and which bot it is
+
+```sh
+tg bot auth show
+```
+
+#### `tg bot auth remove`
+
+forget this profile's bot token
+
+**Changes something in Telegram.**
+
+```sh
+tg bot auth remove
+```
+
+### `tg bot list`
+
+every name on this machine that has a bot token; --check asks Telegram which bot each is
+
+```sh
+tg bot list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--check` | ask Telegram who each bot is. |
+
+### `tg bot chats`
+
+the chats this bot is in — Telegram gives a bot no list of them, so `list` shows the ones it has seen
+
+#### `tg bot chats list`
+
+chats this bot has seen on this machine — not a complete list from Telegram
+
+```sh
+tg bot chats list
+```
+
+### `tg bot recipients`
+
+the chats this bot may write to; with no list, every chat — `off` removes the list
+
+#### `tg bot recipients list`
+
+the chats on the list, or nothing when there is no list
+
+```sh
+tg bot recipients list
+```
+
+#### `tg bot recipients add`
+
+allow a chat: its id, `user:<id>`, or the title of a chat this bot has seen
+
+**Changes something in Telegram.**
+
+```sh
+tg bot recipients add <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required |  |
+
+#### `tg bot recipients remove`
+
+take a chat off the list
+
+**Changes something in Telegram.**
+
+```sh
+tg bot recipients remove <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required |  |
+
+#### `tg bot recipients clear`
+
+remove the list: the bot may write to any chat again
+
+**Changes something in Telegram.**
+
+```sh
+tg bot recipients clear
+```
+
+### `tg bot sends`
+
+what this bot sent, edited and deleted from this machine — ids and outcomes, never text
+
+#### `tg bot sends list`
+
+
+
+```sh
+tg bot sends list
+```
+
 ## `tg skill`
 
 the instructions an agent is given for this tool
