@@ -85,8 +85,8 @@ A person (`<person>`, in `contacts show`) is an id, an `@username` or part of th
 
 ## Reading
 
-**Reading marks nothing read.** No command below shows the other side that you looked. The one
-command that does is `tg chats mark-read` ([below](#marking-a-chat-read)).
+**Reading marks nothing read.** No command below shows the other side that you looked. Only
+`tg chats mark-read` and `tg messages list --mark-read` do ([below](#marking-a-chat-read)).
 
 ### Chats
 
@@ -171,6 +171,8 @@ tg messages transcribe "Book club" 4242          # by Telegram where it can, els
 tg messages transcribe "Book club" 4242 --local  # only the model on this machine
 tg messages list "Book club" --transcribe        # every voice message shown that has no text yet
 tg inbox --transcribe
+tg review --transcribe
+tg messages list "Book club" --transcribe --model gigaam-v3
 ```
 
 Telegram transcribes for Premium accounts, and a few messages a week on the free trial. Without it,
@@ -188,7 +190,7 @@ tg models audio download parakeet-v3   # once, checked against the sha256 this v
 | `gigaam-v3` | Russian — the best of the three for Russian | 232 MB |
 | `gigaam-v3-ctc` | Russian — a little faster, rougher with capital letters | 225 MB |
 
-`--model` picks another model for one command; `transcribeWith` and `speechModel` in the settings
+`--model` picks another model for one command, beside `--transcribe` or in `messages transcribe`; `transcribeWith` and `speechModel` in the settings
 choose the defaults ([configuration.md](configuration.md)). A transcript is kept in the local store,
 so asking again answers at once. `--transcribe` can take minutes.
 
@@ -375,6 +377,7 @@ made with `--revote`.
 ```sh
 tg chats mark-read "Book club"               # up to the newest message
 tg chats mark-read "Book club" --until 4242  # only up to this one
+tg messages list "Book club" --mark-read     # read it, and mark it read up to the newest shown
 ```
 
 The other side sees that you read it. It goes through the guard as the action `read`, and does not

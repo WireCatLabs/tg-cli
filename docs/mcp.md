@@ -118,8 +118,8 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | Tool | Command | What it does |
 |---|---|---|
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
-| `tg_review` | `tg review`, `--since`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered |
-| `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages |
+| `tg_review` | `tg review`, `--since`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered; `transcribe` hears voice messages, `model` picks the model |
+| `tg_inbox` | `tg inbox`, `--since`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages, `model` picks the model |
 | `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
@@ -131,7 +131,7 @@ them (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna P
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
 | `tg_contacts_lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
-| `tg_messages_list` | `tg messages list`, `--before`, `--after` | a chat's messages; `after` reads forward from a message id or a time; marks nothing read; a voice message carries `transcript` once heard, and `transcribe` hears the rest |
+| `tg_messages_list` | `tg messages list`, `--before`, `--after` | a chat's messages; `after` reads forward from a message id or a time; marks nothing read — `tg_chats_mark_read` does that, behind its own permission; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
 | `tg_messages_context` | `tg messages show`, `context` | one message and those either side |
 | `tg_messages_scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
 | `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; anything else is refused with the `tg messages download` command that saves it |
