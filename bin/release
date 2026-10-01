@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 # Publishes the version in package.json and tags it. Run on a clean `main`. When npm already has that
-# version, or a higher one, it commits the next free version to `main` and publishes that.
+# version, or a higher one, it commits the next free version to `main` and publishes that. Nothing is
+# published until `pnpm release:check` passes; the judgement half is `.claude/skills/release/SKILL.md`.
 #
 #   bin/release           # publishes from GitHub Actions (.github/workflows/release.yml)
 #   bin/release --local   # publishes from this machine: NPM_TOKEN if exported, else the keyring
@@ -63,6 +64,10 @@ if published; then
   exit 1
 fi
 
+echo "== checks for $version =="
+pnpm install --frozen-lockfile
+pnpm release:check
+
 if [ "$mode" = ci ]; then
   last_run() {
     gh run list --workflow release.yml --branch main --event workflow_dispatch --limit 1 \
@@ -84,11 +89,6 @@ if [ "$mode" = ci ]; then
   echo "published $package@$version"
   exit 0
 fi
-
-echo "== checks for $version =="
-pnpm install --frozen-lockfile
-pnpm lint && pnpm typecheck && pnpm test
-pnpm build
 
 if [ -z "${NPM_TOKEN:-}" ]; then
   NPM_TOKEN=$(secret-tool lookup service npm account leemour 2>/dev/null) || {
