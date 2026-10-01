@@ -367,7 +367,8 @@ tg polls close "Book club" 4250            # your own poll; it cannot be reopene
 
 When you read a chat, reactions show under a message — `👍 3  🔥 1  (you: 🔥)`. A vote in a public poll
 shows your name to everyone in the chat. Vote by the ids `polls show` prints, never by an answer's
-position. `--multiple` lets people pick several answers.
+position. `--multiple` lets people pick several answers. People can change their vote only in a poll
+made with `--revote`.
 
 ### Marking a chat read
 
