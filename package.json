@@ -33,7 +33,7 @@
     "test:matrix": "vitest run >/dev/null && tsc --build --force >/dev/null && cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check",
     "test:slow": "vitest run --reporter=json --outputFile=coverage/tests.json >/dev/null; cli-dev slow-tests",
     "smoke:bun": "bun run scripts/smoke.ts",
-    "docs:check": "node --experimental-strip-types scripts/docs-check.ts",
+    "docs:check": "node --experimental-strip-types scripts/docs-check.ts && cspell --no-progress --no-summary README.md 'docs/*.md' && rumdl check --config node_modules/@leemour/cli-core/config/rumdl.toml --disable MD028 README.md docs/*.md",
     "parity:check": "pnpm build && node dist/bin/tg.js commands --json | cli-messaging-parity tg && node dist/bin/tg.js commands --json | cli-messaging-parity tg --pages README.md docs/*.md",
     "smoke:live": "pnpm build && node --experimental-strip-types scripts/smoke-live.ts",
     "release:check": "pnpm build && node --experimental-strip-types scripts/release-check.ts",
@@ -46,16 +46,20 @@
     "secrets:scan": "gitleaks git --no-banner --redact ."
   },
   "dependencies": {
-    "@leemour/cli-core": "0.12.0",
+    "@leemour/cli-core": "0.14.0",
     "@leemour/cli-messaging": "0.94.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.14",
+    "@cspell/dict-en-gb": "^5.0.34",
+    "@cspell/dict-ru_ru": "^2.3.2",
     "@types/node": "^22.20.4",
     "@vitest/coverage-v8": "5.0.2",
+    "cspell": "^10.3.6",
     "lefthook": "^2.1.14",
+    "rumdl": "^0.2.78",
     "typescript": "^7.0.2",
     "vitest": "^5.0.2"
   }

@@ -25,7 +25,6 @@ tg messages send "Book club" "Running 15 minutes late"
 
 ## The personal account
 
-
 `tg` works with your own account, as one more of your devices: every chat, its history, groups,
 channels and contacts. It is not a bot: it talks to Telegram over MTProto, Telegram's own API for
 client apps, with an app you register yourself.
@@ -39,7 +38,6 @@ tg messages send "Book club" "Running 15 minutes late"
 In full: [docs/usage.md](docs/usage.md).
 
 ## How to use it
-
 
 - **A check on a schedule.** Morning and evening, the agent looks at what came in and sends you a
   short summary: who is waiting for an answer, what is urgent, what you can skip.
@@ -77,7 +75,6 @@ marks nothing read. Ready requests, a schedule and limits for each job: [recipes
 
 ## Groups you run
 
-
 ```sh
 tg review --chat "Hiking" --unanswered            # questions nobody answered in 24 hours
 tg chats events "Hiking" --since-time 7d          # who joined, left, was added or removed, and by whom
@@ -91,7 +88,6 @@ Renaming a group, adding and removing members and admins, resetting its invite l
 rules for links, forwards and floods are commands too. In full: [docs/groups.md](docs/groups.md).
 
 ## How it works
-
 
 `tg` works in your name, as one more of your devices. It is not a bot: it talks to Telegram over
 MTProto, Telegram's own API for client apps, with an app you register yourself. From then on `tg`
@@ -108,7 +104,6 @@ An agent connects to `tg` in one of two ways:
   profile's `permissions` decide what the agent may do ([mcp.md](docs/mcp.md#what-an-agent-may-do)).
 
 ## What it can do
-
 
 - **Read.** Chats, history, one message with its neighbours, other people's unread messages in every
   chat at once (`tg inbox`), everything since the last review (`tg review`), new messages as they
@@ -130,7 +125,6 @@ An agent connects to `tg` in one of two ways:
   and every device and app logged in to the account.
 
 ## Why it is good
-
 
 - **It reads without a trace.** Reading marks nothing read: the other side does not see that you
   opened the chat. Mark it read when you want to: `tg chats mark-read`.
@@ -164,7 +158,6 @@ We build process automation and tools for your task: integrations with Telegram 
 messengers, AI agents, internal services. Write to [info@neirox.ai](mailto:info@neirox.ai).
 
 ## How it differs
-
 
 There are good tools for a Telegram account already. Choose what fits the job.
 
@@ -207,7 +200,6 @@ mode.
 
 ## Contents
 
-
 - [The personal account](#the-personal-account)
 - [Groups you run](#groups-you-run)
 - [Install](#install)
@@ -222,7 +214,6 @@ mode.
 - [Contributing](#contributing)
 
 ## Install
-
 
 The package is **`@leemour/tg-cli`**; the command it installs is **`tg`**.
 
@@ -247,7 +238,6 @@ login exists, without connecting. Details, variables and where the files go:
 
 ## Log in
 
-
 Every user registers their own Telegram app at [my.telegram.org](https://my.telegram.org/apps).
 `tg session start` asks for it the first time; `--app auto` fills in the site for you.
 
@@ -269,7 +259,6 @@ export TG_PROFILE=work     # or for the whole shell session
 The app, the session and profiles: [docs/sessions.md](docs/sessions.md).
 
 ## Use
-
 
 **A conversation in your name:**
 
@@ -306,7 +295,6 @@ In full: [docs/usage.md](docs/usage.md). Every command and option:
 version that does not exist.
 
 ## For scripts and agents
-
 
 ### A skill for agents with a terminal
 
@@ -370,7 +358,6 @@ every exit code. All codes: [docs/commands.md](docs/commands.md#exit-codes).
 
 ## Security
 
-
 - The session is a file readable only by your user, and it is as good as your password: copying it
   copies the login. The app keys are in the system keyring.
 - The local store is readable only by your user. It holds the full text of what was read,
@@ -388,8 +375,6 @@ In full — what reaches the disk, what goes over the network and what the tool 
 [docs/security.md](docs/security.md).
 
 ## Documentation
-
-
 
 | Page | Answers |
 |---|---|
@@ -411,7 +396,6 @@ In full — what reaches the disk, what goes over the network and what the tool 
 What each version changed: [CHANGELOG.md](CHANGELOG.md).
 
 ## Development
-
 
 ```sh
 pnpm install
@@ -443,11 +427,9 @@ What each released version changed is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence
 
-
 MIT — see [LICENSE](LICENSE).
 
 ## Contributing
-
 
 Pull requests, bug reports and ideas are welcome —
 [issues](https://github.com/leemour/tg-cli/issues). How the code is built and how to test it:

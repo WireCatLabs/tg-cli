@@ -128,7 +128,7 @@ tg chats moderate "Hiking"                         # judge what is new since the
 | `flood.messages`, `flood.minutes`, `flood.action` | more than so many messages from one person within so many minutes |
 | `trusted` | people never acted on; the group's admins and you never are either |
 
-Each rule's action is `report`, `delete` or `remove`. Whether a `delete` or a `remove` really happens
+Each rule's action is `report`, `delete` or `remove`. Whether a `delete` or a `remove` happens
 is the group's level for it, `consent.delete` and `consent.remove`: `deny` never, `readonly` only
 reports, `ask` asks you about each one (the default; `--allow-dangerous` says yes to all), `allow`
 does it. Every action still goes through the send guard and its hourly limit, and a run stops after

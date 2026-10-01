@@ -126,7 +126,7 @@ archived chats unless a message mentions you or replies to you; `--all` takes th
 stderr how many it left out.
 
 **`inbox --new` moves a saved point.** The next `--new` starts from where this one stopped, so each
-message is shown once. The very first `--new` looks back 24 hours. `inbox` without `--new`, and
+message is shown once. The first `--new` looks back 24 hours. `inbox` without `--new`, and
 `inbox --since-time`, leave the point where it is. Plain `inbox` answers the same until the messages are
 read in the app, since it marks nothing read.
 
