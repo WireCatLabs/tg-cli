@@ -125,9 +125,10 @@ Nothing else. There is no telemetry.
 
 ## Telegram's rules and your account
 
-`tg` is an unofficial client. Telegram allows them, but watches accounts that use one for spam or
-automation. That is why every user registers their own app, and why the hourly limit is on by
-default. Mass mailing, automatic replies and other people's accounts are not what `tg` is for.
+`tg` is a client on Telegram's own API, which Telegram opens to third-party apps. Telegram watches
+accounts used for spam or automation
+([Telegram API Terms of Service](https://core.telegram.org/api/terms)). That is why every user
+registers their own app, and why the hourly limit is on by default. Mass mailing, automatic replies and other people's accounts are not what `tg` is for.
 
 ## If the session leaked
 
