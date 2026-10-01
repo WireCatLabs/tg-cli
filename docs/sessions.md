@@ -11,9 +11,9 @@ A login has two parts:
 
 ## The app from my.telegram.org
 
-Every user registers their own app. Telegram allows one app per phone number and watches accounts
-used for spam or automation, so an app id is never shared or built into `tg`. You need it once per
-profile; `tg session start` asks only when the profile has none.
+Every user registers their own app. Telegram gives one app per phone number, so an app id is never
+shared or built into `tg`. You need it once per profile; `tg session start` asks only when the profile
+has none.
 
 Two ways to get it:
 

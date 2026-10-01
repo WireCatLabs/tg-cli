@@ -123,12 +123,12 @@ there is no way around it.
 
 Nothing else. There is no telemetry.
 
-## Telegram's rules and your account
+## Your own app, and Telegram's terms
 
-`tg` is a client on Telegram's own API, which Telegram opens to third-party apps. Telegram watches
-accounts used for spam or automation
-([Telegram API Terms of Service](https://core.telegram.org/api/terms)). That is why every user
-registers their own app, and why the hourly limit is on by default. Mass mailing, automatic replies and other people's accounts are not what `tg` is for.
+`tg` is a Telegram client, as the apps on your phone and computer are. It signs in with your own app
+from my.telegram.org and follows
+[Telegram's API Terms of Service](https://core.telegram.org/api/terms). The hourly limit is on by
+default, so an agent sends at the pace of a person.
 
 ## If the session leaked
 
