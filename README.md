@@ -83,10 +83,11 @@ tg chats events "Hiking" --since 7d               # who joined, left, was added 
 tg chats members list "Hiking" --all              # everyone, with their role and when they were last seen
 tg topics list "Hiking"                           # a forum group's topics, newest activity first
 tg chats inspect https://t.me/+AbCdEf             # where an invite link leads, without joining
+tg chats create "Hiking 2027" @olga               # a new group, with the people you name
 ```
 
-These read. Creating a group, changing members and admins, invite links and moderation rules are
-not in `tg` yet ([Roadmap](#roadmap)).
+Changing members and admins, invite links and moderation rules are coming
+([Roadmap](#roadmap)). In full: [docs/groups.md](docs/groups.md).
 
 ## How it works
 
@@ -113,14 +114,14 @@ An agent connects to `tg` in one of two ways:
 - **Search.** Messages by their text, across everything this machine has kept, without connecting to
   Telegram; with `--regex` for a pattern. Chats by part of their title, contacts by part of a name,
   a person by phone number.
-- **Write.** Text with Markdown, replies, files and photos, silent messages, scheduled messages
+- **Write.** Text with Markdown, replies, files, photos, videos and voice messages, silent messages, scheduled messages
   that go out even with this computer off, edits, forwards, pins, reactions, polls, deletion — for
   you or for everyone.
 - **Keep an archive.** Fetch a chat's history into the local store, in the background if it is long;
   keep the store current with `tg serve`, as a systemd or launchd service; back it up and restore it
   while it is in use.
-- **Groups and channels.** Members with their role, who joined and left, forum topics, where an
-  invite link leads.
+- **Groups and channels.** Create a group or a channel, join by a link, leave; members with their
+  role, who joined and left, forum topics, where an invite link leads.
 - **The account.** Who you are logged in as, and every device and app logged in to the account.
 
 ## Why it is good
@@ -170,13 +171,16 @@ There are good tools for a personal Telegram account already. Choose what fits t
 | export as JSON lines or Markdown | ✅ | — |
 | new messages as they arrive | ✅ `tg watch` | ✅ `sync --follow`, into the archive |
 | reading, sending text, photos and files | ✅ | ✅ |
+| sending videos and voice messages | ✅ | — |
 | scheduled sending | ✅ | ✅ |
 | edit, forward, pin, reactions, polls | ✅ | — |
 | deleting messages — for you or for everyone | ✅ | — |
 | marking a chat read on request | ✅ | ✅ |
 | sending into a forum topic; spoilers; protected content; HTML | — | ✅ |
 | forum topics: list and search | ✅ | ✅ |
-| groups: rename, add and remove members, invite links, join, leave | — | ✅ |
+| groups: create | ✅ | — |
+| groups: join, leave | ✅ | ✅ |
+| groups: rename, add and remove members, invite links | — | ✅ |
 | folders | — | ✅ |
 | your own tags, aliases and notes on chats and contacts | — | ✅ |
 | install with Homebrew or Docker | — | ✅ |
@@ -377,6 +381,7 @@ In full — what reaches the disk, what goes over the network and what the tool 
 | [mcp.md](docs/mcp.md) | Claude Desktop, Cursor and other clients without a terminal |
 | [remote.md](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |
+| [groups.md](docs/groups.md) | groups you run: unanswered questions, newcomers, a weekly report, with an agent |
 | [diagnostics.md](docs/diagnostics.md) | `--trace`, `--record`, `runs`, `doctor report` — and what is never recorded |
 | [security.md](docs/security.md) | what reaches the disk and what never does; the send guard |
 | [troubleshooting.md](docs/troubleshooting.md) | by symptom: what the screen says, and what to do |
@@ -410,10 +415,9 @@ before the pull request.
 
 What is coming, in the order it is likely to arrive:
 
-- **Richer sending** — voice notes and videos, several photos in one message, sending into a forum
-  topic.
-- **Running groups** — creating a group, joining and leaving, members and admins, invite links,
-  folders, contacts, your profile, and moderation rules checked on your say-so.
+- **Running groups** — a group's title and settings, members and admins, invite links, folders,
+  contacts, your profile, and moderation rules checked on your say-so.
+- **Richer sending** — several photos in one message, sending into a forum topic.
 
 ## Licence
 
