@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**269 ✅ · 11 ⛔ · 0 ❌** — 123 commands, 157 options.
+**284 ✅ · 25 ⛔ · 0 ❌** — 136 commands, 173 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -209,6 +209,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |
 | `store migrate` |  | ✅ |  |
+| `store reindex` |  | ✅ |  |
 | `store backup` |  | ✅ |  |
 | `store restore` |  | ✅ |  |
 | `conversations build` |  | ✅ |  |
@@ -224,6 +225,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations batches next` |  | ✅ |  |
 | `conversations batches next` | `--chat` | ✅ |  |
 | `conversations batches next` | `--size` | ✅ |  |
+| `conversations links add` |  | ✅ |  |
+| `conversations links add` | `--batch` | ✅ |  |
+| `conversations links clear` |  | ✅ |  |
+| `conversations links clear` | `--chat` | ✅ |  |
+| `conversations links clear` | `--model` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
@@ -272,6 +278,29 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot list` |  | ✅ |  |
 | `bot list` | `--check` | ✅ |  |
 | `bot chats list` |  | ✅ |  |
+| `bot chats show` |  | ✅ |  |
+| `bot chats leave` |  | ✅ |  |
+| `bot chats action` |  | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` |  | ✅ |  |
+| `bot messages send` | `--reply-to` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--silent` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--md` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--html` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--file` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--photo` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--as-file` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--voice` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages send` | `--allow-any-file` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages list` |  | ✅ |  |
+| `bot messages show` |  | ✅ |  |
+| `bot messages edit` |  | ✅ |  |
+| `bot messages edit` | `--md` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages edit` | `--html` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages delete` |  | ✅ |  |
+| `bot messages delete` | `--allow-dangerous` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages pin` |  | ✅ |  |
+| `bot messages pin` | `--notify` | ⛔ | tg's bot adapter does not do this until tg-cli #206, which adds it and its test in src/bot-messages.test.ts; until then the shared command refuses with "a Telegram bot cannot …". #206 removes this entry |
+| `bot messages unpin` |  | ✅ |  |
 | `bot recipients list` |  | ✅ |  |
 | `bot recipients add` |  | ✅ |  |
 | `bot recipients remove` |  | ✅ |  |

@@ -15,8 +15,8 @@ importers:
         specifier: 0.14.0
         version: 0.14.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.94.0
-        version: 0.94.0(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.97.0
+        version: 0.97.0(@leemour/cli-core@0.14.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -434,11 +434,15 @@ packages:
       commander:
         optional: true
 
-  '@leemour/cli-messaging@0.94.0':
-    resolution: {integrity: sha512-8JCYFrKyjP3ZUKNh/BCNUy5+E4X7D+qzKapOwojuG897o5SkY1VUPGQ2CBqxOtcnyXgYSRfXemxXO0deb4sWkA==}
+  '@leemour/cli-messaging-sqlite@1.0.0':
+    resolution: {integrity: sha512-NFJMG+/2BWIb3JdOMgyV8SFsB7Fuv3wLtUmMt08GZ4KTpgu0WuA7qQmQE6appEgJJuF/97vHj6+AuXw2z3HMHw==}
+
+  '@leemour/cli-messaging@0.97.0':
+    resolution: {integrity: sha512-LmBrHGxpk3JwO5RroY76Ksfr7PsJRuUFOGT4m3wZLvqxDIIlc6Nd6jQEBh7WPe5djbbT2xtXxII/Y5krWivRbA==}
     engines: {node: ^22.16.0 || >=24}
     hasBin: true
     peerDependencies:
+      '@leemour/cli-core': 0.14.0
       commander: '>=15'
 
   '@modelcontextprotocol/core@2.1.0':
@@ -1932,10 +1936,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@leemour/cli-messaging@0.94.0(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging-sqlite@1.0.0': {}
+
+  '@leemour/cli-messaging@0.97.0(@leemour/cli-core@0.14.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@leemour/cli-core': 0.14.0(commander@15.0.0)(typescript@7.0.2)
+      '@leemour/cli-messaging-sqlite': 1.0.0
       '@modelcontextprotocol/server': 2.1.0
       '@valibot/to-json-schema': 1.8.0(valibot@1.5.0(typescript@7.0.2))
       commander: 15.0.0

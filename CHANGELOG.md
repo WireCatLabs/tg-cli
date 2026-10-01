@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Your own AI agent can link a group's conversations**, when you ask it to: `tg skill show
+  link-conversations` is its guide. It says how much text it would read and waits for your yes, then
+  answers the chat a batch at a time (`tg conversations batches next`, `tg conversations links add`);
+  `tg conversations links clear` drops its answers. tg calls no model itself. See
+  [the archive](docs/archive.md).
 - **`tg bot`** — a Telegram bot, through the official Bot API and its token: `bot auth set|show|remove`,
   `bot list [--check]`, `bot chats list`, `bot recipients list|add|remove|clear` and `bot sends list`,
   the same commands `max bot` has. Several bots, each under its own name; the token lives in the
