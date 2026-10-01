@@ -160,7 +160,9 @@ class FakeClient {
   }
   getPeerDialogs = async (peer: unknown) => {
     this.#record("getPeerDialogs", [peer])
-    return Array.isArray(peer) ? peer.map(() => this.dialogs[0] ?? null) : [this.dialogs[0]]
+    const of = (id: unknown) =>
+      (this.dialogs as { peer: { id: unknown } }[]).find((one) => one.peer.id === id) ?? this.dialogs[0] ?? null
+    return Array.isArray(peer) ? peer.map(of) : [of(peer)]
   }
   getPeer = async (peer: unknown) => {
     this.#record("getPeer", [peer])
@@ -626,15 +628,16 @@ describe("reading", () => {
     })
   })
 
-  it("shows a person with their bio and the chats in common", async () => {
+  it("shows a person with their bio, the one-to-one chat and the chats in common", async () => {
     const { adapter, client } = await open()
     client.peer = user(777, "Ana")
-    client.dialogs = [dialog(group(-100500, "Valencia expats"))]
+    client.dialogs = [dialog(group(-100500, "Valencia expats")), dialog(user(777, "Ana"), "2026-09-28T10:00:00.000Z")]
 
     const card = await adapter.contact("777")
 
     expect(card).toMatchObject({ id: "777", name: "Ana", description: "a bio" })
     expect(card.chats).toEqual([
+      { id: "777", title: "Ana", kind: "dialog", lastMessageAt: "2026-09-28T10:00:00.000Z" },
       { id: "-100500", title: "Valencia expats", kind: "group", lastMessageAt: "2026-09-27T10:00:00.000Z" },
     ])
   })

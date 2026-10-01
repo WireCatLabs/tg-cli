@@ -89,6 +89,12 @@ const telegramOf = (command: Command, base: BaseContext) => {
   return { environment, sessionPath, credentials, open, connect }
 }
 
+/** Shipped beside `dist/`; this file compiles to `dist/commands/context.js`. */
+export const SKILL = new URL("../../skills/tg-cli/SKILL.md", import.meta.url)
+
+/** Channels and supergroups number their own messages, so an id alone there names another message. */
+const OWN_NUMBERING = ["channel", "supergroup", "gigagroup", "monoforum"]
+
 export const TELEGRAM: Messenger = {
   app: TG,
   provider: "telegram",
@@ -113,6 +119,13 @@ export const TELEGRAM: Messenger = {
   },
   // In Telegram a one-to-one chat's id is the other person's id.
   partnerOf: (chat) => (chat.kind === "dialog" ? chat.id : undefined),
+  // Telegram names a deletion without its chat only where ids count per account. A chat stored by
+  // its id alone has no kind yet, but `-100…` marks a channel's or a supergroup's.
+  deletedWithoutChat: (chat) =>
+    chat.kind !== "channel" &&
+    !(chat.kind === "unknown" && chat.id.startsWith("-100")) &&
+    !OWN_NUMBERING.includes(String(chat.providerMetadata?.chatType ?? "")),
+  skill: SKILL,
 }
 
 export const forCommand = (command: Command): CommandContext => {

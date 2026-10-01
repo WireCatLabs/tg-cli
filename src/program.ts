@@ -33,7 +33,7 @@ import {
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"
-import { type Environment, TELEGRAM } from "./commands/context.js"
+import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
 import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
@@ -69,7 +69,7 @@ const definition: ProgramDefinition = {
       upgradeCommand(),
       mcpCommand(TELEGRAM),
       botCommand(TELEGRAM_BOT),
-      skillCommand(TG, new URL("../skills/tg-cli/SKILL.md", import.meta.url)),
+      skillCommand(TG, SKILL),
     ]),
 }
 
