@@ -1,4 +1,4 @@
-import { mkdtempSync } from "node:fs"
+import { existsSync, mkdtempSync, statSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { NodePlatform } from "@mtcute/node"
@@ -40,5 +40,26 @@ describe("the session storage over the runtime's own SQLite", () => {
     expect(second.authKeys.get(2)).toEqual(key)
     expect(second.peers.getById(peer.id)).toEqual(peer)
     await second.driver.destroy?.()
+  })
+
+  it("keeps the session and its -wal and -shm owner-only", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
+    const storage = await opened(path)
+    storage.authKeys.set(2, new Uint8Array(256))
+    await storage.driver.save?.()
+
+    for (const file of [path, `${path}-wal`, `${path}-shm`]) {
+      expect(existsSync(file)).toBe(true)
+      expect(statSync(file).mode & 0o777).toBe(0o600)
+    }
+    await storage.driver.destroy?.()
+  })
+
+  it("makes a session left readable by others owner-only again", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
+    writeFileSync(path, "", { mode: 0o644 })
+    const storage = await opened(path)
+    expect(statSync(path).mode & 0o777).toBe(0o600)
+    await storage.driver.destroy?.()
   })
 })

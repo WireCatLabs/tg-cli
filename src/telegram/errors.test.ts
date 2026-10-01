@@ -1,4 +1,12 @@
-import { tl } from "@mtcute/node"
+import {
+  MtcuteError,
+  MtInvalidPeerTypeError,
+  MtMessageNotFoundError,
+  MtPeerNotFoundError,
+  MtTypeAssertionError,
+  MtUnsupportedError,
+  tl,
+} from "@mtcute/node"
 import { describe, expect, it } from "vitest"
 import { toCliError } from "./errors.js"
 
@@ -14,7 +22,16 @@ describe("Telegram's refusals", () => {
   })
 
   it("makes a revoked session an authentication error", () => {
-    expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"))).toMatchObject({ code: "authentication_error" })
+    expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"))).toMatchObject({
+      code: "authentication_error",
+      message: expect.stringContaining("`tg session start`"),
+    })
+  })
+
+  it("names the profile to log in again on", () => {
+    expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"), "`tg work session start`")).toMatchObject({
+      message: expect.stringContaining("`tg work session start`"),
+    })
   })
 
   it("makes an unknown peer not found", () => {
@@ -31,5 +48,32 @@ describe("Telegram's refusals", () => {
 
   it("makes an unreachable network a network error", () => {
     expect(toCliError(Object.assign(new Error("x"), { code: "ECONNREFUSED" }))).toMatchObject({ code: "network_error" })
+  })
+})
+
+describe("mtcute's own errors", () => {
+  it("makes a chat it cannot find not found, without what was typed", () => {
+    const known = toCliError(new MtPeerNotFoundError('Chat "Mum\'s birthday" was not found'))
+    expect(known).toMatchObject({ code: "not_found" })
+    expect((known as Error).message).not.toContain("birthday")
+  })
+
+  it("makes a missing message not found, by its id", () => {
+    expect(toCliError(new MtMessageNotFoundError(777, 42))).toMatchObject({
+      code: "not_found",
+      message: expect.stringContaining("42"),
+    })
+  })
+
+  it("makes a chat of the wrong kind a validation error, without what was typed", () => {
+    const known = toCliError(new MtInvalidPeerTypeError("Mum's birthday", "channel"))
+    expect(known).toMatchObject({ code: "validation_error" })
+    expect((known as Error).message).not.toContain("birthday")
+  })
+
+  it("makes what tg or mtcute cannot read a provider failure", () => {
+    expect(toCliError(new MtUnsupportedError("File ref expired!"))).toMatchObject({ code: "provider_error" })
+    expect(toCliError(new MtTypeAssertionError("message", "messageEmpty"))).toMatchObject({ code: "invalid_response" })
+    expect(toCliError(new MtcuteError("anything"))).toMatchObject({ code: "provider_error" })
   })
 })

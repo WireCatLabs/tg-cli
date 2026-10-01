@@ -79,6 +79,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **A conversation reads in English.** Your own messages are `you`, and day headings read
   `26 September 2026`; they were Russian.
+- **A chat or message tg cannot find is `not_found`**, and a chat of the wrong kind for the command
+  is `validation_error`. They were an unknown failure with exit code 1 and the library's own words,
+  which could repeat a chat's title.
+- **The "not logged in" error names your profile**: `tg <profile> session start`, as the other login
+  hints already did.
+- **Downloads and exports get your usual file permissions again.** Since the first release, opening a
+  session made every file tg wrote afterwards readable only by you. The session file and its
+  companions stay owner-only.
 
 ## 0.20.0 — 30.09.2026
 
