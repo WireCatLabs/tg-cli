@@ -370,6 +370,9 @@ export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll =>
 export const toInputPoll = ({ question, answers, multiple, anonymous, revote }: NewPoll): InputMediaLike =>
   InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true })
 
+/** The two of max's five group switches Telegram has, as default member permissions. */
+export const GROUP_SETTINGS = ["allCanPin", "onlyAdminsAdd"] as const
+
 /**
  * A group as `chats create` and `chats join` answer it. Telegram has two of max's five switches —
  * whether members may pin, and whether they may add people — as default member permissions; the

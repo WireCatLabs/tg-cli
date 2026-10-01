@@ -103,6 +103,10 @@ class FakeClient {
   addChatMembers = vi.fn(async (..._args: unknown[]): Promise<{ userId: number }[]> => [])
   joinChat = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ status: "ok", chat: group(-100702, "Joined") }))
   leaveChat = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  setChatTitle = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  setChatDescription = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  setChatDefaultPermissions = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
+  exportInviteLink = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ link: "https://t.me/+new" }))
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
@@ -994,6 +998,37 @@ describe("making, joining and leaving groups", () => {
       message: expect.stringContaining("request is sent"),
     })
     expect(client.joinChat.mock.calls[1]).toEqual(["pisos_vlc"])
+  })
+
+  it("**changes only the switches asked for**, keeping every other right Telegram holds", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = {
+      ...full(-100700, "Plans"),
+      defaultPermissions: {
+        canPinMessages: false,
+        canInviteUsers: true,
+        raw: { _: "chatBannedRights", untilDate: 0, pinMessages: true, sendPolls: true },
+      },
+    }
+
+    await adapter.updateGroup("-100700", { title: "Plans 2", settings: { allCanPin: true, onlyAdminsAdd: true } })
+
+    expect(client.setChatTitle.mock.calls).toEqual([[-100700, "Plans 2"]])
+    expect(client.setChatDescription).not.toHaveBeenCalled()
+    expect(client.setChatDefaultPermissions.mock.calls).toEqual([
+      [-100700, { pinMessages: false, sendPolls: true, inviteUsers: true }],
+    ])
+    expect(() => adapter.updateGroup("-100700", { settings: { onlyAdminsCall: true } })).toThrow(/no group setting/)
+  })
+
+  it("reads a group, and replaces its link", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = { ...full(-100700, "Plans"), inviteLink: { link: "https://t.me/+old" } }
+    client.peer = group(-100700, "Plans")
+
+    expect(await adapter.group("-100700")).toMatchObject({ link: "https://t.me/+old", settings: { allCanPin: false } })
+    await adapter.resetInviteLink("-100700")
+    expect(client.exportInviteLink.mock.calls).toEqual([[-100700]])
   })
 
   it("leaves, answering the chat's id", async () => {
