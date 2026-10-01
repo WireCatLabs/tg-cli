@@ -21,7 +21,6 @@ jobs:
         node --experimental-strip-types scripts/commands.ts
         git diff --exit-code
         pnpm docs:check
-        node dist/bin/tg.js commands --json | pnpm exec cli-messaging-parity tg --pages README.md docs/*.md
         pnpm parity:check
 
   version:
