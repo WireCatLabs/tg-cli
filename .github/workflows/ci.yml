@@ -30,6 +30,8 @@ jobs:
       - run: node --experimental-strip-types scripts/commands.ts
       - run: git diff --exit-code
       - run: pnpm docs:check
+      # dist/ is built above; the script reads the command tree from it.
+      - run: node --experimental-strip-types scripts/docs-commands.ts
       - run: pnpm parity:check
 
   bun:
