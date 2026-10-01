@@ -128,6 +128,9 @@ describe("tg bot messages send", () => {
     const kept = await tg(["sales", "bot", "messages", "list", "Team", "--json"])
     expect(kept.answer.items.map((item: { id: string }) => item.id)).toEqual(["500"])
     expect(kept.err).toContain("gives a bot no history")
+    await tg(["sales", "bot", "messages", "send", "Team", "and tomorrow"])
+    const newest = await tg(["sales", "bot", "messages", "list", "Team", "--limit", "1", "--json"])
+    expect(newest.answer.items.map((item: { id: string }) => item.id)).toEqual(["501"])
   })
 
   it("writes to a person as user:<id>, and sends --html as Telegram's HTML", async () => {
@@ -235,5 +238,16 @@ describe("tg bot chats", () => {
       { method: "sendChatAction", params: { chat_id: String(GROUP.id), action: "upload_document" } },
       { method: "leaveChat", params: { chat_id: String(GROUP.id) } },
     ])
+  })
+})
+
+describe("tg bot chats admins and members", () => {
+  it("**refuses what tg's bot cannot do yet**, before asking Telegram anything", async () => {
+    const admin = await tg(["sales", "bot", "chats", "admins", "add", "Team", "42", "--can", "pin", "--title", "Mod"])
+    const remove = await tg(["sales", "bot", "chats", "members", "remove", "Team", "42", "--block"])
+
+    expect([admin.code, remove.code]).toEqual([2, 2])
+    expect(admin.err).toContain("a Telegram bot cannot make an admin")
+    expect(requests.filter(({ method }) => method !== "getMe")).toEqual([])
   })
 })

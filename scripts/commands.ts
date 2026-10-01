@@ -42,6 +42,7 @@ whole shell session; without either, the profile is \`default\`.`,
     globalHeading: "Options for every command",
     globalIntro: "",
     mutates: "**Changes something in Telegram.**",
+    mutatesLocal: "**Changes something on this computer only.**",
     exitHeading: "Exit codes",
     exitIntro: "Branch on the code, not on the text: the text can change, the code does not.",
     outro: `\`0\` and only \`0\` means the operation was done. \`14\` (\`outcome_unknown\`) means a message **may**

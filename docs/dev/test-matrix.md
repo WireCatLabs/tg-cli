@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**298 ✅ · 11 ⛔ · 0 ❌** — 136 commands, 173 options.
+**306 ✅ · 11 ⛔ · 0 ❌** — 140 commands, 177 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -281,6 +281,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot chats show` |  | ✅ |  |
 | `bot chats leave` |  | ✅ |  |
 | `bot chats action` |  | ✅ |  |
+| `bot chats admins list` |  | ✅ |  |
+| `bot chats admins add` |  | ✅ |  |
+| `bot chats admins add` | `--can` | ✅ |  |
+| `bot chats admins add` | `--title` | ✅ |  |
+| `bot chats admins remove` |  | ✅ |  |
+| `bot chats members remove` |  | ✅ |  |
+| `bot chats members remove` | `--block` | ✅ |  |
 | `bot messages send` |  | ✅ |  |
 | `bot messages send` | `--reply-to` | ✅ |  |
 | `bot messages send` | `--silent` | ✅ |  |
@@ -292,6 +299,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages send` | `--voice` | ✅ |  |
 | `bot messages send` | `--allow-any-file` | ✅ |  |
 | `bot messages list` |  | ✅ |  |
+| `bot messages list` | `--limit` | ✅ |  |
 | `bot messages show` |  | ✅ |  |
 | `bot messages edit` |  | ✅ |  |
 | `bot messages edit` | `--md` | ✅ |  |

@@ -17,6 +17,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `tg conversations links clear` drops its answers. tg calls no model itself. See
   [the archive](docs/archive.md).
 
+### Fixed
+
+- **Commands that change only this computer no longer say they change Telegram.** `config set` and
+  `unset`, `chats rules set` and `unset`, `recipients add`, `remove` and `clear`, and the bot's
+  `auth set`, `auth remove` and `recipients add`, `remove` and `clear` write the config file, the
+  group-rules file, the recipient lists or the keyring. The [command reference](docs/commands.md) now
+  says "Changes something on this computer only." under them. They are still listed as writes in
+  `tg commands`. `chats moderate` and `session end` still say they change Telegram.
+
 ## 0.21.0 — 01.10.2026
 
 ### What's new
