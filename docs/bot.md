@@ -169,6 +169,22 @@ refuses a second address until the first is deleted.
 The settings for a bot live in the `bot` section of the configuration file:
 `tg sales config set --bot sendsPerHour 200` ([configuration.md](configuration.md)).
 
+## Moderating a group by its rules
+
+A bot that is an admin of a group can judge what is new there by the group's rules, as
+`tg chats moderate` does for your account:
+
+```sh
+tg sales bot chats rules set -1001234567890 invites delete   # invite links to other chats: delete
+tg sales bot chats moderate -1001234567890 --dry-run         # what breaks the rules, without acting
+tg sales bot chats moderate -1001234567890                   # act as the rules allow
+```
+
+Telegram gives a bot no history, so the bot judges only what `tg sales bot watch` kept on this
+computer — nothing from before `watch` started. Joins are not judged. A removed person cannot come
+back by the link unless `--no-ban`. The rules live in the same file as those of your account profile
+of the same name.
+
 ## The bot for an agent (MCP)
 
 `tg <name> bot mcp` serves the bot to an agent, as `tg mcp` serves your account:

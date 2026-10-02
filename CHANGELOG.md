@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg <name> bot chats moderate` and `bot chats rules`**: a bot judges a group's new messages by its
+  rules and acts as they allow. It judges what `bot watch` kept, since Telegram gives a bot no history.
+  See [the bot page](docs/bot.md#moderating-a-group-by-its-rules).
 - **`tg <name> bot mcp`: the bot for an agent**, over MCP. It offers the tools the bot profile's
   permissions allow; a deletion asks in a form first. See [the bot page](docs/bot.md#the-bot-for-an-agent-mcp).
 - **`tg messages search` takes a query language**: `"a phrase"`, `-word`, `a OR b`, and the filters

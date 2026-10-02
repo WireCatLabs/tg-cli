@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**363 ✅ · 18 ⛔ · 0 ❌** — 158 commands, 223 options.
+**372 ✅ · 18 ⛔ · 0 ❌** — 162 commands, 228 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -326,6 +326,15 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot chats admins remove` |  | ✅ |  |
 | `bot chats members remove` |  | ✅ |  |
 | `bot chats members remove` | `--block` | ✅ |  |
+| `bot chats rules show` |  | ✅ |  |
+| `bot chats rules set` |  | ✅ |  |
+| `bot chats rules unset` |  | ✅ |  |
+| `bot chats moderate` |  | ✅ |  |
+| `bot chats moderate` | `--since-time` | ✅ |  |
+| `bot chats moderate` | `--dry-run` | ✅ |  |
+| `bot chats moderate` | `--allow-dangerous` | ✅ |  |
+| `bot chats moderate` | `--no-ban` | ✅ |  |
+| `bot chats moderate` | `--max-actions` | ✅ |  |
 | `bot messages send` |  | ✅ |  |
 | `bot messages send` | `--reply-to` | ✅ |  |
 | `bot messages send` | `--silent` | ✅ |  |

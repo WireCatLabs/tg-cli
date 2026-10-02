@@ -198,3 +198,37 @@ describe("tg bot mcp config", () => {
     expect(streams.stderr.join("\n")).toContain("no longer decide anything")
   })
 })
+
+describe("tg bot chats moderate", () => {
+  it("**judges what the local copy kept**, since Telegram gives a bot no history, and says so", async () => {
+    const fetch = telegram({
+      getMe: ME,
+      getChatAdministrators: { status: 200, body: { ok: true, result: [] } },
+    })
+    await tg(["sales", "bot", "auth", "set"], fetch, TOKEN)
+
+    const done = await tg(
+      [
+        "sales",
+        "bot",
+        "chats",
+        "moderate",
+        "-100",
+        "--since-time",
+        "2h",
+        "--dry-run",
+        "--allow-dangerous",
+        "--no-ban",
+        "--max-actions",
+        "3",
+        "--json",
+      ],
+      fetch,
+    )
+
+    expect(done.code).toBe(0)
+    expect(done.answer).toEqual({ chatId: "-100", rows: [] })
+    expect(done.err).toContain("Telegram gives a bot no history")
+    expect(asked).toContain("getChatAdministrators")
+  })
+})
