@@ -6,7 +6,7 @@ import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Message } from "@leemour/cli-messaging"
 import { unitScope } from "@leemour/cli-messaging/background"
 import type { ServerSystem } from "@leemour/cli-messaging/cli"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
 import { run } from "./program.js"
 import { scripted } from "./testing/scripted.js"
@@ -125,6 +125,108 @@ describe("the archive, from the store", () => {
       store,
     )
     expect(cleared.answer).toEqual({ chat: CHAT, cleared: 1 })
+  })
+
+  it("**embeds and searches a chat by meaning** through a model server, and refuses a model not downloaded", async () => {
+    const store = await backfilled()
+    await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+    vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
+      const { input } = JSON.parse(String(init.body)) as { input: string[] }
+      const dims = url.startsWith("https://api.openai.com") ? 1536 : 8
+      return new Response(
+        JSON.stringify({ data: input.map((_, index) => ({ index, embedding: [1, ...new Array(dims - 1).fill(0)] })) }),
+      )
+    })
+    const env = { TG_OPENAI_API_KEY: "sk-test", CLI_COMMON_CACHE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
+    const server = ["--base-url", "http://127.0.0.1:11434/v1", "--model", "m", "--dims", "8"]
+    try {
+      const embedded = await tg(
+        [
+          "archive",
+          "conversations",
+          "embed",
+          "--chat",
+          CHAT,
+          ...server,
+          "--concurrency",
+          "2",
+          "--max-tokens",
+          "100000",
+          "--json",
+        ],
+        store,
+        env,
+      )
+      expect(embedded.answer).toMatchObject({ chat: CHAT, embedded: 1 })
+      const status = await tg(
+        ["archive", "conversations", "embed", "status", "--chat", CHAT, ...server, "--json"],
+        store,
+        env,
+      )
+      expect(status.answer).toMatchObject({ embedded: 1, left: 0 })
+      const found = await tg(
+        [
+          "archive",
+          "conversations",
+          "search",
+          "invoice",
+          "--chat",
+          CHAT,
+          "--since-time",
+          "2026-09-01",
+          "--limit",
+          "5",
+          ...server,
+          "--json",
+        ],
+        store,
+        env,
+      )
+      expect((found.answer as { items: unknown[] }).items).toHaveLength(1)
+
+      const openai = ["--provider", "openai"]
+      expect(
+        (await tg(["archive", "conversations", "embed", "--chat", CHAT, ...openai, "--json"], store, env)).code,
+      ).not.toBe(0)
+      expect(
+        (await tg(["archive", "conversations", "embed", "status", "--chat", CHAT, ...openai, "--json"], store, env))
+          .answer,
+      ).toMatchObject({ left: 1 })
+      expect((await tg(["archive", "conversations", "search", "invoice", ...openai, "--json"], store, env)).code).toBe(
+        0,
+      )
+      expect(
+        (await tg(["archive", "conversations", "embed", "clear", "--chat", CHAT, ...openai, "--json"], store, env))
+          .code,
+      ).toBe(0)
+      const cleared = await tg(
+        ["archive", "conversations", "embed", "clear", "--chat", CHAT, ...server, "--json"],
+        store,
+        env,
+      )
+      expect(cleared.answer).toEqual({ chat: CHAT, cleared: 1 })
+
+      const local = await tg(
+        [
+          "archive",
+          "conversations",
+          "embed",
+          "--chat",
+          CHAT,
+          "--model",
+          "e5-small",
+          "--workers",
+          "2",
+          "--threads",
+          "2",
+        ],
+        store,
+        env,
+      )
+      expect(local.stderr.join("\n")).toContain("models text download e5-small")
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 
   it("installs the agents' guide under the home it is given", async () => {
