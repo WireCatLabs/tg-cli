@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg <name> bot contacts show`, `bot messages search` and `bot messages between`** read what the bot
+  kept on this computer. See [the bot page](docs/bot.md#what-the-bot-kept).
 - **`tg <name> bot chats moderate` and `bot chats rules`**: a bot judges a group's new messages by its
   rules and acts as they allow. It judges what `bot watch` kept, since Telegram gives a bot no history.
   See [the bot page](docs/bot.md#moderating-a-group-by-its-rules).

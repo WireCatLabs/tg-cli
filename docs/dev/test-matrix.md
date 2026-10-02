@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**372 ✅ · 18 ⛔ · 0 ❌** — 162 commands, 228 options.
+**387 ✅ · 18 ⛔ · 0 ❌** — 165 commands, 240 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -356,6 +356,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages pin` |  | ✅ |  |
 | `bot messages pin` | `--notify` | ✅ |  |
 | `bot messages unpin` |  | ✅ |  |
+| `bot messages search` |  | ✅ |  |
+| `bot messages search` | `--all-bots` | ✅ |  |
+| `bot messages search` | `--bots` | ✅ |  |
+| `bot messages search` | `--limit` | ✅ |  |
+| `bot messages search` | `--newest` | ✅ |  |
+| `bot messages search` | `--from` | ✅ |  |
+| `bot messages between` |  | ✅ |  |
+| `bot messages between` | `--all-bots` | ✅ |  |
+| `bot messages between` | `--bots` | ✅ |  |
+| `bot messages between` | `--limit` | ✅ |  |
 | `bot recipients list` |  | ✅ |  |
 | `bot recipients add` |  | ✅ |  |
 | `bot recipients remove` |  | ✅ |  |
@@ -375,6 +385,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot webhooks set` | `--types` | ✅ |  |
 | `bot webhooks set` | `--secret-stdin` | ✅ |  |
 | `bot webhooks delete` |  | ✅ |  |
+| `bot contacts show` |  | ✅ |  |
+| `bot contacts show` | `--all-bots` | ✅ |  |
+| `bot contacts show` | `--bots` | ✅ |  |
+| `bot contacts show` | `--limit` | ✅ |  |
+| `bot contacts show` | `--refresh` | ✅ |  |
 | `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--confirm-send` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |

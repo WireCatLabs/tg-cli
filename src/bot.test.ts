@@ -1,8 +1,9 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import { commandLookup, createBotServer } from "@leemour/cli-messaging/cli"
+import { botCopy, ChatRegistry, commandLookup, createBotServer } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
 import { beforeEach, describe, expect, it } from "vitest"
+import { TG } from "./app.js"
 import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"
 import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
 import { createProgram, run } from "./program.js"
@@ -230,5 +231,64 @@ describe("tg bot chats moderate", () => {
     expect(done.answer).toEqual({ chatId: "-100", rows: [] })
     expect(done.err).toContain("Telegram gives a bot no history")
     expect(asked).toContain("getChatAdministrators")
+  })
+})
+
+describe("tg bot contacts show and the bot's copy reads", () => {
+  const said = (chatId: string, id: string, senderId: string, senderName: string, text: string, at: number) => ({
+    id,
+    chatId,
+    senderId,
+    senderName,
+    timestamp: new Date(at).toISOString(),
+    editedAt: null,
+    text,
+    outgoing: false,
+    attachments: [],
+    replyTo: null,
+    forwardedFrom: null,
+    reactions: null,
+  })
+
+  it("**reads what the bot kept**: a person, a word search, what two people wrote; --refresh is refused", async () => {
+    const fetch = telegram({ getMe: ME })
+    await tg(["sales", "bot", "auth", "set"], fetch, TOKEN)
+    new ChatRegistry(TG, "sales").rememberBot("7000000001")
+    const at = Date.parse("2026-10-01T10:00:00Z")
+    await botCopy("telegram-bot").keep(
+      "7000000001",
+      [
+        said("-100", "1", "42", "Ann", "ann in team", at),
+        said("-100", "2", "43", "Bob", "bob in team", at + 1),
+        said("42", "3", "42", "Ann", "hi bot", at + 2),
+      ],
+      "watch",
+      () => {},
+      [
+        { id: "42", name: "Ann", username: "ann" },
+        { id: "43", name: "Bob" },
+      ],
+    )
+
+    const card = await tg(["sales", "bot", "contacts", "show", "@ann", "--limit", "5", "--json"], fetch)
+    const found = await tg(
+      ["sales", "bot", "messages", "search", "team", "--from", "@ann", "--newest", "--limit", "5", "--json"],
+      fetch,
+    )
+    const between = await tg(["sales", "bot", "messages", "between", "@ann", "Bob", "--limit", "5", "--json"], fetch)
+    const refresh = await tg(["sales", "bot", "contacts", "show", "@ann", "--refresh"], fetch)
+    const across = await tg(["sales", "bot", "contacts", "show", "@ann", "--all-bots", "--bots", "other"], fetch)
+
+    expect(card.answer).toMatchObject({ id: "42", messages: [{ text: "hi bot" }] })
+    expect(found.answer.items.map((message: { id: string }) => message.id)).toEqual(["1"])
+    expect(between.answer.chats.map((chat: { id: string }) => chat.id)).toEqual(["-100"])
+    expect(refresh.code).toBe(2)
+    expect(across.err).toContain("readOtherBots")
+    for (const read of [
+      ["messages", "search", "team", "--all-bots", "--bots", "other"],
+      ["messages", "between", "@ann", "Bob", "--all-bots", "--bots", "other"],
+    ]) {
+      expect((await tg(["sales", "bot", ...read], fetch)).err).toContain("readOtherBots")
+    }
   })
 })

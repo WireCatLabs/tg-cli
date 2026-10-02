@@ -2245,6 +2245,44 @@ tg bot messages unpin <chat> <message>
 | `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
 | `message` | required | message id. |
 
+#### `tg bot messages search`
+
+search the messages this bot has read, sent or received on this machine — the local copy only, best match first; every word must appear; "a phrase", -word, a OR b, from: chat: after: before: has:; by text, by --from, or both
+
+```sh
+tg bot messages search [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | the words to find. |
+
+| Option | What it does |
+|---|---|
+| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--from <who>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
+
+#### `tg bot messages between`
+
+what two or more people wrote in the chats they have all written in — from the local copy, grouped by chat, oldest first; --limit counts per chat. Common chats are the ones this copy saw each of them write in, not a member list from Telegram
+
+```sh
+tg bot messages between <people> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `people` | required | two or more people — an id, @username or part of a name each. |
+
+| Option | What it does |
+|---|---|
+| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--limit <n>` | how many of the latest messages from each chat. |
+
 ### `tg bot recipients`
 
 the chats this bot may write to; with no list, every chat — `clear` removes the list
@@ -2423,6 +2461,29 @@ tg bot webhooks delete <url>
 | Argument | | What it is |
 |---|---|---|
 | `url` | required | the address. |
+
+### `tg bot contacts`
+
+people this bot has seen write — from the local copy on this machine, never asking Telegram unless told to
+
+#### `tg bot contacts show`
+
+one person: the chats they wrote in (with their last message there) and the latest messages of their private chat with the bot
+
+```sh
+tg bot contacts show <who> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `who` | required | an id, @username or part of a name. |
+
+| Option | What it does |
+|---|---|
+| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--limit <n>` | how many messages from the private chat. |
+| `--refresh` | read the private chat with them from Telegram first — one request. |
 
 ### `tg bot mcp`
 
