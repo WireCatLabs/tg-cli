@@ -1480,7 +1480,7 @@ tg conversations show <conversation> [message]
 
 ### `tg conversations search`
 
-the conversations nearest in meaning to a query, in one chat or every embedded one — after `conversations embed`; runs on this machine
+the conversations nearest to a query in meaning and in words, best first, in one chat or every one — meaning after `conversations embed`; runs on this machine
 
 ```sh
 tg conversations search <query> [options]
@@ -2354,6 +2354,38 @@ tg bot webhooks delete <url>
 | Argument | | What it is |
 |---|---|---|
 | `url` | required | the address. |
+
+### `tg bot mcp`
+
+serve this bot to an agent over MCP, on stdin and stdout — `claude mcp add sales-bot -- tg sales bot mcp`
+
+```sh
+tg bot mcp [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
+| `--allow-moderate` | no longer used — the profile's permissions decide. |
+
+#### `tg bot mcp config`
+
+print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes nothing
+
+```sh
+tg bot mcp config [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
+| `--allow-moderate` | no longer used — the profile's permissions decide. |
 
 ## `tg skill`
 

@@ -1,8 +1,11 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
+import { commandLookup, createBotServer } from "@leemour/cli-messaging/cli"
+import type { Command } from "commander"
 import { beforeEach, describe, expect, it } from "vitest"
 import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"
-import { run } from "./program.js"
+import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
+import { createProgram, run } from "./program.js"
 
 const TOKEN = "123456789:AAsecretSECRETsecretSECRETsecret0"
 const SECRET = "AAsecretSECRET"
@@ -143,5 +146,55 @@ describe("tg bot list", () => {
     expect((await tg(["bot", "list", "--check", "--json"], telegram({ getMe: ME }))).answer.items).toEqual([
       { name: "sales", token: "keyring", bot: "sales_bot", id: "7000000001" },
     ])
+  })
+})
+
+describe("tg bot mcp", () => {
+  const offered = async (permissions: Record<string, "deny" | "readonly" | "ask" | "allow">) => {
+    const group = createProgram().commands.find((one) => one.name() === "bot") as Command
+    const { offered: names } = createBotServer({
+      bot: TELEGRAM_BOT,
+      commandAt: commandLookup(group),
+      settings: { profile: "sales", permissions, readOtherBots: false },
+      env: {},
+      run: await botMcpRun({ keyring }),
+    })
+    return names
+  }
+
+  it("**offers the shared bot tools by the profile's levels**: every write by default, none when read-only", async () => {
+    const all = await offered({})
+    expect(all).toEqual(expect.arrayContaining(["tg_bot_messages_send", "tg_bot_messages_delete", "tg_bot_chats_list"]))
+    expect(all.some((name) => /comments|people|_me$/.test(name))).toBe(false)
+
+    const reads = await offered({ bot: "readonly" })
+    expect(reads).toContain("tg_bot_messages_list")
+    expect(reads.some((name) => /_(send|edit|delete|pin|unpin|remove|action|answer)$/.test(name))).toBe(false)
+  })
+})
+
+describe("tg bot mcp config", () => {
+  it("**prints the bot's server entry with --confirm-send and --allow-dangerous**, and drops the retired flags", async () => {
+    const streams = captureStreams()
+    const flags = ["--allow-send", "--allow-delete", "--allow-moderate", "--confirm-send", "--allow-dangerous"]
+    const code = await run(["sales", "bot", "mcp", "config", ...flags, "--json"], {
+      streams,
+      tty: false,
+      keyring,
+      mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/tg.js" },
+    } as never)
+
+    expect(code).toBe(0)
+    const servers = JSON.parse(streams.stdout.join("")).mcpServers
+    expect(Object.keys(servers)).toEqual(["tg-bot-sales"])
+    expect(servers["tg-bot-sales"].args).toEqual([
+      "/opt/tg/tg.js",
+      "sales",
+      "bot",
+      "mcp",
+      "--confirm-send",
+      "--allow-dangerous",
+    ])
+    expect(streams.stderr.join("\n")).toContain("no longer decide anything")
   })
 })

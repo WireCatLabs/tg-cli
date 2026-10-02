@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**357 ✅ · 12 ⛔ · 0 ❌** — 156 commands, 213 options.
+**363 ✅ · 18 ⛔ · 0 ❌** — 158 commands, 223 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -366,6 +366,18 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot webhooks set` | `--types` | ✅ |  |
 | `bot webhooks set` | `--secret-stdin` | ✅ |  |
 | `bot webhooks delete` |  | ✅ |  |
+| `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` | `--confirm-send` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` | `--allow-send` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` | `--allow-delete` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` | `--allow-moderate` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp config` |  | ✅ |  |
+| `bot mcp config` | `--confirm-send` | ✅ |  |
+| `bot mcp config` | `--allow-dangerous` | ✅ |  |
+| `bot mcp config` | `--allow-send` | ✅ |  |
+| `bot mcp config` | `--allow-delete` | ✅ |  |
+| `bot mcp config` | `--allow-moderate` | ✅ |  |
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |

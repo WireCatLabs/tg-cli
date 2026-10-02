@@ -38,6 +38,15 @@ export const UNTESTED: Untested[] = [
       "P2's shared command; cli-messaging's moderation tests drive it through the port, and tg's own test " +
       "comes with P2's Telegram moderation work",
   },
+  ...["", "--confirm-send", "--allow-dangerous", "--allow-send", "--allow-delete", "--allow-moderate"].map(
+    (option) => ({
+      command: "bot mcp",
+      ...(option ? { option } : {}),
+      reason:
+        "serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, " +
+        "src/bot.test.ts the tools tg offers, and bot mcp config there the flags",
+    }),
+  ),
   {
     command: "mcp",
     reason:

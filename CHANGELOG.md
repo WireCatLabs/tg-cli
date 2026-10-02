@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg <name> bot mcp`: the bot for an agent**, over MCP. It offers the tools the bot profile's
+  permissions allow; a deletion asks in a form first. See [the bot page](docs/bot.md#the-bot-for-an-agent-mcp).
 - **`tg messages search` takes a query language**: `"a phrase"`, `-word`, `a OR b`, and the filters
   `from:`, `chat:`, `after:`/`before:` and `has:`. A typo is corrected, and stderr says so.
   `--context <n>` shows the messages around each hit (2 in the terminal). `in:max`, `in:all` or
