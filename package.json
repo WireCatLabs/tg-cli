@@ -46,8 +46,8 @@
     "secrets:scan": "gitleaks git --no-banner --redact ."
   },
   "dependencies": {
-    "@leemour/cli-core": "0.15.0",
-    "@leemour/cli-messaging": "0.112.0",
+    "@leemour/cli-core": "0.16.0",
+    "@leemour/cli-messaging": "0.113.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0"
   },

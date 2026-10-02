@@ -1884,6 +1884,45 @@ tg mcp config [options]
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
 
+### `tg mcp setup`
+
+add this profile's local MCP server to Codex or Claude Code
+
+**Changes something on this computer only.**
+
+```sh
+tg mcp setup <client> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `client` | required | codex or claude-code. |
+
+| Option | What it does |
+|---|---|
+| `--allow-writes` | acknowledge that this profile offers writing tools. |
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-mark-read` | no longer used — the profile's permissions decide. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
+
+### `tg mcp doctor`
+
+check this profile's local MCP handshake and tool list
+
+```sh
+tg mcp doctor [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--confirm-send` | show the owner every write in a form from the server first. |
+| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
+| `--allow-mark-read` | no longer used — the profile's permissions decide. |
+| `--allow-delete` | no longer used — the profile's permissions decide. |
+
 ## `tg bot`
 
 a Telegram bot, through the official Bot API and a bot token — not your personal account

@@ -354,6 +354,9 @@ In full: [docs/mcp.md](docs/mcp.md).
 
 ```sh
 claude mcp add tg -- tg mcp         # Claude Code
+tg mcp doctor                       # check the local MCP server
+tg mcp setup codex                 # add it to Codex
+tg mcp setup claude-code           # add it to Claude Code
 tg mcp config                       # the entry for Claude Desktop, Cursor and others, with full paths
 ```
 

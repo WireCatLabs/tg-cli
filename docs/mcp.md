@@ -14,6 +14,26 @@ This server is copied from max-cli's (`max mcp`) and behaves the same way.
 
 Log in in a terminal first, as usual (`tg session start`). The server never logs in.
 
+**Codex or Claude Code on this computer:**
+
+```sh
+tg mcp doctor                # check that MCP starts and lists tools
+tg mcp setup codex          # add it to Codex
+tg mcp setup claude-code    # or add it to Claude Code
+```
+
+Put a profile first, for example `tg work mcp setup codex`. Setup uses the client's own command
+and leaves its other servers alone. If the same name already exists, remove that entry in the
+client before running setup again. The default tg profile offers writing tools. Setup therefore
+asks you to review its permissions and repeat with `--allow-writes`; that flag acknowledges the
+installation and does not change permissions. To restrict what the agent can do, set the profile's
+`permissions` first ([below](#what-an-agent-may-do)).
+
+`mcp doctor` reads no messages and does not log in to Telegram. A healthy result means the MCP
+handshake and tool list work, not that the account session is valid. `potentialWrites` counts tools
+without a read-only declaration. Browser and mobile chats need a separate remote connection
+([remote.md](remote.md)).
+
 **Claude Code:**
 
 ```sh
