@@ -169,6 +169,20 @@ refuses a second address until the first is deleted.
 The settings for a bot live in the `bot` section of the configuration file:
 `tg sales config set --bot sendsPerHour 200` ([configuration.md](configuration.md)).
 
+## What the bot kept
+
+Everything `tg sales bot watch` saw is kept on this computer, and these read it without asking Telegram:
+
+```sh
+tg sales bot contacts show @ann              # where Ann wrote, and her private chat with the bot
+tg sales bot messages search "price list"    # best match first; --newest for newest first
+tg sales bot messages search --from @ann     # what one person wrote
+tg sales bot messages between @ann Bob       # what both wrote, in the chats both wrote in
+```
+
+`--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `readOtherBots`
+allows it. Telegram gives a bot no history, so `contacts show --refresh` is refused.
+
 ## Moderating a group by its rules
 
 A bot that is an admin of a group can judge what is new there by the group's rules, as
