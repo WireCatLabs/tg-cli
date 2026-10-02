@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.15.0",
-    "@leemour/cli-messaging": "0.109.0",
+    "@leemour/cli-messaging": "0.111.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0"
   },

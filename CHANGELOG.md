@@ -63,6 +63,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **A refused bot write names a working config command** with `--bot` and the permission key
+  (cli-messaging 0.111.0). The former hint placed `config` under `bot`, where it does not exist.
+
 - **Commands that change only this computer no longer say they change Telegram.** `config set` and
   `unset`, `chats rules set` and `unset`, `recipients add`, `remove` and `clear`, and the bot's
   `auth set`, `auth remove` and `recipients add`, `remove` and `clear` write the config file, the
