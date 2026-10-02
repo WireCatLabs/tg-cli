@@ -17,6 +17,7 @@ import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"
 import { isolated, sessionFile } from "../paths.js"
 import { ADMIN_RIGHTS, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
+import type { BotHistoryOptions, BotHistoryReader } from "../telegram/bot-history.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import type { UpdateEnvironment } from "../update.js"
 
@@ -31,6 +32,7 @@ export interface Environment extends BaseEnvironment {
   system?: ServerSystem
   /** Tests hand in a stand-in for Telegram's Bot API. */
   botFetch?: FetchLike
+  botHistory?: (options: BotHistoryOptions) => Promise<BotHistoryReader>
 }
 
 export type Adapter = MessengerAdapter & Pick<TelegramAdapter, "login">

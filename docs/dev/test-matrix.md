@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**390 ✅ · 18 ⛔ · 0 ❌** — 166 commands, 242 options.
+**397 ✅ · 18 ⛔ · 0 ❌** — 167 commands, 248 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -393,6 +393,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot contacts show` | `--bots` | ✅ |  |
 | `bot contacts show` | `--limit` | ✅ |  |
 | `bot contacts show` | `--refresh` | ✅ |  |
+| `bot store fetch` |  | ✅ |  |
+| `bot store fetch` | `--limit` | ✅ |  |
+| `bot store fetch` | `--page-size` | ✅ |  |
+| `bot store fetch` | `--pause` | ✅ |  |
+| `bot store fetch` | `--since-time` | ✅ |  |
+| `bot store fetch` | `--last` | ✅ |  |
+| `bot store fetch` | `--from` | ✅ |  |
 | `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--confirm-send` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin until the client closes; cli-messaging's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
