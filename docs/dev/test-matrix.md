@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**397 ✅ · 18 ⛔ · 0 ❌** — 167 commands, 248 options.
+**399 ✅ · 29 ⛔ · 0 ❌** — 169 commands, 259 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -313,6 +313,19 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp config` | `--allow-send` | ✅ |  |
 | `mcp config` | `--allow-mark-read` | ✅ |  |
 | `mcp config` | `--allow-delete` | ✅ |  |
+| `mcp setup` |  | ✅ |  |
+| `mcp setup` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--confirm-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-dangerous` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-mark-read` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-delete` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp doctor` |  | ✅ |  |
+| `mcp doctor` | `--confirm-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-dangerous` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-mark-read` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-delete` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
 | `bot auth set` |  | ✅ |  |
 | `bot auth show` |  | ✅ |  |
 | `bot auth remove` |  | ✅ |  |

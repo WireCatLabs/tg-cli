@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg mcp setup codex|claude-code` and `tg mcp doctor`** add the local server to a client and
+  check its handshake and tools. Setup requires `--allow-writes` when the profile offers writing
+  tools; doctor does not check the Telegram login.
 - **`tg <bot> bot store fetch <chat>` imports older channel and supergroup messages** into the bot's
   local copy, without sending or marking read. Use `--from <message link>` for a first run without
   a known message number; later runs continue backwards. Private chats and basic groups are refused.

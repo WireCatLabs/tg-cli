@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@leemour/cli-core':
-        specifier: 0.15.0
-        version: 0.15.0(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.16.0
+        version: 0.16.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.112.0
-        version: 0.112.0(@leemour/cli-core@0.15.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.113.0
+        version: 0.113.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -424,8 +424,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@leemour/cli-core@0.15.0':
-    resolution: {integrity: sha512-rPNvr1NsKQBrGnvOz5q7qjXlDtF70UP8JFSsaThqnC+UpcORIsy1MFV0Xr6lby1MFSyK5UYsQFaAvScfZhEcNA==}
+  '@leemour/cli-core@0.16.0':
+    resolution: {integrity: sha512-MRabtQqZ1UlKXUGP6KM0JDKbP7md2Lbnu9zYil0InMdWxYaPHyByzs0bhn4yCn0AsqfBqCGqmlVqVXRC1QV2Iw==}
     engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
@@ -440,12 +440,12 @@ packages:
   '@leemour/cli-messaging-sqlite@1.0.0':
     resolution: {integrity: sha512-NFJMG+/2BWIb3JdOMgyV8SFsB7Fuv3wLtUmMt08GZ4KTpgu0WuA7qQmQE6appEgJJuF/97vHj6+AuXw2z3HMHw==}
 
-  '@leemour/cli-messaging@0.112.0':
-    resolution: {integrity: sha512-pmzLaJCCrzJTXRZADuup+n7kYuOyzFDuM2WTF5/rTdDDGx0wI4Pu9pc2M5tSP/TzoDterHMkkcyNn5RlXHBXgw==}
+  '@leemour/cli-messaging@0.113.0':
+    resolution: {integrity: sha512-NuKuXRXAcSG42WgPcb69orbXWpgPNdgNh7LS4s9ocyhPdMN2naC1COwvZZa3bxyRIDQcqWCV8Uf+p5OY8kNFzA==}
     engines: {node: ^22.16.0 || >=24}
     hasBin: true
     peerDependencies:
-      '@leemour/cli-core': '>=0.13.0 <0.16.0'
+      '@leemour/cli-core': '>=0.16.0 <0.17.0'
       commander: '>=15'
 
   '@modelcontextprotocol/core@2.1.0':
@@ -962,6 +962,10 @@ packages:
     resolution: {integrity: sha512-uiqLcOiVDJtBP8WGkZHEP+FZIhTzP1dxvn59EfoYUi9gqupjrBWVQkO2atDrbnKPwLeotFYDsuNb26uBMqB+hw==}
     engines: {node: '>= 6'}
 
+  cross-spawn@7.0.6:
+    resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
+    engines: {node: '>= 8'}
+
   cspell-config-lib@10.3.6:
     resolution: {integrity: sha512-3LcA2uIgB90Ucn3xa1lO5VVncHtsD4LZUf2ENBtHVmxFVFw1wvm1hbXL1mhenLY2xJDONGvLKRnNoowUWIZoDQ==}
     engines: {node: '>=22.18.0'}
@@ -1137,6 +1141,9 @@ packages:
   is-safe-filename@0.1.1:
     resolution: {integrity: sha512-4SrR7AdnY11LHfDKTZY1u6Ga3RuxZdl3YKWWShO5iyuG5h8QS4GD2tOb04peBJ5I7pXbR+CGBNEhTcwK+FzN3g==}
     engines: {node: '>=20'}
+
+  isexe@2.0.0:
+    resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -1320,6 +1327,10 @@ packages:
   opus-decoder@0.7.12:
     resolution: {integrity: sha512-6zpHFDi/MhYvMwyYiuJPqJ2lcRkfm7wHblSvT3lUtx/kLvHkunoe/rhTn1dLKxqVGLeQj3gQi7CnR0N2p3RuOg==}
 
+  path-key@3.1.1:
+    resolution: {integrity: sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==}
+    engines: {node: '>=8'}
+
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -1399,6 +1410,14 @@ packages:
     resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
+
+  shebang-command@2.0.0:
+    resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
+    engines: {node: '>=8'}
+
+  shebang-regex@3.0.0:
+    resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
+    engines: {node: '>=8'}
 
   sherpa-onnx@1.13.8:
     resolution: {integrity: sha512-bsZ7K55hNakFbCVIrCsuwEFLLiWa/1/KI6dXEK3CwtI6N/j/Zc1LMheo1syMJhG0e4gu7MXPwbtKfbm44BQYIg==}
@@ -1591,6 +1610,11 @@ packages:
 
   vscode-uri@3.2.0:
     resolution: {integrity: sha512-m2gXo3bn0G1kT9InzMf07fTbqMbGtyckj3bH5ktLO+1Ssv+yiATZ4dhwaQv9UZWxJh6E9IFGnQyjgWVDWVBDrg==}
+
+  which@2.0.2:
+    resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
+    engines: {node: '>= 8'}
+    hasBin: true
 
   why-is-node-running@3.2.2:
     resolution: {integrity: sha512-NKUzAelcoCXhXL4dJzKIwXeR8iEVqsA0Lq6Vnd0UXvgaKbzVo4ZTHROF2Jidrv+SgxOQ03fMinnNhzZATxOD3A==}
@@ -1931,9 +1955,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  '@leemour/cli-core@0.15.0(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       cli-table3: 0.6.5
+      cross-spawn: 7.0.6
       env-paths: 4.0.0
       picocolors: 1.1.1
       pino: 10.3.1
@@ -1950,11 +1975,11 @@ snapshots:
 
   '@leemour/cli-messaging-sqlite@1.0.0': {}
 
-  '@leemour/cli-messaging@0.112.0(@leemour/cli-core@0.15.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging@0.113.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@huggingface/tokenizers': 0.2.0
-      '@leemour/cli-core': 0.15.0(commander@15.0.0)(typescript@7.0.2)
+      '@leemour/cli-core': 0.16.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging-onnx': 1.0.0
       '@leemour/cli-messaging-sqlite': 1.0.0
       '@modelcontextprotocol/server': 2.1.0
@@ -2335,6 +2360,12 @@ snapshots:
       array-timsort: 1.0.3
       esprima: 4.0.1
 
+  cross-spawn@7.0.6:
+    dependencies:
+      path-key: 3.1.1
+      shebang-command: 2.0.0
+      which: 2.0.2
+
   cspell-config-lib@10.3.6:
     dependencies:
       '@cspell/cspell-types': 10.3.6
@@ -2524,6 +2555,8 @@ snapshots:
 
   is-safe-filename@0.1.1: {}
 
+  isexe@2.0.0: {}
+
   js-tokens@10.0.0: {}
 
   lefthook-darwin-arm64@2.1.14:
@@ -2665,6 +2698,8 @@ snapshots:
     dependencies:
       '@wasm-audio-decoders/common': 9.0.7
 
+  path-key@3.1.1: {}
+
   picocolors@1.1.1: {}
 
   picomatch@4.0.7: {}
@@ -2776,6 +2811,12 @@ snapshots:
   safe-stable-stringify@2.5.0: {}
 
   semver@7.8.5: {}
+
+  shebang-command@2.0.0:
+    dependencies:
+      shebang-regex: 3.0.0
+
+  shebang-regex@3.0.0: {}
 
   sherpa-onnx@1.13.8: {}
 
@@ -2928,6 +2969,10 @@ snapshots:
   vscode-languageserver-textdocument@1.0.15: {}
 
   vscode-uri@3.2.0: {}
+
+  which@2.0.2:
+    dependencies:
+      isexe: 2.0.0
 
   why-is-node-running@3.2.2: {}
 
