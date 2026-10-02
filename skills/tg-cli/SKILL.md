@@ -150,3 +150,8 @@ tg watch --jsonl                                   # new messages as they arrive
 An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg mcp`. The
 profile's `permissions` decide which tools it offers; a form before a change is the owner's to
 answer. `tg mcp config` prints the entry with full paths.
+
+`tg <bot> bot store fetch <chat>` imports a channel or supergroup by message number, read-only over
+a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
+number when neither the bot's copy nor the existing default personal session knows it. Private
+chats and basic groups are refused. Sending and updates stay on the Bot API.

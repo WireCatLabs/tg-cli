@@ -35,9 +35,10 @@ import {
   MessageReactions,
   type Peer,
   type PeerSender,
+  PeersIndex,
   type RawUpdateInfo,
   type TextWithEntities,
-  type Message as TgMessage,
+  Message as TgMessage,
   type Poll as TgPoll,
   type tl,
 } from "@mtcute/node"
@@ -178,6 +179,22 @@ export const toMessage = (message: TgMessage): Message => {
     ...(metadata ? { providerMetadata: metadata } : {}),
     ...mentionsOf(message),
   }
+}
+
+export const toHistoryChannel = (chats: tl.TypeChat[], id: number): tl.TypeInputChannel | undefined => {
+  const chat = chats.find((one) => one._ === "channel" && one.id === id)
+  return chat?._ === "channel" && chat.accessHash
+    ? { _: "inputChannel", channelId: chat.id, accessHash: chat.accessHash }
+    : undefined
+}
+
+export const toHistoryMessages = (
+  page: Exclude<tl.messages.TypeMessages, tl.messages.RawMessagesNotModified>,
+): Message[] => {
+  const peers = PeersIndex.from(page)
+  return page.messages
+    .filter((message) => message._ !== "messageEmpty")
+    .map((message) => toMessage(new TgMessage(message, peers)))
 }
 
 /** A mention by name has no `@handle` in the text; the entity carries the person's id. */

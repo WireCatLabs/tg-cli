@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg <bot> bot store fetch <chat>` imports older channel and supergroup messages** into the bot's
+  local copy, without sending or marking read. Use `--from <message link>` for a first run without
+  a known message number; later runs continue backwards. Private chats and basic groups are refused.
+  See [the bot page](docs/bot.md#fetching-older-messages).
+
 ## 0.22.0 — 03.10.2026
 
 ### What's new
@@ -19,7 +28,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg <name> bot contacts show`, `bot messages search` and `bot messages between`** read what the bot
   kept on this computer. See [the bot page](docs/bot.md#what-the-bot-kept).
 - **`tg <name> bot chats moderate` and `bot chats rules`**: a bot judges a group's new messages by its
-  rules and acts as they allow. It judges what `bot watch` kept, since Telegram gives a bot no history.
+  rules and acts as they allow. It judges what `bot watch` kept or `bot store fetch` imported.
   See [the bot page](docs/bot.md#moderating-a-group-by-its-rules).
 - **`tg <name> bot mcp`: the bot for an agent**, over MCP. It offers the tools the bot profile's
   permissions allow; a deletion asks in a form first. See [the bot page](docs/bot.md#the-bot-for-an-agent-mcp).
@@ -45,8 +54,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   and taking a person out of a chat, for good with `--block`. See [the bot page](docs/bot.md).
 - **`tg bot messages send|list|show|edit|delete|pin|unpin`** and **`tg bot chats show|leave|action`**
   — the bot writes to a chat by id or title, or to a person as `user:<id>`, with `--md`, `--html`, a
-  file or a photo. Telegram gives a bot no history, so `list` and `show` answer from what this bot
-  sent and received on this computer. A delete asks first; `--allow-dangerous` answers.
+  file or a photo. `list` and `show` answer from what this bot sent, received and imported on this
+  computer. A delete asks first; `--allow-dangerous` answers.
 - **Your own AI agent can link a group's conversations**, when you ask it to: `tg skill show
   link-conversations` is its guide. It says how much text it would read and waits for your yes, then
   answers the chat a batch at a time (`tg conversations batches next`, `tg conversations links add`);

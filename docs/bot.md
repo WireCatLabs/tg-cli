@@ -120,14 +120,53 @@ A bot sends one file per message: a photo up to 10 MB, any other file up to 50 M
 If the connection breaks while a message is going, `tg` does not send it again: it says it does not
 know whether the message arrived (exit code 14). Check the chat before you send it again.
 
-**Telegram gives a bot no history.** A bot cannot ask Telegram for a chat's messages, or for one
-message. So `messages list` and `messages show` answer from what the bot has sent, and what
-`bot watch` received, on this computer, and say so:
+**Telegram's Bot API has no history call.** `messages list` and `messages show` answer from what
+the bot has sent, what `bot watch` received, and what `bot store fetch` imported on this computer,
+and say so:
 
 ```sh
 tg sales bot messages list "Team"
 tg sales bot messages show "Team" 512
 ```
+
+## Fetching older messages
+
+`bot store fetch` reads older messages in a channel or supergroup into the bot's local copy.
+It signs the bot in to Telegram's MTProto API with its existing bot token, in a separate session.
+It reads message numbers through [channels.getMessages](https://core.telegram.org/method/channels.getMessages).
+Sending and `bot watch` continue through the Bot API; the history session has updates off.
+The command sends nothing and marks nothing read.
+
+These examples use a synthetic chat id and message link:
+
+```sh
+tg sales bot store fetch -1001234567890 --from https://t.me/c/1234567890/512 --limit 20 --json
+tg sales bot store fetch -1001234567890 --last 200 --pause 1s
+```
+
+`--from` starts at that message, inclusive, and must name the same chat. Without it, the command
+uses the newest message the bot has kept for the chat. If there is none, it reads the newest from
+the existing `default` personal session. If neither knows a number, it asks for `--from`.
+It uses the bot profile's Telegram app credentials (`api_id` and `api_hash`), or the existing
+`default` profile's credentials; `TG_API_ID` and `TG_API_HASH` also work. No personal login is made.
+
+- `--limit` bounds messages fetched in this run (1,000 by default).
+- `--page-size` bounds the message numbers requested per page, at most 100.
+- `--pause` waits between requests (1 second by default), including requests across empty ranges.
+- `--last` stops when the newest requested number of messages is held.
+- `--since-time` stops when it reaches older messages; ISO 8601 or `2h` / `1d` ago.
+  Give `--last` or `--since-time`, not both.
+
+Run it again to continue backwards. JSON reports `chat`, `fetched`, `complete` and `ranges`.
+An imported message becomes available to `bot messages list --offline`, search and contacts.
+The bot's session is stored separately under its state directory, per profile and bot id; it is
+closed when the command ends.
+
+**Limits:** private chats and basic groups are refused: their message numbers share one sequence
+across all of the bot's chats. The bot must be able to access the channel or supergroup. Deleted
+messages and service numbers leave gaps; the reader scans past them to number 1. Large gaps can
+need many requests even with a small `--limit`. Telegram's bot rate limits still apply: short
+flood waits are respected, and a long wait ends the run so you can resume later.
 
 ## A chat
 
@@ -220,7 +259,8 @@ tg sales bot messages between @ann Bob       # what both wrote, in the chats bot
 ```
 
 `--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `readOtherBots`
-allows it. Telegram gives a bot no history, so `contacts show --refresh` is refused.
+allows it. The Bot API has no history call, so `contacts show --refresh` is refused; import older messages
+with `bot store fetch` first.
 
 ## Moderating a group by its rules
 
@@ -233,8 +273,8 @@ tg sales bot chats moderate -1001234567890 --dry-run         # what breaks the r
 tg sales bot chats moderate -1001234567890                   # act as the rules allow
 ```
 
-Telegram gives a bot no history, so the bot judges only what `tg sales bot watch` kept on this
-computer — nothing from before `watch` started. Joins are not judged. A removed person cannot come
+The bot judges only what `tg sales bot watch` kept or `bot store fetch` imported on this
+computer. Joins are not judged. A removed person cannot come
 back by the link unless `--no-ban`. The rules live in the same file as those of your account profile
 of the same name.
 

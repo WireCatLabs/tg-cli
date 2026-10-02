@@ -14,3 +14,6 @@ export const isolated = (env: NodeJS.ProcessEnv = process.env) =>
 /** The MTProto session: an auth key, which is a credential as good as a password. */
 export const sessionFile = (profile: string, env: NodeJS.ProcessEnv = process.env): string =>
   join(pathsFor(env).state, "sessions", `${profile}.session`)
+
+export const botSessionFile = (profile: string, botId: string, env: NodeJS.ProcessEnv = process.env): string =>
+  join(pathsFor(env).state, "bots", profile, `mtproto-${botId}.session`)
