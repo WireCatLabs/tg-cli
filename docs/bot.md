@@ -18,6 +18,29 @@ tg sales bot auth show    # which bot it is
 `auth set` asks Telegram whose token it is before keeping it, so a typo never replaces a token that
 works.
 
+## Finding a chat's id
+
+Telegram gives a bot no list of its chats, so a chat's id comes from something the bot did or saw.
+
+- **A person.** Write to them as `user:<id>`. Sending prints the chat the message went to, as
+  `chatId` in `--json`. A person must have started the bot first: a Telegram bot cannot
+  [start a conversation](https://core.telegram.org/bots#how-are-bots-different-from-users) with someone who never wrote to it.
+- **A group or a channel.** Add the bot there, write something in it, then watch what the bot sees:
+
+  ```sh
+  tg sales bot watch --events --jsonl --timeout 1m
+  ```
+
+  Each line carries the chat's id as `chatId`. In a group, a bot that is not an admin sees only
+  commands and replies to it, unless its [privacy mode](https://core.telegram.org/bots/features#privacy-mode)
+  is turned off in @BotFather.
+
+After `tg sales bot chats show <id>` the bot knows the chat's title, and the commands below take the
+title too. `chats list` shows every chat the bot has seen.
+
+- A group's or a channel's id is **negative**.
+- A positive id is a person.
+
 ## Several bots
 
 A bot is kept under a name you choose, and that name is the **first word** of the command, as a
@@ -65,7 +88,7 @@ always named with its chat: Telegram numbers messages inside each chat.
 tg sales bot messages send "Team" "Build is ready"
 tg sales bot messages send user:4815162342 "Hello"
 tg sales bot messages send "Team" "**Weekly** report" --md       # or --html
-tg sales bot messages send "Team" "Report" --file report.pdf     # the text becomes the caption
+tg sales bot messages send "Team" "Got it" --reply-to 511
 echo "From a pipe" | tg sales bot messages send "Team"
 tg sales bot messages edit "Team" 512 "Fixed text"
 tg sales bot messages delete "Team" 512 513 --allow-dangerous
@@ -73,10 +96,26 @@ tg sales bot messages pin "Team" 512 --notify
 tg sales bot messages unpin "Team" 512
 ```
 
-`--photo` sends a picture as a photo, `--voice` an Ogg Opus file as a voice message, `--as-file` a
-video as a file. A file from a hidden folder or from `tg`'s own folders is refused unless you add
-`--allow-any-file`. A bot sends one file per message. Telegram deletes only messages under 48 hours
-old.
+`--silent` sends without a notification. A message is up to 4096 characters
+([`sendMessage`](https://core.telegram.org/bots/api#sendmessage)). `--md` and `--html` do not go
+together. Deleting asks first; `--allow-dangerous` answers yes. Pinning is quiet unless `--notify`.
+The answer to a send is the message and its `operationId`, its line in the bot's journal. Telegram
+deletes only messages under 48 hours old.
+
+### Files
+
+`--file` attaches a file from disk. A picture, a video or a sound is recognised by its extension;
+anything else goes as a file. `--photo` sends a picture as a photo, `--voice` an Ogg Opus file as a
+voice message, `--as-file` a video as a file. The text becomes the caption, and may be left out:
+
+```sh
+tg sales bot messages send "Team" "Weekly report" --file report.pdf
+tg sales bot messages send "Team" --photo screenshot.png
+```
+
+A file from a hidden folder or from `tg`'s own folders is refused unless you add `--allow-any-file`.
+A bot sends one file per message: a photo up to 10 MB, any other file up to 50 MB
+([sending files](https://core.telegram.org/bots/api#sending-files)).
 
 If the connection breaks while a message is going, `tg` does not send it again: it says it does not
 know whether the message arrived (exit code 14). Check the chat before you send it again.
@@ -198,6 +237,25 @@ Telegram gives a bot no history, so the bot judges only what `tg sales bot watch
 computer — nothing from before `watch` started. Joins are not judged. A removed person cannot come
 back by the link unless `--no-ban`. The rules live in the same file as those of your account profile
 of the same name.
+
+## For scripts and agents
+
+With `--json` a command prints only data on stdout, and an error on stderr with an exit code:
+
+| Code | What happened |
+|---|---|
+| `4` | no bot token, or Telegram did not accept it |
+| `5` | the profile's permissions do not let the bot do this |
+| `6` | the chat was not found — a title the bot has not seen yet, say |
+| `7` | the chat is not on the bot's recipient list, or nobody answered a question an `ask` level put |
+| `8` | the bot's `sendsPerHour` is used up |
+| `14` | no answer came: whether Telegram did the write is not known |
+
+Every code is in [commands.md](commands.md). Messages come out in the same shape as your account's.
+
+`--trace` and `--record` work for a bot too: each Bot API request is a line on stderr, never with
+its address, since the token is in it. A failed run is kept and shows in `tg runs list`
+([diagnostics.md](diagnostics.md)).
 
 ## The bot for an agent (MCP)
 
