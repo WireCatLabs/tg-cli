@@ -127,6 +127,49 @@ describe("a person at a terminal", () => {
   })
 })
 
+describe("topic options", () => {
+  it("passes --topic for message sends and poll creation", async () => {
+    const checked: unknown[] = []
+    const sent: unknown[] = []
+    const adapter = () =>
+      scripted({
+        validateThread: async (...args) => {
+          checked.push(args)
+        },
+        send: async (chatId, text, options) => {
+          sent.push([chatId, text, options])
+          return { message: message("43"), sendId: options.sendId }
+        },
+        createPoll: async (chatId, poll, options) => {
+          sent.push([chatId, poll, options])
+          return { message: message("44"), sendId: options.sendId }
+        },
+      })
+    expect(
+      (
+        await tg(["messages", "send", "Valencia", "hi", "--topic", "12", "--reply-to", "14", "--send-id", "42"], {
+          adapter,
+        })
+      ).code,
+    ).toBe(0)
+    expect(
+      (
+        await tg(["polls", "create", "Valencia", "Friday?", "yes", "no", "--topic", "12", "--send-id", "43"], {
+          adapter,
+        })
+      ).code,
+    ).toBe(0)
+    expect(checked).toEqual([
+      [chat.id, "12", { replyTo: "14" }],
+      [chat.id, "12", {}],
+    ])
+    expect(sent).toMatchObject([
+      [chat.id, "hi", { threadId: "12", replyTo: "14", sendId: "42" }],
+      [chat.id, { question: "Friday?" }, { threadId: "12", sendId: "43" }],
+    ])
+  })
+})
+
 describe("sending", () => {
   it("reads the text from stdin when none is given", async () => {
     const { code, stdout } = await tg(["messages", "send", "me", "--send-id", "-9001"], {

@@ -115,6 +115,12 @@ tg chats create "Hiking 2027" @olga               # a new group, with the people
 Renaming a group, adding and removing members and admins, resetting its invite link and moderation
 rules for links, forwards and floods are commands too. In full: [docs/groups.md](docs/groups.md).
 
+Send into a forum topic with `messages send --topic` or `polls create --topic`. Use the id from
+`topics list`; an explicit reply must belong to that topic. Text, photo/file captions and scheduled
+sends keep the topic. Closed or missing topics are refused before sending. On an unknown outcome,
+repeat with the same send id, chat and topic; check the scheduled queue instead of repeating a
+scheduled send.
+
 ## How it works
 
 `tg` works in your name, as one more of your devices. It is not a bot: it talks to Telegram over

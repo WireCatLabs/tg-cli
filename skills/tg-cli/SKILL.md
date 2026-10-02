@@ -102,6 +102,10 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
     folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
     the same `--send-id` is safe here too (measured 2026-09-29).
+**Forum sends:** `messages send --topic` and `polls create --topic` use a topic id from `topics list`.
+    Reply targets must belong to that topic. Keep the same chat, topic and `--send-id` on a retry;
+    never retry a scheduled send. Missing or closed topics are refused; nothing marks them read.
+
 16. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
     not have this: `--before-id` is exact.

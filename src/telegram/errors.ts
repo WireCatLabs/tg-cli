@@ -26,6 +26,9 @@ const NOT_FOUND = new Set([
 
 /** Refusals whose name alone would not tell a person what to do. */
 const EXPLAINED: Record<string, [ErrorCode, string]> = {
+  TOPIC_CLOSED: ["permission_error", "that forum topic is closed; choose an open topic"],
+  TOPIC_DELETED: ["not_found", "that forum topic was deleted; check `topics list`"],
+  TOPIC_ID_INVALID: ["not_found", "that forum topic does not exist; check `topics list`"],
   MSG_VOICE_MISSING: ["validation_error", "that message is not a voice or video note"],
   MSG_VOICE_TOO_LONG: ["validation_error", "the voice message is too long for Telegram to transcribe"],
   PREMIUM_ACCOUNT_REQUIRED: [

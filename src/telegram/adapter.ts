@@ -304,14 +304,16 @@ export class TelegramAdapter {
   send(
     chatId: string,
     text: string,
-    { sendId, replyTo, silent, noPreview, markup, at, attachments = [] }: SendOptions,
+    { sendId, replyTo, threadId, silent, noPreview, markup, at, attachments = [] }: SendOptions,
   ): Promise<Sent> {
     const id = parseSendId(sendId)
+    const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
     const body = markup ? toFormatted(text, markup) : text
     const common = {
       randomId: id,
+      ...(thread === undefined || thread === 1 ? {} : { threadId: thread }),
       ...(answering === undefined ? {} : { replyTo: answering }),
       ...(silent ? { silent } : {}),
       ...(at === undefined ? {} : { schedule: new Date(at) }),
@@ -573,12 +575,18 @@ export class TelegramAdapter {
   }
 
   /** One `random_id` per logical create, as a send has: a retry repeats it and Telegram keeps one poll. */
-  createPoll(chatId: string, poll: NewPoll, { sendId, silent }: { sendId: string; silent?: boolean }): Promise<Sent> {
+  createPoll(
+    chatId: string,
+    poll: NewPoll,
+    { sendId, silent, threadId }: { sendId: string; silent?: boolean; threadId?: string },
+  ): Promise<Sent> {
     const randomId = parseSendId(sendId)
+    const thread = threadId === undefined ? undefined : topicNumber(threadId)
     return this.#call(async () => {
       try {
         const message = await this.#client.sendMedia(Number(chatId), toInputPoll(poll), {
           randomId,
+          ...(thread === undefined || thread === 1 ? {} : { threadId: thread }),
           ...(silent ? { silent } : {}),
         })
         return { message: toMessage(message), sendId }
@@ -646,6 +654,28 @@ export class TelegramAdapter {
         }
       }
       return toLinkChat(await this.#client.getFullChat(invite ? typed : publicName(typed)))
+    })
+  }
+
+  async validateThread(chatId: string, threadId: string, { replyTo }: { replyTo?: string }): Promise<void> {
+    const topicId = topicNumber(threadId)
+    const replyId = replyTo === undefined ? undefined : messageNumber(replyTo, "--reply-to needs a message id")
+    return this.#call(async () => {
+      const peer = await this.#client.getPeer(Number(chatId))
+      if (peer.type !== "chat" || !peer.isForum) {
+        throw new CliError("validation_error", "--topic requires a Telegram forum group")
+      }
+      const [topic] = await this.#client.getForumTopicsById(Number(chatId), topicId)
+      if (!topic) throw new CliError("not_found", "that forum topic does not exist; check `topics list`")
+      if (topic.isClosed) throw new CliError("permission_error", "that forum topic is closed; choose an open topic")
+      if (replyId !== undefined) {
+        const [reply] = await this.#client.getMessages(Number(chatId), [replyId])
+        if (!reply) throw new CliError("not_found", "the message to reply to no longer exists in this chat")
+        const replyThread = reply.isTopicMessage ? (reply.replyToMessage?.threadId ?? reply.id) : 1
+        if (reply.id !== topicId && replyThread !== topicId) {
+          throw new CliError("validation_error", "--reply-to belongs to a different topic; choose a message in --topic")
+        }
+      }
     })
   }
 
@@ -1155,4 +1185,11 @@ const unknownIfUnanswered = (error: unknown, what: string, details: Record<strin
     return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
   }
   return error
+}
+
+const topicNumber = (id: string): number => {
+  if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) {
+    throw new CliError("validation_error", "--topic needs a positive Telegram topic id")
+  }
+  return Number(id)
 }
