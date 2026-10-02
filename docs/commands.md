@@ -737,6 +737,7 @@ tg messages send <chat> [text] [options]
 
 | Option | What it does |
 |---|---|
+| `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
@@ -1042,6 +1043,7 @@ tg polls create <chat> <question> <answers> [options]
 
 | Option | What it does |
 |---|---|
+| `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
 | `--multiple` | people may pick several answers. |
 | `--anonymous` | nobody sees who voted for what. |
 | `--revote` | people may change their vote. |

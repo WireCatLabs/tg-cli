@@ -65,6 +65,7 @@ class FakeClient {
   preview: unknown = null
   fullChat: unknown = null
   topics: unknown[] = []
+  getForumTopicsById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => this.topics)
   getChatPreview = async (link: string) => {
     this.#record("getChatPreview", [link])
     if (!this.preview) throw new MtPeerNotFoundError("You have already joined this chat!")
@@ -762,6 +763,71 @@ describe("transcribing", () => {
     await vi.advanceTimersByTimeAsync(61_000)
 
     expect(await answer).toEqual({ text: "", pending: true })
+  })
+})
+
+describe("forum addressing", () => {
+  it.each(["0", "-1", "1.2", "2147483648", "x", " 12"])("rejects invalid topic %s without a request", async (id) => {
+    const { adapter, client } = await open()
+    await expect(adapter.validateThread("-100500", id, {})).rejects.toThrow("positive Telegram topic id")
+    expect(client.getForumTopicsById).not.toHaveBeenCalled()
+  })
+
+  it("checks the forum, topic state and reply membership without sending", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "synthetic")
+    await expect(adapter.validateThread("-100500", "12", {})).rejects.toThrow("requires a Telegram forum group")
+    client.peer = { ...group(-100500, "synthetic"), isForum: true }
+    await expect(adapter.validateThread("-100500", "12", {})).rejects.toThrow("does not exist")
+    client.topics = [{ id: 12, isClosed: true }]
+    await expect(adapter.validateThread("-100500", "12", {})).rejects.toThrow("is closed")
+    client.topics = [{ id: 12, isClosed: false }]
+    await expect(adapter.validateThread("-100500", "12", { replyTo: "14" })).rejects.toThrow("no longer exists")
+    client.found = { ...message(14), isTopicMessage: true, replyToMessage: { threadId: 13 } }
+    await expect(adapter.validateThread("-100500", "12", { replyTo: "14" })).rejects.toThrow("different topic")
+    client.found = { ...message(14), isTopicMessage: true, replyToMessage: { threadId: 12 } }
+    await adapter.validateThread("-100500", "12", { replyTo: "14" })
+    client.found = message(12)
+    await adapter.validateThread("-100500", "12", { replyTo: "12" })
+    client.found = message(14)
+    await adapter.validateThread("-100500", "1", { replyTo: "14" })
+    expect(client.sendText).not.toHaveBeenCalled()
+    expect(client.sendMedia).not.toHaveBeenCalled()
+  })
+
+  it("preserves non-General topics across text, scheduled media and polls", async () => {
+    const { adapter, client } = await open()
+    await adapter.send("-100500", "hello", { sendId: "42", threadId: "12", replyTo: "14" })
+    await adapter.send("-100500", "caption", {
+      sendId: "43",
+      threadId: "12",
+      at: "2027-01-01T12:00:00.000Z",
+      attachments: [{ kind: "photo", name: "synthetic.png", bytes: new Uint8Array([1]) }],
+    })
+    await adapter.createPoll(
+      "-100500",
+      { question: "Friday?", answers: ["yes", "no"], anonymous: true, multiple: false, revote: false },
+      { sendId: "44", threadId: "12", silent: true },
+    )
+    expect(client.sendText.mock.calls[0]?.[2]).toMatchObject({ threadId: 12, replyTo: 14 })
+    expect(client.sendMedia.mock.calls[0]?.[2]).toMatchObject({
+      threadId: 12,
+      schedule: new Date("2027-01-01T12:00:00.000Z"),
+    })
+    expect(client.sendMedia.mock.calls[1]?.[2]).toMatchObject({ threadId: 12, silent: true })
+    expect(String((client.sendMedia.mock.calls[1]?.[2] as { randomId: unknown } | undefined)?.randomId)).toBe("44")
+    await adapter.send("-100500", "general", { sendId: "45", threadId: "1", replyTo: "14" })
+    expect(client.sendText.mock.calls[1]?.[2]).toMatchObject({ replyTo: 14 })
+    expect(client.sendText.mock.calls[1]?.[2]).not.toHaveProperty("threadId")
+  })
+
+  it("maps a topic closed after preflight to a known refusal", async () => {
+    const { adapter, client } = await open()
+    client.sendText.mockRejectedValueOnce(new tl.RpcError(400, "TOPIC_CLOSED"))
+    await expect(adapter.send("-100500", "hi", { sendId: "42", threadId: "12" })).rejects.toMatchObject({
+      code: "permission_error",
+    })
+    expect(client.sendText).toHaveBeenCalledTimes(1)
   })
 })
 

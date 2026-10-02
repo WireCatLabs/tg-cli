@@ -80,3 +80,16 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 |---|---|
 | `session start`, `session end` | a new device login, or logging the owner out of the account |
 | anything in a chat outside the cast | a real person's chat |
+
+## Forum topic addressing
+
+Not yet checked live. Each write type requires the owner's separate permission and a test Group
+that already has forum topics; Saved Messages cannot cover topic addressing. Do not convert a group
+into a forum for this check.
+
+- Read `topics list` for the approved Group and select an open topic plus General.
+- Send text, photo/file caption and a poll with `--topic`; B reads back each thread id.
+- Reply inside the topic and schedule a message there; verify the scheduled address and eventual thread.
+- Refuse a closed/missing topic and a reply from a different topic without sending or uploading.
+- Simulate lost acknowledgement offline; a retry retains the same send id, chat and topic.
+  Scheduled unknown outcomes are checked in the queue and never repeated.

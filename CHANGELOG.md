@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages send --topic` and `tg polls create --topic` send to a named forum topic.** Text, media captions, replies and scheduled messages preserve the topic; missing or closed topics and replies from another topic are refused before sending. MCP accepts the same address as `topic`.
+
 - **`tg mcp setup codex|claude-code` and `tg mcp doctor`** add the local server to a client and
   check its handshake and tools. Setup requires `--allow-writes` when the profile offers writing
   tools; doctor does not check the Telegram login.
