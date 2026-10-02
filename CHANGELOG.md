@@ -19,6 +19,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg mcp` lets go of the search model after 10 minutes without a search**: an agent's
+  `conversations_search` no longer keeps about 1 GB in memory for the whole session. The next search
+  loads the model again, in about a second.
 - **`tg messages evidence <chat>` and `tg_messages_evidence` over MCP** prepare a bounded packet
   from the local archive for an agent’s chat brief, without connecting or marking read. Source
   locators, fingerprints, explicit coverage and an older-page cursor keep citations and paging
