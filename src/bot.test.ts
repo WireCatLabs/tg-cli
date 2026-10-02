@@ -104,6 +104,18 @@ describe("the token never leaves the client", () => {
 })
 
 describe("Telegram's refusals", () => {
+  it("names a bot config command the CLI accepts when a permission refuses a write", async () => {
+    const fetch = telegram({ getMe: ME })
+    await tg(["hintbot", "bot", "auth", "set"], fetch, TOKEN)
+    await tg(["hintbot", "config", "set", "--bot", "permissions.bot.messages.edit", "readonly"], fetch)
+    const refused = await tg(["hintbot", "bot", "messages", "edit", "-100", "1", "synthetic", "--json"], fetch)
+    expect(refused.code).toBe(5)
+    const hint = JSON.parse(refused.err).error.message.split("to allow it: ")[1] as string
+    expect(hint).toBe("tg hintbot config set --bot permissions.bot.messages.edit allow")
+    expect((await tg(hint.split(" ").slice(1), fetch)).code).toBe(0)
+    expect(asked).toEqual(["getMe"])
+  })
+
   it("**turns a flood wait into rate_limited with its wait**", async () => {
     await tg(["sales", "bot", "auth", "set"], telegram({ getMe: ME }), TOKEN)
     const flood = {
