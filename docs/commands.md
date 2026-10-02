@@ -2483,7 +2483,7 @@ tg bot contacts show <who> [options]
 | `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
 | `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
 | `--limit <n>` | how many messages from the private chat. |
-| `--refresh` | read the private chat with them from Telegram first — one request. |
+| `--refresh` | read the private chat with them again from the messenger first — one request. |
 
 ### `tg bot mcp`
 
