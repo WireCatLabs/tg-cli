@@ -3,9 +3,14 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.22.0 — 03.10.2026
 
 ### What's new
+
+- **`tg messages evidence <chat>` and `tg_messages_evidence` over MCP** prepare a bounded packet
+  from the local archive for an agent’s chat brief, without connecting or marking read. Source
+  locators, fingerprints, explicit coverage and an older-page cursor keep citations and paging
+  precise. Whole messages fit within 64 KiB of JSON items; `--limit` accepts 1–100.
 
 - **`tg <name> bot contacts show --refresh`** says the same as in `max`: its help no longer names the
   messenger (cli-messaging 0.109.0).

@@ -659,6 +659,23 @@ tg contacts import <file>
 
 read and send messages
 
+### `tg messages evidence`
+
+a bounded evidence packet from stored messages, newest first
+
+```sh
+tg messages evidence <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many, 1–100. |
+| `--before-id <id>` | only messages older than this message id. |
+
 ### `tg messages list`
 
 a chat's messages, oldest to newest

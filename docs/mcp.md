@@ -165,6 +165,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
 | `tg_contacts_lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
+| `tg_messages_evidence` | `tg messages evidence`, `--limit`, `--before-id` | one local chat evidence packet, newest first, with locators, fingerprints, coverage and `nextBeforeId`; pass the cursor as `before_id`; whole messages within 64 KiB of JSON items, header additional; history coverage unknown; an oversized first message yields an empty byte-truncated packet without a cursor; never connects or marks read; permission `messages.evidence` |
 | `tg_messages_list` | `tg messages list`, `--before-id`, `--before-time`, `--after-id`, `--after-time` | a chat's messages; `before_id` or `before_time` read back, `after_id` or `after_time` forward — one of them at most; marks nothing read — `tg_chats_mark_read` does that, behind its own key; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
 | `tg_messages_context` | `tg messages show`, `context`, `--before-n`, `--after-n` | one message and those either side; `before_n` and `after_n` say how many |
 | `tg_messages_scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
@@ -196,7 +197,8 @@ chat's messages `{ items, limit, hasMore }`, ids are strings. An error is
 `{ error: { code, message, … } }` with the CLI's codes; an ambiguous chat name answers with the
 `candidates`.
 
-Every read is saved to the local store, as a command's is, and each call can be kept as a run
+Reads from Telegram are saved to the local store, as a command’s are; evidence reads that archive.
+Each call can be kept as a run
 (`tg runs list`), named `mcp chats list` and so on.
 
 ## Prompts, and chats by `@`

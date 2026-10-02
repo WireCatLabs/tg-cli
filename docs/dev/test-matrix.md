@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**387 ✅ · 18 ⛔ · 0 ❌** — 165 commands, 240 options.
+**390 ✅ · 18 ⛔ · 0 ❌** — 166 commands, 242 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -90,6 +90,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts unblock` |  | ✅ |  |
 | `contacts rename` |  | ✅ |  |
 | `contacts import` |  | ✅ |  |
+| `messages evidence` |  | ✅ |  |
+| `messages evidence` | `--limit` | ✅ |  |
+| `messages evidence` | `--before-id` | ✅ |  |
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--before-id` | ✅ |  |

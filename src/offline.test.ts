@@ -30,6 +30,37 @@ const tg = async (argv: string[], { store, online = true }: { store: string; onl
 const freshStore = () => join(mkdtempSync(join(tmpdir(), "tg-store-")), "messages.db")
 
 describe("--offline", () => {
+  it("reads an evidence packet from the archive without credentials or a Telegram connection", async () => {
+    const store = freshStore()
+    await tg(["evidence", "messages", "list", "Valencia", "--json"], { store })
+    const result = await tg(["evidence", "messages", "evidence", message.chatId, "--limit", "1", "--json"], {
+      store,
+      online: false,
+    })
+    expect(result.code).toBe(0)
+    expect(result.stderr).toEqual([])
+    expect(JSON.parse(result.stdout[0] ?? "")).toMatchObject({
+      kind: "chats",
+      source: { provider: "telegram", chat: message.chatId },
+      nextBeforeId: null,
+      coverage: { provided: 1, included: 1, omitted: 0, history: "unknown" },
+      items: [{ text: message.text }],
+    })
+    const older = await tg(["evidence", "messages", "evidence", message.chatId, "--before-id", message.id, "--jsonl"], {
+      store,
+      online: false,
+    })
+    expect(older.code).toBe(0)
+    expect(JSON.parse(older.stdout[0] ?? "")).toMatchObject({ items: [], nextBeforeId: null })
+    const failed = await tg(["evidence", "messages", "evidence", message.chatId, "--limit", "101", "--json"], {
+      store,
+      online: false,
+    })
+    expect(failed.code).toBe(2)
+    expect(failed.stdout).toEqual([])
+    expect(JSON.parse(failed.stderr[0] ?? "").error.code).toBe("validation_error")
+  })
+
   it("**answers exactly what Telegram answered**, without connecting or credentials", async () => {
     const store = freshStore()
     const chats = await tg(["kept", "chats", "list", "--json"], { store })
