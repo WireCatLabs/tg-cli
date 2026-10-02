@@ -141,6 +141,30 @@ agent's answers come before the rules' guesses and after Telegram's own replies;
 `tg conversations links clear --chat <chat>` drops them. The permission `conversations.links` decides
 whether a profile may store them.
 
+### Search by meaning
+
+Once a chat's conversations are built, tg can find them by what they are about, not only by the words
+in them. `tg conversations embed` turns each conversation, or each piece of a long one, into a vector on
+this computer; `tg conversations search` then finds the conversations nearest to your question:
+
+```sh
+tg models text download e5-small                         # once: 135 MB, shared with max
+tg conversations embed --chat "Valencia Expats"          # resumes where it stopped; --workers 3 for more speed
+tg conversations search "where to rent a flat" --chat "Valencia Expats"
+tg conversations search "renting a flat"                 # every chat you embedded
+```
+
+Nothing leaves your computer. `tg models text list` shows the models: `e5-small` is the default;
+`embeddinggemma` finds more, runs several times slower, and downloads only with `--accept-terms`, since
+it comes under Google's Gemma terms. `tg conversations embed status --chat <chat>` says how much is left,
+and `tg conversations embed clear --chat <chat>` drops the vectors.
+
+With your own key, a service can compute them instead: `tg models text key set openai`, then
+`--provider openai` on `embed` and `search`. Before any message leaves your computer, `embed` says how
+many chunks, at most how many tokens and at most what price, and waits for your yes (`--yes` in
+scripts; `--max-tokens` sets a limit). `--base-url` takes any server with the same API, such as Ollama
+or LM Studio on this computer, with `--model` and `--dims`.
+
 ## Answering without connecting: `--offline`
 
 ```sh

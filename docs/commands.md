@@ -697,7 +697,7 @@ tg messages search <query> [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store, or all of them — the same as in: in the query. |
+| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many. |
 | `--newest` | newest first instead of best first. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -1087,6 +1087,34 @@ tg models text download <model> [options]
 |---|---|
 | `--accept-terms` | accept the model's licence terms, for a model that has its own. |
 
+#### `tg models text key`
+
+the API key of an embedding service, for `conversations embed --provider`
+
+#### `tg models text key set`
+
+store a key, typed at a hidden prompt or piped on stdin — never as an argument
+
+```sh
+tg models text key set <provider>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `provider` | required | openai, or the host of a --base-url server that wants a key. |
+
+#### `tg models text key remove`
+
+forget a stored key
+
+```sh
+tg models text key remove <provider>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `provider` | required | openai, or a server's host. |
+
 ## `tg inbox`
 
 other people's unread messages in every chat; --new for what arrived since the last check
@@ -1450,6 +1478,28 @@ tg conversations show <conversation> [message]
 | `conversation` | required | a conversation id from `conversations list`; or a chat: its title or part of it, its id, @username, or `me` for Saved Messages, with a message. |
 | `message` | optional | a message id in that chat: show the conversation it is in. |
 
+### `tg conversations search`
+
+the conversations nearest in meaning to a query, in one chat or every embedded one — after `conversations embed`; runs on this machine
+
+```sh
+tg conversations search <query> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | required | what to look for, in your own words, in any language the model reads. |
+
+| Option | What it does |
+|---|---|
+| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
+| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
+| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
+| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
+| `--limit <n>` | how many. |
+
 ### `tg conversations batches`
 
 windows of a chat for your own AI agent to link: which earlier message each one answers
@@ -1508,6 +1558,58 @@ tg conversations links clear [options]
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | only the answers this model gave. |
+
+### `tg conversations embed`
+
+compute a vector for each chunk of a chat's conversations for search by meaning — on this machine, or with --provider through a service and your key; resumes where it stopped
+
+```sh
+tg conversations embed [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
+| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
+| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
+| `--workers <n>` | local: sessions in parallel, each with its own copy of the model (\~0.7 GB each). |
+| `--threads <n>` | local: threads in all (default: min(8, cores)). |
+| `--concurrency <n>` | remote: requests at once (default: 4). |
+| `--max-tokens <n>` | remote: stop before a run that could send more tokens than this. |
+
+#### `tg conversations embed status`
+
+how many chunks of a chat have a vector of the model, how many are left, and what is left costs
+
+```sh
+tg conversations embed status [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
+| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
+| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
+
+#### `tg conversations embed clear`
+
+drop a chat's vectors, or only one model's; messages and conversations are never touched
+
+```sh
+tg conversations embed clear [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
+| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
+| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
 ## `tg recipients`
 

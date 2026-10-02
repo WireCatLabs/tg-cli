@@ -130,6 +130,7 @@ tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can 
 tg messages search "invoice march" --json          # search what was kept
 tg conversations build --chat -1001234567890 --json   # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
+tg conversations search "<question>" --json         # by meaning, after the owner ran tg conversations embed --chat <chat>
 tg watch --jsonl                                   # new messages as they arrive
 ```
 

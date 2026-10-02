@@ -12,8 +12,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `--context <n>` shows the messages around each hit (2 in the terminal). `in:max`, `in:all` or
   `--source` also search the other accounts kept in the same store, MAX ones included. See
   [the archive](docs/archive.md#search).
-- **`tg models text list|download`**: the models a later search by meaning will use, downloaded once
-  into the folder the speech models share. Nothing uses them yet.
+- **Search a group's conversations by meaning**: `tg conversations embed --chat <chat>` computes a
+  vector for each conversation on this computer, and `tg conversations search "<question>"` finds the
+  nearest ones, in one chat or every one you embedded. `tg models text list|download` fetches the model
+  once into the folder the speech models share. With your own key, `--provider openai` (or
+  `--base-url` for Ollama, LM Studio and the like) computes them instead, after telling you what goes
+  out and what it may cost. See [the archive](docs/archive.md#search-by-meaning).
+- **`tg store fetch` no longer runs for ever** when Telegram keeps answering with messages it already
+  gave.
 - **`tg bot watch`**: what happens in the bot's chats as it arrives, kept in the bot's history on this
   computer before it is printed; `--events` for edits, buttons and people joining and leaving.
   **`tg bot callbacks answer`**, **`tg bot commands list|set|clear`** and **`tg bot webhooks

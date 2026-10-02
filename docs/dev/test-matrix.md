@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**325 ✅ · 12 ⛔ · 0 ❌** — 150 commands, 187 options.
+**357 ✅ · 12 ⛔ · 0 ❌** — 156 commands, 213 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -160,6 +160,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models text list` |  | ✅ |  |
 | `models text download` |  | ✅ |  |
 | `models text download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-messaging's tests drive it offline |
+| `models text key set` |  | ✅ |  |
+| `models text key remove` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since-time` | ✅ |  |
@@ -225,6 +227,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations list` | `--since-time` | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
+| `conversations search` |  | ✅ |  |
+| `conversations search` | `--model` | ✅ |  |
+| `conversations search` | `--provider` | ✅ |  |
+| `conversations search` | `--base-url` | ✅ |  |
+| `conversations search` | `--dims` | ✅ |  |
+| `conversations search` | `--chat` | ✅ |  |
+| `conversations search` | `--since-time` | ✅ |  |
+| `conversations search` | `--limit` | ✅ |  |
 | `conversations batches status` |  | ✅ |  |
 | `conversations batches status` | `--chat` | ✅ |  |
 | `conversations batches status` | `--size` | ✅ |  |
@@ -236,6 +246,28 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations links clear` |  | ✅ |  |
 | `conversations links clear` | `--chat` | ✅ |  |
 | `conversations links clear` | `--model` | ✅ |  |
+| `conversations embed` |  | ✅ |  |
+| `conversations embed` | `--chat` | ✅ |  |
+| `conversations embed` | `--model` | ✅ |  |
+| `conversations embed` | `--provider` | ✅ |  |
+| `conversations embed` | `--base-url` | ✅ |  |
+| `conversations embed` | `--dims` | ✅ |  |
+| `conversations embed` | `--workers` | ✅ |  |
+| `conversations embed` | `--threads` | ✅ |  |
+| `conversations embed` | `--concurrency` | ✅ |  |
+| `conversations embed` | `--max-tokens` | ✅ |  |
+| `conversations embed status` |  | ✅ |  |
+| `conversations embed status` | `--chat` | ✅ |  |
+| `conversations embed status` | `--model` | ✅ |  |
+| `conversations embed status` | `--provider` | ✅ |  |
+| `conversations embed status` | `--base-url` | ✅ |  |
+| `conversations embed status` | `--dims` | ✅ |  |
+| `conversations embed clear` |  | ✅ |  |
+| `conversations embed clear` | `--chat` | ✅ |  |
+| `conversations embed clear` | `--model` | ✅ |  |
+| `conversations embed clear` | `--provider` | ✅ |  |
+| `conversations embed clear` | `--base-url` | ✅ |  |
+| `conversations embed clear` | `--dims` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
