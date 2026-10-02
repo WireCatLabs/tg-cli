@@ -168,3 +168,22 @@ refuses a second address until the first is deleted.
 
 The settings for a bot live in the `bot` section of the configuration file:
 `tg sales config set --bot sendsPerHour 200` ([configuration.md](configuration.md)).
+
+## The bot for an agent (MCP)
+
+`tg <name> bot mcp` serves the bot to an agent, as `tg mcp` serves your account:
+
+```sh
+claude mcp add sales-bot -- tg sales bot mcp
+tg sales bot mcp config          # the entry for Claude Desktop, Cursor and others
+```
+
+The agent gets what the bot profile's permissions allow, under `bot.`: the chats the bot has seen,
+messages, admins, the command menu, the journal and the recipient list — and, unless the profile is
+read-only, writing as the bot: send, edit, pin, "typing", answer buttons, delete, remove members.
+`bot: readonly` leaves only reading. A deletion is shown to you in a form first; `--allow-dangerous`
+skips that form, `--confirm-send` puts every write through one. `tg_bot_status` says which profile
+the server speaks for and which writing tools are on.
+
+Each write runs the same command you would type, so the bot's recipient list and journal apply.
+The token, the webhooks, the command menu and the recipient list stay yours to change.
