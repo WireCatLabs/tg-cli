@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg <name> bot contacts show --refresh`** says the same as in `max`: its help no longer names the
+  messenger (cli-messaging 0.109.0).
 - **The bot page is complete** ([docs/bot.md](docs/bot.md)): how to find a chat's id, sending files and
   their limits, and the exit codes a script sees.
 - **`tg <name> bot contacts show`, `bot messages search` and `bot messages between`** read what the bot
