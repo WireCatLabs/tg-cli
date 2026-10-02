@@ -2042,6 +2042,75 @@ tg bot chats members remove <chat> <person> [options]
 |---|---|
 | `--block` | also keep them from coming back by the chat's link. |
 
+#### `tg bot chats rules`
+
+a chat's moderation rules for this bot, kept on this machine
+
+#### `tg bot chats rules show`
+
+the chat's rules; the defaults, marked not saved, if it has none yet
+
+```sh
+tg bot chats rules show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a group's id, or the title of a group this bot has seen. |
+
+#### `tg bot chats rules set`
+
+change one rule — trusted, blocked, blockedNames, links, invites, forwards, blockedPeople, flood.messages, flood.minutes, flood.action, newAccount.days, newAccount.action, consent.delete, consent.remove
+
+**Changes something on this computer only.**
+
+```sh
+tg bot chats rules set <chat> <key> <value>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a group's id, or the title of a group this bot has seen. |
+| `key` | required | the rule. |
+| `value` | required | its new value. |
+
+#### `tg bot chats rules unset`
+
+put one rule back to its default
+
+**Changes something on this computer only.**
+
+```sh
+tg bot chats rules unset <chat> <key>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a group's id, or the title of a group this bot has seen. |
+| `key` | required | the rule. |
+
+#### `tg bot chats moderate`
+
+judge a group's new messages and joins by its rules, and act as they allow — as the bot
+
+**Changes something in Telegram.**
+
+```sh
+tg bot chats moderate <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a group's id, or the title of a group this bot has seen. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | judge what came after this ISO 8601 time, or 2h / 1d ago; the saved point stays. |
+| `--dry-run` | judge and plan; do nothing. |
+| `--allow-dangerous` | yes to every action whose level in the group's rules is ask. |
+| `--no-ban` | remove without banning; by default a removed person cannot come back by the link. |
+| `--max-actions <n>` | at most this many actions in one run; 10 if not given. |
+
 ### `tg bot messages`
 
 the messages in the chats this bot is in
