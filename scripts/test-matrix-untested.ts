@@ -84,6 +84,25 @@ export const UNTESTED: Untested[] = [
     option: "--allow-delete",
     reason: "decides nothing, as --allow-send; mcp config below shows the warning",
   },
+  ...[
+    "--allow-writes",
+    "--confirm-send",
+    "--allow-dangerous",
+    "--allow-send",
+    "--allow-mark-read",
+    "--allow-delete",
+  ].map((option) => ({
+    command: "mcp setup",
+    option,
+    reason:
+      "registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home",
+  })),
+  ...["--confirm-send", "--allow-dangerous", "--allow-send", "--allow-mark-read", "--allow-delete"].map((option) => ({
+    command: "mcp doctor",
+    option,
+    reason:
+      "starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account",
+  })),
   {
     command: "store fetch",
     option: "--background",
