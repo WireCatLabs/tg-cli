@@ -15,6 +15,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   Quick-start, installation, MCP and security pages consistently explain the guided first run.
   `tg skill show` works before login and setup completion points agents to it.
 
+- **`tg topics enable` enables forum topics, and `tg topics create` creates a named topic.** Basic groups require explicit `--upgrade --yes`; their chat id changes and the result returns the new address. CLI and MCP check rights and report a partial result if upgrade succeeds before enable fails. Topic creation uses `--send-id` as an attempt identity; its journal refuses reuse after a sent or unknown outcome. Never retry an unknown topic creation. Existing archive rows keep their original chat ids.
+
 - **`tg messages send --topic` and `tg polls create --topic` send to a named forum topic.** Text, media captions, replies and scheduled messages preserve the topic; missing or closed topics and replies from another topic are refused before sending. MCP accepts the same address as `topic`.
 - **`tg setup` guides the first run**: local checks, automatic or browser app registration, QR
   or phone login, a check of five chats and an optional agent skill. It reuses existing sessions,

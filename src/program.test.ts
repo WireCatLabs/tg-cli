@@ -194,6 +194,59 @@ describe("a person at a terminal", () => {
   })
 })
 
+describe("forum control options", () => {
+  it("passes explicit --upgrade and a fixed topic --send-id through the CLI", async () => {
+    let ready = false
+    const calls: unknown[] = []
+    const state = (id = chat.id, needsUpgrade = true, forum = false) => ({
+      chat: { ...chat, id },
+      needsUpgrade,
+      forum,
+      owner: true,
+      canCreate: true,
+      linkedDiscussion: false,
+    })
+    const adapter = () =>
+      scripted({
+        resolve: async (reference) => ({ ...chat, id: reference === "Valencia" ? chat.id : reference }),
+        forumState: async (id) => state(id, id === chat.id, ready),
+        upgradeForum: async (id) => {
+          calls.push(["upgrade", id])
+          return state("-100700", false)
+        },
+        enableForum: async (id) => {
+          ready = true
+          calls.push(["enable", id])
+          return state(id, false, true)
+        },
+        createTopic: async (id, title, options) => {
+          calls.push(["create", id, options])
+          return {
+            id: "12",
+            title,
+            closed: false,
+            pinned: false,
+            unreadCount: 0,
+            createdAt: "2026-10-03T00:00:00Z",
+            lastMessageAt: null,
+          }
+        },
+      })
+    const enabled = await tg(["topics", "enable", "Valencia", "--upgrade", "--yes", "--json"], { adapter })
+    const created = await tg(["topics", "create", "-100700", "synthetic topic", "--send-id", "42", "--json"], {
+      adapter,
+    })
+    expect(enabled.code).toBe(0)
+    expect(created.code).toBe(0)
+    expect(JSON.parse(enabled.stdout[0] ?? "")).toMatchObject({ upgraded: true, chat: { id: "-100700" }, forum: true })
+    expect(calls).toEqual([
+      ["upgrade", chat.id],
+      ["enable", "-100700"],
+      ["create", "-100700", { sendId: "42" }],
+    ])
+  })
+})
+
 describe("topic options", () => {
   it("passes --topic for message sends and poll creation", async () => {
     const checked: unknown[] = []

@@ -26,7 +26,15 @@ import {
   pickChat,
   type Topic,
 } from "@leemour/cli-messaging"
-import type { After, Download, MessengerAdapter, NewPoll, SendOptions, Transcript } from "@leemour/cli-messaging/cli"
+import type {
+  After,
+  Download,
+  ForumState,
+  MessengerAdapter,
+  NewPoll,
+  SendOptions,
+  Transcript,
+} from "@leemour/cli-messaging/cli"
 import {
   type DeleteMessageUpdate,
   FileLocation,
@@ -654,6 +662,137 @@ export class TelegramAdapter {
         }
       }
       return toLinkChat(await this.#client.getFullChat(invite ? typed : publicName(typed)))
+    })
+  }
+
+  forumState(chatId: string): Promise<ForumState> {
+    return this.#call(() => this.#forumState(chatId))
+  }
+
+  async #forumState(chatId: string): Promise<ForumState> {
+    let full = await this.#client.getFullChat(Number(chatId))
+    if (full.migratedToId != null) full = await this.#client.getFullChat(full.migratedToId)
+    if (full.chatType !== "group" && full.chatType !== "supergroup") {
+      throw new CliError("validation_error", "forum topics require a group, not a channel or dialog")
+    }
+    return {
+      chat: peerToChat(full),
+      forum: full.isForum,
+      needsUpgrade: full.chatType === "group",
+      owner: full.isCreator,
+      linkedDiscussion: full.linkedChat !== null,
+      canCreate:
+        full.isCreator ||
+        full.adminRights?.manageTopics === true ||
+        full.permissions?.canManageTopics === true ||
+        full.defaultPermissions?.canManageTopics === true,
+    }
+  }
+
+  upgradeForum(chatId: string): Promise<ForumState> {
+    return this.#call(async () => {
+      const state = await this.#forumState(chatId)
+      if (!state.owner) throw new CliError("permission_error", "only the owner can prepare this group for topics")
+      if (!state.needsUpgrade) return state
+      const peer = await this.#client.resolvePeer(Number(state.chat.id))
+      if (peer._ !== "inputPeerChat") throw new CliError("validation_error", "only a basic group can be upgraded")
+      try {
+        const updates = await this.#client.call({ _: "messages.migrateChat", chatId: peer.chatId })
+        this.#client.handleClientUpdate(updates, true)
+        const made =
+          updates._ === "updates" || updates._ === "updatesCombined"
+            ? updates.chats.find((chat) => chat._ === "channel" && chat.megagroup)
+            : undefined
+        if (made?._ !== "channel")
+          throw new CliError(
+            "outcome_unknown",
+            "the group may have been upgraded; check its current chat id before repeating",
+          )
+        return await this.#forumState(String(getMarkedPeerId({ _: "peerChannel", channelId: made.id })))
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the group may have been upgraded; check its current chat id before repeating")
+      }
+    })
+  }
+
+  enableForum(chatId: string): Promise<ForumState> {
+    return this.#call(async () => {
+      const state = await this.#forumState(chatId)
+      if (!state.owner) throw new CliError("permission_error", "only the group owner can enable forum topics")
+      if (state.needsUpgrade)
+        throw new CliError("validation_error", "upgrade the basic group explicitly before enabling topics")
+      if (state.linkedDiscussion)
+        throw new CliError("validation_error", "a linked discussion group cannot enable forum topics")
+      if (state.forum) return state
+      try {
+        const full = await this.#client.getFullChat(Number(state.chat.id))
+        await this.#client.updateForumSettings(Number(state.chat.id), {
+          isForum: true,
+          threadsMode: full.raw._ === "channel" && full.raw.forumTabs ? "tabs" : "list",
+        })
+        return await this.#forumState(state.chat.id)
+      } catch (error) {
+        if (tl.RpcError.is(error, "CHAT_NOT_MODIFIED")) return this.#forumState(state.chat.id)
+        throw unknownIfUnanswered(error, "topics may have been enabled; check the forum state before repeating")
+      }
+    })
+  }
+
+  createTopic(chatId: string, title: string, { sendId }: { sendId: string }): Promise<Topic> {
+    const randomId = parseSendId(sendId)
+    return this.#call(async () => {
+      const state = await this.#forumState(chatId)
+      if (!state.forum || state.needsUpgrade)
+        throw new CliError("validation_error", "enable topics before creating a topic")
+      if (!state.canCreate) throw new CliError("permission_error", "creating a topic requires manage-topics permission")
+      let accepted = false
+      try {
+        const updates = await this.#client.call(
+          {
+            _: "messages.createForumTopic",
+            peer: await this.#client.resolvePeer(Number(state.chat.id)),
+            title,
+            randomId,
+          },
+          { maxRetryCount: 0, floodSleepThreshold: 0 },
+        )
+        accepted = true
+        this.#client.handleClientUpdate(updates, true)
+        const message = forwardedCopy(updates)
+        const mapped =
+          updates._ === "updates" || updates._ === "updatesCombined"
+            ? updates.updates.find(
+                (update) => update._ === "updateMessageID" && String(update.randomId) === String(randomId),
+              )
+            : undefined
+        const topicId = mapped && mapped._ === "updateMessageID" ? mapped.id : message?.id
+        if (topicId === undefined)
+          throw new CliError(
+            "outcome_unknown",
+            "Telegram did not return the topic id; check topics list and do not repeat this creation",
+            { sendId, retryable: false },
+          )
+        const [topic] = await this.#client.getForumTopicsById(Number(state.chat.id), topicId)
+        if (!topic)
+          throw new CliError(
+            "outcome_unknown",
+            "the topic may exist but could not be read; check topics list and do not repeat this creation",
+            { sendId, retryable: false },
+          )
+        return toTopic(topic)
+      } catch (error) {
+        if (accepted)
+          throw new CliError(
+            "outcome_unknown",
+            "topic creation was accepted but its result could not be read; check topics list and do not repeat",
+            { sendId, retryable: false },
+          )
+        throw unknownIfUnanswered(
+          error,
+          `the topic may have been created; check topics list and do not repeat this creation`,
+          { sendId, retryable: false },
+        )
+      }
     })
   }
 

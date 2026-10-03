@@ -1226,6 +1226,43 @@ tg topics search <chat> <text> [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
+### `tg topics enable`
+
+enable forum topics; only the owner, with an explicit upgrade for a basic group
+
+**Changes something in Telegram.**
+
+```sh
+tg topics enable <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--upgrade` | upgrade a basic group to a supergroup first; its chat id changes. |
+
+### `tg topics create`
+
+create a named topic in an existing forum; never enable or upgrade a group implicitly
+
+**Changes something in Telegram.**
+
+```sh
+tg topics create <chat> <title> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `title` | required | the topic title, at most 128 UTF-8 bytes. |
+
+| Option | What it does |
+|---|---|
+| `--send-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
+
 ## `tg watch`
 
 print new messages as they arrive, until Ctrl-C or --timeout (either ends it normally)
