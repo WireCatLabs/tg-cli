@@ -2560,6 +2560,14 @@ tg bot contacts show <who> [options]
 | `--limit <n>` | how many messages from the private chat. |
 | `--refresh` | read the private chat with them again from the messenger first — one request. |
 
+### `tg bot me`
+
+the bot this profile's token belongs to: id, name and username
+
+```sh
+tg bot me
+```
+
 ### `tg bot store`
 
 the bot's local copy on this machine

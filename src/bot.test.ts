@@ -178,10 +178,11 @@ describe("tg bot mcp", () => {
   it("**offers the shared bot tools by the profile's levels**: every write by default, none when read-only", async () => {
     const all = await offered({})
     expect(all).toEqual(expect.arrayContaining(["tg_bot_messages_send", "tg_bot_messages_delete", "tg_bot_chats_list"]))
-    expect(all.some((name) => /comments|people|_me$/.test(name))).toBe(false)
+    expect(all.some((name) => /comments|people/.test(name))).toBe(false)
 
     const reads = await offered({ bot: "readonly" })
     expect(reads).toContain("tg_bot_messages_list")
+    expect(reads).toContain("tg_bot_me")
     expect(reads.some((name) => /_(send|edit|delete|pin|unpin|remove|action|answer)$/.test(name))).toBe(false)
   })
 })
@@ -302,5 +303,21 @@ describe("tg bot contacts show and the bot's copy reads", () => {
     ]) {
       expect((await tg(["sales", "bot", ...read], fetch)).err).toContain("readOtherBots")
     }
+  })
+})
+
+describe("tg bot me", () => {
+  it("reads getMe once and keeps the sends journal unchanged", async () => {
+    const fetch = telegram({ getMe: ME })
+    await tg(["sales", "bot", "auth", "set"], fetch, TOKEN)
+    asked = []
+    const before = await tg(["sales", "bot", "sends", "list", "--json"], fetch)
+    const me = await tg(["sales", "bot", "me", "--json"], fetch)
+    expect(me.code).toBe(0)
+    expect(me.answer).toEqual({ id: "7000000001", name: "Sales", username: "sales_bot" })
+    expect(asked).toEqual(["getMe"])
+    expect((await tg(["sales", "bot", "sends", "list", "--json"], fetch)).answer).toEqual(before.answer)
+    expect((await tg(["sales", "bot", "me", "--offline", "--json"], fetch)).code).toBe(2)
+    expect(asked).toEqual(["getMe"])
   })
 })

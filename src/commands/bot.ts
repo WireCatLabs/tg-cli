@@ -29,6 +29,7 @@ export const TELEGRAM_BOT: BotMessenger = {
   app: TG,
   provider: "telegram-bot",
   name: "Telegram",
+  identity: true,
   adminRights: BOT_ADMIN_RIGHTS,
   resolveSettings,
   fetching: {
