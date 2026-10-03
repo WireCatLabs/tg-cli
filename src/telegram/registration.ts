@@ -26,7 +26,11 @@ type Fetch = typeof fetch
 
 export const registerApp = async (
   prompts: RegistrationPrompts,
-  { fetch: request = fetch, shortName = randomShortName() }: { fetch?: Fetch; shortName?: string } = {},
+  {
+    fetch: request = fetch,
+    shortName = randomShortName(),
+    signal,
+  }: { fetch?: Fetch; shortName?: string; signal?: AbortSignal } = {},
 ): Promise<ApiCredentials & { created: boolean }> => {
   const cookies = new Map<string, string>()
   const call = async (path: string, form?: Record<string, string>) => {
@@ -41,6 +45,7 @@ export const registerApp = async (
       },
       ...(form ? { body: new URLSearchParams(form).toString() } : {}),
       redirect: "manual",
+      ...(signal === undefined ? {} : { signal }),
     })
     for (const line of response.headers.getSetCookie()) {
       const [pair] = line.split(";")

@@ -274,6 +274,18 @@ login exists, without connecting. Details, variables and where the files go:
 
 ## Log in
 
+For a first run, use the guided command in your terminal:
+
+```sh
+tg setup --agent codex       # also: cursor, claude, gemini, all or none
+```
+
+Allow about five minutes. It checks local directories, obtains your Telegram app keys, logs in
+by QR code, checks the first five chats and installs the selected agent skill. Without `--agent`,
+it asks at a terminal; machine output defaults to `none`. A repeat run checks the existing session.
+History downloads are a separate step: choose a chat before `tg store fetch <chat> --last 100`.
+If automatic app registration fails, use `tg session start --app browser`, then rerun setup.
+
 Every user registers their own Telegram app at [my.telegram.org](https://my.telegram.org/apps).
 `tg session start` asks for it the first time; `--app auto` fills in the site for you.
 

@@ -3,7 +3,7 @@ import { resolve } from "node:path"
 import { CliError } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
 import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
-import { commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
+import { asFirstWord, commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { openInBrowser } from "../browser.js"
@@ -20,13 +20,26 @@ const appCredentials = async (
   how: "browser" | "auto",
   ask: Ask,
   phone: () => Promise<string>,
+  signal?: AbortSignal,
 ) => {
   if (how === "auto") {
-    const app = await registerApp({
-      phone,
-      code: () => ask("code from Telegram for my.telegram.org: ", true),
-      note: context.renderer.note,
-    })
+    let app: Awaited<ReturnType<typeof registerApp>>
+    try {
+      app = await registerApp(
+        {
+          phone,
+          code: () => ask("code from Telegram for my.telegram.org (app registration): ", true),
+          note: context.renderer.note,
+        },
+        signal === undefined ? {} : { signal },
+      )
+    } catch (error) {
+      context.renderer.note(
+        `The Telegram application step did not finish. Get your app keys in the browser with ` +
+          `\`tg ${asFirstWord(context.profile)}session start --app browser\`, then rerun setup.`,
+      )
+      throw error
+    }
     context.renderer.note(
       app.created ? "registered a new app on my.telegram.org" : "found the app already registered on my.telegram.org",
     )
@@ -36,8 +49,11 @@ const appCredentials = async (
   const url = `${MY_TELEGRAM}/apps`
   const opened = openInBrowser(url)
   context.renderer.note(
-    `${opened ? "opened" : "open"} ${url} — log in, create an app if there is none (any title and short name, platform Desktop), ` +
-      "and copy App api_id and App api_hash from it. Or rerun with --app auto to have it done for you",
+    `${opened ? "opened" : "open"} ${url}\n` +
+      "1. Log in with your phone number; the site sends its code in the Telegram app.\n" +
+      "2. Open API development tools. If no app exists, fill App title and Short name, choose Desktop, and create it.\n" +
+      "3. Copy App api_id and App api_hash into this terminal. The hash is hidden as you type.\n" +
+      "Or rerun with --app auto to have the application step done for you.",
   )
   return {
     id: parseApiId(await ask("App api_id: ", true)),
@@ -71,6 +87,78 @@ const loggedIn = (
   ].join("\n")
 }
 
+export interface StartSessionOptions {
+  method: "qr" | "phone"
+  app: "browser" | "auto"
+  qrFile?: string
+  command?: string
+  progress?: (step: "app" | "login") => void
+  signal?: AbortSignal
+}
+
+export const startSession = async (
+  context: CommandContext,
+  { method, app, qrFile, command = "tg session start", progress, signal }: StartSessionOptions,
+) => {
+  if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
+  const input = context.stdin
+  // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
+  if (!input.isTTY && qrFile === undefined)
+    throw new CliError("validation_error", `${command} asks questions — run it in a terminal`)
+  const ask: Ask = (prompt, echo) => {
+    signal?.throwIfAborted()
+    if (!input.isTTY) {
+      throw new CliError("validation_error", `\`${command}\` needs a terminal to ask for the ${prompt.trim()}`)
+    }
+    return readSecret(prompt, { input, echo, ...(signal === undefined ? {} : { signal }) })
+  }
+  const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
+  let typedPhone: string | undefined
+  const phone = async () => {
+    typedPhone ??= await ask("phone number, international format: ", true)
+    return typedPhone
+  }
+
+  const stored = context.credentials.read()
+  progress?.("app")
+  const typed: ApiCredentials | undefined = stored ? undefined : await appCredentials(context, app, ask, phone, signal)
+
+  progress?.("login")
+  const telegram = await context.open(stored ?? typed)
+  context.track(telegram)
+  try {
+    const account = await telegram.login({
+      method,
+      showQr: (url, expires) => {
+        context.renderer.note(
+          `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
+        )
+        if (!qrPath) {
+          context.streams.diagnostic(terminalQr(url).text)
+          return
+        }
+        writeFileSync(qrPath, qrPng(url), { mode: 0o600 })
+        chmodSync(qrPath, 0o600)
+        context.renderer.note(`the QR code is in ${qrPath} — it is replaced when Telegram renews it`)
+      },
+      phone,
+      code: () => ask("login code: ", true),
+      password: () => ask("2FA password (not shown): ", false),
+      note: context.renderer.note,
+    })
+    signal?.throwIfAborted()
+    // Stored only once Telegram has accepted them: a keyring entry cannot be read back to check it.
+    if (typed) context.credentials.write(typed)
+    rememberAccount(TG, context.profile, account.id, context.env)
+    const appKeys = context.credentials.source() ?? null
+    return { profile: context.profile, account, session: context.sessionPath, appKeys }
+  } finally {
+    // The image is a login token for as long as it is valid; it does not outlive the login.
+    if (qrPath) rmSync(qrPath, { force: true })
+    await telegram.close()
+  }
+}
+
 export const sessionCommand = () => {
   const session = new Command("session").description("log this profile in to Telegram, or out")
 
@@ -88,63 +176,9 @@ export const sessionCommand = () => {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const { app, qrFile } = this.opts<{ app: "browser" | "auto"; qrFile?: string }>()
-      if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
-      const input = context.stdin
-      // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
-      if (!input.isTTY && qrFile === undefined)
-        throw new CliError("validation_error", "`tg session start` asks questions — run it in a terminal")
-      const ask: Ask = (prompt, echo) => {
-        if (!input.isTTY) {
-          throw new CliError(
-            "validation_error",
-            `\`tg session start\` needs a terminal to ask for the ${prompt.trim()}`,
-          )
-        }
-        return readSecret(prompt, { input, echo })
-      }
-      const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
-      let typedPhone: string | undefined
-      const phone = async () => {
-        typedPhone ??= await ask("phone number, international format: ", true)
-        return typedPhone
-      }
-
-      const stored = context.credentials.read()
-      const typed: ApiCredentials | undefined = stored ? undefined : await appCredentials(context, app, ask, phone)
-
-      const telegram = await context.open(stored ?? typed)
-      try {
-        const account = await telegram.login({
-          method,
-          showQr: (url, expires) => {
-            context.renderer.note(
-              `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
-            )
-            if (!qrPath) {
-              context.streams.diagnostic(terminalQr(url).text)
-              return
-            }
-            writeFileSync(qrPath, qrPng(url), { mode: 0o600 })
-            chmodSync(qrPath, 0o600)
-            context.renderer.note(`the QR code is in ${qrPath} — it is replaced when Telegram renews it`)
-          },
-          phone,
-          code: () => ask("login code: ", true),
-          password: () => ask("2FA password (not shown): ", false),
-          note: context.renderer.note,
-        })
-        // Stored only once Telegram has accepted them: a keyring entry cannot be read back to check it.
-        if (typed) context.credentials.write(typed)
-        rememberAccount(TG, context.profile, account.id, context.env)
-        const appKeys = context.credentials.source() ?? null
-        const answer = { profile: context.profile, account, session: context.sessionPath, appKeys }
-        if (context.format !== "pretty") context.renderer.result(answer)
-        else context.streams.data(loggedIn(answer, context.env))
-      } finally {
-        // The image is a login token for as long as it is valid; it does not outlive the login.
-        if (qrPath) rmSync(qrPath, { force: true })
-        await telegram.close()
-      }
+      const answer = await startSession(context, { method, app, ...(qrFile === undefined ? {} : { qrFile }) })
+      if (context.format !== "pretty") context.renderer.result(answer)
+      else context.streams.data(loggedIn(answer, context.env))
     })
 
   annotate(session.command("end"), { mutates: true })

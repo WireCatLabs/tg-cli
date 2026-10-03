@@ -6,10 +6,21 @@ import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@leemour/cli-core"
 import { pickChat } from "@leemour/cli-messaging"
 import type { SendOptions } from "@leemour/cli-messaging/cli"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
 describe("machine output", () => {
+  it.each([
+    { argv: ["messages", "send", "me", "synthetic text", "--topic", " ", "--json"] },
+    { argv: ["polls", "create", "me", "synthetic question", "one", "two", "--topic", " ", "--json"] },
+  ])("refuses an empty forum topic before opening a connection: $argv", async ({ argv }) => {
+    const adapter = vi.fn(() => scripted())
+    const result = await tg(argv, { adapter })
+    expect(result.code).toBe(2)
+    expect(result.stdout).toEqual([])
+    expect(result.stderr.join()).toContain("--topic needs the id")
+    expect(adapter).not.toHaveBeenCalled()
+  })
   it("writes one JSON value to stdout and nothing to stderr", async () => {
     const { code, stdout, stderr } = await tg(["chats", "list", "--json"])
 

@@ -62,6 +62,23 @@ log this profile out on Telegram's side and forget the session here
 tg session end
 ```
 
+## `tg setup`
+
+check this computer, log in to Telegram, install an agent skill and verify the first chats
+
+**Changes something in Telegram.**
+
+```sh
+tg setup [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--agent <agent>` | install the skill for this agent; asks at a terminal, otherwise none. One of: `none`, `codex`, `cursor`, `claude`, `gemini`, `all`. |
+| `--app <how>` | how to get your Telegram app credentials the first time. One of: `auto`, `browser`. Default: `auto`. |
+| `--method <method>` | how to log in when there is no session. One of: `qr`, `phone`. Default: `qr`. |
+| `--qr-file <png>` | write a temporary login QR image for an agent; needs stored app credentials without a terminal. |
+
 ## `tg account`
 
 the logged-in account

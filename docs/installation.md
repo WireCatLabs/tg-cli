@@ -36,7 +36,49 @@ tg --help
 tg doctor        # where its files are, and whether a login exists; connects to nothing
 ```
 
-Then log in: [usage.md](usage.md#log-in).
+## First run
+
+Run this in a local terminal:
+
+```sh
+tg setup --agent codex
+```
+
+Choose `codex`, `cursor`, `claude`, `gemini`, `all` or `none`. Without `--agent`, the command asks
+at a terminal; `--json` and non-terminal runs default to `none`. Allow about five minutes for
+app registration, login, a check of the first five chats and skill installation. Downloading chat
+history is separate and can take longer: choose a chat and the amount before running the suggested
+`store fetch` command. Setup starts no background service.
+
+`tg setup --app browser` opens the manual app registration instructions; `--method phone` uses
+a phone login instead of QR. The app-registration code from my.telegram.org and the account-login
+code are separate steps. Repeating setup checks your existing session without another login.
+If a login was interrupted or Telegram ended the session, finish `tg session start` first and
+then rerun setup. See [sessions.md](sessions.md).
+
+Without a global installation, use `npm exec --yes --package=@leemour/tg-cli -- tg setup --agent codex`.
+Setup suggests subsequent commands in the same form.
+
+### Windows terminal
+
+Install a supported Node.js release, then open a new PowerShell window. If PowerShell blocks
+`npm.ps1` or `tg.ps1`, use their command wrappers:
+
+```powershell
+npm.cmd install -g @leemour/tg-cli
+tg.cmd setup --agent codex
+```
+
+If `tg.cmd` is not found, run `npm.cmd prefix -g` and add the printed directory to your user PATH,
+then open a new terminal. To continue immediately without changing PATH:
+
+```powershell
+npm.cmd exec --yes --package=@leemour/tg-cli -- tg setup --agent codex
+```
+
+The CLI is an npm package; no separate Windows executable is needed.
+
+The first reading commands are in [usage.md](usage.md#log-in).
 
 ## From source
 

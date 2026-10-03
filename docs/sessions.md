@@ -7,7 +7,11 @@ A login has two parts:
 - **the session**: what Telegram hands out once you log in. It is a file in the state directory, and
   it is as good as your password.
 
-`tg session start` gets both. It asks questions, so run it in a terminal.
+`tg setup` guides a first run through both parts, checks five chats and offers an agent skill.
+Allow about five minutes; history downloads are a separate step. Run it in a terminal. Use
+`tg setup --app browser` for manual app registration or `--method phone` for a phone login.
+`tg session start` remains the command for login alone, including resuming an interrupted login.
+Setup checks an existing session and does not silently log in again if it is rejected.
 
 ## The app from my.telegram.org
 

@@ -9,7 +9,7 @@ which most of cli-messaging was copied from.
 
 ## 1. Most of `tg` is not in this repository
 
-Every command except `session` and `update` comes from `@leemour/cli-messaging/cli`: the command
+Every command except `session`, `setup` and `update` comes from `@leemour/cli-messaging/cli`: the command
 tree, `run()`, the output contract, the store and `--offline`, run records, the send guard, `mcp`.
 `tg` hands it one description of Telegram and one adapter.
 
@@ -18,7 +18,7 @@ tree, `run()`, the output contract, the store and `--offline`, run records, the 
 | Entry | `src/bin/tg.ts` | argv → `run()` → exit code |
 | Program | `src/program.ts` | which commands exist; wraps cli-messaging's `run()` for the daily update line |
 | Telegram description | `src/commands/context.ts`, `TELEGRAM` | credentials, the session file, how to connect, `doctor`'s checks, `me` → Saved Messages |
-| tg's own commands | `src/commands/session.ts`, `update.ts` | login and logout; self-update |
+| tg's own commands | `src/commands/session.ts`, `setup.ts`, `update.ts` | login and logout; guided first run; self-update |
 | Adapter | `src/telegram/adapter.ts` | the only door to Telegram — speaks the domain model outward |
 | Mapping | `src/telegram/map.ts` | the only file that knows mtcute's object shapes |
 | Errors | `src/telegram/errors.ts` | Telegram's refusals → the closed list of error codes |
