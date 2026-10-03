@@ -320,30 +320,30 @@ The token, the webhooks, the command menu and the recipient list stay yours to c
 Bot `--md` uses the same [Telegram formatting rules](usage.md#sending) as personal sends.
 Text edits and file/photo captions use that formatter too.
 
-## Полный Bot API
+## The complete Bot API
 
-`tg <bot> bot api <метод>` открывает все методы закреплённой схемы Telegram Bot API.
-Названия методов и полей пишутся через дефис: `get-me`, `get-chat --chat-id <id>`.
-`tg bot api --help` перечисляет методы, а справка метода — его поля. Ответ сохраняет
-структуру Telegram; целые числа вне безопасного диапазона JavaScript выводятся строками.
+`tg <bot> bot api <method>` exposes every method in the pinned Telegram Bot API schema.
+Method and field names use kebab case: `get-me`, `get-chat --chat-id <id>`.
+`tg bot api --help` lists the methods; each method's help lists its fields. Results retain
+Telegram's native structure; integers outside JavaScript's safe range are strings.
 
-Поля можно передать отдельными флагами либо JSON через `--body <json>`, `--body -`
-(стандартный ввод) или `--body-file <path>`; `--body-file -` также читает stdin.
-Одно поле нельзя одновременно задать флагом и в JSON. Нативный параметр `timeout`
-называется `--poll-timeout`; глобальный `--timeout` ограничивает всю команду.
+Supply fields as separate flags or JSON with `--body <json>`, `--body -` (stdin),
+or `--body-file <path>`. `--body-file -` also reads stdin. A field cannot appear both
+as a flag and in the JSON body. The native `timeout` parameter is `--poll-timeout`;
+the global `--timeout` limits the entire command.
 
-Только поля, для которых схема допускает файл, понимают `@path` как локальную загрузку,
-в том числе внутри JSON-массива `media`. Обычный текст с `@` остаётся текстом.
-Секретные поля, например `secret_token` и `provider_token`, передаются через stdin или
-JSON-файл с доступом только для владельца; отдельного флага для секрета нет.
+Only schema-declared file fields interpret `@path` as a local upload, including nested
+fields in a `media` JSON array. Ordinary text containing `@` stays literal.
+Secret fields such as `secret_token` and `provider_token` use stdin or a JSON file readable
+only by its owner; they have no separate argument flags.
 
-Операции используют настройки `permissions.bot.api.<метод>`, список получателей и журнал
-бота. Необратимые действия требуют подтверждения по умолчанию. `get-updates` тоже требует
-подтверждения: его offset может подтверждать или забывать обновления. При неизвестном
-исходе запись не повторяется автоматически. `--offline` здесь не работает.
+Operations use `permissions.bot.api.<method>`, the bot's recipient list and its send journal.
+Destructive actions ask by default. `get-updates` also asks: its offset can acknowledge or
+forget updates. An unanswered write is never retried automatically. This interface requires
+the messenger and refuses `--offline`.
 
-`get-managed-bot-token` и `replace-managed-bot-token` требуют `--store-token <profile>`.
-Возвращённый токен сохраняется только в системном хранилище ключей и никогда не печатается.
-Профиль назначения должен принадлежать указанному боту; это проверяется до замены токена.
-После сохранения stdout содержит только профиль, id и `stored: "keyring"`.
-Если системное хранилище недоступно, команда отказывает без сохранения токена в файл.
+`get-managed-bot-token` and `replace-managed-bot-token` require `--store-token <profile>`.
+The returned token goes only to the OS keyring and is never printed. The destination must
+belong to the requested bot; its identity is checked before remote token rotation.
+After storage, stdout contains only the profile, bot id and `stored: "keyring"`.
+An unavailable keyring causes a refusal without storing the returned token in a file.
