@@ -12,7 +12,9 @@ This server is copied from max-cli's (`max mcp`) and behaves the same way.
 
 ## Connecting
 
-Log in in a terminal first, as usual (`tg session start`). The server never logs in.
+Run `tg setup --agent none` in a local terminal first. It configures the Telegram account;
+`tg mcp setup` separately connects the client. `tg skill show` explains both before login.
+The MCP server never logs in for you.
 
 **Codex or Claude Code on this computer:**
 

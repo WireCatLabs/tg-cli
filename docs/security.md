@@ -216,7 +216,7 @@ inherited ACLs.
 - **Telegram**, over MTProto, for everything a command asks — files and photos included.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
   `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration.md](configuration.md)).
-- **my.telegram.org**, only during `tg session start`: opened in your browser, or, with `--app auto`,
+- **my.telegram.org**, only during `tg setup` or `tg session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
 - **Hugging Face and GitHub**, only when you run `tg models audio download`. A voice message never goes
@@ -244,7 +244,7 @@ and check it before you send it.
 
 ## Logging in
 
-`tg session start` draws the QR code in the terminal. It stays in the scrollback, and Telegram renews
+`tg setup` and `tg session start` draw the QR code in the terminal. It stays in the scrollback, and Telegram renews
 it while you wait, so an old one is useless. `--qr-file` writes it as a PNG readable only by you, and
 removes the file when the login ends, whether it worked or not.
 

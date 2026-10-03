@@ -126,7 +126,7 @@ describe("setup", () => {
       account: { id: "1" },
       chats: { checked: 1, hasMore: true },
       agent: { name: "codex" },
-      next: { inbox: "tg inbox --limit 5" },
+      next: { inbox: "tg inbox --limit 5", instructions: "tg skill show" },
     })
     expect(JSON.parse(result.stdout[0] ?? "").account).not.toHaveProperty("phone")
     expect(result.stdout.join()).not.toMatch(/synthetic-(app-hash|code|number|phone)/)
@@ -173,6 +173,7 @@ describe("setup", () => {
     expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(result.stdout.join()).toContain("installed for gemini")
     expect(result.stdout.join()).toContain("tg inbox --limit 5")
+    expect(result.stdout.join()).toContain("For your agent: tg skill show")
   })
 
   it("an empty agent choice skips installation", async () => {

@@ -64,7 +64,7 @@ tg session end
 
 ## `tg setup`
 
-check this computer, log in to Telegram, install an agent skill and verify the first chats
+set up Telegram and connect your agent
 
 **Changes something in Telegram.**
 

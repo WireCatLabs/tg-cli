@@ -1,6 +1,6 @@
 ---
 name: tg-cli
-description: Read and send messages in the owner's personal Telegram account through the `tg` command. Use when asked to find a chat, read a conversation, find a message or a person, or send a message in Telegram.
+description: Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked to install or connect Telegram, find a chat or person, read a conversation, or send a message.
 ---
 
 # tg — the owner's personal Telegram from the command line
@@ -35,6 +35,12 @@ file holds what the help cannot say: the traps and the boundaries.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 
 ## First setup
+
+These instructions are available through `tg skill show` without a Telegram session. On a new
+installation, read them first, then `tg setup --help` for login choices and `tg commands --json`
+for the command tree. The CLI's root help and first-run authentication errors point to setup.
+`tg skill install --for all` installs these instructions separately without logging in.
+
 
 When the owner asks to install or connect Telegram, tell them: "Allow about five minutes for
 setup. Downloading chat history is a separate step and can take longer." Use `tg setup --agent

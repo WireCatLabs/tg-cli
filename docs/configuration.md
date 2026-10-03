@@ -190,7 +190,7 @@ does not see your usual login, because the keyring entry moves with them:
 ```sh
 export TG_CONFIG_DIR=/tmp/tg-try/config TG_STATE_DIR=/tmp/tg-try/state TG_CACHE_DIR=/tmp/tg-try/cache
 export MESSAGING_STORE=/tmp/tg-try/messages.db
-tg session start
+tg setup
 ```
 
 Without `MESSAGING_STORE`, what that login reads still goes into your usual local store.

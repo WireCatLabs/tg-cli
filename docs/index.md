@@ -8,14 +8,18 @@ answered and who joined.
 It is built for scripts and agents first: one operation per call, the same shape of answer every
 time, and a fixed exit code for each kind of failure.
 
-## The first minute
+## Get started
 
 ```sh
 npm install -g @leemour/tg-cli
-tg session start          # your app from my.telegram.org, then a QR code to scan
+tg setup                  # guided app registration, login and agent skill
 tg inbox                  # other people's unread messages, in every chat; nothing is marked read
 tg messages list me       # Saved Messages, the latest 20
 ```
+
+Allow about five minutes for setup. History downloads are a separate step. An agent can read
+`tg skill show` before login; use `tg setup --agent codex` to select its skill explicitly.
+`tg setup --help` shows login choices and Windows instructions.
 
 It needs Node 22.16 or newer, or Bun ([installation.md](installation.md)). The first login asks for your
 own Telegram app; `tg` can register it for you ([sessions.md](sessions.md)).

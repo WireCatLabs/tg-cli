@@ -42,6 +42,27 @@ import { updateNotice } from "./update.js"
 const definition: ProgramDefinition = {
   app: TG,
   configuration: CONFIG,
+  configure: (program) => {
+    program.addHelpText(
+      "after",
+      "\nGetting started after installation:\n" +
+        "  tg setup                    Guided first run; allow about 5 minutes\n" +
+        "  tg setup --agent codex      Log in and install your agent's skill\n" +
+        "  tg setup --help             Login choices, examples and Windows instructions\n" +
+        "\nFor agents:\n" +
+        "  tg skill show               Read the bundled instructions before using Telegram\n" +
+        "  tg commands --json          Discover commands, arguments and flags\n" +
+        "\nSetup checks five chats. Choose a chat before downloading its history.\n",
+    )
+    program.commands
+      .find((command) => command.name() === "skill")
+      ?.addHelpText(
+        "after",
+        "\nBefore the first login, an agent can read `tg skill show`; no session is needed.\n" +
+          "Run `tg setup --agent codex` for guided login and skill installation.\n" +
+          "To install instructions separately: `tg skill install --for all`.\n",
+      )
+  },
   commands: () =>
     loggingArgv([
       sessionCommand(),

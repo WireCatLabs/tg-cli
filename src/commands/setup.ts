@@ -51,7 +51,29 @@ const agentFor = async (context: CommandContext, given?: Agent, signal?: AbortSi
 
 export const setupCommand = () =>
   annotate(new Command("setup"), { mutates: true })
-    .description("check this computer, log in to Telegram, install an agent skill and verify the first chats")
+    .description("set up Telegram and connect your agent")
+    .configureHelp({ showGlobalOptions: true })
+    .addHelpText(
+      "after",
+      "\nExamples:\n" +
+        "  tg setup                         Guided setup in your local terminal\n" +
+        "  tg setup --agent codex           Install the skill for Codex\n" +
+        "  tg work setup --agent claude     Set up a separate work profile\n" +
+        "  tg setup --app browser           Get app ID/hash through my.telegram.org\n" +
+        "  tg setup --method phone          Use a phone login instead of QR\n" +
+        "\nAllow about 5 minutes. App registration and account login are separate steps.\n" +
+        "Scan the QR in Telegram: Settings > Devices > Link Desktop Device.\n" +
+        "Enter codes, app hashes and passwords only in the terminal.\n" +
+        "\nAgents: read `tg skill show` first. First login needs a local terminal.\n" +
+        "With stored app keys and no 2FA input, an agent can use:\n" +
+        "  tg setup --qr-file login.png --agent codex --json\n" +
+        "The QR image is removed when login ends. Machine mode skips agent installation\n" +
+        "unless --agent is given. Existing sessions are checked without another login.\n" +
+        "\nSetup checks five chats. Choose a chat and an amount of history before:\n" +
+        "  tg store fetch <chat> --last 100\n" +
+        "\nWindows: use tg.cmd or npm.cmd if PowerShell blocks scripts. Without PATH:\n" +
+        "  npm.cmd exec --yes --package=@leemour/tg-cli -- tg setup\n",
+    )
     .addOption(
       new Option("--agent <agent>", "install the skill for this agent; asks at a terminal, otherwise none").choices(
         AGENTS,
@@ -167,6 +189,7 @@ export const setupCommand = () =>
         cancellation.signal.throwIfAborted()
         const written = agent === "none" ? [] : installSkill(TG, SKILL, { targets, env: context.env })
         const next = {
+          instructions: `${command}skill show`,
           inbox: `${command}inbox --limit 5`,
           chats: `${command}chats list --limit 5`,
           history: `${command}store fetch <chat> --last 100`,
@@ -195,8 +218,9 @@ export const setupCommand = () =>
           [
             `Telegram is ready — profile ${context.profile}, ${chats.checked} chats checked.`,
             agent.name === "none"
-              ? "Agent skill: skipped."
+              ? `Agent skill: skipped. Install later: ${next.skill}`
               : `Agent skill: installed for ${agent.name}. Start a new agent session if it is not found.`,
+            `For your agent: ${next.instructions}`,
             `Next: ${next.inbox}`,
             `History: ${next.history}`,
           ].join("\n"),
