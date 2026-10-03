@@ -48,6 +48,12 @@
           }
         }
       }
+    },
+    {
+      "includes": ["spec/bot/api.json"],
+      "formatter": {
+        "enabled": false
+      }
     }
   ]
 }

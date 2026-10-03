@@ -64,6 +64,7 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
     me,
     formatMarkdown: async (text) => formatMarkdown(text),
     close: async () => {},
+    api: (method, input, options) => transport.call(method, {}, { ...options, ...input }),
 
     send: async (chat, text, { replyTo, silent, markup, formatting: spans, html, attachments = [] }) => {
       if (attachments.length > 1) throw new CliError("validation_error", "a Telegram bot sends one file at a time")

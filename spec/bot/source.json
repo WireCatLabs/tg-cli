@@ -1,0 +1,8 @@
+{
+  "version": "Bot API 10.3",
+  "revision": "d59462bb813375e5fd53e3969d59400969148bf7",
+  "sourceUrl": "https://github.com/PaulSonOfLars/telegram-bot-api-spec",
+  "officialUrl": "https://core.telegram.org/bots/api",
+  "methods": 185,
+  "types": 400
+}

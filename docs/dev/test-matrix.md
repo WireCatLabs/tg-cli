@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**413 ✅ · 29 ⛔ · 0 ❌** — 173 commands, 269 options.
+**1877 ✅ · 29 ⛔ · 0 ❌** — 358 commands, 1548 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -439,6 +439,1470 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot mcp config` | `--allow-send` | ✅ |  |
 | `bot mcp config` | `--allow-delete` | ✅ |  |
 | `bot mcp config` | `--allow-moderate` | ✅ |  |
+| `bot api get-updates` |  | ✅ |  |
+| `bot api get-updates` | `--offset` | ✅ |  |
+| `bot api get-updates` | `--limit` | ✅ |  |
+| `bot api get-updates` | `--poll-timeout` | ✅ |  |
+| `bot api get-updates` | `--allowed-updates` | ✅ |  |
+| `bot api get-updates` | `--body` | ✅ |  |
+| `bot api get-updates` | `--body-file` | ✅ |  |
+| `bot api set-webhook` |  | ✅ |  |
+| `bot api set-webhook` | `--url` | ✅ |  |
+| `bot api set-webhook` | `--certificate` | ✅ |  |
+| `bot api set-webhook` | `--ip-address` | ✅ |  |
+| `bot api set-webhook` | `--max-connections` | ✅ |  |
+| `bot api set-webhook` | `--allowed-updates` | ✅ |  |
+| `bot api set-webhook` | `--drop-pending-updates` | ✅ |  |
+| `bot api set-webhook` | `--body` | ✅ |  |
+| `bot api set-webhook` | `--body-file` | ✅ |  |
+| `bot api delete-webhook` |  | ✅ |  |
+| `bot api delete-webhook` | `--drop-pending-updates` | ✅ |  |
+| `bot api delete-webhook` | `--body` | ✅ |  |
+| `bot api delete-webhook` | `--body-file` | ✅ |  |
+| `bot api get-webhook-info` |  | ✅ |  |
+| `bot api get-me` |  | ✅ |  |
+| `bot api log-out` |  | ✅ |  |
+| `bot api close` |  | ✅ |  |
+| `bot api send-message` |  | ✅ |  |
+| `bot api send-message` | `--business-connection-id` | ✅ |  |
+| `bot api send-message` | `--chat-id` | ✅ |  |
+| `bot api send-message` | `--message-thread-id` | ✅ |  |
+| `bot api send-message` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-message` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-message` | `--text` | ✅ |  |
+| `bot api send-message` | `--parse-mode` | ✅ |  |
+| `bot api send-message` | `--entities` | ✅ |  |
+| `bot api send-message` | `--link-preview-options` | ✅ |  |
+| `bot api send-message` | `--disable-notification` | ✅ |  |
+| `bot api send-message` | `--protect-content` | ✅ |  |
+| `bot api send-message` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-message` | `--message-effect-id` | ✅ |  |
+| `bot api send-message` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-message` | `--reply-parameters` | ✅ |  |
+| `bot api send-message` | `--reply-markup` | ✅ |  |
+| `bot api send-message` | `--body` | ✅ |  |
+| `bot api send-message` | `--body-file` | ✅ |  |
+| `bot api forward-message` |  | ✅ |  |
+| `bot api forward-message` | `--chat-id` | ✅ |  |
+| `bot api forward-message` | `--message-thread-id` | ✅ |  |
+| `bot api forward-message` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api forward-message` | `--from-chat-id` | ✅ |  |
+| `bot api forward-message` | `--video-start-timestamp` | ✅ |  |
+| `bot api forward-message` | `--disable-notification` | ✅ |  |
+| `bot api forward-message` | `--protect-content` | ✅ |  |
+| `bot api forward-message` | `--message-effect-id` | ✅ |  |
+| `bot api forward-message` | `--suggested-post-parameters` | ✅ |  |
+| `bot api forward-message` | `--message-id` | ✅ |  |
+| `bot api forward-message` | `--body` | ✅ |  |
+| `bot api forward-message` | `--body-file` | ✅ |  |
+| `bot api forward-messages` |  | ✅ |  |
+| `bot api forward-messages` | `--chat-id` | ✅ |  |
+| `bot api forward-messages` | `--message-thread-id` | ✅ |  |
+| `bot api forward-messages` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api forward-messages` | `--from-chat-id` | ✅ |  |
+| `bot api forward-messages` | `--message-ids` | ✅ |  |
+| `bot api forward-messages` | `--disable-notification` | ✅ |  |
+| `bot api forward-messages` | `--protect-content` | ✅ |  |
+| `bot api forward-messages` | `--body` | ✅ |  |
+| `bot api forward-messages` | `--body-file` | ✅ |  |
+| `bot api copy-message` |  | ✅ |  |
+| `bot api copy-message` | `--chat-id` | ✅ |  |
+| `bot api copy-message` | `--message-thread-id` | ✅ |  |
+| `bot api copy-message` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api copy-message` | `--from-chat-id` | ✅ |  |
+| `bot api copy-message` | `--message-id` | ✅ |  |
+| `bot api copy-message` | `--video-start-timestamp` | ✅ |  |
+| `bot api copy-message` | `--caption` | ✅ |  |
+| `bot api copy-message` | `--parse-mode` | ✅ |  |
+| `bot api copy-message` | `--caption-entities` | ✅ |  |
+| `bot api copy-message` | `--show-caption-above-media` | ✅ |  |
+| `bot api copy-message` | `--disable-notification` | ✅ |  |
+| `bot api copy-message` | `--protect-content` | ✅ |  |
+| `bot api copy-message` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api copy-message` | `--message-effect-id` | ✅ |  |
+| `bot api copy-message` | `--suggested-post-parameters` | ✅ |  |
+| `bot api copy-message` | `--reply-parameters` | ✅ |  |
+| `bot api copy-message` | `--reply-markup` | ✅ |  |
+| `bot api copy-message` | `--body` | ✅ |  |
+| `bot api copy-message` | `--body-file` | ✅ |  |
+| `bot api copy-messages` |  | ✅ |  |
+| `bot api copy-messages` | `--chat-id` | ✅ |  |
+| `bot api copy-messages` | `--message-thread-id` | ✅ |  |
+| `bot api copy-messages` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api copy-messages` | `--from-chat-id` | ✅ |  |
+| `bot api copy-messages` | `--message-ids` | ✅ |  |
+| `bot api copy-messages` | `--disable-notification` | ✅ |  |
+| `bot api copy-messages` | `--protect-content` | ✅ |  |
+| `bot api copy-messages` | `--remove-caption` | ✅ |  |
+| `bot api copy-messages` | `--body` | ✅ |  |
+| `bot api copy-messages` | `--body-file` | ✅ |  |
+| `bot api send-photo` |  | ✅ |  |
+| `bot api send-photo` | `--business-connection-id` | ✅ |  |
+| `bot api send-photo` | `--chat-id` | ✅ |  |
+| `bot api send-photo` | `--message-thread-id` | ✅ |  |
+| `bot api send-photo` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-photo` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-photo` | `--photo` | ✅ |  |
+| `bot api send-photo` | `--caption` | ✅ |  |
+| `bot api send-photo` | `--parse-mode` | ✅ |  |
+| `bot api send-photo` | `--caption-entities` | ✅ |  |
+| `bot api send-photo` | `--show-caption-above-media` | ✅ |  |
+| `bot api send-photo` | `--has-spoiler` | ✅ |  |
+| `bot api send-photo` | `--disable-notification` | ✅ |  |
+| `bot api send-photo` | `--protect-content` | ✅ |  |
+| `bot api send-photo` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-photo` | `--message-effect-id` | ✅ |  |
+| `bot api send-photo` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-photo` | `--reply-parameters` | ✅ |  |
+| `bot api send-photo` | `--reply-markup` | ✅ |  |
+| `bot api send-photo` | `--body` | ✅ |  |
+| `bot api send-photo` | `--body-file` | ✅ |  |
+| `bot api send-live-photo` |  | ✅ |  |
+| `bot api send-live-photo` | `--business-connection-id` | ✅ |  |
+| `bot api send-live-photo` | `--chat-id` | ✅ |  |
+| `bot api send-live-photo` | `--message-thread-id` | ✅ |  |
+| `bot api send-live-photo` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-live-photo` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-live-photo` | `--live-photo` | ✅ |  |
+| `bot api send-live-photo` | `--photo` | ✅ |  |
+| `bot api send-live-photo` | `--caption` | ✅ |  |
+| `bot api send-live-photo` | `--parse-mode` | ✅ |  |
+| `bot api send-live-photo` | `--caption-entities` | ✅ |  |
+| `bot api send-live-photo` | `--show-caption-above-media` | ✅ |  |
+| `bot api send-live-photo` | `--has-spoiler` | ✅ |  |
+| `bot api send-live-photo` | `--disable-notification` | ✅ |  |
+| `bot api send-live-photo` | `--protect-content` | ✅ |  |
+| `bot api send-live-photo` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-live-photo` | `--message-effect-id` | ✅ |  |
+| `bot api send-live-photo` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-live-photo` | `--reply-parameters` | ✅ |  |
+| `bot api send-live-photo` | `--reply-markup` | ✅ |  |
+| `bot api send-live-photo` | `--body` | ✅ |  |
+| `bot api send-live-photo` | `--body-file` | ✅ |  |
+| `bot api send-audio` |  | ✅ |  |
+| `bot api send-audio` | `--business-connection-id` | ✅ |  |
+| `bot api send-audio` | `--chat-id` | ✅ |  |
+| `bot api send-audio` | `--message-thread-id` | ✅ |  |
+| `bot api send-audio` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-audio` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-audio` | `--audio` | ✅ |  |
+| `bot api send-audio` | `--caption` | ✅ |  |
+| `bot api send-audio` | `--parse-mode` | ✅ |  |
+| `bot api send-audio` | `--caption-entities` | ✅ |  |
+| `bot api send-audio` | `--duration` | ✅ |  |
+| `bot api send-audio` | `--performer` | ✅ |  |
+| `bot api send-audio` | `--title` | ✅ |  |
+| `bot api send-audio` | `--thumbnail` | ✅ |  |
+| `bot api send-audio` | `--disable-notification` | ✅ |  |
+| `bot api send-audio` | `--protect-content` | ✅ |  |
+| `bot api send-audio` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-audio` | `--message-effect-id` | ✅ |  |
+| `bot api send-audio` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-audio` | `--reply-parameters` | ✅ |  |
+| `bot api send-audio` | `--reply-markup` | ✅ |  |
+| `bot api send-audio` | `--body` | ✅ |  |
+| `bot api send-audio` | `--body-file` | ✅ |  |
+| `bot api send-document` |  | ✅ |  |
+| `bot api send-document` | `--business-connection-id` | ✅ |  |
+| `bot api send-document` | `--chat-id` | ✅ |  |
+| `bot api send-document` | `--message-thread-id` | ✅ |  |
+| `bot api send-document` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-document` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-document` | `--document` | ✅ |  |
+| `bot api send-document` | `--thumbnail` | ✅ |  |
+| `bot api send-document` | `--caption` | ✅ |  |
+| `bot api send-document` | `--parse-mode` | ✅ |  |
+| `bot api send-document` | `--caption-entities` | ✅ |  |
+| `bot api send-document` | `--disable-content-type-detection` | ✅ |  |
+| `bot api send-document` | `--disable-notification` | ✅ |  |
+| `bot api send-document` | `--protect-content` | ✅ |  |
+| `bot api send-document` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-document` | `--message-effect-id` | ✅ |  |
+| `bot api send-document` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-document` | `--reply-parameters` | ✅ |  |
+| `bot api send-document` | `--reply-markup` | ✅ |  |
+| `bot api send-document` | `--body` | ✅ |  |
+| `bot api send-document` | `--body-file` | ✅ |  |
+| `bot api send-video` |  | ✅ |  |
+| `bot api send-video` | `--business-connection-id` | ✅ |  |
+| `bot api send-video` | `--chat-id` | ✅ |  |
+| `bot api send-video` | `--message-thread-id` | ✅ |  |
+| `bot api send-video` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-video` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-video` | `--video` | ✅ |  |
+| `bot api send-video` | `--duration` | ✅ |  |
+| `bot api send-video` | `--width` | ✅ |  |
+| `bot api send-video` | `--height` | ✅ |  |
+| `bot api send-video` | `--thumbnail` | ✅ |  |
+| `bot api send-video` | `--cover` | ✅ |  |
+| `bot api send-video` | `--start-timestamp` | ✅ |  |
+| `bot api send-video` | `--caption` | ✅ |  |
+| `bot api send-video` | `--parse-mode` | ✅ |  |
+| `bot api send-video` | `--caption-entities` | ✅ |  |
+| `bot api send-video` | `--show-caption-above-media` | ✅ |  |
+| `bot api send-video` | `--has-spoiler` | ✅ |  |
+| `bot api send-video` | `--supports-streaming` | ✅ |  |
+| `bot api send-video` | `--disable-notification` | ✅ |  |
+| `bot api send-video` | `--protect-content` | ✅ |  |
+| `bot api send-video` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-video` | `--message-effect-id` | ✅ |  |
+| `bot api send-video` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-video` | `--reply-parameters` | ✅ |  |
+| `bot api send-video` | `--reply-markup` | ✅ |  |
+| `bot api send-video` | `--body` | ✅ |  |
+| `bot api send-video` | `--body-file` | ✅ |  |
+| `bot api send-animation` |  | ✅ |  |
+| `bot api send-animation` | `--business-connection-id` | ✅ |  |
+| `bot api send-animation` | `--chat-id` | ✅ |  |
+| `bot api send-animation` | `--message-thread-id` | ✅ |  |
+| `bot api send-animation` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-animation` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-animation` | `--animation` | ✅ |  |
+| `bot api send-animation` | `--duration` | ✅ |  |
+| `bot api send-animation` | `--width` | ✅ |  |
+| `bot api send-animation` | `--height` | ✅ |  |
+| `bot api send-animation` | `--thumbnail` | ✅ |  |
+| `bot api send-animation` | `--caption` | ✅ |  |
+| `bot api send-animation` | `--parse-mode` | ✅ |  |
+| `bot api send-animation` | `--caption-entities` | ✅ |  |
+| `bot api send-animation` | `--show-caption-above-media` | ✅ |  |
+| `bot api send-animation` | `--has-spoiler` | ✅ |  |
+| `bot api send-animation` | `--disable-notification` | ✅ |  |
+| `bot api send-animation` | `--protect-content` | ✅ |  |
+| `bot api send-animation` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-animation` | `--message-effect-id` | ✅ |  |
+| `bot api send-animation` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-animation` | `--reply-parameters` | ✅ |  |
+| `bot api send-animation` | `--reply-markup` | ✅ |  |
+| `bot api send-animation` | `--body` | ✅ |  |
+| `bot api send-animation` | `--body-file` | ✅ |  |
+| `bot api send-voice` |  | ✅ |  |
+| `bot api send-voice` | `--business-connection-id` | ✅ |  |
+| `bot api send-voice` | `--chat-id` | ✅ |  |
+| `bot api send-voice` | `--message-thread-id` | ✅ |  |
+| `bot api send-voice` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-voice` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-voice` | `--voice` | ✅ |  |
+| `bot api send-voice` | `--caption` | ✅ |  |
+| `bot api send-voice` | `--parse-mode` | ✅ |  |
+| `bot api send-voice` | `--caption-entities` | ✅ |  |
+| `bot api send-voice` | `--duration` | ✅ |  |
+| `bot api send-voice` | `--disable-notification` | ✅ |  |
+| `bot api send-voice` | `--protect-content` | ✅ |  |
+| `bot api send-voice` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-voice` | `--message-effect-id` | ✅ |  |
+| `bot api send-voice` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-voice` | `--reply-parameters` | ✅ |  |
+| `bot api send-voice` | `--reply-markup` | ✅ |  |
+| `bot api send-voice` | `--body` | ✅ |  |
+| `bot api send-voice` | `--body-file` | ✅ |  |
+| `bot api send-video-note` |  | ✅ |  |
+| `bot api send-video-note` | `--business-connection-id` | ✅ |  |
+| `bot api send-video-note` | `--chat-id` | ✅ |  |
+| `bot api send-video-note` | `--message-thread-id` | ✅ |  |
+| `bot api send-video-note` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-video-note` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-video-note` | `--video-note` | ✅ |  |
+| `bot api send-video-note` | `--duration` | ✅ |  |
+| `bot api send-video-note` | `--length` | ✅ |  |
+| `bot api send-video-note` | `--thumbnail` | ✅ |  |
+| `bot api send-video-note` | `--disable-notification` | ✅ |  |
+| `bot api send-video-note` | `--protect-content` | ✅ |  |
+| `bot api send-video-note` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-video-note` | `--message-effect-id` | ✅ |  |
+| `bot api send-video-note` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-video-note` | `--reply-parameters` | ✅ |  |
+| `bot api send-video-note` | `--reply-markup` | ✅ |  |
+| `bot api send-video-note` | `--body` | ✅ |  |
+| `bot api send-video-note` | `--body-file` | ✅ |  |
+| `bot api send-paid-media` |  | ✅ |  |
+| `bot api send-paid-media` | `--business-connection-id` | ✅ |  |
+| `bot api send-paid-media` | `--chat-id` | ✅ |  |
+| `bot api send-paid-media` | `--message-thread-id` | ✅ |  |
+| `bot api send-paid-media` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-paid-media` | `--star-count` | ✅ |  |
+| `bot api send-paid-media` | `--media` | ✅ |  |
+| `bot api send-paid-media` | `--payload` | ✅ |  |
+| `bot api send-paid-media` | `--caption` | ✅ |  |
+| `bot api send-paid-media` | `--parse-mode` | ✅ |  |
+| `bot api send-paid-media` | `--caption-entities` | ✅ |  |
+| `bot api send-paid-media` | `--show-caption-above-media` | ✅ |  |
+| `bot api send-paid-media` | `--disable-notification` | ✅ |  |
+| `bot api send-paid-media` | `--protect-content` | ✅ |  |
+| `bot api send-paid-media` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-paid-media` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-paid-media` | `--reply-parameters` | ✅ |  |
+| `bot api send-paid-media` | `--reply-markup` | ✅ |  |
+| `bot api send-paid-media` | `--body` | ✅ |  |
+| `bot api send-paid-media` | `--body-file` | ✅ |  |
+| `bot api send-media-group` |  | ✅ |  |
+| `bot api send-media-group` | `--business-connection-id` | ✅ |  |
+| `bot api send-media-group` | `--chat-id` | ✅ |  |
+| `bot api send-media-group` | `--message-thread-id` | ✅ |  |
+| `bot api send-media-group` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-media-group` | `--media` | ✅ |  |
+| `bot api send-media-group` | `--disable-notification` | ✅ |  |
+| `bot api send-media-group` | `--protect-content` | ✅ |  |
+| `bot api send-media-group` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-media-group` | `--message-effect-id` | ✅ |  |
+| `bot api send-media-group` | `--reply-parameters` | ✅ |  |
+| `bot api send-media-group` | `--body` | ✅ |  |
+| `bot api send-media-group` | `--body-file` | ✅ |  |
+| `bot api send-location` |  | ✅ |  |
+| `bot api send-location` | `--business-connection-id` | ✅ |  |
+| `bot api send-location` | `--chat-id` | ✅ |  |
+| `bot api send-location` | `--message-thread-id` | ✅ |  |
+| `bot api send-location` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-location` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-location` | `--latitude` | ✅ |  |
+| `bot api send-location` | `--longitude` | ✅ |  |
+| `bot api send-location` | `--horizontal-accuracy` | ✅ |  |
+| `bot api send-location` | `--live-period` | ✅ |  |
+| `bot api send-location` | `--heading` | ✅ |  |
+| `bot api send-location` | `--proximity-alert-radius` | ✅ |  |
+| `bot api send-location` | `--disable-notification` | ✅ |  |
+| `bot api send-location` | `--protect-content` | ✅ |  |
+| `bot api send-location` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-location` | `--message-effect-id` | ✅ |  |
+| `bot api send-location` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-location` | `--reply-parameters` | ✅ |  |
+| `bot api send-location` | `--reply-markup` | ✅ |  |
+| `bot api send-location` | `--body` | ✅ |  |
+| `bot api send-location` | `--body-file` | ✅ |  |
+| `bot api send-venue` |  | ✅ |  |
+| `bot api send-venue` | `--business-connection-id` | ✅ |  |
+| `bot api send-venue` | `--chat-id` | ✅ |  |
+| `bot api send-venue` | `--message-thread-id` | ✅ |  |
+| `bot api send-venue` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-venue` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-venue` | `--latitude` | ✅ |  |
+| `bot api send-venue` | `--longitude` | ✅ |  |
+| `bot api send-venue` | `--title` | ✅ |  |
+| `bot api send-venue` | `--address` | ✅ |  |
+| `bot api send-venue` | `--foursquare-id` | ✅ |  |
+| `bot api send-venue` | `--foursquare-type` | ✅ |  |
+| `bot api send-venue` | `--google-place-id` | ✅ |  |
+| `bot api send-venue` | `--google-place-type` | ✅ |  |
+| `bot api send-venue` | `--disable-notification` | ✅ |  |
+| `bot api send-venue` | `--protect-content` | ✅ |  |
+| `bot api send-venue` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-venue` | `--message-effect-id` | ✅ |  |
+| `bot api send-venue` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-venue` | `--reply-parameters` | ✅ |  |
+| `bot api send-venue` | `--reply-markup` | ✅ |  |
+| `bot api send-venue` | `--body` | ✅ |  |
+| `bot api send-venue` | `--body-file` | ✅ |  |
+| `bot api send-contact` |  | ✅ |  |
+| `bot api send-contact` | `--business-connection-id` | ✅ |  |
+| `bot api send-contact` | `--chat-id` | ✅ |  |
+| `bot api send-contact` | `--message-thread-id` | ✅ |  |
+| `bot api send-contact` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-contact` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-contact` | `--phone-number` | ✅ |  |
+| `bot api send-contact` | `--first-name` | ✅ |  |
+| `bot api send-contact` | `--last-name` | ✅ |  |
+| `bot api send-contact` | `--vcard` | ✅ |  |
+| `bot api send-contact` | `--disable-notification` | ✅ |  |
+| `bot api send-contact` | `--protect-content` | ✅ |  |
+| `bot api send-contact` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-contact` | `--message-effect-id` | ✅ |  |
+| `bot api send-contact` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-contact` | `--reply-parameters` | ✅ |  |
+| `bot api send-contact` | `--reply-markup` | ✅ |  |
+| `bot api send-contact` | `--body` | ✅ |  |
+| `bot api send-contact` | `--body-file` | ✅ |  |
+| `bot api send-poll` |  | ✅ |  |
+| `bot api send-poll` | `--business-connection-id` | ✅ |  |
+| `bot api send-poll` | `--chat-id` | ✅ |  |
+| `bot api send-poll` | `--message-thread-id` | ✅ |  |
+| `bot api send-poll` | `--question` | ✅ |  |
+| `bot api send-poll` | `--question-parse-mode` | ✅ |  |
+| `bot api send-poll` | `--question-entities` | ✅ |  |
+| `bot api send-poll` | `--options` | ✅ |  |
+| `bot api send-poll` | `--is-anonymous` | ✅ |  |
+| `bot api send-poll` | `--type` | ✅ |  |
+| `bot api send-poll` | `--allows-multiple-answers` | ✅ |  |
+| `bot api send-poll` | `--allows-revoting` | ✅ |  |
+| `bot api send-poll` | `--shuffle-options` | ✅ |  |
+| `bot api send-poll` | `--allow-adding-options` | ✅ |  |
+| `bot api send-poll` | `--hide-results-until-closes` | ✅ |  |
+| `bot api send-poll` | `--members-only` | ✅ |  |
+| `bot api send-poll` | `--country-codes` | ✅ |  |
+| `bot api send-poll` | `--correct-option-ids` | ✅ |  |
+| `bot api send-poll` | `--explanation` | ✅ |  |
+| `bot api send-poll` | `--explanation-parse-mode` | ✅ |  |
+| `bot api send-poll` | `--explanation-entities` | ✅ |  |
+| `bot api send-poll` | `--explanation-media` | ✅ |  |
+| `bot api send-poll` | `--open-period` | ✅ |  |
+| `bot api send-poll` | `--close-date` | ✅ |  |
+| `bot api send-poll` | `--is-closed` | ✅ |  |
+| `bot api send-poll` | `--description` | ✅ |  |
+| `bot api send-poll` | `--description-parse-mode` | ✅ |  |
+| `bot api send-poll` | `--description-entities` | ✅ |  |
+| `bot api send-poll` | `--media` | ✅ |  |
+| `bot api send-poll` | `--disable-notification` | ✅ |  |
+| `bot api send-poll` | `--protect-content` | ✅ |  |
+| `bot api send-poll` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-poll` | `--message-effect-id` | ✅ |  |
+| `bot api send-poll` | `--reply-parameters` | ✅ |  |
+| `bot api send-poll` | `--reply-markup` | ✅ |  |
+| `bot api send-poll` | `--body` | ✅ |  |
+| `bot api send-poll` | `--body-file` | ✅ |  |
+| `bot api send-checklist` |  | ✅ |  |
+| `bot api send-checklist` | `--business-connection-id` | ✅ |  |
+| `bot api send-checklist` | `--chat-id` | ✅ |  |
+| `bot api send-checklist` | `--checklist` | ✅ |  |
+| `bot api send-checklist` | `--disable-notification` | ✅ |  |
+| `bot api send-checklist` | `--protect-content` | ✅ |  |
+| `bot api send-checklist` | `--message-effect-id` | ✅ |  |
+| `bot api send-checklist` | `--reply-parameters` | ✅ |  |
+| `bot api send-checklist` | `--reply-markup` | ✅ |  |
+| `bot api send-checklist` | `--body` | ✅ |  |
+| `bot api send-checklist` | `--body-file` | ✅ |  |
+| `bot api send-dice` |  | ✅ |  |
+| `bot api send-dice` | `--business-connection-id` | ✅ |  |
+| `bot api send-dice` | `--chat-id` | ✅ |  |
+| `bot api send-dice` | `--message-thread-id` | ✅ |  |
+| `bot api send-dice` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-dice` | `--emoji` | ✅ |  |
+| `bot api send-dice` | `--disable-notification` | ✅ |  |
+| `bot api send-dice` | `--protect-content` | ✅ |  |
+| `bot api send-dice` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-dice` | `--message-effect-id` | ✅ |  |
+| `bot api send-dice` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-dice` | `--reply-parameters` | ✅ |  |
+| `bot api send-dice` | `--reply-markup` | ✅ |  |
+| `bot api send-dice` | `--body` | ✅ |  |
+| `bot api send-dice` | `--body-file` | ✅ |  |
+| `bot api send-message-draft` |  | ✅ |  |
+| `bot api send-message-draft` | `--chat-id` | ✅ |  |
+| `bot api send-message-draft` | `--message-thread-id` | ✅ |  |
+| `bot api send-message-draft` | `--draft-id` | ✅ |  |
+| `bot api send-message-draft` | `--text` | ✅ |  |
+| `bot api send-message-draft` | `--parse-mode` | ✅ |  |
+| `bot api send-message-draft` | `--entities` | ✅ |  |
+| `bot api send-message-draft` | `--can-stop` | ✅ |  |
+| `bot api send-message-draft` | `--keep-on-stop` | ✅ |  |
+| `bot api send-message-draft` | `--body` | ✅ |  |
+| `bot api send-message-draft` | `--body-file` | ✅ |  |
+| `bot api send-chat-action` |  | ✅ |  |
+| `bot api send-chat-action` | `--business-connection-id` | ✅ |  |
+| `bot api send-chat-action` | `--chat-id` | ✅ |  |
+| `bot api send-chat-action` | `--message-thread-id` | ✅ |  |
+| `bot api send-chat-action` | `--action` | ✅ |  |
+| `bot api send-chat-action` | `--body` | ✅ |  |
+| `bot api send-chat-action` | `--body-file` | ✅ |  |
+| `bot api set-message-reaction` |  | ✅ |  |
+| `bot api set-message-reaction` | `--chat-id` | ✅ |  |
+| `bot api set-message-reaction` | `--message-id` | ✅ |  |
+| `bot api set-message-reaction` | `--reaction` | ✅ |  |
+| `bot api set-message-reaction` | `--is-big` | ✅ |  |
+| `bot api set-message-reaction` | `--body` | ✅ |  |
+| `bot api set-message-reaction` | `--body-file` | ✅ |  |
+| `bot api get-user-profile-photos` |  | ✅ |  |
+| `bot api get-user-profile-photos` | `--user-id` | ✅ |  |
+| `bot api get-user-profile-photos` | `--offset` | ✅ |  |
+| `bot api get-user-profile-photos` | `--limit` | ✅ |  |
+| `bot api get-user-profile-photos` | `--body` | ✅ |  |
+| `bot api get-user-profile-photos` | `--body-file` | ✅ |  |
+| `bot api get-user-profile-audios` |  | ✅ |  |
+| `bot api get-user-profile-audios` | `--user-id` | ✅ |  |
+| `bot api get-user-profile-audios` | `--offset` | ✅ |  |
+| `bot api get-user-profile-audios` | `--limit` | ✅ |  |
+| `bot api get-user-profile-audios` | `--body` | ✅ |  |
+| `bot api get-user-profile-audios` | `--body-file` | ✅ |  |
+| `bot api set-user-emoji-status` |  | ✅ |  |
+| `bot api set-user-emoji-status` | `--user-id` | ✅ |  |
+| `bot api set-user-emoji-status` | `--emoji-status-custom-emoji-id` | ✅ |  |
+| `bot api set-user-emoji-status` | `--emoji-status-expiration-date` | ✅ |  |
+| `bot api set-user-emoji-status` | `--body` | ✅ |  |
+| `bot api set-user-emoji-status` | `--body-file` | ✅ |  |
+| `bot api get-file` |  | ✅ |  |
+| `bot api get-file` | `--file-id` | ✅ |  |
+| `bot api get-file` | `--body` | ✅ |  |
+| `bot api get-file` | `--body-file` | ✅ |  |
+| `bot api ban-chat-member` |  | ✅ |  |
+| `bot api ban-chat-member` | `--chat-id` | ✅ |  |
+| `bot api ban-chat-member` | `--user-id` | ✅ |  |
+| `bot api ban-chat-member` | `--until-date` | ✅ |  |
+| `bot api ban-chat-member` | `--revoke-messages` | ✅ |  |
+| `bot api ban-chat-member` | `--body` | ✅ |  |
+| `bot api ban-chat-member` | `--body-file` | ✅ |  |
+| `bot api unban-chat-member` |  | ✅ |  |
+| `bot api unban-chat-member` | `--chat-id` | ✅ |  |
+| `bot api unban-chat-member` | `--user-id` | ✅ |  |
+| `bot api unban-chat-member` | `--only-if-banned` | ✅ |  |
+| `bot api unban-chat-member` | `--body` | ✅ |  |
+| `bot api unban-chat-member` | `--body-file` | ✅ |  |
+| `bot api restrict-chat-member` |  | ✅ |  |
+| `bot api restrict-chat-member` | `--chat-id` | ✅ |  |
+| `bot api restrict-chat-member` | `--user-id` | ✅ |  |
+| `bot api restrict-chat-member` | `--permissions` | ✅ |  |
+| `bot api restrict-chat-member` | `--use-independent-chat-permissions` | ✅ |  |
+| `bot api restrict-chat-member` | `--until-date` | ✅ |  |
+| `bot api restrict-chat-member` | `--body` | ✅ |  |
+| `bot api restrict-chat-member` | `--body-file` | ✅ |  |
+| `bot api promote-chat-member` |  | ✅ |  |
+| `bot api promote-chat-member` | `--chat-id` | ✅ |  |
+| `bot api promote-chat-member` | `--user-id` | ✅ |  |
+| `bot api promote-chat-member` | `--is-anonymous` | ✅ |  |
+| `bot api promote-chat-member` | `--can-manage-chat` | ✅ |  |
+| `bot api promote-chat-member` | `--can-delete-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--can-manage-video-chats` | ✅ |  |
+| `bot api promote-chat-member` | `--can-restrict-members` | ✅ |  |
+| `bot api promote-chat-member` | `--can-promote-members` | ✅ |  |
+| `bot api promote-chat-member` | `--can-change-info` | ✅ |  |
+| `bot api promote-chat-member` | `--can-invite-users` | ✅ |  |
+| `bot api promote-chat-member` | `--can-post-stories` | ✅ |  |
+| `bot api promote-chat-member` | `--can-edit-stories` | ✅ |  |
+| `bot api promote-chat-member` | `--can-delete-stories` | ✅ |  |
+| `bot api promote-chat-member` | `--can-post-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--can-edit-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--can-pin-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--can-manage-topics` | ✅ |  |
+| `bot api promote-chat-member` | `--can-manage-direct-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--can-manage-tags` | ✅ |  |
+| `bot api promote-chat-member` | `--can-send-welcome-messages` | ✅ |  |
+| `bot api promote-chat-member` | `--body` | ✅ |  |
+| `bot api promote-chat-member` | `--body-file` | ✅ |  |
+| `bot api set-chat-administrator-custom-title` |  | ✅ |  |
+| `bot api set-chat-administrator-custom-title` | `--chat-id` | ✅ |  |
+| `bot api set-chat-administrator-custom-title` | `--user-id` | ✅ |  |
+| `bot api set-chat-administrator-custom-title` | `--custom-title` | ✅ |  |
+| `bot api set-chat-administrator-custom-title` | `--body` | ✅ |  |
+| `bot api set-chat-administrator-custom-title` | `--body-file` | ✅ |  |
+| `bot api set-chat-member-tag` |  | ✅ |  |
+| `bot api set-chat-member-tag` | `--chat-id` | ✅ |  |
+| `bot api set-chat-member-tag` | `--user-id` | ✅ |  |
+| `bot api set-chat-member-tag` | `--tag` | ✅ |  |
+| `bot api set-chat-member-tag` | `--body` | ✅ |  |
+| `bot api set-chat-member-tag` | `--body-file` | ✅ |  |
+| `bot api ban-chat-sender-chat` |  | ✅ |  |
+| `bot api ban-chat-sender-chat` | `--chat-id` | ✅ |  |
+| `bot api ban-chat-sender-chat` | `--sender-chat-id` | ✅ |  |
+| `bot api ban-chat-sender-chat` | `--body` | ✅ |  |
+| `bot api ban-chat-sender-chat` | `--body-file` | ✅ |  |
+| `bot api unban-chat-sender-chat` |  | ✅ |  |
+| `bot api unban-chat-sender-chat` | `--chat-id` | ✅ |  |
+| `bot api unban-chat-sender-chat` | `--sender-chat-id` | ✅ |  |
+| `bot api unban-chat-sender-chat` | `--body` | ✅ |  |
+| `bot api unban-chat-sender-chat` | `--body-file` | ✅ |  |
+| `bot api set-chat-permissions` |  | ✅ |  |
+| `bot api set-chat-permissions` | `--chat-id` | ✅ |  |
+| `bot api set-chat-permissions` | `--permissions` | ✅ |  |
+| `bot api set-chat-permissions` | `--use-independent-chat-permissions` | ✅ |  |
+| `bot api set-chat-permissions` | `--body` | ✅ |  |
+| `bot api set-chat-permissions` | `--body-file` | ✅ |  |
+| `bot api export-chat-invite-link` |  | ✅ |  |
+| `bot api export-chat-invite-link` | `--chat-id` | ✅ |  |
+| `bot api export-chat-invite-link` | `--body` | ✅ |  |
+| `bot api export-chat-invite-link` | `--body-file` | ✅ |  |
+| `bot api create-chat-invite-link` |  | ✅ |  |
+| `bot api create-chat-invite-link` | `--chat-id` | ✅ |  |
+| `bot api create-chat-invite-link` | `--name` | ✅ |  |
+| `bot api create-chat-invite-link` | `--expire-date` | ✅ |  |
+| `bot api create-chat-invite-link` | `--member-limit` | ✅ |  |
+| `bot api create-chat-invite-link` | `--creates-join-request` | ✅ |  |
+| `bot api create-chat-invite-link` | `--body` | ✅ |  |
+| `bot api create-chat-invite-link` | `--body-file` | ✅ |  |
+| `bot api edit-chat-invite-link` |  | ✅ |  |
+| `bot api edit-chat-invite-link` | `--chat-id` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--invite-link` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--name` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--expire-date` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--member-limit` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--creates-join-request` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--body` | ✅ |  |
+| `bot api edit-chat-invite-link` | `--body-file` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` |  | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--chat-id` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--name` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--subscription-period` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--subscription-price` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--body` | ✅ |  |
+| `bot api create-chat-subscription-invite-link` | `--body-file` | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` |  | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` | `--chat-id` | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` | `--invite-link` | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` | `--name` | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` | `--body` | ✅ |  |
+| `bot api edit-chat-subscription-invite-link` | `--body-file` | ✅ |  |
+| `bot api revoke-chat-invite-link` |  | ✅ |  |
+| `bot api revoke-chat-invite-link` | `--chat-id` | ✅ |  |
+| `bot api revoke-chat-invite-link` | `--invite-link` | ✅ |  |
+| `bot api revoke-chat-invite-link` | `--body` | ✅ |  |
+| `bot api revoke-chat-invite-link` | `--body-file` | ✅ |  |
+| `bot api approve-chat-join-request` |  | ✅ |  |
+| `bot api approve-chat-join-request` | `--chat-id` | ✅ |  |
+| `bot api approve-chat-join-request` | `--user-id` | ✅ |  |
+| `bot api approve-chat-join-request` | `--body` | ✅ |  |
+| `bot api approve-chat-join-request` | `--body-file` | ✅ |  |
+| `bot api decline-chat-join-request` |  | ✅ |  |
+| `bot api decline-chat-join-request` | `--chat-id` | ✅ |  |
+| `bot api decline-chat-join-request` | `--user-id` | ✅ |  |
+| `bot api decline-chat-join-request` | `--body` | ✅ |  |
+| `bot api decline-chat-join-request` | `--body-file` | ✅ |  |
+| `bot api answer-chat-join-request-query` |  | ✅ |  |
+| `bot api answer-chat-join-request-query` | `--chat-join-request-query-id` | ✅ |  |
+| `bot api answer-chat-join-request-query` | `--result` | ✅ |  |
+| `bot api answer-chat-join-request-query` | `--body` | ✅ |  |
+| `bot api answer-chat-join-request-query` | `--body-file` | ✅ |  |
+| `bot api send-chat-join-request-web-app` |  | ✅ |  |
+| `bot api send-chat-join-request-web-app` | `--chat-join-request-query-id` | ✅ |  |
+| `bot api send-chat-join-request-web-app` | `--web-app-url` | ✅ |  |
+| `bot api send-chat-join-request-web-app` | `--body` | ✅ |  |
+| `bot api send-chat-join-request-web-app` | `--body-file` | ✅ |  |
+| `bot api set-chat-photo` |  | ✅ |  |
+| `bot api set-chat-photo` | `--chat-id` | ✅ |  |
+| `bot api set-chat-photo` | `--photo` | ✅ |  |
+| `bot api set-chat-photo` | `--body` | ✅ |  |
+| `bot api set-chat-photo` | `--body-file` | ✅ |  |
+| `bot api delete-chat-photo` |  | ✅ |  |
+| `bot api delete-chat-photo` | `--chat-id` | ✅ |  |
+| `bot api delete-chat-photo` | `--body` | ✅ |  |
+| `bot api delete-chat-photo` | `--body-file` | ✅ |  |
+| `bot api set-chat-title` |  | ✅ |  |
+| `bot api set-chat-title` | `--chat-id` | ✅ |  |
+| `bot api set-chat-title` | `--title` | ✅ |  |
+| `bot api set-chat-title` | `--body` | ✅ |  |
+| `bot api set-chat-title` | `--body-file` | ✅ |  |
+| `bot api set-chat-description` |  | ✅ |  |
+| `bot api set-chat-description` | `--chat-id` | ✅ |  |
+| `bot api set-chat-description` | `--description` | ✅ |  |
+| `bot api set-chat-description` | `--body` | ✅ |  |
+| `bot api set-chat-description` | `--body-file` | ✅ |  |
+| `bot api pin-chat-message` |  | ✅ |  |
+| `bot api pin-chat-message` | `--business-connection-id` | ✅ |  |
+| `bot api pin-chat-message` | `--chat-id` | ✅ |  |
+| `bot api pin-chat-message` | `--message-id` | ✅ |  |
+| `bot api pin-chat-message` | `--disable-notification` | ✅ |  |
+| `bot api pin-chat-message` | `--body` | ✅ |  |
+| `bot api pin-chat-message` | `--body-file` | ✅ |  |
+| `bot api unpin-chat-message` |  | ✅ |  |
+| `bot api unpin-chat-message` | `--business-connection-id` | ✅ |  |
+| `bot api unpin-chat-message` | `--chat-id` | ✅ |  |
+| `bot api unpin-chat-message` | `--message-id` | ✅ |  |
+| `bot api unpin-chat-message` | `--body` | ✅ |  |
+| `bot api unpin-chat-message` | `--body-file` | ✅ |  |
+| `bot api unpin-all-chat-messages` |  | ✅ |  |
+| `bot api unpin-all-chat-messages` | `--chat-id` | ✅ |  |
+| `bot api unpin-all-chat-messages` | `--body` | ✅ |  |
+| `bot api unpin-all-chat-messages` | `--body-file` | ✅ |  |
+| `bot api leave-chat` |  | ✅ |  |
+| `bot api leave-chat` | `--chat-id` | ✅ |  |
+| `bot api leave-chat` | `--body` | ✅ |  |
+| `bot api leave-chat` | `--body-file` | ✅ |  |
+| `bot api get-chat` |  | ✅ |  |
+| `bot api get-chat` | `--chat-id` | ✅ |  |
+| `bot api get-chat` | `--body` | ✅ |  |
+| `bot api get-chat` | `--body-file` | ✅ |  |
+| `bot api get-chat-administrators` |  | ✅ |  |
+| `bot api get-chat-administrators` | `--chat-id` | ✅ |  |
+| `bot api get-chat-administrators` | `--return-bots` | ✅ |  |
+| `bot api get-chat-administrators` | `--body` | ✅ |  |
+| `bot api get-chat-administrators` | `--body-file` | ✅ |  |
+| `bot api get-chat-member-count` |  | ✅ |  |
+| `bot api get-chat-member-count` | `--chat-id` | ✅ |  |
+| `bot api get-chat-member-count` | `--body` | ✅ |  |
+| `bot api get-chat-member-count` | `--body-file` | ✅ |  |
+| `bot api get-chat-member` |  | ✅ |  |
+| `bot api get-chat-member` | `--chat-id` | ✅ |  |
+| `bot api get-chat-member` | `--user-id` | ✅ |  |
+| `bot api get-chat-member` | `--body` | ✅ |  |
+| `bot api get-chat-member` | `--body-file` | ✅ |  |
+| `bot api get-user-personal-chat-messages` |  | ✅ |  |
+| `bot api get-user-personal-chat-messages` | `--user-id` | ✅ |  |
+| `bot api get-user-personal-chat-messages` | `--limit` | ✅ |  |
+| `bot api get-user-personal-chat-messages` | `--body` | ✅ |  |
+| `bot api get-user-personal-chat-messages` | `--body-file` | ✅ |  |
+| `bot api set-chat-sticker-set` |  | ✅ |  |
+| `bot api set-chat-sticker-set` | `--chat-id` | ✅ |  |
+| `bot api set-chat-sticker-set` | `--sticker-set-name` | ✅ |  |
+| `bot api set-chat-sticker-set` | `--body` | ✅ |  |
+| `bot api set-chat-sticker-set` | `--body-file` | ✅ |  |
+| `bot api delete-chat-sticker-set` |  | ✅ |  |
+| `bot api delete-chat-sticker-set` | `--chat-id` | ✅ |  |
+| `bot api delete-chat-sticker-set` | `--body` | ✅ |  |
+| `bot api delete-chat-sticker-set` | `--body-file` | ✅ |  |
+| `bot api get-forum-topic-icon-stickers` |  | ✅ |  |
+| `bot api create-forum-topic` |  | ✅ |  |
+| `bot api create-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api create-forum-topic` | `--name` | ✅ |  |
+| `bot api create-forum-topic` | `--icon-color` | ✅ |  |
+| `bot api create-forum-topic` | `--icon-custom-emoji-id` | ✅ |  |
+| `bot api create-forum-topic` | `--body` | ✅ |  |
+| `bot api create-forum-topic` | `--body-file` | ✅ |  |
+| `bot api edit-forum-topic` |  | ✅ |  |
+| `bot api edit-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api edit-forum-topic` | `--message-thread-id` | ✅ |  |
+| `bot api edit-forum-topic` | `--name` | ✅ |  |
+| `bot api edit-forum-topic` | `--icon-custom-emoji-id` | ✅ |  |
+| `bot api edit-forum-topic` | `--body` | ✅ |  |
+| `bot api edit-forum-topic` | `--body-file` | ✅ |  |
+| `bot api close-forum-topic` |  | ✅ |  |
+| `bot api close-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api close-forum-topic` | `--message-thread-id` | ✅ |  |
+| `bot api close-forum-topic` | `--body` | ✅ |  |
+| `bot api close-forum-topic` | `--body-file` | ✅ |  |
+| `bot api reopen-forum-topic` |  | ✅ |  |
+| `bot api reopen-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api reopen-forum-topic` | `--message-thread-id` | ✅ |  |
+| `bot api reopen-forum-topic` | `--body` | ✅ |  |
+| `bot api reopen-forum-topic` | `--body-file` | ✅ |  |
+| `bot api delete-forum-topic` |  | ✅ |  |
+| `bot api delete-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api delete-forum-topic` | `--message-thread-id` | ✅ |  |
+| `bot api delete-forum-topic` | `--body` | ✅ |  |
+| `bot api delete-forum-topic` | `--body-file` | ✅ |  |
+| `bot api unpin-all-forum-topic-messages` |  | ✅ |  |
+| `bot api unpin-all-forum-topic-messages` | `--chat-id` | ✅ |  |
+| `bot api unpin-all-forum-topic-messages` | `--message-thread-id` | ✅ |  |
+| `bot api unpin-all-forum-topic-messages` | `--body` | ✅ |  |
+| `bot api unpin-all-forum-topic-messages` | `--body-file` | ✅ |  |
+| `bot api edit-general-forum-topic` |  | ✅ |  |
+| `bot api edit-general-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api edit-general-forum-topic` | `--name` | ✅ |  |
+| `bot api edit-general-forum-topic` | `--body` | ✅ |  |
+| `bot api edit-general-forum-topic` | `--body-file` | ✅ |  |
+| `bot api close-general-forum-topic` |  | ✅ |  |
+| `bot api close-general-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api close-general-forum-topic` | `--body` | ✅ |  |
+| `bot api close-general-forum-topic` | `--body-file` | ✅ |  |
+| `bot api reopen-general-forum-topic` |  | ✅ |  |
+| `bot api reopen-general-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api reopen-general-forum-topic` | `--body` | ✅ |  |
+| `bot api reopen-general-forum-topic` | `--body-file` | ✅ |  |
+| `bot api hide-general-forum-topic` |  | ✅ |  |
+| `bot api hide-general-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api hide-general-forum-topic` | `--body` | ✅ |  |
+| `bot api hide-general-forum-topic` | `--body-file` | ✅ |  |
+| `bot api unhide-general-forum-topic` |  | ✅ |  |
+| `bot api unhide-general-forum-topic` | `--chat-id` | ✅ |  |
+| `bot api unhide-general-forum-topic` | `--body` | ✅ |  |
+| `bot api unhide-general-forum-topic` | `--body-file` | ✅ |  |
+| `bot api unpin-all-general-forum-topic-messages` |  | ✅ |  |
+| `bot api unpin-all-general-forum-topic-messages` | `--chat-id` | ✅ |  |
+| `bot api unpin-all-general-forum-topic-messages` | `--body` | ✅ |  |
+| `bot api unpin-all-general-forum-topic-messages` | `--body-file` | ✅ |  |
+| `bot api answer-callback-query` |  | ✅ |  |
+| `bot api answer-callback-query` | `--callback-query-id` | ✅ |  |
+| `bot api answer-callback-query` | `--text` | ✅ |  |
+| `bot api answer-callback-query` | `--show-alert` | ✅ |  |
+| `bot api answer-callback-query` | `--url` | ✅ |  |
+| `bot api answer-callback-query` | `--cache-time` | ✅ |  |
+| `bot api answer-callback-query` | `--body` | ✅ |  |
+| `bot api answer-callback-query` | `--body-file` | ✅ |  |
+| `bot api answer-guest-query` |  | ✅ |  |
+| `bot api answer-guest-query` | `--guest-query-id` | ✅ |  |
+| `bot api answer-guest-query` | `--body` | ✅ |  |
+| `bot api answer-guest-query` | `--body-file` | ✅ |  |
+| `bot api get-user-chat-boosts` |  | ✅ |  |
+| `bot api get-user-chat-boosts` | `--chat-id` | ✅ |  |
+| `bot api get-user-chat-boosts` | `--user-id` | ✅ |  |
+| `bot api get-user-chat-boosts` | `--body` | ✅ |  |
+| `bot api get-user-chat-boosts` | `--body-file` | ✅ |  |
+| `bot api get-business-connection` |  | ✅ |  |
+| `bot api get-business-connection` | `--business-connection-id` | ✅ |  |
+| `bot api get-business-connection` | `--body` | ✅ |  |
+| `bot api get-business-connection` | `--body-file` | ✅ |  |
+| `bot api get-managed-bot-token` |  | ✅ |  |
+| `bot api get-managed-bot-token` | `--user-id` | ✅ |  |
+| `bot api get-managed-bot-token` | `--body` | ✅ |  |
+| `bot api get-managed-bot-token` | `--body-file` | ✅ |  |
+| `bot api replace-managed-bot-token` |  | ✅ |  |
+| `bot api replace-managed-bot-token` | `--user-id` | ✅ |  |
+| `bot api replace-managed-bot-token` | `--body` | ✅ |  |
+| `bot api replace-managed-bot-token` | `--body-file` | ✅ |  |
+| `bot api get-managed-bot-access-settings` |  | ✅ |  |
+| `bot api get-managed-bot-access-settings` | `--user-id` | ✅ |  |
+| `bot api get-managed-bot-access-settings` | `--body` | ✅ |  |
+| `bot api get-managed-bot-access-settings` | `--body-file` | ✅ |  |
+| `bot api set-managed-bot-access-settings` |  | ✅ |  |
+| `bot api set-managed-bot-access-settings` | `--user-id` | ✅ |  |
+| `bot api set-managed-bot-access-settings` | `--is-access-restricted` | ✅ |  |
+| `bot api set-managed-bot-access-settings` | `--added-user-ids` | ✅ |  |
+| `bot api set-managed-bot-access-settings` | `--body` | ✅ |  |
+| `bot api set-managed-bot-access-settings` | `--body-file` | ✅ |  |
+| `bot api set-my-commands` |  | ✅ |  |
+| `bot api set-my-commands` | `--commands` | ✅ |  |
+| `bot api set-my-commands` | `--scope` | ✅ |  |
+| `bot api set-my-commands` | `--language-code` | ✅ |  |
+| `bot api set-my-commands` | `--body` | ✅ |  |
+| `bot api set-my-commands` | `--body-file` | ✅ |  |
+| `bot api delete-my-commands` |  | ✅ |  |
+| `bot api delete-my-commands` | `--scope` | ✅ |  |
+| `bot api delete-my-commands` | `--language-code` | ✅ |  |
+| `bot api delete-my-commands` | `--body` | ✅ |  |
+| `bot api delete-my-commands` | `--body-file` | ✅ |  |
+| `bot api get-my-commands` |  | ✅ |  |
+| `bot api get-my-commands` | `--scope` | ✅ |  |
+| `bot api get-my-commands` | `--language-code` | ✅ |  |
+| `bot api get-my-commands` | `--body` | ✅ |  |
+| `bot api get-my-commands` | `--body-file` | ✅ |  |
+| `bot api set-my-name` |  | ✅ |  |
+| `bot api set-my-name` | `--name` | ✅ |  |
+| `bot api set-my-name` | `--language-code` | ✅ |  |
+| `bot api set-my-name` | `--body` | ✅ |  |
+| `bot api set-my-name` | `--body-file` | ✅ |  |
+| `bot api get-my-name` |  | ✅ |  |
+| `bot api get-my-name` | `--language-code` | ✅ |  |
+| `bot api get-my-name` | `--body` | ✅ |  |
+| `bot api get-my-name` | `--body-file` | ✅ |  |
+| `bot api set-my-description` |  | ✅ |  |
+| `bot api set-my-description` | `--description` | ✅ |  |
+| `bot api set-my-description` | `--language-code` | ✅ |  |
+| `bot api set-my-description` | `--body` | ✅ |  |
+| `bot api set-my-description` | `--body-file` | ✅ |  |
+| `bot api get-my-description` |  | ✅ |  |
+| `bot api get-my-description` | `--language-code` | ✅ |  |
+| `bot api get-my-description` | `--body` | ✅ |  |
+| `bot api get-my-description` | `--body-file` | ✅ |  |
+| `bot api set-my-short-description` |  | ✅ |  |
+| `bot api set-my-short-description` | `--short-description` | ✅ |  |
+| `bot api set-my-short-description` | `--language-code` | ✅ |  |
+| `bot api set-my-short-description` | `--body` | ✅ |  |
+| `bot api set-my-short-description` | `--body-file` | ✅ |  |
+| `bot api get-my-short-description` |  | ✅ |  |
+| `bot api get-my-short-description` | `--language-code` | ✅ |  |
+| `bot api get-my-short-description` | `--body` | ✅ |  |
+| `bot api get-my-short-description` | `--body-file` | ✅ |  |
+| `bot api set-my-profile-photo` |  | ✅ |  |
+| `bot api set-my-profile-photo` | `--photo` | ✅ |  |
+| `bot api set-my-profile-photo` | `--body` | ✅ |  |
+| `bot api set-my-profile-photo` | `--body-file` | ✅ |  |
+| `bot api remove-my-profile-photo` |  | ✅ |  |
+| `bot api set-chat-menu-button` |  | ✅ |  |
+| `bot api set-chat-menu-button` | `--chat-id` | ✅ |  |
+| `bot api set-chat-menu-button` | `--menu-button` | ✅ |  |
+| `bot api set-chat-menu-button` | `--body` | ✅ |  |
+| `bot api set-chat-menu-button` | `--body-file` | ✅ |  |
+| `bot api get-chat-menu-button` |  | ✅ |  |
+| `bot api get-chat-menu-button` | `--chat-id` | ✅ |  |
+| `bot api get-chat-menu-button` | `--body` | ✅ |  |
+| `bot api get-chat-menu-button` | `--body-file` | ✅ |  |
+| `bot api set-my-default-administrator-rights` |  | ✅ |  |
+| `bot api set-my-default-administrator-rights` | `--rights` | ✅ |  |
+| `bot api set-my-default-administrator-rights` | `--for-channels` | ✅ |  |
+| `bot api set-my-default-administrator-rights` | `--body` | ✅ |  |
+| `bot api set-my-default-administrator-rights` | `--body-file` | ✅ |  |
+| `bot api get-my-default-administrator-rights` |  | ✅ |  |
+| `bot api get-my-default-administrator-rights` | `--for-channels` | ✅ |  |
+| `bot api get-my-default-administrator-rights` | `--body` | ✅ |  |
+| `bot api get-my-default-administrator-rights` | `--body-file` | ✅ |  |
+| `bot api get-available-gifts` |  | ✅ |  |
+| `bot api send-gift` |  | ✅ |  |
+| `bot api send-gift` | `--user-id` | ✅ |  |
+| `bot api send-gift` | `--chat-id` | ✅ |  |
+| `bot api send-gift` | `--gift-id` | ✅ |  |
+| `bot api send-gift` | `--pay-for-upgrade` | ✅ |  |
+| `bot api send-gift` | `--text` | ✅ |  |
+| `bot api send-gift` | `--text-parse-mode` | ✅ |  |
+| `bot api send-gift` | `--text-entities` | ✅ |  |
+| `bot api send-gift` | `--body` | ✅ |  |
+| `bot api send-gift` | `--body-file` | ✅ |  |
+| `bot api gift-premium-subscription` |  | ✅ |  |
+| `bot api gift-premium-subscription` | `--user-id` | ✅ |  |
+| `bot api gift-premium-subscription` | `--month-count` | ✅ |  |
+| `bot api gift-premium-subscription` | `--star-count` | ✅ |  |
+| `bot api gift-premium-subscription` | `--text` | ✅ |  |
+| `bot api gift-premium-subscription` | `--text-parse-mode` | ✅ |  |
+| `bot api gift-premium-subscription` | `--text-entities` | ✅ |  |
+| `bot api gift-premium-subscription` | `--body` | ✅ |  |
+| `bot api gift-premium-subscription` | `--body-file` | ✅ |  |
+| `bot api verify-user` |  | ✅ |  |
+| `bot api verify-user` | `--user-id` | ✅ |  |
+| `bot api verify-user` | `--custom-description` | ✅ |  |
+| `bot api verify-user` | `--body` | ✅ |  |
+| `bot api verify-user` | `--body-file` | ✅ |  |
+| `bot api verify-chat` |  | ✅ |  |
+| `bot api verify-chat` | `--chat-id` | ✅ |  |
+| `bot api verify-chat` | `--custom-description` | ✅ |  |
+| `bot api verify-chat` | `--body` | ✅ |  |
+| `bot api verify-chat` | `--body-file` | ✅ |  |
+| `bot api remove-user-verification` |  | ✅ |  |
+| `bot api remove-user-verification` | `--user-id` | ✅ |  |
+| `bot api remove-user-verification` | `--body` | ✅ |  |
+| `bot api remove-user-verification` | `--body-file` | ✅ |  |
+| `bot api remove-chat-verification` |  | ✅ |  |
+| `bot api remove-chat-verification` | `--chat-id` | ✅ |  |
+| `bot api remove-chat-verification` | `--body` | ✅ |  |
+| `bot api remove-chat-verification` | `--body-file` | ✅ |  |
+| `bot api read-business-message` |  | ✅ |  |
+| `bot api read-business-message` | `--business-connection-id` | ✅ |  |
+| `bot api read-business-message` | `--chat-id` | ✅ |  |
+| `bot api read-business-message` | `--message-id` | ✅ |  |
+| `bot api read-business-message` | `--body` | ✅ |  |
+| `bot api read-business-message` | `--body-file` | ✅ |  |
+| `bot api delete-business-messages` |  | ✅ |  |
+| `bot api delete-business-messages` | `--business-connection-id` | ✅ |  |
+| `bot api delete-business-messages` | `--message-ids` | ✅ |  |
+| `bot api delete-business-messages` | `--body` | ✅ |  |
+| `bot api delete-business-messages` | `--body-file` | ✅ |  |
+| `bot api set-business-account-name` |  | ✅ |  |
+| `bot api set-business-account-name` | `--business-connection-id` | ✅ |  |
+| `bot api set-business-account-name` | `--first-name` | ✅ |  |
+| `bot api set-business-account-name` | `--last-name` | ✅ |  |
+| `bot api set-business-account-name` | `--body` | ✅ |  |
+| `bot api set-business-account-name` | `--body-file` | ✅ |  |
+| `bot api set-business-account-username` |  | ✅ |  |
+| `bot api set-business-account-username` | `--business-connection-id` | ✅ |  |
+| `bot api set-business-account-username` | `--username` | ✅ |  |
+| `bot api set-business-account-username` | `--body` | ✅ |  |
+| `bot api set-business-account-username` | `--body-file` | ✅ |  |
+| `bot api set-business-account-bio` |  | ✅ |  |
+| `bot api set-business-account-bio` | `--business-connection-id` | ✅ |  |
+| `bot api set-business-account-bio` | `--bio` | ✅ |  |
+| `bot api set-business-account-bio` | `--body` | ✅ |  |
+| `bot api set-business-account-bio` | `--body-file` | ✅ |  |
+| `bot api set-business-account-profile-photo` |  | ✅ |  |
+| `bot api set-business-account-profile-photo` | `--business-connection-id` | ✅ |  |
+| `bot api set-business-account-profile-photo` | `--photo` | ✅ |  |
+| `bot api set-business-account-profile-photo` | `--is-public` | ✅ |  |
+| `bot api set-business-account-profile-photo` | `--body` | ✅ |  |
+| `bot api set-business-account-profile-photo` | `--body-file` | ✅ |  |
+| `bot api remove-business-account-profile-photo` |  | ✅ |  |
+| `bot api remove-business-account-profile-photo` | `--business-connection-id` | ✅ |  |
+| `bot api remove-business-account-profile-photo` | `--is-public` | ✅ |  |
+| `bot api remove-business-account-profile-photo` | `--body` | ✅ |  |
+| `bot api remove-business-account-profile-photo` | `--body-file` | ✅ |  |
+| `bot api set-business-account-gift-settings` |  | ✅ |  |
+| `bot api set-business-account-gift-settings` | `--business-connection-id` | ✅ |  |
+| `bot api set-business-account-gift-settings` | `--show-gift-button` | ✅ |  |
+| `bot api set-business-account-gift-settings` | `--accepted-gift-types` | ✅ |  |
+| `bot api set-business-account-gift-settings` | `--body` | ✅ |  |
+| `bot api set-business-account-gift-settings` | `--body-file` | ✅ |  |
+| `bot api get-business-account-star-balance` |  | ✅ |  |
+| `bot api get-business-account-star-balance` | `--business-connection-id` | ✅ |  |
+| `bot api get-business-account-star-balance` | `--body` | ✅ |  |
+| `bot api get-business-account-star-balance` | `--body-file` | ✅ |  |
+| `bot api transfer-business-account-stars` |  | ✅ |  |
+| `bot api transfer-business-account-stars` | `--business-connection-id` | ✅ |  |
+| `bot api transfer-business-account-stars` | `--star-count` | ✅ |  |
+| `bot api transfer-business-account-stars` | `--body` | ✅ |  |
+| `bot api transfer-business-account-stars` | `--body-file` | ✅ |  |
+| `bot api get-business-account-gifts` |  | ✅ |  |
+| `bot api get-business-account-gifts` | `--business-connection-id` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-unsaved` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-saved` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-unlimited` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-limited-upgradable` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-limited-non-upgradable` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-unique` | ✅ |  |
+| `bot api get-business-account-gifts` | `--exclude-from-blockchain` | ✅ |  |
+| `bot api get-business-account-gifts` | `--sort-by-price` | ✅ |  |
+| `bot api get-business-account-gifts` | `--offset` | ✅ |  |
+| `bot api get-business-account-gifts` | `--limit` | ✅ |  |
+| `bot api get-business-account-gifts` | `--body` | ✅ |  |
+| `bot api get-business-account-gifts` | `--body-file` | ✅ |  |
+| `bot api get-user-gifts` |  | ✅ |  |
+| `bot api get-user-gifts` | `--user-id` | ✅ |  |
+| `bot api get-user-gifts` | `--exclude-unlimited` | ✅ |  |
+| `bot api get-user-gifts` | `--exclude-limited-upgradable` | ✅ |  |
+| `bot api get-user-gifts` | `--exclude-limited-non-upgradable` | ✅ |  |
+| `bot api get-user-gifts` | `--exclude-from-blockchain` | ✅ |  |
+| `bot api get-user-gifts` | `--exclude-unique` | ✅ |  |
+| `bot api get-user-gifts` | `--sort-by-price` | ✅ |  |
+| `bot api get-user-gifts` | `--offset` | ✅ |  |
+| `bot api get-user-gifts` | `--limit` | ✅ |  |
+| `bot api get-user-gifts` | `--body` | ✅ |  |
+| `bot api get-user-gifts` | `--body-file` | ✅ |  |
+| `bot api get-chat-gifts` |  | ✅ |  |
+| `bot api get-chat-gifts` | `--chat-id` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-unsaved` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-saved` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-unlimited` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-limited-upgradable` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-limited-non-upgradable` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-from-blockchain` | ✅ |  |
+| `bot api get-chat-gifts` | `--exclude-unique` | ✅ |  |
+| `bot api get-chat-gifts` | `--sort-by-price` | ✅ |  |
+| `bot api get-chat-gifts` | `--offset` | ✅ |  |
+| `bot api get-chat-gifts` | `--limit` | ✅ |  |
+| `bot api get-chat-gifts` | `--body` | ✅ |  |
+| `bot api get-chat-gifts` | `--body-file` | ✅ |  |
+| `bot api convert-gift-to-stars` |  | ✅ |  |
+| `bot api convert-gift-to-stars` | `--business-connection-id` | ✅ |  |
+| `bot api convert-gift-to-stars` | `--owned-gift-id` | ✅ |  |
+| `bot api convert-gift-to-stars` | `--body` | ✅ |  |
+| `bot api convert-gift-to-stars` | `--body-file` | ✅ |  |
+| `bot api upgrade-gift` |  | ✅ |  |
+| `bot api upgrade-gift` | `--business-connection-id` | ✅ |  |
+| `bot api upgrade-gift` | `--owned-gift-id` | ✅ |  |
+| `bot api upgrade-gift` | `--keep-original-details` | ✅ |  |
+| `bot api upgrade-gift` | `--star-count` | ✅ |  |
+| `bot api upgrade-gift` | `--body` | ✅ |  |
+| `bot api upgrade-gift` | `--body-file` | ✅ |  |
+| `bot api transfer-gift` |  | ✅ |  |
+| `bot api transfer-gift` | `--business-connection-id` | ✅ |  |
+| `bot api transfer-gift` | `--owned-gift-id` | ✅ |  |
+| `bot api transfer-gift` | `--new-owner-chat-id` | ✅ |  |
+| `bot api transfer-gift` | `--star-count` | ✅ |  |
+| `bot api transfer-gift` | `--body` | ✅ |  |
+| `bot api transfer-gift` | `--body-file` | ✅ |  |
+| `bot api post-story` |  | ✅ |  |
+| `bot api post-story` | `--business-connection-id` | ✅ |  |
+| `bot api post-story` | `--content` | ✅ |  |
+| `bot api post-story` | `--active-period` | ✅ |  |
+| `bot api post-story` | `--caption` | ✅ |  |
+| `bot api post-story` | `--parse-mode` | ✅ |  |
+| `bot api post-story` | `--caption-entities` | ✅ |  |
+| `bot api post-story` | `--areas` | ✅ |  |
+| `bot api post-story` | `--post-to-chat-page` | ✅ |  |
+| `bot api post-story` | `--protect-content` | ✅ |  |
+| `bot api post-story` | `--body` | ✅ |  |
+| `bot api post-story` | `--body-file` | ✅ |  |
+| `bot api repost-story` |  | ✅ |  |
+| `bot api repost-story` | `--business-connection-id` | ✅ |  |
+| `bot api repost-story` | `--from-chat-id` | ✅ |  |
+| `bot api repost-story` | `--from-story-id` | ✅ |  |
+| `bot api repost-story` | `--active-period` | ✅ |  |
+| `bot api repost-story` | `--post-to-chat-page` | ✅ |  |
+| `bot api repost-story` | `--protect-content` | ✅ |  |
+| `bot api repost-story` | `--body` | ✅ |  |
+| `bot api repost-story` | `--body-file` | ✅ |  |
+| `bot api edit-story` |  | ✅ |  |
+| `bot api edit-story` | `--business-connection-id` | ✅ |  |
+| `bot api edit-story` | `--story-id` | ✅ |  |
+| `bot api edit-story` | `--content` | ✅ |  |
+| `bot api edit-story` | `--caption` | ✅ |  |
+| `bot api edit-story` | `--parse-mode` | ✅ |  |
+| `bot api edit-story` | `--caption-entities` | ✅ |  |
+| `bot api edit-story` | `--areas` | ✅ |  |
+| `bot api edit-story` | `--body` | ✅ |  |
+| `bot api edit-story` | `--body-file` | ✅ |  |
+| `bot api delete-story` |  | ✅ |  |
+| `bot api delete-story` | `--business-connection-id` | ✅ |  |
+| `bot api delete-story` | `--story-id` | ✅ |  |
+| `bot api delete-story` | `--body` | ✅ |  |
+| `bot api delete-story` | `--body-file` | ✅ |  |
+| `bot api answer-web-app-query` |  | ✅ |  |
+| `bot api answer-web-app-query` | `--web-app-query-id` | ✅ |  |
+| `bot api answer-web-app-query` | `--body` | ✅ |  |
+| `bot api answer-web-app-query` | `--body-file` | ✅ |  |
+| `bot api save-prepared-inline-message` |  | ✅ |  |
+| `bot api save-prepared-inline-message` | `--user-id` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--allow-user-chats` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--allow-bot-chats` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--allow-group-chats` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--allow-channel-chats` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--body` | ✅ |  |
+| `bot api save-prepared-inline-message` | `--body-file` | ✅ |  |
+| `bot api save-prepared-keyboard-button` |  | ✅ |  |
+| `bot api save-prepared-keyboard-button` | `--user-id` | ✅ |  |
+| `bot api save-prepared-keyboard-button` | `--button` | ✅ |  |
+| `bot api save-prepared-keyboard-button` | `--body` | ✅ |  |
+| `bot api save-prepared-keyboard-button` | `--body-file` | ✅ |  |
+| `bot api edit-message-text` |  | ✅ |  |
+| `bot api edit-message-text` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-text` | `--chat-id` | ✅ |  |
+| `bot api edit-message-text` | `--message-id` | ✅ |  |
+| `bot api edit-message-text` | `--inline-message-id` | ✅ |  |
+| `bot api edit-message-text` | `--text` | ✅ |  |
+| `bot api edit-message-text` | `--parse-mode` | ✅ |  |
+| `bot api edit-message-text` | `--entities` | ✅ |  |
+| `bot api edit-message-text` | `--link-preview-options` | ✅ |  |
+| `bot api edit-message-text` | `--rich-message` | ✅ |  |
+| `bot api edit-message-text` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-text` | `--body` | ✅ |  |
+| `bot api edit-message-text` | `--body-file` | ✅ |  |
+| `bot api edit-message-caption` |  | ✅ |  |
+| `bot api edit-message-caption` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-caption` | `--chat-id` | ✅ |  |
+| `bot api edit-message-caption` | `--message-id` | ✅ |  |
+| `bot api edit-message-caption` | `--inline-message-id` | ✅ |  |
+| `bot api edit-message-caption` | `--caption` | ✅ |  |
+| `bot api edit-message-caption` | `--parse-mode` | ✅ |  |
+| `bot api edit-message-caption` | `--caption-entities` | ✅ |  |
+| `bot api edit-message-caption` | `--show-caption-above-media` | ✅ |  |
+| `bot api edit-message-caption` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-caption` | `--body` | ✅ |  |
+| `bot api edit-message-caption` | `--body-file` | ✅ |  |
+| `bot api edit-message-media` |  | ✅ |  |
+| `bot api edit-message-media` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-media` | `--chat-id` | ✅ |  |
+| `bot api edit-message-media` | `--message-id` | ✅ |  |
+| `bot api edit-message-media` | `--inline-message-id` | ✅ |  |
+| `bot api edit-message-media` | `--media` | ✅ |  |
+| `bot api edit-message-media` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-media` | `--body` | ✅ |  |
+| `bot api edit-message-media` | `--body-file` | ✅ |  |
+| `bot api edit-message-live-location` |  | ✅ |  |
+| `bot api edit-message-live-location` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-live-location` | `--chat-id` | ✅ |  |
+| `bot api edit-message-live-location` | `--message-id` | ✅ |  |
+| `bot api edit-message-live-location` | `--inline-message-id` | ✅ |  |
+| `bot api edit-message-live-location` | `--latitude` | ✅ |  |
+| `bot api edit-message-live-location` | `--longitude` | ✅ |  |
+| `bot api edit-message-live-location` | `--live-period` | ✅ |  |
+| `bot api edit-message-live-location` | `--horizontal-accuracy` | ✅ |  |
+| `bot api edit-message-live-location` | `--heading` | ✅ |  |
+| `bot api edit-message-live-location` | `--proximity-alert-radius` | ✅ |  |
+| `bot api edit-message-live-location` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-live-location` | `--body` | ✅ |  |
+| `bot api edit-message-live-location` | `--body-file` | ✅ |  |
+| `bot api stop-message-live-location` |  | ✅ |  |
+| `bot api stop-message-live-location` | `--business-connection-id` | ✅ |  |
+| `bot api stop-message-live-location` | `--chat-id` | ✅ |  |
+| `bot api stop-message-live-location` | `--message-id` | ✅ |  |
+| `bot api stop-message-live-location` | `--inline-message-id` | ✅ |  |
+| `bot api stop-message-live-location` | `--reply-markup` | ✅ |  |
+| `bot api stop-message-live-location` | `--body` | ✅ |  |
+| `bot api stop-message-live-location` | `--body-file` | ✅ |  |
+| `bot api edit-message-checklist` |  | ✅ |  |
+| `bot api edit-message-checklist` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-checklist` | `--chat-id` | ✅ |  |
+| `bot api edit-message-checklist` | `--message-id` | ✅ |  |
+| `bot api edit-message-checklist` | `--checklist` | ✅ |  |
+| `bot api edit-message-checklist` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-checklist` | `--body` | ✅ |  |
+| `bot api edit-message-checklist` | `--body-file` | ✅ |  |
+| `bot api edit-message-reply-markup` |  | ✅ |  |
+| `bot api edit-message-reply-markup` | `--business-connection-id` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--chat-id` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--message-id` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--inline-message-id` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--reply-markup` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--body` | ✅ |  |
+| `bot api edit-message-reply-markup` | `--body-file` | ✅ |  |
+| `bot api stop-poll` |  | ✅ |  |
+| `bot api stop-poll` | `--business-connection-id` | ✅ |  |
+| `bot api stop-poll` | `--chat-id` | ✅ |  |
+| `bot api stop-poll` | `--message-id` | ✅ |  |
+| `bot api stop-poll` | `--reply-markup` | ✅ |  |
+| `bot api stop-poll` | `--body` | ✅ |  |
+| `bot api stop-poll` | `--body-file` | ✅ |  |
+| `bot api edit-ephemeral-message-text` |  | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--chat-id` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--receiver-user-id` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--ephemeral-message-id` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--text` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--parse-mode` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--entities` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--rich-message` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--link-preview-options` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--reply-markup` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--body` | ✅ |  |
+| `bot api edit-ephemeral-message-text` | `--body-file` | ✅ |  |
+| `bot api edit-ephemeral-message-media` |  | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--chat-id` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--receiver-user-id` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--ephemeral-message-id` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--media` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--reply-markup` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--body` | ✅ |  |
+| `bot api edit-ephemeral-message-media` | `--body-file` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` |  | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--chat-id` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--receiver-user-id` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--ephemeral-message-id` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--caption` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--parse-mode` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--caption-entities` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--show-caption-above-media` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--reply-markup` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--body` | ✅ |  |
+| `bot api edit-ephemeral-message-caption` | `--body-file` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` |  | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--chat-id` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--receiver-user-id` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--ephemeral-message-id` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--reply-markup` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--body` | ✅ |  |
+| `bot api edit-ephemeral-message-reply-markup` | `--body-file` | ✅ |  |
+| `bot api approve-suggested-post` |  | ✅ |  |
+| `bot api approve-suggested-post` | `--chat-id` | ✅ |  |
+| `bot api approve-suggested-post` | `--message-id` | ✅ |  |
+| `bot api approve-suggested-post` | `--send-date` | ✅ |  |
+| `bot api approve-suggested-post` | `--body` | ✅ |  |
+| `bot api approve-suggested-post` | `--body-file` | ✅ |  |
+| `bot api decline-suggested-post` |  | ✅ |  |
+| `bot api decline-suggested-post` | `--chat-id` | ✅ |  |
+| `bot api decline-suggested-post` | `--message-id` | ✅ |  |
+| `bot api decline-suggested-post` | `--comment` | ✅ |  |
+| `bot api decline-suggested-post` | `--body` | ✅ |  |
+| `bot api decline-suggested-post` | `--body-file` | ✅ |  |
+| `bot api delete-message` |  | ✅ |  |
+| `bot api delete-message` | `--chat-id` | ✅ |  |
+| `bot api delete-message` | `--message-id` | ✅ |  |
+| `bot api delete-message` | `--body` | ✅ |  |
+| `bot api delete-message` | `--body-file` | ✅ |  |
+| `bot api delete-messages` |  | ✅ |  |
+| `bot api delete-messages` | `--chat-id` | ✅ |  |
+| `bot api delete-messages` | `--message-ids` | ✅ |  |
+| `bot api delete-messages` | `--body` | ✅ |  |
+| `bot api delete-messages` | `--body-file` | ✅ |  |
+| `bot api delete-ephemeral-message` |  | ✅ |  |
+| `bot api delete-ephemeral-message` | `--chat-id` | ✅ |  |
+| `bot api delete-ephemeral-message` | `--receiver-user-id` | ✅ |  |
+| `bot api delete-ephemeral-message` | `--ephemeral-message-id` | ✅ |  |
+| `bot api delete-ephemeral-message` | `--body` | ✅ |  |
+| `bot api delete-ephemeral-message` | `--body-file` | ✅ |  |
+| `bot api delete-message-reaction` |  | ✅ |  |
+| `bot api delete-message-reaction` | `--chat-id` | ✅ |  |
+| `bot api delete-message-reaction` | `--message-id` | ✅ |  |
+| `bot api delete-message-reaction` | `--user-id` | ✅ |  |
+| `bot api delete-message-reaction` | `--actor-chat-id` | ✅ |  |
+| `bot api delete-message-reaction` | `--body` | ✅ |  |
+| `bot api delete-message-reaction` | `--body-file` | ✅ |  |
+| `bot api delete-all-message-reactions` |  | ✅ |  |
+| `bot api delete-all-message-reactions` | `--chat-id` | ✅ |  |
+| `bot api delete-all-message-reactions` | `--user-id` | ✅ |  |
+| `bot api delete-all-message-reactions` | `--actor-chat-id` | ✅ |  |
+| `bot api delete-all-message-reactions` | `--body` | ✅ |  |
+| `bot api delete-all-message-reactions` | `--body-file` | ✅ |  |
+| `bot api send-sticker` |  | ✅ |  |
+| `bot api send-sticker` | `--business-connection-id` | ✅ |  |
+| `bot api send-sticker` | `--chat-id` | ✅ |  |
+| `bot api send-sticker` | `--message-thread-id` | ✅ |  |
+| `bot api send-sticker` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-sticker` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-sticker` | `--sticker` | ✅ |  |
+| `bot api send-sticker` | `--emoji` | ✅ |  |
+| `bot api send-sticker` | `--disable-notification` | ✅ |  |
+| `bot api send-sticker` | `--protect-content` | ✅ |  |
+| `bot api send-sticker` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-sticker` | `--message-effect-id` | ✅ |  |
+| `bot api send-sticker` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-sticker` | `--reply-parameters` | ✅ |  |
+| `bot api send-sticker` | `--reply-markup` | ✅ |  |
+| `bot api send-sticker` | `--body` | ✅ |  |
+| `bot api send-sticker` | `--body-file` | ✅ |  |
+| `bot api get-sticker-set` |  | ✅ |  |
+| `bot api get-sticker-set` | `--name` | ✅ |  |
+| `bot api get-sticker-set` | `--body` | ✅ |  |
+| `bot api get-sticker-set` | `--body-file` | ✅ |  |
+| `bot api get-custom-emoji-stickers` |  | ✅ |  |
+| `bot api get-custom-emoji-stickers` | `--custom-emoji-ids` | ✅ |  |
+| `bot api get-custom-emoji-stickers` | `--body` | ✅ |  |
+| `bot api get-custom-emoji-stickers` | `--body-file` | ✅ |  |
+| `bot api upload-sticker-file` |  | ✅ |  |
+| `bot api upload-sticker-file` | `--user-id` | ✅ |  |
+| `bot api upload-sticker-file` | `--sticker` | ✅ |  |
+| `bot api upload-sticker-file` | `--sticker-format` | ✅ |  |
+| `bot api upload-sticker-file` | `--body` | ✅ |  |
+| `bot api upload-sticker-file` | `--body-file` | ✅ |  |
+| `bot api create-new-sticker-set` |  | ✅ |  |
+| `bot api create-new-sticker-set` | `--user-id` | ✅ |  |
+| `bot api create-new-sticker-set` | `--name` | ✅ |  |
+| `bot api create-new-sticker-set` | `--title` | ✅ |  |
+| `bot api create-new-sticker-set` | `--stickers` | ✅ |  |
+| `bot api create-new-sticker-set` | `--sticker-type` | ✅ |  |
+| `bot api create-new-sticker-set` | `--needs-repainting` | ✅ |  |
+| `bot api create-new-sticker-set` | `--body` | ✅ |  |
+| `bot api create-new-sticker-set` | `--body-file` | ✅ |  |
+| `bot api add-sticker-to-set` |  | ✅ |  |
+| `bot api add-sticker-to-set` | `--user-id` | ✅ |  |
+| `bot api add-sticker-to-set` | `--name` | ✅ |  |
+| `bot api add-sticker-to-set` | `--sticker` | ✅ |  |
+| `bot api add-sticker-to-set` | `--body` | ✅ |  |
+| `bot api add-sticker-to-set` | `--body-file` | ✅ |  |
+| `bot api set-sticker-position-in-set` |  | ✅ |  |
+| `bot api set-sticker-position-in-set` | `--sticker` | ✅ |  |
+| `bot api set-sticker-position-in-set` | `--position` | ✅ |  |
+| `bot api set-sticker-position-in-set` | `--body` | ✅ |  |
+| `bot api set-sticker-position-in-set` | `--body-file` | ✅ |  |
+| `bot api delete-sticker-from-set` |  | ✅ |  |
+| `bot api delete-sticker-from-set` | `--sticker` | ✅ |  |
+| `bot api delete-sticker-from-set` | `--body` | ✅ |  |
+| `bot api delete-sticker-from-set` | `--body-file` | ✅ |  |
+| `bot api replace-sticker-in-set` |  | ✅ |  |
+| `bot api replace-sticker-in-set` | `--user-id` | ✅ |  |
+| `bot api replace-sticker-in-set` | `--name` | ✅ |  |
+| `bot api replace-sticker-in-set` | `--old-sticker` | ✅ |  |
+| `bot api replace-sticker-in-set` | `--sticker` | ✅ |  |
+| `bot api replace-sticker-in-set` | `--body` | ✅ |  |
+| `bot api replace-sticker-in-set` | `--body-file` | ✅ |  |
+| `bot api set-sticker-emoji-list` |  | ✅ |  |
+| `bot api set-sticker-emoji-list` | `--sticker` | ✅ |  |
+| `bot api set-sticker-emoji-list` | `--emoji-list` | ✅ |  |
+| `bot api set-sticker-emoji-list` | `--body` | ✅ |  |
+| `bot api set-sticker-emoji-list` | `--body-file` | ✅ |  |
+| `bot api set-sticker-keywords` |  | ✅ |  |
+| `bot api set-sticker-keywords` | `--sticker` | ✅ |  |
+| `bot api set-sticker-keywords` | `--keywords` | ✅ |  |
+| `bot api set-sticker-keywords` | `--body` | ✅ |  |
+| `bot api set-sticker-keywords` | `--body-file` | ✅ |  |
+| `bot api set-sticker-mask-position` |  | ✅ |  |
+| `bot api set-sticker-mask-position` | `--sticker` | ✅ |  |
+| `bot api set-sticker-mask-position` | `--mask-position` | ✅ |  |
+| `bot api set-sticker-mask-position` | `--body` | ✅ |  |
+| `bot api set-sticker-mask-position` | `--body-file` | ✅ |  |
+| `bot api set-sticker-set-title` |  | ✅ |  |
+| `bot api set-sticker-set-title` | `--name` | ✅ |  |
+| `bot api set-sticker-set-title` | `--title` | ✅ |  |
+| `bot api set-sticker-set-title` | `--body` | ✅ |  |
+| `bot api set-sticker-set-title` | `--body-file` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` |  | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--name` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--user-id` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--thumbnail` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--format` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--body` | ✅ |  |
+| `bot api set-sticker-set-thumbnail` | `--body-file` | ✅ |  |
+| `bot api set-custom-emoji-sticker-set-thumbnail` |  | ✅ |  |
+| `bot api set-custom-emoji-sticker-set-thumbnail` | `--name` | ✅ |  |
+| `bot api set-custom-emoji-sticker-set-thumbnail` | `--custom-emoji-id` | ✅ |  |
+| `bot api set-custom-emoji-sticker-set-thumbnail` | `--body` | ✅ |  |
+| `bot api set-custom-emoji-sticker-set-thumbnail` | `--body-file` | ✅ |  |
+| `bot api delete-sticker-set` |  | ✅ |  |
+| `bot api delete-sticker-set` | `--name` | ✅ |  |
+| `bot api delete-sticker-set` | `--body` | ✅ |  |
+| `bot api delete-sticker-set` | `--body-file` | ✅ |  |
+| `bot api send-rich-message` |  | ✅ |  |
+| `bot api send-rich-message` | `--business-connection-id` | ✅ |  |
+| `bot api send-rich-message` | `--chat-id` | ✅ |  |
+| `bot api send-rich-message` | `--message-thread-id` | ✅ |  |
+| `bot api send-rich-message` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-rich-message` | `--ephemeral-message-parameters` | ✅ |  |
+| `bot api send-rich-message` | `--rich-message` | ✅ |  |
+| `bot api send-rich-message` | `--disable-notification` | ✅ |  |
+| `bot api send-rich-message` | `--protect-content` | ✅ |  |
+| `bot api send-rich-message` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-rich-message` | `--message-effect-id` | ✅ |  |
+| `bot api send-rich-message` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-rich-message` | `--reply-parameters` | ✅ |  |
+| `bot api send-rich-message` | `--reply-markup` | ✅ |  |
+| `bot api send-rich-message` | `--body` | ✅ |  |
+| `bot api send-rich-message` | `--body-file` | ✅ |  |
+| `bot api send-rich-message-draft` |  | ✅ |  |
+| `bot api send-rich-message-draft` | `--chat-id` | ✅ |  |
+| `bot api send-rich-message-draft` | `--message-thread-id` | ✅ |  |
+| `bot api send-rich-message-draft` | `--draft-id` | ✅ |  |
+| `bot api send-rich-message-draft` | `--rich-message` | ✅ |  |
+| `bot api send-rich-message-draft` | `--can-stop` | ✅ |  |
+| `bot api send-rich-message-draft` | `--keep-on-stop` | ✅ |  |
+| `bot api send-rich-message-draft` | `--body` | ✅ |  |
+| `bot api send-rich-message-draft` | `--body-file` | ✅ |  |
+| `bot api answer-inline-query` |  | ✅ |  |
+| `bot api answer-inline-query` | `--inline-query-id` | ✅ |  |
+| `bot api answer-inline-query` | `--cache-time` | ✅ |  |
+| `bot api answer-inline-query` | `--is-personal` | ✅ |  |
+| `bot api answer-inline-query` | `--next-offset` | ✅ |  |
+| `bot api answer-inline-query` | `--button` | ✅ |  |
+| `bot api answer-inline-query` | `--body` | ✅ |  |
+| `bot api answer-inline-query` | `--body-file` | ✅ |  |
+| `bot api send-invoice` |  | ✅ |  |
+| `bot api send-invoice` | `--chat-id` | ✅ |  |
+| `bot api send-invoice` | `--message-thread-id` | ✅ |  |
+| `bot api send-invoice` | `--direct-messages-topic-id` | ✅ |  |
+| `bot api send-invoice` | `--title` | ✅ |  |
+| `bot api send-invoice` | `--description` | ✅ |  |
+| `bot api send-invoice` | `--payload` | ✅ |  |
+| `bot api send-invoice` | `--currency` | ✅ |  |
+| `bot api send-invoice` | `--prices` | ✅ |  |
+| `bot api send-invoice` | `--max-tip-amount` | ✅ |  |
+| `bot api send-invoice` | `--suggested-tip-amounts` | ✅ |  |
+| `bot api send-invoice` | `--start-parameter` | ✅ |  |
+| `bot api send-invoice` | `--provider-data` | ✅ |  |
+| `bot api send-invoice` | `--photo-url` | ✅ |  |
+| `bot api send-invoice` | `--photo-size` | ✅ |  |
+| `bot api send-invoice` | `--photo-width` | ✅ |  |
+| `bot api send-invoice` | `--photo-height` | ✅ |  |
+| `bot api send-invoice` | `--need-name` | ✅ |  |
+| `bot api send-invoice` | `--need-phone-number` | ✅ |  |
+| `bot api send-invoice` | `--need-email` | ✅ |  |
+| `bot api send-invoice` | `--need-shipping-address` | ✅ |  |
+| `bot api send-invoice` | `--send-phone-number-to-provider` | ✅ |  |
+| `bot api send-invoice` | `--send-email-to-provider` | ✅ |  |
+| `bot api send-invoice` | `--is-flexible` | ✅ |  |
+| `bot api send-invoice` | `--disable-notification` | ✅ |  |
+| `bot api send-invoice` | `--protect-content` | ✅ |  |
+| `bot api send-invoice` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-invoice` | `--message-effect-id` | ✅ |  |
+| `bot api send-invoice` | `--suggested-post-parameters` | ✅ |  |
+| `bot api send-invoice` | `--reply-parameters` | ✅ |  |
+| `bot api send-invoice` | `--reply-markup` | ✅ |  |
+| `bot api send-invoice` | `--body` | ✅ |  |
+| `bot api send-invoice` | `--body-file` | ✅ |  |
+| `bot api create-invoice-link` |  | ✅ |  |
+| `bot api create-invoice-link` | `--business-connection-id` | ✅ |  |
+| `bot api create-invoice-link` | `--title` | ✅ |  |
+| `bot api create-invoice-link` | `--description` | ✅ |  |
+| `bot api create-invoice-link` | `--payload` | ✅ |  |
+| `bot api create-invoice-link` | `--currency` | ✅ |  |
+| `bot api create-invoice-link` | `--prices` | ✅ |  |
+| `bot api create-invoice-link` | `--subscription-period` | ✅ |  |
+| `bot api create-invoice-link` | `--max-tip-amount` | ✅ |  |
+| `bot api create-invoice-link` | `--suggested-tip-amounts` | ✅ |  |
+| `bot api create-invoice-link` | `--provider-data` | ✅ |  |
+| `bot api create-invoice-link` | `--photo-url` | ✅ |  |
+| `bot api create-invoice-link` | `--photo-size` | ✅ |  |
+| `bot api create-invoice-link` | `--photo-width` | ✅ |  |
+| `bot api create-invoice-link` | `--photo-height` | ✅ |  |
+| `bot api create-invoice-link` | `--need-name` | ✅ |  |
+| `bot api create-invoice-link` | `--need-phone-number` | ✅ |  |
+| `bot api create-invoice-link` | `--need-email` | ✅ |  |
+| `bot api create-invoice-link` | `--need-shipping-address` | ✅ |  |
+| `bot api create-invoice-link` | `--send-phone-number-to-provider` | ✅ |  |
+| `bot api create-invoice-link` | `--send-email-to-provider` | ✅ |  |
+| `bot api create-invoice-link` | `--is-flexible` | ✅ |  |
+| `bot api create-invoice-link` | `--body` | ✅ |  |
+| `bot api create-invoice-link` | `--body-file` | ✅ |  |
+| `bot api answer-shipping-query` |  | ✅ |  |
+| `bot api answer-shipping-query` | `--shipping-query-id` | ✅ |  |
+| `bot api answer-shipping-query` | `--ok` | ✅ |  |
+| `bot api answer-shipping-query` | `--shipping-options` | ✅ |  |
+| `bot api answer-shipping-query` | `--error-message` | ✅ |  |
+| `bot api answer-shipping-query` | `--body` | ✅ |  |
+| `bot api answer-shipping-query` | `--body-file` | ✅ |  |
+| `bot api answer-pre-checkout-query` |  | ✅ |  |
+| `bot api answer-pre-checkout-query` | `--pre-checkout-query-id` | ✅ |  |
+| `bot api answer-pre-checkout-query` | `--ok` | ✅ |  |
+| `bot api answer-pre-checkout-query` | `--error-message` | ✅ |  |
+| `bot api answer-pre-checkout-query` | `--body` | ✅ |  |
+| `bot api answer-pre-checkout-query` | `--body-file` | ✅ |  |
+| `bot api get-my-star-balance` |  | ✅ |  |
+| `bot api get-star-transactions` |  | ✅ |  |
+| `bot api get-star-transactions` | `--offset` | ✅ |  |
+| `bot api get-star-transactions` | `--limit` | ✅ |  |
+| `bot api get-star-transactions` | `--body` | ✅ |  |
+| `bot api get-star-transactions` | `--body-file` | ✅ |  |
+| `bot api refund-star-payment` |  | ✅ |  |
+| `bot api refund-star-payment` | `--user-id` | ✅ |  |
+| `bot api refund-star-payment` | `--telegram-payment-charge-id` | ✅ |  |
+| `bot api refund-star-payment` | `--body` | ✅ |  |
+| `bot api refund-star-payment` | `--body-file` | ✅ |  |
+| `bot api edit-user-star-subscription` |  | ✅ |  |
+| `bot api edit-user-star-subscription` | `--user-id` | ✅ |  |
+| `bot api edit-user-star-subscription` | `--telegram-payment-charge-id` | ✅ |  |
+| `bot api edit-user-star-subscription` | `--is-canceled` | ✅ |  |
+| `bot api edit-user-star-subscription` | `--body` | ✅ |  |
+| `bot api edit-user-star-subscription` | `--body-file` | ✅ |  |
+| `bot api set-passport-data-errors` |  | ✅ |  |
+| `bot api set-passport-data-errors` | `--user-id` | ✅ |  |
+| `bot api set-passport-data-errors` | `--errors` | ✅ |  |
+| `bot api set-passport-data-errors` | `--body` | ✅ |  |
+| `bot api set-passport-data-errors` | `--body-file` | ✅ |  |
+| `bot api send-game` |  | ✅ |  |
+| `bot api send-game` | `--business-connection-id` | ✅ |  |
+| `bot api send-game` | `--chat-id` | ✅ |  |
+| `bot api send-game` | `--message-thread-id` | ✅ |  |
+| `bot api send-game` | `--game-short-name` | ✅ |  |
+| `bot api send-game` | `--disable-notification` | ✅ |  |
+| `bot api send-game` | `--protect-content` | ✅ |  |
+| `bot api send-game` | `--allow-paid-broadcast` | ✅ |  |
+| `bot api send-game` | `--message-effect-id` | ✅ |  |
+| `bot api send-game` | `--reply-parameters` | ✅ |  |
+| `bot api send-game` | `--reply-markup` | ✅ |  |
+| `bot api send-game` | `--body` | ✅ |  |
+| `bot api send-game` | `--body-file` | ✅ |  |
+| `bot api set-game-score` |  | ✅ |  |
+| `bot api set-game-score` | `--user-id` | ✅ |  |
+| `bot api set-game-score` | `--score` | ✅ |  |
+| `bot api set-game-score` | `--force` | ✅ |  |
+| `bot api set-game-score` | `--disable-edit-message` | ✅ |  |
+| `bot api set-game-score` | `--chat-id` | ✅ |  |
+| `bot api set-game-score` | `--message-id` | ✅ |  |
+| `bot api set-game-score` | `--inline-message-id` | ✅ |  |
+| `bot api set-game-score` | `--body` | ✅ |  |
+| `bot api set-game-score` | `--body-file` | ✅ |  |
+| `bot api get-game-high-scores` |  | ✅ |  |
+| `bot api get-game-high-scores` | `--user-id` | ✅ |  |
+| `bot api get-game-high-scores` | `--chat-id` | ✅ |  |
+| `bot api get-game-high-scores` | `--message-id` | ✅ |  |
+| `bot api get-game-high-scores` | `--inline-message-id` | ✅ |  |
+| `bot api get-game-high-scores` | `--body` | ✅ |  |
+| `bot api get-game-high-scores` | `--body-file` | ✅ |  |
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |
