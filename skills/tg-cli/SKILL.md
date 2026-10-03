@@ -201,3 +201,15 @@ whose chat id changes. Use the returned new id afterwards. `topics create` never
 implicitly; never retry an unknown create; check `topics list`.
 An upgrade that succeeded before enable failed is retained; inspect the partial result and never
 promise rollback to a basic group. Do not silently move old message locators to the new id.
+
+
+Native Bot API: `tg <bot> bot api <kebab-method>` uses the pinned schema and the same
+command builder as MAX. Consult method help; native fields are flags or JSON via `--body`,
+`--body-file` or stdin. Native `timeout` is `--poll-timeout`, separate from the command deadline.
+Only schema-declared file fields interpret `@path`; text remains literal. Secret fields have no
+argv flags: use stdin or a JSON file readable only by its owner. Permissions are
+`bot.api.<kebab-method>`; destructive methods, including update acknowledgement and financial
+operations, ask by default. Never retry an `outcome_unknown` write.
+`get-managed-bot-token` and `replace-managed-bot-token` require `--store-token <profile>`;
+returned credentials go only to that profile's OS keyring, after identity verification.
+Never ask the owner to paste a credential into argv, print one, or fall back to a plaintext file.

@@ -1,0 +1,742 @@
+{
+  "getUpdates": {
+    "effect": "destructive",
+    "reason": "An offset acknowledges updates; a negative offset forgets earlier updates. Never classify this as a harmless read."
+  },
+  "setWebhook": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteWebhook": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getWebhookInfo": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getMe": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "logOut": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "close": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "sendMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "forwardMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "forwardMessages": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "copyMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "copyMessages": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendPhoto": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendLivePhoto": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendAudio": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendDocument": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendVideo": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendAnimation": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendVoice": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendVideoNote": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendPaidMedia": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendMediaGroup": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendLocation": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendVenue": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendContact": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendPoll": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendChecklist": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendDice": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendMessageDraft": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendChatAction": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setMessageReaction": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getUserProfilePhotos": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getUserProfileAudios": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setUserEmojiStatus": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getFile": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "banChatMember": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "unbanChatMember": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "restrictChatMember": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "promoteChatMember": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setChatAdministratorCustomTitle": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setChatMemberTag": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "banChatSenderChat": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "unbanChatSenderChat": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setChatPermissions": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "exportChatInviteLink": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "createChatInviteLink": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editChatInviteLink": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "createChatSubscriptionInviteLink": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editChatSubscriptionInviteLink": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "revokeChatInviteLink": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "approveChatJoinRequest": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "declineChatJoinRequest": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "answerChatJoinRequestQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendChatJoinRequestWebApp": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setChatPhoto": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteChatPhoto": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "setChatTitle": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setChatDescription": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "pinChatMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "unpinChatMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "unpinAllChatMessages": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "leaveChat": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getChat": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getChatAdministrators": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getChatMemberCount": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getChatMember": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getUserPersonalChatMessages": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setChatStickerSet": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteChatStickerSet": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getForumTopicIconStickers": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "createForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "closeForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "reopenForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteForumTopic": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "unpinAllForumTopicMessages": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "editGeneralForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "closeGeneralForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "reopenGeneralForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "hideGeneralForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "unhideGeneralForumTopic": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "unpinAllGeneralForumTopicMessages": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "answerCallbackQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "answerGuestQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getUserChatBoosts": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getBusinessConnection": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getManagedBotToken": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it. Returns an authentication token; output must be directed to secure storage or execution refused."
+  },
+  "replaceManagedBotToken": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. Returns an authentication token; output must be directed to secure storage or execution refused."
+  },
+  "getManagedBotAccessSettings": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setManagedBotAccessSettings": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setMyCommands": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteMyCommands": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getMyCommands": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setMyName": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getMyName": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setMyDescription": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getMyDescription": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setMyShortDescription": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getMyShortDescription": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setMyProfilePhoto": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "removeMyProfilePhoto": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "setChatMenuButton": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getChatMenuButton": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "setMyDefaultAdministratorRights": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getMyDefaultAdministratorRights": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getAvailableGifts": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "sendGift": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "giftPremiumSubscription": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "verifyUser": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "verifyChat": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "removeUserVerification": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "removeChatVerification": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "readBusinessMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteBusinessMessages": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "setBusinessAccountName": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setBusinessAccountUsername": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setBusinessAccountBio": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setBusinessAccountProfilePhoto": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "removeBusinessAccountProfilePhoto": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "setBusinessAccountGiftSettings": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getBusinessAccountStarBalance": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "transferBusinessAccountStars": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getBusinessAccountGifts": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getUserGifts": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getChatGifts": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "convertGiftToStars": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "upgradeGift": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "transferGift": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "postStory": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "repostStory": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editStory": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteStory": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "answerWebAppQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "savePreparedInlineMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "savePreparedKeyboardButton": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageText": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageCaption": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageMedia": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageLiveLocation": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "stopMessageLiveLocation": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageChecklist": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editMessageReplyMarkup": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "stopPoll": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editEphemeralMessageText": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editEphemeralMessageMedia": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editEphemeralMessageCaption": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "editEphemeralMessageReplyMarkup": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "approveSuggestedPost": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "declineSuggestedPost": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "deleteMessage": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "deleteMessages": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "deleteEphemeralMessage": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "deleteMessageReaction": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "deleteAllMessageReactions": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "sendSticker": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getStickerSet": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getCustomEmojiStickers": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "uploadStickerFile": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "createNewStickerSet": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "addStickerToSet": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerPositionInSet": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteStickerFromSet": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "replaceStickerInSet": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerEmojiList": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerKeywords": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerMaskPosition": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerSetTitle": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setStickerSetThumbnail": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setCustomEmojiStickerSetThumbnail": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "deleteStickerSet": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "sendRichMessage": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendRichMessageDraft": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "answerInlineQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendInvoice": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "createInvoiceLink": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "answerShippingQuery": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "answerPreCheckoutQuery": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "getMyStarBalance": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "getStarTransactions": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  },
+  "refundStarPayment": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "editUserStarSubscription": {
+    "effect": "destructive",
+    "reason": "Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone."
+  },
+  "setPassportDataErrors": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "sendGame": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "setGameScore": {
+    "effect": "write",
+    "reason": "Changes bot state or sends a response/message; it is not a read."
+  },
+  "getGameHighScores": {
+    "effect": "read",
+    "reason": "Reads existing API state without changing it."
+  }
+}

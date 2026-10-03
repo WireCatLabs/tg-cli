@@ -1,5 +1,6 @@
 import { CliError, type CliErrorDetails, type ErrorCode } from "@leemour/cli-core"
 import type { EventSink } from "@leemour/cli-messaging/cli"
+import { apiJson, apiPlainJson, parseApiJson } from "@leemour/cli-messaging/cli"
 
 const API = "https://api.telegram.org"
 const DEFAULT_TIMEOUT_MS = 30_000
@@ -60,8 +61,18 @@ export class TelegramBotTransport {
     {
       reads = true,
       file,
+      files = [],
+      body,
+      secrets = [],
       timeoutMs = this.#timeoutMs,
-    }: { reads?: boolean; file?: OutgoingFile; timeoutMs?: number } = {},
+    }: {
+      reads?: boolean
+      file?: OutgoingFile
+      files?: readonly OutgoingFile[]
+      body?: string
+      secrets?: readonly string[]
+      timeoutMs?: number
+    } = {},
   ): Promise<unknown> {
     this.#events?.({ event: "request", operation: method })
     const started = performance.now()
@@ -70,11 +81,17 @@ export class TelegramBotTransport {
     try {
       response = await this.#fetch(`${this.#baseUrl}/bot${this.#token}/${method}`, {
         method: "POST",
-        ...(file
-          ? { headers: { Accept: "application/json" }, body: multipart(params, file) }
+        ...(file || files.length
+          ? {
+              headers: { Accept: "application/json" },
+              body: multipart(
+                body === undefined ? params : (parseApiJson(body) as Record<string, unknown>),
+                file ? [file, ...files] : files,
+              ),
+            }
           : {
               headers: { "Content-Type": "application/json", Accept: "application/json" },
-              body: JSON.stringify(params),
+              body: body ?? apiJson(params),
             }),
         signal: AbortSignal.any(signals),
       })
@@ -84,7 +101,14 @@ export class TelegramBotTransport {
       throw failure
     }
 
-    const text = await response.text()
+    let text: string
+    try {
+      text = await response.text()
+    } catch (error) {
+      const failure = this.#unanswered(method, error, reads, timeoutMs)
+      this.#events?.({ event: "response", operation: method, outcome: "error", errorCode: failure.code })
+      throw failure
+    }
     const answered = {
       event: "response" as const,
       operation: method,
@@ -94,7 +118,7 @@ export class TelegramBotTransport {
     }
     let answer: Answer
     try {
-      answer = JSON.parse(text) as Answer
+      answer = apiPlainJson(parseApiJson(text)) as Answer
     } catch {
       this.#events?.({ ...answered, outcome: "error", errorCode: "invalid_response" })
       throw new CliError("invalid_response", `Telegram answered ${method} with something that is not JSON`, {
@@ -105,6 +129,12 @@ export class TelegramBotTransport {
     if (answer.ok === true) {
       this.#events?.({ ...answered, outcome: "ok" })
       return answer.result
+    }
+    const secretValues = [this.#token, ...secrets]
+    if (answer.description) {
+      for (const secret of secretValues)
+        if (secret) answer.description = answer.description.split(secret).join("[redacted]")
+      answer.description = answer.description.replace(/\b\d+:[A-Za-z0-9_-]{20,}\b/g, "[redacted]")
     }
     const refusal = refusalOf(method, answer, response.status)
     this.#events?.({ ...answered, outcome: "error", errorCode: refusal.code })
@@ -139,12 +169,12 @@ export interface OutgoingFile {
 }
 
 /** A field that is not a string goes as JSON, as Telegram reads `reply_parameters` and `caption_entities` from a form. */
-const multipart = (params: Record<string, unknown>, file: OutgoingFile): FormData => {
+const multipart = (params: Record<string, unknown>, files: readonly OutgoingFile[]): FormData => {
   const form = new FormData()
   for (const [name, value] of Object.entries(params)) {
-    if (value !== undefined) form.append(name, typeof value === "string" ? value : JSON.stringify(value))
+    if (value !== undefined) form.append(name, typeof value === "string" ? value : apiJson(value))
   }
-  form.append(file.field, new Blob([file.bytes]), file.name)
+  for (const file of files) form.append(file.field, new Blob([file.bytes]), file.name)
   return form
 }
 

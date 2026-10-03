@@ -3,6 +3,16 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- `tg <bot> bot api <method>` covers the pinned Telegram Bot API schema using cli-core generators
+  and the common MAX/TG command builder. Native field flags, JSON/stdin bodies and nested multipart
+  uploads share validation and write guards. Destructive methods ask by default; unanswered writes
+  are never retried. Managed bot credentials require an explicit `--store-token <profile>` destination
+  and stay only in the OS keyring; stdout contains a storage receipt.
+
 ## 0.24.0 — 03.10.2026
 
 ### Changed — may break scripts

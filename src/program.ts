@@ -33,6 +33,7 @@ import {
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"
+import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
 import { setupCommand } from "./commands/setup.js"
@@ -91,7 +92,7 @@ const definition: ProgramDefinition = {
       completeCommand(TELEGRAM, CONFIG),
       upgradeCommand(),
       mcpCommand(TELEGRAM),
-      botCommand(TELEGRAM_BOT),
+      botCommand(TELEGRAM_BOT).addCommand(telegramBotApiCommand()),
       skillCommand(TG, SKILL),
     ]),
 }

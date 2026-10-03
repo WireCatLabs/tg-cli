@@ -12,6 +12,8 @@ export default defineConfig({
       exclude: [
         "src/**/*.test.ts",
         "src/testing/**",
+        // Core generator fixtures compile schemas; native API tests validate the committed manifest.
+        "src/bot/generated/**",
         // The entry point: one line handing argv to run(), which the suite drives directly.
         "src/bin/**",
       ],
