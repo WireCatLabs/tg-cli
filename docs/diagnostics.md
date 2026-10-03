@@ -121,3 +121,11 @@ The whole file is in the folder `tg runs path <run-id>` prints.
 
 - [troubleshooting.md](troubleshooting.md) — what an error means and what to do
 - [security.md](security.md) — what reaches the disk at all
+
+## Command discovery for scripts
+
+`tg commands --json` lists commands, global options and exit codes without connecting to an
+account. `cli` names the tool, `version` is the installed package version, and `contract` is the
+shared JSON contract version (`0`). It changes for incompatible response field changes; a package
+upgrade alone does not change `contract`. Scripts can read individual fields instead of comparing
+the whole JSON output with a saved string.
