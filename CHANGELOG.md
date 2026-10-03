@@ -5,6 +5,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## 0.25.0 — 03.10.2026
 
+### Fixed
+
+- `chats show` explains that differing listed-member and participant counts may reflect self
+  omission or a partial list, rather than claiming incomplete loading. JSON data stays unchanged.
+
 ### What's new
 
 - The README and bot guide make the complete native Bot API surface explicit: all 185 methods

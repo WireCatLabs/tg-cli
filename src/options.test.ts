@@ -552,6 +552,20 @@ describe("messages", () => {
 })
 
 describe("chats members", () => {
+  it("show explains a member list that omits this account while keeping the provider counts", async () => {
+    const members = [
+      { id: "7", name: "Ana", username: null },
+      { id: "8", name: "Eva", username: null },
+    ]
+    const adapter = scripted({ chat: async () => ({ ...chat, participantsCount: 3, members }) })
+    const shown = await tg(["chats", "show", "Valencia", "--json"], { adapter: () => adapter })
+
+    expect(shown.code).toBe(0)
+    expect(json(shown.stdout)).toMatchObject({ participantsCount: 3, members })
+    expect(shown.stderr.join("\n")).toContain("2 listed members; the chat reports 3 participants")
+    expect(shown.stderr.join("\n")).toContain("may omit your account or be partial")
+  })
+
   it("list pages with --limit and --page, and --all asks for everyone", async () => {
     const asked: unknown[] = []
     const adapter = scripted({
