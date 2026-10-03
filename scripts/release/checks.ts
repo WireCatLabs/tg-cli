@@ -28,7 +28,10 @@ export const docsRules = (root: string): DocsRules => ({
     ...markdownFiles(join(root, "docs")),
   ],
   ids: IDS,
-  userPage: (name) => name === "README.md" || (/^docs\/[^/]+\.md$/.test(name) && !GENERATED.has(name)),
+  userPage: (name) => {
+    const portable = name.replaceAll("\\", "/")
+    return portable === "README.md" || (/^docs\/[^/]+\.md$/.test(portable) && !GENERATED.has(portable))
+  },
   // cli-messaging and max-cli are sibling checkouts on the owner's machine, not in CI.
   skipLink: (_, destination) => !destination.startsWith(root + sep) && destination !== root,
 })

@@ -90,7 +90,7 @@ describe("tg upgrade and a running server", () => {
     serving("work")
     const { ran, result } = await update([])
 
-    expect(ran[1]).toEqual([process.execPath, expect.stringMatching(/bin\/tg\.js$/), "work", "server", "restart"])
+    expect(ran[1]).toEqual([process.execPath, expect.stringMatching(/bin[/\\]tg\.js$/), "work", "server", "restart"])
     expect(result).toMatchObject({ updated: true, restarted: ["work"] })
   })
 
