@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **The bundled agent instructions explain how to find agreements, prepare meetings and recommend contacts.**
+  Agents check archive coverage, compare group and personal chats, distinguish people with the same name,
+  and retain a draft when sending is refused.
+
 - **`tg messages link` and read-only MCP `tg_messages_link` return a message permalink and locator.**
   Channels and supergroups preserve thread context; private links require access and grant no
   membership. Dialogs, basic groups and Saved Messages return a locator. Offline validates the
@@ -19,12 +23,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   guard checked `messages.pin`. Profiles with explicit canonical permissions should review their
   unpin rule; legacy `allow: ["pin"]` continues to cover both actions.
 
+- **`tg commands [path...] --json` can describe one command or group.** For example,
+  `tg commands messages search --json` includes global options and exit codes alongside that command.
+  Without a path the full tree is unchanged; scoped responses add `scope` and `inheritedOptions`.
+  Inspect different command paths in separate calls.
+
 ### Fixed
 
 - **Unanswered reviews consider retained voice transcripts and requested new transcripts before
   filtering.** Add `--transcribe` to recognize voices that have no retained text. Unrecognized
   voices leave `complete` false: keep the previous review boundary rather than treating an empty
   result as proof that nothing needs an answer.
+
+- Commands opening the local archive together wait briefly for initialization instead of failing
+  immediately when another process holds its write lock. Persistent locks still fail normally.
 
 - Voice transcription downloads use the history connection and close it before local recognition,
   avoiding a second connection for `messages list --transcribe`, `inbox` and `review`.
