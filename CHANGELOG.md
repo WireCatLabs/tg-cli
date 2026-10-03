@@ -28,6 +28,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **A truncated `tg runs list --limit` suggests increasing `--limit`**, instead of the unsupported
+  `--page` option. JSON still reports `hasMore`; reading recorded runs creates no new record.
+- Early bot command failures use bot recording settings, and an unknown subcommand no longer
+  blames a valid leading profile. The shared runner now applies these rules consistently.
+
 - Login completion shortens Windows home paths correctly. Release documentation checks recognize
   Windows path separators. File-mode tests apply Unix permissions only on Unix; Windows access
   follows inherited ACLs, now stated in the security page.
