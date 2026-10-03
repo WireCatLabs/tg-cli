@@ -267,7 +267,7 @@ npx @leemour/tg-cli --help
 Install it:
 
 ```sh
-npm install -g @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli, bun add -g @leemour/tg-cli
+npm install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli, bun add -g @leemour/tg-cli
 tg --version
 tg setup                        # guided first run; allow about five minutes
 ```
@@ -281,6 +281,18 @@ runtime itself, or from tg's own copy when a Linux Node's system SQLite is too o
 nothing to compile. `tg doctor` says where its files are and whether a
 login exists, without connecting. Details, variables and where the files go:
 [docs/installation.md](docs/installation.md).
+
+### Windows installation
+
+```powershell
+& ([scriptblock]::Create((Invoke-RestMethod 'https://wirecat.dev/install.ps1'))) -Tool tg -Agent all
+```
+
+This single installer call saves the npm command folder to user PATH, updates this PowerShell,
+installs the bundled agent skill and verifies bare `tg`. It preserves existing PATH entries,
+works when npm skips lifecycle scripts and leaves PowerShell execution policy unchanged.
+An agent reads `tg skill show` before guiding login. Installation itself contacts no account.
+See [installation](docs/installation.md#windows-one-install-command).
 
 ## Log in
 

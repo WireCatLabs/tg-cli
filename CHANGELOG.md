@@ -10,6 +10,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg <bot> bot me` and MCP `tg_bot_me`** show the bot profile's id, name and username.
   This read uses the bot token, refuses offline mode, and sends no message.
 
+- Global npm installation installs the agent skill before login when its lifecycle hook is allowed.
+  On Windows it saves the npm command folder to user PATH and keeps the `.cmd` launcher usable
+  under restricted PowerShell policies. The one-call Windows installer also updates its current
+  shell, installs skills when scripts are skipped and verifies bare `tg` without account access.
+
 - **Setup is discoverable immediately after installation**: root help and first-run errors point
   to `tg setup`; setup and session help include examples, agent instructions and Windows advice.
   Quick-start, installation, MCP and security pages consistently explain the guided first run.

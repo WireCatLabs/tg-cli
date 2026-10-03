@@ -265,3 +265,12 @@ Every login adds a device to the list in the Telegram app: Settings → Devices.
 - [sessions.md](sessions.md) — the app, the keyring, profiles, logging out
 - [mcp.md](mcp.md) — what an agent can do over MCP, and what each level and flag changes
 - [configuration.md](configuration.md) — `permissions` and `sendsPerHour`
+
+## Global installation changes
+
+The global npm postinstall installs the bundled skill in the user's agent directories; on Windows
+it adds the npm command folder to user PATH and removes only npm's generated `tg.ps1` shim for
+this package. The `.cmd` launcher remains. Project installs and npx do not perform these changes.
+`TG_INSTALL_AGENT=none` skips skill installation. The standalone Windows installer performs the
+same preparation even when npm scripts are disabled. It does not change execution policy, machine
+PATH, credentials or account state. Installation never logs in or reads chats.

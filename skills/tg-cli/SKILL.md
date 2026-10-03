@@ -13,6 +13,14 @@ arguments, flags (whether each takes a value, whether it is required), exit code
 true` on the commands that change something in Telegram. `tg --help` is the same for a person. This
 file holds what the help cannot say: the traps and the boundaries.
 
+## Installation readiness
+
+Global npm installation installs this skill before login when scripts are allowed. On Windows,
+use the one-call installer from the installation guide: it repairs user and current-shell PATH,
+installs the skill even with disabled lifecycle scripts and verifies bare `tg`. Read `tg skill show`
+and verify your skill is loaded before login. If your process predates installation, refresh your
+shell PATH from the user/machine environment yourself; do not ask the user to edit PATH.
+
 ## Boundaries
 
 - **Send nothing the owner did not ask for.** `tg messages send` (also with `--reply-to`), `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
