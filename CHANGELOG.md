@@ -104,6 +104,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **Local message search defaults to a strict Lucene profile:** groups, typed fields/date ranges, `--timezone`, bounded wildcard/regex and coverage on empty results. Write prefixes explicitly as `word*`; use `--language legacy` for previous discovery behavior. The search guide and agent skill explain migration. JavaScript `--regex` runs in an isolated worker with size and time limits.
+
 - **`tg messages search` puts the best match first**, not the newest; `--newest` gives the old order.
   When no message has every word, it now takes any of them, then a piece of a word. The JSON keeps
   `items`, `limit` and `hasMore`, and adds `match` and `score` to each hit, plus `corrections`,

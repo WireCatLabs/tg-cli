@@ -101,9 +101,13 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 4. **Repeat a send only with the same `--send-id`.** Exit `14` means the message may have gone. The
    error carries `--send-id <id>`; Telegram drops a repeat with it, and a repeat without it is a
    second message to a person.
-5. **`tg messages search` searches only what this machine has kept** — what was read, fetched,
-   or kept by `tg serve` — and never asks Telegram. Empty does not mean "never said". Read the chat
-   with `tg messages list <chat>` first, or ask the owner about `tg store fetch`.
+5. **`tg messages search` reads only the local archive.** The default is strict Lucene:
+   phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
+   Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
+   Use --json for query version/coverage. Empty hits do not prove a message never existed.
+   --timezone selects a calendar zone; kind:bot and in:bots differ. Term/body regex differ.
+   See the [search guide](https://github.com/leemour/tg-cli/blob/main/docs/search.md).
+
 6. **`tg store export` exports only what was kept**, and never asks Telegram. `tg store status` says
    how much of each chat is kept.
 7. **`tg store fetch` makes many requests from the owner's account.** Only when the owner asked.

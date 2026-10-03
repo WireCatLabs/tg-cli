@@ -498,13 +498,33 @@ describe("messages", () => {
     await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads })
 
     const { code, stdout } = await tg(
-      ["searching", "messages", "search", "piso", "--chat", "Valencia", "--limit", "1", "--json"],
+      [
+        "searching",
+        "messages",
+        "search",
+        "piso",
+        "--language",
+        "lucene",
+        "--timezone",
+        "Europe/Madrid",
+        "--chat",
+        "Valencia",
+        "--limit",
+        "1",
+        "--json",
+      ],
       { adapter: () => reads },
     )
 
     expect(code).toBe(0)
     expect(json(stdout).items).toHaveLength(1)
     expect(json(stdout).items[0].text).toContain("piso")
+    expect(json(stdout).query).toMatchObject({ language: "lucene-v1", timezone: "Europe/Madrid" })
+    const legacy = await tg(["searching", "messages", "search", "pis", "--language", "legacy", "--json"], {
+      adapter: () => reads,
+    })
+    expect(legacy.code).toBe(0)
+    expect(json(legacy.stdout).items).toHaveLength(2)
   })
 
   it("search --newest --context --source orders by time, shows neighbours and reads only telegram accounts", async () => {

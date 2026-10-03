@@ -73,34 +73,19 @@ tg store jobs cancel <job>                  # stops after the current page; a la
 
 ## Search
 
-```sh
-tg messages search "invoice march"                  # every word, best match first
-tg messages search invoice --chat "Book club" --limit 50
-tg messages search invoice --newest                 # newest first instead
-tg messages search invoice --context 3              # three messages either side of each hit
-tg messages search 'from:@anna after:7d "the contract" -draft'
-tg messages search invoice --source all             # every account and messenger in the store
-tg messages search --regex 'inv(oice)?\s+\d+'       # a regular expression, case-insensitive
-```
-
-**Search reads only the store and never asks Telegram.** An empty answer means "not kept here", not
-"never said". Read the chat first (`tg messages list <chat>`), or fetch its history.
-
-Every word must appear, as a word or the start of one, so `invoi` finds `invoice`. The best match
-comes first. A typo is corrected, and stderr says what it changed. When no message has every word,
-the search takes any of them, then a piece of a word.
-
-The query also takes `"a phrase"`, `-word` to leave a word out, `a OR b`, and filters: `from:` (a
-name, `@username` or `me`), `chat:`, `after:` and `before:` (a day, or `7d`), `has:` (an attachment
-kind, `attachment` or `link`). A search reads the account it runs as. `in:max`, `in:all` or
-`--source` read the other accounts kept in the same store, MAX ones too. A MAX hit opens in `max`.
-
-The JSON says how complete the store is for each chat searched (`completeness`). Each result
-carries a `msg:` locator that `messages show` and `messages context` accept:
+`tg messages search` reads only the local archive. The new default is a strict Lucene profile:
+words, phrases, Boolean groups, fields, dates and bounded regex. The [search guide](search.md)
+explains syntax and migration. Use `--language legacy` for the old filters and discovery.
 
 ```sh
-tg messages context msg:telegram/<account>/<chat>/<id>
+tg messages search 'invoice kind:private' --json
+tg messages search 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid --json
+tg messages search 'preset:secret kind:saved' --json
 ```
+
+Empty hits mean “not found in the selected archive”. JSON reports completeness and coverage;
+missing network refresh watermarks never imply freshness. `--source` selects provider/accounts,
+`--newest` selects time order, `--context` adds nearby messages. --regex remains separate legacy JS mode.
 
 ## Export
 
