@@ -10,8 +10,9 @@ context, not history.
 operation per call, one JSON value on stdout when piped, a typed error and a fixed exit code on
 failure. Everything that is not specific to Telegram lives in the npm package
 [`@leemour/cli-messaging`](https://github.com/leemour/cli-messaging) (checkout: `../cli-messaging`),
-which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) will also move onto
-later. Both sit on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
+which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) also uses.
+**Correction 2026-10-04:** MAX completed its shared command/cache cutover and P7 permissions;
+the coordinated consumer release is prepared in `docs/dev/coordinated-release.md`. Both sit on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
 
 The goal beyond the CLI: a local archive of every messenger with search, a cross-messenger contact
 graph and a CRM on top. The full design:
@@ -52,7 +53,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 ### 3b. Open right now
 
-1. **tg is on npm: `@leemour/tg-cli@0.2.0`** (2026-09-28), released from GitHub by `bin/release`
+1. **tg is on npm: `@leemour/tg-cli@0.25.0`** (**Correction 2026-10-04:** current npm version; 0.26.0 is a draft candidate), released from GitHub by `bin/release`
    (trusted publishing works; the workflow publishes and tags). 0.2.0 added what is now `tg upgrade [--check]`
    and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
    `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
