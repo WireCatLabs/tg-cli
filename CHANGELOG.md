@@ -8,6 +8,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 ### What's new
 
 - **`tg messages send --topic` and `tg polls create --topic` send to a named forum topic.** Text, media captions, replies and scheduled messages preserve the topic; missing or closed topics and replies from another topic are refused before sending. MCP accepts the same address as `topic`.
+- **`tg setup` guides the first run**: local checks, automatic or browser app registration, QR
+  or phone login, a check of five chats and an optional agent skill. It reuses existing sessions,
+  explains the five-minute wait and leaves history downloads as a separate choice. Windows
+  instructions include `.cmd` wrappers and an npm exec fallback when PATH is missing.
 
 - **`tg mcp setup codex|claude-code` and `tg mcp doctor`** add the local server to a client and
   check its handshake and tools. Setup requires `--allow-writes` when the profile offers writing

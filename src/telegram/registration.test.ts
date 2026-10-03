@@ -23,6 +23,7 @@ interface Seen {
   path: string
   form: Record<string, string>
   cookie: string | null
+  signal: AbortSignal | null | undefined
 }
 
 const site = (answers: Record<string, string | (() => string)>, setCookie?: string) => {
@@ -34,6 +35,7 @@ const site = (answers: Record<string, string | (() => string)>, setCookie?: stri
       path,
       form: Object.fromEntries(new URLSearchParams(String(init?.body ?? ""))),
       cookie: headers.get("Cookie"),
+      signal: init?.signal,
     })
     const answer = answers[path]
     const body = typeof answer === "function" ? answer() : (answer ?? "")
@@ -47,6 +49,17 @@ const site = (answers: Record<string, string | (() => string)>, setCookie?: stri
 const prompts = { phone: async () => "+34600000000", code: async () => "abc12", note: () => {} }
 
 describe("registering the owner's app on my.telegram.org", () => {
+  it("passes cancellation to every request in the app registration flow", async () => {
+    const controller = new AbortController()
+    const { fetch, seen } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": APP_PAGE,
+    })
+    await registerApp(prompts, { fetch, signal: controller.signal })
+    expect(seen).toHaveLength(3)
+    expect(seen.every(({ signal }) => signal === controller.signal)).toBe(true)
+  })
   it("reads an app that already exists, without creating another", async () => {
     const { fetch, seen } = site({
       "/auth/send_password": '{"random_hash":"r1"}',

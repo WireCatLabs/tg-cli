@@ -34,6 +34,21 @@ file holds what the help cannot say: the traps and the boundaries.
 - **Not for:** mass mailing, auto-replies, other people's accounts.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 
+## First setup
+
+When the owner asks to install or connect Telegram, tell them: "Allow about five minutes for
+setup. Downloading chat history is a separate step and can take longer." Use `tg setup --agent
+codex` (or `cursor`, `claude`, `gemini`, `all`, `none`) in their local terminal. It checks the
+computer, obtains app keys, logs in and verifies five chats. Do not ask the owner to paste login
+codes, app hashes or 2FA passwords into the conversation; the terminal prompts for them.
+If automatic app registration fails, use `tg session start --app browser`, then rerun setup.
+
+An agent without a terminal can use `tg setup --qr-file login.png --agent codex --json` only with
+stored app keys and no required 2FA input. Show the temporary image to the owner. Setup removes
+it when login ends. Existing sessions are checked without a new login. Missing keyring access
+requires fixing the environment, not another login. Pick a chat and an amount of history with
+the owner before `tg store fetch <chat> --last 100`; setup starts no background service.
+
 ## Output
 
 - **In a pipe or with `--json`, stdout carries data only**: one JSON value. Everything else,

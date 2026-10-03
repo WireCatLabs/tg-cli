@@ -35,6 +35,7 @@ import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { sessionCommand } from "./commands/session.js"
+import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
 
@@ -44,6 +45,7 @@ const definition: ProgramDefinition = {
   commands: () =>
     loggingArgv([
       sessionCommand(),
+      setupCommand(),
       accountCommand(TELEGRAM),
       chatsCommand(TELEGRAM),
       contactsCommand(TELEGRAM),
