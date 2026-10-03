@@ -177,7 +177,7 @@ tg upgrade --check    # only say whether a newer version exists; installs nothin
 `tg upgrade` also restarts a background `serve` it finds running, so the server does not keep running
 the old code. It never runs by itself.
 
-### Upgrade JSON result (planned)
+### Upgrade JSON result
 
 `tg upgrade --check --json` reports current and available versions without installing.
 The common result contains `current`, `latest`, `newer`, `installer`, `command`, `updated` and

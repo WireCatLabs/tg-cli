@@ -39,6 +39,7 @@ describe("tg upgrade", () => {
       installer: "pnpm",
       command: "pnpm add -g @leemour/tg-cli@latest",
       updated: false,
+      restarted: [],
     })
   })
 

@@ -5,6 +5,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+- **`tg upgrade --json` always includes `restarted`**, including checks and no-op updates.
+  Previous fields remain; successful upgrades retain the managed-server restart policy. Scripts
+  validating the exact key set should accept the empty array when no server restarted.
+
 ### What's new
 
 - **`tg <bot> bot me` and MCP `tg_bot_me`** show the bot profile's id, name and username.
