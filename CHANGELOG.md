@@ -5,6 +5,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Fixed
+
+- `chats show` explains that differing listed-member and participant counts may reflect self
+  omission or a partial list, rather than claiming incomplete loading. JSON data stays unchanged.
+
 ### What's new
 
 - `config migrate --dry-run` previews legacy access settings as canonical permissions without
