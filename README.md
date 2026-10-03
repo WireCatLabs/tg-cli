@@ -29,6 +29,11 @@ tg messages send "Book club" "Running 15 minutes late"
 and its token from [@BotFather](https://t.me/BotFather). You can keep several bots: each is kept
 under a name you choose, and that name is the first word of the command.
 
+**The entire Bot API.** All 185 methods of Telegram Bot API 10.3 are exposed through
+`tg <bot> bot api <method>`, including operations beyond the convenient message and chat
+commands. Use native field flags or JSON bodies for your own scripts and automation.
+[Bot API guide](docs/bot.md#the-complete-bot-api) · [Every command and option](docs/commands.md).
+
 ```sh
 tg sales bot auth set                    # the token, at a hidden prompt; Telegram checks it first
 tg sales bot auth show                   # which bot it is
@@ -37,6 +42,8 @@ tg sales bot messages send "Team" "Build is ready" --file report.pdf
 tg bot list --check                      # every bot on this computer
 ```
 
+- **Every Bot API method.** `tg sales bot api --help` lists the complete native API;
+  each method's help lists its fields. The usual bot commands remain available alongside it.
 - **One token per name, in the keyring.** `bot:<name>`, apart from your own login; `TG_BOT_TOKEN`
   for CI. The token is never printed — not in an error, not with `--trace`, not in a run record.
 - **Recipients and a journal.** Each bot has its own list of chats it may write to, and a journal
