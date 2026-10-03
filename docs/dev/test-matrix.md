@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**406 ✅ · 29 ⛔ · 0 ❌** — 170 commands, 265 options.
+**407 ✅ · 29 ⛔ · 0 ❌** — 171 commands, 265 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -413,6 +413,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot contacts show` | `--bots` | ✅ |  |
 | `bot contacts show` | `--limit` | ✅ |  |
 | `bot contacts show` | `--refresh` | ✅ |  |
+| `bot me` |  | ✅ |  |
 | `bot store fetch` |  | ✅ |  |
 | `bot store fetch` | `--limit` | ✅ |  |
 | `bot store fetch` | `--page-size` | ✅ |  |

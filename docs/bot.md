@@ -61,6 +61,7 @@ it goes into a file only you can read.
 
 ```sh
 tg sales bot auth show    # where the token comes from, and which bot it is
+tg sales bot me           # the bot's id, name and username
 tg sales bot auth remove  # forget it
 ```
 

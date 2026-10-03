@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg <bot> bot me` and MCP `tg_bot_me`** show the bot profile's id, name and username.
+  This read uses the bot token, refuses offline mode, and sends no message.
+
 - **Setup is discoverable immediately after installation**: root help and first-run errors point
   to `tg setup`; setup and session help include examples, agent instructions and Windows advice.
   Quick-start, installation, MCP and security pages consistently explain the guided first run.
