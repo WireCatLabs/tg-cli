@@ -107,6 +107,15 @@ tg chats show "Book club"                  # kind, unread count, last message, w
 `--kind` is one of `dialog` (one-to-one), `group`, `channel` or `saved`. The filters look at the
 newest 200 chats. Groups and channels have [their own section](#groups-and-channels).
 
+### Message links (planned)
+
+`tg messages link <chat> <message>` or `tg messages link <msg:locator>` will return
+`{ locator, url, access, reason }`. Channel and supergroup permalinks can be public or restricted;
+a link grants no membership. Dialogs, basic groups and Saved Messages return a locator. Offline
+validates the stored target and returns no permalink. A locator for another account is refused.
+This singular command differs from `messages links`, which explains conversation relationships.
+Claim: `feat/messages-link` (B1c); implementation follows the reviewed contract.
+
 ### Messages
 
 ```sh
