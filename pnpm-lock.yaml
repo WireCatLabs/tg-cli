@@ -12,8 +12,8 @@ importers:
         specifier: 0.16.0
         version: 0.16.0(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.125.0
-        version: 0.125.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)
+        specifier: 0.126.0
+        version: 0.126.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -440,8 +440,8 @@ packages:
   '@leemour/cli-messaging-sqlite@1.0.0':
     resolution: {integrity: sha512-NFJMG+/2BWIb3JdOMgyV8SFsB7Fuv3wLtUmMt08GZ4KTpgu0WuA7qQmQE6appEgJJuF/97vHj6+AuXw2z3HMHw==}
 
-  '@leemour/cli-messaging@0.125.0':
-    resolution: {integrity: sha512-ihoCIasaH938KPoIN1hFdn5W5M0r2v3BlYIf6oIon1NuuUiuRUN14LH59kKXW8ecQuJAGesPwsR7gn/9pd12Dw==}
+  '@leemour/cli-messaging@0.126.0':
+    resolution: {integrity: sha512-i7hIby2xYoFzY1QzuGAJHbbE586AGDkmoBAnzWEZoyYwRi0DpeIPhMCLsUxHGgWWjLstPe9JQZPvlKyt88CHTA==}
     engines: {node: ^22.16.0 || >=24}
     hasBin: true
     peerDependencies:
@@ -1975,7 +1975,7 @@ snapshots:
 
   '@leemour/cli-messaging-sqlite@1.0.0': {}
 
-  '@leemour/cli-messaging@0.125.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)':
+  '@leemour/cli-messaging@0.126.0(@leemour/cli-core@0.16.0(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)':
     dependencies:
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
       '@huggingface/tokenizers': 0.2.0

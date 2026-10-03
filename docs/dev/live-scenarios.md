@@ -102,3 +102,6 @@ basic group, then enables topics; record only the returned shape and use the new
 Read back owner/member roles and forum state, create one test topic with `topics create`, then run
 the approved forum send checks. A migration is retained and not rolled back to a basic group.
 If stage two fails, inspect the new peer before continuing; do not migrate again blindly.
+Topic creation is not a retryable send: after an unknown outcome inspect the topic list and never
+repeat it, even with the same attempt id. The profile journal blocks reserved, sent and unknown
+creation ids; a different profile or lost journal does not provide this protection.
