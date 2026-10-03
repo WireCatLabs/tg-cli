@@ -20,7 +20,8 @@
     "dist",
     "skills",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "install"
   ],
   "scripts": {
     "build": "tsc --build",
@@ -43,7 +44,8 @@
     "probe:random-id": "pnpm build && node --experimental-strip-types scripts/probe-random-id.ts",
     "spike:live": "bin/tg-spike-live",
     "prepare": "lefthook install || true",
-    "secrets:scan": "gitleaks git --no-banner --redact ."
+    "secrets:scan": "gitleaks git --no-banner --redact .",
+    "postinstall": "node install/postinstall.mjs"
   },
   "dependencies": {
     "@leemour/cli-core": "0.16.0",

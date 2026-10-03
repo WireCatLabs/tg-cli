@@ -2,7 +2,8 @@
 
 `tg` is one command, installed as an ordinary npm package. It builds nothing at install time: SQLite
 comes from the runtime itself, so there is no native module to compile. It starts nothing in the
-background by itself either.
+background by itself either. Global npm installation can install the bundled agent instructions
+and, on Windows, repair the user PATH. It never logs in or reads chats during installation.
 
 ## What it needs
 
@@ -15,8 +16,8 @@ background by itself either.
 ## Install
 
 ```sh
-npm install -g @leemour/tg-cli
-# Then: tg setup
+npm install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli
+# The global install puts the skill in .agents and .claude. Then: tg setup
 
 pnpm add -g @leemour/tg-cli
 bun add -g @leemour/tg-cli
@@ -67,24 +68,42 @@ then rerun setup. See [sessions.md](sessions.md).
 Without a global installation, use `npm exec --yes --package=@leemour/tg-cli -- tg setup --agent codex`.
 Setup suggests subsequent commands in the same form.
 
-### Windows terminal
+### Windows: one install command
 
-Install a supported Node.js release, then open a new PowerShell window. If PowerShell blocks
-`npm.ps1` or `tg.ps1`, use their command wrappers:
-
-```powershell
-npm.cmd install -g @leemour/tg-cli
-tg.cmd setup --agent codex
-```
-
-If `tg.cmd` is not found, run `npm.cmd prefix -g` and add the printed directory to your user PATH,
-then open a new terminal. To continue immediately without changing PATH:
+Run this in PowerShell with Node.js 22.16+ or 24+ installed:
 
 ```powershell
-npm.cmd exec --yes --package=@leemour/tg-cli -- tg setup --agent codex
+& ([scriptblock]::Create((Invoke-RestMethod 'https://wirecat.dev/install.ps1'))) -Tool tg -Agent all
 ```
 
-The CLI is an npm package; no separate Windows executable is needed.
+The installer installs the npm package, preserves existing user PATH entries, adds the npm command
+folder once, updates the current PowerShell PATH and installs the bundled skill before login.
+It verifies that bare `tg` starts. `-Agent codex|cursor|claude|gemini|all|none` selects where the
+skill goes; default `all` installs both supported directories. Repeating installation refreshes
+the skill without duplicating PATH. The installer also completes these steps when npm lifecycle
+scripts are disabled.
+
+PowerShell's execution policy is unchanged. The installer removes only npm's generated `tg.ps1`
+shim for this package, keeping `tg.cmd`, so bare `tg` works under a restricted policy too.
+An unrelated script with that name is left untouched and reported as a conflict.
+
+Global npm installation also repairs persistent Windows PATH and installs both skills when its
+postinstall script is allowed:
+
+```powershell
+npm.cmd install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli
+```
+
+Newer npm versions can skip lifecycle scripts unless allowed. `--ignore-scripts` explicitly skips
+this package hook too. The PowerShell installer is the primary Windows entry point because it
+updates the terminal running it as well as persistent PATH; an npm child process cannot update
+its parent's environment. Agents launched before installation should refresh their shell PATH
+from the user and machine environment themselves, without asking the user to edit PATH.
+
+The global hook runs only for a global npm installation, never for project dependencies or npx.
+`TG_INSTALL_AGENT=codex|cursor|claude|gemini|all|none` selects the skill; `none` explicitly opts out.
+An agent reads `tg skill show` and verifies its installed skill before guiding account login.
+No separate Windows executable is needed.
 
 The first reading commands are in [usage.md](usage.md#log-in).
 
