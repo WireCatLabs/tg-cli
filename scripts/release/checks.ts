@@ -15,8 +15,18 @@ export const CHANGELOG: ChangelogRules = {
 }
 
 // The agent skill ships because `tg skill show` reads it from the package.
-export const PACKED = ["dist/", "install/", "package.json", "README.md", "LICENSE", "skills/tg-cli/SKILL.md"]
-export const PACKED_SAID = "dist/, the Windows installer, package.json, README.md, LICENSE and the agent skill"
+export const PACKED = [
+  "dist/",
+  "install/",
+  "package.json",
+  "README.md",
+  "LICENSE",
+  "skills/tg-cli/SKILL.md",
+  "spec/bot/LICENSE",
+  "spec/bot/README.md",
+]
+export const PACKED_SAID =
+  "dist/, the Windows installer, package.json, README.md, LICENSE, the agent skill and Bot API source licence/provenance notes"
 
 const GENERATED = new Set(["docs/commands.md"])
 
