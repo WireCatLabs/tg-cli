@@ -42,7 +42,8 @@ function AddUserPaths([string[]] $Directories) {
                 $updated = if ($updated) { "$directory;$updated" } else { $directory }
                 $added += $directory
             }
-            if (-not (ContainsPath $env:Path $directory)) { $env:Path = "$directory;$env:Path" }
+            $remaining = ($env:Path -split ';') | Where-Object { (NormalPath $_) -ne (NormalPath $directory) }
+            $env:Path = "$directory;" + ($remaining -join ';')
         }
         if ($updated.Length -gt 32767) { throw 'User PATH is too long to add the CLI safely.' }
         if ($updated -ne $old) { $key.SetValue('Path', $updated, $kind) }
@@ -80,10 +81,10 @@ function RemoveGeneratedPowerShellShim([string] $Directory) {
     }
 }
 
-$node = (Get-Command node -CommandType Application -ErrorAction Stop).Source
+$node = (Get-Command node -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
 if (-not $NodeDirectory) { $NodeDirectory = Split-Path $node -Parent }
 if (-not $Prefix) {
-    $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop).Source
+    $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
     $Prefix = (& $npm prefix -g | Out-String).Trim()
     if ($LASTEXITCODE -ne 0) { throw 'Could not determine the npm installation folder.' }
 }
@@ -93,7 +94,7 @@ if ($Prefix.Contains(';') -or $NodeDirectory.Contains(';')) { throw 'Installatio
 if (-not $RepairOnly) {
     & $node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>=24||(a===22&&b>=16)?0:1)'
     if ($LASTEXITCODE -ne 0) { throw 'Node.js 22.16+ or 24+ is required. Install a supported Node.js release first.' }
-    $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop).Source
+    $npm = (Get-Command npm.cmd -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
     $package = "@leemour/$Tool-cli"
     if (-not $PackageSpec) { $PackageSpec = $package }
     Note "1/3 Installing $package..."
@@ -130,7 +131,7 @@ if ($Agent -ne 'none') {
     }
 }
 
-$resolved = Get-Command $Tool -CommandType Application -ErrorAction Stop
+$resolved = Get-Command $Tool -CommandType Application -ErrorAction Stop | Select-Object -First 1
 if ([IO.Path]::GetFullPath($resolved.Source) -ne [IO.Path]::GetFullPath($shim)) {
     throw "Another $Tool command shadows this installation on PATH."
 }
