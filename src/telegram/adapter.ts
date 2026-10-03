@@ -696,8 +696,14 @@ export class TelegramAdapter {
       if (!state.needsUpgrade) return state
       const peer = await this.#client.resolvePeer(Number(state.chat.id))
       if (peer._ !== "inputPeerChat") throw new CliError("validation_error", "only a basic group can be upgraded")
+      let accepted = false
+      let migratedChatId: string | undefined
       try {
-        const updates = await this.#client.call({ _: "messages.migrateChat", chatId: peer.chatId })
+        const updates = await this.#client.call(
+          { _: "messages.migrateChat", chatId: peer.chatId },
+          { maxRetryCount: 0, floodSleepThreshold: 0 },
+        )
+        accepted = true
         this.#client.handleClientUpdate(updates, true)
         const made =
           updates._ === "updates" || updates._ === "updatesCombined"
@@ -708,8 +714,19 @@ export class TelegramAdapter {
             "outcome_unknown",
             "the group may have been upgraded; check its current chat id before repeating",
           )
-        return await this.#forumState(String(getMarkedPeerId({ _: "peerChannel", channelId: made.id })))
+        migratedChatId = String(getMarkedPeerId({ _: "peerChannel", channelId: made.id }))
+        return await this.#forumState(migratedChatId)
       } catch (error) {
+        if (accepted)
+          throw new CliError(
+            "outcome_unknown",
+            "the upgrade was accepted but its state could not be read; check the current group before continuing",
+            {
+              previousChatId: state.chat.id,
+              ...(migratedChatId === undefined ? {} : { chatId: migratedChatId, upgraded: true }),
+              stage: "upgrade",
+            },
+          )
         throw unknownIfUnanswered(error, "the group may have been upgraded; check its current chat id before repeating")
       }
     })

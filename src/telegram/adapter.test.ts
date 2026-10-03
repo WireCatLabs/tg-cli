@@ -824,10 +824,39 @@ describe("forum setup", () => {
       seq: 0,
     }
     expect(await adapter.upgradeForum("-500")).toMatchObject({ chat: { id: "-1000000000700" }, needsUpgrade: false })
-    expect(client.calls).toContainEqual({ method: "call", args: [{ _: "messages.migrateChat", chatId: 500 }] })
+    expect(client.calls).toContainEqual({
+      method: "call",
+      args: [
+        { _: "messages.migrateChat", chatId: 500 },
+        { maxRetryCount: 0, floodSleepThreshold: 0 },
+      ],
+    })
     expect(client.handleClientUpdate).toHaveBeenCalled()
     await adapter.upgradeForum("-1000000000700")
     expect(client.calls.filter(({ method }) => method === "call")).toHaveLength(1)
+  })
+  it("preserves the migrated peer when confirmation fails", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-500, { chatType: "group" })
+    client.resolvePeer = async () => ({ _: "inputPeerChat", chatId: 500 })
+    client.migrationAnswer = {
+      _: "updates",
+      users: [],
+      updates: [],
+      chats: [{ _: "channel", id: 700, megagroup: true }],
+      date: 0,
+      seq: 0,
+    }
+    const read = client.getFullChat
+    client.getFullChat = async (reference) => {
+      if (reference === -1000000000700) throw new Error("synthetic confirmation failure")
+      return read(reference)
+    }
+    await expect(adapter.upgradeForum("-500")).rejects.toMatchObject({
+      code: "outcome_unknown",
+      details: { previousChatId: "-500", chatId: "-1000000000700", upgraded: true, stage: "upgrade" },
+    })
+    expect(client.updateForumSettings).not.toHaveBeenCalled()
   })
   it("preserves forum UI, reads back and does not toggle again", async () => {
     const { adapter, client } = await open()
