@@ -316,3 +316,6 @@ the server speaks for and which writing tools are on.
 
 Each write runs the same command you would type, so the bot's recipient list and journal apply.
 The token, the webhooks, the command menu and the recipient list stay yours to change.
+
+Bot `--md` uses the same [Telegram formatting rules](usage.md#sending) as personal sends.
+Text edits and file/photo captions use that formatter too.
