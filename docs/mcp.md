@@ -174,7 +174,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | Tool | Command | What it does |
 |---|---|---|
 | `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
-| `tg_review` | `tg review`, `--since-time`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `complete` and `until` say where the next review starts; `unanswered` keeps the questions nobody answered; `transcribe` hears voice messages, `model` picks the model |
+| `tg_review` | `tg review`, `--since-time`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `unanswered` also considers retained transcripts; `transcribe` hears new voices before filtering and `model` picks the model; unheard voices leave `complete` false, so keep the previous boundary until the review is complete |
 | `tg_inbox` | `tg inbox`, `--since-time`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages, `model` picks the model |
 | `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |

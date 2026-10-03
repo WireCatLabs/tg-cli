@@ -170,7 +170,8 @@ tg inbox --all --json                              # every chat with unread mess
 tg inbox --since-time 2h --json                    # everything that came in during the last two hours
 tg review --since-time 1d --json                   # every message, the owner's too, in chats that changed — who owes what;
                                                    # when complete, the next review starts at until
-tg review --unanswered --json                      # questions to the owner or a group's admins nobody answered in 24 h
+tg review --unanswered --json                      # questions, including retained voice transcripts, nobody answered in 24 h
+tg review --unanswered --transcribe --json         # hear new voices before filtering; keep the old boundary if incomplete
 tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
 tg chats events -1001234567890 --since-time 7d --json   # who joined, left, was added or removed
