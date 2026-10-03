@@ -179,6 +179,11 @@ answered when you or an admin replied to it, or were the next to speak after the
 Questions younger than the hours given (24 by default) are left out: nobody has had time to answer.
 When a group's admins are not known, the command says so, and only your answers count.
 
+Retained voice transcripts participate in this filtering too. Add `--transcribe` to hear voices
+without a retained transcript before selecting unanswered questions. Unrecognized voices keep the
+review incomplete: an empty result does not prove there are no unanswered questions. Keep the
+previous boundary until `complete` is true.
+
 ### Voice messages
 
 ```sh
