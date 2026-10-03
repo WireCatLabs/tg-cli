@@ -263,7 +263,11 @@ Install it:
 ```sh
 npm install -g @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli, bun add -g @leemour/tg-cli
 tg --version
+tg setup                        # guided first run; allow about five minutes
 ```
+
+For an agent, read `tg skill show` before login and use `tg setup --agent codex`.
+`tg --help` and `tg setup --help` show the next steps.
 
 It needs **Node 22.16 or newer**, or **Bun** — CI runs the built command under both — on macOS, Linux
 or Windows. SQLite comes from the
@@ -347,20 +351,24 @@ version that does not exist.
 
 ### A skill for agents with a terminal
 
-A skill is a file of instructions an agent reads before it works. `tg`'s skill says which commands
-exist, what the agent does only when you ask, and how to repeat a send safely. **Claude Code**,
-**Codex** and **Gemini CLI** read it. It is installed with one command and is always the same
-version as `tg`:
+A skill is a file of instructions an agent reads before it works. The bundled skill is available
+before login through `tg skill show`. It explains setup, reading, permissions and safe sending.
+Guided setup installs it for your chosen agent; an already configured account can install it
+separately:
 
 ```sh
-# Claude Code
-mkdir -p ~/.claude/skills/tg-cli && tg skill show > ~/.claude/skills/tg-cli/SKILL.md
-# Codex and Gemini CLI share ~/.agents/skills
-mkdir -p ~/.agents/skills/tg-cli && tg skill show > ~/.agents/skills/tg-cli/SKILL.md
+tg setup --agent codex            # also cursor, claude, gemini, all or none
+tg skill install --for all        # install both supported skill directories, without logging in
+tg skill show                    # read the complete instructions without installing them
 ```
 
+Claude Code uses `~/.claude/skills/tg-cli/`. Codex, Gemini CLI and local Cursor use
+`~/.agents/skills/tg-cli/`. Start a new agent session after installation if it does not see the
+skill. The installed instructions come from the same package version as `tg`.
+
 How these agents find skills: [Codex](https://learn.chatgpt.com/docs/build-skills),
-[Gemini CLI](https://geminicli.com/docs/cli/skills/).
+[Gemini CLI](https://geminicli.com/docs/cli/skills/),
+[Cursor](https://cursor.com/docs/skills).
 
 ### An MCP server for agents without a terminal
 

@@ -26,7 +26,7 @@ ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ mcp-auth-pro
   recipient list and the hourly limit still apply ([mcp.md](mcp.md#what-an-agent-may-do)).
 - **The computer that runs `tg` must be on.** To use it from a phone or a laptop with nothing
   installed, run all of this on a small always-on server instead, and log in to `tg` there
-  (`tg session start`). Then only a browser is needed on your side.
+  (`tg setup --agent none`). Then only a browser is needed on your side.
 - **Who can use it:**
 
 | App | Plans | Docs |

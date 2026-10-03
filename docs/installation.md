@@ -16,6 +16,8 @@ background by itself either.
 
 ```sh
 npm install -g @leemour/tg-cli
+# Then: tg setup
+
 pnpm add -g @leemour/tg-cli
 bun add -g @leemour/tg-cli
 ```
@@ -38,10 +40,16 @@ tg doctor        # where its files are, and whether a login exists; connects to 
 
 ## First run
 
+`tg --help` shows setup and the agent instructions immediately after installation. `tg skill show`
+works before login: an agent should read it before connecting Telegram. `tg commands --json`
+lists the available commands and flags. These hints work even when the package manager skips
+installation scripts.
+
 Run this in a local terminal:
 
 ```sh
 tg setup --agent codex
+tg setup --help              # examples, login choices and Windows instructions
 ```
 
 Choose `codex`, `cursor`, `claude`, `gemini`, `all` or `none`. Without `--agent`, the command asks

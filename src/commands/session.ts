@@ -173,6 +173,19 @@ export const sessionCommand = () => {
         .default("browser"),
     )
     .option("--qr-file <png>", "write the QR code to this PNG instead of drawing it, for an agent to pass on")
+    .addHelpText(
+      "after",
+      "\nFirst time? Use `tg setup` for login, a check of five chats and an agent skill.\n" +
+        "\nExamples:\n" +
+        "  tg session start                 QR login; app registration opens in your browser\n" +
+        "  tg session start --app auto      Obtain app ID/hash automatically\n" +
+        "  tg session start phone           Phone number, login code and optional 2FA password\n" +
+        "  tg work session start            Log in to the work profile\n" +
+        "\nScan in Telegram: Settings > Devices > Link Desktop Device.\n" +
+        "For an interrupted or expired session, finish this login, then rerun `tg setup`.\n" +
+        "Agents: read `tg skill show`; --qr-file needs stored app keys and no 2FA input\n" +
+        "when running without a terminal. The temporary image is removed after login.\n",
+    )
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")

@@ -9,6 +9,62 @@ import type { SendOptions } from "@leemour/cli-messaging/cli"
 import { describe, expect, it, vi } from "vitest"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
+describe("first-run discovery", () => {
+  it.each([
+    {
+      argv: ["--help"],
+      phrases: ["Getting started after installation", "tg setup", "tg skill show", "tg commands --json"],
+    },
+    {
+      argv: ["setup", "--help"],
+      phrases: [
+        "Examples:",
+        "tg work setup --agent claude",
+        "about 5 minutes",
+        "Global Options:",
+        "--json",
+        "npm.cmd exec",
+        "no 2FA input",
+      ],
+    },
+    {
+      argv: ["session", "start", "--help"],
+      phrases: ["First time?", "tg setup", "tg session start phone", "tg skill show"],
+    },
+    {
+      argv: ["skill", "--help"],
+      phrases: ["no session is needed", "tg setup --agent codex", "tg skill install --for all"],
+    },
+  ])("shows useful help before login: $argv", async ({ argv, phrases }) => {
+    const adapter = vi.fn(() => scripted())
+    const result = await tg(argv, { adapter, env: { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined } })
+    expect(result.code).toBe(0)
+    for (const phrase of phrases) expect(result.stdout.join("\n")).toContain(phrase)
+    expect(adapter).not.toHaveBeenCalled()
+  })
+
+  it("makes the bundled skill readable without credentials or a session", async () => {
+    const adapter = vi.fn(() => scripted())
+    const result = await tg(["skill", "show"], {
+      adapter,
+      env: { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined },
+    })
+    expect(result.code).toBe(0)
+    expect(result.stdout.join("\n")).toContain("## First setup")
+    expect(result.stdout.join("\n")).toContain("tg setup --help")
+    expect(result.stdout.join("\n")).toContain("Allow about five minutes")
+    expect(adapter).not.toHaveBeenCalled()
+  })
+
+  it("points a fresh profile without a session to guided setup", async () => {
+    const result = await tg(["unconfigured", "chats", "list", "--json"], { adapter: undefined })
+    expect(result.code).toBe(4)
+    expect(result.stdout).toEqual([])
+    expect(result.stderr.join("\n")).toContain("tg unconfigured setup")
+    expect(result.stderr.join("\n")).toContain("local terminal")
+  })
+})
+
 describe("machine output", () => {
   it.each([
     { argv: ["messages", "send", "me", "synthetic text", "--topic", " ", "--json"] },
@@ -320,7 +376,8 @@ describe("app credentials out of reach", () => {
 
     expect(loggedIn.code).toBe(4)
     expect(loggedIn.stderr.join("\n")).toContain("XDG_RUNTIME_DIR")
-    expect(never.stderr.join("\n")).toContain("session start")
+    expect(never.stderr.join("\n")).toContain("tg never setup")
+    expect(never.stderr.join("\n")).toContain("tg skill show")
     expect(never.stderr.join("\n")).not.toContain("XDG_RUNTIME_DIR")
   })
 })

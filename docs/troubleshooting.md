@@ -11,7 +11,7 @@ numbers are in [commands.md](commands.md#exit-codes).
 | `1` | `generic_failure` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [store](#the-message-store-was-written-by-a-newer-version-) |
-| `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-session-start) |
+| `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-setup) |
 | `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
 | `7` | `confirmation_required` | the chat is not on the recipient list, or the change asks first and nobody could answer | [recipient list](#chat--is-not-on-the-recipient-list-of-profile-), [asks first](#-asks-before-it-acts) |
@@ -73,19 +73,23 @@ error: unknown command 'list'
 Here `chat` was read as a profile, and `list` is not a command. The command is `chats`, plural.
 `tg --help` lists them all.
 
-## "no session for profile "default" — run `tg session start`"
+## "no session for profile "default" — run `tg setup`"
 
 Exit code `4`. This profile has never logged in on this machine, or it logged out. Check which
 profile you meant: the first word of the command, or `TG_PROFILE` ([sessions.md](sessions.md#profiles)).
 
 ```sh
-tg session start            # log in
+tg setup                    # guided first run
 tg work chats list          # or name the profile you logged in to
 ```
 
 If you are sure you logged in, check whether `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set
 now but was not then, or the other way round — in another terminal, say. They move the login.
 `tg config show` says when one is set; `env | grep TG_` shows them all.
+
+For a first run without app keys, the error names `tg setup` (or `tg work setup` for a work
+profile). Read `tg setup --help` for login choices. Agents can read `tg skill show` before login.
+An interrupted or expired session still needs `tg session start`, then another setup check.
 
 ## "no Telegram app credentials found … although it has logged in on this machine"
 

@@ -56,6 +56,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
     ...(environment.keyring ? { keyring: environment.keyring } : {}),
   })
   const login = `\`tg ${asFirstWord(profile)}session start\``
+  const setup = `\`tg ${asFirstWord(profile)}setup\``
 
   const open = async (given?: ApiCredentials, connecting: ConnectOptions = {}): Promise<Adapter> => {
     const resolved = given ?? credentials.read()
@@ -67,7 +68,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
           ? `no Telegram app credentials found for profile "${profile}", although it has logged in on this machine — ` +
               "the keyring is probably out of reach (cron, ssh, an MCP client that trims the environment: set " +
               `XDG_RUNTIME_DIR); \`tg ${asFirstWord(profile)}doctor\` shows it. Log in again only if they were removed`
-          : `no Telegram app credentials for profile "${profile}" — run ${login} first`,
+          : `no Telegram app credentials for profile "${profile}" — run ${setup} in a local terminal first; agents: read \`tg skill show\``,
       )
     }
     const options = { credentials: resolved, sessionPath, ...connecting }
@@ -83,7 +84,10 @@ const telegramOf = (command: Command, base: BaseContext) => {
 
   const connect = async (options: ConnectOptions = {}): Promise<Adapter> => {
     if (!environment.adapter && !existsSync(sessionPath)) {
-      throw new CliError("authentication_error", `no session for profile "${profile}" — run ${login}`)
+      throw new CliError(
+        "authentication_error",
+        `no session for profile "${profile}" — run ${setup} in a local terminal`,
+      )
     }
     return open(undefined, options)
   }

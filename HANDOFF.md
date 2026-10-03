@@ -37,7 +37,8 @@ the backlog.
 ### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
 
 `tg` uses **`@leemour/cli-messaging`** (**Correction 2026-10-01:** the version is the pin in
-`package.json`, not one written here). What it does now: login (`session`), `upgrade`, `account show`,
+`package.json`, not one written here). What it does now: login (`session`), guided first run (`setup`; **Correction 2026-10-03:**
+root help, `setup --help` and `skill show` explain onboarding before login), `upgrade`, `account show`,
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|search`, `watch
 [--events]`, `serve`, `store fetch|status|export|jobs`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;

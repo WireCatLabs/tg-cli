@@ -10,18 +10,25 @@ stay running, and each of them says so.
 tg [profile] [options] <resource> <action> [arguments]
 ```
 
-## The first minute
+## Get started
 
 ```sh
 npm install -g @leemour/tg-cli
-tg session start          # the app from my.telegram.org, then a QR code to scan
+tg setup                  # guided app registration, login and agent skill
 tg chats list --limit 5   # your newest chats
 tg messages list me       # Saved Messages, the latest 20
 ```
 
+Allow about five minutes for setup. History downloads are separate: choose a chat and an amount
+before `tg store fetch <chat> --last 100`. An agent can read `tg skill show` without logging in;
+use `tg setup --agent codex` to select its skill explicitly. `tg setup --help` explains the flags.
 Nothing more is needed to read.
 
 ## Log in
+
+`tg setup` is the first-run command. It defaults to automatic app registration and QR login;
+`--app browser` and `--method phone` choose the alternatives. For login alone, or to finish an
+interrupted or expired login, use:
 
 ```sh
 tg session start                        # QR code: Settings → Devices → Link Desktop Device
