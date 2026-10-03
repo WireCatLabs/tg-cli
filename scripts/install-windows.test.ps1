@@ -62,10 +62,14 @@ Remove-Item Env:npm_config_ignore_scripts
 $env:TG_TEST_INSTALLER = $installer
 $env:TG_TEST_TARBALL = $Tarball
 $env:TG_TEST_PREFIX = Join-Path $testRoot 'npm Windows PowerShell 51'
-$code = '& $env:TG_TEST_INSTALLER -Prefix $env:TG_TEST_PREFIX -PackageSpec $env:TG_TEST_TARBALL -Agent all -Json'
+$agentDirectory = if ($env:HOME) { $env:HOME } else { $env:USERPROFILE }
+$claudeSkill = Join-Path $agentDirectory '.claude/skills/tg-cli/SKILL.md'
+$claudeTime = (Get-Item $claudeSkill).LastWriteTimeUtc
+$code = '& $env:TG_TEST_INSTALLER -Prefix $env:TG_TEST_PREFIX -PackageSpec $env:TG_TEST_TARBALL -Agent codex -Json'
 $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($code))
 $native = & $powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand $encoded
 if ($LASTEXITCODE -ne 0) { throw 'PowerShell 5.1 installation failed.' }
 $native = ($native -join "`n") | ConvertFrom-Json
-if ($native.tool -ne 'tg' -or $native.written.Count -ne 2) { throw 'PowerShell 5.1 installer result is incomplete.' }
+if ($native.tool -ne 'tg' -or $native.written.Count -ne 1) { throw 'PowerShell 5.1 installer result is incomplete.' }
+if ((Get-Item $claudeSkill).LastWriteTimeUtc -ne $claudeTime) { throw 'Codex-only installation rewrote the Claude skill.' }
 Write-Output 'PASS: persistent/current PATH, restricted shell, skills, repeat, disabled scripts, full PowerShell 5.1 installation'
