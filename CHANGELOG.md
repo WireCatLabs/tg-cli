@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.26.0 — 04.10.2026
 
 ### What's new
 
@@ -13,7 +13,18 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   stored message without connecting; locators for another account are refused.
   Singular `link` differs from conversation-graph `links`.
 
+### Changed — may break scripts
+
+- **Unpin uses its own permission, `messages.unpin`, in CLI and MCP.** Previously the shared
+  guard checked `messages.pin`. Profiles with explicit canonical permissions should review their
+  unpin rule; legacy `allow: ["pin"]` continues to cover both actions.
+
 ### Fixed
+
+- **Unanswered reviews consider retained voice transcripts and requested new transcripts before
+  filtering.** Add `--transcribe` to recognize voices that have no retained text. Unrecognized
+  voices leave `complete` false: keep the previous review boundary rather than treating an empty
+  result as proof that nothing needs an answer.
 
 - Voice transcription downloads use the history connection and close it before local recognition,
   avoiding a second connection for `messages list --transcribe`, `inbox` and `review`.

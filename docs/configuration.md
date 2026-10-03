@@ -206,4 +206,5 @@ Without `MESSAGING_STORE`, what that login reads still goes into your usual loca
 canonical `permissions`, preserving the file's effective levels for personal and bot profiles.
 It does not write the file or connect to Telegram. `tg config migrate --json` applies that
 migration explicitly; a process locked to one profile cannot apply a change affecting all profiles.
-Other settings are preserved. Canonical files need no migration.
+Other settings are preserved. Canonical files need no migration. Once canonical `permissions` are present,
+`config set` refuses legacy `readOnly` and `allow` changes; change the corresponding permission keys.
