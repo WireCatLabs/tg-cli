@@ -46,3 +46,5 @@ What it can do, how agents use it and how it differs from other tools: the
 | [troubleshooting.md](troubleshooting.md) | Something does not work: what the screen says, and what to do |
 | [security.md](security.md) | What reaches the disk and the network, and what stops a send going to the wrong place? |
 | [roadmap.md](roadmap.md) | What is coming next? |
+
+[Message search](search.md): Lucene syntax, fields, regex, dates and legacy migration.
