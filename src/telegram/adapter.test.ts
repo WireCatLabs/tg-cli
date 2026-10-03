@@ -41,6 +41,8 @@ class FakeClient {
   found: unknown = null
   transcripts: { text: string; pending?: boolean }[] = []
   resolvePeer = async (peer: unknown): Promise<unknown> => ({ _: "inputPeerChannel", peer })
+  exportedLink: string | Error = "https://t.me/test_channel/1"
+  resolveChannel = vi.fn(async (_peer: unknown) => ({ _: "inputChannel", channelId: 500, accessHash: 42 }))
   authorizations: unknown[] = []
   phoneOwner: unknown = null
   contacts: unknown[] = []
@@ -50,6 +52,10 @@ class FakeClient {
   handleClientUpdate = vi.fn()
   call = async (request: { _: string }, options?: unknown) => {
     this.#record("call", options === undefined ? [request] : [request, options])
+    if (request._ === "channels.exportMessageLink") {
+      if (this.exportedLink instanceof Error) throw this.exportedLink
+      return { link: this.exportedLink, html: "ignored synthetic embed" }
+    }
     if (request._ === "messages.migrateChat") {
       if (this.migrationAnswer instanceof Error) throw this.migrationAnswer
       return this.migrationAnswer
@@ -1641,4 +1647,62 @@ describe("closing", () => {
     expect(account).toEqual({ id: "1", name: "Owner", username: null })
     expect(client.calls.find((call) => call.method === "start")?.args[0]).toHaveProperty("qrCodeHandler")
   })
+})
+
+describe("message permalinks", () => {
+  it.each([
+    ["https://t.me/test_channel/12", "public"],
+    ["https://t.me/c/500/3/12", "restricted"],
+    ["https://other.example/12", "unknown"],
+    ["https://t.me/test_channel/12?thread=3", "public"],
+    ["https://t.me/test_channel/12?single&thread=3", "public"],
+  ])("exports the individual target with thread context: %s", async (url, access) => {
+    const { adapter, client } = await open()
+    client.peer = { ...group(-100500, "Synthetic"), raw: { _: "channel" }, isForum: true }
+    client.found = { id: 12 }
+    client.exportedLink = url
+    expect(await adapter.permalink("-100500", "12")).toEqual({ url, access, reason: null })
+    expect(client.calls.find((call) => call.method === "getMessages")?.args[1]).toEqual([12])
+    expect(client.calls.find((call) => call.method === "call")?.args[0]).toEqual({
+      _: "channels.exportMessageLink",
+      channel: { _: "inputChannel", channelId: 500, accessHash: 42 },
+      id: 12,
+      thread: true,
+    })
+    expect(client.readHistory).not.toHaveBeenCalled()
+    expect(client.sendText).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    { type: "user", isSelf: false },
+    { type: "user", isSelf: true },
+    { type: "chat", raw: { _: "chat" } },
+  ])("returns no native URL for unsupported chat kinds", async (peer) => {
+    const { adapter, client } = await open()
+    client.peer = peer
+    client.found = { id: 12 }
+    expect(await adapter.permalink("7", "12")).toEqual({ url: null, access: "unavailable", reason: "unsupported_chat" })
+    expect(client.calls.some((call) => call.method === "call")).toBe(false)
+  })
+
+  it("refuses deleted targets and propagates export denial", async () => {
+    const { adapter, client } = await open()
+    client.found = null
+    await expect(adapter.permalink("7", "12")).rejects.toMatchObject({ code: "not_found" })
+    expect(client.calls.some((call) => call.method === "getPeer")).toBe(false)
+    client.peer = { ...group(-100500, "Synthetic"), raw: { _: "channel" } }
+    client.found = { id: 12 }
+    client.exportedLink = new tl.RpcError(400, "CHANNEL_PRIVATE")
+    await expect(adapter.permalink("-100500", "12")).rejects.toMatchObject({ code: "permission_error" })
+  })
+
+  it.each(["0", "-1", "2147483648", "9007199254740993", "12x"])(
+    "refuses invalid ids without requests: %s",
+    async (id) => {
+      const { adapter, client } = await open()
+      client.calls.length = 0
+      await expect(async () => adapter.permalink("7", id)).rejects.toMatchObject({ code: "validation_error" })
+      expect(client.calls).toEqual([])
+    },
+  )
 })

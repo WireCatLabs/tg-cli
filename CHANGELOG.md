@@ -3,6 +3,21 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg messages link` and read-only MCP `tg_messages_link` return a message permalink and locator.**
+  Channels and supergroups preserve thread context; private links require access and grant no
+  membership. Dialogs, basic groups and Saved Messages return a locator. Offline validates the
+  stored message without connecting; locators for another account are refused.
+  Singular `link` differs from conversation-graph `links`.
+
+### Fixed
+
+- Voice transcription downloads use the history connection and close it before local recognition,
+  avoiding a second connection for `messages list --transcribe`, `inbox` and `review`.
+
 ## 0.25.0 — 03.10.2026
 
 ### Fixed

@@ -21,6 +21,15 @@ installs the skill even with disabled lifecycle scripts and verifies bare `tg`. 
 and verify your skill is loaded before login. If your process predates installation, refresh your
 shell PATH from the user/machine environment yourself; do not ask the user to edit PATH.
 
+## Message permalinks
+
+`tg messages link <chat> <message>` or `tg messages link <msg:locator>` returns
+`{ locator, url, access, reason }` without message content. Channels/supergroups can have
+public or restricted links; a link grants no membership. Dialogs, basic groups and Saved Messages
+return only a locator. Offline validates the stored target, never connects and returns no URL.
+Locators from another account are refused. This differs from graph `messages links`.
+Read-only MCP offers `tg_messages_link` with the same result.
+
 ## Boundaries
 
 - **Send nothing the owner did not ask for.** `tg messages send` (also with `--reply-to`), `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
