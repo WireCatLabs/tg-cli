@@ -3,9 +3,12 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.25.0 — 03.10.2026
 
 ### What's new
+
+- The README and bot guide make the complete native Bot API surface explicit: all 185 methods
+  of the pinned Telegram Bot API 10.3, alongside the convenient bot commands and use-case MCP tools.
 
 - `config migrate --dry-run` previews legacy access settings as canonical permissions without
   writing or connecting; `config migrate` applies it explicitly while preserving effective levels.
