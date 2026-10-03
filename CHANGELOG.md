@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- `config migrate --dry-run` previews legacy access settings as canonical permissions without
+  writing or connecting; `config migrate` applies it explicitly while preserving effective levels.
+  Other configuration values stay unchanged.
+
 - `tg <bot> bot api <method>` covers the pinned Telegram Bot API schema using cli-core generators
   and the common MAX/TG command builder. Native field flags, JSON/stdin bodies and nested multipart
   uploads share validation and write guards. Destructive methods ask by default; unanswered writes

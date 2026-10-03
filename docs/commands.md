@@ -1796,6 +1796,20 @@ tg runs path <run-id>
 
 the settings in force, and where each one came from
 
+### `tg config migrate`
+
+replace legacy access settings with permissions, preserving this file's effective levels
+
+**Changes something on this computer only.**
+
+```sh
+tg config migrate [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--dry-run` | show the migration without writing the file. |
+
 ### `tg config show`
 
 the profile, the profiles that exist, and each setting with where it came from
