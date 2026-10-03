@@ -21,6 +21,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   a known message number; later runs continue backwards. Private chats and basic groups are refused.
   See [the bot page](docs/bot.md#fetching-older-messages).
 
+### Fixed
+
+- Login completion shortens Windows home paths correctly. Release documentation checks recognize
+  Windows path separators. File-mode tests apply Unix permissions only on Unix; Windows access
+  follows inherited ACLs, now stated in the security page.
+
 ## 0.22.0 — 03.10.2026
 
 ### What's new

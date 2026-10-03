@@ -76,13 +76,17 @@ visible to every process on the machine in `ps`, and would stay in your shell hi
 The exact paths on this machine: `tg doctor`. The folders on each system:
 [installation.md](installation.md#where-files-go).
 
+The `0600` file and `0700` folder modes above apply on Linux and macOS. Windows uses inherited
+access control lists (ACLs); these numeric modes do not set an owner-only Windows ACL. Keep the
+state, store, exports and temporary QR images in directories private to your Windows user.
+
 **The local store is not encrypted.** Anyone who can read it reads your messages. It is shared with
 other CLIs built on the same library, and it stays after `tg session end` and after uninstalling.
 Message text is also in exports, backups and downloaded files; nothing else in the table holds it.
 
 ### If the computer is lost
 
-`0600` keeps the files from other users of this machine, not from someone who takes the disk. Whole-
+On Linux and macOS, `0600` keeps files from other users, not from someone who takes the disk. Whole-
 disk encryption does that: FileVault on macOS, LUKS on Linux, BitLocker on Windows. The store has no
 encryption of its own: a key in the keyring would not stop a program running as your user, which can
 read the keyring as `tg` does.
@@ -204,7 +208,8 @@ tg messages send me "text"     # this line is visible in ps and stays in your sh
 
 When that matters, leave the text out and pipe it in: `tg messages send me < note.txt`.
 
-Other users of the machine see none of `tg`'s files: folders are `0700`, files `0600`.
+On Linux and macOS, folders are `0700` and files `0600`. On Windows, access follows the directory's
+inherited ACLs.
 
 ## What goes over the network
 

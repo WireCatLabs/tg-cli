@@ -194,7 +194,7 @@ describe("session start", () => {
 
     expect(code).toBe(0)
     expect(during.bytes?.subarray(0, 8)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
-    expect(during.mode).toBe(0o600)
+    if (process.platform !== "win32") expect(during.mode).toBe(0o600)
     expect(stderr.join("\n")).toContain(path)
     expect(stderr.join("\n")).not.toContain("▀")
     expect(existsSync(path)).toBe(false)

@@ -77,8 +77,9 @@ const loggedIn = (
   env: NodeJS.ProcessEnv,
 ): string => {
   const who = [account.username ? `@${account.username}` : undefined, `id ${account.id}`].filter(Boolean).join(", ")
-  const home = env.HOME
-  const shown = home && session.startsWith(`${home}/`) ? `~${session.slice(home.length)}` : session
+  const home = (env.HOME ?? env.USERPROFILE)?.replaceAll("\\", "/")
+  const portable = session.replaceAll("\\", "/")
+  const shown = home && portable.startsWith(`${home}/`) ? `~${portable.slice(home.length)}` : session
   return [
     `Logged in as ${account.name ?? "you"} (${who}) — profile ${profile}.`,
     `Session:  ${shown}`,
