@@ -203,7 +203,8 @@ An upgrade that succeeded before enable failed is retained; inspect the partial 
 promise rollback to a basic group. Do not silently move old message locators to the new id.
 
 
-Native Bot API: `tg <bot> bot api <kebab-method>` uses the pinned schema and the same
+Full native Bot API: all 185 Telegram Bot API 10.3 methods are exposed through
+`tg <bot> bot api <kebab-method>`, including operations outside the convenient bot commands. It uses the pinned schema and the same
 command builder as MAX. Consult method help; native fields are flags or JSON via `--body`,
 `--body-file` or stdin. Native `timeout` is `--poll-timeout`, separate from the command deadline.
 Only schema-declared file fields interpret `@path`; text remains literal. Secret fields have no

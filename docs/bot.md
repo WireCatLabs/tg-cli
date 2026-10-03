@@ -8,6 +8,11 @@ You create a bot with [@BotFather](https://t.me/BotFather) in Telegram; it gives
 
 Every command and option is in [commands.md](commands.md).
 
+**The entire Telegram Bot API is exposed through the CLI:** all 185 methods in the pinned
+Bot API 10.3 schema, including operations beyond the convenient bot commands.
+Use `tg <bot> bot api <method>` with native field flags or JSON bodies; see
+[the complete API guide](#the-complete-bot-api). MCP provides separate tools for common tasks.
+
 ## The first minute
 
 ```sh
