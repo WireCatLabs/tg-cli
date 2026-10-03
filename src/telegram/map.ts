@@ -1,4 +1,5 @@
 import { extname } from "node:path"
+import { CliError } from "@leemour/cli-core"
 import type {
   AccountSession,
   Attachment,
@@ -17,6 +18,7 @@ import type {
   ProviderMetadata,
   QuotedMessage,
   Reactions,
+  TextSpan,
   Topic,
 } from "@leemour/cli-messaging"
 import type { NewPoll } from "@leemour/cli-messaging/cli"
@@ -336,9 +338,31 @@ const ENTITIES = {
 } as const satisfies Record<Markup["type"], tl.TypeMessageEntity["_"]>
 
 /** Both count in UTF-16 code units, so a span's place carries over unchanged. */
-export const toFormatted = (text: string, markup: Markup[]): TextWithEntities => ({
+export const toFormatted = (text: string, markup: readonly (Markup | TextSpan)[]): TextWithEntities => ({
   text,
-  entities: markup.map(({ type, from, length }) => ({ _: ENTITIES[type], offset: from, length })),
+  entities: markup.map((span): tl.TypeMessageEntity => {
+    const base = { offset: span.from, length: span.length }
+    switch (span.type) {
+      case "bold":
+      case "italic":
+      case "strike":
+      case "code":
+        return { _: ENTITIES[span.type], ...base }
+      case "underline":
+        return { _: "messageEntityUnderline", ...base }
+      case "spoiler":
+        return { _: "messageEntitySpoiler", ...base }
+      case "blockquote":
+        return { _: "messageEntityBlockquote", ...base }
+      case "pre":
+        return { _: "messageEntityPre", ...base, language: span.language ?? "" }
+      case "link":
+        if (!span.url) throw new CliError("validation_error", "a formatted link needs a URL")
+        return { _: "messageEntityTextUrl", ...base, url: span.url }
+      default:
+        throw new CliError("validation_error", "Telegram does not support this formatting span")
+    }
+  }),
 })
 
 /** A file goes as a document, so Telegram keeps it byte for byte; a photo is recompressed, as in the apps. */

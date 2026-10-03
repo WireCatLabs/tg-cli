@@ -166,6 +166,24 @@ describe("tg bot messages send", () => {
     expect(newest.answer.items.map((item: { id: string }) => item.id)).toEqual(["501"])
   })
 
+  it("uses Telegram-native underline and spoiler through common bot send/edit", async () => {
+    expect((await tg(["sales", "bot", "messages", "send", "Team", "__u__ ||s||", "--md"])).code).toBe(0)
+    expect(requests.at(-1)?.params).toMatchObject({
+      text: "u s",
+      entities: [
+        { type: "underline", offset: 0, length: 1 },
+        { type: "spoiler", offset: 2, length: 1 },
+      ],
+    })
+    expect(
+      (await tg(["sales", "bot", "messages", "edit", "Team", "500", "[l](https://example.test)", "--md"])).code,
+    ).toBe(0)
+    expect(requests.at(-1)?.params).toMatchObject({
+      text: "l",
+      entities: [{ type: "text_link", offset: 0, length: 1, url: "https://example.test" }],
+    })
+  })
+
   it("writes to a person as user:<id>, and sends --html as Telegram's HTML", async () => {
     await tg(["sales", "bot", "messages", "send", "user:42", "<b>hi</b>", "--html"])
     expect(requests[0]?.params).toMatchObject({ chat_id: "42", text: "<b>hi</b>", parse_mode: "HTML" })

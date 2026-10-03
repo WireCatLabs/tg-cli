@@ -761,7 +761,7 @@ tg messages send <chat> [text] [options]
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
-| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--file <file>` | attach a file; the text becomes its caption. |
 | `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--as-file` | send the --file as a file to download, a video included. |
@@ -855,7 +855,7 @@ tg messages edit <chat> <message> [text] [options]
 
 | Option | What it does |
 |---|---|
-| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 
 ### `tg messages delete`
 
@@ -2248,7 +2248,7 @@ tg bot messages send <chat> [text] [options]
 |---|---|
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--silent` | deliver without a notification. |
-| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 | `--file <file>` | attach a file; the text becomes its caption. |
 | `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
@@ -2303,7 +2303,7 @@ tg bot messages edit <chat> <message> <text> [options]
 
 | Option | What it does |
 |---|---|
-| `--md` | read **bold**, _italic_, \~\~struck\~\~ and `code` in the text; \ keeps a mark literal. |
+| `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
 #### `tg bot messages delete`

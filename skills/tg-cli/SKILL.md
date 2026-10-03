@@ -125,9 +125,10 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     A send with `--offline` is always refused.
 12. **Multi-line text goes through stdin only.** Leave out the last argument and the text is read
     from input: `printf 'first\n\nthird' | tg messages send me`.
-13. **`--md` reads `**bold**`, `_italic_`, `~~struck~~` and `` `code` ``; nothing else.** `_` and `*`
-    count only at a word's edge, so `file_name` stays as typed; `\*` keeps a mark literal. No links,
-    no headings. `--silent` sends without a notification, `--no-preview` without a link card.
+13. **`--md` uses Telegram syntax:** `**bold**`/`*bold*`, `_italic_`, `__underline__`,
+    `~~strike~~`/`~strike~`, `||spoiler||`, code/fences, links and `> ` quotes.
+    Styles nest; code/pre and nested quotes are refused. MAX has different rules.
+    Without the flag text is literal. Use http/https/mailto links; no unsafe URL schemes.
 14. **`--at-time 2h` or `--at-time 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
     It is never repeated: `--send-id` is refused with it, and after exit `14` look in
     `tg messages scheduled <chat>` — a second send would be a second message. Cancel one in the app.

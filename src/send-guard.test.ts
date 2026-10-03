@@ -76,7 +76,7 @@ const telegram = () => {
       reacted.push(`${messageId} ${emoji}`)
     },
     edit: async (chatId, messageId, text, options) => {
-      edited.push(options?.markup ? `${text} ${JSON.stringify(options.markup)}` : text)
+      edited.push(options?.formatting ? `${text} ${JSON.stringify(options.formatting)}` : text)
       return message(messageId, { chatId, text, outgoing: true, editedAt: new Date().toISOString() })
     },
   })

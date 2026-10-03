@@ -3,6 +3,12 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- `--md` uses Telegram's own formatter for personal and bot send/edit/captions. Nested styles, underline, spoilers, links, code fences and quotes are supported. `__text__` means underline; a single `*text*` now means bold. MAX has different syntax. Invalid nesting and unsafe links are refused before writing.
+
 ## 0.23.0 — 03.10.2026
 
 ### Changed — may break scripts

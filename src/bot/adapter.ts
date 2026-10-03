@@ -1,5 +1,6 @@
 import { CliError, isCliError } from "@leemour/cli-core"
 import type { BotAction, BotAdapter, BotChatRef, BotSendOptions } from "@leemour/cli-messaging/cli"
+import { formatMarkdown } from "../telegram/format-markdown.js"
 import {
   ADMIN_RIGHT_FIELDS,
   entitiesOf,
@@ -36,7 +37,7 @@ const ACTIONS: Record<BotAction, string> = {
 }
 
 const formatting = (
-  markup: BotSendOptions["markup"],
+  markup: BotSendOptions["markup"] | BotSendOptions["formatting"],
   html: boolean | undefined,
   field: "entities" | "caption_entities",
 ) => (html ? { parse_mode: "HTML" } : markup && markup.length > 0 ? { [field]: entitiesOf(markup) } : {})
@@ -61,9 +62,10 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
 
   return {
     me,
+    formatMarkdown: async (text) => formatMarkdown(text),
     close: async () => {},
 
-    send: async (chat, text, { replyTo, silent, markup, html, attachments = [] }) => {
+    send: async (chat, text, { replyTo, silent, markup, formatting: spans, html, attachments = [] }) => {
       if (attachments.length > 1) throw new CliError("validation_error", "a Telegram bot sends one file at a time")
       const [attachment] = attachments
       const common = {
@@ -75,7 +77,7 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
         return sent(
           await transport.call(
             "sendMessage",
-            { ...common, text, ...formatting(markup, html, "entities") },
+            { ...common, text, ...formatting(spans ?? markup, html, "entities") },
             { reads: false },
           ),
         )
@@ -87,15 +89,20 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
             ? ["sendVoice", "voice"]
             : ["sendDocument", "document"]
       const file: OutgoingFile = { field, name: attachment.name, bytes: attachment.bytes }
-      const caption = text ? { caption: text, ...formatting(markup, html, "caption_entities") } : {}
+      const caption = text ? { caption: text, ...formatting(spans ?? markup, html, "caption_entities") } : {}
       return sent(await transport.call(method, { ...common, ...caption }, { reads: false, file }))
     },
 
-    edit: async (chat, messageId, text, { markup, html }) =>
+    edit: async (chat, messageId, text, { markup, formatting: spans, html }) =>
       sent(
         await transport.call(
           "editMessageText",
-          { chat_id: chatIdOf(chat), message_id: Number(messageId), text, ...formatting(markup, html, "entities") },
+          {
+            chat_id: chatIdOf(chat),
+            message_id: Number(messageId),
+            text,
+            ...formatting(spans ?? markup, html, "entities"),
+          },
           { reads: false },
         ),
       ),

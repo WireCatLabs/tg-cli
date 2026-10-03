@@ -922,6 +922,38 @@ describe("forum setup", () => {
   })
 })
 
+describe("provider Markdown mapping", () => {
+  it("preserves rich spans across text, edit and scheduled captions", async () => {
+    const { adapter, client } = await open()
+    const formatted = await adapter.formatMarkdown("🧪 **b** __u__ [l](https://example.test)")
+    await adapter.send("-100500", formatted.text, { sendId: "42", threadId: "12", formatting: formatted.spans })
+    expect(client.sendText.mock.calls[0]?.[1]).toMatchObject({
+      text: "🧪 b u l",
+      entities: [
+        { _: "messageEntityBold", offset: 3, length: 1 },
+        { _: "messageEntityUnderline", offset: 5, length: 1 },
+        { _: "messageEntityTextUrl", offset: 7, length: 1, url: "https://example.test" },
+      ],
+    })
+    await adapter.edit("-100500", "14", formatted.text, { formatting: formatted.spans })
+    expect(client.editMessage.mock.calls[0]?.[0]).toMatchObject({ text: { text: formatted.text } })
+    await adapter.send("-100500", formatted.text, {
+      sendId: "43",
+      threadId: "12",
+      at: "2027-01-01T12:00:00.000Z",
+      formatting: formatted.spans,
+      attachments: [{ kind: "photo", name: "synthetic.png", bytes: new Uint8Array([1]) }],
+    })
+    expect(client.sendMedia.mock.calls[0]?.[1]).toMatchObject({
+      caption: { text: formatted.text, entities: expect.any(Array) },
+    })
+    expect(client.sendMedia.mock.calls[0]?.[2]).toMatchObject({
+      threadId: 12,
+      schedule: new Date("2027-01-01T12:00:00.000Z"),
+    })
+  })
+})
+
 describe("forum addressing", () => {
   it.each(["0", "-1", "1.2", "2147483648", "x", " 12"])("rejects invalid topic %s without a request", async (id) => {
     const { adapter, client } = await open()

@@ -303,9 +303,14 @@ tg messages send "Book club" "a link, no card" --no-preview
 tg messages send "Book club" "**Bold** and _italic_" --md  # bold, italic, struck, code
 ```
 
-`--md` reads bold (`**`), italic (`_`), struck (two tildes) and code (backticks), nothing else. A mark
-counts only at a word's edge, so `file_name` stays as typed; `\` keeps a mark literal. Without it,
-the text goes as typed. `messages edit` takes `--md` too.
+`--md` uses Telegram's formatter: `**bold**` or `*bold*`, `_italic_`, `__underline__`,
+`~~struck~~` or `~struck~`, `||spoiler||`, inline code, fenced code with a language,
+`[label](https://example.com)` and quote lines starting with `> `. Styles may nest; code/pre
+cannot nest with other entities and quotes cannot nest. Without the flag text stays as typed.
+Backslash escapes a mark; word-internal `_` and `*` stay literal. Unclosed inline marks stay
+literal; an unclosed fence is refused. Links support absolute http, https and mailto URLs.
+`messages edit` and media captions use the same formatter. Telegram `__text__` is underline;
+MAX `__text__` is bold. A single `*text*` is now bold in Telegram.
 
 ### Text from stdin
 
