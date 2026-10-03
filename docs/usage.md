@@ -24,6 +24,10 @@ before `tg store fetch <chat> --last 100`. An agent can read `tg skill show` wit
 use `tg setup --agent codex` to select its skill explicitly. `tg setup --help` explains the flags.
 Nothing more is needed to read.
 
+To discover the arguments for a task, use `tg commands messages search --json` for one command
+or `tg commands messages --json` for a group. Both include global options and exit codes.
+Inspect each command path in a separate call; `tg commands --json` returns the whole tree.
+
 ## Log in
 
 `tg setup` is the first-run command. It defaults to automatic app registration and QR login;
@@ -211,8 +215,9 @@ tg models audio download parakeet-v3   # once, checked against the sha256 this v
 | `gigaam-v3-ctc` | Russian — a little faster, rougher with capital letters | 225 MB |
 
 `--model` picks another model for one command, beside `--transcribe` or in `messages transcribe`; `transcribeWith` and `speechModel` in the settings
-choose the defaults ([configuration.md](configuration.md)). A transcript is kept in the local store,
-so asking again answers at once. `--transcribe` can take minutes.
+choose the defaults ([configuration.md](configuration.md)). A transcript is kept in the local store
+and reused by message lists, inboxes and reviews. Calling `messages transcribe` again can request
+a new transcript or run recognition again. `--transcribe` can take minutes.
 
 ### Files
 

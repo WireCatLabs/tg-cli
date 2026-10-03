@@ -1907,11 +1907,15 @@ tg doctor report create [options]
 
 ## `tg commands`
 
-every command, option and exit code as JSON — what an agent reads instead of --help
+commands, options and exit codes as JSON — inspect one command path per call
 
 ```sh
-tg commands
+tg commands [path]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `path` | optional | one command path, for example: messages search; inspect other groups in separate calls. |
 
 ## `tg complete`
 
