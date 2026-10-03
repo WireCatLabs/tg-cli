@@ -115,6 +115,12 @@ tg chats create "Hiking 2027" @olga               # a new group, with the people
 Renaming a group, adding and removing members and admins, resetting its invite link and moderation
 rules for links, forwards and floods are commands too. In full: [docs/groups.md](docs/groups.md).
 
+Enable topics with `topics enable`. Only the group owner can do this. A basic group needs
+`--upgrade --yes`, which permanently changes its chat id; the result gives the new address.
+An existing supergroup needs no upgrade. `topics create` creates a named topic; on an unknown
+outcome, check the list and never repeat an unknown creation. Existing archive rows keep
+their original chat ids; histories are not automatically merged across the migration.
+
 Send into a forum topic with `messages send --topic` or `polls create --topic`. Use the id from
 `topics list`; an explicit reply must belong to that topic. Text, photo/file captions and scheduled
 sends keep the topic. Closed or missing topics are refused before sending. On an unknown outcome,

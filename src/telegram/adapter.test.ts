@@ -40,14 +40,24 @@ class FakeClient {
   membersTotal: number | undefined
   found: unknown = null
   transcripts: { text: string; pending?: boolean }[] = []
-  resolvePeer = async (peer: unknown) => ({ _: "inputPeerChannel", peer })
+  resolvePeer = async (peer: unknown): Promise<unknown> => ({ _: "inputPeerChannel", peer })
   authorizations: unknown[] = []
   phoneOwner: unknown = null
   contacts: unknown[] = []
   forwardAnswer: unknown = forwarded(60)
+  migrationAnswer: unknown = undefined
+  topicAnswer: unknown = forwarded(12)
   handleClientUpdate = vi.fn()
-  call = async (request: { _: string }) => {
-    this.#record("call", [request])
+  call = async (request: { _: string }, options?: unknown) => {
+    this.#record("call", options === undefined ? [request] : [request, options])
+    if (request._ === "messages.migrateChat") {
+      if (this.migrationAnswer instanceof Error) throw this.migrationAnswer
+      return this.migrationAnswer
+    }
+    if (request._ === "messages.createForumTopic") {
+      if (this.topicAnswer instanceof Error) throw this.topicAnswer
+      return this.topicAnswer
+    }
     if (request._ === "account.getAuthorizations") return { authorizations: this.authorizations }
     if (request._ === "messages.forwardMessages") {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
@@ -64,6 +74,11 @@ class FakeClient {
   getContacts = async () => this.contacts
   preview: unknown = null
   fullChat: unknown = null
+  fullChats = new Map<number, unknown>()
+  updateForumSettings = vi.fn(async (id: number) => {
+    const current = this.fullChats.get(id) ?? this.fullChat
+    if (current && typeof current === "object") this.fullChats.set(id, { ...current, isForum: true })
+  })
   topics: unknown[] = []
   getForumTopicsById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => this.topics)
   getChatPreview = async (link: string) => {
@@ -73,7 +88,7 @@ class FakeClient {
   }
   getFullChat = async (reference: unknown) => {
     this.#record("getFullChat", [reference])
-    return this.fullChat
+    return this.fullChats.get(Number(reference)) ?? this.fullChat
   }
   async *iterForumTopics(...args: unknown[]) {
     this.#record("iterForumTopics", args)
@@ -763,6 +778,118 @@ describe("transcribing", () => {
     await vi.advanceTimersByTimeAsync(61_000)
 
     expect(await answer).toEqual({ text: "", pending: true })
+  })
+})
+
+const forumFull = (id: number, extra: Record<string, unknown> = {}) => ({
+  ...group(id, "synthetic group"),
+  chatType: "supergroup",
+  isCreator: true,
+  isForum: false,
+  linkedChat: null,
+  migratedToId: null,
+  raw: { _: "channel", forumTabs: false },
+  adminRights: null,
+  permissions: null,
+  defaultPermissions: null,
+  ...extra,
+})
+
+describe("forum setup", () => {
+  it("reads basic, migrated and forum state, and refuses channels", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-500, { chatType: "group" })
+    expect(await adapter.forumState("-500")).toMatchObject({ needsUpgrade: true, owner: true, forum: false })
+    client.fullChat = forumFull(-500, { chatType: "group", migratedToId: -1000000000700 })
+    client.fullChats.set(-1000000000700, forumFull(-1000000000700, { isForum: true }))
+    expect(await adapter.forumState("-500")).toMatchObject({
+      chat: { id: "-1000000000700" },
+      needsUpgrade: false,
+      forum: true,
+    })
+    client.fullChat = forumFull(-501, { chatType: "channel" })
+    await expect(adapter.forumState("-501")).rejects.toThrow("not a channel")
+  })
+  it("migrates once and uses the returned supergroup peer", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-500, { chatType: "group" })
+    client.resolvePeer = async () => ({ _: "inputPeerChat", chatId: 500 })
+    client.fullChats.set(-1000000000700, forumFull(-1000000000700))
+    client.migrationAnswer = {
+      _: "updates",
+      users: [],
+      updates: [],
+      chats: [{ _: "channel", id: 700, megagroup: true }],
+      date: 0,
+      seq: 0,
+    }
+    expect(await adapter.upgradeForum("-500")).toMatchObject({ chat: { id: "-1000000000700" }, needsUpgrade: false })
+    expect(client.calls).toContainEqual({ method: "call", args: [{ _: "messages.migrateChat", chatId: 500 }] })
+    expect(client.handleClientUpdate).toHaveBeenCalled()
+    await adapter.upgradeForum("-1000000000700")
+    expect(client.calls.filter(({ method }) => method === "call")).toHaveLength(1)
+  })
+  it("preserves forum UI, reads back and does not toggle again", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-100700, { raw: { _: "channel", forumTabs: true } })
+    expect(await adapter.enableForum("-100700")).toMatchObject({ forum: true })
+    expect(client.updateForumSettings).toHaveBeenCalledWith(-100700, { isForum: true, threadsMode: "tabs" })
+    await adapter.enableForum("-100700")
+    expect(client.updateForumSettings).toHaveBeenCalledTimes(1)
+  })
+  it.each([{ isCreator: false }, { chatType: "group" }, { linkedChat: {} }])(
+    "refuses invalid enable state %j without toggle",
+    async (extra) => {
+      const { adapter, client } = await open()
+      client.fullChat = forumFull(-100700, extra)
+      await expect(adapter.enableForum("-100700")).rejects.toThrow()
+      expect(client.updateForumSettings).not.toHaveBeenCalled()
+    },
+  )
+  it("creates a topic with the chosen random id and returns its server fields", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-100500, { isForum: true })
+    client.topics = [
+      {
+        id: 12,
+        title: "synthetic topic",
+        isClosed: false,
+        isPinned: false,
+        unreadCount: 0,
+        lastMessage: null,
+        date: new Date("2026-10-03T00:00:00Z"),
+      },
+    ]
+    const topic = await adapter.createTopic("-100500", "synthetic topic", { sendId: "42" })
+    expect(topic).toMatchObject({ id: "12", title: "synthetic topic" })
+    const request = client.calls.find(
+      ({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.createForumTopic",
+    )?.args[0] as { randomId: unknown }
+    expect(String(request.randomId)).toBe("42")
+    expect(
+      client.calls.find(
+        ({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.createForumTopic",
+      )?.args[1],
+    ).toEqual({ maxRetryCount: 0, floodSleepThreshold: 0 })
+    expect(client.getForumTopicsById).toHaveBeenCalledWith(-100500, 12)
+  })
+  it("reports unknown creation/migration without inventing a retry identity", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-100500, { isForum: true })
+    client.topicAnswer = new MtTimeoutError(1000)
+    await expect(adapter.createTopic("-100500", "synthetic", { sendId: "42" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      details: { sendId: "42", retryable: false },
+    })
+    client.topicAnswer = { _: "updates", updates: [], chats: [], users: [] }
+    await expect(adapter.createTopic("-100500", "synthetic", { sendId: "43" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      details: { retryable: false },
+    })
+    client.fullChat = forumFull(-500, { chatType: "group" })
+    client.resolvePeer = async () => ({ _: "inputPeerChat", chatId: 500 })
+    client.migrationAnswer = new MtTimeoutError(1000)
+    await expect(adapter.upgradeForum("-500")).rejects.toMatchObject({ code: "outcome_unknown" })
   })
 })
 

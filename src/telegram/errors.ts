@@ -26,6 +26,8 @@ const NOT_FOUND = new Set([
 
 /** Refusals whose name alone would not tell a person what to do. */
 const EXPLAINED: Record<string, [ErrorCode, string]> = {
+  CHAT_DISCUSSION_UNALLOWED: ["validation_error", "a linked discussion group cannot enable forum topics"],
+  CHANNEL_FORUM_MISSING: ["validation_error", "enable forum topics before creating a topic"],
   TOPIC_CLOSED: ["permission_error", "that forum topic is closed; choose an open topic"],
   TOPIC_DELETED: ["not_found", "that forum topic was deleted; check `topics list`"],
   TOPIC_ID_INVALID: ["not_found", "that forum topic does not exist; check `topics list`"],

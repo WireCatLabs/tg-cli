@@ -182,3 +182,9 @@ answer. `tg mcp config` prints the entry with full paths.
 a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
 number when neither the bot's copy nor the existing default personal session knows it. Private
 chats and basic groups are refused. Sending and updates stay on the Bot API.
+
+Forum setup uses `topics enable`: only the owner, explicit `--upgrade --yes` for a basic group,
+whose chat id changes. Use the returned new id afterwards. `topics create` never enables topics
+implicitly; never retry an unknown create; check `topics list`.
+An upgrade that succeeded before enable failed is retained; inspect the partial result and never
+promise rollback to a basic group. Do not silently move old message locators to the new id.

@@ -93,3 +93,12 @@ into a forum for this check.
 - Refuse a closed/missing topic and a reply from a different topic without sending or uploading.
 - Simulate lost acknowledgement offline; a retry retains the same send id, chat and topic.
   Scheduled unknown outcomes are checked in the queue and never repeated.
+
+## Explicit forum setup
+
+Owner-requested setup is a separate operation from send tests. Use an exact id, since titles may
+match several groups. From the owner profile, `topics enable --upgrade --yes` upgrades the selected
+basic group, then enables topics; record only the returned shape and use the new id afterwards.
+Read back owner/member roles and forum state, create one test topic with `topics create`, then run
+the approved forum send checks. A migration is retained and not rolled back to a basic group.
+If stage two fails, inspect the new peer before continuing; do not migrate again blindly.
