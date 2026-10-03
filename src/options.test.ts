@@ -485,7 +485,7 @@ describe("messages", () => {
     const { code } = await tg(argv, { adapter: () => adapter })
 
     expect(code).toBe(0)
-    expect(asked).toMatchObject({ silent: true, noPreview: true, markup: [expect.anything()] })
+    expect(asked).toMatchObject({ silent: true, noPreview: true, formatting: [expect.anything()] })
   })
 
   it("search finds what an earlier read kept, within one chat and up to --limit", async () => {

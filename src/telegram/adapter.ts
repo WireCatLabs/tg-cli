@@ -2,6 +2,7 @@ import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
 import { CliError } from "@leemour/cli-core"
+import type { TextSpan } from "@leemour/cli-messaging"
 import {
   type AccountSession,
   type AdminRight,
@@ -52,6 +53,7 @@ import {
 } from "@mtcute/node"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
+import { formatMarkdown } from "./format-markdown.js"
 import {
   type Account,
   ADMIN_RIGHT_FIELDS,
@@ -130,6 +132,10 @@ const EVENT_PAGES = 10
  * and never returns is a defect.
  */
 export class TelegramAdapter {
+  async formatMarkdown(text: string) {
+    return formatMarkdown(text)
+  }
+
   readonly #client: TelegramClient
   readonly #sessionPath: string
   readonly #login: string | undefined
@@ -312,13 +318,14 @@ export class TelegramAdapter {
   send(
     chatId: string,
     text: string,
-    { sendId, replyTo, threadId, silent, noPreview, markup, at, attachments = [] }: SendOptions,
+    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [] }: SendOptions,
   ): Promise<Sent> {
     const id = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
     if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
-    const body = markup ? toFormatted(text, markup) : text
+    const spans = formatting ?? markup
+    const body = spans ? toFormatted(text, spans) : text
     const common = {
       randomId: id,
       ...(thread === undefined || thread === 1 ? {} : { threadId: thread }),
@@ -449,9 +456,15 @@ export class TelegramAdapter {
    * An edit has no `random_id`, but setting the same text twice is harmless: Telegram answers the
    * repeat with MESSAGE_NOT_MODIFIED, taken here as done — so a retry after an unknown outcome is safe.
    */
-  edit(chatId: string, messageId: string, text: string, { markup }: { markup?: Markup[] } = {}): Promise<Message> {
+  edit(
+    chatId: string,
+    messageId: string,
+    text: string,
+    { markup, formatting }: { markup?: Markup[]; formatting?: TextSpan[] } = {},
+  ): Promise<Message> {
     const id = messageNumber(messageId, "a message id is a number")
-    const body = markup ? toFormatted(text, markup) : text
+    const spans = formatting ?? markup
+    const body = spans ? toFormatted(text, spans) : text
     return this.#call(async () => {
       try {
         return toMessage(await this.#client.editMessage({ chatId: Number(chatId), message: id, text: body }))

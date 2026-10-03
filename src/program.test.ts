@@ -330,7 +330,7 @@ describe("sending", () => {
       text: "hola",
       silent: true,
       noPreview: true,
-      markup: [{ type: "bold", from: 0, length: 4 }],
+      formatting: [{ type: "bold", from: 0, length: 4 }],
     })
   })
 

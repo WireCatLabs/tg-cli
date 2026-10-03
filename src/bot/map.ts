@@ -1,4 +1,14 @@
-import type { AdminRight, Attachment, Chat, ChatKind, Markup, Message, QuotedMessage } from "@leemour/cli-messaging"
+import { CliError } from "@leemour/cli-core"
+import type {
+  AdminRight,
+  Attachment,
+  Chat,
+  ChatKind,
+  Markup,
+  Message,
+  QuotedMessage,
+  TextSpan,
+} from "@leemour/cli-messaging"
 import type { BotChatAdmin, BotEvent } from "@leemour/cli-messaging/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
@@ -121,8 +131,27 @@ export const toChat = (chat: TgChat): Chat => ({
 })
 
 /** Markup is in UTF-16 positions, which is what Telegram's [entities](https://core.telegram.org/bots/api#messageentity) count. */
-export const entitiesOf = (markup: readonly Markup[]) =>
-  markup.map(({ type, from, length }) => ({ type: ENTITY[type], offset: from, length }))
+export const entitiesOf = (markup: readonly (Markup | TextSpan)[]) =>
+  markup.map((span) => {
+    const base = { offset: span.from, length: span.length }
+    switch (span.type) {
+      case "bold":
+      case "italic":
+      case "strike":
+      case "code":
+        return { type: ENTITY[span.type], ...base }
+      case "underline":
+      case "spoiler":
+      case "blockquote":
+        return { type: span.type, ...base }
+      case "pre":
+        return { type: "pre", ...base, language: span.language ?? "" }
+      case "link":
+        return { type: "text_link", ...base, url: span.url }
+      default:
+        throw new CliError("validation_error", "Telegram does not support this formatting span")
+    }
+  })
 
 /**
  * The shared admin rights in [promoteChatMember](https://core.telegram.org/bots/api#promotechatmember)'s
