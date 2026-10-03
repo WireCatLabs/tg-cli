@@ -199,3 +199,11 @@ Without `MESSAGING_STORE`, what that login reads still goes into your usual loca
 
 - [security.md](security.md) — what `permissions`, the recipient list and `sendsPerHour` protect
 - [diagnostics.md](diagnostics.md) — `record` and `keepRunsForDays`
+
+## Migrating legacy access settings
+
+`tg config migrate --dry-run --json` previews replacement of `readOnly` and `allow` with
+canonical `permissions`, preserving the file's effective levels for personal and bot profiles.
+It does not write the file or connect to Telegram. `tg config migrate --json` applies that
+migration explicitly; a process locked to one profile cannot apply a change affecting all profiles.
+Other settings are preserved. Canonical files need no migration.
