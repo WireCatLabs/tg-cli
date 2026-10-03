@@ -182,6 +182,8 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
 | `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
+| `tg_topics_enable` | `tg topics enable` | enable a forum by `groups`; only the group owner can enable topics; basic-group upgrade must be explicit and returns a new chat id |
+| `tg_topics_create` | `tg topics create` | create a topic by `groups`; after an unknown outcome check `tg_topics_list` instead of repeating, even with the same `send_id` |
 | `tg_topics_list` | `tg topics list`, `tg topics search` | a forum group's topics with their ids; `search` matches titles |
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
@@ -194,13 +196,13 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; anything else is refused with the `tg messages download` command that saves it |
 | `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
-| `tg_messages_send` | `tg messages send`, `--reply-to` | send, by `messages.send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
+| `tg_messages_send` | `tg messages send`, `--reply-to`, `--topic` | send, by `messages.send`; `reply_to` answers a message; `send_id` repeats a send whose outcome was unknown; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `topic` picks a forum topic; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
 | `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `md` as `--md`; repeating it changes nothing |
 | `tg_chats_mark_read` | `tg chats mark-read` | mark a chat read, to its newest message or `until` one, by `chats.mark-read` — the other side sees it |
 | `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view, by `messages.delete` — a form first by default; never for everyone; each counts toward the hourly limit |
 | `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message, by `reactions`; the confirmation form shows the emoji |
 | `tg_polls_show` | `tg polls show` | a poll and its answer ids; a read tool |
-| `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (`polls.vote`), close the owner's own poll (`polls.close`), create one (`polls.create`, with `send_id` for a retry and `revote` to let people change their vote) |
+| `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (`polls.vote`), close the owner's own poll (`polls.close`), create one (`polls.create`, with `send_id` for a retry and `revote` to let people change their vote, and `topic` to choose a forum topic) |
 | `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), by `messages.forward`; `send_id` repeats a forward whose outcome was unknown |
 | `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`, by `messages.pin` and `messages.unpin` |
 | `tg_chats_create`, `tg_chats_join`, `tg_chats_leave` | `tg chats create`, `join`, `leave` | make a group or channel with these people, join one by its link, leave one — the others see each |

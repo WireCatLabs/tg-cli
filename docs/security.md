@@ -42,6 +42,7 @@ It does not protect against:
 | What | Where | Who can use it |
 |---|---|---|
 | the session | `sessions/<profile>.session` in the state directory, `0600` in a `0700` folder | anyone who can read the file: it is as good as your password |
+| a bot history session | `bots/<profile>/mtproto-<bot-id>.session` in the state directory | anyone who can read it can use that bot authorization; protect it like the personal session |
 | the app id and hash | the OS keyring; `credentials.json` (`0600`) beside the settings where there is no keyring | only together with a session |
 | for CI | `TG_API_ID` and `TG_API_HASH` | the process that has them |
 
@@ -213,7 +214,8 @@ inherited ACLs.
 
 ## What goes over the network
 
-- **Telegram**, over MTProto, for everything a command asks — files and photos included.
+- **Telegram**, over MTProto for personal-account commands, including files and photos. Bot commands
+  use the HTTPS Bot API; `bot store fetch` uses a separate MTProto bot session for history.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
   `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration.md](configuration.md)).
 - **my.telegram.org**, only during `tg setup` or `tg session start`: opened in your browser, or, with `--app auto`,

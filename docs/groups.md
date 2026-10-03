@@ -87,6 +87,9 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
 | `tg topics list\|search <chat>` | a forum group's topics |
+| `tg topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
+| `tg topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
+| `tg messages send <chat> <text> --topic <id>`, `tg polls create <chat> <question> <answers> --topic <id>` | send a message or poll into a forum topic |
 | `tg chats inspect <link>` | where an invite or public link leads; joins nothing |
 | `tg chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
 | `tg chats join <link>`, `tg chats leave <chat>` | join by a link, leave |
