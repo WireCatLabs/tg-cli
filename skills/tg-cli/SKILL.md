@@ -127,7 +127,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     from input: `printf 'first\n\nthird' | tg messages send me`.
 13. **`--md` uses Telegram syntax:** `**bold**`/`*bold*`, `_italic_`, `__underline__`,
     `~~strike~~`/`~strike~`, `||spoiler||`, code/fences, links and `> ` quotes.
-    Styles nest; code/pre and nested quotes are refused. MAX has different rules.
+    Styles nest; code/pre cannot overlap other formatting, and quotes cannot nest. MAX has different rules.
     Without the flag text is literal. Use http/https/mailto links; no unsafe URL schemes.
 14. **`--at-time 2h` or `--at-time 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
     It is never repeated: `--send-id` is refused with it, and after exit `14` look in

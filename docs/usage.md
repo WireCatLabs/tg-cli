@@ -300,13 +300,13 @@ profile, the profile's `allow` list, the list of allowed recipients and the hour
 tg messages send me "a note to myself"
 tg messages send "Book club" "See you at 7" --silent       # no notification
 tg messages send "Book club" "a link, no card" --no-preview
-tg messages send "Book club" "**Bold** and _italic_" --md  # bold, italic, struck, code
+tg messages send "Book club" "**Bold** and _italic_" --md  # Telegram Markdown
 ```
 
 `--md` uses Telegram's formatter: `**bold**` or `*bold*`, `_italic_`, `__underline__`,
 `~~struck~~` or `~struck~`, `||spoiler||`, inline code, fenced code with a language,
 `[label](https://example.com)` and quote lines starting with `> `. Styles may nest; code/pre
-cannot nest with other entities and quotes cannot nest. Without the flag text stays as typed.
+cannot nest with other entities, links cannot nest, and quotes cannot nest. Without the flag text stays as typed.
 Backslash escapes a mark; word-internal `_` and `*` stay literal. Unclosed inline marks stay
 literal; an unclosed fence is refused. Links support absolute http, https and mailto URLs.
 `messages edit` and media captions use the same formatter. Telegram `__text__` is underline;
