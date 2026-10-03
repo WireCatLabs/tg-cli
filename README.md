@@ -51,6 +51,7 @@ tg bot list --check                      # every bot on this computer
 - **Messages and chats.** Send, edit, delete and pin, to a chat by id or by title, or to a person
   as `user:<id>`; `--md`, `--html`, a file or a photo. `bot store fetch` imports older channel and supergroup messages;
   `messages list` reads what this bot sent, received or imported on this computer.
+  History import uses a separate MTProto session; private chats and basic groups are unsupported.
 - **Admins, members, buttons, the menu, webhooks.** `bot chats admins`, `bot chats members remove`,
   `bot callbacks answer`, `bot commands`, `bot webhooks` — the same commands `max bot` has.
 - **`bot watch`** prints what happens in the bot's chats as it arrives, and keeps it: that is the
