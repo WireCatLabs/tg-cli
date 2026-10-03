@@ -283,9 +283,10 @@ tg messages search "contract" --chat "Book club"
 tg messages search "invoice.*(march|april)" --regex
 ```
 
-A search needs **at least three characters**. `messages search` looks for every word, as a word or
-the start of one — `invoic` finds "invoice". It never connects to Telegram: it answers from what was
-read, fetched or kept by `serve` ([archive.md](archive.md#search)). Once you have the chat, use its id.
+Chat and contact searches need **at least three characters**. Local `messages search` uses the
+[strict Lucene profile](search.md): `invoic*` matches prefixes; `invoic` is an exact term.
+It never connects to Telegram: it reads what was fetched or kept by `serve`. Use `--language legacy`
+for the previous discovery behavior. Once you have the chat, use its id.
 
 ## Sending
 
@@ -427,8 +428,7 @@ through the guard, as an `account` change.
 
 ### Not in tg yet
 
-Several photos in one message, sending into a forum topic. They are on the
-[roadmap](roadmap.md).
+Several photos in one message remain on the [roadmap](roadmap.md).
 
 ## Groups and channels
 
@@ -446,6 +446,11 @@ All of these only read. `events` reads the chat's service messages: who did what
 names are `join`, `leave`, `add`, `remove`, `create`, `title` and `pin`.
 
 These change something, and the people in the chat see it:
+
+For a forum, use `tg topics enable <chat>` and `tg topics create <chat> <title>`. A basic group
+requires `--upgrade --yes`; keep the new chat id returned by the upgrade. Read `topics list`
+after an unknown creation outcome instead of repeating the creation. Send to its id with
+`tg messages send <chat> <text> --topic <id>` or `tg polls create <chat> <question> <answers> --topic <id>`.
 
 ```sh
 tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people added are told

@@ -3,9 +3,11 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.23.0 — 03.10.2026
 
 ### Changed — may break scripts
+
+- **Local message search defaults to a strict Lucene profile:** groups, typed fields/date ranges, `--timezone`, bounded wildcard/regex and coverage on empty results. Write prefixes explicitly as `word*`; use `--language legacy` for previous discovery behavior. The search guide and agent skill explain migration. JavaScript `--regex` runs in an isolated worker with size and time limits.
 
 - **`tg upgrade --json` always includes `restarted`**, including checks and no-op updates.
   Previous fields remain; successful upgrades retain the managed-server restart policy. Scripts
@@ -13,6 +15,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg mcp` lets go of the search model after 10 minutes without a search**: an agent's
+  `conversations_search` no longer keeps about 1 GB in memory for the whole session. The next search
+  loads the model again, in about a second.
 - **`tg <bot> bot me` and MCP `tg_bot_me`** show the bot profile's id, name and username.
   This read uses the bot token, refuses offline mode, and sends no message.
 
@@ -57,9 +62,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **`tg mcp` lets go of the search model after 10 minutes without a search**: an agent's
-  `conversations_search` no longer keeps about 1 GB in memory for the whole session. The next search
-  loads the model again, in about a second.
 - **`tg messages evidence <chat>` and `tg_messages_evidence` over MCP** prepare a bounded packet
   from the local archive for an agent’s chat brief, without connecting or marking read. Source
   locators, fingerprints, explicit coverage and an older-page cursor keep citations and paging
@@ -72,7 +74,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg <name> bot contacts show`, `bot messages search` and `bot messages between`** read what the bot
   kept on this computer. See [the bot page](docs/bot.md#what-the-bot-kept).
 - **`tg <name> bot chats moderate` and `bot chats rules`**: a bot judges a group's new messages by its
-  rules and acts as they allow. It judges what `bot watch` kept or `bot store fetch` imported.
+  rules and acts as they allow. It judges what `bot watch` kept, since Telegram gives a bot no history.
   See [the bot page](docs/bot.md#moderating-a-group-by-its-rules).
 - **`tg <name> bot mcp`: the bot for an agent**, over MCP. It offers the tools the bot profile's
   permissions allow; a deletion asks in a form first. See [the bot page](docs/bot.md#the-bot-for-an-agent-mcp).
@@ -98,8 +100,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   and taking a person out of a chat, for good with `--block`. See [the bot page](docs/bot.md).
 - **`tg bot messages send|list|show|edit|delete|pin|unpin`** and **`tg bot chats show|leave|action`**
   — the bot writes to a chat by id or title, or to a person as `user:<id>`, with `--md`, `--html`, a
-  file or a photo. `list` and `show` answer from what this bot sent, received and imported on this
-  computer. A delete asks first; `--allow-dangerous` answers.
+  file or a photo. Telegram gives a bot no history, so `list` and `show` answer from what this bot
+  sent and received on this computer. A delete asks first; `--allow-dangerous` answers.
 - **Your own AI agent can link a group's conversations**, when you ask it to: `tg skill show
   link-conversations` is its guide. It says how much text it would read and waits for your yes, then
   answers the chat a batch at a time (`tg conversations batches next`, `tg conversations links add`);
@@ -109,8 +111,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   the agent on connecting, so an agent can read it without running `tg skill show`.
 
 ### Changed — may break scripts
-
-- **Local message search defaults to a strict Lucene profile:** groups, typed fields/date ranges, `--timezone`, bounded wildcard/regex and coverage on empty results. Write prefixes explicitly as `word*`; use `--language legacy` for previous discovery behavior. The search guide and agent skill explain migration. JavaScript `--regex` runs in an isolated worker with size and time limits.
 
 - **`tg messages search` puts the best match first**, not the newest; `--newest` gives the old order.
   When no message has every word, it now takes any of them, then a piece of a word. The JSON keeps
