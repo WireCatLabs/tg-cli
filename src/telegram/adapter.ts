@@ -311,6 +311,34 @@ export class TelegramAdapter {
     })
   }
 
+  permalink(chatId: string, messageId: string) {
+    const id = messageNumber(messageId, "a message id is a positive Telegram integer")
+    if (id <= 0 || id > 2147483647)
+      throw new CliError("validation_error", "a message id is a positive Telegram integer")
+    return this.#call(async () => {
+      const input = await this.#inputOf(chatId)
+      const [found] = await this.#client.getMessages(input, [id])
+      if (!found || found.id !== id) throw new CliError("not_found", "that message no longer exists in this chat")
+      const peer = await this.#client.getPeer(input)
+      if (peer.type !== "chat" || peer.raw._ !== "channel")
+        return { url: null, access: "unavailable" as const, reason: "unsupported_chat" as const }
+      const { link } = await this.#client.call({
+        _: "channels.exportMessageLink",
+        channel: await this.#client.resolveChannel(input),
+        id,
+        thread: true,
+      })
+      const url = new URL(link)
+      const known = ["t.me", "telegram.me", "telegram.dog"].includes(url.hostname)
+      const access = !known
+        ? ("unknown" as const)
+        : url.pathname.startsWith("/c/")
+          ? ("restricted" as const)
+          : ("public" as const)
+      return { url: link, access, reason: null }
+    })
+  }
+
   /**
    * One logical send carries one `random_id`, made before the request and repeated by a retry:
    * Telegram delivers one message for both (measured 2026-09-27, across two connections).

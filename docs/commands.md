@@ -944,6 +944,19 @@ tg messages scheduled <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
+### `tg messages link`
+
+a message permalink when supported, and its account-scoped locator
+
+```sh
+tg messages link <chat> [message]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id. |
+
 ### `tg messages links`
 
 why a message is in its conversation: each link it has, and the chain of answers back to the start

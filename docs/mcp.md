@@ -251,3 +251,6 @@ reads a stale snapshot. The next call connects again. Calls run one at a time, e
 sends them together.
 
 The server exits as soon as the client closes stdin, and closes its connection to Telegram.
+
+`tg_messages_link` returns `{ locator, url, access, reason }` without message content. It shares
+`messages link` account validation and audience limits; a private link grants no membership.

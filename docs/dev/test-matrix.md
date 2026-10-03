@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**1879 ✅ · 29 ⛔ · 0 ❌** — 359 commands, 1549 options.
+**1880 ✅ · 29 ⛔ · 0 ❌** — 360 commands, 1549 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -153,6 +153,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages pin` | `--notify` | ✅ |  |
 | `messages unpin` |  | ✅ |  |
 | `messages scheduled` |  | ✅ |  |
+| `messages link` |  | ✅ |  |
 | `messages links` |  | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |

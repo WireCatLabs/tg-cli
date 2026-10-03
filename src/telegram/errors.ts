@@ -22,10 +22,12 @@ const NOT_FOUND = new Set([
   "USERNAME_INVALID",
   "USERNAME_NOT_OCCUPIED",
   "MSG_ID_INVALID",
+  "MESSAGE_ID_INVALID",
 ])
 
 /** Refusals whose name alone would not tell a person what to do. */
 const EXPLAINED: Record<string, [ErrorCode, string]> = {
+  CHANNEL_PRIVATE: ["permission_error", "you cannot access this channel or supergroup"],
   CHAT_DISCUSSION_UNALLOWED: ["validation_error", "a linked discussion group cannot enable forum topics"],
   CHANNEL_FORUM_MISSING: ["validation_error", "enable forum topics before creating a topic"],
   TOPIC_CLOSED: ["permission_error", "that forum topic is closed; choose an open topic"],
