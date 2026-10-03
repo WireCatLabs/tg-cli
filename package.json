@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.17.0",
-    "@leemour/cli-messaging": "0.135.0",
+    "@leemour/cli-messaging": "0.136.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "valibot": "1.5.0"
