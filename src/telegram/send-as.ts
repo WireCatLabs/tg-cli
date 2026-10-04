@@ -1,6 +1,6 @@
 import { CliError } from "@leemour/cli-core"
 import type { SenderIdentity } from "@leemour/cli-messaging"
-import { getBasicPeerType, getMarkedPeerId, PeersIndex, type TelegramClient } from "@mtcute/node"
+import { getBasicPeerType, getMarkedPeerId, PeersIndex, type TelegramClient, tl } from "@mtcute/node"
 
 type Client = Pick<TelegramClient, "getMe" | "getFullChat" | "resolvePeer" | "call">
 
@@ -11,10 +11,19 @@ type Client = Pick<TelegramClient, "getMe" | "getFullChat" | "resolvePeer" | "ca
 export const sendAsIdentities = async (client: Client, chatId: string): Promise<SenderIdentity[]> => {
   const me = await client.getMe()
   const self = { id: String(me.id), title: me.displayName, kind: "self" as const, premiumRequired: false }
+  const alone = [{ ...self, default: true }]
+  if (getBasicPeerType(Number(chatId)) !== "channel") return alone
   const { full } = await client.getFullChat(Number(chatId))
-  if (full._ !== "channelFull") return [{ ...self, default: true }]
+  if (full._ !== "channelFull") return alone
   const chosen = full.defaultSendAs ? String(getMarkedPeerId(full.defaultSendAs)) : self.id
-  const answer = await client.call({ _: "channels.getSendAs", peer: await client.resolvePeer(Number(chatId)) })
+  let answer: tl.channels.TypeSendAsPeers
+  try {
+    answer = await client.call({ _: "channels.getSendAs", peer: await client.resolvePeer(Number(chatId)) })
+  } catch (error) {
+    // Measured 2026-10-04: a private supergroup the account is in answers PEER_ID_INVALID — no send-as there.
+    if (tl.RpcError.is(error, "PEER_ID_INVALID")) return alone
+    throw error
+  }
   const index = PeersIndex.from(answer)
   const others = answer.peers.flatMap(({ peer, premiumRequired }) => {
     const found = index.has(peer) ? index.get(peer) : undefined

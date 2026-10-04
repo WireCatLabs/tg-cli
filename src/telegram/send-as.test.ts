@@ -1,3 +1,4 @@
+import { tl } from "@mtcute/node"
 import { describe, expect, it, vi } from "vitest"
 import { sendAsIdentities, sendAsPeer } from "./send-as.js"
 
@@ -32,27 +33,42 @@ describe("sender identities", () => {
       },
     )
 
-    expect(await sendAsIdentities(fake, "-1007")).toEqual([
+    expect(await sendAsIdentities(fake, "-1000000001007")).toEqual([
       { id: "1", title: "Owner", kind: "self", premiumRequired: false, default: false },
       { id: "-1000000000002", title: "Synthetic channel", kind: "channel", premiumRequired: false, default: true },
       { id: "-1000000000003", title: "Synthetic group", kind: "group", premiumRequired: true, default: false },
     ])
-    expect(call).toHaveBeenCalledWith({ _: "channels.getSendAs", peer: expect.objectContaining({ channelId: -1007 }) })
+    expect(call).toHaveBeenCalledWith({
+      _: "channels.getSendAs",
+      peer: expect.objectContaining({ channelId: -1000000001007 }),
+    })
   })
 
   it("defaults to the account when the supergroup saved no choice", async () => {
     const { fake } = client({ _: "channelFull" }, { peers: [], chats: [], users: [] })
-    expect(await sendAsIdentities(fake, "-1007")).toEqual([
+    expect(await sendAsIdentities(fake, "-1000000001007")).toEqual([
       { id: "1", title: "Owner", kind: "self", premiumRequired: false, default: true },
     ])
   })
 
-  it("offers only the account in a basic group or a private chat, without asking Telegram for more", async () => {
+  it.each(["-7", "42"])("offers only the account in a basic group or a private chat: %s", async (chat) => {
     const { fake, call } = client({ _: "chatFull" })
-    expect(await sendAsIdentities(fake, "-7")).toEqual([
+    const getFullChat = vi.spyOn(fake, "getFullChat")
+    expect(await sendAsIdentities(fake, chat)).toEqual([
       { id: "1", title: "Owner", kind: "self", premiumRequired: false, default: true },
     ])
+    expect(getFullChat).not.toHaveBeenCalled()
     expect(call).not.toHaveBeenCalled()
+  })
+
+  it("offers only the account in a supergroup without send-as, and keeps other refusals", async () => {
+    const { fake, call } = client({ _: "channelFull" })
+    call.mockRejectedValueOnce(new tl.RpcError(400, "PEER_ID_INVALID"))
+    expect(await sendAsIdentities(fake, "-1000000001007")).toEqual([
+      { id: "1", title: "Owner", kind: "self", premiumRequired: false, default: true },
+    ])
+    call.mockRejectedValueOnce(new tl.RpcError(400, "CHANNEL_PRIVATE"))
+    await expect(sendAsIdentities(fake, "-1000000001007")).rejects.toThrow("CHANNEL_PRIVATE")
   })
 
   it("skips a peer Telegram did not describe", async () => {
@@ -60,7 +76,7 @@ describe("sender identities", () => {
       { _: "channelFull" },
       { peers: [{ _: "sendAsPeer", peer: { _: "peerChannel", channelId: 9 } }], chats: [], users: [] },
     )
-    expect(await sendAsIdentities(fake, "-1007")).toHaveLength(1)
+    expect(await sendAsIdentities(fake, "-1000000001007")).toHaveLength(1)
   })
 })
 
