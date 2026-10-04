@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+# Prepares this Linux machine for `tg mcp --http` behind Tailscale Funnel: installs Tailscale with its
+# official script, logs in (a browser link), and lets the current user run `tailscale funnel` without
+# sudo. The three switches in the Tailscale admin console cannot be scripted; it prints them.
+#
+#   bin/tailscale-setup      # asks for your sudo password
+set -eu
+
+if ! command -v tailscale >/dev/null; then
+  echo "installing Tailscale (https://tailscale.com/kb/1031/install-linux)" >&2
+  curl -fsSL https://tailscale.com/install.sh | sh
+fi
+
+if ! tailscale status >/dev/null 2>&1; then
+  echo "logging in — open the link Tailscale prints and sign in" >&2
+  sudo tailscale up
+fi
+
+sudo tailscale set --operator="$(id -un)"
+
+cat >&2 <<'EOF'
+
+Now three switches in the admin console, once (https://login.tailscale.com/admin):
+  1. DNS → MagicDNS: Enable.
+  2. DNS → HTTPS Certificates: Enable.
+  3. Access controls → Funnel → "Add Funnel to policy" → Save.
+Then run bin/tg-remote.
+EOF
