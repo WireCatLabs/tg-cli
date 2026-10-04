@@ -261,6 +261,11 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   `server install`, and nothing else.
 - **Check it once after `server start`:** `tg server logs`. A service reads the app from the keyring.
   A keyring that stays locked until you log in will probably make it fail; the logs say why.
+- **It does not restart once the login is gone.** When Telegram ends the session, serve exits with code 4 and
+  stays down. Log in again with `tg session start`, then `tg server start`. A
+  keyring still locked when it starts ends it the same way. On macOS the agent does not restart after any
+  failure, since launchd cannot leave out one exit code. A unit installed before this change restarts every
+  30 s — run `tg server install` again.
 - `tg server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 

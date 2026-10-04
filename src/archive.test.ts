@@ -434,6 +434,7 @@ describe("server", () => {
     expect(installed.answer).toMatchObject({ unit, path })
     expect(ran).toEqual([])
     expect(readFileSync(path, "utf8")).toContain('Environment="TG_PROFILE=archive"')
+    expect(readFileSync(path, "utf8")).toContain("RestartPreventExitStatus=4")
 
     const logs = await tg(["archive", "server", "logs", "--lines", "2", "--json"], store)
     expect(logs.answer).toMatchObject({ items: ["one", "two"] })

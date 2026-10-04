@@ -1,8 +1,10 @@
 import { mkdtempSync, readdirSync, readFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { CliError } from "@leemour/cli-core"
 import type { MessageEvent } from "@leemour/cli-messaging"
 import { describe, expect, it } from "vitest"
+import { NO_RESTART_ON } from "./program.js"
 import { chat, dialog, message, scripted, tg } from "./testing/scripted.js"
 import { VERSION } from "./version.js"
 
@@ -56,6 +58,19 @@ describe("the global options", () => {
     expect(code).toBe(0)
     expect(json(stdout).items).toHaveLength(1)
     expect(stderr.map((line) => JSON.parse(line).event)).toContain("request")
+  })
+
+  it("**serve exits 4 on a revoked login**, a code its unit does not restart on", async () => {
+    const revoked = scripted({
+      watch: async () => {
+        throw new CliError("authentication_error", "not logged in, or the session was ended — run `tg session start`")
+      },
+    })
+    const { code, stderr } = await tg(["serve"], { adapter: () => revoked })
+
+    expect(code).toBe(4)
+    expect(NO_RESTART_ON).toContain(code)
+    expect(stderr.join("\n")).toContain("tg session start")
   })
 
   it("--timeout ends a watch normally, exit 0", async () => {

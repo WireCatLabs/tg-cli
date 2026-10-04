@@ -1,5 +1,5 @@
 import { appendFileSync } from "node:fs"
-import { processStreams } from "@leemour/cli-core"
+import { exitCodeFor, processStreams } from "@leemour/cli-core"
 import {
   accountCommand,
   botCommand,
@@ -39,6 +39,12 @@ import { sessionCommand } from "./commands/session.js"
 import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
+
+/**
+ * Telegram's answer to a revoked login does not change on a retry. Only that code: a keyring still
+ * locked right after login is an authentication_error too, and stays down with it — see `server status`.
+ */
+export const NO_RESTART_ON = [exitCodeFor("authentication_error")]
 
 const definition: ProgramDefinition = {
   app: TG,
@@ -80,7 +86,7 @@ const definition: ProgramDefinition = {
       topicsCommand(TELEGRAM),
       watchCommand(TELEGRAM),
       serveCommand(TELEGRAM),
-      serverCommand(TELEGRAM),
+      serverCommand(TELEGRAM, { unit: { noRestartOn: NO_RESTART_ON } }),
       storeCommand(TELEGRAM),
       conversationsCommand(TELEGRAM),
       recipientsCommand(TELEGRAM),

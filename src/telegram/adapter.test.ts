@@ -1649,6 +1649,27 @@ describe("listening", () => {
     expect(client.calls.map((call) => call.method)).toContain("startUpdatesLoop")
     expect(client.onNewMessage.handlers.size + client.onRawUpdate.handlers.size).toBe(0)
   })
+
+  it("**fails on a revoked login before it says it is ready**, rather than listening to nothing", async () => {
+    const { adapter, client } = await open({ listen: true })
+    client.call = async (request: { _: string }) => {
+      if (request._ === "updates.getState") throw new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")
+      return {}
+    }
+    let ready = false
+
+    await expect(
+      adapter.watch(
+        () => {},
+        new AbortController().signal,
+        () => {
+          ready = true
+        },
+      ),
+    ).rejects.toMatchObject({ code: "authentication_error" })
+    expect(ready).toBe(false)
+    expect(client.onNewMessage.handlers.size).toBe(0)
+  })
 })
 
 describe("closing", () => {
