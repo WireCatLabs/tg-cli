@@ -51,6 +51,7 @@ import {
   tl,
   type User,
 } from "@mtcute/node"
+import type { ProxyServer } from "../proxy.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import { formatMarkdown } from "./format-markdown.js"
@@ -82,6 +83,7 @@ import {
   toReactionChange,
   toTopic,
 } from "./map.js"
+import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
 
 export interface AdapterOptions {
@@ -96,6 +98,7 @@ export interface AdapterOptions {
   catchUp?: boolean
   /** How to log in on this profile, for the error a dropped session gives. */
   login?: string
+  proxy?: ProxyServer
 }
 
 export interface LoginPrompts {
@@ -139,6 +142,7 @@ export class TelegramAdapter {
   readonly #client: TelegramClient
   readonly #sessionPath: string
   readonly #login: string | undefined
+  readonly #proxyFailed: Promise<never> | undefined
 
   /** Async because the runtime's SQLite module is imported on demand (cli-messaging `openCache`). */
   static async open(options: AdapterOptions): Promise<TelegramAdapter> {
@@ -152,12 +156,24 @@ export class TelegramAdapter {
   }
 
   private constructor(
-    { credentials, sessionPath, diagnostic, verbose = false, listen = false, catchUp = false, login }: AdapterOptions,
+    {
+      credentials,
+      sessionPath,
+      diagnostic,
+      verbose = false,
+      listen = false,
+      catchUp = false,
+      login,
+      proxy,
+    }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
     this.#sessionPath = sessionPath
     this.#login = login
+    const proxied = proxy ? proxiedTransport(proxy) : undefined
+    this.#proxyFailed = proxied?.failed
     this.#client = new TelegramClient({
+      ...(proxied ? { transport: proxied.transport } : {}),
       apiId: credentials.id,
       apiHash: credentials.hash,
       storage,
@@ -1346,7 +1362,7 @@ export class TelegramAdapter {
 
   async #call<T>(work: () => Promise<T>): Promise<T> {
     try {
-      return await work()
+      return await (this.#proxyFailed ? Promise.race([work(), this.#proxyFailed]) : work())
     } catch (error) {
       throw toCliError(error, this.#login)
     }

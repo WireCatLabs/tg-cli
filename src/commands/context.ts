@@ -16,9 +16,11 @@ import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"
 import { isolated, sessionFile } from "../paths.js"
+import { proxyLabel } from "../proxy.js"
 import { ADMIN_RIGHTS, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
 import type { BotHistoryOptions, BotHistoryReader } from "../telegram/bot-history.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
+import { resolveProxy } from "../telegram/proxy.js"
 import type { UpdateEnvironment } from "../update.js"
 
 export interface Environment extends BaseEnvironment {
@@ -55,6 +57,8 @@ const telegramOf = (command: Command, base: BaseContext) => {
     warn: base.renderer.warn,
     ...(environment.keyring ? { keyring: environment.keyring } : {}),
   })
+  const proxy = () =>
+    resolveProxy(base.settings, { env: base.env, ...(environment.keyring ? { keyring: environment.keyring } : {}) })
   const login = `\`tg ${asFirstWord(profile)}session start\``
   const setup = `\`tg ${asFirstWord(profile)}setup\``
 
@@ -79,6 +83,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
       ? await environment.adapter(options)
       : await TelegramAdapter.open({
           ...options,
+          ...proxyOption(proxy()),
           diagnostic: (line) => base.streams.diagnostic(line),
           verbose: base.settings.trace,
           login,
@@ -95,7 +100,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
     return open(undefined, options)
   }
 
-  return { environment, sessionPath, credentials, open, connect }
+  return { environment, sessionPath, credentials, open, connect, proxy }
 }
 
 /** Shipped beside `dist/`; this file compiles to `dist/commands/context.js`. */
@@ -118,9 +123,10 @@ export const TELEGRAM: Messenger = {
   // Saved Messages is the chat with yourself, so its id is the account's.
   savedChatId: (account) => account.account,
   diagnose: async (command, base) => {
-    const { sessionPath, credentials } = telegramOf(command, base)
+    const { sessionPath, credentials, proxy } = telegramOf(command, base)
     return {
       session: { path: sessionPath, exists: existsSync(sessionPath) },
+      proxy: proxyState(proxy),
       appCredentials: appCredentialsState(() => credentials.read(), base.env),
       // The one failure with no other symptom: a login made without these variables is invisible with them.
       keyringMovedByEnvironment: isolated(base.env),
@@ -156,5 +162,23 @@ const appCredentialsState = (read: () => ApiCredentials | undefined, env: NodeJS
     return env.TG_API_ID ? "from TG_API_ID and TG_API_HASH" : "stored"
   } catch {
     return "unreadable"
+  }
+}
+
+export const proxyOption = (through: ReturnType<typeof resolveProxy>) => (through ? { proxy: through.proxy } : {})
+
+/** The proxy in use without its password or secret, and whether the Bot API can follow it. */
+const proxyState = (resolve: () => ReturnType<typeof resolveProxy>) => {
+  try {
+    const through = resolve()
+    if (!through) return null
+    return {
+      url: proxyLabel(through.proxy),
+      from: through.from,
+      botApi:
+        through.proxy.kind === "mtproxy" ? "direct: an MTProxy carries only Telegram's own protocol" : "through it",
+    }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : String(error) }
   }
 }

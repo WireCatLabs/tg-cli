@@ -184,6 +184,38 @@ config.json is not a valid config:
 A misspelled setting that was silently ignored would run with the default and never say why. The
 same holds for a key in `permissions` that does not start with a resource.
 
+## Through a proxy
+
+Where Telegram is blocked, `tg` can reach it through a proxy: SOCKS5, an HTTP proxy that allows
+`CONNECT`, or an MTProxy. One `proxy` setting per profile, or for every profile with `--defaults`:
+
+```sh
+tg config set proxy socks5://proxy.example:1080       # no password: on the command line
+tg config set proxy http://alice@proxy.example:3128   # a user without a password
+tg config set proxy -                                 # with a password or an MTProxy secret
+proxy URL, hidden as you type: tg://proxy?server=mt.example&port=443&secret=ee…
+tg config unset proxy
+```
+
+| Form | Kind |
+|---|---|
+| `socks5://[user:password@]host[:port]` | SOCKS5; port 1080 when none is given |
+| `http://[user:password@]host[:port]` | an HTTP proxy, by `CONNECT`; `https://` reaches the proxy itself over TLS |
+| `tg://proxy?server=…&port=…&secret=…` or `https://t.me/proxy?…` | an MTProxy, as Telegram shares it; FakeTLS (`ee…`) secrets work |
+| `tg://socks?server=…&port=…&user=…&pass=…` | Telegram's share link for a SOCKS5 proxy |
+
+**A password or an MTProxy secret never reaches the settings file.** `config set proxy -` reads the
+URL without echo, or from a pipe, keeps the secret in the OS keyring, and writes the URL without it;
+`config show`, `doctor` and the errors print it the same way. A URL with a secret on the command line
+is refused, because `ps` and your shell history would keep it.
+
+`TG_PROXY` takes the whole URL, secret included, and wins over the setting — for CI, or for one try.
+`ALL_PROXY` and `HTTPS_PROXY` are not read: they are usually set for other tools, and a proxy is
+something you choose for this account.
+
+The Bot API (`tg bot …`) goes through the same SOCKS5 or HTTP proxy. An MTProxy carries only
+Telegram's own protocol, so with one the Bot API connects directly; `tg doctor` says which.
+
 ## Environment variables
 
 | Variable | What it does |
@@ -192,6 +224,7 @@ same holds for a key in `permissions` that does not start with a resource.
 | `TG_PROFILE_LOCK` | pins the process to one profile; any other is refused ([sessions.md](sessions.md#profiles)) |
 | `TG_TIMEOUT` | the same as `--timeout`: `500ms`, `30s` or `2m` for the whole command |
 | `TG_API_ID`, `TG_API_HASH` | the app, instead of the keyring — for CI; both or neither |
+| `TG_PROXY` | the proxy URL, password or secret included; wins over the `proxy` setting ([above](#through-a-proxy)) |
 | `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR` | move the three directories — and the keyring entry with them |
 | `MESSAGING_STORE` | the path of the local store file |
 | `CLI_COMMON_CACHE_DIR` | where speech models are kept |

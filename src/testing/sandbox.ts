@@ -29,6 +29,7 @@ delete process.env.TG_BOT_TOKEN
 delete process.env.TG_PROFILE
 delete process.env.TG_PROFILE_LOCK
 delete process.env.TG_TIMEOUT
+delete process.env.TG_PROXY
 // At a terminal the daily update check would otherwise ask npm from inside the suite.
 process.env.TG_NO_UPDATE_CHECK = "1"
 // Run by an agent, the suite would see the owner's skill copy under ~/.claude and print a hint to install it.

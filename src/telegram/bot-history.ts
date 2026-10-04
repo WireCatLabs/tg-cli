@@ -5,9 +5,11 @@ import { CliError, isCliError } from "@leemour/cli-core"
 import type { BotAdapter, EventSink } from "@leemour/cli-messaging/cli"
 import { getMarkedPeerId, Long, MtPeerNotFoundError, TelegramClient } from "@mtcute/node"
 import { links } from "@mtcute/node/utils.js"
+import type { ProxyServer } from "../proxy.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import { toHistoryChannel, toHistoryMessages } from "./map.js"
+import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
 
 export type BotHistoryReader = Required<Pick<BotAdapter, "historyBefore" | "close">>
@@ -22,6 +24,7 @@ export interface BotHistoryOptions {
   stop?: AbortSignal
   events?: EventSink
   track?: (reader: Pick<BotHistoryReader, "close">) => void
+  proxy?: ProxyServer
 }
 
 const numberOf = (id: string, maximum = 2_147_483_647): number => {
@@ -53,7 +56,9 @@ const historyError = (error: unknown) => {
 
 export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHistoryReader> => {
   mkdirSync(dirname(options.sessionPath), { recursive: true, mode: 0o700 })
+  const proxied = options.proxy ? proxiedTransport(options.proxy) : undefined
   const client = new TelegramClient({
+    ...(proxied ? { transport: proxied.transport } : {}),
     apiId: options.credentials.id,
     apiHash: options.credentials.hash,
     storage: await openSessionStorage(options.sessionPath),
@@ -65,7 +70,8 @@ export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHis
   const close = () => (closing ??= client.destroy())
   options.track?.({ close })
   try {
-    const self = await client.start({ botToken: options.token, ...(options.stop ? { abortSignal: options.stop } : {}) })
+    const starting = client.start({ botToken: options.token, ...(options.stop ? { abortSignal: options.stop } : {}) })
+    const self = await (proxied ? Promise.race([starting, proxied.failed]) : starting)
     if (!self.isBot || String(self.id) !== options.token.split(":", 1)[0])
       throw new CliError("authentication_error", "the history session belongs to a different bot")
   } catch (error) {

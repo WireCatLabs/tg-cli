@@ -1,4 +1,4 @@
-import { CliError, type CliErrorDetails, type ErrorCode } from "@leemour/cli-core"
+import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@leemour/cli-core"
 import type { EventSink } from "@leemour/cli-messaging/cli"
 import { apiJson, apiPlainJson, parseApiJson } from "@leemour/cli-messaging/cli"
 
@@ -142,6 +142,8 @@ export class TelegramBotTransport {
   }
 
   #unanswered(method: string, error: unknown, reads: boolean, timeoutMs: number): CliError {
+    // A proxy that refused, or was not there, never passed the request on — not an unknown outcome.
+    if (isCliError(error) && error.details.proxy !== undefined) return error
     const timedOut = (error as { name?: string })?.name === "TimeoutError"
     if (this.#signal?.aborted && (this.#signal.reason as { name?: string })?.name !== "TimeoutError") {
       return new CliError("cancelled", `${method} was cancelled`, { operation: method })
