@@ -93,8 +93,31 @@ Writes to Telegram: **no**. Allow: `Bash(tg inbox:*)`.
 > what they want. Put first what needs an answer today. Fold adverts and service notifications into
 > one line at the end.
 
-`--new` shows each message once: `tg` remembers where it stopped, and the next run starts there. The
-first run looks back 24 hours.
+`--new` shows each message once: `tg` remembers where it stopped — for each chat — and the next run
+starts there. The first run looks back 24 hours.
+
+### Since when is "new"
+
+- `tg inbox` — unread, as Telegram counts it: what you have not opened on any device.
+- `tg inbox --new` — since the last `--new` run. Only `tg` knows that point; nobody else sees it.
+- `tg inbox --since-time 2d` — the last two days; the saved point stays where it was.
+
+None of them marks anything read. To do that, add `--mark-read`, or turn on `catchUpMarksRead` in the
+[settings](configuration.md) — the other side then sees that you read it.
+
+### Direct chats, groups and channels apart
+
+`--kind` keeps only chats of that kind: `dialog`, `group`, `channel`. A news summary of channels and a
+summary of your conversations can run apart, at different times: each chat has its own point, so one
+run never hides what the other has not shown yet.
+
+```cron
+30 8 * * * claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg inbox:*)"
+0 19 * * * claude -p "$(cat ~/tg-recipes/news.md)" --allowedTools "Bash(tg inbox:*)"
+```
+
+In `morning.md`, `tg inbox --new --kind dialog,group --json`; in `news.md`, `tg inbox --new --kind
+channel --json` and a request to pick what matters. Without `--kind`, everything together.
 
 ## Weekly report on a chat
 
@@ -109,13 +132,13 @@ Writes to Telegram: **no**. Allow: `Bash(tg messages list:*)`.
 Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg messages context:*)`,
 `Bash(tg messages search:*)`.
 
-> Run `tg review --since-time <where the last review ended> --json` (without `--since-time`, the last 3 days).
+> Run `tg review --new --json` (the first time, the last 3 days; then from the last `--new`, a point per chat).
 > Sort it into three lists: what I owe, what I wait for from others, what needs clarifying. Give each
 > point its chat, date and the message ids it rests on; a deadline only if one was named. Before you
-> call something overdue, check whether it was done later. At the end, say which `--since-time` the next
-> review starts from, and list the open points.
+> call something overdue, check whether it was done later. At the end, list the open points.
 
-The next review is the same request plus the open points from the last one. In an MCP client it is
+The next review is the same request plus the open points from the last one. A chat not read whole
+keeps its point and comes back. In an MCP client it is
 the `review` prompt.
 
 ## What you have not answered
