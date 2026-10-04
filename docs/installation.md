@@ -7,8 +7,7 @@ and, on Windows, repair the user PATH. It never logs in or reads chats during in
 
 ## What it needs
 
-- **Node 22.16 or newer.** CI runs on Node 24; 22.16 is the floor written in `package.json`. CI also runs
-  the built command under Bun.
+- **Node 22.16+ (22.x) or 24+** with npm. The command also supports **Bun**.
 - Linux, macOS or Windows.
 - **Your own Telegram app** from [my.telegram.org](https://my.telegram.org/apps). `tg` asks for it at
   the first login and can register it for you ([sessions.md](sessions.md#the-app-from-mytelegramorg)).
@@ -95,9 +94,9 @@ npm.cmd install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour
 ```
 
 Newer npm versions can skip lifecycle scripts unless allowed. `--ignore-scripts` explicitly skips
-this package hook too. The PowerShell installer is the primary Windows entry point because it
-updates the terminal running it as well as persistent PATH; an npm child process cannot update
-its parent's environment. Agents launched before installation should refresh their shell PATH
+this package hook too. For agent-led setup, use npm and verify the command, installed skill and
+shell PATH before login. The optional PowerShell installer updates the terminal running it as well
+as persistent PATH; an npm child process cannot update its parent's environment. Agents launched before installation should refresh their shell PATH
 from the user and machine environment themselves, without asking the user to edit PATH.
 
 The global hook runs only for a global npm installation, never for project dependencies or npx.
