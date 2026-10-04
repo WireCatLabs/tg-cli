@@ -63,24 +63,24 @@ are in [installation.md](installation.md#where-files-go)).
 }
 ```
 
-| Setting | Default | What it does |
-|---|---|---|
-| `limit` | `20` | rows per page of a list; `--limit` overrides it |
-| `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` |
-| `color` | from the terminal | colour in the table view; `NO_COLOR` also turns it off |
-| `senderColors` | `false` | a colour per sender in the table view of messages |
-| `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)); `--record` and `--no-record` override it |
-| `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept |
-| `permissions` | everything allowed; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) |
-| `sendsPerHour` | `30` | the most sends in any hour ([security.md](security.md#the-send-guard)) |
-| `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` |
-| `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) |
-| `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` |
-| `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` |
-| `readOtherBots` | `false` | a bot profile only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bot.md](bot.md)) |
+| Setting | Default | What it does | Overridden for one run by |
+|---|---|---|---|
+| `limit` | `20` | rows per page of a list | `--limit` |
+| `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` | none (`--timeout` is a different thing) |
+| `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
+| `senderColors` | `false` | a colour per sender in the table view of messages | none |
+| `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)) | `--record`, `--no-record` |
+| `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
+| `permissions` | everything allowed; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
+| `sendsPerHour` | `30` | the most sends in any hour ([security.md](security.md#the-send-guard)) | none |
+| `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
+| `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) | `--model` |
+| `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
+| `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
+| `readOtherBots` | `false` | a bot profile only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bot.md](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
 
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
-names one.
+names one. The first word (`tg work …`) and `TG_PROFILE` override it.
 
 ## What a profile may do
 
