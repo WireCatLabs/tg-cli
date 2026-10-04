@@ -3,6 +3,16 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than
+  `--limit`.** Telegram leaves deleted messages out of a page, so a short page in the middle of a chat answered
+  `hasMore: false` and dropped the hint for the next page. They now say there is more until Telegram returns an
+  empty page, as plain `messages list` already does; the last page may say there is more, and following its hint
+  returns an empty page.
+
 ## 0.27.0 — 04.10.2026
 
 ### What's new

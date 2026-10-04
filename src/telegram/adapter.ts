@@ -231,7 +231,8 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const peer = await this.#inputOf(reference)
       const page = await this.#client.getHistory(peer, { limit, reverse: true, offset })
-      return { items: page.map(toMessage).filter(newer), hasMore: page.length === limit }
+      // As history(): a short page is no end, deleted entries are dropped from it; only an empty one is.
+      return { items: page.map(toMessage).filter(newer), hasMore: page.next !== undefined }
     })
   }
 
@@ -241,7 +242,7 @@ export class TelegramAdapter {
       const peer = await this.#inputOf(reference)
       const page = await this.#client.getHistory(peer, { limit, offset: { id: 0, date: Math.floor(time / 1000) } })
       const older = page.map(toMessage).filter((message) => Date.parse(message.timestamp) < time)
-      return { items: older.reverse(), hasMore: page.length === limit }
+      return { items: older.reverse(), hasMore: page.next !== undefined }
     })
   }
 

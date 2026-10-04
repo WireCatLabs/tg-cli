@@ -444,6 +444,7 @@ describe("reading", () => {
   it("reads forward from one past a message id, or from a moment, keeping only what is newer", async () => {
     const { adapter, client } = await open()
     client.history = [message(11), message(12)]
+    client.historyNext = { id: 13, date: 0 }
 
     const byId = await adapter.historyAfter("-100500", { limit: 2, after: { id: "10" } })
     client.history = [message(11), { ...message(12), date: new Date("2026-09-27T11:00:00.000Z") }]
@@ -453,7 +454,7 @@ describe("reading", () => {
     })
 
     expect([byId.items.map((one) => one.id), byId.hasMore]).toEqual([["11", "12"], true])
-    expect([byTime.items.map((one) => one.id), byTime.hasMore]).toEqual([["12"], false])
+    expect([byTime.items.map((one) => one.id), byTime.hasMore]).toEqual([["12"], true])
     const asked = client.calls.filter((call) => call.method === "getHistory").map((call) => call.args[1])
     expect(asked).toEqual([
       { limit: 2, reverse: true, offset: { id: 11, date: 0 } },
@@ -469,12 +470,31 @@ describe("reading", () => {
       at(11, "2026-09-27T09:00:00.000Z"),
       at(10, "2026-09-27T08:00:00.000Z"),
     ]
+    client.historyNext = { id: 10, date: 0 }
 
     const page = await adapter.historyBefore("-100500", { limit: 3, time: Date.parse("2026-09-27T10:00:00.000Z") })
 
     expect([page.items.map((one) => one.id), page.hasMore]).toEqual([["10", "11"], true])
     const asked = client.calls.filter((call) => call.method === "getHistory").map((call) => call.args[1])
     expect(asked).toEqual([{ limit: 3, offset: { id: 0, date: Date.parse("2026-09-27T10:00:00.000Z") / 1000 } }])
+  })
+
+  it("**reads past a short page** before or after a moment, and stops only at an empty one", async () => {
+    const { adapter, client } = await open()
+    const time = Date.parse("2026-09-27T10:00:00.000Z")
+    client.history = [{ ...message(5), date: new Date("2026-09-27T09:00:00.000Z") }]
+    client.historyNext = { id: 5, date: 0 }
+    const shortBefore = await adapter.historyBefore("-100500", { limit: 100, time })
+    const shortAfter = await adapter.historyAfter("-100500", { limit: 100, after: { id: "4" } })
+
+    client.history = []
+    client.historyNext = undefined
+    const startBefore = await adapter.historyBefore("-100500", { limit: 100, time })
+    const endAfter = await adapter.historyAfter("-100500", { limit: 100, after: { id: "5" } })
+
+    expect([shortBefore.items.map((one) => one.id), shortBefore.hasMore]).toEqual([["5"], true])
+    expect([shortAfter.items.map((one) => one.id), shortAfter.hasMore]).toEqual([["5"], true])
+    expect([startBefore.hasMore, endAfter.hasMore]).toEqual([false, false])
   })
 
   it("reads chat events from service messages, oldest first, naming people it only has ids for", async () => {
