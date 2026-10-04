@@ -7,9 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **`tg chats send-as <chat>` lists who you may post as in a group, and `tg messages send --send-as <id>`
-  posts text as one of them.** The list always includes you and marks the group's saved choice; reading it
-  changes nothing. An id not in the list and a file with `--send-as` are refused.
+- **`tg chats send-as <chat>` lists who you may post as in a group, and `--send-as <id>` posts as one of
+  them** — on `tg messages send` (files included), `tg messages forward` and `tg polls create`. The list always
+  includes you and marks the group's saved choice; reading it changes nothing. An id not in the list is refused.
 
 ## 0.33.0 — 07.10.2026
 

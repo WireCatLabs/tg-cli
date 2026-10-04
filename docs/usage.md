@@ -404,8 +404,9 @@ tg messages send "Book club" "Meeting moved to 8" --send-as <id from the list>
 ```
 
 The list always has you, and `default` marks the group's saved choice; reading it changes nothing.
-An id not in the list is refused. Text only for now — a file with `--send-as` is refused. To repeat an
-unknown outcome, give the same `--send-as` with the `--send-id`.
+An id not in the list is refused. `--send-as` works with files, `tg messages forward` and
+`tg polls create` too — for a forward, the list is the one of the `--to` chat. To repeat an unknown
+outcome, give the same `--send-as` with the `--send-id`.
 
 ### When the outcome is unknown
 

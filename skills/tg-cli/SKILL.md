@@ -178,7 +178,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     Reply targets must belong to that topic. Keep the same chat, topic and `--send-id` on a retry;
     never retry a scheduled send. Missing or closed topics are refused; nothing marks them read.
 **Posting as a channel:** `messages send --send-as <id>` only with an id from `chats send-as <chat>`,
-    and only when the owner named that identity. Text only. A retry keeps the same `--send-as`.
+    and only when the owner named that identity; `messages forward` and `polls create` take it too. A retry
+    keeps the same `--send-as`.
 
 16. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
