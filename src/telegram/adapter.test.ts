@@ -416,12 +416,14 @@ describe("reading", () => {
     ])
   })
 
-  it("**reads a short page mid-history as more to come**, and a page holding the whole chat as the end", async () => {
+  it("**reads past short pages and untrusted counts**, until the library returns no cursor", async () => {
     const { adapter, client } = await open()
     client.history = [message(3)]
     client.historyNext = { id: 3, date: 0 }
     client.historyTotal = 250
     const short = await adapter.history("-100500", { limit: 100, before: "10" })
+    client.historyTotal = 0
+    const inexact = await adapter.history("-100500", { limit: 100, before: "10" })
 
     client.history = [message(2), message(1)]
     client.historyNext = { id: 1, date: 0 }
@@ -434,7 +436,8 @@ describe("reading", () => {
     const start = await adapter.history("-100500", { limit: 100, before: "3" })
 
     expect([short.items.map((one) => one.id), short.hasMore]).toEqual([["3"], true])
-    expect([small.items.map((one) => one.id), small.hasMore]).toEqual([["1", "2"], false])
+    expect(inexact.hasMore).toBe(true)
+    expect([small.items.map((one) => one.id), small.hasMore]).toEqual([["1", "2"], true])
     expect([start.items, start.hasMore]).toEqual([[], false])
   })
 
