@@ -233,7 +233,8 @@ was a send, check the chat before you repeat it.
 
 Exit code `10`. The connection could not be made or broke: no network, a firewall, a proxy, or DNS.
 The code in brackets says which (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`). Commands that answer from
-the store work without the network: `tg --offline chats list`.
+the store work without the network: `tg --offline chats list`. Where Telegram is blocked, set a
+proxy ([configuration.md](configuration.md#through-a-proxy)).
 
 ## "the proxy … cannot be reached" or "… refused"
 

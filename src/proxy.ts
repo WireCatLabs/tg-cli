@@ -45,6 +45,7 @@ export const parseProxy = (text: string, from: string): ProxyServer => {
   const host = url.hostname.replace(/^\[(.*)\]$/, "$1")
   switch (url.protocol) {
     case "socks5:":
+    case "socks5h:":
       return { kind: "socks5", host, port: port(1080), tls: false, ...credentials }
     case "http:":
       return { kind: "http", host, port: port(80), tls: false, ...credentials }
@@ -117,5 +118,5 @@ export const proxySetting = v.pipe(
     } catch {
       return false
     }
-  }, `has to be ${SHAPES}, without its password or secret — \`tg config set proxy <url>\` keeps those in the OS keyring`),
+  }, `has to be ${SHAPES}, without its password or secret — \`tg config set proxy -\` keeps those in the OS keyring`),
 )

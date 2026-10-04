@@ -30,7 +30,7 @@ export const botDispatcher = async (proxy: ProxyServer): Promise<Dispatcher | un
  * undici's own `fetch` with its agent, not the global one: an agent from one copy of undici is not
  * promised to work with another's fetch.
  */
-export const proxiedBotFetch = (proxy: ProxyServer): FetchLike | undefined => {
+export const proxiedFetch = (proxy: ProxyServer): FetchLike | undefined => {
   if (proxy.kind === "mtproxy") return undefined
   let dispatcher: Promise<Dispatcher | undefined> | undefined
   return async (url, init) => {

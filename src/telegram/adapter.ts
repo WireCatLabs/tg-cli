@@ -171,7 +171,8 @@ export class TelegramAdapter {
     this.#sessionPath = sessionPath
     this.#login = login
     const proxied = proxy ? proxiedTransport(proxy) : undefined
-    this.#proxyFailed = proxied?.failed
+    // watch and serve outlive a proxy that is down for a moment; mtcute's own retries suit them.
+    this.#proxyFailed = listen ? undefined : proxied?.failed
     this.#client = new TelegramClient({
       ...(proxied ? { transport: proxied.transport } : {}),
       apiId: credentials.id,

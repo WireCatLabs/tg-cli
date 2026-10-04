@@ -15,6 +15,7 @@ describe("parseProxy", () => {
       secret: "p:ss",
     })
     expect(parseProxy("socks5://proxy.example", "TG_PROXY")).toMatchObject({ port: 1080 })
+    expect(parseProxy("socks5h://127.0.0.1:10808", "TG_PROXY")).toMatchObject({ kind: "socks5", port: 10808 })
   })
 
   it("reads an HTTP CONNECT proxy, and https:// as one reached over TLS", () => {

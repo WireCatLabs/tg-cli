@@ -2,7 +2,7 @@ import { createServer } from "node:http"
 import { ProxyAgent, Socks5ProxyAgent } from "undici"
 import { afterEach, describe, expect, it } from "vitest"
 import { parseProxy } from "../proxy.js"
-import { botDispatcher, proxiedBotFetch } from "./proxy.js"
+import { botDispatcher, proxiedFetch } from "./proxy.js"
 import { TelegramBotTransport } from "./transport.js"
 
 const TOKEN = "123456:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -40,7 +40,7 @@ describe("botDispatcher", () => {
 describe("the Bot API through an HTTP proxy", () => {
   it("asks the proxy for a tunnel to api.telegram.org, with the proxy's credentials", async () => {
     const { port, seen } = await fakeProxy(407)
-    const fetch = proxiedBotFetch(parseProxy(`http://u:hunter2@127.0.0.1:${port}`, "x"))
+    const fetch = proxiedFetch(parseProxy(`http://u:hunter2@127.0.0.1:${port}`, "x"))
     const transport = new TelegramBotTransport({ token: TOKEN, ...(fetch ? { fetch } : {}) })
 
     const error = (await transport.call("getMe").catch((thrown: unknown) => thrown)) as Error & { code: string }
@@ -55,7 +55,7 @@ describe("the Bot API through an HTTP proxy", () => {
 
   it("keeps a write the proxy refused from reading as an unknown outcome — it never left", async () => {
     const { port } = await fakeProxy(502)
-    const fetch = proxiedBotFetch(parseProxy(`http://127.0.0.1:${port}`, "x"))
+    const fetch = proxiedFetch(parseProxy(`http://127.0.0.1:${port}`, "x"))
     const transport = new TelegramBotTransport({ token: TOKEN, ...(fetch ? { fetch } : {}) })
 
     await expect(transport.call("sendMessage", { chat_id: 1, text: "x" }, { reads: false })).rejects.toMatchObject({

@@ -10,7 +10,7 @@ import {
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
-import { proxiedBotFetch } from "../bot/proxy.js"
+import { proxiedFetch } from "../bot/proxy.js"
 import { TelegramBotTransport } from "../bot/transport.js"
 import { botSessionFile, sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
@@ -46,7 +46,7 @@ export const TELEGRAM_BOT: BotMessenger = {
     const env = environment.env ?? process.env
     const settings = resolveSettings(command.optsWithGlobals(), { env, kind: "bot" })
     const through = resolveProxy(settings, { env, ...(environment.keyring ? { keyring: environment.keyring } : {}) })
-    const fetch = environment.botFetch ?? (through ? proxiedBotFetch(through.proxy) : undefined)
+    const fetch = environment.botFetch ?? (through ? proxiedFetch(through.proxy) : undefined)
     const adapter = telegramBotAdapter(
       new TelegramBotTransport({
         token,

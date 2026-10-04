@@ -22,7 +22,7 @@ export interface RegistrationPrompts {
   note: (message: string) => void
 }
 
-type Fetch = typeof fetch
+type Fetch = (url: string, init: RequestInit) => Promise<Response>
 
 export const registerApp = async (
   prompts: RegistrationPrompts,

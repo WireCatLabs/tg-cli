@@ -187,7 +187,8 @@ same holds for a key in `permissions` that does not start with a resource.
 ## Through a proxy
 
 Where Telegram is blocked, `tg` can reach it through a proxy: SOCKS5, an HTTP proxy that allows
-`CONNECT`, or an MTProxy. One `proxy` setting per profile, or for every profile with `--defaults`:
+`CONNECT`, or an MTProxy. One `proxy` setting per profile, or for every profile with `--defaults`.
+Set it before `tg setup`: the login goes through it too.
 
 ```sh
 tg config set proxy socks5://proxy.example:1080       # no password: on the command line
@@ -199,7 +200,7 @@ tg config unset proxy
 
 | Form | Kind |
 |---|---|
-| `socks5://[user:password@]host[:port]` | SOCKS5; port 1080 when none is given |
+| `socks5://[user:password@]host[:port]` | SOCKS5; port 1080 when none is given; `socks5h://` is read the same way |
 | `http://[user:password@]host[:port]` | an HTTP proxy, by `CONNECT`; `https://` reaches the proxy itself over TLS |
 | `tg://proxy?server=…&port=…&secret=…` or `https://t.me/proxy?…` | an MTProxy, as Telegram shares it; FakeTLS (`ee…`) secrets work |
 | `tg://socks?server=…&port=…&user=…&pass=…` | Telegram's share link for a SOCKS5 proxy |
@@ -210,11 +211,14 @@ URL without echo, or from a pipe, keeps the secret in the OS keyring, and writes
 is refused, because `ps` and your shell history would keep it.
 
 `TG_PROXY` takes the whole URL, secret included, and wins over the setting — for CI, or for one try.
+`config show` prints the setting from the file; `tg doctor` prints the proxy actually in use.
 `ALL_PROXY` and `HTTPS_PROXY` are not read: they are usually set for other tools, and a proxy is
 something you choose for this account.
 
-The Bot API (`tg bot …`) goes through the same SOCKS5 or HTTP proxy. An MTProxy carries only
-Telegram's own protocol, so with one the Bot API connects directly; `tg doctor` says which.
+The Bot API (`tg bot …`) and the app registration of `session start --app auto` go through the
+same SOCKS5 or HTTP proxy. An MTProxy carries only Telegram's own protocol, so with one they connect
+directly; `tg doctor` says which. `--app browser` opens my.telegram.org in your browser, which
+uses its own proxy settings.
 
 ## Environment variables
 

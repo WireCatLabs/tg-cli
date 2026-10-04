@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs"
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
+import { join } from "node:path"
 import { Readable } from "node:stream"
 import { memoryKeyring } from "@leemour/cli-core/testing"
 import { describe, expect, it } from "vitest"
@@ -83,5 +84,24 @@ describe("config set proxy", () => {
 
     expect(json(doctor.stdout).telegram.proxy).toMatchObject({ url: "http://u@env.example:3128", from: "TG_PROXY" })
     expect(doctor.stdout.join("\n")).not.toContain("hunter2")
+  })
+
+  it("never repeats a password someone wrote into the file by hand", async () => {
+    const dir = mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? "", "hand-"))
+    mkdirSync(join(dir, "config"))
+    writeFileSync(
+      join(dir, "config", "config.json"),
+      JSON.stringify({ profiles: { default: { proxy: "socks5://u:hunter2@h:1080" } } }),
+    )
+    const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", TG_CONFIG_DIR: join(dir, "config") }
+
+    for (const argv of [
+      ["doctor", "--json"],
+      ["chats", "list"],
+      ["config", "show"],
+    ]) {
+      const { stdout, stderr } = await tg(argv, { env })
+      expect([...stdout, ...stderr].join("\n")).not.toContain("hunter2")
+    }
   })
 })

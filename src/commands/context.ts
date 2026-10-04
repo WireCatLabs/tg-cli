@@ -43,6 +43,7 @@ export interface CommandContext extends MessengerContext {
   sessionPath: string
   credentials: ReturnType<typeof apiCredentials>
   open: (credentials?: ApiCredentials) => Promise<Adapter>
+  proxy: () => ReturnType<typeof resolveProxy>
   withTelegram: MessengerContext["withMessenger"]
 }
 
@@ -145,12 +146,13 @@ export const TELEGRAM: Messenger = {
 
 export const forCommand = (command: Command): CommandContext => {
   const context = messengerContext(command, TELEGRAM)
-  const { sessionPath, credentials, open } = telegramOf(command, context)
+  const { sessionPath, credentials, open, proxy } = telegramOf(command, context)
   return {
     ...context,
     sessionPath,
     credentials,
     open,
+    proxy,
     withTelegram: context.withMessenger,
   }
 }
