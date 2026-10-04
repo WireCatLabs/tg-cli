@@ -16,6 +16,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
   `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
 
+### Changed — may break scripts
+
+- **`tg messages list` answers `hasMore: true`, and prints the `older messages: --before-id` hint, whenever Telegram
+  gave a page back,** not only when the page was full. A chat with fewer messages than `--limit`, or the last page
+  back to a chat's start, now says there may be more; the next page comes back empty. A short page is no proof
+  of the start, since Telegram leaves deleted messages out of it.
+
 ### Fixed
 
 - **`tg store fetch` no longer stops early and counts a chat as complete when a page comes back short.**
