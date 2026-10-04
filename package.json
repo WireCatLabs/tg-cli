@@ -57,6 +57,7 @@
     "@leemour/cli-messaging": "0.147.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
+    "undici": "7.30.0",
     "valibot": "1.5.0"
   },
   "devDependencies": {

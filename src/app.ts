@@ -1,5 +1,7 @@
 import type { AppIdentity } from "@leemour/cli-messaging/cli"
 import { type Configuration, settingsFor } from "@leemour/cli-messaging/cli"
+import * as v from "valibot"
+import { proxySetting } from "./proxy.js"
 import { VERSION } from "./version.js"
 
 export const TG: AppIdentity = {
@@ -12,5 +14,5 @@ export const TG: AppIdentity = {
   locale: "en-GB",
 }
 
-export const CONFIG: Configuration = settingsFor(TG)
+export const CONFIG: Configuration = settingsFor(TG, { profile: { proxy: v.optional(proxySetting) } })
 export const { resolveSettings, configuredProfiles, changeSetting } = CONFIG

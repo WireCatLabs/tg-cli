@@ -35,6 +35,7 @@ import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"
 import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
+import { withProxySecrets } from "./commands/proxy-config.js"
 import { sessionCommand } from "./commands/session.js"
 import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
@@ -89,7 +90,7 @@ const definition: ProgramDefinition = {
       recipientsCommand(TELEGRAM),
       sendsCommand(TELEGRAM),
       runsCommand(TG),
-      configCommand(TG, CONFIG),
+      withProxySecrets(configCommand(TG, CONFIG)),
       doctorCommand(TELEGRAM),
       commandsCommand(TG),
       completeCommand(TELEGRAM, CONFIG),

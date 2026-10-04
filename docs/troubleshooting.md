@@ -10,7 +10,7 @@ numbers are in [commands.md](commands.md#exit-codes).
 |---|---|---|---|
 | `1` | `generic_failure` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
-| `3` | `configuration_error` | `config.json` is wrong, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [store](#the-message-store-was-written-by-a-newer-version-) |
+| `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-setup) |
 | `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
@@ -233,7 +233,23 @@ was a send, check the chat before you repeat it.
 
 Exit code `10`. The connection could not be made or broke: no network, a firewall, a proxy, or DNS.
 The code in brackets says which (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`). Commands that answer from
-the store work without the network: `tg --offline chats list`.
+the store work without the network: `tg --offline chats list`. Where Telegram is blocked, set a
+proxy ([configuration.md](configuration.md#through-a-proxy)).
+
+## "the proxy … cannot be reached" or "… refused"
+
+Exit code `3`. The fault is the proxy, not Telegram: nothing reached Telegram, so even a send did
+not leave. `tg` stops at the first failed connection instead of waiting for the deadline.
+
+- **cannot be reached (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`)** — the proxy is down, or its
+  host or port is wrong.
+- **refused: … auth …** or **refused the tunnel (HTTP 407)** — wrong user or password. Set it again
+  with `tg config set proxy -`.
+- **refused the tunnel (HTTP 403 or 502)** — the proxy will not, or cannot, reach Telegram.
+
+`tg doctor` names the proxy in use, where it came from (`TG_PROXY` or the settings) and whether the
+Bot API goes through it. To try without it, `tg config unset proxy`. An MTProxy with a wrong secret
+usually looks like a hang rather than a refusal: bound it with `--timeout 30s`.
 
 ## `outcome_unknown` after a send
 

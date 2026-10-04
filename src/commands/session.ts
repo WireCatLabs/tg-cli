@@ -6,9 +6,9 @@ import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messag
 import { asFirstWord, commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
+import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
-
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, forCommand } from "./context.js"
 
@@ -24,6 +24,8 @@ const appCredentials = async (
 ) => {
   if (how === "auto") {
     let app: Awaited<ReturnType<typeof registerApp>>
+    const through = context.proxy()
+    const fetch = through ? proxiedFetch(through.proxy) : undefined
     try {
       app = await registerApp(
         {
@@ -31,7 +33,7 @@ const appCredentials = async (
           code: () => ask("code from Telegram for my.telegram.org (app registration): ", true),
           note: context.renderer.note,
         },
-        signal === undefined ? {} : { signal },
+        { ...(signal === undefined ? {} : { signal }), ...(fetch ? { fetch } : {}) },
       )
     } catch (error) {
       context.renderer.note(

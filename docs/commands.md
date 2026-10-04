@@ -1976,7 +1976,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, readOtherBots, updateCheck, skillHint. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -1997,7 +1997,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, readOtherBots, updateCheck, skillHint. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint. |
 
 | Option | What it does |
 |---|---|

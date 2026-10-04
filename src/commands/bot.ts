@@ -10,12 +10,14 @@ import {
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
+import { proxiedFetch } from "../bot/proxy.js"
 import { TelegramBotTransport } from "../bot/transport.js"
 import { botSessionFile, sessionFile } from "../paths.js"
 import { TelegramAdapter } from "../telegram/adapter.js"
 import { openBotHistory } from "../telegram/bot-history.js"
 import { apiCredentials } from "../telegram/credentials.js"
-import { type Adapter, type Environment, SKILL } from "./context.js"
+import { resolveProxy } from "../telegram/proxy.js"
+import { type Adapter, type Environment, proxyOption, SKILL } from "./context.js"
 
 /** tg's `run` as the shared bot MCP server calls it; a test adds its keyring and Bot API stand-in as `extra`. */
 export const botMcpRun = async (extra: Environment = {}): Promise<RunBotCommand> => {
@@ -41,18 +43,20 @@ export const TELEGRAM_BOT: BotMessenger = {
   },
   connect: async (command, token, { stop, events, history, track } = {}) => {
     const environment = environmentOf<Environment>(command)
-    const { botFetch } = environment
+    const env = environment.env ?? process.env
+    const settings = resolveSettings(command.optsWithGlobals(), { env, kind: "bot" })
+    const through = resolveProxy(settings, { env, ...(environment.keyring ? { keyring: environment.keyring } : {}) })
+    const fetch = environment.botFetch ?? (through ? proxiedFetch(through.proxy) : undefined)
     const adapter = telegramBotAdapter(
       new TelegramBotTransport({
         token,
-        ...(botFetch ? { fetch: botFetch } : {}),
+        ...(fetch ? { fetch } : {}),
         ...(stop ? { signal: stop } : {}),
         ...(events ? { events } : {}),
       }),
     )
     if (!history) return adapter
-    const env = environment.env ?? process.env
-    const { profile } = resolveSettings(command.optsWithGlobals(), { env, kind: "bot" })
+    const { profile } = settings
     const readCredentials = (profile: string) =>
       apiCredentials({ profile, env, ...(environment.keyring ? { keyring: environment.keyring } : {}) }).read()
     const credentials = readCredentials(profile) ?? readCredentials("default")
@@ -68,6 +72,7 @@ export const TELEGRAM_BOT: BotMessenger = {
       sessionPath: botSessionFile(profile, botId, env),
       token,
       ...history,
+      ...proxyOption(through),
       ...(stop ? { stop } : {}),
       ...(events ? { events } : {}),
       ...(track ? { track } : {}),
@@ -81,7 +86,7 @@ export const TELEGRAM_BOT: BotMessenger = {
         try {
           personal = environment.adapter
             ? await environment.adapter({ credentials, sessionPath: personalPath })
-            : await TelegramAdapter.open({ credentials, sessionPath: personalPath })
+            : await TelegramAdapter.open({ credentials, sessionPath: personalPath, ...proxyOption(through) })
           track?.(personal)
           return (await personal.history?.(chat, { limit: 1 }))?.items[0]?.id
         } catch {

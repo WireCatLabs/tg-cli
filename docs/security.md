@@ -27,6 +27,7 @@ servers it talks to, and what to do if the session leaks.
 | a bot history session | `bots/<profile>/mtproto-<bot-id>.session` in the state directory | anyone who can read it can use that bot authorization; protect it like the personal session |
 | the app id and hash | the OS keyring; `credentials.json` (`0600`) beside the settings where there is no keyring | only together with a session |
 | for CI | `TG_API_ID` and `TG_API_HASH` | the process that has them |
+| a proxy password or MTProxy secret | the OS keyring, or `credentials.json`, one per profile and one for `--defaults`; the settings keep the URL without it | anyone who can use the proxy with it |
 
 The session is Telegram's authorization key. Copying the file copies the login, with no password and
 no code. Treat it like a password: never commit it, never attach it, never paste it.

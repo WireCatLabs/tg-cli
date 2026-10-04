@@ -24,6 +24,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - `tg chats members audit` lists suspicious member signals without removing anyone; unavailable signals
   are reported in `unknown`. MCP inbox/review accept `kinds` and `new` with their own checkpoints.
 
+- **`tg` connects through a proxy: SOCKS5, HTTP `CONNECT` or MTProxy.** Set it per profile with
+  `tg config set proxy <url>` — or `tg config set proxy -` to paste one with a password or an
+  MTProxy secret, which is kept in the OS keyring, never in the settings file — or for one run with
+  `TG_PROXY`. Bot API commands use the same SOCKS5 or HTTP proxy. A proxy that refuses or cannot be
+  reached fails at once with `configuration_error`, and `tg doctor` names the proxy in use.
+
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.
