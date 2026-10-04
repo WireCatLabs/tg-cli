@@ -41,7 +41,7 @@ visible to every process on the machine in `ps`, and would stay in your shell hi
 
 The local store, settings, run records, the send journal, the recipient list, speech models and
 exports are described on the
-[shared page](https://wirecat.dev/en/docs/security#what-stays-on-your-computer). The store is
+[shared page](https://wirecat.dev/en/docs/security). The store is
 shared with `max`, holds **the full text** of every message `tg` has read or sent, and is not
 encrypted. Besides those, `tg` writes:
 
@@ -64,7 +64,7 @@ Devices, end the session that `tg` created. That makes the session file useless.
 Every command and MCP tool that changes something in Telegram goes through the shared guard:
 `permissions`, the recipient list, `sendsPerHour` (30 by default) and a journal without text. How
 each check works, its exit code, and what it cannot hold: the
-[shared page](https://wirecat.dev/en/docs/security#the-send-guard).
+[shared page](https://wirecat.dev/en/docs/security).
 
 ```sh
 tg config set permissions.messages readonly  # no change to messages from this profile
@@ -84,7 +84,7 @@ MCP there is no way around it.
 ## Other people's text on your screen
 
 Control characters, line breaks in names and look-alike chat titles are handled as the
-[shared page](https://wirecat.dev/en/docs/security#other-peoples-text-on-your-screen) describes. A
+[shared page](https://wirecat.dev/en/docs/security) describes. A
 downloaded file's name also loses any leading dot.
 
 ## What goes over the network
