@@ -1,6 +1,15 @@
 import type { DeleteMessageUpdate, Message as TgMessage } from "@mtcute/node"
 import { describe, expect, it } from "vitest"
-import { peerToChat, toAccount, toChat, toDeletions, toMessage, toMessageHit, toReactionChange } from "./map.js"
+import {
+  peerToChat,
+  toAccount,
+  toChat,
+  toDeletions,
+  toGroupMember,
+  toMessage,
+  toMessageHit,
+  toReactionChange,
+} from "./map.js"
 
 const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: string; username?: string }) =>
   ({
@@ -129,6 +138,8 @@ describe("a message's details", () => {
       forwards: 2,
       link: "https://t.me/x/7",
     })
+    expect(toMessage(with_({ replies: { hasComments: true, count: 4 } })).providerMetadata).toEqual({ comments: 4 })
+    expect(toMessage(with_({ replies: { hasComments: false, count: 9 } }))).not.toHaveProperty("providerMetadata")
     const private_ = Object.defineProperty({ ...base }, "link", {
       get: () => {
         throw new Error("not public")
@@ -211,5 +222,36 @@ describe("a reaction update", () => {
       reactions: { total: 2 },
     })
     expect(toReactionChange({ update: { _: "updateUserStatus" }, peers: {} } as never)).toBeUndefined()
+  })
+})
+
+describe("a Telegram group member", () => {
+  const user = { id: 777, displayName: "Ana", username: null, isBot: false, isDeleted: false, isScam: false }
+  const member = (extra: Record<string, unknown>, own: Record<string, unknown> = {}) =>
+    toGroupMember({
+      status: "member",
+      joinedDate: null,
+      invitedBy: null,
+      user: { ...user, isFake: false, photo: null, lastOnline: null, ...own },
+      ...extra,
+    } as unknown as Parameters<typeof toGroupMember>[0])
+
+  it("keeps what the list says for free: when they joined, who brought them, and the account's own marks", () => {
+    expect(
+      member(
+        { joinedDate: new Date("2026-09-01T12:00:00.000Z"), invitedBy: { id: 99 } },
+        { isBot: true, isScam: true, photo: {} },
+      ),
+    ).toMatchObject({
+      id: "777",
+      joinedAt: "2026-09-01T12:00:00.000Z",
+      invitedBy: "99",
+      isBot: true,
+      deleted: false,
+      flagged: "scam",
+      hasPhoto: true,
+    })
+    expect(member({})).toMatchObject({ joinedAt: null, invitedBy: null, hasPhoto: false })
+    expect(member({})).not.toHaveProperty("flagged")
   })
 })

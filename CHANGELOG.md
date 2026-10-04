@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`chats members audit` judges with everything Telegram's member list carries.** Each member now brings when
+  they joined, who invited them, and whether the account is a bot, deleted, marked scam or fake, or has no photo —
+  so bursts of joins, mass invites and marked accounts show up, with no extra request per person.
+- **`chats stats` counts comments on channel posts**, beside views and forwards.
+
 - **A file whose upload drops is tried again, up to three times, before anything is sent.** If it still fails, the
   error says nothing was sent, instead of exit `14` "it may have gone". The message itself still goes once, with
   its send id.
