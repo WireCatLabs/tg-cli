@@ -222,6 +222,23 @@ tg chats members list <chat> [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
+#### `tg chats members audit`
+
+members that look like bots, each with its reasons — read from the member list and the local store; never one request per person, and it removes nobody
+
+```sh
+tg chats members audit <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
+| `--min-score <n>` | only members scoring at least this; 1 lists everyone with a reason (default: 2). |
+
 #### `tg chats members add`
 
 add people; they are told

@@ -247,3 +247,15 @@ operations, ask by default. Never retry an `outcome_unknown` write.
 `get-managed-bot-token` and `replace-managed-bot-token` require `--store-token <profile>`;
 returned credentials go only to that profile's OS keyring, after identity verification.
 Never ask the owner to paste a credential into argv, print one, or fall back to a plaintext file.
+
+Use `tg chats stats <chat> --offline --json` for stored group/channel activity. The online command also
+requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
+`tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
+every HTTP write requires a form. `tg mcp --revoke` forgets browser logins for the profile.
+MCP inbox/review `kinds` and `new` use checkpoints separate from CLI `--new`.
+
+`tg chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
+Treat scores as hints; check `more` and `unknown`, and review each person before any moderation action.
+
+The current Telegram member audit uses names/usernames and stored messages; bot/scam/fake flags, deletion,
+photos, join bursts and inviters are unavailable and reported in `unknown`.

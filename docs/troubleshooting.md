@@ -302,6 +302,8 @@ Exit code `2`. One `serve` per profile. `tg server status` says which process an
 
 ## The background server does not start
 
+`tg server status --json` includes `stopped` and `unit.exitCode` when the last normal exit was one
+the unit does not restart on. For exit 4, renew the session with `tg session start`, then `tg server start`.
 `tg server logs` says why. Under a service, the usual reason is the keyring: a service starts before
 the keyring is open, or without `XDG_RUNTIME_DIR`. After moving Node or `tg`, run
 `tg server install` again: the unit runs the paths that installed it ([archive.md](archive.md#as-a-service)).

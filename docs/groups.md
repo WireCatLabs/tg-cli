@@ -152,3 +152,23 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
 - **Telegram's rate limits apply.** Reading every member of a large group is many requests; a
   `FLOOD_WAIT` answer says how long to wait
   ([troubleshooting.md](troubleshooting.md#telegram-asks-to-wait-n-s-before-the-next-request)).
+
+## Activity statistics
+
+```sh
+tg chats stats <chat> --since-time 7d --by day --timezone Europe/Madrid --json
+tg chats stats <chat> --offline --json
+```
+
+Counts messages, active senders, replies, threads, reactions, top posts and questions answered from the local
+store. The online command also asks Telegram for joins and leaves; `--offline` and MCP `tg_chats_stats`
+omit `members`. When `complete` is false, counts are lower bounds; run the suggested `store fetch`.
+
+## Review suspicious members
+
+`tg chats members audit <chat>` lists members with bot-like signals and reasons; `--budget` caps pages and
+`--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means the list
+is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`; scores need human review.
+
+This Telegram adapter does not yet map bot/scam/fake, deletion, photo or join/inviter fields into the audit.
+Those signals appear in `unknown`; the audit can still use names and stored messages.

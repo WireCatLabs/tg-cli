@@ -1,14 +1,14 @@
 # The MCP server
 
 `tg mcp` hands a profile to an agent over [MCP](https://modelcontextprotocol.io), on stdin and
-stdout, with no network port. The server comes with `tg`; there is nothing else to install.
+stdout by default; `--http --public-url` serves it on a local port behind your HTTPS tunnel. The server comes with `tg`; there is nothing else to install.
 
 **When you need it.** In Claude Code, Codex and other agents with a terminal, `tg` itself is enough
 — it costs the same tokens and can do the same things. MCP is for clients without a terminal, such
 as Claude Desktop or Cursor's chat, and for anyone who wants the client to ask before each send.
-ChatGPT or Claude **in the browser** need more than this — see [remote.md](remote.md).
+For ChatGPT or Claude **in the browser**, use `tg mcp --http` — see [remote.md](remote.md).
 
-This server is copied from max-cli's (`max mcp`) and behaves the same way.
+The personal tools use the shared messenger catalogue. Telegram also supports topics.
 
 ## Connecting
 
@@ -128,7 +128,7 @@ tg agent config set permissions.messages.send ask
 ```
 
 The levels bind you too: in that profile your own `tg agent messages send` asks as well. Two flags
-skip the form for the levels at `ask`:
+skip the form for levels at `ask` over stdin/stdout. HTTP always requires a form:
 
 - `tg mcp --allow-dangerous` — no form before a deletion;
 - `tg mcp --yes` — no form before any other change.
@@ -179,6 +179,8 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
+| `tg_chats_members_audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
+| `tg_chats_stats` | `tg chats stats --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
 | `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
 | `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
@@ -235,7 +237,7 @@ The server offers four ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
-| `catch-up` | `since` — optional | calls `tg_inbox` once and summarises per chat; sends nothing |
+| `catch-up` | `kind`, `mode` — optional | calls `tg_inbox`; `mode` is `unread` (default), `new` or a time; `kind` selects chat kinds; marking read requires a separate approved tool call |
 | `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
 | `review` | `since`, `groups` — optional | calls `tg_review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
@@ -265,3 +267,7 @@ absolute time shown in the form, even after a delayed response.
 
 Local conversation refresh is refused before writing at `ask` or with `--confirm-send`; run the
 CLI command with the owner's approval.
+
+MCP `tg_inbox` and `tg_review` accept `kinds` and `new`. MCP keeps its own per-chat checkpoints,
+separate from CLI `--new`. `new` cannot be combined with `since_time`, or with `unanswered` on review.
+HTTP writes always require a form, regardless of permission level or confirmation flags.
