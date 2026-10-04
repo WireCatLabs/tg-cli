@@ -22,7 +22,8 @@ class Signal {
   }
 }
 
-const page = <T>(items: T[], next?: unknown) => Object.assign([...items], { next })
+const page = <T>(items: T[], next?: unknown, total = Number.POSITIVE_INFINITY) =>
+  Object.assign([...items], { next, total })
 
 class FakeClient {
   readonly calls: { method: string; args: unknown[] }[] = []
@@ -35,6 +36,7 @@ class FakeClient {
   dialogs: unknown[] = []
   history: unknown[] = []
   historyNext: unknown = undefined
+  historyTotal = Number.POSITIVE_INFINITY
   peer: unknown = undefined
   members: unknown = []
   membersTotal: number | undefined
@@ -178,7 +180,7 @@ class FakeClient {
   }
   getHistory = async (...args: unknown[]) => {
     this.#record("getHistory", args)
-    return page(this.history, this.historyNext)
+    return page(this.history, this.historyNext, this.historyTotal)
   }
   getPeerDialogs = async (peer: unknown) => {
     this.#record("getPeerDialogs", [peer])
@@ -414,17 +416,25 @@ describe("reading", () => {
     ])
   })
 
-  it("**reads a short page as more to come**, and only a page with no next one as the start", async () => {
+  it("**reads a short page mid-history as more to come**, and a page holding the whole chat as the end", async () => {
     const { adapter, client } = await open()
     client.history = [message(3)]
     client.historyNext = { id: 3, date: 0 }
+    client.historyTotal = 250
     const short = await adapter.history("-100500", { limit: 100, before: "10" })
+
+    client.history = [message(2), message(1)]
+    client.historyNext = { id: 1, date: 0 }
+    client.historyTotal = 2
+    const small = await adapter.history("@someone", { limit: 100 })
 
     client.history = []
     client.historyNext = undefined
+    client.historyTotal = 0
     const start = await adapter.history("-100500", { limit: 100, before: "3" })
 
     expect([short.items.map((one) => one.id), short.hasMore]).toEqual([["3"], true])
+    expect([small.items.map((one) => one.id), small.hasMore]).toEqual([["1", "2"], false])
     expect([start.items, start.hasMore]).toEqual([[], false])
   })
 

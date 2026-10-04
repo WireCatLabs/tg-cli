@@ -212,8 +212,9 @@ export class TelegramAdapter {
       const peer = await this.#inputOf(reference)
       const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
       const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
-      // mtcute drops deleted entries, so a page short of `limit` can sit mid-history; only no `next` is the start.
-      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined }
+      // mtcute drops deleted entries, so a short page can sit mid-history. `total` is the chat's count from a
+      // slice, or the page itself when Telegram sent the full list; only a page holding all of it is the end.
+      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined && page.total > page.length }
     })
   }
 

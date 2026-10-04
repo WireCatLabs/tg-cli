@@ -150,7 +150,8 @@ class SeededClient {
   ) => {
     const { reverse = false, limit = 100, addOffset = 0 } = params
     const offset = params.offset ?? (reverse ? { id: 1, date: 0 } : { id: 0, date: 0 })
-    const found = this.#serverHistory(this.#peer(reference).id, {
+    const chatId = this.#peer(reference).id
+    const found = this.#serverHistory(chatId, {
       offsetId: offset.id,
       offsetDate: offset.date,
       addOffset: addOffset + (reverse ? -limit : 0),
@@ -159,7 +160,8 @@ class SeededClient {
     if (reverse) found.reverse()
     const last = found.at(-1)
     const next = last ? { id: last.id + (reverse ? 1 : 0), date: Math.floor(last.date.getTime() / 1000) } : undefined
-    return Object.assign(found, { next })
+    const total = this.#held.filter((held) => held.chatId === chatId).length
+    return Object.assign(found, { next, total })
   }
 
   /** Telegram drops a repeated `random_id` and answers the message it already sent. */

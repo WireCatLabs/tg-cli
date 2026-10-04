@@ -18,10 +18,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **`tg messages list` answers `hasMore: true`, and prints the `older messages: --before-id` hint, whenever Telegram
-  gave a page back,** not only when the page was full. A chat with fewer messages than `--limit`, or the last page
-  back to a chat's start, now says there may be more; the next page comes back empty. A short page is no proof
-  of the start, since Telegram leaves deleted messages out of it.
+- **`tg messages list` can answer `hasMore: true`, with the `older messages: --before-id` hint, on a page shorter
+  than `--limit`.** Telegram leaves deleted messages out of a page, so a short page is no proof of a chat's first
+  message. A chat that fits in one page still ends there; in a longer chat, the last page back can say there is more,
+  and the next page comes back empty.
 
 ### Fixed
 
