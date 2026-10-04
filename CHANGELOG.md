@@ -3,8 +3,6 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
 ## 0.27.0 — 04.10.2026
 
 ### What's new
