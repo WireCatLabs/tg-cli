@@ -120,6 +120,7 @@ export const TELEGRAM: Messenger = {
   connect: (command, base, options) => telegramOf(command, base).connect(options),
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   groupSettings: GROUP_SETTINGS,
+  mediaOptions: ["spoiler", "captionAbove"],
   addsWithHistory: false,
   officialStats: true,
   knowsAccountAge: false,

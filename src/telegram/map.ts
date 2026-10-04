@@ -400,18 +400,26 @@ export const toUploadParams = (upload: Upload) => {
   }
 }
 
+/** Checked before the upload, so a refused spoiler never spends one. */
+export const checkSpoiler = (upload: Upload) => {
+  if (upload.kind !== "photo" && !videoMime(upload))
+    throw new CliError("validation_error", "--spoiler hides a photo or a video only")
+}
+
 /** `file` is the bytes, or the same file already uploaded — then nothing is uploaded again. */
 export const toInputMedia = (
   upload: Upload,
   caption: string | TextWithEntities,
   file: Uint8Array | UploadedFile = upload.bytes,
+  { spoiler = false }: { spoiler?: boolean } = {},
 ): InputMediaLike => {
   const { kind, name } = upload
-  if (kind === "photo") return InputMedia.photo(file, { fileName: name, caption })
+  const hidden = spoiler ? { spoiler } : {}
+  if (kind === "photo") return InputMedia.photo(file, { fileName: name, caption, ...hidden })
   if (kind === "voice") return InputMedia.voice(file, { fileMime: "audio/ogg", caption })
   const video = videoMime(upload)
   return video
-    ? InputMedia.video(file, { fileName: name, fileMime: video, caption, supportsStreaming: true })
+    ? InputMedia.video(file, { fileName: name, fileMime: video, caption, supportsStreaming: true, ...hidden })
     : InputMedia.document(file, { fileName: name, caption })
 }
 

@@ -67,6 +67,7 @@ import {
   ADMIN_RIGHT_FIELDS,
   answerId,
   attachmentsOf,
+  checkSpoiler,
   type EventOf,
   eventOf,
   GROUP_SETTINGS,
@@ -486,7 +487,20 @@ export class TelegramAdapter {
   send(
     chatId: string,
     text: string,
-    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [], sendAs }: SendOptions,
+    {
+      sendId,
+      replyTo,
+      threadId,
+      silent,
+      noPreview,
+      markup,
+      formatting,
+      at,
+      attachments = [],
+      sendAs,
+      spoiler,
+      captionAbove,
+    }: SendOptions,
   ): Promise<Sent> {
     const id = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
@@ -505,10 +519,14 @@ export class TelegramAdapter {
     }
     return this.#call(async () => {
       const [attachment] = attachments
+      if (spoiler && attachment) checkSpoiler(attachment)
       const uploaded = attachment ? await uploadAttachment(this.#client, attachment) : undefined
       try {
         const message = attachment
-          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body, uploaded), common)
+          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body, uploaded, { spoiler }), {
+              ...common,
+              ...(captionAbove ? { invert: true } : {}),
+            })
           : await this.#client.sendText(Number(chatId), body, {
               ...common,
               ...(noPreview ? { disableWebPreview: true } : {}),
