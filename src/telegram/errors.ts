@@ -49,6 +49,38 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
 }
 
+type Standing = (login: string) => [ErrorCode, string, "frozen" | "banned" | "deactivated" | "revoked"]
+
+const revoked: Standing = (login) => ["authentication_error", `Telegram ended this login — run ${login}`, "revoked"]
+const frozen: Standing = () => [
+  "permission_error",
+  "Telegram froze this account: it can read but not write — `tg doctor --online` shows until when, and where to appeal",
+  "frozen",
+]
+
+/**
+ * Refusals that say what state the account is in, so `doctor --online` can name it. Logging in again
+ * cannot undo a ban, so those never send the person to `session start`. FROZEN_METHOD_INVALID is a
+ * 420, Telegram's flood code, and would otherwise read as "wait and retry" (core.telegram.org/api/auth#frozen-accounts).
+ */
+const STANDINGS: Record<string, Standing> = {
+  AUTH_KEY_UNREGISTERED: revoked,
+  SESSION_REVOKED: revoked,
+  SESSION_EXPIRED: revoked,
+  USER_DEACTIVATED: () => [
+    "authentication_error",
+    "this Telegram account was deleted — a new login cannot bring it back",
+    "deactivated",
+  ],
+  USER_DEACTIVATED_BAN: () => [
+    "authentication_error",
+    "Telegram banned this account — a new login cannot lift it; only Telegram can",
+    "banned",
+  ],
+  FROZEN_METHOD_INVALID: frozen,
+  FROZEN_PARTICIPANT_MISSING: frozen,
+}
+
 /** mtcute's argument errors by the start of their text, which may go on to quote what was typed. */
 const ARGUMENT_KINDS: [RegExp, string][] = [
   [/^You haven't joined /, "you are not a member of that chat"],
@@ -88,6 +120,11 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
           `tg watch or a command beside them) — run ${login}`,
         details,
       )
+    }
+    const standing = STANDINGS[error.text]
+    if (standing) {
+      const [code, message, state] = standing(login)
+      return new CliError(code, message, { ...details, standing: { state, hint: message } })
     }
     if (error.code === RpcError.UNAUTHORIZED) {
       return new CliError("authentication_error", `not logged in, or the session was ended — run ${login}`, details)

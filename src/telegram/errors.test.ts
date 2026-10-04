@@ -41,6 +41,24 @@ describe("Telegram's refusals", () => {
     })
   })
 
+  it("**never calls a frozen account a rate limit**, though Telegram sends it as a 420", () => {
+    for (const text of ["FROZEN_METHOD_INVALID", "FROZEN_PARTICIPANT_MISSING"]) {
+      expect(toCliError(rpc(text === "FROZEN_METHOD_INVALID" ? 420 : 400, text))).toMatchObject({
+        code: "permission_error",
+        details: { providerError: text, standing: { state: "frozen" } },
+        message: expect.stringContaining("doctor --online"),
+      })
+    }
+  })
+
+  it("names a banned or deleted account, and does not send it to log in again", () => {
+    const banned = toCliError(rpc(401, "USER_DEACTIVATED_BAN"))
+    expect(banned).toMatchObject({ code: "authentication_error", details: { standing: { state: "banned" } } })
+    expect((banned as Error).message).not.toContain("session start")
+    expect(toCliError(rpc(401, "USER_DEACTIVATED"))).toMatchObject({ details: { standing: { state: "deactivated" } } })
+    expect(toCliError(rpc(401, "SESSION_REVOKED"))).toMatchObject({ details: { standing: { state: "revoked" } } })
+  })
+
   it("names the profile to log in again on", () => {
     expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"), "`tg work session start`")).toMatchObject({
       message: expect.stringContaining("`tg work session start`"),

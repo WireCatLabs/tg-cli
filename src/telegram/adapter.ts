@@ -215,6 +215,33 @@ export class TelegramAdapter {
     })
   }
 
+  /**
+   * For `doctor --online`: Telegram's clock, from `help.getConfig`'s `date` in whole seconds, and
+   * whether the account is frozen, from `help.getAppConfig`'s `freeze_*` fields
+   * (core.telegram.org/api/config, /api/auth#frozen-accounts). A frozen account still reads, so a
+   * working `me()` cannot tell. Both read only.
+   */
+  health(): Promise<{
+    serverTime: number
+    serverTimeResolutionMs: number
+    standingChecked: boolean
+    standing?: FrozenStanding
+  }> {
+    return this.#call(async () => {
+      const config = await this.#client.call({ _: "help.getConfig" })
+      const serverTime = config.date * 1000
+      let appConfig: Record<string, unknown>
+      try {
+        appConfig = await this.#client.appConfig.get()
+      } catch {
+        // The clock is still worth reporting; the standing is then unknown, never "active".
+        return { serverTime, serverTimeResolutionMs: 1000, standingChecked: false }
+      }
+      const standing = frozenOf(appConfig)
+      return { serverTime, serverTimeResolutionMs: 1000, standingChecked: true, ...(standing ? { standing } : {}) }
+    })
+  }
+
   /** Telegram lists dialogs by position, so a page is the dialogs up to its end, cut; `limit` unset is every one. */
   chats({ limit, offset }: { limit?: number; offset: number }): Promise<Page<Chat>> {
     return this.#call(async () => {
@@ -1388,6 +1415,36 @@ export class TelegramAdapter {
 }
 
 export { GROUP_SETTINGS }
+
+export interface FrozenStanding {
+  state: "frozen"
+  since?: string
+  until?: string
+  appealUrl?: string
+  hint: string
+}
+
+const unixTime = (value: unknown): string | undefined =>
+  typeof value === "number" && value > 0 ? new Date(value * 1000).toISOString() : undefined
+
+/** Telegram sets `freeze_since_date` non-zero only on a frozen account; the dates are unix seconds. */
+export const frozenOf = (config: Record<string, unknown>): FrozenStanding | undefined => {
+  const since = unixTime(config.freeze_since_date)
+  if (!since) return undefined
+  const until = unixTime(config.freeze_until_date)
+  const appealUrl =
+    typeof config.freeze_appeal_url === "string" && config.freeze_appeal_url ? config.freeze_appeal_url : undefined
+  return {
+    state: "frozen",
+    since,
+    ...(until ? { until } : {}),
+    ...(appealUrl ? { appealUrl } : {}),
+    hint:
+      "Telegram froze this account: it can read but not write" +
+      (until ? `, and deletes it on ${until.slice(0, 10)}` : "") +
+      (appealUrl ? ` unless an appeal is accepted — appeal at ${appealUrl}` : " unless an appeal is accepted"),
+  }
+}
 
 /** The rights `tg chats admins add --can` offers: max's, less `read`. */
 export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]

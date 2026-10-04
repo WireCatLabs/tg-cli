@@ -43,6 +43,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `TG_PROXY`. Bot API commands use the same SOCKS5 or HTTP proxy. A proxy that refuses or cannot be
   reached fails at once with `configuration_error`, and `tg doctor` names the proxy in use.
 
+- `tg doctor` shows the login as `not checked` until you add `--online`, and names each private
+  file or folder other users can read, with the `chmod` that fixes it. `tg doctor --online` also
+  reports this computer's clock against Telegram's, and whether the account is frozen (with its
+  dates and the appeal link), banned, deleted or logged out. Needs the next `@leemour/cli-messaging`.
+- A frozen account's refusal is a `permission_error` that points to `tg doctor --online`, not a rate
+  limit to wait out. A banned or deleted account no longer tells you to log in again.
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.

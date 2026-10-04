@@ -52,8 +52,17 @@ class FakeClient {
   migrationAnswer: unknown = undefined
   topicAnswer: unknown = forwarded(12)
   handleClientUpdate = vi.fn()
+  serverDate = 1_790_000_000
+  appConfigValue: Record<string, unknown> | Error = {}
+  readonly appConfig = {
+    get: async () => {
+      if (this.appConfigValue instanceof Error) throw this.appConfigValue
+      return this.appConfigValue
+    },
+  }
   call = async (request: { _: string }, options?: unknown) => {
     this.#record("call", options === undefined ? [request] : [request, options])
+    if (request._ === "help.getConfig") return { _: "config", date: this.serverDate }
     if (request._ === "channels.exportMessageLink") {
       if (this.exportedLink instanceof Error) throw this.exportedLink
       return { link: this.exportedLink, html: "ignored synthetic embed" }
@@ -378,6 +387,45 @@ describe("opening", () => {
     const { adapter, client } = await open()
     client.storage.self.getCached = () => null
     expect(adapter.self()).toBeNull()
+  })
+})
+
+describe("health", () => {
+  it("reads Telegram's clock in whole seconds, and an account in good standing has none", async () => {
+    const { adapter } = await open()
+    expect(await adapter.health()).toEqual({
+      serverTime: 1_790_000_000_000,
+      serverTimeResolutionMs: 1000,
+      standingChecked: true,
+    })
+  })
+
+  it("**reports a frozen account with its dates and the appeal link**", async () => {
+    const { adapter, client } = await open()
+    client.appConfigValue = {
+      freeze_since_date: 1_788_000_000,
+      freeze_until_date: 1_791_000_000,
+      freeze_appeal_url: "https://example.org/appeal",
+    }
+    expect((await adapter.health()).standing).toEqual({
+      state: "frozen",
+      since: new Date(1_788_000_000_000).toISOString(),
+      until: new Date(1_791_000_000_000).toISOString(),
+      appealUrl: "https://example.org/appeal",
+      hint: expect.stringContaining("appeal at https://example.org/appeal"),
+    })
+  })
+
+  it("treats a zero freeze date as not frozen, and still answers the clock when the app configuration fails", async () => {
+    const { adapter, client } = await open()
+    client.appConfigValue = { freeze_since_date: 0 }
+    expect((await adapter.health()).standing).toBeUndefined()
+    client.appConfigValue = new tl.RpcError(500, "INTERNAL")
+    expect(await adapter.health()).toEqual({
+      serverTime: 1_790_000_000_000,
+      serverTimeResolutionMs: 1000,
+      standingChecked: false,
+    })
   })
 })
 
