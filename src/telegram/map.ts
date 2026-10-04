@@ -102,6 +102,12 @@ export const toGroupMember = (member: ChatMember): GroupMember => ({
   ...toMember(member.user),
   role: member.status === "creator" ? "owner" : member.status === "admin" ? "admin" : "member",
   lastSeenAt: member.user.lastOnline?.toISOString() ?? null,
+  joinedAt: member.joinedDate?.toISOString() ?? null,
+  invitedBy: member.invitedBy ? String(member.invitedBy.id) : null,
+  isBot: member.user.isBot,
+  deleted: member.user.isDeleted,
+  ...(member.user.isScam ? { flagged: "scam" as const } : member.user.isFake ? { flagged: "fake" as const } : {}),
+  hasPhoto: member.user.photo !== null,
 })
 
 export const toMember = (user: Peer): Member => ({
@@ -157,6 +163,7 @@ export const toMessage = (message: TgMessage): Message => {
   const metadata = compact({
     views: message.views ?? undefined,
     forwards: message.forwards ?? undefined,
+    comments: message.replies?.hasComments ? message.replies.count : undefined,
     groupedId: message.groupedIdUnique ?? undefined,
     action: message.action?.type,
     link: linkOf(message),
