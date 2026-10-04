@@ -105,6 +105,22 @@ or `bot` — or it is refused. **The most specific key you set wins**: with the 
 `messages.send` is allowed and every other change to messages is refused. There is no wildcard:
 `messages: readonly` does not touch `reactions`, `polls` or `chats`.
 
+Keys from different sections of the file add up, but **the nearest section decides first, then the
+longest key**. A key a profile sets hides the same key and every key under it in `personal.defaults`,
+`bot.defaults` and `defaults`. Here profile `agent` cannot delete: its `messages` hides
+`messages.delete` from `defaults`.
+
+```json
+{
+  "defaults": { "permissions": { "messages.delete": "allow" } },
+  "profiles": { "agent": { "permissions": { "messages": "readonly" } } }
+}
+```
+
+It works both ways: a profile's `messages: allow` also hides `messages.delete: deny` from `defaults`,
+and deleting asks again, as it does by default. The older `readOnly` and `allow` count in the section
+they are written in.
+
 `inbox`, `review`, `watch`, `serve` and `store fetch`, `export` and `search` show messages, so they
 count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
 `mcp` and the store's own upkeep are never limited.
@@ -141,7 +157,7 @@ and the error names the flag.
 `readOnly: true` reads as every resource `readonly`. A list in `allow` (`send`, `forward`,
 `reaction`, `edit`, `pin`, `read`, `delete`, `groups`, `contacts`, `profile`, `folders`,
 `sessions`) reads as those actions `allow` and the rest `readonly`; deleting still asks. A key in
-`permissions` wins over both.
+`permissions` of the same section wins over both.
 
 ## Change it without opening the file
 
