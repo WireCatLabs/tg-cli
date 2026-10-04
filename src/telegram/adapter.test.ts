@@ -386,7 +386,11 @@ describe("opening", () => {
 describe("health", () => {
   it("reads Telegram's clock in whole seconds, and an account in good standing has none", async () => {
     const { adapter } = await open()
-    expect(await adapter.health()).toEqual({ serverTime: 1_790_000_000_000, serverTimeResolutionMs: 1000 })
+    expect(await adapter.health()).toEqual({
+      serverTime: 1_790_000_000_000,
+      serverTimeResolutionMs: 1000,
+      standingChecked: true,
+    })
   })
 
   it("**reports a frozen account with its dates and the appeal link**", async () => {
@@ -410,7 +414,11 @@ describe("health", () => {
     client.appConfigValue = { freeze_since_date: 0 }
     expect((await adapter.health()).standing).toBeUndefined()
     client.appConfigValue = new tl.RpcError(500, "INTERNAL")
-    expect(await adapter.health()).toMatchObject({ serverTime: 1_790_000_000_000 })
+    expect(await adapter.health()).toEqual({
+      serverTime: 1_790_000_000_000,
+      serverTimeResolutionMs: 1000,
+      standingChecked: false,
+    })
   })
 })
 

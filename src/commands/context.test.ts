@@ -93,28 +93,33 @@ describe("the session's file modes", () => {
     return { dir, path }
   }
 
-  it("is fine when only the owner can read the session, a read-only one included", () => {
-    const { path } = session()
-    chmodSync(path, 0o400)
-    expect(sessionModes(path, "linux")).toEqual({ checked: true, ok: true, problems: [] })
-  })
+  it.skipIf(process.platform === "win32")(
+    "is fine when only the owner can read the session, a read-only one included",
+    () => {
+      const { path } = session()
+      chmodSync(path, 0o400)
+      expect(sessionModes(path, "linux")).toEqual({ checked: true, ok: true, problems: [] })
+    },
+  )
 
-  it("**names the -wal file and the folder others can open, with the chmod that fixes each**, and changes nothing", () => {
-    const { dir, path } = session()
-    writeFileSync(`${path}-wal`, "", { mode: 0o644 })
-    chmodSync(`${path}-wal`, 0o644)
-    chmodSync(dir, 0o755)
+  it.skipIf(process.platform === "win32")(
+    "**names the -wal file and the folder others can open, with the chmod that fixes each**, and changes nothing",
+    () => {
+      const { dir, path } = session()
+      writeFileSync(`${path}-wal`, "", { mode: 0o644 })
+      chmodSync(`${path}-wal`, 0o644)
+      chmodSync(dir, 0o755)
 
-    expect(sessionModes(path, "linux")).toEqual({
-      checked: true,
-      ok: false,
-      problems: [
-        { path: `${path}-wal`, mode: "0644", want: "0600", fix: `chmod 600 '${path}-wal'` },
-        { path: dir, mode: "0755", want: "0700", fix: `chmod 700 '${dir}'` },
-      ],
-    })
-    expect(sessionModes(path, "linux").problems).toHaveLength(2)
-  })
+      expect(sessionModes(path, "linux")).toEqual({
+        checked: true,
+        ok: false,
+        problems: [
+          { path: `${path}-wal`, mode: "0644", want: "0600", fix: `chmod 600 '${path}-wal'` },
+          { path: dir, mode: "0755", want: "0700", fix: `chmod 700 '${dir}'` },
+        ],
+      })
+    },
+  )
 
   it("says it did not check on Windows", () => {
     expect(sessionModes("C:\\x.session", "win32")).toMatchObject({ checked: false })

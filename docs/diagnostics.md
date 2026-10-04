@@ -102,7 +102,7 @@ the runs kept.
 - **`online.standing`** (with `--online`) is `active`, `frozen`, `banned`, `deactivated` or
   `revoked`. A frozen account can read but not write. It comes with the date it was frozen, the date
   Telegram will delete it, and the appeal link, where Telegram gives them. Logging in again does not
-  lift a ban.
+  reopen an account Telegram closed.
 
 ## A problem report
 

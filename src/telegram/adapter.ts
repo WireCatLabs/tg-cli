@@ -220,17 +220,24 @@ export class TelegramAdapter {
    * (core.telegram.org/api/config, /api/auth#frozen-accounts). A frozen account still reads, so a
    * working `me()` cannot tell. Both read only.
    */
-  health(): Promise<{ serverTime: number; serverTimeResolutionMs: number; standing?: FrozenStanding }> {
+  health(): Promise<{
+    serverTime: number
+    serverTimeResolutionMs: number
+    standingChecked: boolean
+    standing?: FrozenStanding
+  }> {
     return this.#call(async () => {
       const config = await this.#client.call({ _: "help.getConfig" })
       const serverTime = config.date * 1000
-      let standing: FrozenStanding | undefined
+      let appConfig: Record<string, unknown>
       try {
-        standing = frozenOf(await this.#client.appConfig.get())
+        appConfig = await this.#client.appConfig.get()
       } catch {
-        // The clock is still worth reporting when the app configuration cannot be read.
+        // The clock is still worth reporting; the standing is then unknown, never "active".
+        return { serverTime, serverTimeResolutionMs: 1000, standingChecked: false }
       }
-      return { serverTime, serverTimeResolutionMs: 1000, ...(standing ? { standing } : {}) }
+      const standing = frozenOf(appConfig)
+      return { serverTime, serverTimeResolutionMs: 1000, standingChecked: true, ...(standing ? { standing } : {}) }
     })
   }
 
