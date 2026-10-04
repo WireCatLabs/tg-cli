@@ -11,6 +11,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   error says nothing was sent, instead of exit `14` "it may have gone". The message itself still goes once, with
   its send id.
 
+### Changed — may break scripts
+
+- **Pin, unpin, react, mark read, delete, vote, poll close, folder and contact changes end in exit `14`
+  (`outcome_unknown`) when Telegram does not answer**, instead of a timeout or network error that the send
+  journal recorded as failed. The message says whether a repeat is safe; for a folder creation it is not —
+  check `tg chats folders list` first.
+
 ### Fixed
 
 - **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than

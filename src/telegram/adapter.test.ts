@@ -1800,3 +1800,40 @@ describe("message permalinks", () => {
     },
   )
 })
+
+describe("a write with no answer", () => {
+  it("is an unknown outcome that says a repeat is safe where it is", async () => {
+    const { adapter, client } = await open()
+    client.pinMessage.mockRejectedValueOnce(new MtTimeoutError(1000))
+    client.sendReaction.mockRejectedValueOnce(new MtTimeoutError(1000))
+    client.blockUser.mockRejectedValueOnce(new MtTimeoutError(1000))
+
+    for (const write of [
+      () => adapter.pin("-100500", "5", { notify: false }),
+      () => adapter.react("-100500", "5", "👍"),
+      () => adapter.block("42"),
+    ]) {
+      await expect(write()).rejects.toMatchObject({
+        code: "outcome_unknown",
+        message: expect.stringContaining("repeating it is safe"),
+      })
+    }
+  })
+
+  it("warns that a repeated folder creation makes a second folder", async () => {
+    const { adapter, client } = await open()
+    client.createFolder.mockRejectedValueOnce(new MtTimeoutError(1000))
+
+    await expect(adapter.createFolder("Work", [])).rejects.toMatchObject({
+      code: "outcome_unknown",
+      message: expect.stringContaining("a repeat makes a second one"),
+    })
+  })
+
+  it("keeps a refusal a refusal", async () => {
+    const { adapter, client } = await open()
+    client.pinMessage.mockRejectedValueOnce(new tl.RpcError(400, "MESSAGE_ID_INVALID"))
+
+    await expect(adapter.pin("-100500", "5", { notify: false })).rejects.not.toMatchObject({ code: "outcome_unknown" })
+  })
+})

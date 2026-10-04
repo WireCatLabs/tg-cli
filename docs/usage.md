@@ -389,7 +389,10 @@ tg messages forward "Book club" 4242 --to me --send-id <id from the error>
 
 A forward and a poll carry one too. A repeat without it is a second message to a person.
 A file is uploaded before the message is sent: tg tries a dropped upload three times, and if it still
-fails the error says nothing was sent — that one you can simply run again. A message sent with `--at-time` is never repeated:
+fails the error says nothing was sent — that one you can simply run again.
+Other writes — pin, react, mark read, delete, vote, folders, contacts — end in exit `14` the same way
+when Telegram does not answer; the message says whether repeating is safe. A folder creation is not:
+look in `tg chats folders list` first, or you may get two. A message sent with `--at-time` is never repeated:
 look in `tg messages scheduled <chat>` instead.
 
 ### Editing, forwarding, pinning, deleting
