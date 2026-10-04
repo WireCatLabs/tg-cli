@@ -43,6 +43,7 @@
     "version:sync": "cli-dev version --sync",
     "generate": "pnpm bot:generate && pnpm build && node --experimental-strip-types scripts/commands.ts",
     "probe:random-id": "pnpm build && node --experimental-strip-types scripts/probe-random-id.ts",
+    "probe:sessions": "pnpm build && node --experimental-strip-types scripts/live-two-processes.ts",
     "spike:live": "bin/tg-spike-live",
     "prepare": "lefthook install || true",
     "secrets:scan": "gitleaks git --no-banner --redact .",

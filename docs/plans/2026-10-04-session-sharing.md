@@ -1,0 +1,118 @@
+# Several processes on one Telegram session
+
+**TASK-366, 2026-10-04.** The question: what happens when `tg serve`, one-shot commands, `tg mcp` and
+`tg watch` use one profile's session at the same time? Short answer: the session file itself is
+safe. **Telegram's rules are not met:** every process opens its own main connection on the same
+login, and Telegram's docs say that revokes the login. Fixing it needs one process to own the
+connection (option (c) below). That is a plan here, not code, and waits for the owner.
+
+Mtcute line numbers are for `@mtcute/core@0.32.3` (the pinned version), relative to
+`node_modules/.pnpm/@mtcute+node@0.32.3/node_modules/@mtcute/core/`.
+
+## 1. Telegram's rules: one main session per login
+
+- [Error handling, 406](https://core.telegram.org/api/errors): AUTH_KEY_DUPLICATED "is only emitted
+  if any of the non-media DC detects that an authorized session is sending requests in parallel from
+  two separate TCP connections, from the same or different IP addresses … opening additional parallel
+  main sessions (i.e. multiple session_ids over the same authorization key, or multiple TCP
+  connections to the main DC) is what triggers this error." After it, "the user must generate a new
+  auth key and login again".
+- [Datacenters, parallel sessions](https://core.telegram.org/api/datacenter#parallel-sessions): one
+  key *may* carry several MTProto sessions, but the number of parallel main sessions to the home DC
+  is the `tmp_sessions` field of `config` / `auth.authorization`: "when the field is absent or ≤ 1,
+  a single main session must be used." More than that "will terminate all sessions an
+  AUTH_KEY_DUPLICATED error, which will also invalidate the authorization key". With
+  `tmp_sessions` > 1, every session must also use Perfect Forward Secrecy (temporary keys).
+  Only file-transfer sessions on media DCs are exempt.
+- [MTProto, session](https://core.telegram.org/mtproto/description): a session id is a random
+  64-bit number the client picks per application instance.
+
+This is what the docs describe. Whether Telegram enforces it on one machine and one IP is **not
+measured**. No revocation has been seen on the owner's account so far.
+`pnpm probe:sessions` (§5) settles it on the test account.
+
+## 2. What each process opens
+
+| Process | Connection | Updates | Lifetime |
+|---|---|---|---|
+| `tg serve` | its own main connection | on, `catchUp: true` | until stopped |
+| `tg watch` | its own main connection | on, `catchUp: false` | until stopped |
+| one-shot command | its own main connection | off (`invokeWithoutUpdates`) | one command |
+| `tg mcp` | its own main connection, kept between calls | off | up to 2 min idle, 5 min in all (cli-messaging `src/mcp/session.ts`) |
+
+- Every `TelegramClient` picks a fresh random session id (`network/mtproto-session.js:23`). Turning
+  updates off only wraps each call in `invokeWithoutUpdates` (`network/session-connection.js:1018`).
+  It is still a main session to the home DC.
+- Inside one process mtcute keeps to `tmp_sessions` (`network/network-manager.js:62`). Nothing
+  coordinates two processes.
+- **So `serve` next to any command, `mcp` or `watch` is two main sessions on one key.** With MCP the
+  overlap lasts minutes. The only guard is the lock against a second `serve`
+  (cli-messaging `src/cli/messenger/serve-command.ts:24-31`). That lock is read, then written, not
+  taken atomically, so two `serve`s started in the same instant can both pass.
+
+## 3. What each process writes to the session file
+
+The file is mtcute's SQLite storage over our driver (`src/telegram/storage.ts`).
+
+- **SQLite itself is sound.** `openCache` sets WAL and `busy_timeout = 5000`
+  (cli-messaging `src/store/open.ts:17`, `src/store/driver.ts:41-42`). mtcute flushes its pending
+  writes in one `BEGIN IMMEDIATE` transaction (`src/telegram/storage.ts:39-41`). Two writers wait for
+  each other; they do not corrupt the file. Do not "fix" this.
+- **Every write replaces whole rows** (`insert or replace` in `storage/sqlite/repository/*.js`).
+  The last process to flush wins, row by row.
+- **Update state (pts, qts, date, seq, channel pts)** is written only by an `UpdatesManager`. mtcute
+  builds one only when updates are on (`highlevel/base.js:38`, `highlevel/updates/manager.js:30`).
+  **One-shot commands and MCP never write update state** — option (a) already holds, and
+  `src/telegram/adapter.test.ts:350` holds it in place.
+- **`watch` writes update state too.** It does not catch up: it takes the server's current state
+  (`manager.js:146`, `:302`) and saves after every pass of its loop (`manager.js:1563`). `serve`
+  reads the stored state only when it starts (`manager.js:352`). So `watch` can move or roll back
+  the point a restarted `serve` catches up from (reproduced: `src/telegram/storage.test.ts`, "lets
+  the last process to flush set the updates state"). No message is lost: `watch` saves what it sees
+  to the store (cli-messaging `src/cli/messenger/stored.ts:141`). Re-reading only repeats work.
+- **Peers, the current user, DC options and salts** are written by every process, with fresh data.
+  Last writer wins, which is harmless.
+- **A dropped key is dropped for everyone.** When the server stops knowing the key (after
+  AUTH_KEY_DUPLICATED, say), mtcute deletes the key from the file at once
+  (`network/session-connection.js:183-187` → `network/network-manager.js:115` →
+  `storage/sqlite/repository/auth-keys.js:36`; reproduced in `storage.test.ts`). One revoked process
+  therefore logs out every process on the profile.
+
+The message store (cli-messaging) is a separate SQLite file with the same pragmas. Every process
+writes to it by inserting or updating rows, so the store is not at risk.
+
+## 4. The fix
+
+| Option | Correct? |
+|---|---|
+| (a) one-shots never write serve's keys | already true for update state (§3); does nothing for §1 |
+| (b) a file lock, error or wait | correct only if commands cannot run while `serve` runs: `serve` holds the connection forever, so a waiting command waits forever |
+| (c) commands and MCP go through a running `serve` | the only option that meets §1 and keeps commands working beside `serve` |
+
+**Plan for (c)**: messenger-neutral, in cli-messaging. max-cli already works this way (its
+`src/server/`, a per-profile Unix socket).
+
+1. `serve` listens on `<state>/serve/<profile>.sock` (mode 0600; a named pipe on Windows) once
+   `listeningAt` is set. Requests are one JSON line: `{id, method, args}` → `{id, result}` or
+   `{id, error}`. An error keeps the `CliError` code and details.
+2. `messengerContext`'s connect returns a forwarding `MessengerAdapter` when a live lock and its
+   socket answer. Every port method is data in and data out; file paths work, because both
+   processes are on one machine. `serve` runs the calls one at a time on its own adapter.
+3. Without a `serve`, a command connects directly, as now. It holds a short per-profile connection
+   lock (an exclusive create with its PID). `serve` waits for that lock before it connects. Two
+   direct commands still overlap; the same lock, held for the length of a connection, serialises
+   them.
+4. `watch` while `serve` runs reads `serve`'s event stream over the socket, rather than a second
+   listener. `session start` and `session end` stop `serve` first.
+5. A version mismatch with the lock's `version` refuses to forward, and says to restart `serve`.
+
+The size, judged from max-cli's `src/server/`: one to two days, mostly in cli-messaging, and a
+cli-messaging release before tg can use it.
+
+## 5. The live check
+
+`pnpm probe:sessions` (`scripts/live-two-processes.ts`) runs on the test account `tgtest` only; the
+profile is fixed in the script. Phase 1 prints `tmp_sessions` from `help.getConfig`, over one
+connection. `--parallel` keeps a listening connection open for 90 s with one-shot connections beside
+it. It then reports Telegram's error names and whether the login survived. **The `--parallel` phase
+may revoke the tgtest login.**
