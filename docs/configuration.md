@@ -227,3 +227,6 @@ It does not write the file or connect to Telegram. `tg config migrate --json` ap
 migration explicitly; a process locked to one profile cannot apply a change affecting all profiles.
 Other settings are preserved. Canonical files need no migration. Once canonical `permissions` are present,
 `config set` refuses legacy `readOnly` and `allow` changes; change the corresponding permission keys.
+
+Over `tg mcp --http`, every write requires a form even with `allow`, `--yes` or `--allow-dangerous`.
+The permission levels still decide which tools the profile may use.
