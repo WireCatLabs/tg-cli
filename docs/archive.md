@@ -261,11 +261,12 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   `server install`, and nothing else.
 - **Check it once after `server start`:** `tg server logs`. A service reads the app from the keyring.
   A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the logs say why.
-- **It does not restart once the login is gone.** When Telegram ends the session, serve exits with code 4 and
-  stays down. Log in again with `tg session start`, then `tg server start`. A
-  keyring still locked when it starts is different: serve exits with code 12, and systemd tries again. On macOS the agent does not restart after any
-  failure, since launchd cannot leave out one exit code. A unit installed before this change restarts every
-  30 s — run `tg server install` again.
+- **An already revoked login prevents startup.** `serve` checks it before reporting readiness and exits with
+  code 4; the installed unit then stays down. Log in with `tg session start`, then `tg server start`.
+  This startup check does not detect every session revoked while the service is already running.
+  If app credentials are unavailable while a saved session exists, serve exits with code 12 and systemd retries.
+  On macOS the agent does not restart after any failure, since launchd cannot exclude one exit code;
+  start it again with `tg server start`. Run `tg server install` again to update an older unit.
 - `tg server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 
