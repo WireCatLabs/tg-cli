@@ -13,6 +13,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg serve` exits with code 12 (`provider_unavailable`) when a saved session exists but the app credentials are unavailable**,
+  for example while the login keyring is locked. Systemd retries after 30 seconds; macOS needs `tg server start`.
+  Other commands and profiles without a saved session still exit 4.
+- **`tg serve` and `tg watch` refuse to start with code 4 (`authentication_error`) if the session was already revoked.**
+  They check the login before reporting readiness. A session revoked after startup still needs a separate check.
+- **The background service no longer restarts on that code.** On systemd, exit 4 prevents a restart. On macOS,
+  launchd cannot exclude one exit code, so the agent no longer restarts after any failure. Run `tg server install`
+  again to update the unit; after `tg session start`, run `tg server start`.
+
 - Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
   `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
 

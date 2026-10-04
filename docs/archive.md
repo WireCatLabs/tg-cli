@@ -260,7 +260,13 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
 - It gets the profile and the `TG_*_DIR` and `MESSAGING_STORE` variables of the shell that ran
   `server install`, and nothing else.
 - **Check it once after `server start`:** `tg server logs`. A service reads the app from the keyring.
-  A keyring that stays locked until you log in will probably make it fail; the logs say why.
+  A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the logs say why.
+- **An already revoked login prevents startup.** `serve` checks it before reporting readiness and exits with
+  code 4; the installed unit then stays down. Log in with `tg session start`, then `tg server start`.
+  This startup check does not detect every session revoked while the service is already running.
+  If app credentials are unavailable while a saved session exists, serve exits with code 12 and systemd retries.
+  On macOS the agent does not restart after any failure, since launchd cannot exclude one exit code;
+  start it again with `tg server start`. Run `tg server install` again to update an older unit.
 - `tg server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 

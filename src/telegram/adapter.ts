@@ -404,6 +404,9 @@ export class TelegramAdapter {
     try {
       await this.#call(async () => {
         await client.connect()
+        // With catchUp, mtcute fetches the updates state in the background and, on a revoked login,
+        // quietly stops its loop — serve would sit "connected" forever. Asking first makes it fail here.
+        await client.call({ _: "updates.getState" })
         await client.startUpdatesLoop()
       })
       onReady?.()

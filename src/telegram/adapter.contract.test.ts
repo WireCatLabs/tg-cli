@@ -113,6 +113,7 @@ class SeededClient {
 
   prepare = async () => {}
   connect = async () => {}
+  call = async (_request: { _: string }) => ({})
   startUpdatesLoop = async () => {}
   destroy = async () => {}
 

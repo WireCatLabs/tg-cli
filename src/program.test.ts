@@ -7,6 +7,7 @@ import { CliError } from "@leemour/cli-core"
 import { pickChat } from "@leemour/cli-messaging"
 import type { SendOptions } from "@leemour/cli-messaging/cli"
 import { describe, expect, it, vi } from "vitest"
+import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
 describe("first-run discovery", () => {
@@ -432,5 +433,21 @@ describe("app credentials out of reach", () => {
     expect(never.stderr.join("\n")).toContain("tg never setup")
     expect(never.stderr.join("\n")).toContain("tg skill show")
     expect(never.stderr.join("\n")).not.toContain("XDG_RUNTIME_DIR")
+  })
+
+  it("**serve treats an unreachable keyring as temporary**, so its unit retries; a missing login still exits 4", async () => {
+    const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
+    const sessions = join(process.env.TG_STATE_DIR as string, "sessions")
+    mkdirSync(sessions, { recursive: true })
+    writeFileSync(join(sessions, "locked.session"), "")
+
+    const locked = await tg(["locked", "serve"], { env })
+    const never = await tg(["never", "serve"], { env })
+
+    expect(locked.code).toBe(12)
+    expect(NO_RESTART_ON).not.toContain(locked.code)
+    expect(locked.stderr.join("\n")).toContain("XDG_RUNTIME_DIR")
+    expect(never.code).toBe(4)
+    expect(NO_RESTART_ON).toContain(never.code)
   })
 })

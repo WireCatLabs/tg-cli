@@ -29,6 +29,10 @@ describe("Telegram's refusals", () => {
     })
   })
 
+  it("makes a session ended from another device an authentication error too", () => {
+    expect(toCliError(rpc(401, "SESSION_REVOKED"))).toMatchObject({ code: "authentication_error" })
+  })
+
   it("names the profile to log in again on", () => {
     expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"), "`tg work session start`")).toMatchObject({
       message: expect.stringContaining("`tg work session start`"),

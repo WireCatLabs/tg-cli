@@ -61,10 +61,13 @@ const telegramOf = (command: Command, base: BaseContext) => {
   const open = async (given?: ApiCredentials, connecting: ConnectOptions = {}): Promise<Adapter> => {
     const resolved = given ?? credentials.read()
     if (!resolved) {
+      const loggedIn = existsSync(sessionPath)
+      // A service can start before the login keyring unlocks; its unit restarts on this code, not on 4.
+      const unreachable = loggedIn && command.name() === "serve" ? "provider_unavailable" : "authentication_error"
       // Logging in again would register another device, and the same environment would lose it again.
       throw new CliError(
-        "authentication_error",
-        existsSync(sessionPath)
+        unreachable,
+        loggedIn
           ? `no Telegram app credentials found for profile "${profile}", although it has logged in on this machine — ` +
               "the keyring is probably out of reach (cron, ssh, an MCP client that trims the environment: set " +
               `XDG_RUNTIME_DIR); \`tg ${asFirstWord(profile)}doctor\` shows it. Log in again only if they were removed`
