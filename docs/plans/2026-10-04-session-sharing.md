@@ -4,7 +4,10 @@
 `tg watch` use one profile's session at the same time? Short answer: the session file itself is
 safe. **Telegram's rules are not met:** every process opens its own main connection on the same
 login, and Telegram's docs say that revokes the login. Fixing it needs one process to own the
-connection (option (c) below). That is a plan here, not code, and waits for the owner.
+connection (option (c) below).
+
+**Conclusion (owner's ruling NEED-600 A):** the risk is real according to the docs, but it has not
+been observed in practice (§6). (c) stays a plan until evidence appears; §6 names the signal.
 
 Mtcute line numbers are for `@mtcute/core@0.32.3` (the pinned version), relative to
 `node_modules/.pnpm/@mtcute+node@0.32.3/node_modules/@mtcute/core/`.
@@ -127,3 +130,26 @@ It is not a reason to skip (c).
 
 An interim step, if (c) waits: refuse `watch` while `serve` runs (the existing lock). `serve`
 already keeps the store current, so nothing is lost.
+
+## 6. Measured 2026-10-04, and what reopens (c)
+
+Run on `tgtest` with the owner's yes:
+
+- `pnpm probe:sessions` → `{"profile":"tgtest","tmpSessions":null}`. Telegram grants no parallel main
+  sessions to this account, so by its docs a single main session is required.
+- `pnpm probe:sessions-parallel` → `{"tmpSessions":null,"parallel":{"oneShots":18,"errors":{}},"after":{"survived":true}}`.
+  One listening connection, 18 one-shot connections beside it over 90 s, no error, and the login
+  survived.
+- The owner's account has run `serve` beside commands for weeks with no revocation.
+
+**What this proves:** on one machine and one IP, Telegram did not enforce its rule within 90 s, nor
+over weeks of normal use. **What it does not prove:** that it never will. The detection may come
+later, need more traffic or parallel requests, apply only across IP addresses, or change on
+Telegram's side without notice. The docs' rule stands. We do not rely on Telegram ignoring it; we
+only defer the work.
+
+**The signal that reopens (c):** any `AUTH_KEY_DUPLICATED`. Since this change, `tg` maps it to
+`authentication_error` (exit 4, so a `serve` unit stops retrying). The message names overlapping
+connections as the cause, and `providerError: "AUTH_KEY_DUPLICATED"` is kept in the error details,
+so it shows in run records (`tg runs`). A login that ends for no known reason
+(`AUTH_KEY_UNREGISTERED` while nobody logged out) is the weaker signal to look into too.

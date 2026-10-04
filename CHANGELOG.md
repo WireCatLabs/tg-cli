@@ -39,6 +39,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
   `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
+- Telegram's `AUTH_KEY_DUPLICATED` (a login ended because two connections used it at once) is now
+  `authentication_error`, exit 4, not `provider_error`. The message says to log in again and names
+  the overlapping `tg` processes as the cause.
 
 - **`tg messages list` can answer `hasMore: true`, with the `older messages: --before-id` hint, on a page shorter
   than `--limit`.** Telegram leaves deleted messages out of a page, so a short page is no proof of a chat's first

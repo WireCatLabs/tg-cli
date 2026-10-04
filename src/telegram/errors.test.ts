@@ -33,6 +33,14 @@ describe("Telegram's refusals", () => {
     expect(toCliError(rpc(401, "SESSION_REVOKED"))).toMatchObject({ code: "authentication_error" })
   })
 
+  it("makes a login revoked for overlapping connections an authentication error that names the cause", () => {
+    expect(toCliError(rpc(406, "AUTH_KEY_DUPLICATED"))).toMatchObject({
+      code: "authentication_error",
+      message: expect.stringContaining("two connections used it at once"),
+      details: { providerError: "AUTH_KEY_DUPLICATED" },
+    })
+  })
+
   it("names the profile to log in again on", () => {
     expect(toCliError(rpc(401, "AUTH_KEY_UNREGISTERED"), "`tg work session start`")).toMatchObject({
       message: expect.stringContaining("`tg work session start`"),
