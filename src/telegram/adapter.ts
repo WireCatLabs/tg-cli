@@ -569,14 +569,14 @@ export class TelegramAdapter {
   /** In a one-to-one chat the pin is on the owner's side only; `notify` reaches groups alone, as Telegram has it. */
   pin(chatId: string, messageId: string, { notify }: { notify: boolean }): Promise<void> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(async () => {
+    return this.#write("the pin may have been made — repeating it is safe", async () => {
       await this.#client.pinMessage({ chatId: Number(chatId), message: id, notify })
     })
   }
 
   unpin(chatId: string, messageId: string): Promise<void> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(async () => {
+    return this.#write("the message may have been unpinned — repeating it is safe", async () => {
       await this.#client.unpinMessage({ chatId: Number(chatId), message: id })
     })
   }
@@ -587,7 +587,7 @@ export class TelegramAdapter {
    */
   react(chatId: string, messageId: string, emoji: string | null): Promise<void> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(async () => {
+    return this.#write("the reaction may have been set — repeating it is safe", async () => {
       await this.#client.sendReaction({ chatId: Number(chatId), message: id, emoji })
     })
   }
@@ -595,7 +595,7 @@ export class TelegramAdapter {
   /** Up to `until`, or everything; mentions stay, as Telegram's own clients leave them until they are seen. */
   markRead(chatId: string, until?: string): Promise<void> {
     const maxId = until === undefined ? undefined : messageNumber(until, "--until takes a message id")
-    return this.#call(async () => {
+    return this.#write("the chat may have been marked read — repeating it is safe", async () => {
       await this.#client.readHistory(Number(chatId), maxId === undefined ? {} : { maxId })
     })
   }
@@ -606,7 +606,7 @@ export class TelegramAdapter {
    */
   delete(chatId: string, messageIds: string[], { forEveryone }: { forEveryone: boolean }): Promise<void> {
     const ids = messageIds.map((id) => messageNumber(id, "a message id is a number"))
-    return this.#call(async () => {
+    return this.#write("the messages may have been deleted — repeating it is safe", async () => {
       const peer = await this.#client.resolvePeer(Number(chatId))
       if (peer._ === "inputPeerChannel" && !forEveryone) {
         throw new CliError(
@@ -625,7 +625,7 @@ export class TelegramAdapter {
   /** Votes by the answers' own bytes, never by index: mtcute would fetch the poll and pick by position. */
   vote(chatId: string, messageId: string, answerIds: string[]): Promise<Poll> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(async () => {
+    return this.#write("the vote may have been cast — repeating it is safe", async () => {
       const current = await this.#pollOf(chatId, messageId)
       const known = new Map(current.answers.map((answer) => [answerId(answer.data), answer.data]))
       const unknown = answerIds.filter((answer) => !known.has(answer))
@@ -642,7 +642,7 @@ export class TelegramAdapter {
 
   closePoll(chatId: string, messageId: string): Promise<Poll> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(async () =>
+    return this.#write("the poll may have been closed; check `tg polls show` before repeating", async () =>
       toPoll(chatId, messageId, await this.#client.closePoll({ chatId: Number(chatId), message: id })),
     )
   }
@@ -1216,19 +1216,22 @@ export class TelegramAdapter {
   }
 
   createFolder(title: string, chatIds: string[]): Promise<Folder> {
-    return this.#call(async () => {
-      const includePeers = await Promise.all(chatIds.map((id) => this.#client.resolvePeer(Number(id))))
-      const made = await this.#client.createFolder({
-        title: { _: "textWithEntities", text: title, entities: [] },
-        includePeers,
-      })
-      return toFolder(made) as Folder
-    })
+    return this.#write(
+      "the folder may have been made; check `tg chats folders list` before repeating — a repeat makes a second one",
+      async () => {
+        const includePeers = await Promise.all(chatIds.map((id) => this.#client.resolvePeer(Number(id))))
+        const made = await this.#client.createFolder({
+          title: { _: "textWithEntities", text: title, entities: [] },
+          includePeers,
+        })
+        return toFolder(made) as Folder
+      },
+    )
   }
 
   /** Telegram replaces a folder's chats as a list, so the ones it has are read and only the asked ones change. */
   updateFolder(folderId: string, { title, add = [], remove = [] }: FolderChange): Promise<Folder> {
-    return this.#call(async () => {
+    return this.#write("the folder may have changed — repeating it is safe", async () => {
       const current = (await this.#filters()).find(
         (one) => one._ !== "dialogFilterDefault" && String(one.id) === folderId,
       )
@@ -1251,7 +1254,7 @@ export class TelegramAdapter {
   }
 
   deleteFolder(folderId: string): Promise<void> {
-    return this.#call(async () => {
+    return this.#write("the folder may have been deleted — repeating it is safe", async () => {
       await this.#client.deleteFolder(Number(folderId))
     })
   }
@@ -1262,7 +1265,7 @@ export class TelegramAdapter {
 
   /** Under the name they show; `renameContact` gives one of the owner's own. */
   addContact(personId: string): Promise<Member> {
-    return this.#call(async () => {
+    return this.#write("the contact may have been added — repeating it is safe", async () => {
       const peer = await this.#client.getPeer(Number(personId))
       if (peer.type !== "user") throw new CliError("validation_error", `${personId} is a chat, not a person`)
       return toMember(
@@ -1276,25 +1279,25 @@ export class TelegramAdapter {
   }
 
   removeContact(personId: string): Promise<void> {
-    return this.#call(async () => {
+    return this.#write("the contact may have been removed — repeating it is safe", async () => {
       await this.#client.deleteContacts([Number(personId)])
     })
   }
 
   block(personId: string): Promise<void> {
-    return this.#call(async () => {
+    return this.#write("the person may have been blocked — repeating it is safe", async () => {
       await this.#client.blockUser(Number(personId))
     })
   }
 
   unblock(personId: string): Promise<void> {
-    return this.#call(async () => {
+    return this.#write("the person may have been unblocked — repeating it is safe", async () => {
       await this.#client.unblockUser(Number(personId))
     })
   }
 
   renameContact(personId: string, firstName: string, lastName?: string): Promise<Member> {
-    return this.#call(async () =>
+    return this.#write("the contact may have been renamed — repeating it is safe", async () =>
       toMember(
         await this.#client.addContact({ userId: Number(personId), firstName, ...(lastName ? { lastName } : {}) }),
       ),
@@ -1303,7 +1306,7 @@ export class TelegramAdapter {
 
   /** The name is split at its first space into Telegram's first and last name. */
   importContacts(entries: PhoneBookEntry[]): Promise<Member[]> {
-    return this.#call(async () => {
+    return this.#write("the contacts may have been imported — repeating it is safe", async () => {
       const result = await this.#client.importContacts(
         entries.map(({ phone, name }) => {
           const [firstName = name, ...rest] = name.split(" ")
@@ -1362,6 +1365,17 @@ export class TelegramAdapter {
       if (known instanceof CliError && known.code === "permission_error") return null
       throw known
     }
+  }
+
+  /** A write with no id to repeat it by: no answer means it may have happened, and `what` says what to do. */
+  #write<T>(what: string, work: () => Promise<T>): Promise<T> {
+    return this.#call(async () => {
+      try {
+        return await work()
+      } catch (error) {
+        throw unknownIfUnanswered(error, what)
+      }
+    })
   }
 
   async #call<T>(work: () => Promise<T>): Promise<T> {
