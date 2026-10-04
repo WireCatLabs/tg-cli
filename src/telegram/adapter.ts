@@ -28,6 +28,7 @@ import {
   type Poll,
   type ProfileFacts,
   pickChat,
+  type SenderIdentity,
   type Topic,
 } from "@leemour/cli-messaging"
 import type {
@@ -92,6 +93,7 @@ import {
 } from "./map.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
+import { sendAsIdentities } from "./send-as.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -441,6 +443,10 @@ export class TelegramAdapter {
     })
   }
 
+  sendAsIdentities(chatId: string): Promise<SenderIdentity[]> {
+    return this.#call(() => sendAsIdentities(this.#client, chatId))
+  }
+
   permalink(chatId: string, messageId: string) {
     const id = messageNumber(messageId, "a message id is a positive Telegram integer")
     if (id <= 0 || id > 2147483647)
@@ -476,7 +482,7 @@ export class TelegramAdapter {
   send(
     chatId: string,
     text: string,
-    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [] }: SendOptions,
+    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [], sendAs }: SendOptions,
   ): Promise<Sent> {
     const id = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
@@ -490,6 +496,7 @@ export class TelegramAdapter {
       ...(answering === undefined ? {} : { replyTo: answering }),
       ...(silent ? { silent } : {}),
       ...(at === undefined ? {} : { schedule: new Date(at) }),
+      ...(sendAs === undefined ? {} : { sendAs: peerNumber(sendAs) }),
     }
     return this.#call(async () => {
       const [attachment] = attachments
@@ -1728,6 +1735,13 @@ const unknownIfUnanswered = (error: unknown, what: string, details: Record<strin
     return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
   }
   return error
+}
+
+const peerNumber = (id: string): number => {
+  if (!/^-?\d{1,16}$/.test(id) || !Number.isSafeInteger(Number(id))) {
+    throw new CliError("validation_error", "--send-as takes an id from `tg chats send-as`")
+  }
+  return Number(id)
 }
 
 const topicNumber = (id: string): number => {
