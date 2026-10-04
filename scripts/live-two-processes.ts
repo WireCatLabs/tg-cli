@@ -8,9 +8,9 @@
  * named. Uses the main checkout's logins, as bin/tg-live does. Prints counts and Telegram's error
  * names, never a message, a name or an id.
  *
- *   pnpm probe:sessions              phase 1: one connection, prints tmp_sessions from help.getConfig
- *   pnpm probe:sessions --parallel   phase 2: a listening connection plus one-shot connections beside
- *                                    it for 90 s — MAY REVOKE THE tgtest LOGIN; log it in again after
+ *   pnpm probe:sessions            phase 1: one connection, prints tmp_sessions from help.getConfig
+ *   pnpm probe:sessions-parallel   phase 2: a listening connection plus one-shot connections beside
+ *                                  it for 90 s — MAY REVOKE THE tgtest LOGIN; log it in again after
  */
 import { execFileSync } from "node:child_process"
 import { join, resolve } from "node:path"

@@ -29,7 +29,7 @@ Mtcute line numbers are for `@mtcute/core@0.32.3` (the pinned version), relative
 
 This is what the docs describe. Whether Telegram enforces it on one machine and one IP is **not
 measured**. No revocation has been seen on the owner's account so far.
-`pnpm probe:sessions` (§5) settles it on the test account.
+The probe in §5 can confirm the rule on the test account, but it cannot clear it.
 
 ## 2. What each process opens
 
@@ -45,8 +45,9 @@ measured**. No revocation has been seen on the owner's account so far.
   It is still a main session to the home DC.
 - Inside one process mtcute keeps to `tmp_sessions` (`network/network-manager.js:62`). Nothing
   coordinates two processes.
-- **So `serve` next to any command, `mcp` or `watch` is two main sessions on one key.** With MCP the
-  overlap lasts minutes. The only guard is the lock against a second `serve`
+- **So any two of them at once are two main sessions on one key.** That covers `serve` next to a
+  command, `mcp` or `watch`, but also, with no `serve`, a command while `mcp` holds its connection,
+  or two commands an agent runs in parallel. With MCP the overlap lasts minutes. The only guard is the lock against a second `serve`
   (cli-messaging `src/cli/messenger/serve-command.ts:24-31`). That lock is read, then written, not
   taken atomically, so two `serve`s started in the same instant can both pass.
 
@@ -111,8 +112,18 @@ cli-messaging release before tg can use it.
 
 ## 5. The live check
 
-`pnpm probe:sessions` (`scripts/live-two-processes.ts`) runs on the test account `tgtest` only; the
-profile is fixed in the script. Phase 1 prints `tmp_sessions` from `help.getConfig`, over one
-connection. `--parallel` keeps a listening connection open for 90 s with one-shot connections beside
-it. It then reports Telegram's error names and whether the login survived. **The `--parallel` phase
-may revoke the tgtest login.**
+Run from the tg-cli checkout. It needs B's login (`tgtest`) in the main checkout, and runs on that
+profile only; the profile is fixed in `scripts/live-two-processes.ts`.
+
+- `pnpm probe:sessions` prints `tmp_sessions` from `help.getConfig`, over one connection. Absent or
+  ≤ 1 means Telegram's rule applies to this account.
+- `pnpm probe:sessions-parallel` also keeps a listening connection open for 90 s, with one-shot
+  connections beside it. It then reports Telegram's error names and whether the login survived.
+  **It may revoke the tgtest login.**
+
+Read the result in one direction only. A revoked login confirms the rule. A surviving login shows
+only that this pattern was not caught in 90 s: the detection may come later, or depend on traffic.
+It is not a reason to skip (c).
+
+An interim step, if (c) waits: refuse `watch` while `serve` runs (the existing lock). `serve`
+already keeps the store current, so nothing is lost.
