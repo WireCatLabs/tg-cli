@@ -3,7 +3,14 @@ import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { FLOOD_SLEEP, LOOP_CHECK_MS, TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
+import {
+  FLOOD_SLEEP,
+  HEARTBEAT_TICKS,
+  LOOP_CHECK_MS,
+  STATE_WAIT_MS,
+  TelegramAdapter,
+  TRANSCRIBE_POLL_MS,
+} from "./adapter.js"
 
 type Handler = (value: unknown) => void
 
@@ -1828,6 +1835,32 @@ describe("a watch whose updates loop stops", () => {
     client._client.updates.updatesLoopActive = false
     await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
     await ended
+  })
+
+  it("an ask that never answers is a restart too, so the watch cannot hang on it", async () => {
+    const { watch, client } = await watching(() => new Promise(() => {}))
+    const ended = expect(watch).rejects.toMatchObject({ code: "provider_unavailable", details: { cause: "timeout" } })
+
+    client._client.updates.updatesLoopActive = false
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS + STATE_WAIT_MS)
+    await ended
+  })
+
+  it("**asks Telegram itself every 15 minutes**: a refused login ends it even while the loop looks alive", async () => {
+    const answers: (() => Promise<unknown>)[] = [
+      () => Promise.reject(Object.assign(new Error("x"), { code: "ECONNRESET" })),
+      () => Promise.reject(new tl.RpcError(401, "SESSION_REVOKED")),
+    ]
+    const { watch, asked } = await watching(() => (answers.shift() as () => Promise<unknown>)())
+    const ended = expect(watch).rejects.toMatchObject({ code: "authentication_error" })
+
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS * (HEARTBEAT_TICKS - 1))
+    expect(asked).toHaveLength(1)
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
+    expect(asked).toHaveLength(2)
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS * HEARTBEAT_TICKS)
+    await ended
+    expect(asked).toHaveLength(3)
   })
 
   it("a stop asked for is a stop, even once the loop is down", async () => {

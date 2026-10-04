@@ -483,40 +483,43 @@ export class TelegramAdapter {
   }
 
   /**
-   * Until `signal` aborts, or mtcute's updates loop is found stopped. mtcute stops it without a word
-   * on AUTH_KEY_UNREGISTERED (`highlevel/updates/manager.js`, `_fetchUpdatesState` and
-   * `_fetchDifferenceLater`), usually met by its own 15-minute keep-alive. A loop found stopped is
-   * asked about once: a refused login ends the watch with exit 4; anything else with exit 12, which a
-   * service unit restarts — never a process that looks connected and receives nothing.
+   * Until `signal` aborts, or the login or mtcute's updates loop is found gone. mtcute stops the loop
+   * without a word on AUTH_KEY_UNREGISTERED (`highlevel/updates/manager.js`, `_fetchUpdatesState` and
+   * `_fetchDifferenceLater`), usually met by its own 15-minute keep-alive; the heartbeat asks itself
+   * at the same rate, in case that path never runs. A refused login ends the watch with exit 4; a
+   * stopped loop otherwise with exit 12, which a service unit restarts — never a process that looks
+   * connected and receives nothing. A heartbeat that fails for any other reason is let pass.
    */
-  #untilStopped(signal: AbortSignal): Promise<void> {
+  async #untilStopped(signal: AbortSignal): Promise<void> {
     const updates = (this.#client._client as unknown as { updates?: { updatesLoopActive: boolean } } | undefined)
       ?.updates
-    return new Promise((resolve, reject) => {
-      const stopped = () => {
-        clearInterval(timer)
-        resolve()
-      }
-      const timer = setInterval(() => {
-        if (signal.aborted || updates?.updatesLoopActive !== false) return
-        clearInterval(timer)
-        signal.removeEventListener("abort", stopped)
-        const ended = (error: unknown) => (signal.aborted ? resolve() : reject(error))
-        this.#call(() => this.#client.call({ _: "updates.getState" })).then(
-          () => ended(new CliError("provider_unavailable", LOOP_STOPPED)),
-          (error) =>
-            ended(
-              isCliError(error) && error.code === "authentication_error"
-                ? error
-                : new CliError("provider_unavailable", LOOP_STOPPED, {
-                    cause: isCliError(error) ? error.code : "unknown",
-                  }),
-            ),
-        )
-      }, LOOP_CHECK_MS)
-      if (signal.aborted) stopped()
-      else signal.addEventListener("abort", stopped, { once: true })
+    for (let tick = 1; ; tick += 1) {
+      await pause(LOOP_CHECK_MS, signal)
+      if (signal.aborted) return
+      const down = updates?.updatesLoopActive === false
+      if (!down && tick % HEARTBEAT_TICKS !== 0) continue
+      const refusal = await this.#askState()
+      if (signal.aborted) return
+      if (refusal?.code === "authentication_error") throw refusal
+      if (down) throw new CliError("provider_unavailable", LOOP_STOPPED, refusal ? { cause: refusal.code } : {})
+    }
+  }
+
+  /** `updates.getState` under a timer of its own: a request that never answers must not hold the watch. */
+  async #askState(): Promise<CliError | undefined> {
+    let timer: NodeJS.Timeout | undefined
+    const late = new Promise<CliError>((resolve) => {
+      timer = setTimeout(() => resolve(new CliError("timeout", "Telegram did not answer in time")), STATE_WAIT_MS)
     })
+    const asked = this.#call(() => this.#client.call({ _: "updates.getState" })).then(
+      () => undefined,
+      (error: unknown) => (isCliError(error) ? error : new CliError("provider_error", "Telegram failed")),
+    )
+    try {
+      return await Promise.race([asked, late])
+    } finally {
+      clearTimeout(timer)
+    }
   }
 
   scheduled(reference: string): Promise<Message[]> {
@@ -1517,12 +1520,26 @@ export const FLOOD_SLEEP = {
 
 /** A look at a local flag, not a request. */
 export const LOOP_CHECK_MS = 30_000
+/** Every 15 minutes, mtcute's own keep-alive rate: ~96 light requests a day. */
+export const HEARTBEAT_TICKS = 30
+export const STATE_WAIT_MS = 30_000
 const LOOP_STOPPED =
   "Telegram's updates stopped arriving although the connection is open — ending, so a service unit starts it again"
 
 export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const pause = (ms: number, signal: AbortSignal) =>
+  new Promise<void>((resolve) => {
+    const done = () => {
+      clearTimeout(timer)
+      signal.removeEventListener("abort", done)
+      resolve()
+    }
+    const timer = setTimeout(done, ms)
+    if (signal.aborted) done()
+    else signal.addEventListener("abort", done, { once: true })
+  })
 
 const messageNumber = (id: string, rule = "--before-id takes a message id"): number => {
   if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)

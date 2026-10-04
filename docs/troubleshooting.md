@@ -201,8 +201,9 @@ wait: until it ends, the same command fails at once without asking Telegram agai
 Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.
 It can still read. Message @SpamBot in a Telegram app: it says until when. Sending again makes it
 worse, so with the next `@leemour/cli-messaging`, `tg` holds every send for 24 hours and says so;
-`tg doctor` shows the hold under `flood.sendBlock`. A frozen account's refusal holds sends the same
-way, until Telegram's date; `tg doctor --online` sets and lifts that one.
+`tg doctor` shows the hold under `flood.sendBlock`, with the file that keeps it in `flood.path`.
+Once @SpamBot says the limit is gone, delete that file to send again sooner. A frozen account's
+refusal holds sends the same way, until Telegram's date; `tg doctor --online` sets and lifts that one.
 
 ## "profile … has sent N messages in the hour …"
 
