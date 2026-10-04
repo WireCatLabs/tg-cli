@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**1918 ✅ · 29 ⛔ · 0 ❌** — 364 commands, 1583 options.
+**1922 ✅ · 33 ⛔ · 0 ❌** — 365 commands, 1590 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -50,6 +50,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members remove` |  | ✅ |  |
 | `chats mark-read` |  | ✅ |  |
 | `chats mark-read` | `--until` | ✅ |  |
+| `chats stats` |  | ✅ |  |
+| `chats stats` | `--since-time` | ✅ |  |
+| `chats stats` | `--by` | ✅ |  |
+| `chats stats` | `--timezone` | ✅ |  |
 | `chats create` |  | ✅ |  |
 | `chats create` | `--channel` | ✅ |  |
 | `chats join` |  | ✅ |  |
@@ -361,6 +365,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |
 | `mcp` | `--allow-mark-read` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
 | `mcp` | `--allow-delete` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
+| `mcp` | `--http` | ⛔ | serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check |
+| `mcp` | `--port` | ⛔ | serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check |
+| `mcp` | `--public-url` | ⛔ | serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check |
+| `mcp` | `--revoke` | ⛔ | serves MCP on the process's own stdin until the client closes; cli-messaging's src/mcp/mcp.test.ts drives the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--confirm-send` | ✅ |  |
 | `mcp config` | `--allow-dangerous` | ✅ |  |

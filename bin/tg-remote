@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+# Live check of `tg mcp --http` with ChatGPT or Claude in the browser: opens Tailscale Funnel on the
+# port and serves this checkout's build behind it through bin/tg — its own session and store, never
+# the owner's real ones.
+#
+#   pnpm build && bin/tg session start   # once per checkout
+#   bin/tg-remote                        # prints the connector address and the login code
+#
+# Ctrl-C stops both. PORT picks another local port.
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+port=${PORT:-8765}
+command -v tailscale >/dev/null || { echo "install Tailscale first: https://tailscale.com/download" >&2; exit 1; }
+
+name=$(tailscale status --json | node -e '
+  let text = ""
+  process.stdin.on("data", (chunk) => (text += chunk)).on("end", () => {
+    process.stdout.write((JSON.parse(text).Self?.DNSName ?? "").replace(/\.$/, ""))
+  })')
+[ -n "$name" ] || { echo "Tailscale is not logged in — run: tailscale up" >&2; exit 1; }
+
+tailscale funnel "$port" >/dev/null 2>&1 &
+funnel=$!
+trap 'kill "$funnel" 2>/dev/null || true' EXIT INT TERM
+
+echo "connector address for Claude or ChatGPT: https://$name/mcp" >&2
+"$root/bin/tg" mcp --http --public-url "https://$name" --port "$port"
