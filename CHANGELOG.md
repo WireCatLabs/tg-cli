@@ -7,6 +7,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg mcp --http --public-url https://<name>.ts.net` lets ChatGPT and Claude in the browser use `tg`.** It serves
+  the MCP tools on `127.0.0.1` behind your own tunnel, with its own login: an app needs a one-time code that `tg`
+  prints in your terminal. Every change asks through a form in the app first. Logins last 30 days;
+  `tg mcp --revoke` ends them all. [docs/remote.md](docs/remote.md) replaces the third-party proxy setup.
+
+- **`tg chats stats <chat>` counts a group's or channel's period from the local store**: messages, people who
+  wrote, replies, reactions, top posts, questions answered, joins and leaves. Also the read-only MCP tool.
+
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.
