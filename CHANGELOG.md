@@ -77,7 +77,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   stderr; a third one ends it with code 8 (`rate_limited`) and `retryAfterMs`. `serve` and `watch` wait up to
   2 minutes, three times.
 - **`PEER_FLOOD` (the account limited as spam) exits with code 5 (`permission_error`), not 11**, and points to
-  @SpamBot: retrying makes it worse. With the next `@leemour/cli-messaging`, it holds sends for 24 hours, and a
+  @SpamBot: retrying makes it worse. With the next `@leemour/cli-messaging`, it holds sends for an hour, set again
+  by each new refusal; `tg flood clear` lifts the hold and forgets remembered waits; and a
   remembered FLOOD_WAIT fails the next command at once.
 - **The background service no longer restarts on that code.** On systemd, exit 4 prevents a restart. On macOS,
   launchd cannot exclude one exit code, so the agent no longer restarts after any failure. Run `tg server install`
