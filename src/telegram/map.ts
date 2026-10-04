@@ -43,6 +43,7 @@ import {
   Message as TgMessage,
   type Poll as TgPoll,
   type tl,
+  type UploadedFile,
 } from "@mtcute/node"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
@@ -369,16 +370,33 @@ export const toFormatted = (text: string, markup: readonly (Markup | TextSpan)[]
 const VIDEO: Record<string, string> = { ".mp4": "video/mp4", ".m4v": "video/mp4", ".mov": "video/quicktime" }
 
 /** A video plays in the chat unless `asFile`; a `document` is always a file to download (`forceFile`). */
+const videoMime = ({ kind, name, asFile }: Upload): string | undefined =>
+  kind === "file" && !asFile ? VIDEO[extname(name).toLowerCase()] : undefined
+
+/** What `uploadFile` needs to store the file as `toInputMedia` will send it. */
+export const toUploadParams = (upload: Upload) => {
+  const mime = upload.kind === "voice" ? "audio/ogg" : videoMime(upload)
+  return {
+    file: upload.bytes,
+    fileName: upload.name,
+    ...(mime ? { fileMime: mime } : {}),
+    ...(upload.kind === "photo" ? { requireFileSize: true, requireExtension: true } : {}),
+  }
+}
+
+/** `file` is the bytes, or the same file already uploaded — then nothing is uploaded again. */
 export const toInputMedia = (
-  { kind, name, bytes, asFile }: Upload,
+  upload: Upload,
   caption: string | TextWithEntities,
+  file: Uint8Array | UploadedFile = upload.bytes,
 ): InputMediaLike => {
-  if (kind === "photo") return InputMedia.photo(bytes, { fileName: name, caption })
-  if (kind === "voice") return InputMedia.voice(bytes, { fileMime: "audio/ogg", caption })
-  const video = VIDEO[extname(name).toLowerCase()]
-  return video && !asFile
-    ? InputMedia.video(bytes, { fileName: name, fileMime: video, caption, supportsStreaming: true })
-    : InputMedia.document(bytes, { fileName: name, caption })
+  const { kind, name } = upload
+  if (kind === "photo") return InputMedia.photo(file, { fileName: name, caption })
+  if (kind === "voice") return InputMedia.voice(file, { fileMime: "audio/ogg", caption })
+  const video = videoMime(upload)
+  return video
+    ? InputMedia.video(file, { fileName: name, fileMime: video, caption, supportsStreaming: true })
+    : InputMedia.document(file, { fileName: name, caption })
 }
 
 /** An answer's id is its option bytes as base64url: Telegram's own, and not a position a person could guess. */

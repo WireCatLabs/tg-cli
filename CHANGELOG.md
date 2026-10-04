@@ -5,6 +5,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **A file whose upload drops is tried again, up to three times, before anything is sent.** If it still fails, the
+  error says nothing was sent, instead of exit `14` "it may have gone". The message itself still goes once, with
+  its send id.
+
 ### Fixed
 
 - **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than
