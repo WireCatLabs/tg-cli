@@ -69,6 +69,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` | none (`--timeout` is a different thing) |
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
 | `senderColors` | `false` | a colour per sender in the table view of messages | none |
+| `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)) | `--record`, `--no-record` |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |

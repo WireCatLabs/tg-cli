@@ -103,6 +103,37 @@ fetch the history if you need all of it.
 you can read, and prints where it went and how many messages it holds. It never overwrites a file.
 `--since-time` takes an ISO 8601 time or `30m`, `2h`, `1d` ago.
 
+### Into a folder, and only what changed
+
+```sh
+tg store export "Book club" "Work" --to ~/tg-export   # a JSON-lines file per chat, and manifest.json
+tg store export --kind group --to ~/tg-groups          # every stored group
+tg store export --all --to ~/tg-all                    # every stored chat of this account
+```
+
+Run it again on the same folder and it adds only what changed since the last run: new messages, edits
+(old messages too) and deletions. A deleted message is written without its text, as
+`{ "id", "chatId", "deleted": true }`. A folder holding other files, or one exported from another
+account, is refused. A change to reactions alone does not count as a change.
+
+### With a password
+
+`--encrypt` on `store export` (with `--output` or `--to`) and on `store backup` compresses the file and
+encrypts it with a password — no other program needed. `tg store decrypt <file> --output <new file>`
+opens one; `tg store restore` asks for the password of an encrypted backup.
+
+- **The password is kept nowhere** — not in the settings, the keyring or any record. Lose it and the
+  file cannot be opened.
+- Type it yourself at the hidden prompt, which asks twice. An agent you gave it to pipes it in on stdin,
+  never as an argument, which other programs on the machine can see:
+
+  ```sh
+  printf '%s' 'password' | tg store backup ~/tg.sealed --encrypt
+  ```
+
+- An encrypted folder takes one file per run. Its `manifest.json` names no chat, and a run with a
+  different password is refused.
+
 ## Conversations in a group
 
 A busy group mixes several conversations at once. `tg conversations` finds them in the stored messages,
@@ -238,7 +269,7 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
 ```sh
 tg store info                          # where the file is, its size, its schema, how many rows; changes nothing
 tg store check                         # integrity, search indexes, disk, and which chats are behind; changes nothing
-tg store backup ~/tg-store.db          # a copy of the store, while it is in use
+tg store backup ~/tg-store.db          # a copy of the store, while it is in use; --encrypt for a password
 tg store restore ~/tg-store.db         # put a backup in place of the store
 tg store migrate                       # bring the store up to this version's schema
 tg store clear --left --allow-dangerous  # delete the chats you have left, with their messages
