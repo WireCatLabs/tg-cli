@@ -1,5 +1,6 @@
+import { CliError } from "@leemour/cli-core"
 import type { SenderIdentity } from "@leemour/cli-messaging"
-import { getMarkedPeerId, PeersIndex, type TelegramClient } from "@mtcute/node"
+import { getBasicPeerType, getMarkedPeerId, PeersIndex, type TelegramClient } from "@mtcute/node"
 
 type Client = Pick<TelegramClient, "getMe" | "getFullChat" | "resolvePeer" | "call">
 
@@ -28,4 +29,14 @@ export const sendAsIdentities = async (client: Client, chatId: string): Promise<
     ]
   })
   return [self, ...others].map((one) => ({ ...one, default: one.id === chosen }))
+}
+
+/** Telegram takes `send_as` in channels and supergroups only; elsewhere the account is the one author. */
+export const sendAsPeer = (chatId: string, sendAs: string, self: string | null): number | undefined => {
+  if (!/^-?\d{1,16}$/.test(sendAs) || !Number.isSafeInteger(Number(sendAs))) {
+    throw new CliError("validation_error", "--send-as takes an id from `tg chats send-as`")
+  }
+  if (getBasicPeerType(Number(chatId)) === "channel") return Number(sendAs)
+  if (sendAs === self) return undefined
+  throw new CliError("validation_error", "only a supergroup offers identities other than the account")
 }

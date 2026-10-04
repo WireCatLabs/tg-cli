@@ -93,7 +93,7 @@ import {
 } from "./map.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
-import { sendAsIdentities } from "./send-as.js"
+import { sendAsIdentities, sendAsIdentities, sendAsPeer } from "./send-as.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -487,6 +487,7 @@ export class TelegramAdapter {
     const id = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
+    const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, this.self())
     if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
     const spans = formatting ?? markup
     const body = spans ? toFormatted(text, spans) : text
@@ -496,7 +497,7 @@ export class TelegramAdapter {
       ...(answering === undefined ? {} : { replyTo: answering }),
       ...(silent ? { silent } : {}),
       ...(at === undefined ? {} : { schedule: new Date(at) }),
-      ...(sendAs === undefined ? {} : { sendAs: peerNumber(sendAs) }),
+      ...(author === undefined ? {} : { sendAs: author }),
     }
     return this.#call(async () => {
       const [attachment] = attachments
@@ -510,11 +511,11 @@ export class TelegramAdapter {
             })
         return { message: toMessage(message), sendId }
       } catch (error) {
-        throw unknownIfUnanswered(
-          error,
-          `the message may have been sent. Repeat with --send-id ${sendId}, never without it`,
-          { sendId },
-        )
+        const repeat = sendAs === undefined ? `--send-id ${sendId}` : `--send-id ${sendId} --send-as ${sendAs}`
+        throw unknownIfUnanswered(error, `the message may have been sent. Repeat with ${repeat}, never without it`, {
+          sendId,
+          ...(sendAs === undefined ? {} : { sendAs }),
+        })
       }
     })
   }
@@ -1735,13 +1736,6 @@ const unknownIfUnanswered = (error: unknown, what: string, details: Record<strin
     return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
   }
   return error
-}
-
-const peerNumber = (id: string): number => {
-  if (!/^-?\d{1,16}$/.test(id) || !Number.isSafeInteger(Number(id))) {
-    throw new CliError("validation_error", "--send-as takes an id from `tg chats send-as`")
-  }
-  return Number(id)
 }
 
 const topicNumber = (id: string): number => {

@@ -1214,11 +1214,23 @@ describe("sending", () => {
   it("sends as the identity it was given, and refuses one that is not a peer id", async () => {
     const { adapter, client } = await open()
 
-    await adapter.send("-100500", "hola", { sendId: "42", sendAs: "-1002" })
-    expect(() => adapter.send("-100500", "hola", { sendId: "43", sendAs: "@channel" })).toThrow("--send-as takes")
+    await adapter.send("-1000000000500", "hola", { sendId: "42", sendAs: "-1002" })
+    expect(() => adapter.send("-1000000000500", "hola", { sendId: "43", sendAs: "@channel" })).toThrow(
+      "--send-as takes",
+    )
 
     expect(client.sendText.mock.calls[0]?.[2]).toMatchObject({ sendAs: -1002 })
     expect(client.sendText).toHaveBeenCalledOnce()
+  })
+
+  it("names the identity in the repeat an unknown outcome asks for", async () => {
+    const { adapter, client } = await open()
+    client.sendText.mockRejectedValueOnce(new MtTimeoutError(1))
+
+    await expect(adapter.send("-1000000000500", "hola", { sendId: "42", sendAs: "-1002" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      message: expect.stringContaining("--send-id 42 --send-as -1002"),
+    })
   })
 
   it("sends silently, without a preview, with each span as a Telegram entity", async () => {

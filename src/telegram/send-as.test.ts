@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { sendAsIdentities } from "./send-as.js"
+import { sendAsIdentities, sendAsPeer } from "./send-as.js"
 
 const me = { id: 1, displayName: "Owner" }
 const channel = (id: number, title: string, broadcast: boolean) => ({ _: "channel", id, title, broadcast })
@@ -61,5 +61,16 @@ describe("sender identities", () => {
       { peers: [{ _: "sendAsPeer", peer: { _: "peerChannel", channelId: 9 } }], chats: [], users: [] },
     )
     expect(await sendAsIdentities(fake, "-1007")).toHaveLength(1)
+  })
+})
+
+describe("the send_as peer", () => {
+  it("is passed in a supergroup, left out for the account elsewhere, and refused for another identity there", () => {
+    expect(sendAsPeer("-1000000001007", "-1002", "1")).toBe(-1002)
+    expect(sendAsPeer("-1000000001007", "1", "1")).toBe(1)
+    expect(sendAsPeer("-7", "1", "1")).toBeUndefined()
+    expect(sendAsPeer("42", "1", "1")).toBeUndefined()
+    expect(() => sendAsPeer("-7", "-1002", "1")).toThrow("only a supergroup")
+    expect(() => sendAsPeer("-1000000001007", "@channel", "1")).toThrow("--send-as takes")
   })
 })
