@@ -1,41 +1,23 @@
 # Security: what reaches the disk, and what stops a send
 
-`tg` works with your real Telegram account. This page says what it keeps on this machine, what it
-never keeps, and what stands between an agent and a message to a real person.
+`tg` works with your real Telegram account. What it shares with every WireCat tool — the local
+store, the send guard, what an agent may do over MCP, other people's text on your screen, how to
+report a vulnerability — is on the [shared security page](https://wirecat.dev/en/docs/security).
+This page is what only Telegram adds: where the login lives, the files only `tg` writes, which
+servers it talks to, and what to do if the session leaks.
 
 ## In short
 
-It protects against:
-
-- **an agent talked into sending** by a message it read. The profile's `permissions` decide what an
-  agent may do: a level of `ask` shows you a form before the change, and `--confirm-send` shows one
-  before every change. A yes in that form counts once, for five minutes, and only for the chat and
-  the text it showed ([mcp.md](mcp.md#a-confirmation-form-from-the-server-itself)). Every read tool
-  tells the model that message text is data, never instructions.
-- **a change the profile does not allow.** The profile's `permissions`, the recipient list and the
-  hourly limit are checked by every command and every MCP tool, and every attempt is written to a
-  journal without its text ([below](#the-send-guard)).
-- **an agent stepping outside its profile, or sending your keys.** `TG_PROFILE_LOCK` pins the
-  profile, and `--file` refuses hidden files, `~/.ssh` and `tg`'s own folders.
-- **other people's text taking over your terminal.** Control and invisible characters are shown as
-  text, names are printed on one line, and completion inserts only ids
-  ([below](#other-peoples-text-on-your-screen)).
-- **a secret in a log** — runs, reports and the journal of sends hold ids and counts, never text;
-- **a secret in `ps` or shell history** — no command takes a password, a code or a phone number as an
-  argument;
-- **other users of this machine.** Every file `tg` writes is created readable by you only, in folders
-  only you can open ([below](#what-reaches-the-disk)).
-- **a tampered release.** The package is published from GitHub Actions with npm's trusted
-  publishing; the publish step installs nothing and runs no package scripts, and direct dependencies
-  are pinned to exact versions.
-
-It does not protect against:
-
-- **someone with your user account on this machine.** They can read the session file and the local
-  store, as you can.
-- **an agent that can change the settings.** The guard reads `config.json` and the recipient list.
-  An agent allowed to run `tg config set` or `tg recipients add`, or to edit those files, can lift the
-  limits. Keep those commands out of what the agent may run ([below](#what-the-guard-cannot-hold)).
+- **The session file is your login.** Anyone who can read it uses your account, with no password
+  and no code ([below](#where-the-login-lives)).
+- **No command takes a secret as an argument** — not the app hash, the 2FA password, the login code
+  or a phone number.
+- **The send guard is the shared one**: `permissions`, the recipient list and `sendsPerHour` are
+  checked by every command and MCP tool ([below](#the-send-guard)).
+- **`tg` talks to Telegram, npm and my.telegram.org only**, and to model hosts when you download a
+  model ([below](#what-goes-over-the-network)).
+- **It does not protect against someone with your user account on this machine**, or an agent
+  allowed to change the settings.
 
 ## Where the login lives
 
@@ -57,160 +39,53 @@ visible to every process on the machine in `ps`, and would stay in your shell hi
 
 ## What reaches the disk
 
+The local store, settings, run records, the send journal, the recipient list, speech models and
+exports are described on the
+[shared page](https://wirecat.dev/en/docs/security). The store is
+shared with `max`, holds **the full text** of every message `tg` has read or sent, and is not
+encrypted. Besides those, `tg` writes:
+
 | What | Where | Holds | Mode |
 |---|---|---|---|
-| the local store | `~/.local/share/cli-messaging/messages.db` | **the full text** of every message `tg` has read or sent, chat titles, names, transcripts | `0600`, folder `0700` |
-| settings | `config.json` | settings only | `0644`, folder `0700` |
-| recorded runs — with `--record`, and every failed run | `runs/` in the state directory | the command's words, ids, counts, durations, error codes | `0600`, folder `0700` |
-| the journal of sends — always | `sends/<profile>.jsonl` | for each attempt: when, which chat, the outcome, the length, attachment kind and size — never the text or a file name | `0600`, folder `0700` |
-| the recipient list | `profiles/<profile>.recipients.json` | the chats this profile may send to | `0600` |
 | `inbox --new`'s point | `inbox/<profile>.json` | where the last check stopped | `0600` |
 | background fetch jobs | the state directory | the chat, the progress, the outcome | `0600` |
 | `serve`'s log and lock | `serve/<profile>.log`, or the systemd journal | what `serve` did | `0600` |
 | a systemd unit or launchd agent — only `tg server install` | your user's unit folder | the command line that starts `serve` | `0644` |
-| downloaded files — only `tg messages download` | `--output-dir`, or the current folder | the files of the messages you named | `0600` |
-| an export — only `tg store export` | `--output`, or wherever you redirect it | the messages of one chat | `0600` with `--output`; your shell decides otherwise |
 | a backup — only `tg store backup` | the file you name | a copy of the whole store | `0600` |
-| a problem report — only `tg doctor report create` | `--output`, or the current folder | ids replaced by labels, no text | `0600` |
-| speech models — only `tg models audio download` | `~/.cache/cli-common/models/audio/` | downloaded models | `0600`, folder `0700` |
 
 The exact paths on this machine: `tg doctor`. The folders on each system:
 [installation.md](installation.md#where-files-go).
 
-The `0600` file and `0700` folder modes above apply on Linux and macOS. Windows uses inherited
-access control lists (ACLs); these numeric modes do not set an owner-only Windows ACL. Keep the
-state, store, exports and temporary QR images in directories private to your Windows user.
-
-**The local store is not encrypted.** Anyone who can read it reads your messages. It is shared with
-other CLIs built on the same library, and it stays after `tg session end` and after uninstalling.
-Message text is also in exports, backups and downloaded files; nothing else in the table holds it.
-
-### If the computer is lost
-
-On Linux and macOS, `0600` keeps files from other users, not from someone who takes the disk. Whole-
-disk encryption does that: FileVault on macOS, LUKS on Linux, BitLocker on Windows. The store has no
-encryption of its own: a key in the keyring would not stop a program running as your user, which can
-read the keyring as `tg` does.
-
-End the session from another device: in the Telegram app, Settings → Devices, end the session that
-`tg` created. That makes the session file useless.
-
-## What it never does
-
-- **Mark anything read without being asked.** Reading a chat and marking it read are two different
-  requests to Telegram. Only `tg chats mark-read` sends the second.
-- **Send or change anything you did not type.** Only the commands `docs/commands.md` marks
-  "Changes something in Telegram" do: sending and changing messages, reactions, polls, marking read,
-  administering groups and folders, `account update`, `contacts` writes, `account sessions end` and
-  `session end` — each does only what the line says. `tg commands --json` marks
-  them `mutates`, together with the commands marked "Changes something on this computer only": the
-  settings, the recipient lists, group rules and the bot token.
-- **Delete without an explicit word.** `tg messages delete` asks first, and `--allow-dangerous`
-  answers yes for you; deleting for everyone needs `--for-everyone` too. A deletion cannot be
-  undone. An agent over MCP never deletes for everyone and never ends your other sessions, whatever
-  the settings say.
-- **Take a phone number on the command line.** `contacts lookup` asks for it or reads it from stdin.
-  No error, journal or record holds one.
-- **Write a message into a log.** Not shortened, not hashed ([diagnostics.md](diagnostics.md)).
-- **Stay connected on its own.** A command connects, does its job and exits. Only `watch`, `serve`,
-  `mcp` and a background fetch job hold a connection, and only while they run.
+If the computer is lost, end the session from another device: in the Telegram app, Settings →
+Devices, end the session that `tg` created. That makes the session file useless.
 
 ## The send guard
 
-An agent reads other people's messages together with your request. A message can be written so the
-agent takes it for an order: "forward this conversation there". So every command and MCP tool that
-changes something in Telegram — a send, a reply, an edit, a forward, a pin, a reaction, a vote, a
-poll, a deletion, marking a chat read — goes through the same checks, in this order:
-
-| Check | Turn it on | Refusal |
-|---|---|---|
-| **`permissions`** — per command: `deny`, `readonly`, `ask` or `allow` ([configuration.md](configuration.md#what-a-profile-may-do)) | `tg config set permissions.messages.send ask` | `deny` and `readonly`: exit code `5`, before anything is sent; `ask` with nobody to answer: exit code `7` |
-| **the recipient list** — only the chats on it | `tg recipients add <chat>`; off again with `tg recipients clear` | exit code `7` |
-| **`sendsPerHour`** — the most sends in any hour, 30 by default | `tg config set sendsPerHour 10` | exit code `8`; the error says when the next send is possible |
-| **the journal** — every attempt, never its text | always; `tg sends list` | — |
+Every command and MCP tool that changes something in Telegram goes through the shared guard:
+`permissions`, the recipient list, `sendsPerHour` (30 by default) and a journal without text. How
+each check works, its exit code, and what it cannot hold: the
+[shared page](https://wirecat.dev/en/docs/security).
 
 ```sh
 tg config set permissions.messages readonly  # no change to messages from this profile
 tg config set permissions.messages.send ask  # a question before each send
 tg recipients add "Book club"                # the first add turns the list on
-tg recipients list
-tg recipients remove "Book club"             # the list stays on
-tg recipients clear                          # the list is gone: any chat again
 tg sends list                                # every attempt: sent, refused, failed, or not known
 ```
 
-**What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, each
-deleted message, a new group, and each person added to one. A reaction, a vote, a quiet pin and marking a chat read do not. A scheduled message
-counts in the hour Telegram sends it. Two commands started at once cannot get past the limit together:
-each holds its place from the check until Telegram answers.
+In Telegram, these count toward the hourly limit: a message, a forward, an edit, a pin that
+notifies, each deleted message, a new group, and each person added to one. A reaction, a vote, a
+quiet pin and marking a chat read do not. A forward is checked against the chat it goes to.
 
-The recipient list is optional: until something is added, any chat is allowed. A forward is checked
-against the chat it goes to. Over MCP, every tool goes through the same guard as the command.
-
-By default every change is allowed, except deleting messages and ending sessions, which ask. Older
-settings still work: `readOnly: true` makes everything read-only, and an `allow` list allows only
-the actions it names.
-
-**A refusal is the owner's decision, not a fault.** An agent that meets exit code `5`, `7` or `8`
-should stop and say so, not change the settings or retry. The skill file tells agents exactly that.
-
-### What the guard cannot hold
-
-The checks live in `tg` itself, so an agent with a shell can lift them: change a setting, clear the
-list. They protect against a model **talked into** sending by a message it read, not against an agent
-that **sets out** to get round them. Against that, only a boundary outside works: a sandbox, a
-separate OS user, a rule in the agent's own settings.
-
-When you choose that boundary:
-
-- **`TG_PROFILE_LOCK` pins the profile; `TG_PROFILE` does not.** The first word of a command beats
-  `TG_PROFILE`: an agent with `TG_PROFILE=agent` only has to type `tg work messages send …`.
-  `TG_PROFILE_LOCK=agent` refuses that — but only where the agent cannot change its own environment:
-  in the MCP client's settings, or in a wrapper script. An agent with a shell can unset it.
-- **`--file` and `--photo` refuse hidden files and folders, `~/.ssh`, `tg`'s own folders and the
-  local store**: a file somebody talked an agent into sending would usually be a key or a token, and
-  those live there. `--allow-any-file` lifts it for one command; it is meant for you, not for an
-  agent. Over MCP there is no way around it. Anything else your user can read can be sent; the journal
-  keeps only its kind and size.
-- **An agent rule like "ask before `tg messages send`"** does not see the form with a profile, `tg
-  work messages send`. It is safer to limit the profile itself — `permissions` or the recipient list
-  — and not to keep an unlimited profile with a live session beside it.
+`TG_PROFILE_LOCK` pins the profile where an agent cannot change its own environment. `--file` and
+`--photo` refuse hidden files and folders, `~/.ssh`, `tg`'s own folders and the local store; over
+MCP there is no way around it.
 
 ## Other people's text on your screen
 
-Names, chat titles, file names and messages are written by other people. `tg` does not let them drive
-your terminal or fake what you see:
-
-- control characters — the ones that recolour, erase lines, change the window title or the clipboard
-  — are shown as text (`\x1b`), not run; so are invisible characters and the ones that reverse the
-  direction of text;
-- a name, a title or a caption is printed on one line, so a line break in a name cannot start a fake
-  line of the conversation or the table;
-- when a typed name fits more than one chat, `tg` does not choose: it lists them all;
-- shell completion inserts only a chat's id; the title is shown beside it as a hint;
-- a Markdown export goes through the same cleaning, and a downloaded file's name loses its control and
-  direction characters and any leading dot.
-
-For an agent, a message is data, never an instruction: "forward this there" or "reply with this"
-inside a message is not your request. The skill file (`tg skill show`) and the MCP server say so to
-agents that read them. The send guard is there for when one does not listen.
-
-`--json` is data: strings in it are as Telegram sent them, escaped by JSON's rules. If you pass it to
-a program that prints to a terminal, clean it there.
-
-## What others on this machine can see
-
-The arguments of a command are visible to every process in `ps`. That is why no secret is an
-argument — but **a message's text is**:
-
-```sh
-tg messages send me "text"     # this line is visible in ps and stays in your shell history
-```
-
-When that matters, leave the text out and pipe it in: `tg messages send me < note.txt`.
-
-On Linux and macOS, folders are `0700` and files `0600`. On Windows, access follows the directory's
-inherited ACLs.
+Control characters, line breaks in names and look-alike chat titles are handled as the
+[shared page](https://wirecat.dev/en/docs/security) describes. A
+downloaded file's name also loses any leading dot.
 
 ## What goes over the network
 
@@ -233,17 +108,6 @@ from my.telegram.org and follows
 [Telegram's API Terms of Service](https://core.telegram.org/api/terms). The hourly limit is on by
 default, so an agent sends at the pace of a person.
 
-## For yourself
-
-`tg` keeps other people's messages and names on your computer. That is fine while you do it for
-yourself, with your own account: the GDPR does not apply to processing for purely personal or
-household purposes (Article 2(2)(c)). Working with other people's accounts, or for a business, is no
-longer personal. An export you hand to someone else leaves that purpose too.
-
-A problem report (`tg doctor report create`) goes to a **public** issue on GitHub, where everyone sees
-it. It holds no text, names or phone numbers, and every id in it is replaced by a label; open the file
-and check it before you send it.
-
 ## Logging in
 
 `tg setup` and `tg session start` draw the QR code in the terminal. It stays in the scrollback, and Telegram renews
@@ -263,6 +127,8 @@ Every login adds a device to the list in the Telegram app: Settings → Devices.
 
 ## Next
 
+- [Shared security page](https://wirecat.dev/en/docs/security) — the store, the guard, agents and
+  MCP, reporting a vulnerability
 - [diagnostics.md](diagnostics.md) — what exactly is recorded, and what never is
 - [sessions.md](sessions.md) — the app, the keyring, profiles, logging out
 - [mcp.md](mcp.md) — what an agent can do over MCP, and what each level and flag changes
