@@ -80,6 +80,15 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
   }
   if (RpcError.is(error)) {
     const details = { providerError: error.text, status: error.code }
+    // The signal that reopens owner-process routing (docs/plans/2026-10-04-session-sharing.md, §6).
+    if (error.text === "AUTH_KEY_DUPLICATED") {
+      return new CliError(
+        "authentication_error",
+        `Telegram ended this login because two connections used it at once (tg serve, tg mcp, ` +
+          `tg watch or a command beside them) — run ${login}`,
+        details,
+      )
+    }
     if (error.code === RpcError.UNAUTHORIZED) {
       return new CliError("authentication_error", `not logged in, or the session was ended — run ${login}`, details)
     }

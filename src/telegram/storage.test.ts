@@ -63,3 +63,42 @@ describe("the session storage over the runtime's own SQLite", () => {
     await storage.driver.destroy?.()
   })
 })
+
+const pts = (value: number) => {
+  const bytes = new Uint8Array(4)
+  new DataView(bytes.buffer).setInt32(0, value, true)
+  return bytes
+}
+const ptsOf = (bytes: Uint8Array | null) =>
+  bytes ? new DataView(bytes.buffer, bytes.byteOffset).getInt32(0, true) : null
+
+describe("two processes on one session file (docs/plans/2026-10-04-session-sharing.md)", () => {
+  it("lets the last process to flush set the updates state, even an older one", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
+    const serve = await opened(path)
+    const watch = await opened(path)
+
+    serve.kv.set("updates_pts", pts(200))
+    await serve.driver.save?.()
+    watch.kv.set("updates_pts", pts(150))
+    await watch.driver.save?.()
+    await Promise.all([serve.driver.destroy?.(), watch.driver.destroy?.()])
+
+    const restarted = await opened(path)
+    expect(ptsOf(restarted.kv.get("updates_pts") as Uint8Array | null)).toBe(150)
+    await restarted.driver.destroy?.()
+  })
+
+  it("loses the login for every process once one of them drops the key", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
+    const serve = await opened(path)
+    serve.authKeys.set(2, new Uint8Array(256).fill(7))
+    await serve.driver.save?.()
+    const command = await opened(path)
+
+    command.authKeys.set(2, null)
+
+    expect(serve.authKeys.get(2)).toBeNull()
+    await Promise.all([serve.driver.destroy?.(), command.driver.destroy?.()])
+  })
+})
