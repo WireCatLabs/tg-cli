@@ -40,10 +40,7 @@ import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
 
-/**
- * Telegram's answer to a revoked login does not change on a retry. Only that code: a keyring still
- * locked right after login is an authentication_error too, and stays down with it — see `server status`.
- */
+/** A revoked or missing login fails the same on every retry; serve reports a locked keyring with another code. */
 export const NO_RESTART_ON = [exitCodeFor("authentication_error")]
 
 const definition: ProgramDefinition = {
