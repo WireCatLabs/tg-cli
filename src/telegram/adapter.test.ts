@@ -119,6 +119,13 @@ class FakeClient {
   sendVote = vi.fn(async (..._args: unknown[]): Promise<unknown> => fakePoll({ chosen: 1 }))
   closePoll = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ ...fakePoll({}), isClosed: true }))
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
+  uploadFile = vi.fn(
+    async (params: { file: Uint8Array; fileName?: string; fileMime?: string }): Promise<unknown> => ({
+      inputFile: { _: "inputFile", name: params.fileName },
+      size: params.file.length,
+      mime: params.fileMime ?? "application/octet-stream",
+    }),
+  )
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
@@ -1109,6 +1116,20 @@ describe("sending", () => {
     expect(options).toMatchObject({ silent: true, disableWebPreview: true })
   })
 
+  it("sends nothing when the upload fails, and answers that nothing was sent", async () => {
+    const { adapter, client } = await open()
+    client.uploadFile.mockRejectedValue(new tl.RpcError(400, "FILE_PARTS_INVALID"))
+    client.sendMedia.mockClear()
+
+    await expect(
+      adapter.send("-100500", "", {
+        sendId: "1",
+        attachments: [{ kind: "file", name: "plan.pdf", bytes: new Uint8Array([1]) }],
+      }),
+    ).rejects.not.toMatchObject({ code: "outcome_unknown" })
+    expect(client.sendMedia).not.toHaveBeenCalled()
+  })
+
   it("sends a voice message as voice, and a video as a video unless asFile", async () => {
     const { adapter, client } = await open()
     const bytes = new Uint8Array([1, 2, 3])
@@ -1142,7 +1163,12 @@ describe("sending", () => {
     expect(sent.message.id).toBe("98")
     const [[chat, photo, options], [, file]] = client.sendMedia.mock.calls as unknown[][] as [unknown[], unknown[]]
     expect(chat).toBe(-100500)
-    expect(photo).toMatchObject({ type: "photo", file: bytes, fileName: "cat.png", caption: "look" })
+    expect(client.uploadFile.mock.calls[0]?.[0]).toMatchObject({
+      file: bytes,
+      fileName: "cat.png",
+      requireFileSize: true,
+    })
+    expect(photo).toMatchObject({ type: "photo", file: { inputFile: { name: "cat.png" } }, caption: "look" })
     expect(String((options as { randomId: unknown }).randomId)).toBe("123456789012345")
     expect(options).toMatchObject({ replyTo: 7 })
     expect(file).toMatchObject({ type: "document", fileName: "plan.pdf" })

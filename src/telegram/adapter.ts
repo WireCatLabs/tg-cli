@@ -85,6 +85,7 @@ import {
 } from "./map.js"
 import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
+import { uploadAttachment } from "./upload.js"
 
 export interface AdapterOptions {
   credentials: ApiCredentials
@@ -381,10 +382,11 @@ export class TelegramAdapter {
       ...(at === undefined ? {} : { schedule: new Date(at) }),
     }
     return this.#call(async () => {
+      const [attachment] = attachments
+      const uploaded = attachment ? await uploadAttachment(this.#client, attachment) : undefined
       try {
-        const [attachment] = attachments
         const message = attachment
-          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body), common)
+          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body, uploaded), common)
           : await this.#client.sendText(Number(chatId), body, {
               ...common,
               ...(noPreview ? { disableWebPreview: true } : {}),
