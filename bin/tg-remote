@@ -22,7 +22,7 @@ name=$(tailscale status --json | node -e '
   })')
 [ -n "$name" ] || { echo "Tailscale is not logged in — run: tailscale up" >&2; exit 1; }
 
-tailscale funnel "$port" >/dev/null 2>&1 &
+tailscale funnel "$port" >&2 &
 funnel=$!
 trap 'kill "$funnel" 2>/dev/null || true' EXIT INT TERM
 
