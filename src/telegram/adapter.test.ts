@@ -3,7 +3,7 @@ import { join } from "node:path"
 import type { MessageEvent } from "@leemour/cli-messaging"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
+import { FLOOD_SLEEP, LOOP_CHECK_MS, TelegramAdapter, TRANSCRIBE_POLL_MS } from "./adapter.js"
 
 type Handler = (value: unknown) => void
 
@@ -220,6 +220,7 @@ class FakeClient {
   }
   connect = async () => this.#record("connect", [])
   startUpdatesLoop = async () => this.#record("startUpdatesLoop", [])
+  readonly _client = { updates: { updatesLoopActive: true } }
   logOut = async () => this.#record("logOut", [])
   destroy = async () => this.#record("destroy", [])
 }
@@ -1763,6 +1764,136 @@ describe("listening", () => {
     ).rejects.toMatchObject({ code: "authentication_error" })
     expect(ready).toBe(false)
     expect(client.onNewMessage.handlers.size).toBe(0)
+  })
+})
+
+describe("a watch whose updates loop stops", () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  const watching = async (answer: () => Promise<unknown>) => {
+    vi.useFakeTimers()
+    const { adapter, client } = await open({ listen: true })
+    const asked: string[] = []
+    client.call = async (request: { _: string }) => {
+      asked.push(request._)
+      return request._ === "updates.getState" && asked.length > 1 ? answer() : {}
+    }
+    const stop = new AbortController()
+    let ready = false
+    const watch = adapter.watch(
+      () => {},
+      stop.signal,
+      () => {
+        ready = true
+      },
+    )
+    await vi.waitFor(() => expect(ready).toBe(true))
+    return { watch, client, stop, asked }
+  }
+
+  it("**ends with exit 4 when Telegram ended the login while it listened**", async () => {
+    const { watch, client, asked } = await watching(() => Promise.reject(new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")))
+    const ended = expect(watch).rejects.toMatchObject({ code: "authentication_error" })
+
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
+    expect(asked).toEqual(["updates.getState"])
+    client._client.updates.updatesLoopActive = false
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
+
+    await ended
+    expect(asked).toEqual(["updates.getState", "updates.getState"])
+    expect(client.onNewMessage.handlers.size).toBe(0)
+  })
+
+  it("**ends with a code a service restarts** when the loop stopped and the login still works", async () => {
+    const { watch, client } = await watching(async () => ({ _: "updates.state" }))
+    const ended = expect(watch).rejects.toMatchObject({ code: "provider_unavailable" })
+
+    client._client.updates.updatesLoopActive = false
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
+    await ended
+  })
+
+  it("a network failure while asking is a restart too, never exit 4", async () => {
+    const { watch, client } = await watching(() =>
+      Promise.reject(Object.assign(new Error("x"), { code: "ECONNRESET" })),
+    )
+    const ended = expect(watch).rejects.toMatchObject({
+      code: "provider_unavailable",
+      details: { cause: "network_error" },
+    })
+
+    client._client.updates.updatesLoopActive = false
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS)
+    await ended
+  })
+
+  it("a stop asked for is a stop, even once the loop is down", async () => {
+    const { watch, client, stop, asked } = await watching(async () => ({}))
+
+    stop.abort()
+    client._client.updates.updatesLoopActive = false
+    await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS * 2)
+    await expect(watch).resolves.toBeUndefined()
+    expect(asked).toEqual(["updates.getState"])
+  })
+})
+
+describe("flood waits", () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  type Middleware = (context: unknown, next: (context: unknown) => Promise<unknown>) => Promise<unknown>
+  const floodWaiterOf = () => {
+    const { middlewares } = (stand.options as { network: { middlewares: Middleware[] } }).network
+    // mtcute's `basic()`: media throttle, flood waiter, internal errors.
+    return middlewares[1] as Middleware
+  }
+  const context = {
+    request: { _: "messages.getHistory" },
+    manager: { _log: { warn: () => {} }, teardownSignal: new AbortController().signal },
+  }
+  const flood = (seconds: number) => ({ _: "mt_rpc_error", errorCode: 420, errorMessage: `FLOOD_WAIT_${seconds}` })
+
+  it("**a one-shot command sits out a short wait and says so, and is told a long one at once**", async () => {
+    vi.useFakeTimers()
+    const notes: string[] = []
+    await TelegramAdapter.open({
+      credentials: { id: 1, hash: "h" },
+      sessionPath: join(mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? "", "adapter-")), "default.session"),
+      note: (line) => notes.push(line),
+    })
+    const waiter = floodWaiterOf()
+
+    const long = vi.fn(async () => flood(30))
+    expect(await waiter(context, long)).toEqual(flood(30))
+    expect(long).toHaveBeenCalledTimes(1)
+    expect(notes).toEqual([])
+
+    const answers = [flood(3), { ok: true }]
+    const short = vi.fn(async () => answers.shift())
+    const waited = waiter({ ...context, request: { _: "contacts.resolveUsername" } }, short)
+    await vi.advanceTimersByTimeAsync(3000)
+    expect(await waited).toEqual({ ok: true })
+    expect(notes).toEqual(["Telegram asks to wait 3 s before contacts.resolveUsername — waiting, then going on"])
+  })
+
+  it("serve sits out a wait up to two minutes", async () => {
+    vi.useFakeTimers()
+    const lines: string[] = []
+    await open({ listen: true, diagnostic: (line) => lines.push(line) })
+    const answers = [flood(90), { ok: true }]
+    const waited = floodWaiterOf()(
+      context,
+      vi.fn(async () => answers.shift()),
+    )
+    await vi.advanceTimersByTimeAsync(90_000)
+    expect(await waited).toEqual({ ok: true })
+    expect(lines).toEqual(["Telegram asks to wait 90 s before messages.getHistory — waiting, then going on"])
+    expect(FLOOD_SLEEP.listening.maxWait).toBe(120_000)
   })
 })
 

@@ -12,7 +12,7 @@ numbers are in [commands.md](commands.md#exit-codes).
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-setup) |
-| `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-) |
+| `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-), [PEER_FLOOD](#telegram-limited-this-accounts-messages-as-spam-peer_flood) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
 | `7` | `confirmation_required` | the chat is not on the recipient list, or the change asks first and nobody could answer | [recipient list](#chat--is-not-on-the-recipient-list-of-profile-), [asks first](#-asks-before-it-acts) |
 | `8` | `rate_limited` | the hourly limit, or Telegram asks you to wait | [hourly limit](#profile--has-sent-n-messages-in-the-hour-), [FLOOD_WAIT](#telegram-asks-to-wait-n-s-before-the-next-request) |
@@ -190,6 +190,20 @@ Exit code `8`. Telegram's own rate limit (FLOOD_WAIT). Wait that long; the JSON 
 other commands, or a long `store fetch`. For `store fetch` and `messages download --all`, a longer
 `--pause` helps.
 
+A command waits out a request of up to 10 seconds, twice at most, and says so on stderr: "Telegram
+asks to wait 3 s before … — waiting, then going on". `serve` and `watch` wait up to 2 minutes. A longer
+wait ends the command with this error. With the next `@leemour/cli-messaging`, `tg` also remembers the
+wait: until it ends, the same command fails at once without asking Telegram again, and
+`tg doctor` and `tg server status` list it under `flood`.
+
+## "Telegram limited this account's messages as spam (PEER_FLOOD)"
+
+Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.
+It can still read. Message @SpamBot in a Telegram app: it says until when. Sending again makes it
+worse, so with the next `@leemour/cli-messaging`, `tg` holds every send for 24 hours and says so;
+`tg doctor` shows the hold under `flood.sendBlock`. A frozen account's refusal holds sends the same
+way, until Telegram's date; `tg doctor --online` sets and lifts that one.
+
 ## "profile … has sent N messages in the hour …"
 
 Exit code `8`. The profile's own hourly limit (`sendsPerHour`, 30 by default). The error says when
@@ -318,6 +332,13 @@ for a long chat. Keep `--page-size` at 100 or less: Telegram returns up to 100 m
 
 Exit code `2`. One `serve` per profile. `tg server status` says which process and since when;
 `tg server stop` stops one started by `server start` or the unit.
+
+## `serve` stopped by itself
+
+`tg server logs` says why. If Telegram ended the login while `serve` ran, it exits with code `4`
+within about 15 minutes and does not restart: run `tg session start`, then `tg server start`. If
+Telegram's updates stopped arriving for another reason, it exits with code `12`, and systemd starts
+it again.
 
 ## The background server does not start
 

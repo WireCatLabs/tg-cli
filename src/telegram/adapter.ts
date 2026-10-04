@@ -1,7 +1,7 @@
 import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
-import { CliError } from "@leemour/cli-core"
+import { CliError, isCliError } from "@leemour/cli-core"
 import type { TextSpan } from "@leemour/cli-messaging"
 import {
   type AccountSession,
@@ -43,6 +43,7 @@ import {
   type InputPeerLike,
   Long,
   MtPeerNotFoundError,
+  networkMiddlewares,
   PeersIndex,
   type RawUpdateInfo,
   TelegramClient,
@@ -100,6 +101,8 @@ export interface AdapterOptions {
   /** How to log in on this profile, for the error a dropped session gives. */
   login?: string
   proxy?: ProxyServer
+  /** Where a wait mtcute sits out is said — a warning, so `--quiet` drops it. The diagnostic stream if not given. */
+  note?: (message: string) => void
 }
 
 export interface LoginPrompts {
@@ -166,6 +169,7 @@ export class TelegramAdapter {
       catchUp = false,
       login,
       proxy,
+      note,
     }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
@@ -174,6 +178,10 @@ export class TelegramAdapter {
     const proxied = proxy ? proxiedTransport(proxy) : undefined
     // watch and serve outlive a proxy that is down for a moment; mtcute's own retries suit them.
     this.#proxyFailed = listen ? undefined : proxied?.failed
+    // mtcute's default handler writes with console.log, which is stdout — where only data may go.
+    const write = diagnostic ?? ((line: string) => process.stderr.write(`${line}\n`))
+    const say = note ?? write
+    const { maxWait, maxRetries } = listen ? FLOOD_SLEEP.listening : FLOOD_SLEEP.oneShot
     this.#client = new TelegramClient({
       ...(proxied ? { transport: proxied.transport } : {}),
       apiId: credentials.id,
@@ -182,9 +190,17 @@ export class TelegramAdapter {
       disableUpdates: !listen,
       ...(listen ? { updates: { catchUp } } : {}),
       logLevel: verbose ? 3 : 1,
+      network: {
+        middlewares: networkMiddlewares.basic({
+          floodWaiter: {
+            maxWait,
+            maxRetries,
+            onBeforeWait: (context, seconds) =>
+              say(`Telegram asks to wait ${seconds} s before ${context.request._} — waiting, then going on`),
+          },
+        }),
+      },
     })
-    // mtcute's default handler writes with console.log, which is stdout — where only data may go.
-    const write = diagnostic ?? ((line: string) => process.stderr.write(`${line}\n`))
     this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
   }
 
@@ -457,13 +473,50 @@ export class TelegramAdapter {
         await client.startUpdatesLoop()
       })
       onReady?.()
-      if (!signal.aborted) await new Promise((resolve) => signal.addEventListener("abort", resolve, { once: true }))
+      await this.#untilStopped(signal)
     } finally {
       client.onNewMessage.remove(message)
       client.onEditMessage.remove(edit)
       client.onDeleteMessage.remove(deletion)
       client.onRawUpdate.remove(raw)
     }
+  }
+
+  /**
+   * Until `signal` aborts, or mtcute's updates loop is found stopped. mtcute stops it without a word
+   * on AUTH_KEY_UNREGISTERED (`highlevel/updates/manager.js`, `_fetchUpdatesState` and
+   * `_fetchDifferenceLater`), usually met by its own 15-minute keep-alive. A loop found stopped is
+   * asked about once: a refused login ends the watch with exit 4; anything else with exit 12, which a
+   * service unit restarts — never a process that looks connected and receives nothing.
+   */
+  #untilStopped(signal: AbortSignal): Promise<void> {
+    const updates = (this.#client._client as unknown as { updates?: { updatesLoopActive: boolean } } | undefined)
+      ?.updates
+    return new Promise((resolve, reject) => {
+      const stopped = () => {
+        clearInterval(timer)
+        resolve()
+      }
+      const timer = setInterval(() => {
+        if (signal.aborted || updates?.updatesLoopActive !== false) return
+        clearInterval(timer)
+        signal.removeEventListener("abort", stopped)
+        const ended = (error: unknown) => (signal.aborted ? resolve() : reject(error))
+        this.#call(() => this.#client.call({ _: "updates.getState" })).then(
+          () => ended(new CliError("provider_unavailable", LOOP_STOPPED)),
+          (error) =>
+            ended(
+              isCliError(error) && error.code === "authentication_error"
+                ? error
+                : new CliError("provider_unavailable", LOOP_STOPPED, {
+                    cause: isCliError(error) ? error.code : "unknown",
+                  }),
+            ),
+        )
+      }, LOOP_CHECK_MS)
+      if (signal.aborted) stopped()
+      else signal.addEventListener("abort", stopped, { once: true })
+    })
   }
 
   scheduled(reference: string): Promise<Message[]> {
@@ -1448,6 +1501,24 @@ export const frozenOf = (config: Record<string, unknown>): FrozenStanding | unde
 
 /** The rights `tg chats admins add --can` offers: max's, less `read`. */
 export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
+
+/**
+ * How long mtcute sits out a FLOOD_WAIT before the wait becomes `rate_limited` with `retryAfterMs`, and
+ * how many times. One-shot: 10 s, mtcute's own default, which covers the routine short waits; past it a
+ * person or a script is better told the wait than held, and twice at most keeps a command under ~20 s
+ * of announced waiting. Listening (`watch`, `serve`): nobody is waiting on a request, and giving up
+ * costs a restart and a new connection — 120 s, tlgr's threshold. `store fetch` keeps the one-shot
+ * value: cli-messaging's `patiently` sits out up to 5 min above it, and says so.
+ */
+export const FLOOD_SLEEP = {
+  oneShot: { maxWait: 10_000, maxRetries: 2 },
+  listening: { maxWait: 120_000, maxRetries: 3 },
+}
+
+/** A look at a local flag, not a request. */
+export const LOOP_CHECK_MS = 30_000
+const LOOP_STOPPED =
+  "Telegram's updates stopped arriving although the connection is open — ending, so a service unit starts it again"
 
 export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000

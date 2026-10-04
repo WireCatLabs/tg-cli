@@ -49,6 +49,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   dates and the appeal link), banned, deleted or logged out. Needs the next `@leemour/cli-messaging`.
 - A frozen account's refusal is a `permission_error` that points to `tg doctor --online`, not a rate
   limit to wait out. A banned or deleted account no longer tells you to log in again.
+- **`tg serve` and `tg watch` notice a login ended while they listen.** mtcute stops its updates without an
+  error then; `tg` checks every 30 seconds and exits with code 4, usually within 15 minutes of the logout, which the
+  service does not restart. If the updates stop for another reason, it exits with code 12, which systemd restarts.
+- **Telegram's waits are said, and bounded.** A command waits out a FLOOD_WAIT of up to 10 seconds, twice at most,
+  and says so on stderr; `serve` and `watch` wait up to 2 minutes. A longer wait is `rate_limited` with
+  `retryAfterMs`, as before.
+- `PEER_FLOOD` (the account limited as spam) is a `permission_error` that points to @SpamBot, not a refusal to
+  retry. With the next `@leemour/cli-messaging`, it holds sends for 24 hours and remembered waits fail fast.
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.
