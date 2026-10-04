@@ -1,4 +1,4 @@
-import { CliError, isCliError, loadConfigFile } from "@leemour/cli-core"
+import { CliError, isCliError } from "@leemour/cli-core"
 import { readSecret } from "@leemour/cli-messaging"
 import { environmentOf } from "@leemour/cli-messaging/cli"
 import type { Command } from "commander"
@@ -28,12 +28,11 @@ export const withProxySecrets = (config: Command): Command => {
     const { env = process.env, keyring, stdin = process.stdin } = environmentOf<Environment>(action)
     const secrets = proxySecrets({ env, ...(keyring ? { keyring } : {}) })
 
+    const scope = action.opts<{ defaults?: boolean }>().defaults
+      ? undefined
+      : CONFIG.resolveSettings(action.optsWithGlobals(), { env }).profile
     if (action.name() === "unset") {
-      const removed = scopeValue(action, env)
-      if (removed !== undefined)
-        pending = () => {
-          if (!proxiesIn(configFile(action, env).config).includes(removed)) secrets.remove(removed)
-        }
+      pending = () => secrets.remove(scope)
       return
     }
 
@@ -54,8 +53,8 @@ export const withProxySecrets = (config: Command): Command => {
     const label = proxyLabel(proxy)
     action.processedArgs[1] = label
     pending = () => {
-      if (proxy.secret === undefined) secrets.remove(label)
-      else secrets.write(label, proxy.secret)
+      if (proxy.secret === undefined) secrets.remove(scope)
+      else secrets.write(scope, proxy.secret)
     }
   })
   config.hook("postAction", () => {
@@ -71,24 +70,4 @@ const asValidation = <T>(work: () => T): T => {
   } catch (error) {
     throw isCliError(error) ? new CliError("validation_error", error.message) : error
   }
-}
-
-const configFile = (action: Command, env: NodeJS.ProcessEnv) => {
-  const settings = CONFIG.resolveSettings(action.optsWithGlobals(), { env })
-  return { settings, config: loadConfigFile(settings.configPath, CONFIG.schema, () => ({ profiles: {} })) }
-}
-
-/** The proxy `config unset` is about to remove: the profile's, or with `--defaults` everyone's. */
-const scopeValue = (action: Command, env: NodeJS.ProcessEnv): string | undefined => {
-  const { settings } = configFile(action, env)
-  const scope = action.opts<{ defaults?: boolean }>().defaults ? settings.shared : settings.configured
-  return typeof scope.proxy === "string" ? proxyLabel(parseProxy(scope.proxy, "proxy")) : undefined
-}
-
-/** Every proxy the file still names, so a secret two profiles share outlives one `unset`. */
-const proxiesIn = (config: unknown): string[] => {
-  if (typeof config !== "object" || config === null) return []
-  return Object.entries(config).flatMap(([key, value]) =>
-    key === "proxy" && typeof value === "string" ? [proxyLabel(parseProxy(value, "proxy"))] : proxiesIn(value),
-  )
 }

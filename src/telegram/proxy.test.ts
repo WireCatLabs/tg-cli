@@ -9,7 +9,12 @@ import { TelegramAdapter } from "./adapter.js"
 import { proxiedTransport, proxySecrets, resolveProxy } from "./proxy.js"
 
 const MT_SECRET = `ee${"00".repeat(16)}${Buffer.from("example.com").toString("hex")}`
-const settings = (configured: Record<string, unknown> = {}, shared: Record<string, unknown> = {}) => ({
+const settings = (
+  configured: Record<string, unknown> = {},
+  shared: Record<string, unknown> = {},
+  profile = "default",
+) => ({
+  profile,
   configured,
   shared,
 })
@@ -36,7 +41,8 @@ describe("resolveProxy", () => {
   it("takes the profile's setting over the defaults, and adds the secret kept in the keyring", () => {
     const keyring = memoryKeyring()
     const env = {}
-    proxySecrets({ env, keyring }).write("socks5://u@profile.example:1080", "hunter2")
+    proxySecrets({ env, keyring }).write("default", "hunter2")
+    proxySecrets({ env, keyring }).write(undefined, "from-defaults")
 
     const resolved = resolveProxy(
       settings({ proxy: "socks5://u@profile.example:1080" }, { proxy: "socks5://defaults.example:1080" }),
@@ -47,6 +53,32 @@ describe("resolveProxy", () => {
       from: "config file",
       proxy: { kind: "socks5", host: "profile.example", port: 1080, tls: false, user: "u", secret: "hunter2" },
     })
+  })
+
+  it("keeps a password per profile, so two profiles on one proxy can log in as different users", () => {
+    const keyring = memoryKeyring()
+    const env = {}
+    proxySecrets({ env, keyring }).write("work", "secret-a")
+    proxySecrets({ env, keyring }).write("home", "secret-b")
+    const proxy = { proxy: "socks5://u@shared.example:1080" }
+
+    expect(resolveProxy(settings(proxy, {}, "work"), { env, keyring })?.proxy.secret).toBe("secret-a")
+    expect(resolveProxy(settings(proxy, {}, "home"), { env, keyring })?.proxy.secret).toBe("secret-b")
+  })
+
+  it("falls back to the defaults' password only for the defaults' proxy", () => {
+    const keyring = memoryKeyring()
+    const env = {}
+    proxySecrets({ env, keyring }).write(undefined, "from-defaults")
+    const shared = { proxy: "socks5://u@defaults.example:1080" }
+
+    expect(resolveProxy(settings({}, shared, "plain"), { env, keyring })?.proxy.secret).toBe("from-defaults")
+    proxySecrets({ env, keyring }).write("own", "s3cret")
+    expect(resolveProxy(settings({}, shared, "own"), { env, keyring })?.proxy.secret).toBe("s3cret")
+    expect(
+      resolveProxy(settings({ proxy: "socks5://u@profile.example:1080" }, shared, "plain"), { env, keyring })?.proxy
+        .secret,
+    ).toBeUndefined()
   })
 
   it("does not read ALL_PROXY or HTTPS_PROXY", () => {

@@ -206,7 +206,8 @@ tg config unset proxy
 | `tg://socks?server=…&port=…&user=…&pass=…` | Telegram's share link for a SOCKS5 proxy |
 
 **A password or an MTProxy secret never reaches the settings file.** `config set proxy -` reads the
-URL without echo, or from a pipe, keeps the secret in the OS keyring, and writes the URL without it;
+URL without echo, or from a pipe, keeps the secret in the OS keyring — one per profile, and one for
+`--defaults` that a profile uses only with the defaults' proxy — and writes the URL without it;
 `config show`, `doctor` and the errors print it the same way. A URL with a secret on the command line
 is refused, because `ps` and your shell history would keep it.
 

@@ -22,7 +22,7 @@ describe("config set proxy", () => {
     expect(json(set.stdout)).toMatchObject({ setting: "proxy", value: "socks5://u@proxy.example:1080" })
     expect([...set.stdout, ...set.stderr].join("\n")).not.toContain("hunter2")
     expect(readFileSync(json(set.stdout).configFile, "utf8")).not.toContain("hunter2")
-    expect(proxySecrets({ keyring }).read("socks5://u@proxy.example:1080")).toBe("hunter2")
+    expect(proxySecrets({ keyring }).read("proxied")).toBe("hunter2")
 
     const doctor = await tg(["proxied", "doctor", "--json"], { keyring })
     expect(json(doctor.stdout).telegram.proxy).toEqual({
@@ -33,7 +33,7 @@ describe("config set proxy", () => {
     expect(doctor.stdout.join("\n")).not.toContain("hunter2")
 
     expect((await tg(["proxied", "config", "unset", "proxy"], { keyring })).code).toBe(0)
-    expect(proxySecrets({ keyring }).read("socks5://u@proxy.example:1080")).toBeUndefined()
+    expect(proxySecrets({ keyring }).read("proxied")).toBeUndefined()
   })
 
   it("keeps an MTProxy secret out of the file too, and says the Bot API cannot follow it", async () => {
@@ -47,6 +47,24 @@ describe("config set proxy", () => {
     expect(doctor.telegram.proxy.botApi).toMatch(/^direct/)
 
     await tg(["mtproxied", "config", "unset", "proxy"], { keyring })
+  })
+
+  it("gives two profiles on the same proxy their own passwords, and --defaults its own", async () => {
+    const keyring = memoryKeyring()
+    const url = (password: string) => `socks5://u:${password}@shared.example:1080`
+    await tg(["one", "config", "set", "proxy", "-"], { keyring, stdin: piped(url("secret-a")) })
+    await tg(["two", "config", "set", "proxy", "-"], { keyring, stdin: piped(url("secret-b")) })
+    await tg(["config", "set", "--defaults", "proxy", "-"], { keyring, stdin: piped(url("from-defaults")) })
+
+    expect(proxySecrets({ keyring }).read("one")).toBe("secret-a")
+    expect(proxySecrets({ keyring }).read("two")).toBe("secret-b")
+    expect(proxySecrets({ keyring }).read(undefined)).toBe("from-defaults")
+
+    await tg(["one", "config", "unset", "proxy"], { keyring })
+    expect(proxySecrets({ keyring }).read("one")).toBeUndefined()
+    expect(proxySecrets({ keyring }).read("two")).toBe("secret-b")
+    await tg(["two", "config", "unset", "proxy"], { keyring })
+    await tg(["config", "unset", "--defaults", "proxy"], { keyring })
   })
 
   it("refuses an MTProxy secret that cannot work, without quoting it", async () => {

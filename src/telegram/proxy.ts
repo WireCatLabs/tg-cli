@@ -15,7 +15,11 @@ type TelegramTransport = ReturnType<typeof proxyTransportFromUrl>
 
 export const PROXY_ENV = "TG_PROXY"
 
-/** A proxy's password or MTProxy secret in the OS keyring, by the proxy it belongs to — so every profile and `--defaults` share it. */
+/**
+ * A proxy's password or MTProxy secret in the OS keyring, one per profile and one for `--defaults`:
+ * a profile locked with `TG_PROFILE_LOCK` must not be able to change another profile's password.
+ * `undefined` is the defaults; the two namespaces keep a profile named "defaults" apart from them.
+ */
 export const proxySecrets = ({ env = process.env, keyring }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore }) => {
   const store = new Credentials({
     configDir: pathsFor(env).config,
@@ -24,11 +28,12 @@ export const proxySecrets = ({ env = process.env, keyring }: { env?: NodeJS.Proc
     env,
     ...(keyring ? { keyring } : {}),
   })
-  const account = (label: string) => `proxy:${label}`
+  const account = (profile: string | undefined) =>
+    profile === undefined ? "proxy:defaults" : `proxy:profile:${profile}`
   return {
-    read: (label: string) => store.read(account(label))?.secret,
-    write: (label: string, secret: string) => store.write(account(label), secret),
-    remove: (label: string) => store.remove(account(label)),
+    read: (profile: string | undefined) => store.read(account(profile))?.secret,
+    write: (profile: string | undefined, secret: string) => store.write(account(profile), secret),
+    remove: (profile: string | undefined) => store.remove(account(profile)),
   }
 }
 
@@ -44,7 +49,7 @@ export interface ProxyInUse {
  * would be a surprise found late.
  */
 export const resolveProxy = (
-  settings: Pick<Settings, "configured" | "shared">,
+  settings: Pick<Settings, "profile" | "configured" | "shared">,
   { env = process.env, keyring }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore } = {},
 ): ProxyInUse | undefined => {
   const given = env[PROXY_ENV]?.trim()
@@ -52,11 +57,12 @@ export const resolveProxy = (
   const { value, from } = fromFile<string | undefined>(settings, "proxy", undefined)
   if (value === undefined) return undefined
   const proxy = parseProxy(value, "the proxy setting")
-  const secret = proxySecrets({ env, ...(keyring ? { keyring } : {}) }).read(proxyLabel(proxy))
+  const secrets = proxySecrets({ env, ...(keyring ? { keyring } : {}) })
+  const secret = secrets.read(settings.profile) ?? (from === "config defaults" ? secrets.read(undefined) : undefined)
   if (proxy.kind === "mtproxy" && !secret)
     throw new CliError(
       "configuration_error",
-      `no secret is stored for the MTProxy ${proxyLabel(proxy)} — run \`tg config set proxy '<the whole link>'\` again`,
+      `no secret is stored for the MTProxy ${proxyLabel(proxy)} — run \`tg config set proxy -\` again`,
     )
   return { proxy: secret ? { ...proxy, secret } : proxy, from }
 }
