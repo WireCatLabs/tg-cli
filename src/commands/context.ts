@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs"
+import { existsSync, statSync } from "node:fs"
+import { dirname } from "node:path"
 import { CliError, type KeyringStore } from "@leemour/cli-core"
 import {
   asFirstWord,
@@ -126,7 +127,7 @@ export const TELEGRAM: Messenger = {
   diagnose: async (command, base) => {
     const { sessionPath, credentials, proxy } = telegramOf(command, base)
     return {
-      session: { path: sessionPath, exists: existsSync(sessionPath) },
+      session: { path: sessionPath, exists: existsSync(sessionPath), files: sessionModes(sessionPath) },
       proxy: proxyState(proxy),
       appCredentials: appCredentialsState(() => credentials.read(), base.env),
       // The one failure with no other symptom: a login made without these variables is invisible with them.
@@ -155,6 +156,34 @@ export const forCommand = (command: Command): CommandContext => {
     proxy,
     withTelegram: context.withMessenger,
   }
+}
+
+const octal = (mode: number) => `0${mode.toString(8)}`
+
+/**
+ * The session is a login as good as a password: it, SQLite's -wal and -shm beside it, and its folder
+ * are the owner's alone. Only `stat`, so `doctor` never opens it; the fix is printed, never applied.
+ */
+export const sessionModes = (sessionPath: string, platform: NodeJS.Platform = process.platform) => {
+  if (platform === "win32") return { checked: false, reason: "Windows has no Unix file modes" }
+  const wanted: [string, number][] = [
+    ...[sessionPath, `${sessionPath}-wal`, `${sessionPath}-shm`].map((path): [string, number] => [path, 0o600]),
+    [dirname(sessionPath), 0o700],
+  ]
+  const problems = wanted.flatMap(([path, want]) => {
+    if (!existsSync(path)) return []
+    const mode = statSync(path).mode & 0o777
+    if ((mode & 0o077) === 0) return []
+    return [
+      {
+        path,
+        mode: octal(mode),
+        want: octal(want),
+        fix: `chmod ${want.toString(8)} '${path.replaceAll("'", `'\\''`)}'`,
+      },
+    ]
+  })
+  return { checked: true, ok: problems.length === 0, problems }
 }
 
 /** Whether app credentials exist and where from — never the values. */

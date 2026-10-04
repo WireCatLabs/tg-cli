@@ -33,7 +33,8 @@ installation and does not change permissions. To restrict what the agent can do,
 
 `mcp doctor` reads no messages and does not log in to Telegram. A healthy result means the MCP
 handshake and tool list work, not that the account session is valid. `potentialWrites` counts tools
-without a read-only declaration. Browser and mobile chats need a separate remote connection
+without a read-only declaration. When the server does not start, the error shows the last lines it
+wrote to stderr, with your home folder, long numbers and tokens hidden. Browser and mobile chats need a separate remote connection
 ([remote.md](remote.md)).
 
 **Claude Code:**

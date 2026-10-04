@@ -90,6 +90,20 @@ credentials exist (never their values), whether `TG_*_DIR` moved the keyring ent
 (its path, its version, and how many chats and messages it holds), the sends of the last hour, and
 the runs kept.
 
+- **`login`** is `not checked` without `--online`. A session file on disk does not mean Telegram
+  still accepts it. With `--online` it is `ok` or `failed`, with a hint.
+- **`files`** and **`telegram.session.files`** name each private file or folder that other users of
+  this machine can read: the session, the store, their SQLite `-wal` and `-shm` files, the send
+  journal and the runs folder. Each has the `chmod` command that fixes it. `doctor` never changes a
+  mode itself. Windows is not checked.
+- **`online.clock`** (with `--online`) compares this computer's clock with Telegram's.
+  `skewMs` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
+  refuses a request stamped more than 30 seconds ahead of its own clock.
+- **`online.standing`** (with `--online`) is `active`, `frozen`, `banned`, `deactivated` or
+  `revoked`. A frozen account can read but not write. It comes with the date it was frozen, the date
+  Telegram will delete it, and the appeal link, where Telegram gives them. Logging in again does not
+  lift a ban.
+
 ## A problem report
 
 ```sh
@@ -99,7 +113,7 @@ tg doctor report create --run <run-id>    # about this one
 
 It writes a JSON file — what `tg doctor` shows plus the run — and says where to send it: a new issue
 at [github.com/leemour/tg-cli/issues](https://github.com/leemour/tg-cli/issues/new). Read it before
-you send it. It holds no message text, and ids appear as labels, not as Telegram's numbers.
+you send it. It holds no message text, and every id appears as a label, not as Telegram's number.
 
 If no failed run is kept, run the failing command again; its failure is kept by itself.
 

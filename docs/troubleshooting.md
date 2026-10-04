@@ -41,6 +41,9 @@ tg doctor --online
 ```
 
 `--online` also connects once and reads the account. It sends nothing and marks nothing read.
+Without it, the login shows as `not checked`: only `--online` tells you that Telegram still accepts
+the session. `--online` also reports a wrong clock on this computer, and whether Telegram froze or
+banned the account ([diagnostics.md](diagnostics.md#check-the-installation-tg-doctor)).
 
 ## `tg` is not found after installing
 
