@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**1880 ✅ · 29 ⛔ · 0 ❌** — 360 commands, 1549 options.
+**1918 ✅ · 29 ⛔ · 0 ❌** — 364 commands, 1583 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -116,6 +116,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--language` | ✅ |  |
 | `messages search` | `--timezone` | ✅ |  |
 | `messages search` | `--regex` | ✅ |  |
+| `messages stats` |  | ✅ |  |
+| `messages stats` | `--by` | ✅ |  |
+| `messages stats` | `--chat` | ✅ |  |
+| `messages stats` | `--source` | ✅ |  |
+| `messages stats` | `--limit` | ✅ |  |
+| `messages stats` | `--timezone` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -180,15 +186,22 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `inbox` | `--since-time` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
 | `inbox` | `--all` | ✅ |  |
+| `inbox` | `--kind` | ✅ |  |
 | `inbox` | `--transcribe` | ✅ |  |
 | `inbox` | `--model` | ✅ |  |
+| `inbox` | `--mark-read` | ✅ |  |
+| `inbox` | `--no-mark-read` | ✅ |  |
 | `review` |  | ✅ |  |
 | `review` | `--since-time` | ✅ |  |
 | `review` | `--chat` | ✅ |  |
+| `review` | `--kind` | ✅ |  |
 | `review` | `--unanswered` | ✅ |  |
 | `review` | `--all` | ✅ |  |
 | `review` | `--transcribe` | ✅ |  |
 | `review` | `--model` | ✅ |  |
+| `review` | `--new` | ✅ |  |
+| `review` | `--mark-read` | ✅ |  |
+| `review` | `--no-mark-read` | ✅ |  |
 | `topics list` |  | ✅ |  |
 | `topics list` | `--limit` | ✅ |  |
 | `topics list` | `--page` | ✅ |  |
@@ -228,6 +241,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store export` | `--format` | ✅ |  |
 | `store export` | `--since-time` | ✅ |  |
 | `store export` | `--output` | ✅ |  |
+| `store export` | `--to` | ✅ |  |
+| `store export` | `--kind` | ✅ |  |
+| `store export` | `--all` | ✅ |  |
+| `store export` | `--encrypt` | ✅ |  |
 | `store clear` |  | ✅ |  |
 | `store clear` | `--left` | ✅ |  |
 | `store clear` | `--allow-dangerous` | ✅ |  |
@@ -236,22 +253,41 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store migrate` |  | ✅ |  |
 | `store reindex` |  | ✅ |  |
 | `store backup` |  | ✅ |  |
+| `store backup` | `--encrypt` | ✅ |  |
 | `store restore` |  | ✅ |  |
+| `store decrypt` |  | ✅ |  |
+| `store decrypt` | `--output` | ✅ |  |
 | `conversations build` |  | ✅ |  |
 | `conversations build` | `--chat` | ✅ |  |
+| `conversations build` | `--max-chats` | ✅ |  |
 | `conversations list` |  | ✅ |  |
 | `conversations list` | `--chat` | ✅ |  |
 | `conversations list` | `--since-time` | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
+| `conversations related` |  | ✅ |  |
+| `conversations related` | `--limit` | ✅ |  |
+| `conversations related` | `--model` | ✅ |  |
+| `conversations related` | `--provider` | ✅ |  |
+| `conversations related` | `--base-url` | ✅ |  |
+| `conversations related` | `--dims` | ✅ |  |
+| `conversations status` |  | ✅ |  |
+| `conversations status` | `--chat` | ✅ |  |
+| `conversations status` | `--model` | ✅ |  |
+| `conversations status` | `--provider` | ✅ |  |
+| `conversations status` | `--base-url` | ✅ |  |
+| `conversations status` | `--dims` | ✅ |  |
 | `conversations search` |  | ✅ |  |
 | `conversations search` | `--model` | ✅ |  |
 | `conversations search` | `--provider` | ✅ |  |
 | `conversations search` | `--base-url` | ✅ |  |
 | `conversations search` | `--dims` | ✅ |  |
+| `conversations search` | `--max-chats` | ✅ |  |
+| `conversations search` | `--max-chunks` | ✅ |  |
 | `conversations search` | `--chat` | ✅ |  |
 | `conversations search` | `--since-time` | ✅ |  |
 | `conversations search` | `--limit` | ✅ |  |
+| `conversations search` | `--refresh` | ✅ |  |
 | `conversations batches status` |  | ✅ |  |
 | `conversations batches status` | `--chat` | ✅ |  |
 | `conversations batches status` | `--size` | ✅ |  |
@@ -273,6 +309,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed` | `--threads` | ✅ |  |
 | `conversations embed` | `--concurrency` | ✅ |  |
 | `conversations embed` | `--max-tokens` | ✅ |  |
+| `conversations embed` | `--max-chats` | ✅ |  |
+| `conversations embed` | `--max-chunks` | ✅ |  |
 | `conversations embed status` |  | ✅ |  |
 | `conversations embed status` | `--chat` | ✅ |  |
 | `conversations embed status` | `--model` | ✅ |  |

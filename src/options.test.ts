@@ -606,6 +606,54 @@ describe("inbox", () => {
     expect(answer.chats.flatMap((one: { messages: unknown[] }) => one.messages)).toHaveLength(1)
   })
 
+  it("--kind keeps those kinds, and --mark-read marks the chats shown read, --no-mark-read never", async () => {
+    const marks: string[] = []
+    const marking = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+      history: async () => ({ items: [message("71", { timestamp: latest })], hasMore: false }),
+      markRead: async (chatId) => {
+        marks.push(chatId)
+      },
+    })
+    const other = chat.kind === "channel" ? "dialog" : "channel"
+
+    const none = json(
+      (await tg(["inbox", "--since-time", "1h", "--kind", other, "--json"], { adapter: () => marking })).stdout,
+    )
+    await tg(["inbox", "--since-time", "1h", "--no-mark-read", "--json"], { adapter: () => marking })
+    expect(marks).toEqual([])
+    const marked = json(
+      (await tg(["inbox", "--since-time", "1h", "--mark-read", "--json"], { adapter: () => marking })).stdout,
+    )
+
+    expect(none.chats).toEqual([])
+    expect(marked.markedRead).toHaveLength(1)
+    expect(marks).toEqual([chat.id])
+  })
+
+  it("review --new reads each chat once, by --kind, and marks read only when asked", async () => {
+    const marks: string[] = []
+    const marking = scripted({
+      chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
+      history: async () => ({ items: [message("71", { timestamp: latest })], hasMore: false }),
+      markRead: async (chatId) => {
+        marks.push(chatId)
+      },
+    })
+    const other = chat.kind === "channel" ? "dialog" : "channel"
+
+    const none = json(
+      (await tg(["review", "--new", "--kind", other, "--no-mark-read", "--json"], { adapter: () => marking })).stdout,
+    )
+    const first = json((await tg(["review", "--new", "--mark-read", "--json"], { adapter: () => marking })).stdout)
+    const second = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
+
+    expect(none.chats).toEqual([])
+    expect(first.chats).toHaveLength(1)
+    expect(second.chats).toEqual([])
+    expect(marks).toEqual([chat.id])
+  })
+
   it("--transcribe hears the voice messages it shows", async () => {
     const voiced = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),

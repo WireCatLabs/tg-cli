@@ -184,6 +184,15 @@ describe("the archive, from the store", () => {
       )
       expect((found.answer as { items: unknown[] }).items).toHaveLength(1)
 
+      const fresh = await tg(["archive", "conversations", "status", "--chat", CHAT, ...server, "--json"], store, env)
+      const related = await tg(
+        ["archive", "conversations", "related", CHAT, "101", "--limit", "3", ...server, "--json"],
+        store,
+        env,
+      )
+      expect(fresh.code).toBe(0)
+      expect(related.code).toBe(0)
+
       const openai = ["--provider", "openai"]
       expect(
         (await tg(["archive", "conversations", "embed", "--chat", CHAT, ...openai, "--json"], store, env)).code,
@@ -192,6 +201,12 @@ describe("the archive, from the store", () => {
         (await tg(["archive", "conversations", "embed", "status", "--chat", CHAT, ...openai, "--json"], store, env))
           .answer,
       ).toMatchObject({ left: 1 })
+      expect(
+        (await tg(["archive", "conversations", "status", "--chat", CHAT, ...openai, "--json"], store, env)).code,
+      ).toBe(0)
+      expect(
+        (await tg(["archive", "conversations", "related", CHAT, "101", ...openai, "--json"], store, env)).code,
+      ).not.toBe(0)
       expect((await tg(["archive", "conversations", "search", "invoice", ...openai, "--json"], store, env)).code).toBe(
         0,
       )
@@ -227,6 +242,102 @@ describe("the archive, from the store", () => {
     } finally {
       vi.unstubAllGlobals()
     }
+  })
+
+  it("**exports into a folder and again only what changed**, sealed with a password it never keeps", async () => {
+    const store = await backfilled()
+    const root = mkdtempSync(join(tmpdir(), "tg-folder-"))
+
+    const first = await tg(["archive", "store", "export", CHAT, "--to", join(root, "one"), "--json"], store)
+    const second = await tg(["archive", "store", "export", CHAT, "--to", join(root, "one"), "--json"], store)
+    const all = await tg(["archive", "store", "export", "--all", "--to", join(root, "all"), "--json"], store)
+    const kind = await tg(
+      ["archive", "store", "export", "--kind", "group,dialog", "--to", join(root, "k"), "--json"],
+      store,
+    )
+    const sealed = await tg(
+      ["archive", "store", "export", CHAT, "--output", join(root, "c.sealed"), "--encrypt", "--json"],
+      store,
+      {},
+      "pw one\n",
+    )
+    const opened = await tg(
+      ["archive", "store", "decrypt", join(root, "c.sealed"), "--output", join(root, "c.jsonl"), "--json"],
+      store,
+      {},
+      "pw one\n",
+    )
+    const backup = await tg(
+      ["archive", "store", "backup", join(root, "s.sealed"), "--encrypt", "--json"],
+      store,
+      {},
+      "pw one\n",
+    )
+
+    expect(first.answer).toMatchObject({ chats: [{ id: CHAT, messages: 3 }] })
+    expect(second.answer).toMatchObject({ chats: [{ file: null, messages: 0 }] })
+    expect(all.code).toBe(0)
+    expect(kind.code).toBe(0)
+    expect(sealed.answer).toMatchObject({ count: 3, encrypted: true })
+    expect(opened.code).toBe(0)
+    expect(readFileSync(join(root, "c.jsonl"), "utf8").trim().split("\n")).toHaveLength(3)
+    expect(backup.answer).toMatchObject({ encrypted: true })
+  })
+
+  it("**builds every changed chat a bounded number at a time**, and counts what a query matches", async () => {
+    const store = await backfilled()
+
+    const built = await tg(["archive", "conversations", "build", "--max-chats", "1", "--json"], store)
+    const counted = await tg(
+      [
+        "archive",
+        "messages",
+        "stats",
+        "invoice",
+        "--by",
+        "day",
+        "--chat",
+        CHAT,
+        "--source",
+        "personal",
+        "--limit",
+        "5",
+        "--timezone",
+        "Europe/Madrid",
+        "--json",
+      ],
+      store,
+    )
+
+    const models = { CLI_COMMON_CACHE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
+    const embedded = await tg(
+      ["archive", "conversations", "embed", "--max-chats", "1", "--max-chunks", "10", "--json"],
+      store,
+      models,
+    )
+    const refreshed = await tg(
+      [
+        "archive",
+        "conversations",
+        "search",
+        "invoice",
+        "--refresh",
+        "--max-chats",
+        "1",
+        "--max-chunks",
+        "10",
+        "--json",
+      ],
+      store,
+      models,
+    )
+
+    expect(built.code).toBe(0)
+    expect(counted.code).toBe(0)
+    expect(embedded.code).toBe(6)
+    expect(embedded.stderr.join("\n")).toContain("models text download e5-small")
+    expect(refreshed.code).toBe(0)
+    expect(refreshed.stderr.join("\n")).toContain("searched by words only")
   })
 
   it("installs the agents' guide under the home it is given", async () => {
