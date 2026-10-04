@@ -77,6 +77,39 @@ describe("--offline", () => {
     expect(messagesOffline.code).toBe(0)
   })
 
+  it("counts a stored chat's period by calendar day in a timezone, without connecting", async () => {
+    const store = freshStore()
+    await tg(["stats", "messages", "list", "Valencia", "--json"], { store })
+
+    const { code, stdout } = await tg(
+      [
+        "stats",
+        "chats",
+        "stats",
+        message.chatId,
+        "--offline",
+        "--since-time",
+        "2000-01-01",
+        "--by",
+        "day",
+        "--timezone",
+        "UTC",
+        "--json",
+      ],
+      { store, online: false },
+    )
+
+    expect(code).toBe(0)
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({
+      chatId: message.chatId,
+      since: "2000-01-01T00:00:00.000Z",
+      messages: 1,
+      senders: 1,
+      complete: false,
+      series: [{ key: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/), messages: 1, senders: 1 }],
+    })
+  })
+
   it("finds Saved Messages as `me`", async () => {
     const store = freshStore()
     const saved = { ...message, chatId: "1" }
