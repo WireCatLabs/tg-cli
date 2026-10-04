@@ -3,6 +3,19 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
+  and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
+  readiness and bounded local refresh; models are never downloaded automatically.
+
+### Changed — may break scripts
+
+- Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
+  `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
+
 ## 0.26.0 — 04.10.2026
 
 ### What's new

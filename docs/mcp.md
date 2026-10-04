@@ -193,8 +193,8 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_messages_list` | `tg messages list`, `--before-id`, `--before-time`, `--after-id`, `--after-time` | a chat's messages; `before_id` or `before_time` read back, `after_id` or `after_time` forward — one of them at most; marks nothing read — `tg_chats_mark_read` does that, behind its own key; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
 | `tg_messages_context` | `tg messages show`, `context`, `--before-n`, `--after-n` | one message and those either side; `before_n` and `after_n` say how many |
 | `tg_messages_scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
-| `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; anything else is refused with the `tg messages download` command that saves it |
-| `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
+| `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; `index` selects an attachment; anything else is refused with the `tg messages download` command that saves it |
+| `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `model` chooses the downloaded speech model; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
 | `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
 | `tg_messages_link` | `tg messages link` | a permalink where supported and an account-scoped locator; read-only; a link grants no chat membership |
 | `tg_messages_send` | `tg messages send`, `--reply-to`, `--topic` | send, by `messages.send`; `reply_to` answers a message and must belong to the chosen topic; `send_id` repeats a send whose outcome was unknown in the same chat and topic; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `topic` picks a forum topic; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
@@ -215,6 +215,9 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_chats_rules_show`, `tg_chats_moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
 | `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
 | `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
+| `tg_messages_stats` | `tg messages stats` | count local query matches by chat, sender, day or hour |
+| `tg_conversations_status`, `tg_conversations_related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
+| `tg_conversations_refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
 | `tg_conversations_list`, `tg_conversations_show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
@@ -255,3 +258,10 @@ The server exits as soon as the client closes stdin, and closes its connection t
 
 `tg_messages_link` returns `{ locator, url, access, reason }` without message content. It shares
 `messages link` account validation and audience limits; a private link grants no membership.
+
+Personal MCP validates arguments against the advertised schema and refuses unknown fields before
+connecting or acting. Use `at_time` for scheduling; an approved relative time executes at the
+absolute time shown in the form, even after a delayed response.
+
+Local conversation refresh is refused before writing at `ask` or with `--confirm-send`; run the
+CLI command with the owner's approval.
