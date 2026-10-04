@@ -212,7 +212,7 @@ There are good tools for a Telegram account already. Choose what fits the job.
 | | tg-cli | [tgcli](https://github.com/kfastov/tgcli) |
 |---|:-:|:-:|
 | what it is | a terminal tool and an MCP server | a terminal tool, an archiver and an MCP server |
-| MCP server | ✅ over stdin and stdout, started by the client | ✅ over HTTP, from its background service |
+| MCP server | ✅ stdin/stdout or HTTP behind your tunnel | ✅ over HTTP, from its background service |
 | a skill for agents with a terminal | ✅ | ✅ |
 | limits for an agent: read-only, allowed actions, allowed chats, an hourly cap, confirming each send | ✅ | — |
 | a message never sent twice after a broken connection | ✅ | — (retries a failed send) |
@@ -520,3 +520,7 @@ MIT — see [LICENSE](LICENSE).
 Pull requests, bug reports and ideas are welcome —
 [issues](https://github.com/leemour/tg-cli/issues). How the code is built and how to test it:
 [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) and [docs/dev/TESTING.md](docs/dev/TESTING.md).
+
+For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel
+with an owner-code login and a form before every write. See [remote access](docs/remote.md).
+Group activity is available with `tg chats stats <chat>`; [statistics](docs/groups.md#activity-statistics).

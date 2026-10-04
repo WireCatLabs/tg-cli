@@ -5,21 +5,30 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.27.0 — 04.10.2026
+
 ### What's new
 
-- **`tg mcp --http --public-url https://<name>.ts.net` lets ChatGPT and Claude in the browser use `tg`.** It serves
-  the MCP tools on `127.0.0.1` behind your own tunnel, with its own login: an app needs a one-time code that `tg`
-  prints in your terminal. Every change asks through a form in the app first. Logins last 30 days;
-  `tg mcp --revoke` ends them all. [docs/remote.md](docs/remote.md) replaces the third-party proxy setup.
-
-- **`tg chats stats <chat>` counts a group's or channel's period from the local store**: messages, people who
-  wrote, replies, reactions, top posts, questions answered, joins and leaves. Also the read-only MCP tool.
+- `tg mcp --http --public-url https://<name>.ts.net` serves behind your HTTPS tunnel with its own owner-code
+  OAuth login. Every HTTP write needs a form; `tg mcp --revoke` forgets browser logins for the profile.
+- `tg chats stats <chat>` counts stored group/channel activity and asks Telegram for joins and leaves.
+  Offline and MCP results omit membership; incomplete counts are lower bounds.
+- `tg chats members audit` lists suspicious member signals without removing anyone; unavailable signals
+  are reported in `unknown`. MCP inbox/review accept `kinds` and `new` with their own checkpoints.
 
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.
 
 ### Changed — may break scripts
+
+- Search/statistics coverage uses actual inventory and fetch timestamps; each completeness entry adds
+  `fetchedAt`. Old stores gain these facts after the next whole chat list and history fetch.
+  The `/catch-up` prompt takes `kind` and `mode` instead of `since`.
+- `config set permissions` refuses unknown command keys, including keys inside a whole object, with exit 2.
+  Existing files warn and continue; `config unset` can remove an old unknown key.
+- `store fetch --page-size` above 100 is refused before connecting. Run `store fetch <chat>` again to repair
+  an incorrect history-start mark when older messages exist.
 
 - **`tg serve` exits with code 12 (`provider_unavailable`) when a saved session exists but the app credentials are unavailable**,
   for example while the login keyring is locked. Systemd retries after 30 seconds; macOS needs `tg server start`.
@@ -38,6 +47,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   message. Even the last nonempty page may say there is more; following its hint can return an empty page.
 
 ### Fixed
+
+- Legacy, regex and filters-only search report the actual word-index readiness. `server status` reports
+  the last normal unit exit and a stopped-login hint when the unit deliberately stays down.
 
 - **`tg store fetch` no longer stops early and counts a chat as complete when a page comes back short.**
   Telegram leaves deleted messages out of a page, so a page can be short in the middle of a chat; the

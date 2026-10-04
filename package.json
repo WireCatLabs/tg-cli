@@ -1,6 +1,6 @@
 {
   "name": "@leemour/tg-cli",
-  "version": "0.26.0",
+  "version": "0.27.0",
   "description": "A local command line interface for a personal Telegram account, built for agents and scripts",
   "license": "MIT",
   "author": "Viacheslav Ptsarev",
@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.17.0",
-    "@leemour/cli-messaging": "0.146.0",
+    "@leemour/cli-messaging": "0.147.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "valibot": "1.5.0"

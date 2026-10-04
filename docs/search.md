@@ -42,8 +42,10 @@ Exceeding row/byte/state/work/time budgets produces an explicit error; narrow th
 ## Archive and machine response
 
 Empty hits do not prove that a message was never sent. JSON reports the query version,
-completeness/coverage, accounts/chat and index readiness even with no hits. lastSyncedAt is currently null;
-profile inventory is not considered complete. JSONL contains items only; use --json for coverage.
+completeness/coverage, accounts/chat and index readiness even with no hits. `lastSyncedAt` is the oldest fetch time of chats in scope,
+`null` if any chat has never been fetched. `inventoryComplete` means every account in scope has
+provided its whole chat list at least once; it does not promise a complete history. An older store
+keeps `false` and `null` until the next whole list and `store fetch`. JSONL contains items only; use --json for coverage.
 An unfinished word index requires `tg store migrate`; fetch history with `tg store fetch`.
 Candidate presets do not verify credentials.
 
@@ -65,3 +67,7 @@ contains operator/field tables, Unicode/escaping, presets, limits, errors and te
 The [technical specification](https://github.com/leemour/cli-messaging/blob/main/docs/search/query-language-spec.md)
 describes the pinned grammar, AST/schema, reference fixtures and compiler.
 [Archive](archive.md) covers fetching and completeness; [commands](commands.md) lists current options.
+
+`wordsReady` reports the actual word-index state even for filters-only or regex searches.
+When false, finish `tg store migrate`: strict word searches refuse to run, while legacy word searches
+use substring matches until the index is ready.
