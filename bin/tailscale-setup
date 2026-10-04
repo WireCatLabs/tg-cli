@@ -20,9 +20,10 @@ sudo tailscale set --operator="$(id -un)"
 
 cat >&2 <<'EOF'
 
-Now three switches in the admin console, once (https://login.tailscale.com/admin):
-  1. DNS → MagicDNS: Enable.
-  2. DNS → HTTPS Certificates: Enable.
-  3. Access controls → Funnel → "Add Funnel to policy" → Save.
+Now three switches in the admin console, once:
+  1. https://login.tailscale.com/admin/dns → MagicDNS: Enable.
+  2. Same page → HTTPS Certificates → Enable HTTPS. Your machine name and tailnet name then appear
+     in public certificate logs (https://tailscale.com/kb/1153/enabling-https).
+  3. https://login.tailscale.com/admin/acls → Funnel → "Add Funnel to policy" → Save.
 Then run bin/tg-remote.
 EOF
