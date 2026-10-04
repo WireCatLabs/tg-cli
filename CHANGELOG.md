@@ -16,6 +16,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
   `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
 
+### Fixed
+
+- **`tg store fetch` no longer stops early and counts a chat as complete when a page comes back short.**
+  Telegram leaves deleted messages out of a page, so a page can be short in the middle of a chat; the
+  fetch now goes on until Telegram has nothing older. For a chat already counted as complete with older
+  messages missing, run `tg store fetch <chat>` again: it reads below what is held.
+
 ## 0.26.0 — 04.10.2026
 
 ### What's new

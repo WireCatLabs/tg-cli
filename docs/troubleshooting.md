@@ -289,6 +289,12 @@ Search reads only what this machine has kept, never Telegram. An empty answer me
 "never said". Read the chat (`tg messages list <chat>`), or fetch its history with `tg store fetch`,
 then search again ([archive.md](archive.md#search)). `tg store check` says which chats are behind.
 
+## A chat reads as fetched in full, but older messages are missing
+
+Run `tg store fetch <chat>` again. It reads below the oldest message the store holds, whether or not
+the chat was counted as complete, and goes on to the chat's first message; give `--limit` more room
+for a long chat. Keep `--page-size` at 100 or less: Telegram returns up to 100 messages a request.
+
 ## "tg serve is already running for profile …"
 
 Exit code `2`. One `serve` per profile. `tg server status` says which process and since when;

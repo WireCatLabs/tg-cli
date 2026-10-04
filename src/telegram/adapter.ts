@@ -212,7 +212,8 @@ export class TelegramAdapter {
       const peer = await this.#inputOf(reference)
       const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
       const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
-      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined && page.length === limit }
+      // mtcute drops deleted entries, so a page short of `limit` can sit mid-history; only no `next` is the start.
+      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined }
     })
   }
 

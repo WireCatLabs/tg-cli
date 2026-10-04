@@ -414,6 +414,20 @@ describe("reading", () => {
     ])
   })
 
+  it("**reads a short page as more to come**, and only a page with no next one as the start", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(3)]
+    client.historyNext = { id: 3, date: 0 }
+    const short = await adapter.history("-100500", { limit: 100, before: "10" })
+
+    client.history = []
+    client.historyNext = undefined
+    const start = await adapter.history("-100500", { limit: 100, before: "3" })
+
+    expect([short.items.map((one) => one.id), short.hasMore]).toEqual([["3"], true])
+    expect([start.items, start.hasMore]).toEqual([[], false])
+  })
+
   it("reads forward from one past a message id, or from a moment, keeping only what is newer", async () => {
     const { adapter, client } = await open()
     client.history = [message(11), message(12)]
