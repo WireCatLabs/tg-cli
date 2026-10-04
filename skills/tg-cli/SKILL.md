@@ -84,7 +84,7 @@ the owner before `tg store fetch <chat> --last 100`; setup starts no background 
 - **`--jsonl`**: one object per line, for `jq`. Whether there is more is said on stderr only.
 - **Branch on the exit code, not on the text**: `0` success, `2` bad input, `4` not logged in, `5`
   the profile may not do this (its `permissions`; the error names the key — do not work around it),
-  `6` not found, `7` the chat is not on the list of allowed recipients, or the change asks first and
+  or Telegram froze the account or limited its messages as spam (do not retry; tell the owner), `6` not found, `7` the chat is not on the list of allowed recipients, or the change asks first and
   nobody answered (stop and ask the owner), `8` a limit (sends per hour, or Telegram's FLOOD_WAIT —
   the error says how long), `14` **unknown whether the message went** (see sending).
 - `-v` and `-vv` add detail for a person. The version is `tg -V`.

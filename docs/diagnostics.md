@@ -82,7 +82,7 @@ The same goes for a report made from a run.
 
 ```sh
 tg doctor              # connects to nothing
-tg doctor --online     # also connects once and reads the account; sends nothing
+tg doctor --online     # also connects once and reads the account; sends nothing to Telegram
 ```
 
 It shows the version, the runtime, the profile, the config file, whether a session and the app
@@ -103,6 +103,11 @@ the runs kept.
   `revoked`. A frozen account can read but not write. It comes with the date it was frozen, the date
   Telegram will delete it, and the appeal link, where Telegram gives them. Logging in again does not
   reopen an account Telegram closed.
+- **`flood`** lists the waits Telegram asked this profile to keep (`deadlines`) and a hold on its
+  sends (`sendBlock`), from the next `@leemour/cli-messaging`. `doctor` reads only, with one
+  exception: **`doctor --online` writes the frozen hold.** When it reads the account frozen, it holds
+  sends until Telegram's date; when it reads it active, it lifts that hold. It never lifts a hold for
+  a spam limit — `tg flood clear` does that.
 
 ## A problem report
 

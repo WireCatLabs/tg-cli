@@ -51,6 +51,16 @@ describe("Telegram's refusals", () => {
     }
   })
 
+  it("**makes PEER_FLOOD a limit on writing, not a wait**, so sends are held rather than retried", () => {
+    expect(toCliError(rpc(400, "PEER_FLOOD"))).toMatchObject({
+      code: "permission_error",
+      details: {
+        providerError: "PEER_FLOOD",
+        standing: { state: "limited", hint: expect.stringContaining("@SpamBot") },
+      },
+    })
+  })
+
   it("names a banned or deleted account, and does not send it to log in again", () => {
     const banned = toCliError(rpc(401, "USER_DEACTIVATED_BAN"))
     expect(banned).toMatchObject({ code: "authentication_error", details: { standing: { state: "banned" } } })

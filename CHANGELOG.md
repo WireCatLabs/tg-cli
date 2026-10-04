@@ -68,6 +68,18 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   Other commands and profiles without a saved session still exit 4.
 - **`tg serve` and `tg watch` refuse to start with code 4 (`authentication_error`) if the session was already revoked.**
   They check the login before reporting readiness. A session revoked after startup still needs a separate check.
+- **`tg serve` and `tg watch` exit when Telegram ends the login while they listen**, with code 4, within about 15
+  minutes; the service does not restart on it. mtcute stops its updates without an error then, so `tg` looks every
+  30 seconds and asks Telegram itself every 15 minutes. If the updates stop for another reason, or that question gets
+  no answer within 30 seconds, it exits with code 12, which systemd restarts. Before, it stayed up and received
+  nothing.
+- **A one-shot command waits out a FLOOD_WAIT of up to 10 seconds twice at most, not five times**, and says so on
+  stderr; a third one ends it with code 8 (`rate_limited`) and `retryAfterMs`. `serve` and `watch` wait up to
+  2 minutes, three times.
+- **`PEER_FLOOD` (the account limited as spam) exits with code 5 (`permission_error`), not 11**, and points to
+  @SpamBot: retrying makes it worse. With the next `@leemour/cli-messaging`, it holds sends for an hour, set again
+  by each new refusal; `tg flood clear` lifts the hold and forgets remembered waits; and a
+  remembered FLOOD_WAIT fails the next command at once.
 - **The background service no longer restarts on that code.** On systemd, exit 4 prevents a restart. On macOS,
   launchd cannot exclude one exit code, so the agent no longer restarts after any failure. Run `tg server install`
   again to update the unit; after `tg session start`, run `tg server start`.

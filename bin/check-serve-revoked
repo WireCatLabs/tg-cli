@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Live check for a login Telegram ends while `serve` listens (TASK-369 part A): runs this checkout's
+# `serve` on the test account B (`tgtest`) in the foreground and prints how it ended. Run it from a
+# terminal; it sends nothing.
+#
+#   pnpm build
+#   bin/check-serve-revoked
+#
+# Once it says "listening", end its session from another device: Settings → Devices, the session
+# named after this app. Expect exit code 4 within about 15 minutes. Afterwards B needs a new login in
+# the main checkout: bin/tg tgtest session start.
+set -u
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+started=$(date +%s)
+"$root/bin/tg-live" tgtest serve
+code=$?
+echo "serve exited with code $code after $(( $(date +%s) - started )) s (4 is a refused login, 12 a restart)" >&2
+exit "$code"

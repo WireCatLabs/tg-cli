@@ -87,6 +87,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
           ...options,
           ...proxyOption(proxy()),
           diagnostic: (line) => base.streams.diagnostic(line),
+          note: (line) => base.renderer.warn(line),
           verbose: base.settings.trace,
           login,
         })

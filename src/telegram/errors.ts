@@ -49,7 +49,7 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
 }
 
-type Standing = (login: string) => [ErrorCode, string, "frozen" | "banned" | "deactivated" | "revoked"]
+type Standing = (login: string) => [ErrorCode, string, "frozen" | "limited" | "banned" | "deactivated" | "revoked"]
 
 const revoked: Standing = (login) => ["authentication_error", `Telegram ended this login — run ${login}`, "revoked"]
 const frozen: Standing = () => [
@@ -79,6 +79,13 @@ const STANDINGS: Record<string, Standing> = {
   ],
   FROZEN_METHOD_INVALID: frozen,
   FROZEN_PARTICIPANT_MISSING: frozen,
+  // Not a wait: retrying is what made it. `limited` makes cli-messaging hold every write for a while.
+  PEER_FLOOD: () => [
+    "permission_error",
+    "Telegram limited this account's messages as spam (PEER_FLOOD) — it can still read; " +
+      "message @SpamBot in a Telegram app to see until when",
+    "limited",
+  ],
 }
 
 /** mtcute's argument errors by the start of their text, which may go on to quote what was typed. */
