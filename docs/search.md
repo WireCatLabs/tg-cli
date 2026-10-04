@@ -19,10 +19,15 @@ correction or substring fallback. `alpha OR beta gamma` means `(alpha OR beta) A
 
 ## Fields and operators
 
-text/body/from/chat/date/kind/has/topic/in/preset, Boolean and field groups,
+text/body/from/chat/date/kind/has/topic/in/preset/filename/mime/size, Boolean and field groups,
 inclusive/exclusive ranges, bounded wildcard and Lucene regex are supported. topic requires one mandatory chat.
-kind:bot selects a peer; in:bots selects Bot API accounts. filename/mime/size/tag are explicitly unsupported,
-as are fuzzy/proximity/boost/interval functions. Unknown fields never become literal text.
+kind:bot selects a peer; in:bots selects Bot API accounts. tag is not supported yet, nor are
+fuzzy/proximity/boost/interval functions. Unknown fields never become literal text.
+
+Files are found by name, type and size, with no message text needed: `filename:*.pdf`,
+`filename:*contract*` (the whole name, ignoring case and accents), `size>10MB`, `size:[1KB TO 300KB]`
+(KB/MB/GB are 1024-based), `mime:image` or `mime:"application/pdf"` (quote a full type: `/` starts a
+regex). A link to a site is a phrase: `has:link AND "github.com"`.
 
 ## Dates and regex
 
