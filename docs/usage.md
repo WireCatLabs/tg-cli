@@ -476,6 +476,7 @@ made with `--revote`.
 ```sh
 tg chats mark-read "Book club"               # up to the newest message
 tg chats mark-read "Book club" --until 4242  # only up to this one
+tg chats mark-read "Hiking" --topic 12       # only this forum topic
 tg messages list "Book club" --mark-read     # read it, and mark it read up to the newest shown
 ```
 
