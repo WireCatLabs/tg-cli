@@ -118,8 +118,11 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
    Use --json for query version/coverage. Empty hits do not prove a message never existed.
    --timezone selects a calendar zone; kind:bot and in:bots differ. Term/body regex differ.
-   Files: `filename:*.pdf`, `size>10MB`, `mime:image`; links: `has:link AND "github.com"`.
-   See the [search guide](https://github.com/leemour/tg-cli/blob/main/docs/search.md).
+   Dates: `date:today`, `date:7d`; files: `filename:*.pdf`, `size>10MB`, `mime:image`;
+   links: `has:link AND "github.com"`; the owner's labels: `tag:work`. Counts: `tg messages stats`.
+   Guides: [search](https://github.com/leemour/tg-cli/blob/main/docs/search.md),
+   [topic search](https://github.com/leemour/tg-cli/blob/main/docs/topic-search.md) (conversations by
+   meaning), [query language](https://github.com/leemour/tg-cli/blob/main/docs/query-language.md).
 
 6. **`tg store export` exports only what was kept**, and never asks Telegram. `tg store status` says
    how much of each chat is kept.

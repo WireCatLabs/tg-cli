@@ -1,93 +1,153 @@
 # Message search
 
-`tg messages search` reads only the shared local archive, without networking or read receipts.
+`tg messages search` finds messages in the local archive: the copy of your chats that tg keeps on this
+computer. It never connects to Telegram and marks nothing read. A message tg has not fetched cannot be
+found, so fetch the history first: `tg store fetch <chat>` ([archive](archive.md)).
 
-## Quick start
+This page covers everyday searches. Three more pages go further:
 
-```sh
-tg messages search 'invoice AND (kind:group OR kind:private)' --json
-tg messages search 'from:"Alice Synthetic" date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid --json
-tg messages search 'preset:secret kind:saved' --json
-tg messages search 'text:/pass(port)?/' --json
-tg messages search 'chat:"Work" AND body:/.*invoice.*/' --json
-tg messages search 'has:file' --json
-```
+- [Topic search](topic-search.md) — find a discussion by what it was about, when you do not remember
+  its words.
+- [Query language](query-language.md) — every field, operator, limit and the JSON answer.
+- [How search works](https://wirecat.dev/en/docs/search-architecture) — the technical page: the word
+  index, the conversation graph, vectors and how results are ranked.
 
-Replace example names with your own. Words and phrases match strictly, with no automatic
-correction or substring fallback. `alpha OR beta gamma` means `(alpha OR beta) AND gamma`;
-`alpha OR beta AND gamma` means `alpha OR (beta AND gamma)`. Use parentheses for clarity.
+Put the query in single quotes, so the shell leaves its quotes and brackets alone. The names below are
+examples; use your own chats and people.
 
-## Fields and operators
-
-text/body/from/chat/date/kind/has/topic/in/preset/filename/mime/size/tag, Boolean and field groups,
-inclusive/exclusive ranges, bounded wildcard and Lucene regex are supported. topic requires one mandatory chat.
-kind:bot selects a peer; in:bots selects Bot API accounts. fuzzy/proximity/boost/interval functions are unsupported. Unknown fields never become literal text.
-
-Files are found by name, type and size, with no message text needed: `filename:*.pdf`,
-`filename:*contract*` (the whole name, ignoring case and accents), `size>10MB`, `size:[1KB TO 300KB]`
-(KB/MB/GB are 1024-based), `mime:image` or `mime:"application/pdf"` (quote a full type: `/` starts a
-regex). A link to a site is a phrase: `has:link AND "github.com"`.
-
-## Dates and regex
-
-`--timezone` selects an IANA zone; a date without a time means a calendar day. An inclusive upper
-boundary includes the whole day, an exclusive one excludes it; DST days are not always 24 hours.
-Quote exact timestamps and include seconds and an offset.
-
-text regex matches a whole normalized term; body regex matches the entire raw, case-sensitive body.
-Use `.*` for a body substring. This is a Lucene subset, without JavaScript lookaround, backreferences or flags.
-Exceeding row/byte/state/work/time budgets produces an explicit error; narrow the scope.
-
-## Archive and machine response
-
-Empty hits do not prove that a message was never sent. JSON reports the query version,
-completeness/coverage, accounts/chat and index readiness even with no hits. `lastSyncedAt` is the oldest fetch time of chats in scope,
-`null` if any chat has never been fetched. `inventoryComplete` means every account in scope has
-provided its whole chat list at least once; it does not promise a complete history. An older store
-keeps `false` and `null` until the next whole list and `store fetch`. JSONL contains items only; use --json for coverage.
-An unfinished word index requires `tg store migrate`; fetch history with `tg store fetch`.
-Candidate presets do not verify credentials.
-
-## Legacy migration
+## Words and phrases
 
 ```sh
-tg messages search 'from:alice after:7d invoice -draft' --language legacy --json
-tg messages search --regex 'invoice\s+\d+' --json
+tg messages search invoice
+tg messages search '"invoice paid"'              # the exact phrase
+tg messages search 'cafe OR library'
+tg messages search '(cafe OR library) NOT loud'
+tg messages search 'invoic*'                     # every word that starts with "invoic"
 ```
 
-Legacy preserves the old filters and discovery. --regex is a separate JavaScript iu full-body mode with
-an isolated worker and limits; --regex --language lucene is refused. The programmatic saved-query contract carries a language/version;
-the shared migration preview cannot preserve fuzzy discovery results.
+Words next to each other must all be in the message. A word finds that word, in any case and with
+or without accents. Another form of a word is another word: `flat` does not find `flats`; a prefix such
+as `flat*` finds both. Nothing is guessed: no typo correction, no similar words.
 
-## Full reference
-
-The [canonical language guide](https://github.com/leemour/cli-messaging/blob/main/docs/search/query-language.md)
-contains operator/field tables, Unicode/escaping, presets, limits, errors and ten executable recipes.
-The [technical specification](https://github.com/leemour/cli-messaging/blob/main/docs/search/query-language-spec.md)
-describes the pinned grammar, AST/schema, reference fixtures and compiler.
-[Archive](archive.md) covers fetching and completeness; [commands](commands.md) lists current options.
-
-`wordsReady` reports the actual word-index state even for filters-only or regex searches.
-When false, finish `tg store migrate`: strict word searches refuse to run, while legacy word searches
-use substring matches until the index is ready.
-
-## Tags, saved searches and query history
+## People and chats
 
 ```sh
-tg tags add work --chat <chat>
-tg tags list --tag work --type chat --json
-tg messages search 'tag:work AND invoice' --json
-tg searches create invoices invoice --chat <chat>
-tg messages search --saved invoices --json
-tg messages stats --saved invoices --by day --json
-tg searches history --json
-tg searches clear
+tg messages search 'from:"Alice Synthetic" invoice'
+tg messages search 'from:("Alice Synthetic" OR "Bob Synthetic") library'
+tg messages search 'from:me date:7d'             # what you wrote this week
+tg messages search 'chat:"Book club" library'
+tg messages search library --chat "Book club"    # the same, as an option
+tg messages search 'passport kind:private'       # one-to-one chats only
 ```
 
-Tags label a chat, person or message in the local archive and are never sent. `tag:work` matches a
-message tagged, in a tagged chat or from a tagged person; `NOT tag:work` excludes these exactly.
-`tags remove` removes labels. Saved queries are checked again; extra words are AND-ed and supplied
-options replace stored options. `searches list`, `show` and `delete` manage named queries.
-Successful search/statistics calls keep query parameters in separate history by default, without results
-or message bodies; the newest 1,000 runs are kept. Explicit `--no-record` or `record:false` disables
-this in CLI and MCP. `searches clear` clears history and preserves named searches. This is separate from `runs`.
+`kind:` takes `private`, `group`, `channel`, `saved` (Saved Messages) and `bot`. `topic:` keeps to one
+forum topic of a group; it needs that group in `chat:` or `--chat`.
+
+## Dates
+
+```sh
+tg messages search 'date:today'
+tg messages search 'library date:yesterday'
+tg messages search 'invoice date:7d'             # from 7 days ago until now; also 30m, 2h
+tg messages search 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
+```
+
+`today`, `yesterday` and calendar dates are days in your computer's time zone; `--timezone` picks
+another. In a range, `[` and `]` include that day, `{` and `}` exclude it.
+
+## Files and links
+
+```sh
+tg messages search 'has:file'
+tg messages search 'filename:*.pdf'
+tg messages search 'filename:*contract*'         # part of the name
+tg messages search 'size>10MB'
+tg messages search 'mime:image'                  # any picture sent as a file
+tg messages search 'mime:"application/pdf"'      # quote a full type
+tg messages search 'has:photo chat:"Book club"'
+tg messages search 'has:link AND "github.com"'   # a link to a site
+```
+
+A file is found by its name, size and type even when the message has no text. `filename:` compares the
+whole name, ignoring case and accents. Sizes use KB, MB and GB of 1,024. `has:` also takes `attachment`,
+`video`, `audio`, `voice`, `sticker`, `contact`, `location` and `poll`. A link counts when it is in the
+text or only in its preview card.
+
+## Passwords, codes and cards
+
+```sh
+tg messages search 'preset:secret kind:saved'    # something that looks like a password or token
+tg messages search 'preset:card'
+```
+
+A preset finds messages that *look like* a password, a login code, an API key, a card or IBAN number, a
+passport, a phone, an email or a link. It checks the shape only: it does not prove that a password
+works or a card is real. The full list is in the [query language](query-language.md#presets).
+
+## Tags
+
+```sh
+tg tags add work --chat "Book club"
+tg tags add work --contact "Bob Synthetic"
+tg tags list --tag work --type chat
+tg messages search 'tag:work invoice'
+tg messages search 'invoice NOT tag:work'
+tg tags remove work --chat "Book club"
+```
+
+A tag is your own label on a chat, a person or one message (`--message <id> --chat <chat>`). It is kept
+in the local archive only and is never sent to Telegram. `tag:work` finds messages tagged `work`,
+messages in a chat tagged `work` and messages from a person tagged `work`. A tag is 1–32 letters a–z,
+digits and hyphens.
+
+## Saved searches and history
+
+```sh
+tg searches create meetings 'library OR cafe' --chat "Book club"
+tg messages search --saved meetings
+tg messages search --saved meetings 'date:today'  # extra words are added with AND
+tg messages stats --saved meetings --by day
+tg searches list
+tg searches history --limit 10
+tg messages search --saved 42                    # a row of the history, by its number
+```
+
+`searches create` saves a query with its options and runs nothing; an existing name needs `--replace`.
+Options you type with `--saved` replace the saved ones. The saved text is read again on every run, so
+`date:7d` always means the last 7 days. `searches show` prints one, `searches delete` removes one.
+
+Every search and count that succeeds is written to the history: the query and its options, never the
+messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run out of it, the same
+in MCP with `record: false`; `searches clear` empties the history and keeps the saved searches. This
+history is separate from the run records of `tg runs`.
+
+## Counting: `messages stats`
+
+```sh
+tg messages stats invoice                        # how many in each chat
+tg messages stats 'date:7d' --by sender
+tg messages stats 'from:me' --by day --timezone Europe/Madrid
+tg messages stats --by hour                      # every stored message
+```
+
+`messages stats` counts the messages `messages search` would find with the same query, each one once.
+`--by chat` (the default) and `--by sender` put the largest first; `--by day` and `--by hour` go in
+order. When some chats are not stored in full, the numbers are a lower bound, and stderr says how
+many chats that is.
+
+## When nothing is found
+
+An empty answer means "not in the archive you searched", not "never sent". Check what is stored with
+`tg store status` and fetch more with `tg store fetch`. With `--json` the answer says which chats were
+searched and how complete they are, even when nothing matched. If tg asks for `tg store migrate`, the
+word index is still being built; searches without words (`has:file`, `date:today`) already work.
+
+To search every account in the store, add `--source all`. `--newest` orders by time instead of by
+relevance, and `--context 2` shows two messages around each one found.
+
+## For scripts and agents
+
+`--json` returns one object with the messages and what was searched; `--jsonl` streams the messages
+only. In MCP, `tg_messages_search` and `tg_messages_stats` take the same queries, and `tg_tags_*` and
+`tg_searches_*` manage tags and saved searches. The answer's fields,
+the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).

@@ -14,6 +14,9 @@ order.
 | [sessions.md](sessions.md) | How does login work: QR or phone, the app from my.telegram.org, the keyring, profiles, logout? |
 | [configuration.md](configuration.md) | What can I set, with which variable, and which value wins? |
 | [archive.md](archive.md) | What does the local store keep, how do I fill it, search it, export it, keep it current and back it up? |
+| [search.md](search.md) | How do I find a message by its words, sender, chat, date, file, link or tag, save a search and count? |
+| [topic-search.md](topic-search.md) | How do I find a discussion by what it was about, keep that current, and what leaves my computer? |
+| [query-language.md](query-language.md) | Every search field, operator, preset, limit and the JSON answer |
 | [mcp.md](mcp.md) | How do I connect Claude Desktop, Cursor or another client without a terminal? |
 | [remote.md](remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes.md](recipes.md) | What can an agent do for me every day, and how do I run it on a schedule? |
