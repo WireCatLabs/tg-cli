@@ -73,19 +73,9 @@ tg store jobs cancel <job>                  # stops after the current page; a la
 
 ## Search
 
-`tg messages search` reads only the local archive. The new default is a strict Lucene profile:
-words, phrases, Boolean groups, fields, dates and bounded regex. The [search guide](search.md)
-explains syntax and migration. Use `--language legacy` for the old filters and discovery.
-
-```sh
-tg messages search 'invoice kind:private' --json
-tg messages search 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid --json
-tg messages search 'preset:secret kind:saved' --json
-```
-
-Empty hits mean “not found in the selected archive”. JSON reports completeness and coverage;
-missing network refresh watermarks never imply freshness. `--source` selects provider/accounts,
-`--newest` selects time order, `--context` adds nearby messages. --regex remains separate legacy JS mode.
+`tg messages search` finds stored messages by their words, sender, chat, date, files, links and your
+own tags; it never asks Telegram. [Message search](search.md) is the guide, with saved searches and
+counts. An empty answer means "not in this archive": fetch the chat first.
 
 ## Export
 
@@ -136,50 +126,8 @@ opens one; `tg store restore` asks for the password of an encrypted backup.
 
 ## Conversations in a group
 
-A busy group mixes several conversations at once. `tg conversations` finds them in the stored messages,
-by replies, mentions and who wrote next, without asking Telegram and without any AI:
-
-```sh
-tg conversations build --chat "Valencia Expats"          # find them; run it again after fetching more
-tg conversations list --chat "Valencia Expats" --since-time 7d
-tg conversations show 91                                 # one conversation, oldest first
-tg conversations show "Valencia Expats" 4521             # the conversation message 4521 is in
-tg messages links "Valencia Expats" 4521                 # why that message is where it is
-```
-
-Nothing is built until you run `build`, and a new `build` replaces the last one. `tg store check` names
-the chats built with older rules. A mention by name, with no @username, counts as a mention too.
-
-Your own AI agent can link what the rules leave open. `tg skill show link-conversations` is its
-guide: it says how much text it would read and waits for your yes, then answers the chat a batch at a
-time (`tg conversations batches next`, `tg conversations links add`). tg calls no model itself. The
-agent's answers come before the rules' guesses and after Telegram's own replies;
-`tg conversations links clear --chat <chat>` drops them. The permission `conversations.links` decides
-whether a profile may store them.
-
-### Search by meaning
-
-Once a chat's conversations are built, tg can find them by what they are about, not only by the words
-in them. `tg conversations embed` turns each conversation, or each piece of a long one, into a vector on
-this computer; `tg conversations search` then finds the conversations nearest to your question:
-
-```sh
-tg models text download e5-small                         # once: 135 MB, shared with max
-tg conversations embed --chat "Valencia Expats"          # resumes where it stopped; --workers 3 for more speed
-tg conversations search "where to rent a flat" --chat "Valencia Expats"
-tg conversations search "renting a flat"                 # every chat you embedded
-```
-
-Nothing leaves your computer. `tg models text list` shows the models: `e5-small` is the default;
-`embeddinggemma` finds more, runs several times slower, and downloads only with `--accept-terms`, since
-it comes under Google's Gemma terms. `tg conversations embed status --chat <chat>` says how much is left,
-and `tg conversations embed clear --chat <chat>` drops the vectors.
-
-With your own key, a service can compute them instead: `tg models text key set openai`, then
-`--provider openai` on `embed` and `search`. Before any message leaves your computer, `embed` says how
-many chunks, at most how many tokens and at most what price, and waits for your yes (`--yes` in
-scripts; `--max-tokens` sets a limit). `--base-url` takes any server with the same API, such as Ollama
-or LM Studio on this computer, with `--model` and `--dims`.
+A busy group mixes several conversations at once. `tg conversations` untangles them from the stored
+messages and finds them by what they were about, on this computer: [topic search](topic-search.md).
 
 ## Evidence for a chat brief
 

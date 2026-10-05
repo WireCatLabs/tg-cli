@@ -11,6 +11,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   separate history; --no-record disables it in both interfaces, without storing results or message bodies.
 - Shared reply controls expose test/status/pause/resume. Actual replies require replies.send:allow and a tester
   list; defaults deny sending and an empty list answers nobody.
+- **Search has three guides.** [Message search](docs/search.md) is everyday searching by words, people, dates,
+  files, links and tags; [topic search](docs/topic-search.md) explains conversations, vectors, freshness and what
+  a remote model sends; [query language](docs/query-language.md) is the reference.
 - Store repair previews preserve mismatched tables as copies. Stem settings are store-wide; flood clear is owner
   maintenance without a MCP tool.
 
@@ -275,7 +278,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   nearest ones, in one chat or every one you embedded. `tg models text list|download` fetches the model
   once into the folder the speech models share. With your own key, `--provider openai` (or
   `--base-url` for Ollama, LM Studio and the like) computes them instead, after telling you what goes
-  out and what it may cost. See [the archive](docs/archive.md#search-by-meaning).
+  out and what it may cost. See [topic search](docs/topic-search.md).
 - **`tg store fetch` no longer runs for ever** when Telegram keeps answering with messages it already
   gave.
 - **`tg bot watch`**: what happens in the bot's chats as it arrives, kept in the bot's history on this
