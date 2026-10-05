@@ -40,6 +40,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`messages delete` checks the ids belong to the chat first.** In a private chat or a basic group Telegram
+  numbers messages per account and deletes by number alone, so an id from another chat — or the other side's
+  number for the same message — deleted a message there. Now any id that is not in the named chat stops the
+  whole delete with exit 2, and nothing is deleted.
 - MCP respects explicit query-history recording disablement. Documentation matches mapped member signals and
   the current revoked-update-loop, proxy, upload and unknown-outcome behavior.
 
