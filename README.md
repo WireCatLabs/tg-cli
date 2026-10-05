@@ -288,7 +288,7 @@ It needs **Node 22.16 or newer**, or **Bun** — CI runs the built command under
 or Windows. SQLite comes from the
 runtime itself, or from tg's own copy when a Linux Node's system SQLite is too old, so there is
 nothing to compile. `tg doctor` says where its files are and whether a
-login exists, without connecting. Details, variables and where the files go:
+session is saved, without connecting; `tg doctor --online` checks the login works. Details, variables and where the files go:
 [docs/installation.md](docs/installation.md).
 
 ### Windows installation

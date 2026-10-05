@@ -14,8 +14,8 @@ servers it talks to, and what to do if the session leaks.
   or a phone number.
 - **The send guard is the shared one**: `permissions`, the recipient list and `sendsPerHour` are
   checked by every command and MCP tool ([below](#the-send-guard)).
-- **`tg` talks to Telegram, npm and my.telegram.org only**, and to model hosts when you download a
-  model ([below](#what-goes-over-the-network)).
+- **`tg` talks to Telegram, npm and my.telegram.org only** — through your proxy when you set one —
+  and to model hosts when you download a model ([below](#what-goes-over-the-network)).
 - **It does not protect against someone with your user account on this machine**, or an agent
   allowed to change the settings.
 

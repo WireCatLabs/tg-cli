@@ -193,6 +193,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
 | `tg_contacts_lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
+| `tg_contacts_context` | `tg contacts context` | what the store holds about one person in every messenger linked to them: shared chats, last messages each way, recent messages, mentions; never connects; a message read, so `messages: deny` hides it |
 | `tg_messages_evidence` | `tg messages evidence`, `--limit`, `--before-id` | one local chat evidence packet, newest first, with locators, fingerprints, coverage and `nextBeforeId`; pass the cursor as `before_id`; whole messages within 64 KiB of JSON items, header additional; history coverage unknown; an oversized first message yields an empty byte-truncated packet without a cursor; never connects or marks read; permission `messages.evidence` |
 | `tg_messages_list` | `tg messages list`, `--before-id`, `--before-time`, `--after-id`, `--after-time` | a chat's messages; `before_id` or `before_time` read back, `after_id` or `after_time` forward — one of them at most; marks nothing read — `tg_chats_mark_read` does that, behind its own key; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
 | `tg_messages_context` | `tg messages show`, `context`, `--before-n`, `--after-n` | one message and those either side; `before_n` and `after_n` say how many |
@@ -220,6 +221,9 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
 | `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
 | `tg_messages_stats` | `tg messages stats` | count local query matches by chat, sender, day or hour |
+| `tg_tags_list`, `tg_tags_add`, `tg_tags_remove` | `tg tags list`, `add`, `remove` | the owner's own labels on a chat, a person or one message, kept in the local store and never sent; the writes by `tags.add` and `tags.remove`, refused under `ask` since there is no question to put |
+| `tg_searches_list`, `tg_searches_history` | `tg searches list`, `history` | saved searches by name, and the searches and counts that ran; `saved` on `tg_messages_search` and `tg_messages_stats` runs one |
+| `tg_searches_create`, `tg_searches_delete`, `tg_searches_clear` | `tg searches create`, `delete`, `clear` | save a search without running it, delete one saved search or history row, empty the history; local store only |
 | `tg_conversations_status`, `tg_conversations_related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
 | `tg_conversations_refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
 | `tg_conversations_list`, `tg_conversations_show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |

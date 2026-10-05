@@ -100,11 +100,11 @@ the runs kept.
   `skewMs` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
   refuses a request stamped more than 30 seconds ahead of its own clock.
 - **`online.standing`** (with `--online`) is `active`, `frozen`, `banned`, `deactivated` or
-  `revoked`. A frozen account can read but not write. It comes with the date it was frozen, the date
+  `revoked`, or `unknown` when Telegram's answer could not tell. A frozen account can read but not write. It comes with the date it was frozen, the date
   Telegram will delete it, and the appeal link, where Telegram gives them. Logging in again does not
   reopen an account Telegram closed.
 - **`flood`** lists the waits Telegram asked this profile to keep (`deadlines`) and a hold on its
-  sends (`sendBlock`), from the next `@leemour/cli-messaging`. `doctor` reads only, with one
+  sends (`sendBlock`). `doctor` reads only, with one
   exception: **`doctor --online` writes the frozen hold.** When it reads the account frozen, it holds
   sends until Telegram's date; when it reads it active, it lifts that hold. It never lifts a hold for
   a spam limit — `tg flood clear` does that.
