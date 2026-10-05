@@ -310,3 +310,24 @@ Run `tg upgrade`. Nothing in the file is lost.
 
 - [recipes.md](recipes.md) — search and export in an agent's daily work
 - [security.md](security.md) — what the store means for the privacy of your messages
+
+## Repair and index maintenance
+
+`tg store migrate` builds unfinished indexes; `tg store reindex` rebuilds them. `store info` and
+`store check` show word/stem readiness. A stem index alone does not change strict-search matching.
+`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin spanish` set the shared store's
+stemmers (`none` disables one, `english` is also available for Latin); run `store reindex` afterwards.
+The setting affects both messengers and every profile; a profile-locked process cannot change it.
+
+`tg store repair --dry-run --json` previews structural repair and rolls it back. `store repair` applies it
+without deleting data: mismatched tables are kept as copies, and rows/columns left there are named in the answer.
+Inspect retained copies before deleting one with `store copies delete <exact name>`; `store copies list`
+shows them. Stop processes using the store before repair.
+
+## Tester-only reply rules
+
+`tg replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
+Rules live in the profile's replies file. `replies status`, `pause` and `resume` inspect/control them.
+Actual shared `serve` replies require both an explicit `replies.send:allow` permission and a configured
+`testers` list. Sending is denied by default; missing/empty testers means nobody is answered. Edits, messages
+from before startup and already answered messages are ignored. `ask` cannot send from an unattended service.

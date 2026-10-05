@@ -235,7 +235,8 @@ There are good tools for a Telegram account already. Choose what fits the job.
 | groups: join, leave | ✅ | ✅ |
 | groups: rename, add and remove members, invite links | ✅ | ✅ |
 | folders | ✅ | ✅ |
-| your own tags, aliases and notes on chats and contacts | — | ✅ |
+| local tags on chats, contacts and messages | ✅ | ✅ |
+| aliases and notes on chats and contacts | — | ✅ |
 | install with Homebrew or Docker | — | ✅ |
 
 **Telegram's own apps** are made for a person. `tg` is made for a script and an agent: one operation

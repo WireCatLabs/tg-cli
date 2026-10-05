@@ -45,8 +45,8 @@ option, an unknown command, a check before any work, commands that never connect
 load, is kept as a run named `tg`. The record holds only the command's words, such as
 `messages list`, never what followed them.
 
-A run that worked leaves nothing unless you asked. So a problem report always has a failure to
-attach, and a history of what you read does not build up. `--no-record`, or `"record": false` in the
+A successful run leaves no diagnostic record unless requested; successful search/statistics queries have separate history. So a problem report always has a failure to
+attach, while query history has its own controls. `--no-record`, or `"record": false` in the
 settings, turns this off too.
 
 ## When to record every run
@@ -148,3 +148,5 @@ account. `cli` names the tool, `version` is the installed package version, and `
 shared JSON contract version (`0`). It changes for incompatible response field changes; a package
 upgrade alone does not change `contract`. Scripts can read individual fields instead of comparing
 the whole JSON output with a saved string.
+
+Search/statistics query history is separate from run records; see [query history and --no-record](search.md).

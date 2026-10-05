@@ -7,6 +7,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- Local tags, saved searches and --saved execution are available in CLI/MCP. Successful query parameters have
+  separate history; --no-record disables it in both interfaces, without storing results or message bodies.
+- Shared reply controls expose test/status/pause/resume. Actual replies require replies.send:allow and a tester
+  list; defaults deny sending and an empty list answers nobody.
+- Store repair previews preserve mismatched tables as copies. Stem settings are store-wide; flood clear is owner
+  maintenance without a MCP tool.
+
 - **`chats members audit` judges with everything Telegram's member list carries.** Each member now brings when
   they joined, who invited them, and whether the account is a bot, deleted, marked scam or fake, or has no photo —
   so bursts of joins, mass invites and marked accounts show up, with no extra request per person.
@@ -18,12 +25,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- Adopt cli-messaging0.148.2/core0.17.1. Searches retain query parameters by default; explicit recording disablement
+  opts out. New local data/index tables preserve existing data and compatible older readers.
+- Unread/new/review/filter discovery scans every returned dialog, while processing at most20 chats per run.
+  The obsolete short-forward-page contract skip is removed; pagination ends at an empty page.
+
 - **Pin, unpin, react, mark read, delete, vote, poll close, folder and contact changes end in exit `14`
   (`outcome_unknown`) when Telegram does not answer**, instead of a timeout or network error that the send
   journal recorded as failed. The message says whether a repeat is safe; for a folder creation it is not —
   check `tg chats folders list` first.
 
 ### Fixed
+
+- MCP respects explicit query-history recording disablement. Documentation matches mapped member signals and
+  the current revoked-update-loop, proxy, upload and unknown-outcome behavior.
 
 - **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than
   `--limit`.** Telegram leaves deleted messages out of a page, so a short page in the middle of a chat answered

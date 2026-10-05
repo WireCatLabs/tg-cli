@@ -100,7 +100,7 @@ names one. The first word (`tg work …`) and `TG_PROFILE` override it.
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
 `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
-starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`
+starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`, `tags`, `searches`, `replies`
 or `bot`, and must name a known command or checked write. Unknown command keys are refused by
 `config set` with exit 2, including keys inside a whole `permissions` object. `config unset` can remove
 an old unknown key. Reading an existing file with one warns on stderr and continues. **The most specific key you set wins**: with the example above,
@@ -268,3 +268,5 @@ Other settings are preserved. Canonical files need no migration. Once canonical 
 
 Over `tg mcp --http`, every write requires a form even with `allow`, `--yes` or `--allow-dangerous`.
 The permission levels still decide which tools the profile may use.
+
+`replies.send` defaults to `deny`; enabling a rule alone does not allow sending. The tester list is a separate requirement.

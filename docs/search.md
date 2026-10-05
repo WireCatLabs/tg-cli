@@ -19,10 +19,9 @@ correction or substring fallback. `alpha OR beta gamma` means `(alpha OR beta) A
 
 ## Fields and operators
 
-text/body/from/chat/date/kind/has/topic/in/preset/filename/mime/size, Boolean and field groups,
+text/body/from/chat/date/kind/has/topic/in/preset/filename/mime/size/tag, Boolean and field groups,
 inclusive/exclusive ranges, bounded wildcard and Lucene regex are supported. topic requires one mandatory chat.
-kind:bot selects a peer; in:bots selects Bot API accounts. tag is not supported yet, nor are
-fuzzy/proximity/boost/interval functions. Unknown fields never become literal text.
+kind:bot selects a peer; in:bots selects Bot API accounts. fuzzy/proximity/boost/interval functions are unsupported. Unknown fields never become literal text.
 
 Files are found by name, type and size, with no message text needed: `filename:*.pdf`,
 `filename:*contract*` (the whole name, ignoring case and accents), `size>10MB`, `size:[1KB TO 300KB]`
@@ -71,3 +70,24 @@ describes the pinned grammar, AST/schema, reference fixtures and compiler.
 `wordsReady` reports the actual word-index state even for filters-only or regex searches.
 When false, finish `tg store migrate`: strict word searches refuse to run, while legacy word searches
 use substring matches until the index is ready.
+
+## Tags, saved searches and query history
+
+```sh
+tg tags add work --chat <chat>
+tg tags list --tag work --type chat --json
+tg messages search 'tag:work AND invoice' --json
+tg searches create invoices invoice --chat <chat>
+tg messages search --saved invoices --json
+tg messages stats --saved invoices --by day --json
+tg searches history --json
+tg searches clear
+```
+
+Tags label a chat, person or message in the local archive and are never sent. `tag:work` matches a
+message tagged, in a tagged chat or from a tagged person; `NOT tag:work` excludes these exactly.
+`tags remove` removes labels. Saved queries are checked again; extra words are AND-ed and supplied
+options replace stored options. `searches list`, `show` and `delete` manage named queries.
+Successful search/statistics calls keep query parameters in separate history by default, without results
+or message bodies; the newest 1,000 runs are kept. Explicit `--no-record` or `record:false` disables
+this in CLI and MCP. `searches clear` clears history and preserves named searches. This is separate from `runs`.
