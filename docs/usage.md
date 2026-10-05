@@ -108,8 +108,8 @@ tg chats list --search book                # titles containing "book"; at least 
 tg chats show "Book club"                  # kind, unread count, last message, who is in it
 ```
 
-`--kind` is one of `dialog` (one-to-one), `group`, `channel` or `saved`. The filters look at the
-newest 200 chats. Groups and channels have [their own section](#groups-and-channels).
+`--kind` is one of `dialog` (one-to-one), `group`, `channel` or `saved`. The filters look at
+every returned chat. Groups and channels have [their own section](#groups-and-channels).
 
 ### Message links
 
@@ -647,3 +647,11 @@ secret.** Every setting and variable: [configuration.md](configuration.md).
 - [configuration.md](configuration.md) — settings, and what a profile may do
 - [security.md](security.md) — what reaches the disk, and the send guard
 - [recipes.md](recipes.md) — daily work for an agent
+
+## Local person context
+
+`tg contacts context <person>` reads linked identities' stored messages and shared chats without connecting
+or marking read. `complete:false` and `notRead` expose archive gaps. `contacts link <person> max:<id>` and
+`contacts unlink` maintain local identity links; they do not change Telegram's address book.
+
+`contacts context` returns message bodies and therefore follows `messages` permissions; identity-link writes remain controlled by `contacts`.

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**1928 ✅ · 30 ⛔ · 0 ❌** — 366 commands, 1592 options.
+**1953 ✅ · 49 ⛔ · 0 ❌** — 385 commands, 1617 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -94,6 +94,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts list` | `--order` | ✅ |  |
 | `contacts list` | `--search` | ✅ |  |
 | `contacts show` |  | ✅ |  |
+| `contacts context` |  | ✅ |  |
+| `contacts context` | `--limit` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and archive gaps; this consumer mounts the shared command |
+| `contacts context` | `--since-time` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing |
+| `contacts link` |  | ✅ |  |
+| `contacts unlink` |  | ✅ |  |
 | `contacts lookup` |  | ✅ |  |
 | `contacts sync` |  | ✅ |  |
 | `contacts add` |  | ✅ |  |
@@ -123,12 +128,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--language` | ✅ |  |
 | `messages search` | `--timezone` | ✅ |  |
 | `messages search` | `--regex` | ✅ |  |
+| `messages search` | `--saved` | ✅ |  |
 | `messages stats` |  | ✅ |  |
 | `messages stats` | `--by` | ✅ |  |
 | `messages stats` | `--chat` | ✅ |  |
 | `messages stats` | `--source` | ✅ |  |
 | `messages stats` | `--limit` | ✅ |  |
 | `messages stats` | `--timezone` | ✅ |  |
+| `messages stats` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -264,6 +271,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store restore` |  | ✅ |  |
 | `store decrypt` |  | ✅ |  |
 | `store decrypt` | `--output` | ✅ |  |
+| `store repair` |  | ✅ |  |
+| `store repair` | `--dry-run` | ⛔ | cli-messaging src/cli/messenger/store-maintenance.test.ts and src/store/repair.test.ts cover preview rollback and retained data |
+| `store copies delete` |  | ✅ |  |
 | `conversations build` |  | ✅ |  |
 | `conversations build` | `--chat` | ✅ |  |
 | `conversations build` | `--max-chats` | ✅ |  |
@@ -330,6 +340,40 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed clear` | `--provider` | ✅ |  |
 | `conversations embed clear` | `--base-url` | ✅ |  |
 | `conversations embed clear` | `--dims` | ✅ |  |
+| `tags add` |  | ✅ |  |
+| `tags add` | `--chat` | ✅ |  |
+| `tags add` | `--contact` | ⛔ | cli-messaging src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags add` | `--message` | ⛔ | cli-messaging src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags remove` |  | ✅ |  |
+| `tags remove` | `--chat` | ✅ |  |
+| `tags remove` | `--contact` | ⛔ | cli-messaging src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags remove` | `--message` | ⛔ | cli-messaging src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags list` |  | ✅ |  |
+| `tags list` | `--tag` | ✅ |  |
+| `tags list` | `--type` | ✅ |  |
+| `searches create` |  | ✅ |  |
+| `searches create` | `--chat` | ✅ |  |
+| `searches create` | `--source` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--limit` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--newest` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--context` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--language` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--regex` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--by` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--replace` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches show` |  | ✅ |  |
+| `searches list` |  | ✅ |  |
+| `searches history` |  | ✅ |  |
+| `searches history` | `--limit` | ⛔ | cli-messaging src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation |
+| `searches delete` |  | ✅ |  |
+| `searches clear` |  | ✅ |  |
+| `flood clear` |  | ✅ |  |
+| `replies test` |  | ✅ |  |
+| `replies test` | `--since-time` | ⛔ | cli-messaging src/cli/messenger/replies-command.test.ts and src/replies/decide.test.ts cover stored simulation and time selection; shared command |
+| `replies pause` |  | ✅ |  |
+| `replies resume` |  | ✅ |  |
+| `replies status` |  | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |

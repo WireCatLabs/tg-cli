@@ -376,3 +376,10 @@ it.
 
 ⚠ Never attach the state folder, the session file or `~/.local/share/cli-messaging/` — they hold your
 login and your messages.
+
+## Remembered waits
+
+The SDK remembers per-operation/chat deadlines; a retry before expiry fails with exit 8 without another request.
+Frozen/spam-limited refusals can hold sending. `tg flood clear` is owner maintenance after the restriction ends:
+it clears local waits/holds and changes nothing at Telegram. It has no MCP tool; agents must not clear a hold
+just to retry. `doctor --online` checks login, account standing and clock; offline doctor does not prove login.

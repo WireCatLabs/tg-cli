@@ -605,6 +605,48 @@ tg contacts show <person>
 |---|---|---|
 | `person` | required | their id, @username, or part of their name. |
 
+### `tg contacts context`
+
+what the store holds about one person, in every messenger linked to them: shared chats, the last messages each way, their recent messages, where others mentioned them — never connects
+
+```sh
+tg contacts context <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | at most this many messages in each list; 10 if not given. |
+| `--since-time <time>` | nothing older than this ISO 8601 time, or 2h / 1d ago. |
+
+### `tg contacts link`
+
+record that two people in the store are one person — the same name is never enough
+
+```sh
+tg contacts link <person> <other>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+| `other` | required | the same in another messenger of the store, as <messenger>:<person> — max:Ana. |
+
+### `tg contacts unlink`
+
+undo contacts link for one identity: it is a person of its own again
+
+```sh
+tg contacts unlink <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name; <messenger>:<person> for another messenger. |
+
 ### `tg contacts lookup`
 
 who has this phone number — asks for it, or reads it from stdin; never an argument
@@ -756,12 +798,12 @@ tg messages list <chat> [options]
 search the local store — what was read, fetched or kept by serve; never asks the messenger
 
 ```sh
-tg messages search <query> [options]
+tg messages search [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; --language legacy keeps discovery. |
+| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; --language legacy keeps discovery; with --saved, more words AND-ed to it. |
 
 | Option | What it does |
 |---|---|
@@ -773,6 +815,7 @@ tg messages search <query> [options]
 | `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
+| `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
 ### `tg messages stats`
 
@@ -784,7 +827,7 @@ tg messages stats [query] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message. |
+| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
 
 | Option | What it does |
 |---|---|
@@ -793,6 +836,7 @@ tg messages stats [query] [options]
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many rows. |
 | `--timezone <zone>` | the IANA timezone for calendar days and hours. |
+| `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
 ### `tg messages send`
 
@@ -1551,7 +1595,7 @@ tg store check
 
 ### `tg store migrate`
 
-bring the store up to this build's schema, then normalize the messages stored before it
+bring the store up to this build's schema, then normalize, index and stem the messages stored before it
 
 ```sh
 tg store migrate
@@ -1559,7 +1603,7 @@ tg store migrate
 
 ### `tg store reindex`
 
-rebuild the word index and its typo vocabulary from the stored messages; loses no message
+rebuild the word index, its typo vocabulary and the stems from the stored messages; loses no message
 
 ```sh
 tg store reindex
@@ -1608,6 +1652,34 @@ tg store decrypt <file> [options]
 | Option | What it does |
 |---|---|
 | `--output <file>` | the new file, readable only by you. |
+
+### `tg store repair`
+
+bring every table to this build's shape, deleting nothing: a table of the wrong shape is kept as a copy beside a new one
+
+```sh
+tg store repair [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--dry-run` | say what it would do, and change nothing. |
+
+### `tg store copies`
+
+the tables `store repair` kept as copies
+
+#### `tg store copies delete`
+
+delete one copy `store repair` kept, named exactly; refuses any other table
+
+```sh
+tg store copies delete <name>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | the copy's name, as `store repair` printed it. |
 
 ## `tg conversations`
 
@@ -1828,6 +1900,197 @@ tg conversations embed clear [options]
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
+## `tg tags`
+
+your own labels on chats, people and messages, kept in the local store and never sent; tag: in a search finds them
+
+### `tg tags add`
+
+put tags on one chat, person or message
+
+```sh
+tg tags add <tag> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `tag` | required | one or more tags: 1–32 letters a–z, digits and hyphens; upper case is lowered. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | the chat to tag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--contact <person>` | the person to tag: their id, @username or name, as the local store knows them. |
+| `--message <message>` | the message to tag: its id in --chat, or a msg: locator alone. |
+
+### `tg tags remove`
+
+take tags off one chat, person or message
+
+```sh
+tg tags remove <tag> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `tag` | required | one or more tags: 1–32 letters a–z, digits and hyphens; upper case is lowered. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | the chat to untag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--contact <person>` | the person to untag: their id, @username or name, as the local store knows them. |
+| `--message <message>` | the message to untag: its id in --chat, or a msg: locator alone. |
+
+### `tg tags list`
+
+what is tagged: this account's chats and messages, and the people of its messenger
+
+```sh
+tg tags list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--tag <tag>` | only this tag. |
+| `--type <names>` | only what is tagged of this type: chat, contact or message. |
+
+## `tg searches`
+
+saved searches and the history of messages search and messages stats, kept in the local store; --saved runs one
+
+### `tg searches create`
+
+save a search under a name without running it; messages search --saved <name> runs it
+
+```sh
+tg searches create <name> [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | up to 64 letters a–z, digits and hyphens, not only digits. |
+| `query` | optional | the query, as for messages search; none matches every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
+| `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--context <n>` | messages before and after each hit. |
+| `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
+| `--by <chat\|sender\|day\|hour>` | what messages stats --saved counts by. |
+| `--replace` | overwrite a saved search of the same name. |
+
+### `tg searches show`
+
+one saved search or earlier run: its query, options and how often it ran
+
+```sh
+tg searches show <name|id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name\|id` | required | a saved search's name, or the id of any row of searches history. |
+
+### `tg searches list`
+
+the saved searches, by name
+
+```sh
+tg searches list
+```
+
+### `tg searches history`
+
+the searches and counts that ran, newest first — saved ones included; never their results
+
+```sh
+tg searches history [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many. |
+
+### `tg searches delete`
+
+delete a saved search, or one run from the history
+
+```sh
+tg searches delete <name|id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name\|id` | required | a saved search's name, or the id of any row of searches history. |
+
+### `tg searches clear`
+
+empty the history; saved searches stay
+
+```sh
+tg searches clear
+```
+
+## `tg flood`
+
+the waits Telegram asked this profile to keep, and a hold on its writes
+
+### `tg flood clear`
+
+forget them and lift the hold, once Telegram no longer limits the account; changes nothing there
+
+```sh
+tg flood clear
+```
+
+## `tg replies`
+
+rules that answer messages for you, kept in a file of this profile
+
+### `tg replies test`
+
+what the rules would have answered in the stored messages, to whom and why — sends nothing, changes nothing, never connects
+
+```sh
+tg replies test [rule] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `rule` | optional | only this rule, by its id; every rule in file order if not given. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | from this ISO 8601 time, or 2h / 1d ago; 7d ago if not given. |
+
+### `tg replies pause`
+
+stop every reply rule of this profile at once, a running serve too; resume undoes it
+
+```sh
+tg replies pause
+```
+
+### `tg replies resume`
+
+let the reply rules answer again after pause
+
+```sh
+tg replies resume
+```
+
+### `tg replies status`
+
+whether the rules may send, which are on, and who they may answer
+
+```sh
+tg replies status
+```
+
 ## `tg recipients`
 
 the chats this profile may send to, when the list is on
@@ -1976,7 +2239,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -1997,7 +2260,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 
 | Option | What it does |
 |---|---|

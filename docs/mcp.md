@@ -157,8 +157,9 @@ warning so an agent set up with them still starts. Remove them from the client's
 claude mcp add tg -- tg mcp --confirm-send
 ```
 
-The server shows a form before a change whose level is `ask`, and with `--confirm-send` before
-every change, whatever its level. A send's form shows **which chat** — the title and id the
+Messenger changes at `ask`, and all messenger changes with `--confirm-send`, require a form.
+Local tags, saved searches and conversation updates at `ask`, with `--confirm-send` or over HTTP
+refuse with `confirmation_required` before writing; run them through the CLI. Readonly keeps read tools. A send's form shows **which chat** — the title and id the
 agent's name resolved to — and **the whole text**. The change goes only after Accept; the form has
 no fields, only the one button. The client's own window shows the arguments as the model wrote them
 (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna Petrova (123456)").
@@ -179,7 +180,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_inbox` | `tg inbox`, `--since-time`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages, `model` picks the model |
 | `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
-| `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over the newest 200, `partial` when older ones exist |
+| `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over every returned chat; `partial` when the messenger cannot provide the whole inventory |
 | `tg_chats_members_audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
 | `tg_chats_stats` | `tg chats stats --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
 | `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |

@@ -51,7 +51,7 @@ Read-only MCP offers `tg_messages_link` with the same result.
   retry. Tell the owner the send did not go, and why.
 - **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` and
   `tg messages list --mark-read` mark a chat read, and the other side sees it: only when the owner asked.
-- **Not for:** mass mailing, auto-replies, other people's accounts.
+- **Not for:** mass mailing or other people's accounts; automatic replies are limited to configured testers with explicit permission.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 
 ## First setup
@@ -196,7 +196,7 @@ tg review --since-time 1d --json                   # every message, the owner's 
 tg review --unanswered --json                      # questions, including retained voice transcripts, nobody answered in 24 h
 tg review --unanswered --transcribe --json         # hear new voices before filtering; keep the old boundary if incomplete
 tg chats list --json                               # find a chat, take its id
-tg chats list --search vale --kind group --unread --json   # filtered, over the newest 200 chats
+tg chats list --search vale --kind group --unread --json   # filtered, over every returned chat
 tg chats events -1001234567890 --since-time 7d --json   # who joined, left, was added or removed
 tg chats members list -1001234567890 --json          # a group's members, paged
 tg chats inspect https://t.me/+AbCd --json           # where an invite leads, without joining
@@ -257,5 +257,10 @@ MCP inbox/review `kinds` and `new` use checkpoints separate from CLI `--new`.
 `tg chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
 Treat scores as hints; check `more` and `unknown`, and review each person before any moderation action.
 
-The current Telegram member audit uses names/usernames and stored messages; bot/scam/fake flags, deletion,
-photos, join bursts and inviters are unavailable and reported in `unknown`.
+Telegram maps member flags, photos and join/inviter metadata when present; inspect unknown signals.
+
+Use tags for local labels/tag: search and searches create/list/show/history/delete/clear with --saved. Successful query parameters are retained separately from runs; --no-record disables that history. flood clear is owner maintenance, never an agent retry bypass.
+
+Reply controls: `tg replies test` simulates stored messages without sending; `status`, `pause` and `resume`
+control the profile's rules. Shared `serve` can reply only to configured testers and only with explicit
+`permissions.replies.send:allow`; the default is deny and an empty tester list answers nobody.

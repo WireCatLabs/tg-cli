@@ -170,5 +170,5 @@ omit `members`. When `complete` is false, counts are lower bounds; run the sugge
 `--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means the list
 is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`; scores need human review.
 
-This Telegram adapter does not yet map bot/scam/fake, deletion, photo or join/inviter fields into the audit.
-Those signals appear in `unknown`; the audit can still use names and stored messages.
+Telegram maps bot/scam/fake/deleted/photo and join/inviter metadata when it is provided.
+Inspect `unknown` for unavailable evidence; scores still require human review.
