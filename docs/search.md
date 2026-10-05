@@ -121,6 +121,9 @@ messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run o
 in MCP with `record: false`; `searches clear` empties the history and keeps the saved searches. This
 history is separate from the run records of `tg runs`.
 
+Saved searches and the history live in the store that tg and max share: both see the same ones, and
+`delete` or `clear` in one changes the other. Tags stay with their account.
+
 ## Counting: `messages stats`
 
 ```sh
