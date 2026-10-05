@@ -686,17 +686,36 @@ export class TelegramAdapter {
   /**
    * mtcute deletes for everyone unless told otherwise, so `revoke` is always passed. In a supergroup or
    * a channel Telegram has no "for me": a deletion there is for everyone, and without `forEveryone` it is refused.
+   *
+   * **Outside a channel the ids are checked against the chat first.** Telegram numbers private-chat and
+   * basic-group messages per account and `messages.deleteMessages` takes no chat, so an id from another
+   * chat — or the other side's number for the same message — deletes whatever this account has under it
+   * (SEC-30). `getMessages` answers null for an id that is not in the chat it was given.
    */
-  delete(chatId: string, messageIds: string[], { forEveryone }: { forEveryone: boolean }): Promise<void> {
+  async delete(chatId: string, messageIds: string[], { forEveryone }: { forEveryone: boolean }): Promise<void> {
     const ids = messageIds.map((id) => messageNumber(id, "a message id is a number"))
-    return this.#write("the messages may have been deleted — repeating it is safe", async () => {
+    const peer = await this.#call(async () => {
       const peer = await this.#client.resolvePeer(Number(chatId))
-      if (peer._ === "inputPeerChannel" && !forEveryone) {
+      if (peer._ === "inputPeerChannel") {
+        if (!forEveryone) {
+          throw new CliError(
+            "validation_error",
+            "in a supergroup or a channel Telegram deletes for everyone — add --for-everyone if that is what you want",
+          )
+        }
+        return peer
+      }
+      const found = await this.#client.getMessages(peer, ids)
+      const missing = ids.filter((_, index) => found[index] == null)
+      if (missing.length > 0) {
         throw new CliError(
           "validation_error",
-          "in a supergroup or a channel Telegram deletes for everyone — add --for-everyone if that is what you want",
+          `no message ${missing.join(", ")} in chat ${chatId} — not in this chat, or already deleted; nothing was deleted`,
         )
       }
+      return peer
+    })
+    return this.#write("the messages may have been deleted — repeating it is safe", async () => {
       await this.#client.deleteMessagesById(peer, ids, { revoke: forEveryone })
     })
   }

@@ -1634,6 +1634,7 @@ describe("deleting", () => {
   it("**always says whether for everyone**, since mtcute's default is yes", async () => {
     const { adapter, client } = await open()
     client.resolvePeer = async (peer) => ({ _: "inputPeerUser", peer })
+    client.getMessages = async (_peer: unknown, ids: unknown) => (ids as number[]).map((id) => message(id))
 
     await adapter.delete("1", ["5", "6"], { forEveryone: false })
     await adapter.delete("1", ["7"], { forEveryone: true })
@@ -1654,6 +1655,20 @@ describe("deleting", () => {
     await adapter.delete("-1001234567890", ["5"], { forEveryone: true })
 
     expect(client.deleteMessagesById).toHaveBeenCalledTimes(1)
+  })
+
+  it("**refuses an id that is not in the private chat**, deleting none, since Telegram numbers them per account", async () => {
+    const { adapter, client } = await open()
+    client.resolvePeer = async (peer) => ({ _: "inputPeerUser", peer })
+    // mtcute answers null for an id it found in another chat.
+    client.getMessages = async (_peer: unknown, ids: unknown) =>
+      (ids as number[]).map((id) => (id === 289 ? null : message(id)))
+
+    await expect(adapter.delete("1", ["127188", "289"], { forEveryone: true })).rejects.toMatchObject({
+      code: "validation_error",
+      message: expect.stringContaining("no message 289 in chat 1"),
+    })
+    expect(client.deleteMessagesById).not.toHaveBeenCalled()
   })
 })
 
