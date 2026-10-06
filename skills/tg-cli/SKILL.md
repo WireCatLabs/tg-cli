@@ -114,7 +114,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    Saved Messages.
 4. **Repeat a send only with the same `--send-id`.** Exit `14` means the message may have gone. The
    error carries `--send-id <id>`; Telegram drops a repeat with it, and a repeat without it is a
-   second message to a person.
+   second message to a person. Pin, react, mark read, delete, vote, poll close, folder and contact
+   changes also end in exit `14` when Telegram does not answer; the error says whether a repeat is
+   safe. Never repeat a folder creation before `tg chats folders list`.
 5. **`tg messages search` reads the local archive by default.** The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
    Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
@@ -184,7 +186,8 @@ Choose a path from the user's task rather than reading recent messages by defaul
   a later confirmation can close an old blocker. Use `messages evidence` for a brief, inspect
   coverage and follow its cursor. Distinguish decisions, open questions and inferred dates.
 - **Recommend a person:** compare actual evidence of relevant experience across chats. Match
-  message sender IDs to `contacts show` and relevant personal chats; two identical display
+  message sender IDs to `contacts show`, `contacts context` (what the store holds about one
+  person, without connecting) and relevant personal chats; two identical display
   names are not one person. Past availability is not current availability. Prepare a draft
   unless the owner explicitly asks to send it to the identified recipient. If sending is
   refused by permissions, stop and keep the draft; do not change settings or switch profiles.

@@ -21,7 +21,7 @@ numbers are in [commands.md](commands.md#exit-codes).
 | `11` | `provider_error` | Telegram refused the request | [Telegram refused](#telegram-refused-) |
 | `12` | `provider_unavailable` | Telegram failed on its side | [Telegram failed](#telegram-failed-) |
 | `13` | `invalid_response` | an answer `tg` cannot read — so far only from my.telegram.org | [my.telegram.org](#mytelegramorg-says-the-app-was-created-but-its-page-shows-none) |
-| `14` | `outcome_unknown` | the connection broke after a message left: it may have gone | [outcome unknown](#outcome_unknown-after-a-send) |
+| `14` | `outcome_unknown` | the connection broke after a write left: it may have happened | [outcome unknown](#outcome_unknown-after-a-send) |
 | `130` | `cancelled` | you pressed Ctrl-C, or answered no to a question | [Ctrl-C](#ctrl-c) |
 
 ## First: `tg doctor`
@@ -192,15 +192,14 @@ other commands, or a long `store fetch`. For `store fetch` and `messages downloa
 
 A command waits out a request of up to 10 seconds, twice at most, and says so on stderr: "Telegram
 asks to wait 3 s before … — waiting, then going on". `serve` and `watch` wait up to 2 minutes. A longer
-wait ends the command with this error. With the next `@leemour/cli-messaging`, `tg` also remembers the
-wait: until it ends, the same command fails at once without asking Telegram again, and
+wait ends the command with this error. `tg` also remembers the wait: until it ends, the same command fails at once without asking Telegram again, and
 `tg doctor` and `tg server status` list it under `flood`.
 
 ## "Telegram limited this account's messages as spam (PEER_FLOOD)"
 
 Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.
 It can still read. Message @SpamBot in a Telegram app: it says until when. Sending again makes it
-worse, so with the next `@leemour/cli-messaging`, `tg` holds every send for an hour and says so;
+worse, so `tg` holds every send for an hour and says so;
 each new refusal starts the hour again. `tg doctor` shows the hold under `flood.sendBlock`. Once
 @SpamBot says the limit is gone, `tg flood clear` lifts it, together with any wait `tg` remembers.
 A frozen account's refusal holds sends the same way, until Telegram's date; `tg doctor --online`
@@ -281,6 +280,10 @@ tg messages send <chat> "<the same text>" --send-id <id from the error>
 ```
 
 After `--at-time`, look in `tg messages scheduled <chat>` instead: a scheduled send is never repeated.
+
+Pin, unpin, react, mark read, delete, vote, poll close, folder and contact changes end the same way when
+Telegram does not answer. The message says whether repeating is safe. For a folder creation it is not: look in
+`tg chats folders list` first, or you may get a second folder.
 
 ## A command hangs
 

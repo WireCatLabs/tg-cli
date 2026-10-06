@@ -3,60 +3,135 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-- Adopt the shared search, graph-context, sync-first and attachment-text interfaces. MCP gains stored time context and agent-linking instructions; account-qualified context locators are validated.
+## 0.28.0 — 06.10.2026
 
 ### What's new
 
-- Local tags, saved searches and --saved execution are available in CLI/MCP. Successful query parameters have
-  separate history; --no-record disables it in both interfaces, without storing results or message bodies.
-- Shared reply controls expose test/status/pause/resume. Actual replies require replies.send:allow and a tester
-  list; defaults deny sending and an empty list answers nobody.
-- **Search has three guides.** [Message search](docs/search.md) is everyday searching by words, people, dates,
-  files, links and tags; [topic search](docs/topic-search.md) explains conversations, vectors, freshness and what
-  a remote model sends; [query language](docs/query-language.md) is the reference.
-- Store repair previews preserve mismatched tables as copies. Stem settings are store-wide; flood clear is owner
-  maintenance without a MCP tool.
+- **Search the text inside files.** `attachments extract` indexes retained plain text, Word and PDF text
+  layers for `content:` queries. Word/PDF need optional `mammoth`/`unpdf`; an agent reads scans and photos
+  and saves their text with `attachments text set`. `--download --output-dir` explicitly fetches missing files.
+- **Refresh before searching and follow replies.** `--sync-first` fetches within defaults of five chats,
+  500 messages and 30 seconds; incomplete refresh keeps local results and reports stale coverage.
+  `--thread` follows a bounded stored reply graph with link provenance, falling back to time context when absent.
+- **Filter conversations and choose account scope.** `--filter` is strict Lucene and applies before ranking;
+  one message must match the entire filter. `--source` widens scope explicitly. MCP now offers agent-linking
+  batches, link write-back, rebuilding and the `link-conversations` prompt.
+- **Configure embeddings and analysis separately by profile.** Local embeddings and the owner's agent remain
+  defaults. Remote providers receive text only when chosen; `build --analyze --chat` requests and remembers
+  account/chat/provider consent until revoked. A remote embedding setting also sends MCP search query text.
 
+- **`tg` connects through a proxy: SOCKS5, HTTP `CONNECT` or MTProxy.** Set it per profile with
+  `tg config set proxy <url>` — or `tg config set proxy -` to paste one with a password or an MTProxy secret, which
+  is kept in the OS keyring, never in the settings file — or for one run with `TG_PROXY`. Bot API commands use the
+  same SOCKS5 or HTTP proxy; with an MTProxy they go direct, and `tg doctor` says so. A proxy that refuses or cannot
+  be reached fails at once with `configuration_error` (exit 3), so it never reads as Telegram being down.
+- **`tg doctor` says what it really checked.** The login shows as `not checked` until you add `--online`, and each
+  private file or folder other users can read is named with the `chmod` that fixes it; `doctor` never changes a
+  mode itself. `tg doctor --online` also reports this computer's clock against Telegram's (a warning past 10
+  seconds), and whether the account is active, frozen (with its dates and the appeal link), banned, deleted or
+  logged out. `tg doctor` and `tg server status` show the waits Telegram asked this profile to keep, and any hold on
+  its writes, as `flood`.
+- **`tg flood clear`** forgets those waits and lifts the hold on writes, once Telegram no longer limits the
+  account. It never connects. Agents get no MCP tool for it, on purpose.
+- **Tags: your own labels on a chat, a person or one message**, kept in the local store and never sent.
+  `tg tags add <tag…> --chat <chat> | --contact <person> | --message <message>`, `tags remove` with the same target,
+  and `tags list`. `tag:<tag>` in a search finds what is tagged. MCP: `tags_list`, `tags_add`, `tags_remove`.
+- **Saved searches and a search history.** `tg searches create <name> [query]` saves a search without running it;
+  `tg messages search --saved <name>` and `tg messages stats --saved <name>` run it — more words are added with
+  AND, and options you type replace the saved ones. `searches list`, `show`, `history`, `delete` and `clear` manage
+  them. Every search and count that succeeds is kept in the history: its query and options, never a message or a
+  result, the newest 1,000. `--no-record` keeps a run out of it; for MCP, `tg mcp --no-record` or `record` set to
+  `false`. Saved searches and the history are shared with max-cli, which uses the same store.
+- **`tg contacts context <person>`**: what the store holds about one person — shared chats, the last message each
+  way, their recent messages, where others mentioned them — across every messenger linked to them. It never
+  connects, and `permissions.messages: deny` blocks it like other message reads. `tg contacts link <person>
+  max:<person>` records that a Telegram and a MAX account are one person; `contacts unlink` undoes it.
+- **Reply rules can answer test accounts.** `tg serve` answers with the rules in `config/<profile>.replies.json`
+  only to the accounts in its `testers` list, and only when `permissions.replies.send` is `allow` — it is `deny`
+  by default, and an empty list answers nobody. `tg replies test` shows what the rules would have answered in the
+  stored messages and sends nothing; `replies pause` stops every rule at once, a running `serve` too; `replies
+  resume` undoes it; `replies status` says whether the rules may send and to whom.
+- **`tg store repair [--dry-run]`** brings every table of the store to this build's shape, deleting nothing: a
+  table of the wrong shape is kept as a copy beside the new one, and `tg store copies delete <name>` removes a copy
+  once you have looked. It repairs a store where reading a message failed on `messages.mentions`.
+- The store gains tables for tags, saved searches, member history and word stems the first time this version opens
+  it; older `tg` builds still open the file. `tg store migrate` and `tg store reindex` also build the word-stem index
+  (on a large store, run `tg store migrate` once), and `tg config set searchStemmers.cyrillic` (`russian` or `none`)
+  and `searchStemmers.latin` (`spanish`, `english` or `none`) choose the stemmers for the whole store. Searches do
+  not use the stems yet.
 - **`chats members audit` judges with everything Telegram's member list carries.** Each member now brings when
   they joined, who invited them, and whether the account is a bot, deleted, marked scam or fake, or has no photo —
   so bursts of joins, mass invites and marked accounts show up, with no extra request per person.
 - **`chats stats` counts comments on channel posts**, beside views and forwards.
-
 - **A file whose upload drops is tried again, up to three times, before anything is sent.** If it still fails, the
   error says nothing was sent, instead of exit `14` "it may have gone". The message itself still goes once, with
   its send id.
+- **Search has three guides.** [Message search](docs/search.md) is everyday searching by words, people, dates,
+  files, links and tags; [topic search](docs/topic-search.md) explains conversations, vectors, freshness and what
+  a remote model sends; [query language](docs/query-language.md) is the reference.
+- `tg mcp doctor` shows the last lines of the server's error output when it fails to start, with your home folder,
+  long numbers and anything like a token hidden.
 
 ### Changed — may break scripts
 
-- Adopt cli-messaging0.148.2/core0.17.1. Searches retain query parameters by default; explicit recording disablement
-  opts out. New local data/index tables preserve existing data and compatible older readers.
-- Unread/new/review/filter discovery scans every returned dialog, while processing at most20 chats per run.
-  The obsolete short-forward-page contract skip is removed; pagination ends at an empty page.
+- **Local e5-small meaning results require cosine similarity above 0.80 before combining with words.**
+  Exact word matches remain eligible. Results may be shorter and a combined hit may become words-only.
+- **The shared archive gains attachment text and analysis consent tables.** Opening it migrates local schema
+  while retaining existing messages; back up a large archive before upgrading.
 
+- **A wait Telegram asked for is remembered.** After a `FLOOD_WAIT` (exit 8, `rate_limited`, with
+  `retryAfterMs`), the same call — and, when it named a chat, the same call in that chat — fails at once with exit 8
+  and `details.remembered: true` until the wait has passed, without asking Telegram. A script that retried at once
+  after exit 8 now gets exit 8 again, sooner. `tg flood clear` forgets the waits.
+- **A frozen or spam-limited account's writes are held.** After Telegram refuses a write because the account is
+  frozen or limited as spam (`PEER_FLOOD`), every send-type write fails with exit 5 (`permission_error`) that says
+  until when; reads, reactions and marking read still work. A spam limit holds for an hour, set again by each new
+  refusal; a frozen account until Telegram's end date, or a day. `tg doctor --online` sets a frozen hold and lifts
+  it once the account is active again; it never lifts a spam hold — `tg flood clear` does, once you know the limit
+  is gone.
+- **`PEER_FLOOD` exits with code 5 (`permission_error`), not 11**, and points to @SpamBot: retrying makes it
+  worse. A frozen account's refusal is also a `permission_error` pointing to `tg doctor --online`, not a rate limit
+  to wait out. A banned or deleted account no longer tells you to log in again.
+- **A one-shot command waits out a FLOOD_WAIT of up to 10 seconds twice at most, not five times**, and says so on
+  stderr; the next one ends it with code 8 (`rate_limited`) and `retryAfterMs`. `serve` and `watch` wait up to
+  2 minutes, three times.
+- **`tg serve` and `tg watch` exit when Telegram ends the login while they listen**, with code 4, within about 15
+  minutes; the service does not restart on it. If the updates stop for another reason, or Telegram does not answer
+  within 30 seconds when asked, they exit with code 12, which systemd restarts. Before, they stayed up and received
+  nothing.
+- **Telegram's `AUTH_KEY_DUPLICATED`** (a login ended because two connections used it at once) is now
+  `authentication_error`, exit 4, not `provider_error`. The message says to log in again and names overlapping
+  `tg` processes as the cause.
 - **Pin, unpin, react, mark read, delete, vote, poll close, folder and contact changes end in exit `14`
   (`outcome_unknown`) when Telegram does not answer**, instead of a timeout or network error that the send
   journal recorded as failed. The message says whether a repeat is safe; for a folder creation it is not —
   check `tg chats folders list` first.
+- **`tg inbox`, `inbox --new`, `review` and `chats list --unread` (also with `--search` and `--kind`) look at every
+  chat**, not only the newest 100 or 200, so an unread chat further down the list is no longer left out. This costs
+  one request per 100 chats. `partial` now means only that Telegram could not list every chat; chats past the
+  20-per-run cap are named in a `skipped N chats` note.
+- **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than
+  `--limit`.** Telegram leaves deleted messages out of a page, so a short page in the middle of a chat answered
+  `hasMore: false` and dropped the hint for the next page. They now say there is more until Telegram returns an
+  empty page, as plain `messages list` already does: the last page may say there is more, and following its hint
+  returns an empty page.
+- `tg messages search` takes its query as optional, since `--saved` can stand alone; with neither it still refuses.
 
 ### Fixed
 
-- **`tg serve` stopped with Ctrl-C or `kill` exits 0.** It printed «database is not open» and exited 1: the
-  Telegram library closes the session database on the signal, and closing the client closed it again.
+- **Account-qualified context locators reject another account before reading.** MCP also accepts
+  `offline: true` for ordinary stored context.
+- **Stopping `tg serve` with Ctrl-C or a signal exits 0.** The session database closes once, avoiding the
+  previous "database is not open" error on shutdown.
+
 - **`messages delete` checks the ids belong to the chat first.** In a private chat or a basic group Telegram
   numbers messages per account and deletes by number alone, so an id from another chat — or the other side's
   number for the same message — deleted a message there. Now any id that is not in the named chat stops the
   whole delete with exit 2, and nothing is deleted.
-- MCP respects explicit query-history recording disablement. Documentation matches mapped member signals and
-  the current revoked-update-loop, proxy, upload and unknown-outcome behavior.
-
-- **`tg messages list --after-id`, `--after-time` and `--before-time` no longer stop at a page shorter than
-  `--limit`.** Telegram leaves deleted messages out of a page, so a short page in the middle of a chat answered
-  `hasMore: false` and dropped the hint for the next page. They now say there is more until Telegram returns an
-  empty page, as plain `messages list` already does; the last page may say there is more, and following its hint
-  returns an empty page.
-
+- `text:/…/` in a strict search folds letters as the word index does, so `text:/Квартир.*/` and `text:/счёт/`
+  find the words they missed. A search error says what to do instead: `~` points to `--language legacy`, a prefix
+  too short to expand names a longer one, and an index still building gives the exact `tg store migrate`.
+- Two `tg serve`s started in the same instant for one profile can no longer both run.
 ## 0.27.0 — 04.10.2026
 
 ### What's new
@@ -68,18 +143,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - `tg chats members audit` lists suspicious member signals without removing anyone; unavailable signals
   are reported in `unknown`. MCP inbox/review accept `kinds` and `new` with their own checkpoints.
 
-- **`tg` connects through a proxy: SOCKS5, HTTP `CONNECT` or MTProxy.** Set it per profile with
-  `tg config set proxy <url>` — or `tg config set proxy -` to paste one with a password or an
-  MTProxy secret, which is kept in the OS keyring, never in the settings file — or for one run with
-  `TG_PROXY`. Bot API commands use the same SOCKS5 or HTTP proxy. A proxy that refuses or cannot be
-  reached fails at once with `configuration_error`, and `tg doctor` names the proxy in use.
-
-- `tg doctor` shows the login as `not checked` until you add `--online`, and names each private
-  file or folder other users can read, with the `chmod` that fixes it. `tg doctor --online` also
-  reports this computer's clock against Telegram's, and whether the account is frozen (with its
-  dates and the appeal link), banned, deleted or logged out. Needs the next `@leemour/cli-messaging`.
-- A frozen account's refusal is a `permission_error` that points to `tg doctor --online`, not a rate
-  limit to wait out. A banned or deleted account no longer tells you to log in again.
 - Personal MCP uses the matching shared catalogue adopted by MAX. Photo previews accept `index`,
   and direct transcription accepts `model`. The SDK also adds archive statistics, conversation
   readiness and bounded local refresh; models are never downloaded automatically.
@@ -99,27 +162,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   Other commands and profiles without a saved session still exit 4.
 - **`tg serve` and `tg watch` refuse to start with code 4 (`authentication_error`) if the session was already revoked.**
   They check the login before reporting readiness. A session revoked after startup still needs a separate check.
-- **`tg serve` and `tg watch` exit when Telegram ends the login while they listen**, with code 4, within about 15
-  minutes; the service does not restart on it. mtcute stops its updates without an error then, so `tg` looks every
-  30 seconds and asks Telegram itself every 15 minutes. If the updates stop for another reason, or that question gets
-  no answer within 30 seconds, it exits with code 12, which systemd restarts. Before, it stayed up and received
-  nothing.
-- **A one-shot command waits out a FLOOD_WAIT of up to 10 seconds twice at most, not five times**, and says so on
-  stderr; a third one ends it with code 8 (`rate_limited`) and `retryAfterMs`. `serve` and `watch` wait up to
-  2 minutes, three times.
-- **`PEER_FLOOD` (the account limited as spam) exits with code 5 (`permission_error`), not 11**, and points to
-  @SpamBot: retrying makes it worse. With the next `@leemour/cli-messaging`, it holds sends for an hour, set again
-  by each new refusal; `tg flood clear` lifts the hold and forgets remembered waits; and a
-  remembered FLOOD_WAIT fails the next command at once.
 - **The background service no longer restarts on that code.** On systemd, exit 4 prevents a restart. On macOS,
   launchd cannot exclude one exit code, so the agent no longer restarts after any failure. Run `tg server install`
   again to update the unit; after `tg session start`, run `tg server start`.
 
 - Unknown personal MCP arguments now fail before execution. Use the advertised schema, including
   `at_time` for scheduling. Approved schedules execute at the absolute time displayed in the form.
-- Telegram's `AUTH_KEY_DUPLICATED` (a login ended because two connections used it at once) is now
-  `authentication_error`, exit 4, not `provider_error`. The message says to log in again and names
-  the overlapping `tg` processes as the cause.
 
 - **`tg messages list` can answer `hasMore: true`, with the `older messages: --before-id` hint, on a page shorter
   than `--limit`.** Telegram leaves deleted messages out of a page, so a short page is no proof of a chat's first
