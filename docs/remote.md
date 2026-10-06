@@ -27,7 +27,7 @@ The default local port is `8765`. The server prints a one-time owner code in the
 
 Add the tunnel address with `/mcp`, for example `https://<device>.<network>.ts.net/mcp`, as your
 remote MCP connector. See the app's instructions:
-[ChatGPT developer mode](https://developers.openai.com/api/docs/guides/developer-mode) or
+[ChatGPT developer mode](https://developers.openai.com/api/docs/guides/custom-mcp-server) or
 [Claude custom connectors](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp).
 The login page asks for the code printed in your terminal. It expires after ten minutes;
 a new code is printed after each login. Five wrong codes lock login until the server restarts.
