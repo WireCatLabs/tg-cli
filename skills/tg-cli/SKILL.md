@@ -32,7 +32,7 @@ shell PATH from the user/machine environment yourself; do not ask the user to ed
 public or restricted links; a link grants no membership. Dialogs, basic groups and Saved Messages
 return only a locator. Offline validates the stored target, never connects and returns no URL.
 Locators from another account are refused. This differs from graph `messages links`.
-Read-only MCP offers `tg_messages_link` with the same result.
+Read-only MCP offers `messages link` with the same result.
 
 ## Boundaries
 
@@ -229,10 +229,10 @@ tg watch --jsonl                                   # new messages as they arrive
 ```
 
 An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg mcp`. The
-profile's `permissions` decide which tools it offers; a form before a change is the owner's to
-answer. `tg mcp config` prints the entry with full paths.
+profile's `permissions` decide which commands it offers, through `tg_tools_search`, `tg_read` and
+`tg_write`; there is no confirmation form. `tg mcp config` prints the entry with full paths.
 
-`tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `tg_bot_me`.
+`tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `me`.
 
 `tg <bot> bot store fetch <chat>` imports a channel or supergroup by message number, read-only over
 a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
@@ -261,9 +261,8 @@ Never ask the owner to paste a credential into argv, print one, or fall back to 
 Use `tg stats chats show <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
-every HTTP write requires a form by default. The owner can start with `--http-confirmation permissions`
-to let effective `allow` tools run without elicitation, and repeat `--permission key=level` to override
-permissions for this server process. `ask` still needs a form; never change permissions to bypass a refusal. `tg mcp --revoke` forgets browser logins for the profile.
+HTTP writes follow the same permissions, with no form. The owner can repeat `--permission key=level`
+to override permissions for this server process; never change permissions to bypass a refusal. `tg mcp --revoke` forgets browser logins for the profile.
 MCP inbox/review `kinds` and `new` use checkpoints separate from CLI `--new`.
 
 `tg chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
@@ -294,8 +293,8 @@ details.
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
 stale links are marked and not traversed.
 
-MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`, `tg_conversations_links_add`,
-`tg_conversations_links_clear` and `tg_conversations_build`, plus the `link-conversations` prompt. Report batch
+MCP offers `conversations batches status`, `conversations batches next`, `conversations links add`,
+`conversations links clear` and `conversations build`, plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
 afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
 text.

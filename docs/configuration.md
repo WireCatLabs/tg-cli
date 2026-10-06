@@ -275,9 +275,9 @@ migration explicitly; a process locked to one profile cannot apply a change affe
 Other settings are preserved. Canonical files need no migration. Once canonical `permissions` are present,
 `config set` refuses legacy `readOnly` and `allow` changes; change the corresponding permission keys.
 
-Over `tg mcp --http`, every write requires a form by default. Explicit `--http-confirmation permissions`
-follows the effective levels; repeat `--permission key=level` to override them for this server process.
-`--yes` and `--allow-dangerous` do not bypass forms over HTTP ([browser setup](remote.md)).
+Over MCP, stdin/stdout or `tg mcp --http`, a write at `ask` goes ahead like one at `allow`: there is
+no form. Repeat `--permission key=level` to override levels for this server process
+([browser setup](remote.md)).
 The permission levels still decide which tools the profile may use.
 
 `replies.send` defaults to `deny`; enabling a rule alone does not allow sending. The tester list is a separate requirement.

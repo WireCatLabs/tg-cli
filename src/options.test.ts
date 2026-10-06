@@ -992,13 +992,13 @@ describe("doctor --online", () => {
 })
 
 describe("mcp", () => {
-  it("config carries --confirm-send and --allow-dangerous into the server's arguments", async () => {
+  it("config leaves out --confirm-send and --allow-dangerous, which show no form any more", async () => {
     const { code, stdout } = await tg(["mcp", "config", "--confirm-send", "--allow-dangerous", "--json"], {
       mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
     } as never)
 
     expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp","--confirm-send","--allow-dangerous"]')
+    expect(JSON.stringify(json(stdout))).toContain('"mcp"]')
   })
 
   it("config warns that the --allow-* flags decide nothing now, and leaves them out", async () => {

@@ -397,6 +397,7 @@ describe("tg bot watch", () => {
     expect(polls[1]).toMatchObject({ offset: 9 })
     expect(watched.code).toBe(0)
     expect(watched.lines.map((line: { event: string }) => line.event)).toEqual(["message", "joined"])
+    stop = new AbortController()
     const kept = await tg(["sales", "bot", "messages", "show", "Team", "600", "--offline", "--json"])
     expect(kept.answer).toMatchObject({ text: "hi bot", senderId: "42" })
   })
@@ -424,6 +425,7 @@ describe("tg bot watch", () => {
     ]
     await tg(["sales", "bot", "watch", "--jsonl"])
     requests = []
+    stop = new AbortController()
     await tg(["sales", "bot", "callbacks", "answer", "cq-1", "--notification", "Done", "--text", "Confirmed"])
 
     expect(requests.map(({ method, params }) => [method, params])).toEqual([

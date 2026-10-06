@@ -5,6 +5,25 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## 0.30.0 — 07.10.2026
 
+### Changed — may break scripts
+
+- **`tg mcp` offers an agent three tools instead of one per command: `tg_tools_search`, `tg_read` and
+  `tg_write`.** The agent finds a command by words and runs it as
+  `{ "command": "messages list", "arguments": { … } }`, with the same arguments and the same answer its
+  old tool had. `tg bot mcp` works the same way: `tg_bot_tools_search`, `tg_bot_read`, `tg_bot_write`.
+  Why: an agent read about 80 tools' descriptions before its first question.
+  What to watch for: the old names (`tg_messages_send`, `tg_status` and the rest) no longer work, and
+  neither do client rules that name them; allow `tg_read`, and `tg_write` if you want, in your client
+  ([MCP](docs/mcp.md)).
+
+- **Writes over MCP show no confirmation form: the profile's permissions decide alone.** A level of
+  `ask` acts like `allow` over MCP, over stdin/stdout and `--http` alike.
+  Why: forms broke in many clients and got in the way.
+  What to watch for: with the default permissions an agent may now delete your own messages; set
+  `tg config set permissions.messages.delete readonly` to stop it. Actions a group's rules want
+  confirmed are left for you. `--confirm-send`, `--allow-dangerous` and `--http-confirmation` (from
+  0.30.0) are accepted with a warning and change nothing; `tg mcp config` no longer writes them.
+
 ### What's new
 
 - **`tg setup` is easier to follow.** Each step is a heading, `[1/5] This computer`, with what happened

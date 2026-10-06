@@ -54,11 +54,8 @@ claude mcp add tg-work -- tg work mcp
 
 ```sh
 tg mcp config
-tg work mcp config --confirm-send     # the entry with a form before every change
+tg work mcp config
 ```
-
-`--confirm-send`, `--allow-dangerous` and `--yes` go into the entry as given
-([below](#what-an-agent-may-do)).
 
 ```json
 {
@@ -97,20 +94,19 @@ that the keyring is probably out of reach. The entry from `tg mcp config` includ
 
 ## What an agent may do
 
-The profile's `permissions` decide which tools an agent is offered, by the same levels as the
-commands ([configuration.md](configuration.md#what-a-profile-may-do)):
+The profile's `permissions` decide which commands an agent can find and run, by the same levels as
+the commands ([configuration.md](configuration.md#what-a-profile-may-do)):
 
 | Level | Over MCP |
 |---|---|
-| `deny` | the tool is not offered; `messages: deny` also hides the prompts and the chat resources |
-| `readonly` | the reading tools are offered, the writing ones are not |
-| `ask` | before the tool acts, the server shows you a form ([below](#a-confirmation-form-from-the-server-itself)) |
-| `allow` | the tool acts without asking |
+| `deny` | the command is not offered; `messages: deny` also hides the prompts and the chat resources |
+| `readonly` | the reading commands are offered, the writing ones are not |
+| `ask` | the command acts without asking: over MCP nobody is at a terminal to answer |
+| `allow` | the command acts without asking |
 
-**With the default settings an agent can send, edit, react, forward, pin, vote and mark a chat
-read**, with no flag and no question. Only `tg_messages_delete` is at `ask`: you see a form before
-each deletion. An agent never deletes for everyone and never ends your other sessions, whatever the
-level.
+**With the default settings an agent can send, edit, react, forward, pin, vote, mark a chat read
+and delete your own messages**, with no flag and no question. An agent never deletes for everyone
+and never ends your other sessions, whatever the level.
 
 To keep an agent read-only, give it a profile of its own — `tg agent session start` logs it in, as
 another device of the same account — and set each resource there:
@@ -122,118 +118,95 @@ done
 claude mcp add tg -- tg agent mcp
 ```
 
-`readOnly: true` in that profile does the same, as an older setting. To have the agent ask before
-each send, set `messages.send` to `ask`:
-
-```sh
-tg agent config set permissions.messages.send ask
-```
-
-The levels bind you too: in that profile your own `tg agent messages send` asks as well. Two flags
-skip the form for levels at `ask` over stdin/stdout. HTTP requires a form by default; `--http-confirmation permissions` follows the effective levels:
-
-- `tg mcp --allow-dangerous` — no form before a deletion;
-- `tg mcp --yes` — no form before any other change.
+`readOnly: true` in that profile does the same, as an older setting. To see each change before it
+happens, leave `tg_write` unapproved in your client: Claude Code, VS Code and Cursor then ask before
+every call of it.
 
 A send, an edit or a forward over MCP goes through the same checks as its command: the profile's
 `permissions`, the list of allowed recipients, the hourly limit, and the journal of sends
-(`tg sends list`). On top of that every writing tool is marked as dangerous: VS Code
-and Cursor ask before every call, and Claude Code, by its documentation, shows an approval dialog
-even where everything else is allowed in advance.
+(`tg sends list`). HTTP follows the same permissions as stdin/stdout.
 
 **Marking a chat read** is `chats.mark-read`: the other side sees that you read it. Set it to
-`readonly` when an agent reads on your behalf and should not give that away. `tg_chats_mark_read`
+`readonly` when an agent reads on your behalf and should not give that away. `chats mark-read`
 never counts toward the hourly limit.
 
-**Deleting** is `messages.delete`. `tg_messages_delete` removes up to 10 messages from **your** view
+**Deleting** is `messages.delete`. `messages delete` removes up to 10 messages from **your** view
 only; deleting for everyone is left to the command, typed by you. In a supergroup or a channel
 Telegram has no "for me only", so there the tool is refused.
 
-`--allow-send`, `--allow-mark-read` and `--allow-delete` decide nothing: they are accepted with a
-warning so an agent set up with them still starts. Remove them from the client's settings.
-
-### A confirmation form from the server itself
-
-```sh
-claude mcp add tg -- tg mcp --confirm-send
-```
-
-Messenger changes at `ask`, and all messenger changes with `--confirm-send`, require a form.
-Local tags, saved searches and conversation updates at `ask`, with `--confirm-send` or over HTTP in its default confirmation mode
-refuse with `confirmation_required` before writing; run them through the CLI. Readonly keeps read tools. A send's
-form shows **which chat** — the title and id the
-agent's name resolved to — and **the whole text**. The change goes only after Accept; the form has
-no fields, only the one button. The client's own window shows the arguments as the model wrote them
-(`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna Petrova (123456)").
-
-- Decline, or closing the form: nothing is changed, and the agent gets `confirmation_required` and
-  must not try again.
-- A client that cannot show forms gets an error — **nothing is changed**. Claude Code shows forms.
-- The yes is bound to what the form showed: if the agent changes the chat, the text or the tool
-  after confirming, nothing is changed.
-- A yes works once, for 5 minutes. Replaying the same answer changes nothing.
+`--allow-send`, `--allow-mark-read`, `--allow-delete`, `--confirm-send`, `--allow-dangerous` and
+`--http-confirmation` decide nothing: they are accepted with a warning so an agent set up with them
+still starts. Remove them from the client's settings.
 
 ## Tools
 
-| Tool | Command | What it does |
+The server offers three tools:
+
+- `tg_tools_search` — find a command by words; answers its path, whether it writes, and its arguments;
+- `tg_read` — run a command that only reads: `{ "command": "messages list", "arguments": { "chat": "…" } }`;
+- `tg_write` — run a command that changes something, the same way.
+
+A command is its CLI path; its arguments are its options in `snake_case`:
+
+| Command | CLI | What it does |
 |---|---|---|
-| `tg_status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
-| `tg_review` | `tg review`, `--since-time`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `unanswered` also considers retained transcripts; `transcribe` hears new voices before filtering and `model` picks the model; unheard voices leave `complete` false, so keep the previous boundary until the review is complete |
-| `tg_inbox` | `tg inbox`, `--since-time`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages, `model` picks the model |
-| `tg_account_show` | `tg account show` | who the login is; the phone always as its last four digits |
-| `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
-| `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over every returned chat; `partial` when the messenger cannot provide the whole inventory |
-| `tg_chats_members_audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
-| `tg_stats_chats_show` | `tg stats chats show --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
-| `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
-| `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
-| `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
-| `tg_topics_enable` | `tg topics enable` | enable a forum by `groups`; only the group owner can enable topics; basic-group upgrade must be explicit and returns a new chat id |
-| `tg_topics_create` | `tg topics create` | create a topic by `groups`; after an unknown outcome check `tg_topics_list` instead of repeating, even with the same `send_id` |
-| `tg_topics_list` | `tg topics list`, `tg topics search` | a forum group's topics with their ids; `search` matches titles |
-| `tg_chats_show` | `tg chats show` | one chat and who is in it |
-| `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
-| `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
-| `tg_contacts_profile` | `tg contacts profile` | what Telegram says about one person, and their stored activity per shared chat; the phone always shows its last four digits |
-| `tg_contacts_lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
-| `tg_contacts_context` | `tg contacts context` | what the store holds about one person in every messenger linked to them: shared chats, last messages each way, recent messages, mentions; never connects; a message read, so `messages: deny` hides it |
-| `tg_messages_evidence` | `tg messages evidence`, `--limit`, `--before-id` | one local chat evidence packet, newest first, with locators, fingerprints, coverage and `nextBeforeId`; pass the cursor as `before_id`; whole messages within 64 KiB of JSON items, header additional; history coverage unknown; an oversized first message yields an empty byte-truncated packet without a cursor; never connects or marks read; permission `messages.evidence` |
-| `tg_messages_list` | `tg messages list`, `--before-id`, `--before-time`, `--after-id`, `--after-time` | a chat's messages; `before_id` or `before_time` read back, `after_id` or `after_time` forward — one of them at most; marks nothing read — `tg_chats_mark_read` does that, behind its own key; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
-| `tg_messages_context` | `tg messages show`, `context`, `--before-n`, `--after-n` | one message and those either side; `before_n` and `after_n` say how many |
-| `tg_messages_scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
-| `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; `index` selects an attachment; anything else is refused with the `tg messages download` command that saves it |
-| `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `model` chooses the downloaded speech model; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
-| `tg_messages_search` | `tg messages search` | search what this machine has kept; local by default; optional `sync_first` fetches new messages with `messages.sync-first: allow` |
-| `tg_messages_link` | `tg messages link` | a permalink where supported and an account-scoped locator; read-only; a link grants no chat membership |
-| `tg_messages_send` | `tg messages send`, `--reply-to`, `--topic` | send, by `messages.send`; `reply_to` answers a message and must belong to the chosen topic; `send_id` repeats a send whose outcome was unknown in the same chat and topic; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `topic` picks a forum topic; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
-| `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `md` as `--md`; repeating it changes nothing |
-| `tg_chats_mark_read` | `tg chats mark-read` | mark a chat read, to its newest message or `until` one, by `chats.mark-read` — the other side sees it |
-| `tg_messages_delete` | `tg messages delete` | up to 10 messages from the owner's view, by `messages.delete` — a form first by default; never for everyone; each counts toward the hourly limit |
-| `tg_reactions_add`, `tg_reactions_remove` | `tg reactions add`, `remove` | the owner's reaction on one message, by `reactions`; the confirmation form shows the emoji |
-| `tg_polls_show` | `tg polls show` | a poll and its answer ids; a read tool |
-| `tg_polls_vote`, `tg_polls_close`, `tg_polls_create` | `tg polls vote`, `close`, `create` | vote by answer id (`polls.vote`), close the owner's own poll (`polls.close`), create one (`polls.create`, with `send_id` for a retry in the same chat and topic, `revote` to let people change their vote, and `topic` to choose an open forum topic) |
-| `tg_messages_forward` | `tg messages forward` | one message into another chat (`to`), by `messages.forward`; `send_id` repeats a forward whose outcome was unknown |
-| `tg_messages_pin`, `tg_messages_unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`, by `messages.pin` and `messages.unpin` |
-| `tg_chats_create`, `tg_chats_join`, `tg_chats_leave` | `tg chats create`, `join`, `leave` | make a group or channel with these people, join one by its link, leave one — the others see each |
-| `tg_chats_update` | `tg chats update` | rename a group or channel, change its description or settings; its members see the change |
-| `tg_chats_link_show`, `tg_chats_link_reset` | `tg chats link show`, `reset` | a group's invite link; a new one, after which the old one stops working |
-| `tg_chats_members_add`, `tg_chats_members_remove` | `tg chats members add`, `remove` | add people to a group (each is told), or remove them; their messages stay |
-| `tg_chats_admins_add`, `tg_chats_admins_remove` | `tg chats admins add`, `remove` | make a member an admin with these rights, or take them back |
-| `tg_chats_folders_list`, `_create`, `_update`, `_delete` | `tg chats folders …` | the owner's chat folders; create one, rename it or change its chats, delete it — the chats stay |
-| `tg_chats_rules_show`, `tg_chats_moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
-| `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
-| `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
-| `tg_stats_messages_show` | `tg stats messages show` | count local query matches by chat, sender, day or hour |
-| `tg_conversations_batches_status`, `tg_conversations_batches_next` | `tg conversations batches …` | batch volume and bounded messages; read after owner consent |
-| `tg_conversations_links_add`, `tg_conversations_links_clear`, `tg_conversations_build` | `tg conversations links …`, `build` | store or clear agent links, rebuild; `conversations.links` |
-| `tg_attachments_list`, `tg_attachments_text_set` | `tg attachments list`, `text set` | retained paths/text status; save agent text for `content:` |
-| `tg_tags_list`, `tg_tags_add`, `tg_tags_remove` | `tg tags list`, `add`, `remove` | the owner's own labels on a chat, a person or one message, kept in the local store and never sent; the writes by `tags.add` and `tags.remove`, refused under `ask` since there is no question to put |
-| `tg_searches_list`, `tg_searches_history` | `tg searches list`, `history` | saved searches by name, and the searches and counts that ran; `saved` on `tg_messages_search` and `tg_stats_messages_show` runs one |
-| `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_stats_tasks_show` | `tg tasks list`, `add`, `close`, `stats` | what waits on the owner — questions nobody answered, mentions, requests, promises — kept in the local store and never sent, each with the message it points at; `review` and `serve` open and close them; the writes by `tasks.add` and `tasks.close`, refused under `ask` since there is no question to put |
-| `tg_searches_create`, `tg_searches_delete`, `tg_searches_clear` | `tg searches create`, `delete`, `clear` | save a search without running it, delete one saved search or history row, empty the history; local store only |
-| `tg_conversations_status`, `tg_conversations_related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
-| `tg_conversations_refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
-| `tg_conversations_list`, `tg_conversations_show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |
+| `status` | `tg doctor` | which profile the server speaks for, which account it last saw, which writing tools are on; never connects |
+| `review` | `tg review`, `--since-time`, `--chat`, `--unanswered`, `--all` | every message, the owner's too, in each chat that changed since a point (three days without one); `unanswered` also considers retained transcripts; `transcribe` hears new voices before filtering and `model` picks the model; unheard voices leave `complete` false, so keep the previous boundary until the review is complete |
+| `inbox` | `tg inbox`, `--since-time`, `--all` | what came in: the unread messages, or everything after a moment, in one call; muted and archived chats only when they mention the owner, or with `all`; marks nothing read and never moves `tg inbox --new`'s point; `transcribe` hears voice messages, `model` picks the model |
+| `account show` | `tg account show` | who the login is; the phone always as its last four digits |
+| `account sessions` | `tg account sessions list` | every device and app logged in; reads only |
+| `chats list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over every returned chat; `partial` when the messenger cannot provide the whole inventory |
+| `chats members audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
+| `stats chats show` | `tg stats chats show --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
+| `chats events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
+| `chats members` | `tg chats members list` | a group's members, paged, with role and last seen |
+| `chats inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
+| `topics enable` | `tg topics enable` | enable a forum by `groups`; only the group owner can enable topics; basic-group upgrade must be explicit and returns a new chat id |
+| `topics create` | `tg topics create` | create a topic by `groups`; after an unknown outcome check `topics list` instead of repeating, even with the same `send_id` |
+| `topics list` | `tg topics list`, `tg topics search` | a forum group's topics with their ids; `search` matches titles |
+| `chats show` | `tg chats show` | one chat and who is in it |
+| `contacts list` | `tg contacts list` | people with a one-to-one chat |
+| `contacts show` | `tg contacts show` | one person and the chats shared with them |
+| `contacts profile` | `tg contacts profile` | what Telegram says about one person, and their stored activity per shared chat; the phone always shows its last four digits |
+| `contacts lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
+| `contacts context` | `tg contacts context` | what the store holds about one person in every messenger linked to them: shared chats, last messages each way, recent messages, mentions; never connects; a message read, so `messages: deny` hides it |
+| `messages evidence` | `tg messages evidence`, `--limit`, `--before-id` | one local chat evidence packet, newest first, with locators, fingerprints, coverage and `nextBeforeId`; pass the cursor as `before_id`; whole messages within 64 KiB of JSON items, header additional; history coverage unknown; an oversized first message yields an empty byte-truncated packet without a cursor; never connects or marks read; permission `messages.evidence` |
+| `messages list` | `tg messages list`, `--before-id`, `--before-time`, `--after-id`, `--after-time` | a chat's messages; `before_id` or `before_time` read back, `after_id` or `after_time` forward — one of them at most; marks nothing read — `chats mark-read` does that, behind its own key; a voice message carries `transcript` once heard, `transcribe` hears the rest, and `model` picks the model |
+| `messages context` | `tg messages show`, `context`, `--before-n`, `--after-n` | one message and those either side; `before_n` and `after_n` say how many |
+| `messages scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
+| `messages photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; `index` selects an attachment; anything else is refused with the `tg messages download` command that saves it |
+| `messages transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `model` chooses the downloaded speech model; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
+| `messages search` | `tg messages search` | search what this machine has kept; local by default; optional `sync_first` fetches new messages with `messages.sync-first: allow` |
+| `messages link` | `tg messages link` | a permalink where supported and an account-scoped locator; read-only; a link grants no chat membership |
+| `messages send` | `tg messages send`, `--reply-to`, `--topic` | send, by `messages.send`; `reply_to` answers a message and must belong to the chosen topic; `send_id` repeats a send whose outcome was unknown in the same chat and topic; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `topic` picks a forum topic; `at_time` sends it later — never retried; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
+| `messages edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `md` as `--md`; repeating it changes nothing |
+| `chats mark-read` | `tg chats mark-read` | mark a chat read, to its newest message or `until` one, by `chats.mark-read` — the other side sees it |
+| `messages delete` | `tg messages delete` | up to 10 messages from the owner's view, by `messages.delete`; never for everyone; each counts toward the hourly limit |
+| `reactions add`, `reactions remove` | `tg reactions add`, `remove` | the owner's reaction on one message, by `reactions` |
+| `polls show` | `tg polls show` | a poll and its answer ids; a read tool |
+| `polls vote`, `polls close`, `polls create` | `tg polls vote`, `close`, `create` | vote by answer id (`polls.vote`), close the owner's own poll (`polls.close`), create one (`polls.create`, with `send_id` for a retry in the same chat and topic, `revote` to let people change their vote, and `topic` to choose an open forum topic) |
+| `messages forward` | `tg messages forward` | one message into another chat (`to`), by `messages.forward`; `send_id` repeats a forward whose outcome was unknown |
+| `messages pin`, `messages unpin` | `tg messages pin`, `unpin` | pin one message, quietly unless `notify`, by `messages.pin` and `messages.unpin` |
+| `chats create`, `chats join`, `chats leave` | `tg chats create`, `join`, `leave` | make a group or channel with these people, join one by its link, leave one — the others see each |
+| `chats update` | `tg chats update` | rename a group or channel, change its description or settings; its members see the change |
+| `chats link show`, `chats link reset` | `tg chats link show`, `reset` | a group's invite link; a new one, after which the old one stops working |
+| `chats members add`, `chats members remove` | `tg chats members add`, `remove` | add people to a group (each is told), or remove them; their messages stay |
+| `chats admins add`, `chats admins remove` | `tg chats admins add`, `remove` | make a member an admin with these rights, or take them back |
+| `chats folders list`, `_create`, `_update`, `_delete` | `tg chats folders …` | the owner's chat folders; create one, rename it or change its chats, delete it — the chats stay |
+| `chats rules show`, `chats moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
+| `account update` | `tg account update` | the name or description everyone sees on the owner's profile |
+| `contacts rename` | `tg contacts rename` | a name for a person only the owner sees |
+| `stats messages show` | `tg stats messages show` | count local query matches by chat, sender, day or hour |
+| `conversations batches status`, `conversations batches next` | `tg conversations batches …` | batch volume and bounded messages; read after owner consent |
+| `conversations links add`, `conversations links clear`, `conversations build` | `tg conversations links …`, `build` | store or clear agent links, rebuild; `conversations.links` |
+| `attachments list`, `attachments text set` | `tg attachments list`, `text set` | retained paths/text status; save agent text for `content:` |
+| `tags list`, `tags add`, `tags remove` | `tg tags list`, `add`, `remove` | the owner's own labels on a chat, a person or one message, kept in the local store and never sent; the writes by `tags.add` and `tags.remove`, refused under `ask` since there is no question to put |
+| `searches list`, `searches history` | `tg searches list`, `history` | saved searches by name, and the searches and counts that ran; `saved` on `messages search` and `stats messages show` runs one |
+| `tasks list`, `tasks add`, `tasks close`, `stats tasks show` | `tg tasks list`, `add`, `close`, `stats` | what waits on the owner — questions nobody answered, mentions, requests, promises — kept in the local store and never sent, each with the message it points at; `review` and `serve` open and close them; the writes by `tasks.add` and `tasks.close`, refused under `ask` since there is no question to put |
+| `searches create`, `searches delete`, `searches clear` | `tg searches create`, `delete`, `clear` | save a search without running it, delete one saved search or history row, empty the history; local store only |
+| `conversations status`, `conversations related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
+| `conversations refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
+| `conversations list`, `conversations show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |
 
 Answers are what the command prints with `--json`: a list is `{ items, page, limit, hasMore }`, a
 chat's messages `{ items, limit, hasMore }`, ids are strings. An error is
@@ -250,14 +223,14 @@ The server offers six ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
-| `catch-up` | `kind`, `mode` — optional | calls `tg_inbox`; `mode` is `unread` (default), `new` or a time; `kind` selects chat kinds; marking read requires a separate approved tool call |
+| `catch-up` | `kind`, `mode` — optional | calls `inbox`; `mode` is `unread` (default), `new` or a time; `kind` selects chat kinds; marking read requires a separate approved tool call |
 | `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
 | `link-conversations` | none | report cost and request consent, then read batches, save links and rebuild |
-| `review` | `since`, `groups` — optional | calls `tg_review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
+| `review` | `since`, `groups` — optional | calls `review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
 | `open-tasks` | `chat` — optional | calls review to refresh tasks, lists pending tasks and suggests drafts; closes a task only after owner approval; sends nothing |
 
-`reply` and `review` send through `tg_messages_send`, so where `messages.send` is `readonly` the
+`reply` and `review` send through `messages send`, so where `messages.send` is `readonly` the
 agent only shows the drafts.
 
 Chats are resources `tg://chat/<id>` — in Claude Code you can mention them with `@`. A resource is
@@ -273,27 +246,22 @@ sends them together.
 
 The server exits as soon as the client closes stdin, and closes its connection to Telegram.
 
-`tg_messages_link` returns `{ locator, url, access, reason }` without message content. It shares
+`messages link` returns `{ locator, url, access, reason }` without message content. It shares
 `messages link` account validation and audience limits; a private link grants no membership.
 
 Personal MCP validates arguments against the advertised schema and refuses unknown fields before
-connecting or acting. Use `at_time` for scheduling; an approved relative time executes at the
-absolute time shown in the form, even after a delayed response.
+connecting or acting. Use `at_time` for scheduling.
 
-Local conversation refresh is refused before writing at `ask` or with `--confirm-send`; run the
-CLI command with the owner's approval.
-
-MCP `tg_inbox` and `tg_review` accept `kinds` and `new`. MCP keeps its own per-chat checkpoints,
+MCP `inbox` and `review` accept `kinds` and `new`. MCP keeps its own per-chat checkpoints,
 separate from CLI `--new`. `new` cannot be combined with `since_time`, or with `unanswered` on review.
-HTTP writes require a server form by default. Start with `--http-confirmation permissions`
-to execute effective `allow` tools without elicitation; `ask` still requires a form. Repeat
+HTTP writes follow the profile's permissions, as over stdin/stdout. Repeat
 `--permission key=level` to override permissions for this server process only ([browser setup](remote.md)).
 
-MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`, `tg_conversations_links_add`,
-`tg_conversations_links_clear` and `tg_conversations_build`, plus the `link-conversations` prompt. Report batch
+MCP offers `conversations batches status`, `conversations batches next`, `conversations links add`,
+`conversations links clear` and `conversations build`, plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
 afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
 text.
 
-`tg_attachments_list` exposes retained paths and text status; `tg_attachments_text_set` saves agent text for
+`attachments list` exposes retained paths and text status; `attachments text set` saves agent text for
 `content:`. Extraction is CLI-only. `messages_context` accepts `offline: true` for stored messages.

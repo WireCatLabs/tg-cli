@@ -100,22 +100,16 @@ remote MCP connector. See the app's instructions:
 The login page asks for the code printed in your terminal. It expires after ten minutes;
 a new code is printed after each login. Five wrong codes lock login until the server restarts.
 
-Profile `permissions` decide which tools are available. By default, every HTTP write requires a
-server confirmation form, even at level `allow`. A client without elicitation forms can only read.
-`--yes` and `--allow-dangerous` do not bypass server forms over HTTP.
+Profile `permissions` decide which commands are available, as over stdin/stdout: a write at `ask` or
+`allow` goes ahead with no form. A web app reads pages and messages from strangers all day — if it
+should not write, serve it a read-only profile. The app's own tool approval is separate: the server
+cannot verify it, and an app set to always allow `tg_write` runs it without another prompt.
 
-## Writes from web clients without forms
-
-Add `--http-confirmation permissions` to your server startup command. Tools at effective level
-`allow` can then execute without a server form; `ask` still requires one, while `deny` and `readonly`
-restrict access. The app's own tool approval is separate: the server cannot verify it, and an app
-set to always allow a tool may run it without another prompt.
+## Overriding permissions for one server
 
 Repeat `--permission key=level` to override permissions only for this server process.
 For example, append `--permission messages.send=allow` to enable sending from a read-only profile.
-`--permission messages=allow` overrides saved permissions for the messages resource; built-in
-confirmation defaults still apply, so deletion needs its own `--permission messages.delete=allow`
-to execute without a form. The saved configuration, recipient restrictions and hourly limits
+`--permission messages=allow` overrides saved permissions for the messages resource. The saved configuration, recipient restrictions and hourly limits
 are unchanged. To override a read refusal, name its resource or command with level `allow`.
 See [configuration](configuration.md) for permission keys.
 
@@ -124,7 +118,7 @@ plugin with the `/mcp` address and OAuth. Connect with the terminal code, instal
 and enable it in your Work chat (or mention it with `@`). Local Codex `config.toml` does not
 configure this web connection. Availability can depend on your account or workspace.
 Use dynamic client registration (DCR) when offered; this server advertises DCR and the S256 code challenge.
-The same tools work without MCP prompts, resources or elicitation when their level is `allow`.
+The same tools work without MCP prompts or resources.
 Follow the [OpenAI connection guide](https://developers.openai.com/plugins/quickstart) and
 [OAuth requirements](https://developers.openai.com/plugins/build/auth).
 
