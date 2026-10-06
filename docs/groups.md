@@ -119,7 +119,7 @@ tg tasks list --state open                                # what waits on you, o
 tg tasks list --chat "Hiking" --type question,mention
 tg tasks add msg:telegram/<you>/<chat>/<message> --type promise   # what the rules cannot see
 tg tasks close <task> --as dismissed --reason no-reply-needed
-tg tasks stats                                            # open per chat, the oldest, the median time to close
+tg stats tasks show                                            # open per chat, the oldest, the median time to close
 ```
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a

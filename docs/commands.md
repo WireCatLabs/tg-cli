@@ -2274,19 +2274,6 @@ tg tasks close <task> [options]
 | `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
 | `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
 
-### `tg tasks stats`
-
-per chat: how many tasks are open, the oldest open one, the median time to close
-
-```sh
-tg tasks stats [options]
-```
-
-| Option | What it does |
-|---|---|
-| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <name>` | only this type: question, request, mention or promise. |
-
 ## `tg flood`
 
 the waits Telegram asked this profile to keep, and a hold on its writes
