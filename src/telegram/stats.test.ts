@@ -28,7 +28,7 @@ describe("Telegram's graph JSON", () => {
   })
 
   it("keeps small x values as numbers, for hours and weekdays", () => {
-    expect(toOfficialGraph(graph([0, 1, 23])).x).toEqual({ type: "number", values: [0, 1, 23] })
+    expect(toOfficialGraph(graph([0, 1, 23]))).toMatchObject({ x: { type: "number", values: [0, 1, 23] } })
   })
 
   it("answers an error for JSON it cannot read, never the text Telegram sent", () => {
