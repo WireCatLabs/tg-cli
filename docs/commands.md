@@ -224,7 +224,7 @@ tg chats members list <chat> [options]
 
 #### `tg chats members audit`
 
-members that look like bots, each with its reasons — read from the member list and the local store; never one request per person, and it removes nobody
+members that look like bots, each with its reasons, from the member list and local store; --deep checks selected people individually; removes nobody
 
 ```sh
 tg chats members audit <chat> [options]
@@ -238,7 +238,7 @@ tg chats members audit <chat> [options]
 |---|---|
 | `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
 | `--min-score <n>` | only members scoring at least this; 1 lists everyone with a reason (default: 2). |
-| `--deep <n>` | also check the top n in full — profile, photos, everything they wrote, and the public ban lists, which are sent their ids — one person a second. |
+| `--deep <n>` | also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second. |
 
 #### `tg chats members history`
 
@@ -706,7 +706,7 @@ tg contacts profile <person> [options]
 
 ### `tg contacts context`
 
-what the store holds about one person, in every messenger linked to them: shared chats, the last messages each way, their recent messages, where others mentioned them — never connects
+what the local store holds about a person; --chat --refresh explicitly asks Telegram first
 
 ```sh
 tg contacts context <person> [options]
@@ -737,7 +737,7 @@ tg contacts check <person> [options]
 
 | Option | What it does |
 |---|---|
-| `--no-registries` | do not ask the public ban lists; nothing about them leaves this machine. |
+| `--no-registries` | skip public ban lists; still ask Telegram for the profile and photos unless --offline. |
 
 ### `tg contacts link`
 

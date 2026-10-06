@@ -72,6 +72,27 @@ const definition: ProgramDefinition = {
           "Run `tg setup --agent codex` for guided login and skill installation.\n" +
           "To install instructions separately: `tg skill install --for all`.\n",
       )
+    const contacts = program.commands.find((command) => command.name() === "contacts")
+    const check = contacts?.commands.find((command) => command.name() === "check")
+    const registries = check?.options.find((option) => option.long === "--no-registries")
+    if (registries)
+      registries.description = "skip public ban lists; still ask Telegram for the profile and photos unless --offline"
+    contacts?.commands
+      .find((command) => command.name() === "context")
+      ?.description("what the local store holds about a person; --chat --refresh explicitly asks Telegram first")
+    const audit = program.commands
+      .find((command) => command.name() === "chats")
+      ?.commands.find((command) => command.name() === "members")
+      ?.commands.find((command) => command.name() === "audit")
+    audit?.description(
+      "members that look like bots, each with its reasons, from the member list and local store; " +
+        "--deep checks selected people individually; removes nobody",
+    )
+    const deep = audit?.options.find((option) => option.long === "--deep")
+    if (deep)
+      deep.description =
+        "also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, " +
+        "which are sent their ids — one person a second"
   },
   commands: () =>
     loggingArgv([
