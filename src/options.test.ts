@@ -52,6 +52,16 @@ describe("the global options", () => {
     expect(quiet.stderr).toEqual([])
   })
 
+  it("--fields keeps only the named fields, and the input and output bounds hold", async () => {
+    const projected = await tg(["chats", "list", "--fields", "items.id", "--no-input", "--json"])
+    expect(projected.code).toBe(0)
+    expect(Object.keys(json(projected.stdout).items[0])).toEqual(["id"])
+
+    const bounded = await tg(["chats", "list", "--max-output-bytes", "10", "--max-input-bytes", "1024", "--json"])
+    expect(bounded.code).not.toBe(0)
+    expect(bounded.stdout).toEqual([])
+  })
+
   it("--trace shows each request as it happens, on stderr, and keeps stdout to the data", async () => {
     const { code, stdout, stderr } = await tg(["chats", "list", "--trace", "--json"])
 
