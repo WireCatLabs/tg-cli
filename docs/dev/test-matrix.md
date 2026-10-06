@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2024 ✅ · 80 ⛔ · 1 ❌** — 403 commands, 1702 options.
+**2025 ✅ · 80 ⛔ · 0 ❌** — 403 commands, 1702 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -505,7 +505,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `upgrade` |  | ✅ |  |
 | `upgrade` | `--check` | ✅ |  |
 | `mcp` |  | ✅ |  |
-| `mcp` | `--permission` | ❌ |  |
+| `mcp` | `--permission` | ✅ |  |
 | `mcp` | `--confirm-send` | ✅ |  |
 | `mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDangerous, and mcp config below shows the flag reaching the server's arguments |
 | `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |

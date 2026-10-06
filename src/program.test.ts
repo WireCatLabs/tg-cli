@@ -474,6 +474,16 @@ describe("MCP startup overrides", () => {
     expect(entry.mcpServers.tg.args).toEqual(expect.arrayContaining(["--permission", "messages.send=allow"]))
     expect(adapter).not.toHaveBeenCalled()
   })
+  it("rejects malformed startup permissions before requiring a tunnel or connection", async () => {
+    const adapter = vi.fn(() => scripted())
+    const result = await tg(
+      ["mcp", "--http", "--http-confirmation", "permissions", "--permission", "messages.send=yes", "--json"],
+      { adapter },
+    )
+    expect(result.code).toBe(2)
+    expect(result.stderr.join("")).toContain("--permission takes")
+    expect(adapter).not.toHaveBeenCalled()
+  })
   it("refuses conflicting HTTP confirmation options before connecting", async () => {
     const adapter = vi.fn(() => scripted())
     const result = await tg(["mcp", "--http", "--http-confirmation", "permissions", "--confirm-send", "--json"], {
