@@ -33,6 +33,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   removed by the shared SDK; update commands and use stats.messages.show for exact permissions.
   Parser errors now return exit 2 with a structured validation_error instead of prose/exit 1.
 
+### Fixed
+
+- `chats show` gives a supergroup's real member count, which Telegram's chat list showed as missing or
+  out of date, and a group's card or invite link gives a basic group's count instead of 0. The member
+  list now carries the group's count too, so `chats members fetch` can tell who left a supergroup once
+  tg moves to the next shared library.
+
 ## 0.29.0 — 06.10.2026
 
 ### What's new

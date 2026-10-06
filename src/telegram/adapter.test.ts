@@ -699,6 +699,31 @@ describe("reading", () => {
     expect(asked).toEqual([{ offset: 2, limit: 2 }])
   })
 
+  it("counts a supergroup by its member list, which the chat and its full info can lag behind", async () => {
+    const { adapter, client } = await open()
+    client.peer = { ...group(-100500, "Test group"), membersCount: 1, raw: { _: "channel" } }
+    client.fullChat = { ...group(-100500, "Test group"), membersCount: 1, full: { _: "channelFull" } }
+    client.members = [{ user: user(1, "Owner"), status: "creator" }, { user: user(2, "Ana") }]
+
+    expect(await adapter.members("-100500", { offset: 0 })).toMatchObject({ participantsCount: 2, hasMore: false })
+    expect(await adapter.members("-100500", { offset: 200 })).toMatchObject({ participantsCount: null })
+    client.dialogs = [dialog(client.peer)]
+    expect(await adapter.chat("-100500")).toMatchObject({ participantsCount: 2, members: [{ id: "1" }, { id: "2" }] })
+  })
+
+  it("keeps a supergroup's full count when its list is hidden from this account", async () => {
+    const { adapter, client } = await open()
+    client.peer = { ...group(-100500, "Test group"), raw: { _: "channel" } }
+    client.fullChat = {
+      ...group(-100500, "Test group"),
+      membersCount: 40,
+      full: { _: "channelFull", participantsHidden: true },
+    }
+    client.members = [{ user: user(1, "Owner"), status: "creator" }]
+
+    expect(await adapter.members("-100500", { offset: 0 })).toMatchObject({ participantsCount: 40 })
+  })
+
   it("previews an invite without joining, and reads a joined invite or a public link as the chat", async () => {
     const { adapter, client } = await open()
     const chat = {
