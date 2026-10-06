@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Long messages are searched by meaning in full.** A message longer than about 1200 characters is split
+  into overlapping pieces before it is embedded, so `messages search` by meaning reads all of it, not only its
+  start. Chats built before read as outdated, and `conversations build` or `search --refresh` rebuilds them
+  (cli-messaging 0.153.0; the store moves to version 21, which older builds still write).
+
 - **A person's profile.** `tg contacts profile <person>` shows what Telegram says about someone — every
   username, bio, birthday, Telegram's own marks (bot, verified, premium, scam, fake, restricted, deleted),
   when they were last seen (`recently`, `week` and `month` are no longer shown as hidden), whether you are each
