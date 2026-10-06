@@ -165,6 +165,17 @@ describe("setup", () => {
     })
   })
 
+  it("shows a person each step as a heading, its details and the QR code indented under it", async () => {
+    input.answers = ["synthetic-number", "synthetic-code"]
+    const result = await execute(["setup", "--agent", "codex"], { tty: true })
+    expect(result.code).toBe(0)
+    const screen = result.stderr.join("\n")
+    for (let step = 1; step <= 5; step++) expect(screen).toMatch(new RegExp(`\n\\[${step}/5\\] `))
+    expect(screen).toContain("\n      ✓ local directories ready")
+    expect(screen).toMatch(/\n\n {8}\S/)
+    expect(screen).not.toMatch(/^· \d\/5/m)
+  })
+
   it("asks a person for their agent and prints a readable completion", async () => {
     existingSession()
     input.answers = [" GEMINI "]
@@ -173,14 +184,14 @@ describe("setup", () => {
     expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(result.stdout.join()).toContain("installed for gemini")
     expect(result.stdout.join()).toContain("tg inbox --limit 5")
-    expect(result.stdout.join()).toContain("For your agent: tg skill show")
+    expect(result.stdout.join()).toMatch(/For an agent +tg skill show/)
   })
 
   it("an empty agent choice skips installation", async () => {
     existingSession()
     const result = await execute(["setup"], { tty: true })
     expect(result.code).toBe(0)
-    expect(result.stdout.join()).toContain("Agent skill: skipped")
+    expect(result.stdout.join()).toMatch(/Agent skill +skipped/)
     expect(installSkill).not.toHaveBeenCalled()
   })
 

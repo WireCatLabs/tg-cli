@@ -1,6 +1,6 @@
 import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { CliError } from "@leemour/cli-core"
+import { CliError, indent } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
 import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
 import { asFirstWord, commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
@@ -97,11 +97,13 @@ export interface StartSessionOptions {
   command?: string
   progress?: (step: "app" | "login") => void
   signal?: AbortSignal
+  /** How far the questions sit right, to line up under a setup step. */
+  indent?: number
 }
 
 export const startSession = async (
   context: CommandContext,
-  { method, app, qrFile, command = "tg session start", progress, signal }: StartSessionOptions,
+  { method, app, qrFile, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
 ) => {
   if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
   const input = context.stdin
@@ -113,7 +115,7 @@ export const startSession = async (
     if (!input.isTTY) {
       throw new CliError("validation_error", `\`${command}\` needs a terminal to ask for the ${prompt.trim()}`)
     }
-    return readSecret(prompt, { input, echo, ...(signal === undefined ? {} : { signal }) })
+    return readSecret(`${" ".repeat(pad)}${prompt}`, { input, echo, ...(signal === undefined ? {} : { signal }) })
   }
   const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
   let typedPhone: string | undefined
@@ -137,7 +139,7 @@ export const startSession = async (
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
         )
         if (!qrPath) {
-          context.streams.diagnostic(terminalQr(url).text)
+          context.streams.diagnostic(`\n${indent(terminalQr(url).text, pad + 2)}`)
           return
         }
         writeFileSync(qrPath, qrPng(url), { mode: 0o600 })

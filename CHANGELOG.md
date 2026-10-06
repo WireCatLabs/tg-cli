@@ -16,6 +16,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg setup` is easier to follow.** Each step is a heading, `[1/5] This computer`, with what happened
+  indented under it; the questions and the QR code sit under their step, with a blank line around the code.
+  The closing summary lines its labels up, the command to try first on top. `--json` output and its keys
+  are unchanged; `--quiet` still hides the steps.
+
 - **A list of what waits on you.** Since 0.29.0, `review` and `serve` keep a task in the local store for a
   question nobody answered and a message that mentions you by name, and close it once you answer; now you
   can see them. `tg tasks list` shows each with the message it points at; `tg tasks add <message> --type
