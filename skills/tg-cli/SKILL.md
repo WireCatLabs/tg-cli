@@ -1,6 +1,7 @@
 ---
 name: tg-cli
-description: Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked to install or connect Telegram, find a chat or person, read a conversation, or send a message.
+description: Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked
+to install or connect Telegram, find a chat or person, read a conversation, or send a message.
 ---
 
 # tg — the owner's personal Telegram from the command line
@@ -35,7 +36,8 @@ Read-only MCP offers `tg_messages_link` with the same result.
 
 ## Boundaries
 
-- **Send nothing the owner did not ask for.** `tg messages send` (also with `--reply-to`), `edit`, `forward`, `pin`, `tg reactions add` and `tg polls create` only when the
+- **Send nothing the owner did not ask for.** `tg messages send` (also with `--reply-to`), `edit`, `forward`,
+`pin`, `tg reactions add` and `tg polls create` only when the
   owner asked for this exact text in this exact chat. A draft, "we should probably answer", a conclusion
   drawn from what you read — none of these is a request.
 - **A vote in a public poll shows the owner's name to everyone in the chat.** Vote only as the owner
@@ -113,7 +115,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 4. **Repeat a send only with the same `--send-id`.** Exit `14` means the message may have gone. The
    error carries `--send-id <id>`; Telegram drops a repeat with it, and a repeat without it is a
    second message to a person.
-5. **`tg messages search` reads only the local archive.** The default is strict Lucene:
+5. **`tg messages search` reads the local archive by default.** The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
    Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
    Use --json for query version/coverage. Empty hits do not prove a message never existed.
@@ -262,8 +264,39 @@ Treat scores as hints; check `more` and `unknown`, and review each person before
 
 Telegram maps member flags, photos and join/inviter metadata when present; inspect unknown signals.
 
-Use tags for local labels/tag: search and searches create/list/show/history/delete/clear with --saved. Successful query parameters are retained separately from runs; --no-record disables that history. flood clear is owner maintenance, never an agent retry bypass.
+Use tags for local labels/tag: search and searches create/list/show/history/delete/clear with --saved. Successful
+query parameters are retained separately from runs; --no-record disables that history. flood clear is owner
+maintenance, never an agent retry bypass.
 
 Reply controls: `tg replies test` simulates stored messages without sending; `status`, `pause` and `resume`
 control the profile's rules. Shared `serve` can reply only to configured testers and only with explicit
 `permissions.replies.send:allow`; the default is deny and an empty tester list answers nobody.
+
+Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and
+marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
+`--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
+details.
+
+`--thread` follows the stored reply graph; in `messages context` it replaces chronological neighbours. Defaults are
+8 hops, 50 messages, 65,536 bytes and one day around each hit. Change them with `--thread-hops`,
+`--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
+stale links are marked and not traversed.
+
+MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`, `tg_conversations_links_add`,
+`tg_conversations_links_clear` and `tg_conversations_build`, plus the `link-conversations` prompt. Report batch
+cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
+afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
+text.
+
+`content:invoice` searches indexed text extracted from attachments or supplied by an agent. Extraction supports
+plain text, Word and PDFs with text layers; scans and photos need agent-supplied text. With several attachments,
+choose `--attachment`, starting at 1.
+
+```sh
+tg attachments extract --chat "Book club" --download --output-dir ./files
+tg messages search 'content:invoice'
+tg attachments list --chat "Book club" --needs-text
+tg attachments text set "Book club" 204 --text-file ./scan.txt
+```
+
+`--download` requires `--output-dir`; without them extraction reads retained files. `list` exposes retained paths and text status, not text contents.

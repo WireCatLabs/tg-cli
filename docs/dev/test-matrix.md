@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**1953 ✅ · 49 ⛔ · 0 ❌** — 385 commands, 1617 options.
+**2002 ✅ · 49 ⛔ · 0 ❌** — 390 commands, 1661 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -53,6 +53,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members remove` |  | ✅ |  |
 | `chats mark-read` |  | ✅ |  |
 | `chats mark-read` | `--until` | ✅ |  |
+| `chats mark-read` | `--topic` | ✅ |  |
 | `chats stats` |  | ✅ |  |
 | `chats stats` | `--since-time` | ✅ |  |
 | `chats stats` | `--by` | ✅ |  |
@@ -120,6 +121,15 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--model` | ✅ |  |
 | `messages list` | `--mark-read` | ✅ |  |
 | `messages search` |  | ✅ |  |
+| `messages search` | `--sync-first` | ✅ |  |
+| `messages search` | `--max-chats` | ✅ |  |
+| `messages search` | `--sync-time` | ✅ |  |
+| `messages search` | `--max-messages` | ✅ |  |
+| `messages search` | `--thread` | ✅ |  |
+| `messages search` | `--thread-hops` | ✅ |  |
+| `messages search` | `--thread-messages` | ✅ |  |
+| `messages search` | `--thread-bytes` | ✅ |  |
+| `messages search` | `--thread-within` | ✅ |  |
 | `messages search` | `--chat` | ✅ |  |
 | `messages search` | `--source` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
@@ -130,6 +140,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--regex` | ✅ |  |
 | `messages search` | `--saved` | ✅ |  |
 | `messages stats` |  | ✅ |  |
+| `messages stats` | `--sync-first` | ✅ |  |
+| `messages stats` | `--max-chats` | ✅ |  |
+| `messages stats` | `--sync-time` | ✅ |  |
+| `messages stats` | `--max-messages` | ✅ |  |
 | `messages stats` | `--by` | ✅ |  |
 | `messages stats` | `--chat` | ✅ |  |
 | `messages stats` | `--source` | ✅ |  |
@@ -151,6 +165,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--at-time` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
+| `messages context` | `--thread` | ✅ |  |
+| `messages context` | `--thread-hops` | ✅ |  |
+| `messages context` | `--thread-messages` | ✅ |  |
+| `messages context` | `--thread-bytes` | ✅ |  |
+| `messages context` | `--thread-within` | ✅ |  |
 | `messages context` | `--before-n` | ✅ |  |
 | `messages context` | `--after-n` | ✅ |  |
 | `messages download` |  | ✅ |  |
@@ -276,6 +295,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store copies delete` |  | ✅ |  |
 | `conversations build` |  | ✅ |  |
 | `conversations build` | `--chat` | ✅ |  |
+| `conversations build` | `--analyze` | ✅ |  |
+| `conversations build` | `--provider` | ✅ |  |
+| `conversations build` | `--model` | ✅ |  |
+| `conversations build` | `--base-url` | ✅ |  |
+| `conversations build` | `--size` | ✅ |  |
+| `conversations build` | `--max-tokens` | ✅ |  |
 | `conversations build` | `--max-chats` | ✅ |  |
 | `conversations list` |  | ✅ |  |
 | `conversations list` | `--chat` | ✅ |  |
@@ -301,8 +326,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations search` | `--dims` | ✅ |  |
 | `conversations search` | `--max-chats` | ✅ |  |
 | `conversations search` | `--max-chunks` | ✅ |  |
+| `conversations search` | `--sync-first` | ✅ |  |
+| `conversations search` | `--sync-time` | ✅ |  |
+| `conversations search` | `--max-messages` | ✅ |  |
 | `conversations search` | `--chat` | ✅ |  |
 | `conversations search` | `--since-time` | ✅ |  |
+| `conversations search` | `--filter` | ✅ |  |
+| `conversations search` | `--source` | ✅ |  |
+| `conversations search` | `--timezone` | ✅ |  |
 | `conversations search` | `--limit` | ✅ |  |
 | `conversations search` | `--refresh` | ✅ |  |
 | `conversations batches status` |  | ✅ |  |
@@ -316,6 +347,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations links clear` |  | ✅ |  |
 | `conversations links clear` | `--chat` | ✅ |  |
 | `conversations links clear` | `--model` | ✅ |  |
+| `conversations consents list` |  | ✅ |  |
+| `conversations consents revoke` |  | ✅ |  |
+| `conversations consents revoke` | `--chat` | ✅ |  |
+| `conversations consents revoke` | `--provider` | ✅ |  |
 | `conversations embed` |  | ✅ |  |
 | `conversations embed` | `--chat` | ✅ |  |
 | `conversations embed` | `--model` | ✅ |  |
@@ -340,6 +375,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed clear` | `--provider` | ✅ |  |
 | `conversations embed clear` | `--base-url` | ✅ |  |
 | `conversations embed clear` | `--dims` | ✅ |  |
+| `attachments extract` |  | ✅ |  |
+| `attachments extract` | `--chat` | ✅ |  |
+| `attachments extract` | `--download` | ✅ |  |
+| `attachments extract` | `--output-dir` | ✅ |  |
+| `attachments extract` | `--limit` | ✅ |  |
+| `attachments list` |  | ✅ |  |
+| `attachments list` | `--chat` | ✅ |  |
+| `attachments list` | `--needs-text` | ✅ |  |
+| `attachments list` | `--limit` | ✅ |  |
+| `attachments list` | `--page` | ✅ |  |
+| `attachments list` | `--all` | ✅ |  |
+| `attachments text set` |  | ✅ |  |
+| `attachments text set` | `--attachment` | ✅ |  |
+| `attachments text set` | `--text-file` | ✅ |  |
 | `tags add` |  | ✅ |  |
 | `tags add` | `--chat` | ✅ |  |
 | `tags add` | `--contact` | ⛔ | cli-messaging src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |

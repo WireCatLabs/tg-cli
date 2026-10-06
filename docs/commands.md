@@ -286,6 +286,7 @@ tg chats mark-read <chat> [options]
 | Option | What it does |
 |---|---|
 | `--until <message>` | only up to this message id; the newest by default. |
+| `--topic <id>` | mark only this forum topic read; unsupported by messengers without topics. |
 
 ### `tg chats stats`
 
@@ -795,7 +796,7 @@ tg messages list <chat> [options]
 
 ### `tg messages search`
 
-search the local store — what was read, fetched or kept by serve; never asks the messenger
+search the local store — what was read, fetched or kept by serve; optionally fetches new messages with --sync-first
 
 ```sh
 tg messages search [query] [options]
@@ -807,6 +808,15 @@ tg messages search [query] [options]
 
 | Option | What it does |
 |---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--thread` | the stored reply chain and replies instead of time neighbours; falls back when no graph exists. |
+| `--thread-hops <n>` | at most this many links from the hit (default: 8). |
+| `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
+| `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
+| `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many. |
@@ -819,7 +829,7 @@ tg messages search [query] [options]
 
 ### `tg messages stats`
 
-how many stored messages match, by chat, sender, day or hour — the local store only; never asks the messenger
+how many stored messages match, by chat, sender, day or hour — the local store only; optionally fetches new messages with --sync-first
 
 ```sh
 tg messages stats [query] [options]
@@ -831,6 +841,10 @@ tg messages stats [query] [options]
 
 | Option | What it does |
 |---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
 | `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
@@ -896,6 +910,11 @@ tg messages context <chat> [message] [options]
 
 | Option | What it does |
 |---|---|
+| `--thread` | the stored reply chain and replies instead of time neighbours; falls back when no graph exists. |
+| `--thread-hops <n>` | at most this many links from the hit (default: 8). |
+| `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
+| `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
+| `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
 | `--before-n <n>` | how many before it. Default: `5`. |
 | `--after-n <n>` | how many after it. Default: `5`. |
 
@@ -1239,7 +1258,7 @@ tg models text download <model> [options]
 
 #### `tg models text key`
 
-the API key of an embedding service, for `conversations embed --provider`
+API keys for embedding and analysis providers
 
 #### `tg models text key set`
 
@@ -1251,7 +1270,7 @@ tg models text key set <provider>
 
 | Argument | | What it is |
 |---|---|---|
-| `provider` | required | openai, or the host of a --base-url server that wants a key. |
+| `provider` | required | openai, anthropic, or the host of a --base-url server that wants a key. |
 
 #### `tg models text key remove`
 
@@ -1263,7 +1282,7 @@ tg models text key remove <provider>
 
 | Argument | | What it is |
 |---|---|---|
-| `provider` | required | openai, or a server's host. |
+| `provider` | required | openai, anthropic, or a server's host. |
 
 ## `tg inbox`
 
@@ -1603,7 +1622,7 @@ tg store migrate
 
 ### `tg store reindex`
 
-rebuild the word index, its typo vocabulary and the stems from the stored messages; loses no message
+rebuild the word index, its typo vocabulary, the stems and the files' word index from the stored messages; loses no message
 
 ```sh
 tg store reindex
@@ -1696,6 +1715,12 @@ tg conversations build [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--analyze` | link batches using the configured analysis provider; requires --chat and remembers consent for this chat/provider. |
+| `--provider <provider>` | analysis: agent, openai or anthropic. |
+| `--model <model>` | analysis model; overrides analysisModel. |
+| `--base-url <url>` | analysis API endpoint; overrides analysisBaseUrl. |
+| `--size <n>` | analysis answer messages per batch, 10–200; default 50. |
+| `--max-tokens <n>` | analysis input/output reservation cap per run; default 100000. |
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
 
 ### `tg conversations list`
@@ -1742,7 +1767,7 @@ tg conversations related <chat> <message> [options]
 |---|---|
 | `--limit <n>` | how many. |
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
@@ -1758,7 +1783,7 @@ tg conversations status [options]
 |---|---|
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
@@ -1777,13 +1802,19 @@ tg conversations search <query> [options]
 | Option | What it does |
 |---|---|
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
-| `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
+| `--max-chats <n>` | at most this many chats; 5 with --sync-first, 20 with --refresh if not given. |
 | `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
+| `--filter <query>` | strict Lucene filter: any message in a conversation must match; does not change the meaning query. |
+| `--source <source>` | accounts to search: personal, bots, all, or a provider; defaults to the active account. |
+| `--timezone <zone>` | IANA timezone for filter dates; system timezone by default. |
 | `--limit <n>` | how many. |
 | `--refresh` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
 
@@ -1846,6 +1877,31 @@ tg conversations links clear [options]
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | only the answers this model gave. |
 
+### `tg conversations consents`
+
+remembered analysis permissions for this account's chats and provider endpoints
+
+#### `tg conversations consents list`
+
+
+
+```sh
+tg conversations consents list
+```
+
+#### `tg conversations consents revoke`
+
+
+
+```sh
+tg conversations consents revoke [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | revoke only this chat's consents; defaults to every chat. |
+| `--provider <identity>` | exact provider identity from consents list; defaults to every provider. |
+
 ### `tg conversations embed`
 
 compute a vector for each chunk of a chat's conversations for search by meaning — on this machine, or with --provider through a service and your key; resumes where it stopped; without --chat, every built chat with chunks left, on this machine only
@@ -1858,7 +1914,7 @@ tg conversations embed [options]
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 | `--workers <n>` | local: sessions in parallel, each with its own copy of the model (\~0.7 GB each). |
@@ -1866,7 +1922,7 @@ tg conversations embed [options]
 | `--concurrency <n>` | remote: requests at once (default: 4). |
 | `--max-tokens <n>` | remote: stop before a run that could send more tokens than this. |
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
-| `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
+| `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given, and no limit with --chat. |
 
 #### `tg conversations embed status`
 
@@ -1880,7 +1936,7 @@ tg conversations embed status [options]
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
@@ -1896,9 +1952,66 @@ tg conversations embed clear [options]
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embed through a service with your key instead of on this machine: openai. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
+
+## `tg attachments`
+
+the files of stored messages: their text in the local store, for content: in a search
+
+### `tg attachments extract`
+
+read the text of downloaded files — plain text, Word, PDF with a text layer — into the local store, for content: in a search
+
+```sh
+tg attachments extract [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat's files; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--download` | first save the files no download saved yet, from the messenger, into --output-dir. |
+| `--output-dir <dir>` | with --download, where to save them; created if missing. |
+| `--limit <n>` | read at most this many files; run it again to continue. |
+
+### `tg attachments list`
+
+files of stored messages, where each was saved and whether its text is held — never the text
+
+```sh
+tg attachments list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat's files; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--needs-text` | only files saved here whose text nobody has yet: what an agent reads and writes back. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+
+### `tg attachments text`
+
+the text of one file, as an agent read it
+
+#### `tg attachments text set`
+
+keep the text an agent read from a file — a scan, a photo — so content: finds it; nothing is sent
+
+```sh
+tg attachments text set <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--attachment <n>` | which file of the message, from 1; needed when it has more than one. |
+| `--text-file <path>` | read the text from this file; - or none reads stdin. |
 
 ## `tg tags`
 
@@ -2239,7 +2352,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -2260,7 +2373,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 
 | Option | What it does |
 |---|---|

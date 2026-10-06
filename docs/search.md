@@ -1,7 +1,7 @@
 # Message search
 
 `tg messages search` finds messages in the local archive: the copy of your chats that tg keeps on this
-computer. It never connects to Telegram and marks nothing read. A message tg has not fetched cannot be
+computer. By default it never connects to Telegram and marks nothing read. A message tg has not fetched cannot be
 found, so fetch the history first: `tg store fetch <chat>` ([archive](archive.md)).
 
 This page covers everyday searches. Three more pages go further:
@@ -154,3 +154,29 @@ relevance, and `--context 2` shows two messages around each one found.
 only. In MCP, `tg_messages_search` and `tg_messages_stats` take the same queries, and `tg_tags_*` and
 `tg_searches_*` manage tags and saved searches. The answer's fields,
 the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).
+
+Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and
+marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
+`--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
+details.
+
+`content:invoice` searches indexed text extracted from attachments or supplied by an agent. Extraction supports
+plain text, Word and PDFs with text layers; scans and photos need agent-supplied text. With several attachments,
+choose `--attachment`, starting at 1.
+
+```sh
+tg attachments extract --chat "Book club" --download --output-dir ./files
+tg messages search 'content:invoice'
+tg attachments list --chat "Book club" --needs-text
+tg attachments text set "Book club" 204 --text-file ./scan.txt
+```
+
+`--download` requires `--output-dir`; without them extraction reads retained files. `list` exposes retained paths and text status, not text contents.
+
+`--thread` follows the stored reply graph; in `messages context` it replaces chronological neighbours. Defaults are
+8 hops, 50 messages, 65,536 bytes and one day around each hit. Change them with `--thread-hops`,
+`--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
+stale links are marked and not traversed.
+
+PDF extraction needs optional `unpdf`; Word needs optional `mammoth`, installed where `tg` is. For a global npm
+install: `npm install -g unpdf mammoth`. Missing engines are reported; an agent can supply text instead.

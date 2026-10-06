@@ -47,6 +47,7 @@ Fuzzy `~`, proximity, boosts and intervals are refused with an error, not ignore
 | `topic` | one forum topic; needs one chat | `chat:"Book club" AND topic:42` |
 | `in` | which accounts: a provider or `bots` | `in:bots` |
 | `preset` | text shaped like a secret or a contact detail | `preset:secret` |
+| `content` | indexed attachment text | `content:invoice` |
 | `filename` | an attached file's whole name | `filename:*.pdf` |
 | `mime` | an attached file's type; a value without `/` matches the first part | `mime:image` |
 | `size` | an attached file's size, in bytes or KB/MB/GB of 1,024 | `size>10MB` |
@@ -148,3 +149,17 @@ time and size limits. `--regex` cannot be combined with `--language lucene`.
 | `before:2026-02-01` | `date:[* TO 2026-02-01}` |
 | `after:7d` | `date:7d` |
 | automatic prefix and typo correction | `invo*` explicitly; typos only in `--language legacy` |
+
+`--thread` follows the stored reply graph; in `messages context` it replaces chronological neighbours. Defaults are
+8 hops, 50 messages, 65,536 bytes and one day around each hit. Change them with `--thread-hops`,
+`--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
+stale links are marked and not traversed.
+
+Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and
+marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
+`--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
+details.
+
+MCP uses `thread`, `thread_hops`, `thread_messages`, `thread_bytes`, `thread_within` and `sync_first`. `sync_first`
+is exposed only with `messages.sync-first: allow`. Ordinary `messages_context` with `offline: true` reads stored
+messages.

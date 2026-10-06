@@ -1,7 +1,8 @@
 # The MCP server
 
 `tg mcp` hands a profile to an agent over [MCP](https://modelcontextprotocol.io), on stdin and
-stdout by default; `--http --public-url` serves it on a local port behind your HTTPS tunnel. The server comes with `tg`; there is nothing else to install.
+stdout by default; `--http --public-url` serves it on a local port behind your HTTPS tunnel. The server comes with
+`tg`; there is nothing else to install.
 
 **When you need it.** In Claude Code, Codex and other agents with a terminal, `tg` itself is enough
 — it costs the same tokens and can do the same things. MCP is for clients without a terminal, such
@@ -159,7 +160,8 @@ claude mcp add tg -- tg mcp --confirm-send
 
 Messenger changes at `ask`, and all messenger changes with `--confirm-send`, require a form.
 Local tags, saved searches and conversation updates at `ask`, with `--confirm-send` or over HTTP
-refuse with `confirmation_required` before writing; run them through the CLI. Readonly keeps read tools. A send's form shows **which chat** — the title and id the
+refuse with `confirmation_required` before writing; run them through the CLI. Readonly keeps read tools. A send's
+form shows **which chat** — the title and id the
 agent's name resolved to — and **the whole text**. The change goes only after Accept; the form has
 no fields, only the one button. The client's own window shows the arguments as the model wrote them
 (`chat: "Anna"`); the form shows what you are actually agreeing to ("Anna Petrova (123456)").
@@ -199,7 +201,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_messages_scheduled` | `tg messages scheduled` | what waits to be sent in a chat, soonest first, each with `scheduledFor` |
 | `tg_messages_photo` | `tg messages download` | a message's photo as an image to look at, up to 512 KB; `index` selects an attachment; anything else is refused with the `tg messages download` command that saves it |
 | `tg_messages_transcribe` | `tg messages transcribe` | a voice message as text — by Telegram (Premium or the weekly trial), else by a speech model on this machine; `local: true` skips Telegram; `model` chooses the downloaded speech model; `pending: true` means Telegram was not finished within a minute; a missing model is refused with `tg models audio download`, never downloaded |
-| `tg_messages_search` | `tg messages search` | search what this machine has kept; never asks Telegram |
+| `tg_messages_search` | `tg messages search` | search what this machine has kept; local by default; optional `sync_first` fetches new messages with `messages.sync-first: allow` |
 | `tg_messages_link` | `tg messages link` | a permalink where supported and an account-scoped locator; read-only; a link grants no chat membership |
 | `tg_messages_send` | `tg messages send`, `--reply-to`, `--topic` | send, by `messages.send`; `reply_to` answers a message and must belong to the chosen topic; `send_id` repeats a send whose outcome was unknown in the same chat and topic; `silent`, `no_preview` and `md` as `--silent`, `--no-preview` and `--md`; `topic` picks a forum topic; `at_time` sends it later — never retried, the confirmation form shows the clock time; `file` or `photo` attaches a path from this machine, the text as the caption (`as_file` keeps a video a file), `voice` sends an Ogg Opus file as a voice message — hidden files, `~/.ssh`, tg's own folders and the message store are refused, with no way around it over MCP |
 | `tg_messages_edit` | `tg messages edit` | the new text of the owner's own message, by `messages.edit`; `md` as `--md`; repeating it changes nothing |
@@ -220,6 +222,9 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
 | `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
 | `tg_messages_stats` | `tg messages stats` | count local query matches by chat, sender, day or hour |
+| `tg_conversations_batches_status`, `tg_conversations_batches_next` | `tg conversations batches …` | batch volume and bounded messages; read after owner consent |
+| `tg_conversations_links_add`, `tg_conversations_links_clear`, `tg_conversations_build` | `tg conversations links …`, `build` | store or clear agent links, rebuild; `conversations.links` |
+| `tg_attachments_list`, `tg_attachments_text_set` | `tg attachments list`, `text set` | retained paths/text status; save agent text for `content:` |
 | `tg_conversations_status`, `tg_conversations_related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
 | `tg_conversations_refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
 | `tg_conversations_list`, `tg_conversations_show` | `tg conversations list`, `show` | the conversations inside a group, from the stored messages; one conversation's messages |
@@ -235,13 +240,14 @@ Each call can be kept as a run
 
 ## Prompts, and chats by `@`
 
-The server offers four ready prompts — in Claude Code they are `/` commands:
+The server offers five ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
 | `catch-up` | `kind`, `mode` — optional | calls `tg_inbox`; `mode` is `unread` (default), `new` or a time; `kind` selects chat kinds; marking read requires a separate approved tool call |
 | `reply` | `chat` | reads the chat, writes a draft, and sends it only after your yes to that text |
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
+| `link-conversations` | none | report cost and request consent, then read batches, save links and rebuild |
 | `review` | `since`, `groups` — optional | calls `tg_review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
 
 `reply` and `review` send through `tg_messages_send`, so where `messages.send` is `readonly` the
@@ -273,3 +279,12 @@ CLI command with the owner's approval.
 MCP `tg_inbox` and `tg_review` accept `kinds` and `new`. MCP keeps its own per-chat checkpoints,
 separate from CLI `--new`. `new` cannot be combined with `since_time`, or with `unanswered` on review.
 HTTP writes always require a form, regardless of permission level or confirmation flags.
+
+MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`, `tg_conversations_links_add`,
+`tg_conversations_links_clear` and `tg_conversations_build`, plus the `link-conversations` prompt. Report batch
+cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
+afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
+text.
+
+`tg_attachments_list` exposes retained paths and text status; `tg_attachments_text_set` saves agent text for
+`content:`. Extraction is CLI-only. `messages_context` accepts `offline: true` for stored messages.
