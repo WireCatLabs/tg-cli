@@ -20,6 +20,7 @@ import {
   type Member,
   type Message,
   type MessageEvent,
+  type OfficialChatStats,
   type Page,
   type PersonCard,
   type PhoneBookEntry,
@@ -89,6 +90,7 @@ import {
 } from "./map.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
+import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
 
@@ -1259,6 +1261,70 @@ export class TelegramAdapter {
 
   group(reference: string): Promise<GroupCard> {
     return this.#call(async () => toGroupCard(await this.#client.getFullChat(await this.#inputOf(reference))))
+  }
+
+  /**
+   * Telegram computes these only on the chat's statistics server (`stats_dc`); mtcute opens that
+   * connection and carries the login over itself, and `close` ends it with the others.
+   */
+  officialChatStats(reference: string): Promise<OfficialChatStats> {
+    return this.#call(async () => {
+      let full = await this.#client.getFullChat(await this.#inputOf(reference))
+      if (full.migratedToId != null) full = await this.#client.getFullChat(full.migratedToId)
+      const broadcast = full.chatType === "channel"
+      if (!broadcast && full.chatType !== "supergroup" && full.chatType !== "gigagroup") {
+        throw new CliError(
+          "validation_error",
+          full.chatType === "group"
+            ? "Telegram keeps statistics only for supergroups and channels, not for a basic group"
+            : "Telegram keeps statistics only for supergroups and channels",
+        )
+      }
+      if (!full.canViewStats) {
+        throw new CliError(
+          "permission_error",
+          "Telegram shows statistics only to admins of large enough groups and channels, and not for this one",
+        )
+      }
+      const statsDc = full.full._ === "channelFull" ? full.full.statsDc : undefined
+      const options = statsDc === undefined ? undefined : { dcId: statsDc }
+      const channel = await this.#client.resolveChannel(full.id)
+      const chat = { id: String(full.id), title: full.displayName }
+      const graphOf: GraphOf = async (graph) => {
+        if (graph._ === "statsGraph") return toOfficialGraph(graph.json.data)
+        if (graph._ === "statsGraphError") return { error: graph.error }
+        try {
+          const loaded = await this.#client.call({ _: "stats.loadAsyncGraph", token: graph.token }, options)
+          if (loaded._ === "statsGraph") return toOfficialGraph(loaded.json.data)
+          return { error: loaded._ === "statsGraphError" ? loaded.error : "Telegram did not finish this graph" }
+        } catch (error) {
+          if (tl.RpcError.is(error)) return { error: error.text }
+          throw error
+        }
+      }
+      try {
+        return broadcast
+          ? await toOfficialChannelStats(
+              chat,
+              await this.#client.call({ _: "stats.getBroadcastStats", channel }, options),
+              graphOf,
+            )
+          : await toOfficialGroupStats(
+              chat,
+              await this.#client.call({ _: "stats.getMegagroupStats", channel }, options),
+              graphOf,
+            )
+      } catch (error) {
+        // Reached the main server a moment ago, so the login stands; only the statistics server refused it.
+        if (tl.RpcError.is(error, "AUTH_KEY_UNREGISTERED"))
+          throw new CliError(
+            "provider_error",
+            "Telegram's statistics server did not accept this login (AUTH_KEY_UNREGISTERED); the login itself works — try again later",
+            { providerError: error.text, status: error.code },
+          )
+        throw error
+      }
+    })
   }
 
   /**

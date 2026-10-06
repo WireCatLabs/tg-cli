@@ -47,6 +47,9 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
       "send them the invite link instead (`tg chats link show <chat>`)",
   ],
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
+  CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
+  MEGAGROUP_REQUIRED: ["validation_error", "that works only in a supergroup"],
+  BROADCAST_REQUIRED: ["validation_error", "that works only in a channel"],
 }
 
 type Standing = (login: string) => [ErrorCode, string, "frozen" | "limited" | "banned" | "deactivated" | "revoked"]
