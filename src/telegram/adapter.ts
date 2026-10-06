@@ -328,6 +328,17 @@ export class TelegramAdapter {
     })
   }
 
+  /** How many profile photos they show and the oldest one's date: the newest first, so the last page holds it. */
+  photos(person: string): Promise<{ count: number; oldestAt: string | null }> {
+    return this.#call(async () => {
+      const peer = await this.#inputOf(person)
+      const newest = await this.#client.getProfilePhotos(peer, { limit: 1 })
+      if (newest.total <= 1) return { count: newest.total, oldestAt: newest[0]?.date.toISOString() ?? null }
+      const [oldest] = await this.#client.getProfilePhotos(peer, { offset: newest.total - 1, limit: 1 })
+      return { count: newest.total, oldestAt: oldest?.date.toISOString() ?? null }
+    })
+  }
+
   /** A person, their bio, and the groups this account shares with them — newest conversation first. */
   contact(reference: string): Promise<PersonCard> {
     return this.#call(async () => {

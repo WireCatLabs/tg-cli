@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2014 ✅ · 53 ⛔ · 0 ❌** — 398 commands, 1669 options.
+**2016 ✅ · 51 ⛔ · 0 ❌** — 398 commands, 1669 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -49,7 +49,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members audit` |  | ✅ |  |
 | `chats members audit` | `--budget` | ⛔ | shared member audit; cli-messaging src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
 | `chats members audit` | `--min-score` | ⛔ | shared member audit; cli-messaging src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
-| `chats members audit` | `--deep` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts ("chats members audit 7 --deep 1") and src/services/members-audit.test.ts cover the deep check of the top flagged members; this consumer mounts the shared command |
+| `chats members audit` | `--deep` | ✅ |  |
 | `chats members history` |  | ✅ |  |
 | `chats members history` | `--since-time` | ⛔ | cli-messaging src/services/members-fetch.test.ts ("chats members history") covers the recorded joins, leaves and changes since a time; shared option parsing |
 | `chats members fetch` |  | ✅ |  |
@@ -113,7 +113,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts context` | `--chat` | ✅ |  |
 | `contacts context` | `--refresh` | ✅ |  |
 | `contacts check` |  | ✅ |  |
-| `contacts check` | `--no-registries` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts ("contacts check 40 --no-registries") covers scoring from local signals alone, no registry asked; this consumer mounts the shared command |
+| `contacts check` | `--no-registries` | ✅ |  |
 | `contacts link` |  | ✅ |  |
 | `contacts unlink` |  | ✅ |  |
 | `contacts lookup` |  | ✅ |  |
