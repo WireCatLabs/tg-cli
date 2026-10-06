@@ -5,6 +5,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg setup` is easier to follow.** Each step is a heading, `[1/5] This computer`, with what happened
+  indented under it; the questions and the QR code sit under their step, with a blank line around the code.
+  The closing summary lines its labels up, the command to try first on top. `--json` output and its keys
+  are unchanged; `--quiet` still hides the steps.
+
 ### Fixed
 
 - **Estimated registration dates are closer for accounts made in 2022–2025.** When Telegram does not give the
@@ -15,11 +22,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 ## 0.30.0 — 07.10.2026
 
 ### What's new
-
-- **`tg setup` is easier to follow.** Each step is a heading, `[1/5] This computer`, with what happened
-  indented under it; the questions and the QR code sit under their step, with a blank line around the code.
-  The closing summary lines its labels up, the command to try first on top. `--json` output and its keys
-  are unchanged; `--quiet` still hides the steps.
 
 - **A list of what waits on you.** Since 0.29.0, `review` and `serve` keep a task in the local store for a
   question nobody answered and a message that mentions you by name, and close it once you answer; now you
