@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2039 ✅ · 80 ⛔ · 0 ❌** — 407 commands, 1712 options.
+**2080 ✅ · 54 ⛔ · 0 ❌** — 416 commands, 1718 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -60,10 +60,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats mark-read` |  | ✅ |  |
 | `chats mark-read` | `--until` | ✅ |  |
 | `chats mark-read` | `--topic` | ✅ |  |
-| `chats stats` |  | ✅ |  |
-| `chats stats` | `--since-time` | ✅ |  |
-| `chats stats` | `--by` | ✅ |  |
-| `chats stats` | `--timezone` | ✅ |  |
 | `chats tracking list` |  | ✅ |  |
 | `chats tracking show` |  | ✅ |  |
 | `chats tracking add` |  | ✅ |  |
@@ -155,17 +151,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--timezone` | ✅ |  |
 | `messages search` | `--regex` | ✅ |  |
 | `messages search` | `--saved` | ✅ |  |
-| `messages stats` |  | ✅ |  |
-| `messages stats` | `--sync-first` | ✅ |  |
-| `messages stats` | `--max-chats` | ✅ |  |
-| `messages stats` | `--sync-time` | ✅ |  |
-| `messages stats` | `--max-messages` | ✅ |  |
-| `messages stats` | `--by` | ✅ |  |
-| `messages stats` | `--chat` | ✅ |  |
-| `messages stats` | `--source` | ✅ |  |
-| `messages stats` | `--limit` | ✅ |  |
-| `messages stats` | `--timezone` | ✅ |  |
-| `messages stats` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -444,48 +429,78 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks close` |  | ✅ |  |
 | `tasks close` | `--as` | ✅ |  |
 | `tasks close` | `--reason` | ✅ |  |
-| `tasks stats` |  | ✅ |  |
-| `tasks stats` | `--chat` | ✅ |  |
-| `tasks stats` | `--type` | ✅ |  |
 | `flood clear` |  | ✅ |  |
 | `replies add` |  | ✅ |  |
 | `replies on` |  | ✅ |  |
 | `replies off` |  | ✅ |  |
 | `replies edit` |  | ✅ |  |
-| `replies edit` | `--do` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--kinds` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--not-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--words` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--question` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--no-question` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--mentions-me` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--no-mentions-me` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--not-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--contacts-only` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--no-contacts-only` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--template` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--model` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--as-reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--no-as-reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--per-chat` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--per-person` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--outside` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--days` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
-| `replies edit` | `--no-hours` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--do` | ✅ |  |
+| `replies edit` | `--kinds` | ✅ |  |
+| `replies edit` | `--chats` | ✅ |  |
+| `replies edit` | `--not-chats` | ✅ |  |
+| `replies edit` | `--words` | ✅ |  |
+| `replies edit` | `--question` | ✅ |  |
+| `replies edit` | `--no-question` | ✅ |  |
+| `replies edit` | `--mentions-me` | ✅ |  |
+| `replies edit` | `--no-mentions-me` | ✅ |  |
+| `replies edit` | `--people` | ✅ |  |
+| `replies edit` | `--not-people` | ✅ |  |
+| `replies edit` | `--contacts-only` | ✅ |  |
+| `replies edit` | `--no-contacts-only` | ✅ |  |
+| `replies edit` | `--template` | ✅ |  |
+| `replies edit` | `--model` | ✅ |  |
+| `replies edit` | `--as-reply` | ✅ |  |
+| `replies edit` | `--no-as-reply` | ✅ |  |
+| `replies edit` | `--per-chat` | ✅ |  |
+| `replies edit` | `--per-person` | ✅ |  |
+| `replies edit` | `--outside` | ✅ |  |
+| `replies edit` | `--days` | ✅ |  |
+| `replies edit` | `--timezone` | ✅ |  |
+| `replies edit` | `--no-hours` | ✅ |  |
 | `replies audience` |  | ✅ |  |
-| `replies audience` | `--reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
-| `replies audience` | `--allow-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
-| `replies audience` | `--allow-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
-| `replies audience` | `--deny-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
-| `replies audience` | `--deny-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
+| `replies audience` | `--reply` | ✅ |  |
+| `replies audience` | `--allow-people` | ✅ |  |
+| `replies audience` | `--allow-chats` | ✅ |  |
+| `replies audience` | `--deny-people` | ✅ |  |
+| `replies audience` | `--deny-chats` | ✅ |  |
+| `replies consents show` |  | ✅ |  |
+| `replies consents grant` |  | ✅ |  |
+| `replies consents revoke` |  | ✅ |  |
+| `replies consents deny` |  | ✅ |  |
+| `replies consents allow` |  | ✅ |  |
 | `replies test` |  | ✅ |  |
-| `replies test` | `--since-time` | ⛔ | cli-messaging src/cli/messenger/replies-command.test.ts and src/replies/decide.test.ts cover stored simulation and time selection; shared command |
+| `replies test` | `--since-time` | ✅ |  |
+| `replies test` | `--ai` | ✅ |  |
 | `replies pause` |  | ✅ |  |
 | `replies resume` |  | ✅ |  |
 | `replies status` |  | ✅ |  |
+| `stats` |  | ⛔ | A command group with no action; its show command is exercised through the CLI |
+| `stats messages` |  | ⛔ | A command group with no action; its show command is exercised through the CLI |
+| `stats messages show` |  | ✅ |  |
+| `stats messages show` | `--sync-first` | ✅ |  |
+| `stats messages show` | `--max-chats` | ✅ |  |
+| `stats messages show` | `--sync-time` | ✅ |  |
+| `stats messages show` | `--max-messages` | ✅ |  |
+| `stats messages show` | `--by` | ✅ |  |
+| `stats messages show` | `--chat` | ✅ |  |
+| `stats messages show` | `--source` | ✅ |  |
+| `stats messages show` | `--limit` | ✅ |  |
+| `stats messages show` | `--timezone` | ✅ |  |
+| `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
+| `stats chats` |  | ⛔ | A command group with no action; its show command is exercised through the CLI |
+| `stats chats show` |  | ✅ |  |
+| `stats chats show` | `--since-time` | ✅ |  |
+| `stats chats show` | `--by` | ✅ |  |
+| `stats chats show` | `--timezone` | ✅ |  |
+| `stats tasks show` |  | ✅ |  |
+| `stats tasks show` | `--chat` | ✅ |  |
+| `stats tasks show` | `--type` | ✅ |  |
+| `stats charts` |  | ✅ |  |
+| `stats charts` | `--chart-kind` | ✅ |  |
+| `stats charts` | `--by` | ✅ |  |
+| `stats charts` | `--since-time` | ✅ |  |
+| `stats charts` | `--timezone` | ✅ |  |
+| `stats charts` | `--output` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |

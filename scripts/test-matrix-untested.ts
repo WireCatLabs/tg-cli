@@ -10,41 +10,9 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
-  ...[
-    "--do",
-    "--kinds",
-    "--chats",
-    "--not-chats",
-    "--words",
-    "--question",
-    "--no-question",
-    "--mentions-me",
-    "--no-mentions-me",
-    "--people",
-    "--not-people",
-    "--contacts-only",
-    "--no-contacts-only",
-    "--template",
-    "--model",
-    "--as-reply",
-    "--no-as-reply",
-    "--per-chat",
-    "--per-person",
-    "--outside",
-    "--days",
-    "--timezone",
-    "--no-hours",
-  ].map((option) => ({
-    command: "replies edit",
-    option,
-    reason:
-      "cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command",
-  })),
-  ...["--reply", "--allow-people", "--allow-chats", "--deny-people", "--deny-chats"].map((option) => ({
-    command: "replies audience",
-    option,
-    reason:
-      "cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command",
+  ...["stats", "stats messages", "stats chats"].map((command) => ({
+    command,
+    reason: "A command group with no action; its show command is exercised through the CLI",
   })),
   ...["mcp setup", "mcp doctor"].map((command) => ({
     command,
@@ -96,7 +64,7 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing",
   },
   {
-    command: "messages stats",
+    command: "stats messages show",
     option: "--saved",
     reason:
       "cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters",
@@ -106,12 +74,6 @@ export const UNTESTED: Untested[] = [
     option: "--dry-run",
     reason:
       "cli-messaging src/cli/messenger/store-maintenance.test.ts and src/store/repair.test.ts cover preview rollback and retained data",
-  },
-  {
-    command: "replies test",
-    option: "--since-time",
-    reason:
-      "cli-messaging src/cli/messenger/replies-command.test.ts and src/replies/decide.test.ts cover stored simulation and time selection; shared command",
   },
   {
     command: "tags add",

@@ -184,7 +184,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over every returned chat; `partial` when the messenger cannot provide the whole inventory |
 | `tg_chats_members_audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
-| `tg_chats_stats` | `tg chats stats --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
+| `tg_chats_stats` | `tg stats chats show --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
 | `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
 | `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
@@ -223,7 +223,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_chats_rules_show`, `tg_chats_moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
 | `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
 | `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
-| `tg_messages_stats` | `tg messages stats` | count local query matches by chat, sender, day or hour |
+| `tg_messages_stats` | `tg stats messages show` | count local query matches by chat, sender, day or hour |
 | `tg_conversations_batches_status`, `tg_conversations_batches_next` | `tg conversations batches …` | batch volume and bounded messages; read after owner consent |
 | `tg_conversations_links_add`, `tg_conversations_links_clear`, `tg_conversations_build` | `tg conversations links …`, `build` | store or clear agent links, rebuild; `conversations.links` |
 | `tg_attachments_list`, `tg_attachments_text_set` | `tg attachments list`, `text set` | retained paths/text status; save agent text for `content:` |

@@ -279,3 +279,48 @@ Rules live in the profile's replies file. `replies status`, `pause` and `resume`
 Actual shared `serve` replies require both an explicit `replies.send:allow` permission and a configured
 `testers` list. Sending is denied by default; missing/empty testers means nobody is answered. Edits, messages
 from before startup and already answered messages are ignored. `ask` cannot send from an unattended service.
+
+Create a disabled rule with `tg replies add away`, edit it with `replies edit away --template`, then
+use `replies on away` or `off away`. Enabled reply rules need a nonempty template. Editing changes
+only named fields; lists are comma-separated replacements, an empty string clears one. Options
+include `--do reply,task`, `--kinds`, `--chats`, `--not-chats`, `--words`, `--question` /
+`--no-question`, `--mentions-me` / `--no-mentions-me`, `--people`, `--not-people`, `--contacts-only` /
+`--no-contacts-only`, `--as-reply` / `--no-as-reply`, `--per-chat`, `--per-person`, and the hours
+fields `--outside`, `--days`, `--timezone` (`--no-hours` clears them). First setting hours requires
+all three fields. Invalid edits preserve the file, other rules, testers and reply history.
+
+`tg replies audience` shows the profile's audience; `--reply all|listed`, `--allow-people`,
+`--allow-chats`, `--deny-people` and `--deny-chats` replace its named fields. Deny wins; listed with
+an empty allow list answers nobody. Testers still limit answers on top of the audience. A rule's
+local task can open even where an answer is forbidden.
+
+Templates use Liquid variables `sender.firstName`, `sender.name`, `chat.title`, `chat.kind`, and
+`now` in the rule's working-hours timezone (UTC without one), with filters such as `default` and
+`date`. Unknown variables/filters are refused; file tags and prototype access are forbidden, and
+render time, allocation and output length are bounded. The incoming message is never a variable.
+Only an ai block may call a model; its body is the instruction, the message goes separately as data:
+
+```liquid
+Thanks, {{ sender.firstName | default: "there" }}.
+{% ai %}Briefly acknowledge this; I will answer tomorrow.{% else %}I will answer tomorrow.{% endai %}
+```
+
+Model output replaces only its block and is not parsed again. Missing configuration/consent,
+failed calls and refused output use the else branch; without one the reply is skipped. Outside
+text remains the owner's text with its usual substitutions. Old placeholders and may-reword
+files keep their filled literal fallback with warnings; new files need no model field.
+
+Choose `models.replies.provider`, `.model`, and optionally `.baseUrl`; `models.default` is the
+fallback and `provider off` disables a purpose. Existing analysis settings remain supported.
+`config set` / `unset` accept dotted fields; `config show` reports each source. Keys stay in
+`models text key set`; custom endpoints use their host/port key, never a public provider's key.
+
+`tg replies consents show|grant|revoke` controls model consent separately from sending permission.
+Grant explicitly permits incoming data to go to the configured provider across this profile,
+except native chat ids opted out with `replies consents deny`; `allow` removes an opt-out without
+granting consent. Opt-outs survive grant/revoke. A different endpoint needs another grant.
+Consent, configuration, pause, rule and audience changes during a model call are checked before sending.
+
+`tg replies test` shows instructions/fallback without model calls. `tg replies test --ai` explicitly
+sends stored message data to the consented model, still sends no messenger reply and changes no
+reply history; it cannot be combined with `--offline`.

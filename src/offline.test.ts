@@ -79,13 +79,14 @@ describe("--offline", () => {
 
   it("counts a stored chat's period by calendar day in a timezone, without connecting", async () => {
     const store = freshStore()
-    await tg(["stats", "messages", "list", "Valencia", "--json"], { store })
+    await tg(["activity", "messages", "list", "Valencia", "--json"], { store })
 
     const { code, stdout } = await tg(
       [
+        "activity",
         "stats",
         "chats",
-        "stats",
+        "show",
         message.chatId,
         "--offline",
         "--since-time",
