@@ -7,6 +7,22 @@ the shared design lives in cli-messaging and in
 [max-cli's ARCHITECTURE.md](https://github.com/leemour/max-cli/blob/main/docs/dev/ARCHITECTURE.md),
 which most of cli-messaging was copied from.
 
+### CLI design references
+
+Telegram and MAX use one [CLI standard and adoption profile](https://github.com/leemour/cli-messaging/blob/main/docs/dev/STANDARD.md#external-references-and-our-adoption-profile).
+It draws on [POSIX utility conventions](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap12.html),
+[GNU command-line conventions](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces)
+and [Command Line Interface Guidelines](https://clig.dev/) for utility syntax, help, composition
+and compatibility. Resource names and the statistics hierarchy are project policy; these
+references do not certify the CLI or prescribe its command tree.
+
+The shared standard also assesses the [MCP tools specification](https://modelcontextprotocol.io/specification/2025-11-25/server/tools),
+the [Agent Skills format](https://agentskills.io/specification) and additional agent-tool guidance.
+The shell/renderer own output, services own operations and guards enforce permissions across
+CLI and MCP. The public [compliance audit](https://github.com/leemour/cli-messaging/blob/main/docs/dev/CLI-COMPLIANCE.md)
+separates source evidence, isolated observations, intentional differences and follow-up work.
+Shared runtime fixes become available only after this CLI adopts their published version.
+
 ## 1. Most of `tg` is not in this repository
 
 Every command except `session`, `setup` and `update` comes from `@leemour/cli-messaging/cli`: the command
