@@ -189,6 +189,8 @@ export class TelegramAdapter {
       apiId: credentials.id,
       apiHash: credentials.hash,
       storage,
+      // The storage manager has an exit hook of its own; the close is the command's (storage.ts `setup`).
+      storageOptions: { cleanup: false },
       disableUpdates: !listen,
       ...(listen ? { updates: { catchUp } } : {}),
       logLevel: verbose ? 3 : 1,

@@ -62,6 +62,8 @@ export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHis
     apiId: options.credentials.id,
     apiHash: options.credentials.hash,
     storage: await openSessionStorage(options.sessionPath),
+    // The storage manager has an exit hook of its own; the close is the command's (storage.ts `setup`).
+    storageOptions: { cleanup: false },
     disableUpdates: true,
     logLevel: 0,
   })

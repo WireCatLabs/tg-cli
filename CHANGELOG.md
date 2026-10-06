@@ -45,6 +45,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **Parser errors return exit 2 with a structured validation_error.** Scripts expecting
   prose or exit 1 must update their error handling.
 
+### Fixed
+
+- **`tg serve` and `tg watch` stopped with SIGTERM or Ctrl-C end cleanly.** They exited 1 with
+  `database is not open`, and the updates and contacts that were still arriving were lost: the Telegram
+  library closed the login file on the signal, before the command had finished with it. Now the command
+  closes it, once, after saving what arrived.
+
 ## 0.29.0 — 06.10.2026
 
 ### What's new

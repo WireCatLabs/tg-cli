@@ -42,17 +42,6 @@ describe("the session storage over the runtime's own SQLite", () => {
     await second.driver.destroy?.()
   })
 
-  it("closes once when mtcute's own SIGTERM hook already closed it", async () => {
-    const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
-    const storage = await opened(path)
-    const driver = storage.driver as unknown as { _save(): void; _destroy(): void }
-
-    driver._save()
-    driver._destroy()
-
-    await expect(storage.driver.destroy?.()).resolves.toBeUndefined()
-  })
-
   it.skipIf(process.platform === "win32")("keeps the session and its -wal and -shm owner-only", async () => {
     const path = join(mkdtempSync(join(tmpdir(), "tg-session-")), "test.session")
     const storage = await opened(path)
