@@ -20,6 +20,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - `tg contacts context <person> --chat <chat>` (repeat it for more) gives their newest messages in each chat,
   as time and text only, for an agent to summarise; `-v` adds ids and links, `--limit` is per chat, and `--refresh`
   asks Telegram first with one search by sender per chat.
+- **Is this account a bot?** `tg contacts check <person>` scores one person from Telegram's own marks, their
+  profile and oldest photo, what the store holds that they wrote, and the public spam lists Combot CAS and
+  lols.bot, which are sent their id; `--no-registries` skips the lists. `tg chats members audit --deep <n>` runs
+  the same check on the top n members, one a second. Every reason says where it came from; a hint, never a
+  verdict.
 
 ## 0.28.0 — 06.10.2026
 

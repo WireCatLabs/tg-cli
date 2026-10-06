@@ -172,3 +172,7 @@ is partial, and `unknown` names unavailable signals. It is unavailable with `--o
 
 Telegram maps bot/scam/fake/deleted/photo and join/inviter metadata when it is provided.
 Inspect `unknown` for unavailable evidence; scores still require human review.
+
+`--deep <n>` also checks the top n members in full, one person a second: their profile, their oldest profile
+photo, everything the store holds that they wrote, and two public spam lists — Combot CAS and lols.bot. Each
+member's id is sent to those lists. The full check lands in `check` on each of those members.

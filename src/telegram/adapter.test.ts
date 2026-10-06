@@ -221,6 +221,12 @@ class FakeClient {
   }
   getFullUser = async () => ({ bio: "a bio" })
   getCommonChats = async () => [{ id: -100500 }]
+  photoDates: string[] = []
+  getProfilePhotos = async (_peer: unknown, { offset = 0, limit = 100 }: { offset?: number; limit?: number } = {}) => {
+    this.#record("getProfilePhotos", [offset, limit])
+    const page = this.photoDates.slice(offset, offset + limit).map((at) => ({ date: new Date(at) }))
+    return Object.assign(page, { total: this.photoDates.length })
+  }
   getUsers = async (ids: number[]) => ids.map((id) => (id === 404 ? null : user(id, `User ${id}`)))
   getChatMembers = async (...args: unknown[]) => {
     this.#record("getChatMembers", args)
@@ -790,6 +796,20 @@ describe("reading", () => {
       { id: "777", title: "Ana", kind: "dialog", lastMessageAt: "2026-09-28T10:00:00.000Z" },
       { id: "-100500", title: "Valencia expats", kind: "group", lastMessageAt: "2026-09-27T10:00:00.000Z" },
     ])
+  })
+
+  it("reads how many profile photos a person shows and the oldest one's date, in two requests at most", async () => {
+    const { adapter, client } = await open()
+    client.peer = user(777, "Ana")
+    client.photoDates = ["2026-09-30T10:00:00.000Z", "2024-01-01T10:00:00.000Z", "2019-05-05T10:00:00.000Z"]
+
+    expect(await adapter.photos("777")).toEqual({ count: 3, oldestAt: "2019-05-05T10:00:00.000Z" })
+    expect(client.calls.filter(({ method }) => method === "getProfilePhotos").map(({ args }) => args)).toEqual([
+      [0, 1],
+      [2, 1],
+    ])
+    client.photoDates = []
+    expect(await adapter.photos("777")).toEqual({ count: 0, oldestAt: null })
   })
 
   it("refuses a contact that is a chat", async () => {

@@ -669,6 +669,22 @@ chats you share:
 It asks Telegram exactly what `contacts show` asks, and tells the person nothing. With `--offline` it answers
 from the store.
 
+## Is this account a bot
+
+`tg contacts check <person>` scores one person as a possible bot, fake or spammer and lists every reason with
+where it came from:
+
+- Telegram's own marks: bot, scam, fake, deleted;
+- the profile: no photo, no username, no bio, an odd name, a young account, a first photo from the last 30 days;
+- what the store holds that they wrote: nothing at all, a link as their first message, the same text in several
+  chats;
+- two public spam lists, Combot CAS and lols.bot, which are sent the person's id.
+
+`--no-registries` skips the lists, so nothing about the person leaves this machine; `--offline` asks nothing
+online. A list that is down or refuses shows as `unknown`, and the rest still answer. If you have a Combot API
+key, keep it in `TG_CAS_API_KEY` or the keyring account `registries:cas`; CAS answers without one for now. The
+score is a hint, never a verdict.
+
 ## Local person context
 
 `tg contacts context <person>` reads linked identities' stored messages and shared chats without connecting
