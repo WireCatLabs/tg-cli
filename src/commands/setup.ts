@@ -1,5 +1,5 @@
 import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
-import { CliError } from "@leemour/cli-core"
+import { CliError, indent, renderPretty } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
 import { installSkill, type SkillTarget } from "@leemour/cli-core/skill"
 import { readSecret } from "@leemour/cli-messaging"
@@ -31,12 +31,39 @@ type Options = {
   qrFile?: string
 }
 
-const agentFor = async (context: CommandContext, given?: Agent, signal?: AbortSignal): Promise<Agent> => {
+const STEPS = 5
+const chatCount = (count: number) => `${count} ${count === 1 ? "chat" : "chats"}`
+const DETAIL = 6
+
+/**
+ * A person sees each step as a heading with its details indented under it. `--quiet` hides both, as it
+ * hides notes; a machine mode keeps the plain notes it always had, since stderr there is a log.
+ */
+const screenFor = (context: CommandContext, quiet: boolean) => {
+  const person = context.format === "pretty"
+  const say = (text: string) => {
+    if (!quiet) context.streams.diagnostic(text)
+  }
+  return {
+    step: (index: number, title: string) =>
+      person ? say(`\n[${index}/${STEPS}] ${title}`) : context.renderer.note(`${index}/${STEPS} — ${title}`),
+    detail: (text: string) => (person ? say(indent(text, DETAIL)) : context.renderer.note(text)),
+    title: (text: string) => (person ? say(text) : context.renderer.note(text)),
+    indent: person ? DETAIL : 0,
+  }
+}
+
+const agentFor = async (
+  context: CommandContext,
+  given: Agent | undefined,
+  pad: number,
+  signal?: AbortSignal,
+): Promise<Agent> => {
   if (given) return given
   if (context.format !== "pretty" || !context.stdin.isTTY) return "none"
   const answer =
     (
-      await readSecret("Agent [codex/cursor/claude/gemini/all/none] (none): ", {
+      await readSecret(`${" ".repeat(pad)}Agent [codex/cursor/claude/gemini/all/none] (none): `, {
         input: context.stdin,
         echo: true,
         ...(signal === undefined ? {} : { signal }),
@@ -126,8 +153,10 @@ export const setupCommand = () =>
           },
         },
       ]
+      const screen = screenFor(context, this.optsWithGlobals().quiet === true)
       const loginContext: CommandContext = {
         ...context,
+        renderer: { ...context.renderer, note: screen.detail },
         open: async (credentials) => {
           cancellation.signal.throwIfAborted()
           const telegram = await context.open(credentials)
@@ -140,23 +169,26 @@ export const setupCommand = () =>
         },
       }
       const answer = await withDeadline(context.settings.commandTimeoutMs, closeables, async () => {
-        context.renderer.note(
-          "Allow about 5 minutes for setup. Downloading chat history is a separate step and can take longer.",
+        screen.title(
+          `Telegram setup — profile ${context.profile}. Allow about 5 minutes; downloading chat history is a separate step.`,
         )
-        context.renderer.note("1/5 — checking this computer and the local directories")
+        screen.step(1, "This computer")
         const paths = pathsFor(context.env)
         for (const path of [paths.config, paths.state, paths.cache]) {
           mkdirSync(path, { recursive: true })
           accessSync(path, constants.W_OK)
         }
+        screen.detail("✓ local directories ready")
         if (process.platform === "win32")
-          context.renderer.note(
+          screen.detail(
             "Windows: use tg.cmd or npm.cmd if PowerShell blocks scripts. Open a new terminal after installing Node.js.",
           )
 
         if (reused) {
-          context.renderer.note("2/5 — using the stored Telegram app credentials")
-          context.renderer.note("3/5 — checking your existing session; no new login")
+          screen.step(2, "Telegram app ID and hash")
+          screen.detail("✓ stored credentials")
+          screen.step(3, "Log in")
+          screen.detail("✓ existing session, no new login")
         } else {
           await context.run(async () => {
             await startSession(loginContext, {
@@ -165,25 +197,26 @@ export const setupCommand = () =>
               app: options.app,
               ...(options.qrFile === undefined ? {} : { qrFile: options.qrFile }),
               command: `${prefix}setup`,
+              indent: screen.indent,
               progress: (step) =>
-                context.renderer.note(
-                  step === "app"
-                    ? "2/5 — Telegram application: obtaining your app ID and hash"
-                    : "3/5 — Telegram account: confirm the QR login or enter the login code",
-                ),
+                step === "app"
+                  ? screen.step(2, "Telegram app ID and hash")
+                  : screen.step(3, "Log in: scan the QR code or enter the login code"),
             })
           })
         }
 
-        context.renderer.note("4/5 — verifying the account and reading the first 5 chats")
+        screen.step(4, "Account")
         const { account, chats } = await context.withTelegram(async (telegram) => {
           closeables.push(telegram)
           cancellation.signal.throwIfAborted()
           if (!telegram.chats) throw new CliError("provider_error", "Telegram connection cannot list chats")
           return { account: await telegram.me(), chats: await telegram.chats({ limit: 5, offset: 0 }) }
         })
-        context.renderer.note("5/5 — connecting your agent")
-        const agent = await agentFor(context, options.agent, cancellation.signal)
+        screen.detail(`✓ verified, ${chatCount(chats.items.length)} read`)
+        screen.step(5, "Agent")
+        const agent = await agentFor(context, options.agent, screen.indent, cancellation.signal)
+        screen.detail(agent === "none" ? "✓ no agent skill installed" : `✓ ${agent}`)
         const targets: readonly SkillTarget[] =
           agent === "all" ? ["claude", "agents"] : [agent === "claude" ? "claude" : "agents"]
         cancellation.signal.throwIfAborted()
@@ -206,23 +239,23 @@ export const setupCommand = () =>
           agent: { name: agent, written },
           next,
         }
-        context.renderer.note(
-          "Choose a chat and how much history to fetch before running store fetch. Setup starts no background service.",
-        )
         return answer
       })
       const { agent, next, chats } = answer
       if (context.format !== "pretty") context.renderer.result(answer)
-      else
-        context.streams.data(
-          [
-            `Telegram is ready — profile ${context.profile}, ${chats.checked} chats checked.`,
+      else {
+        const rows = {
+          "Try now": next.inbox,
+          History: `${next.history}  (choose the chat and the amount first)`,
+          "Agent skill":
             agent.name === "none"
-              ? `Agent skill: skipped. Install later: ${next.skill}`
-              : `Agent skill: installed for ${agent.name}. Start a new agent session if it is not found.`,
-            `For your agent: ${next.instructions}`,
-            `Next: ${next.inbox}`,
-            `History: ${next.history}`,
-          ].join("\n"),
+              ? `skipped — install later: ${next.skill}`
+              : `installed for ${agent.name}; start a new agent session if it is not found`,
+          "For an agent": next.instructions,
+        }
+        context.streams.data(
+          `\n✓ Telegram is ready — profile ${context.profile}, ${chatCount(chats.checked)} checked\n\n` +
+            indent(renderPretty(rows, { color: context.color }), 2),
         )
+      }
     })
