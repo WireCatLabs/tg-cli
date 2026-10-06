@@ -173,7 +173,7 @@ An agent connects to `tg` in one of two ways:
   and every device and app logged in to the account.
 - **About one person.** Their profile, last seen and when they registered; how many of their
   messages you hold in each shared chat; their latest messages per chat for an agent to summarise;
-  and whether the account looks like a bot or a spammer, public ban lists included
+  and whether the account looks like a bot or a spammer, public spam lists included
   ([people.md](docs/people.md)).
 
 ## Why it is good
