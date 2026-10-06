@@ -52,8 +52,8 @@ const ID_MONTHS: readonly [number, string][] = [
 ]
 
 /**
- * The last point only marks where the table ends: an account made in 2026-10 had an id just above it,
- * so anything at or past it gets no estimate rather than one years off.
+ * The last point only marks where the table ends: the table cannot tell an id just above it made in
+ * 2025 from one made in 2026, so anything at or past it gets no estimate rather than a possibly wrong one.
  */
 const TABLE_END = ID_MONTHS.at(-1)?.[0] ?? 0
 
