@@ -299,6 +299,15 @@ export class TelegramAdapter {
     })
   }
 
+  /** One person's newest messages in a chat: Telegram's search by sender, newest first, answered oldest first. */
+  historyFrom(reference: string, person: string, { limit }: { limit: number }): Promise<Page<Message>> {
+    return this.#call(async () => {
+      const [chatId, fromUser] = await Promise.all([this.#inputOf(reference), this.#inputOf(person)])
+      const page = await this.#client.searchMessages({ chatId, fromUser, limit })
+      return { items: page.map(toMessage).reverse(), hasMore: page.total > page.length }
+    })
+  }
+
   /** Back from a moment, newest first as Telegram reads, answered oldest first. The filter cuts at the moment itself. */
   historyBefore(reference: string, { limit, time }: { limit: number; time: number }): Promise<Page<Message>> {
     return this.#call(async () => {

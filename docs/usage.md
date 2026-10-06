@@ -675,4 +675,9 @@ from the store.
 or marking read. `complete:false` and `notRead` expose archive gaps. `contacts link <person> max:<id>` and
 `contacts unlink` maintain local identity links; they do not change Telegram's address book.
 
+`tg contacts context <person> --chat <chat> --chat <chat>` gives their newest messages in each chat named,
+oldest first, as time and text only — short enough for an AI agent to summarise. `--limit` is per chat (20 by
+default); `-v` adds ids, links to each message, the sender and what it answers; `-vv` gives everything.
+`--refresh` asks Telegram first: one search by sender per chat. Nothing is marked read.
+
 `contacts context` returns message bodies and therefore follows `messages` permissions; identity-link writes remain controlled by `contacts`.

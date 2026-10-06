@@ -17,6 +17,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - Uses cli-messaging 0.150.0, which also brings `contacts check` (bot signals and public ban lists),
   `contacts context --chat` and `--refresh`, `chats members audit --deep`, `chats members fetch --track` and
   `--budget`, and `chats members history`.
+- `tg contacts context <person> --chat <chat>` (repeat it for more) gives their newest messages in each chat,
+  as time and text only, for an agent to summarise; `-v` adds ids and links, `--limit` is per chat, and `--refresh`
+  asks Telegram first with one search by sender per chat.
 
 ## 0.28.0 — 06.10.2026
 
