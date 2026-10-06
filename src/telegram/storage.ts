@@ -19,18 +19,18 @@ class RuntimeSqliteDriver extends BaseSqliteStorageDriver {
     this.#database = database
   }
 
+  // mtcute's exit hook closes the database on SIGINT/SIGTERM while the command is still running, and
+  // `client.destroy()` then flushes the writes queued since into a closed database: "database is not
+  // open" (BUG-148). The command closes the client on every exit path, so it is the only owner.
+  override setup(...[log, platform]: Parameters<BaseSqliteStorageDriver["setup"]>): void {
+    super.setup(log, Object.assign(Object.create(platform), { beforeExit: () => () => {} }))
+  }
+
   _createDatabase(): ISqliteDatabase {
     const database = this.#database
-    let closed = false
     return {
       exec: (sql) => database.exec(sql),
-      // On SIGINT/SIGTERM mtcute's exit hook closes the database itself, then `client.destroy()` closes it
-      // again (`@mtcute/core` storage/sqlite/driver.js `_load` → `beforeExit`); the second would throw.
-      close: () => {
-        if (closed) return
-        closed = true
-        database.close()
-      },
+      close: () => database.close(),
       prepare: <P extends unknown[]>(sql: string): ISqliteStatement<P> => {
         const statement = database.prepare(sql)
         return {
