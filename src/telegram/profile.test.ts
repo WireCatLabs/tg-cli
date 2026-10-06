@@ -29,6 +29,7 @@ describe("a person's profile from Telegram", () => {
   })
 
   it("gives no estimate past the table's last point", () => {
+    expect(estimatedRegistration(7_520_000_000)).toBeNull()
     expect(estimatedRegistration(8_100_000_000)).toBeNull()
   })
 })

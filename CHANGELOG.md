@@ -28,6 +28,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`contacts profile` no longer guesses a registration date for the newest accounts.** The id table ends at
+  December 2024, and an account made in October 2026 had an id just past that point; such ids now get no
+  estimate instead of a date years too early.
 - **`tg mcp --http`: Claude and ChatGPT can finish logging in.** The login page made the browser send its form
   as coming from nowhere, and `tg` refused it with "Origin not allowed". Now the login works (cli-messaging 0.152.0).
 ## 0.28.0 — 06.10.2026
