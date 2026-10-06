@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2025 ✅ · 80 ⛔ · 0 ❌** — 403 commands, 1702 options.
+**2039 ✅ · 80 ⛔ · 0 ❌** — 407 commands, 1712 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -433,6 +433,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches history` | `--limit` | ⛔ | cli-messaging src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation |
 | `searches delete` |  | ✅ |  |
 | `searches clear` |  | ✅ |  |
+| `tasks list` |  | ✅ |  |
+| `tasks list` | `--state` | ✅ |  |
+| `tasks list` | `--chat` | ✅ |  |
+| `tasks list` | `--type` | ✅ |  |
+| `tasks list` | `--before-time` | ✅ |  |
+| `tasks list` | `--limit` | ✅ |  |
+| `tasks add` |  | ✅ |  |
+| `tasks add` | `--type` | ✅ |  |
+| `tasks close` |  | ✅ |  |
+| `tasks close` | `--as` | ✅ |  |
+| `tasks close` | `--reason` | ✅ |  |
+| `tasks stats` |  | ✅ |  |
+| `tasks stats` | `--chat` | ✅ |  |
+| `tasks stats` | `--type` | ✅ |  |
 | `flood clear` |  | ✅ |  |
 | `replies add` |  | ✅ |  |
 | `replies on` |  | ✅ |  |

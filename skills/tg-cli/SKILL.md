@@ -203,6 +203,8 @@ tg review --since-time 1d --json                   # every message, the owner's 
                                                    # when complete, the next review starts at until
 tg review --unanswered --json                      # questions, including retained voice transcripts, nobody answered in 24 h
 tg review --unanswered --transcribe --json         # hear new voices before filtering; keep the old boundary if incomplete
+tg tasks list --state open --json                  # what waits on the owner; review and serve open and close tasks
+tg tasks close <task> --as dismissed --reason no-reply-needed --json   # only after the owner says so
 tg chats list --json                               # find a chat, take its id
 tg chats list --search vale --kind group --unread --json   # filtered, over every returned chat
 tg chats events -1001234567890 --since-time 7d --json   # who joined, left, was added or removed
