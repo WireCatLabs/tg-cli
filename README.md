@@ -171,6 +171,10 @@ An agent connects to `tg` in one of two ways:
   ([groups.md](docs/groups.md)).
 - **Contacts and the account.** Add, rename, block and import contacts; who you are logged in as,
   and every device and app logged in to the account.
+- **About one person.** Their profile, last seen and when they registered; how many of their
+  messages you hold in each shared chat; their latest messages per chat for an agent to summarise;
+  and whether the account looks like a bot or a spammer, public ban lists included
+  ([people.md](docs/people.md)).
 
 ## Why it is good
 
@@ -470,6 +474,8 @@ In full — what reaches the disk, what goes over the network and what the tool 
 | [sessions](docs/sessions.md) | QR and phone login, the app from my.telegram.org, the keyring, profiles, logout |
 | [archive](docs/archive.md) | the local store: fetch, search, export, `--offline`, `serve` as a service, backup |
 | [groups](docs/groups.md) | groups you run: unanswered questions, newcomers, a weekly report |
+| [people](docs/people.md) | one person: profile, what they said in each chat, does the account look like a bot |
+| [replies](docs/replies.md) | answer messages by your rules, to test accounts only |
 | [mcp](docs/mcp.md) | Claude Desktop, Cursor and other clients without a terminal |
 | [remote](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |
