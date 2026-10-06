@@ -151,8 +151,8 @@ relevance, and `--context 2` shows two messages around each one found.
 ## For scripts and agents
 
 `--json` returns one object with the messages and what was searched; `--jsonl` streams the messages
-only. In MCP, `tg_messages_search` and `tg_stats_messages_show` take the same queries, and `tg_tags_*` and
-`tg_searches_*` manage tags and saved searches. The answer's fields,
+only. In MCP, `messages search` and `stats messages show` take the same queries, and `tags …` and
+`searches …` manage tags and saved searches. The answer's fields,
 the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).
 
 Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and

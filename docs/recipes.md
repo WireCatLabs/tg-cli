@@ -172,8 +172,8 @@ schedule.
 > question. Do not send it — show me the text.
 
 Once you agree, the agent sends it: `tg messages send @example_user "…"`. An agent without a terminal
-connects with `tg mcp --confirm-send`: before each send you see the chat and the text and answer yes
-or no ([mcp.md](mcp.md)).
+connects with `tg mcp`; leave `tg_write` unapproved in the client and it asks you before each send
+([mcp.md](mcp.md)).
 
 ## A group you run
 

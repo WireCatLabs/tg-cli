@@ -315,11 +315,11 @@ tg sales bot mcp config          # the entry for Claude Desktop, Cursor and othe
 The agent gets what the bot profile's permissions allow, under `bot.`: the chats the bot has seen,
 messages, admins, the command menu, the journal and the recipient list — and, unless the profile is
 read-only, writing as the bot: send, edit, pin, "typing", answer buttons, delete, remove members.
-`permissions.bot: readonly` blocks writes unless a more specific rule permits one. A deletion at
-`ask` is shown in a form; explicit `permissions.bot.messages.delete: allow` or `--allow-dangerous`
-skips that form unless `--confirm-send` is enabled. `--confirm-send` puts every write through a
-form. `tg_bot_status` says which profile
-the server speaks for and which writing tools are on.
+`permissions.bot: readonly` blocks writes unless a more specific rule permits one. There is no
+confirmation form: a write at `ask` goes ahead like one at `allow`; set
+`permissions.bot.messages.delete: readonly` to keep the agent from deleting. The server offers three
+tools — `tg_bot_tools_search`, `tg_bot_read` and `tg_bot_write` — over the commands under `tg bot`.
+`status` says which profile the server speaks for and which writing commands are on.
 
 Each write runs the same command you would type, so the bot's recipient list and journal apply.
 The token, the webhooks, the command menu and the recipient list stay yours to change.

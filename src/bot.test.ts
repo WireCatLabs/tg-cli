@@ -188,7 +188,7 @@ describe("tg bot mcp", () => {
 })
 
 describe("tg bot mcp config", () => {
-  it("**prints the bot's server entry with --confirm-send and --allow-dangerous**, and drops the retired flags", async () => {
+  it("**prints the bot's server entry**, and drops the retired flags", async () => {
     const streams = captureStreams()
     const flags = ["--allow-send", "--allow-delete", "--allow-moderate", "--confirm-send", "--allow-dangerous"]
     const code = await run(["sales", "bot", "mcp", "config", ...flags, "--json"], {
@@ -201,14 +201,7 @@ describe("tg bot mcp config", () => {
     expect(code).toBe(0)
     const servers = JSON.parse(streams.stdout.join("")).mcpServers
     expect(Object.keys(servers)).toEqual(["tg-bot-sales"])
-    expect(servers["tg-bot-sales"].args).toEqual([
-      "/opt/tg/tg.js",
-      "sales",
-      "bot",
-      "mcp",
-      "--confirm-send",
-      "--allow-dangerous",
-    ])
+    expect(servers["tg-bot-sales"].args).toEqual(["/opt/tg/tg.js", "sales", "bot", "mcp"])
     expect(streams.stderr.join("\n")).toContain("no longer decide anything")
   })
 })

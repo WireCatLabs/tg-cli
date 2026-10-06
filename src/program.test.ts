@@ -484,13 +484,4 @@ describe("MCP startup overrides", () => {
     expect(result.stderr.join("")).toContain("--permission takes")
     expect(adapter).not.toHaveBeenCalled()
   })
-  it("refuses conflicting HTTP confirmation options before connecting", async () => {
-    const adapter = vi.fn(() => scripted())
-    const result = await tg(["mcp", "--http", "--http-confirmation", "permissions", "--confirm-send", "--json"], {
-      adapter,
-    })
-    expect(result.code).toBe(2)
-    expect(result.stderr.join("")).toContain("conflicts")
-    expect(adapter).not.toHaveBeenCalled()
-  })
 })

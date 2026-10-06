@@ -27,6 +27,11 @@ whole shell session; without either, the profile is `default`.
 | `--trace` | the connection's own log lines on stderr — never message content. |
 | `--timeout <duration>` | give up on the whole command after this — 30s, 2m, 500ms. |
 | `--offline` | answer from what was recorded and never connect; fails if nothing was. |
+| `--no-input` | never prompt or open interactive login; piped input remains available. |
+| `--max-input-bytes <bytes>` | maximum buffered input bytes (default: 16777216). |
+| `--max-output-bytes <bytes>` | maximum machine output bytes (default: 4194304; 0 disables). |
+| `--fields <paths>` | comma-separated item or object fields: id,text; preserve pagination and operation ids. |
+| `--dry-run` | preview parsed arguments and permissions before running the action. |
 | `--yes` | go ahead without the question an ask level puts before a write. |
 | `--record` | keep this run — ids and timings, never message content. |
 | `--no-record` | do not keep it, whatever the configuration says. |
@@ -2793,13 +2798,17 @@ tg doctor report create [options]
 
 commands, options and exit codes as JSON — inspect one command path per call
 
+### `tg commands schema`
+
+one command's argv and result schemas, effects, permissions and retry guidance
+
 ```sh
-tg commands [path]
+tg commands schema <path>
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `path` | optional | one command path, for example: messages search; inspect other groups in separate calls. |
+| `path` | required | one command path, for example: stats messages show. |
 
 ## `tg complete`
 
@@ -2836,13 +2845,13 @@ tg mcp [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
-| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; every write asks first by default. |
-| `--http-confirmation <mode>` | required: every write needs a server form (default); permissions: follow the profile levels. |
+| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel. |
+| `--http-confirmation <mode>` | no longer used — writes show no form; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
 | `--revoke` | forget every login given to a browser app; each must log in again. |
@@ -2858,8 +2867,8 @@ tg mcp config [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
@@ -2882,8 +2891,8 @@ tg mcp setup <client> [options]
 |---|---|
 | `--allow-writes` | acknowledge that this profile offers writing tools. |
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
@@ -2899,8 +2908,8 @@ tg mcp doctor [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
@@ -3566,8 +3575,8 @@ tg bot mcp [options]
 
 | Option | What it does |
 |---|---|
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
 | `--allow-moderate` | no longer used — the profile's permissions decide. |
@@ -3582,8 +3591,8 @@ tg bot mcp config [options]
 
 | Option | What it does |
 |---|---|
-| `--confirm-send` | show the owner every write in a form from the server first. |
-| `--allow-dangerous` | no form before a deletion whose permission level is ask. |
+| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
+| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
 | `--allow-moderate` | no longer used — the profile's permissions decide. |

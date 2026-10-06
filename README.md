@@ -404,9 +404,9 @@ How these agents find skills: [Codex](https://learn.chatgpt.com/docs/build-skill
 ### An MCP server for agents without a terminal
 
 Claude Desktop, Cursor and other MCP clients connect to `tg mcp` and work with the same account.
-The profile's `permissions` decide which tools it gets: by default it can send, react and mark
-read, and you see a form before each deletion. Set a level to `readonly` to keep the agent from
-changing it, or to `ask` to answer yes or no each time; `--confirm-send` asks before every change.
+The profile's `permissions` decide which commands it gets: by default it can send, react, mark
+read and delete your own messages, with no form. Set a level to `readonly` to keep the agent from
+changing it; to see each change first, leave `tg_write` unapproved in your client.
 In full: [docs/mcp.md](docs/mcp.md).
 
 ```sh
@@ -455,8 +455,8 @@ every exit code. All codes: [docs/commands.md](docs/commands.md#exit-codes).
   unencrypted; only whole-disk encryption protects it from a stolen disk. It stays after logging out.
 - Before each send, from a command or over MCP, `tg` checks the profile's limits and writes a line to
   the journal — without the message's text.
-- A level of `ask` in `permissions`, or the MCP server's `--confirm-send`, shows you a change before
-  it goes. Deleting asks by default. `--file` refuses keys and hidden files unless you add
+- A level of `ask` in `permissions` asks you in the terminal before a change; over MCP nobody is
+  there to answer, so it goes ahead — use `readonly` to stop an agent. `--file` refuses keys and hidden files unless you add
   `--allow-any-file`, and over MCP there is no way around it.
 - The limits protect against an agent talked into sending by a message it read, not against one
   that sets out to get round them: against that you need a boundary outside — a sandbox or a
@@ -529,5 +529,5 @@ Pull requests, bug reports and ideas are welcome —
 [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) and [docs/dev/TESTING.md](docs/dev/TESTING.md).
 
 For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel
-with an owner-code login and a form before every write. See [remote access](docs/remote.md).
+with an owner-code login and the same permissions. See [remote access](docs/remote.md).
 Group activity is available with `tg stats chats show <chat>`; [statistics](docs/groups.md#statistics-for-group-admins).
