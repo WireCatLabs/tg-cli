@@ -240,7 +240,12 @@ tg contacts list --order name --search ann
 tg contacts show @example_user         # their bio and the chats you share
 tg contacts lookup                     # who has a phone number — asks for it, or reads it from stdin
 tg contacts sync                       # your whole Telegram contact list into the local store
+tg contacts profile @example_user      # flags, last seen, registered, messages per shared chat
+tg contacts context @example_user --chat "Book club"   # their latest messages there
+tg contacts check @example_user        # does the account look like a bot or a spammer
 ```
+
+More about one person, and what `contacts check` sends where: [people.md](people.md).
 
 `contacts list` is the people you have a one-to-one chat with. `contacts sync` brings in the rest of
 your Telegram contact list too. `contacts lookup` never takes the number as an argument: pipe it in,
