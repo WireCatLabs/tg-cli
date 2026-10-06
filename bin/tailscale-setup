@@ -20,10 +20,10 @@ sudo tailscale set --operator="$(id -un)"
 
 cat >&2 <<'EOF'
 
-Now three switches in the admin console, once:
-  1. https://login.tailscale.com/admin/dns → MagicDNS: Enable.
-  2. Same page → HTTPS Certificates → Enable HTTPS. Your machine name and tailnet name then appear
-     in public certificate logs (https://tailscale.com/kb/1153/enabling-https).
-  3. https://login.tailscale.com/admin/acls → Funnel → "Add Funnel to policy" → Save.
+Now, once:
+  1. If MagicDNS is off: https://console.tailscale.com/admin/dns -> MagicDNS -> Enable.
+  2. Run `tailscale funnel 8765`, open the link it prints and approve. Tailscale then creates the
+     HTTPS certificate and the Funnel permission itself; your machine and network names appear in
+     public certificate logs (https://tailscale.com/kb/1153/enabling-https). Press Ctrl-C after.
 Then run bin/tg-remote.
 EOF
