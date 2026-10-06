@@ -211,7 +211,7 @@ describe("contacts profile", () => {
       name: "Zoe",
       usernames: ["zoe"],
       bio: null,
-      phone: "34600000123",
+      phone: "0123",
       flags: { bot: false, scam: false },
       seen: "week",
       registered: { at: "2015-07-01T00:00:00.000Z", source: "estimate", precision: "month" },
@@ -227,7 +227,7 @@ describe("contacts profile", () => {
 
     expect(masked).toMatchObject({ phone: "***0123", seen: "week", registered: { source: "estimate" } })
     expect(masked.chats).toMatchObject([{ id: "7", theirMessages: 0 }])
-    expect(whole.phone).toBe("34600000123")
+    expect(whole.phone).toBe("0123")
   })
 })
 
