@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
+import { stripVTControlCharacters } from "node:util"
 import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
 import { installSkill } from "@leemour/cli-core/skill"
 import { beforeEach, describe, expect, it, vi } from "vitest"
@@ -184,14 +185,14 @@ describe("setup", () => {
     expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(result.stdout.join()).toContain("installed for gemini")
     expect(result.stdout.join()).toContain("tg inbox --limit 5")
-    expect(result.stdout.join()).toMatch(/For an agent +tg skill show/)
+    expect(stripVTControlCharacters(result.stdout.join())).toMatch(/For an agent +tg skill show/)
   })
 
   it("an empty agent choice skips installation", async () => {
     existingSession()
     const result = await execute(["setup"], { tty: true })
     expect(result.code).toBe(0)
-    expect(result.stdout.join()).toMatch(/Agent skill +skipped/)
+    expect(stripVTControlCharacters(result.stdout.join())).toMatch(/Agent skill +skipped/)
     expect(installSkill).not.toHaveBeenCalled()
   })
 
