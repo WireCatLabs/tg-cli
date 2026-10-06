@@ -5,10 +5,10 @@ everyday examples start with [message search](search.md).
 
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT,
 groups, fields, ranges, bounded wildcards and regular expressions. The
-[full reference](https://github.com/leemour/cli-messaging/blob/v0.148.2/docs/search/query-language.md)
+[full reference](https://github.com/leemour/cli-messaging/blob/v0.149.0/docs/search/query-language.md)
 (in Russian) has the generated tables of fields, operators, presets and limits, and executable
 examples; the
-[technical specification](https://github.com/leemour/cli-messaging/blob/v0.148.2/docs/search/query-language-spec.md)
+[technical specification](https://github.com/leemour/cli-messaging/blob/v0.149.0/docs/search/query-language-spec.md)
 describes the grammar and the compiler.
 
 ## Operators
