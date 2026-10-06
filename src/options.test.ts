@@ -352,6 +352,39 @@ describe("messages", () => {
     expect(asked).toEqual({ id: "42", before: 2, after: 3 })
   })
 
+  it("contacts context --chat reads one person's newest by sender with --refresh, short unless -v", async () => {
+    const said = (id: string) =>
+      message(id, { senderId: "778", senderName: "Bea", timestamp: `2026-09-26T10:0${id}:00.000Z` })
+    const asked: string[] = []
+    const adapter = scripted({
+      history: async () => ({ items: [said("1")], hasMore: false }),
+      historyFrom: async (reference: string, person: string, { limit }: { limit: number }) => {
+        asked.push(`${reference}:${person}:${limit}`)
+        return { items: [said("2"), said("3")], hasMore: false }
+      },
+    } as never)
+    await tg(["messages", "list", "Valencia"], { adapter: () => adapter })
+
+    const short = await tg(
+      ["contacts", "context", "778", "--chat", "Valencia", "--limit", "2", "--refresh", "--json"],
+      {
+        adapter: () => adapter,
+      },
+    )
+    const detailed = await tg(["contacts", "context", "778", "--chat", "-1001234567890", "-v", "--json"], {
+      adapter: () => adapter,
+    })
+
+    expect(short.code, short.stderr.join("")).toBe(0)
+    expect(asked).toEqual(["-1001234567890:778:2"])
+    expect(JSON.parse(short.stdout[0] ?? "null").chats[0].messages).toEqual([
+      { at: "2026-09-26T10:02:00.000Z", text: "synthetic text 2" },
+      { at: "2026-09-26T10:03:00.000Z", text: "synthetic text 3" },
+    ])
+    expect(detailed.code, detailed.stderr.join("")).toBe(0)
+    expect(JSON.parse(detailed.stdout[0] ?? "null").chats[0].messages[0]).toHaveProperty("locator")
+  })
+
   it("download saves the message's file into --output-dir and answers its path", async () => {
     const into = join(mkdtempSync(join(tmpdir(), "tg-download-")), "out")
     const adapter = scripted({

@@ -205,6 +205,10 @@ class FakeClient {
     this.#record("getHistory", args)
     return page(this.history, this.historyNext, this.historyTotal)
   }
+  searchMessages = async (...args: unknown[]) => {
+    this.#record("searchMessages", args)
+    return page(this.history, this.historyNext, this.historyTotal)
+  }
   getPeerDialogs = async (peer: unknown) => {
     this.#record("getPeerDialogs", [peer])
     const of = (id: unknown) =>
@@ -476,6 +480,20 @@ describe("reading", () => {
     expect(asked).toEqual([
       [-100500, { limit: 2, offset: { id: 10, date: 0 } }],
       ["someone", { limit: 2 }],
+    ])
+  })
+
+  it("reads one person's newest in a chat by Telegram's search by sender, oldest first", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(7), message(5)]
+    client.historyTotal = 3
+
+    const found = await adapter.historyFrom("-100500", "42", { limit: 2 })
+
+    expect(found.items.map((one) => one.id)).toEqual(["5", "7"])
+    expect(found.hasMore).toBe(true)
+    expect(client.calls.find((call) => call.method === "searchMessages")?.args).toEqual([
+      { chatId: -100500, fromUser: 42, limit: 2 },
     ])
   })
 

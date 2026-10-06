@@ -35,18 +35,6 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing",
   },
   {
-    command: "contacts context",
-    option: "--chat",
-    reason:
-      'cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --chat 11") covers the newest messages per named chat, lean and with -v; this consumer mounts the shared command',
-  },
-  {
-    command: "contacts context",
-    option: "--refresh",
-    reason:
-      'cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --refresh") covers the refusal with --offline and the read before answering; shared option parsing',
-  },
-  {
     command: "contacts check",
     option: "--no-registries",
     reason:

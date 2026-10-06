@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2011 ✅ · 56 ⛔ · 0 ❌** — 398 commands, 1669 options.
+**2014 ✅ · 53 ⛔ · 0 ❌** — 398 commands, 1669 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -108,10 +108,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts profile` |  | ✅ |  |
 | `contacts profile` | `--show-phone` | ✅ |  |
 | `contacts context` |  | ✅ |  |
-| `contacts context` | `--limit` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and archive gaps; this consumer mounts the shared command |
+| `contacts context` | `--limit` | ✅ |  |
 | `contacts context` | `--since-time` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing |
-| `contacts context` | `--chat` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --chat 11") covers the newest messages per named chat, lean and with -v; this consumer mounts the shared command |
-| `contacts context` | `--refresh` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --refresh") covers the refusal with --offline and the read before answering; shared option parsing |
+| `contacts context` | `--chat` | ✅ |  |
+| `contacts context` | `--refresh` | ✅ |  |
 | `contacts check` |  | ✅ |  |
 | `contacts check` | `--no-registries` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts ("contacts check 40 --no-registries") covers scoring from local signals alone, no registry asked; this consumer mounts the shared command |
 | `contacts link` |  | ✅ |  |
