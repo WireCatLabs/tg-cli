@@ -676,12 +676,13 @@ where it came from:
 
 - Telegram's own marks: bot, scam, fake, deleted;
 - the profile: no photo, no username, no bio, an odd name, a young account, a first photo from the last 30 days;
-- what the store holds that they wrote: nothing at all, a link as their first message, the same text in several
-  chats;
+- up to 1,000 stored messages: nothing found, a link in the oldest stored message when all stored messages
+  fit the limit, the same text in several chats;
 - two public spam lists, Combot CAS and lols.bot, which are sent the person's id.
 
-`--no-registries` skips the lists, so nothing about the person leaves this machine; `--offline` asks nothing
-online. A list that is down or refuses shows as `unknown`, and the rest still answer. If you have a Combot API
+`--no-registries` skips the public lists; Telegram is still asked for the profile and photos.
+`--offline` asks nothing online and judges only stored evidence. A list that is down or refuses shows as
+`unknown`, and the rest still answer. If you have a Combot API
 key, keep it in `TG_CAS_API_KEY` or the keyring account `registries:cas`; CAS answers without one for now. The
 score is a hint, never a verdict.
 

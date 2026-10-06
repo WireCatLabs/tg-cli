@@ -21,12 +21,13 @@ export const PACKED = [
   "package.json",
   "README.md",
   "LICENSE",
+  "THIRD_PARTY_NOTICES",
   "skills/tg-cli/SKILL.md",
   "spec/bot/LICENSE",
   "spec/bot/README.md",
 ]
 export const PACKED_SAID =
-  "dist/, the Windows installer, package.json, README.md, LICENSE, the agent skill and Bot API source licence/provenance notes"
+  "dist/, the Windows installer, package.json, README.md, LICENSE, THIRD_PARTY_NOTICES, the agent skill and Bot API source licence/provenance notes"
 
 const GENERATED = new Set(["docs/commands.md"])
 

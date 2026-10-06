@@ -32,6 +32,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Help explains what member checks read and where they connect.** `--no-registries` skips public ban
+  lists but still requests the person's profile and photos from Telegram; `--offline` is the local-only
+  mode. Deep checks inspect at most 1,000 stored messages per person and make individual requests for
+  selected members. `contacts context --chat --refresh` explicitly connects before reading the store.
 - **`contacts profile` no longer guesses a registration date for the newest accounts.** The id table ends at
   December 2024, and an account made in October 2026 had an id just past that point; such ids now get no
   estimate instead of a date years too early.
