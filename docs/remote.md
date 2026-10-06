@@ -2,8 +2,7 @@
 
 `tg mcp --http` serves the same tools on `127.0.0.1`, behind your HTTPS tunnel. The HTTP server
 has its own OAuth login for one owner; no separate authentication proxy is needed.
-The local stdin/stdout connection still works as before. The owner confirmed reading and sending through Claude web on 7 October 2026 using the
-permissions mode. OpenAI web clients and these platform-specific setup instructions still need
+The local stdin/stdout connection still works as before. The owner confirmed reading and sending through Claude web on 7 October 2026. OpenAI web clients and these platform-specific setup instructions still need
 an end-to-end check on each platform.
 
 ## Start the tunnel and server
@@ -19,7 +18,7 @@ link. Keep two terminal windows open. Copy the HTTPS origin it prints, without `
 path, into the second window when asked. Keep an explicit public port such as `:8443` in that origin.
 The server listens on `127.0.0.1:8765` and prints a one-time login code; it never needs administrator
 rights. Only the tunnel may need elevation. These commands enable sending for this server process
-using `--http-confirmation permissions --permission messages.send=allow`; see the permissions below.
+using `--permission messages.send=allow`; see the permissions below.
 
 ### Windows (PowerShell)
 
@@ -39,7 +38,7 @@ Second window: normal PowerShell, under the user who logged into Telegram:
 
 ```powershell
 $mcpPublicUrl = Read-Host 'Paste the HTTPS origin printed by Funnel (no /mcp)'
-tg.cmd mcp --http --port 8765 --public-url $mcpPublicUrl --http-confirmation permissions --permission messages.send=allow
+tg.cmd mcp --http --port 8765 --public-url $mcpPublicUrl --permission messages.send=allow
 ```
 
 Use native Windows for both processes. WSL is a separate environment: a Windows tunnel pointing
@@ -61,7 +60,7 @@ zsh and bash:
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --http-confirmation permissions --permission messages.send=allow
+tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
 ```
 
 ### Linux (Terminal)
@@ -79,7 +78,7 @@ by `tg setup --agent none`:
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --http-confirmation permissions --permission messages.send=allow
+tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
 ```
 
 ## Run MAX and Telegram together
