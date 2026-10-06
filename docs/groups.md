@@ -124,7 +124,7 @@ tg stats tasks show                                            # open per chat, 
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
 task — an admin's do not — and a mention by `@username` is not seen. An agent gets the same as
-MCP tools: `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_tasks_stats` ([mcp.md](mcp.md)).
+MCP tools: `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_stats_tasks_show` ([mcp.md](mcp.md)).
 
 ## Rules
 
@@ -185,7 +185,7 @@ counts and they were stored with the posts. A missing count does not mean zero. 
 counts, without refreshing every post. Questions follow the same rules as `review --unanswered`.
 These are locally computed figures; the command does not request Telegram's official admin statistics.
 
-The online command also asks Telegram for join and leave events. `--offline` and MCP `tg_chats_stats`
+The online command also asks Telegram for join and leave events. `--offline` and MCP `tg_stats_chats_show`
 omit `members`, the summary of those events. This differs from `memberCounts`: recorded daily snapshots
 of the group's size, which remain available offline.
 

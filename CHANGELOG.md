@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.30.0 — 07.10.2026
 
 ### What's new
 
@@ -11,8 +11,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   question nobody answered and a message that mentions you by name, and close it once you answer; now you
   can see them. `tg tasks list` shows each with the message it points at; `tg tasks add <message> --type
   promise` adds what the rules cannot see; `tg tasks close <task> --as done|dismissed` closes one for good;
-  `tg tasks stats` counts them per chat. Nothing is sent. MCP: `tg_tasks_list`, `tg_tasks_add`,
-  `tg_tasks_close`, `tg_tasks_stats`.
+  `tg stats tasks show` counts them per chat. Nothing is sent. MCP: `tg_tasks_list`, `tg_tasks_add`,
+  `tg_tasks_close`, `tg_stats_tasks_show`.
 
 - **Reply rules can be edited from the CLI and use Liquid templates with optional ai blocks.**
   `replies add|edit|on|off` changes rules and `replies audience` changes profile allow/deny lists.
@@ -27,11 +27,23 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `--permission key=level` to override permissions for this server process without editing config.
   App approval is separate and cannot be verified by the server. [Browser setup](docs/remote.md).
 
+- **Charts can be saved as PNG.** `tg stats charts <chat> --output activity.png` writes a dark-theme
+  chart to a new file; SVG stays available. MCP `tg_stats_charts` with `format: "png"`
+  returns an image and JSON without connecting to Telegram or writing a file.
+- **The open-tasks MCP prompt lists pending tasks.** It calls review to refresh tasks,
+  then lists them with an optional `chat` filter; closes tasks only after approval and sends nothing.
+- **Browser setup covers Windows, macOS and Linux.** The guide separates PowerShell and
+  terminal commands, temporary send permissions, Codex web login, two simultaneous servers
+  and stopping individual tunnels. [Browser setup](docs/remote.md).
+
 ### Changed — may break scripts
 
-- **Statistics use stats messages/chats show.** Legacy messages stats and chats stats paths are
-  removed by the shared SDK; update commands and use stats.messages.show for exact permissions.
-  Parser errors now return exit 2 with a structured validation_error instead of prose/exit 1.
+- **Statistics use `stats messages show`, `stats chats show` and `stats tasks show`.**
+  Legacy `messages stats`, `chats stats` and `tasks stats` paths are removed. Update commands
+  and exact permissions to `stats.messages.show`, `stats.chats.show`, `stats.tasks.show`.
+  MCP names are `tg_stats_messages_show`, `tg_stats_chats_show`, `tg_stats_tasks_show`.
+- **Parser errors return exit 2 with a structured validation_error.** Scripts expecting
+  prose or exit 1 must update their error handling.
 
 ## 0.29.0 — 06.10.2026
 

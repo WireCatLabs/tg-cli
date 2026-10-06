@@ -109,7 +109,7 @@ names one. The first word (`tg work …`) and `TG_PROFILE` override it.
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
 `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
-starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`, `tags`, `searches`, `replies`, `attachments`
+starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`, `tags`, `searches`, `replies`, `attachments`, `tasks`, `stats`
 or `bot`, and must name a known command or checked write. Unknown command keys are refused by
 `config set` with exit 2, including keys inside a whole `permissions` object. `config unset` can remove
 an old unknown key. Reading an existing file with one warns on stderr and continues. **The most specific key you set wins**: with the example above,
@@ -150,7 +150,7 @@ tg config unset permissions.messages.delete         # back to the default
 To make a profile read-only — here the profile `agent` — set each resource:
 
 ```sh
-for key in messages reactions polls topics chats contacts account conversations tags searches replies attachments bot; do
+for key in messages reactions polls topics chats contacts account conversations tags searches replies attachments tasks stats bot; do
   tg agent config set permissions.$key readonly
 done
 ```

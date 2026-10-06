@@ -184,7 +184,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_account_sessions` | `tg account sessions list` | every device and app logged in; reads only |
 | `tg_chats_list` | `tg chats list`, `--search`, `--kind`, `--unread` | chats, newest first; filtered over every returned chat; `partial` when the messenger cannot provide the whole inventory |
 | `tg_chats_members_audit` | `tg chats members audit` | members with bot-like signals; removes nobody, `more` and `unknown` expose incomplete evidence |
-| `tg_chats_stats` | `tg stats chats show --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
+| `tg_stats_chats_show` | `tg stats chats show --offline` | stored group/channel activity; membership changes are not requested, so `members` is omitted; incomplete counts are lower bounds |
 | `tg_chats_events` | `tg chats events`, `--since-time`, `--type` | who joined, left, was added or removed, and by whom, from the chat's service messages; seven days back without `since_time` |
 | `tg_chats_members` | `tg chats members list` | a group's members, paged, with role and last seen |
 | `tg_chats_inspect` | `tg chats inspect` | what an invite or public link leads to; joins nothing |
@@ -223,13 +223,13 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_chats_rules_show`, `tg_chats_moderate` | `tg chats rules show`, `tg chats moderate` | a group's rules; judge its new messages and members by them and act where the rules' levels allow ([groups.md](groups.md)) |
 | `tg_account_update` | `tg account update` | the name or description everyone sees on the owner's profile |
 | `tg_contacts_rename` | `tg contacts rename` | a name for a person only the owner sees |
-| `tg_messages_stats` | `tg stats messages show` | count local query matches by chat, sender, day or hour |
+| `tg_stats_messages_show` | `tg stats messages show` | count local query matches by chat, sender, day or hour |
 | `tg_conversations_batches_status`, `tg_conversations_batches_next` | `tg conversations batches …` | batch volume and bounded messages; read after owner consent |
 | `tg_conversations_links_add`, `tg_conversations_links_clear`, `tg_conversations_build` | `tg conversations links …`, `build` | store or clear agent links, rebuild; `conversations.links` |
 | `tg_attachments_list`, `tg_attachments_text_set` | `tg attachments list`, `text set` | retained paths/text status; save agent text for `content:` |
 | `tg_tags_list`, `tg_tags_add`, `tg_tags_remove` | `tg tags list`, `add`, `remove` | the owner's own labels on a chat, a person or one message, kept in the local store and never sent; the writes by `tags.add` and `tags.remove`, refused under `ask` since there is no question to put |
-| `tg_searches_list`, `tg_searches_history` | `tg searches list`, `history` | saved searches by name, and the searches and counts that ran; `saved` on `tg_messages_search` and `tg_messages_stats` runs one |
-| `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_tasks_stats` | `tg tasks list`, `add`, `close`, `stats` | what waits on the owner — questions nobody answered, mentions, requests, promises — kept in the local store and never sent, each with the message it points at; `review` and `serve` open and close them; the writes by `tasks.add` and `tasks.close`, refused under `ask` since there is no question to put |
+| `tg_searches_list`, `tg_searches_history` | `tg searches list`, `history` | saved searches by name, and the searches and counts that ran; `saved` on `tg_messages_search` and `tg_stats_messages_show` runs one |
+| `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_stats_tasks_show` | `tg tasks list`, `add`, `close`, `stats` | what waits on the owner — questions nobody answered, mentions, requests, promises — kept in the local store and never sent, each with the message it points at; `review` and `serve` open and close them; the writes by `tasks.add` and `tasks.close`, refused under `ask` since there is no question to put |
 | `tg_searches_create`, `tg_searches_delete`, `tg_searches_clear` | `tg searches create`, `delete`, `clear` | save a search without running it, delete one saved search or history row, empty the history; local store only |
 | `tg_conversations_status`, `tg_conversations_related` | `tg conversations status`, `related` | archive readiness and similar conversations from retained vectors |
 | `tg_conversations_refresh` | `tg conversations search --refresh` | bounded local rebuild and embedding; writes by `conversations.embed`, never downloads a model |
@@ -246,7 +246,7 @@ Each call can be kept as a run
 
 ## Prompts, and chats by `@`
 
-The server offers five ready prompts — in Claude Code they are `/` commands:
+The server offers six ready prompts — in Claude Code they are `/` commands:
 
 | Prompt | Argument | What the agent does |
 |---|---|---|
@@ -255,6 +255,7 @@ The server offers five ready prompts — in Claude Code they are `/` commands:
 | `find` | `text` | looks for a person or for words, and shows the messages around each hit; sends nothing |
 | `link-conversations` | none | report cost and request consent, then read batches, save links and rebuild |
 | `review` | `since`, `groups` — optional | calls `tg_review` once and sorts it into what you owe, what others owe and what needs clarifying; drafts reminders, sends one only after your yes |
+| `open-tasks` | `chat` — optional | calls review to refresh tasks, lists pending tasks and suggests drafts; closes a task only after owner approval; sends nothing |
 
 `reply` and `review` send through `tg_messages_send`, so where `messages.send` is `readonly` the
 agent only shows the drafts.

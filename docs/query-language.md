@@ -129,7 +129,7 @@ An error carries the position of the problem in the query and a hint.
 `tg_messages_search` takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
 `language` chooses `lucene` or `legacy`, `timezone` the calendar zone. `chat` takes an id or a stored
 name; `source`, `newest`, `context` and `limit` work as the command options do; `saved` runs a saved search.
-The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `tg_messages_stats` counts
+The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `tg_stats_messages_show` counts
 the same queries.
 
 ## The older modes
