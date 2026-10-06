@@ -524,4 +524,4 @@ Pull requests, bug reports and ideas are welcome —
 
 For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel
 with an owner-code login and a form before every write. See [remote access](docs/remote.md).
-Group activity is available with `tg chats stats <chat>`; [statistics](docs/groups.md#activity-statistics).
+Group activity is available with `tg stats chats show <chat>`; [statistics](docs/groups.md#activity-statistics).

@@ -124,7 +124,7 @@ tg stats tasks show                                            # open per chat, 
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
 task — an admin's do not — and a mention by `@username` is not seen. An agent gets the same as
-MCP tools: `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_tasks_stats` ([mcp.md](mcp.md)).
+MCP tools: `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_stats_tasks_show` ([mcp.md](mcp.md)).
 
 ## Rules
 
@@ -179,7 +179,7 @@ tg stats chats show <chat> --offline --json
 ```
 
 Counts messages, active senders, replies, threads, reactions, top posts and questions answered from the local
-store. The online command also asks Telegram for joins and leaves; `--offline` and MCP `tg_chats_stats`
+store. The online command also asks Telegram for joins and leaves; `--offline` and MCP `tg_stats_chats_show`
 omit `members`. When `complete` is false, counts are lower bounds; run the suggested `store fetch`.
 
 ## Review suspicious members
