@@ -117,8 +117,8 @@ Options you type with `--saved` replace the saved ones. The saved text is read a
 `date:7d` always means the last 7 days. `searches show` prints one, `searches delete` removes one.
 
 Every search and count that succeeds is written to the history: the query and its options, never the
-messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run out of it, the same
-in MCP with `record: false`; `searches clear` empties the history and keeps the saved searches. This
+messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run out of it; in MCP,
+`tg mcp --no-record` or `record` set to `false` keeps the server's calls out; `searches clear` empties the history and keeps the saved searches. This
 history is separate from the run records of `tg runs`.
 
 Saved searches and the history live in the store that tg and max share: both see the same ones, and

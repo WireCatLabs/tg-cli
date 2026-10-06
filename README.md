@@ -156,8 +156,8 @@ An agent connects to `tg` in one of two ways:
 - **Read.** Chats, history, one message with its neighbours, other people's unread messages in every
   chat at once (`tg inbox`), everything since the last review (`tg review`), new messages as they
   arrive (`tg watch`), a message's files or a whole chat's, voice messages as text.
-- **Search.** Messages by their text, across everything this machine has kept, without connecting to
-  Telegram; with `--regex` for a pattern. Chats by part of their title, contacts by part of a name,
+- **Search.** Messages by their text, across everything this machine has kept, locally by default;
+  `--sync-first` explicitly fetches new messages before searching; with `--regex` for a pattern. Chats by part of their title, contacts by part of a name,
   a person by phone number.
 - **Write.** Text with Markdown, replies, files, photos, videos and voice messages, silent messages,
   scheduled messages that go out even with this computer off, edits, forwards, pins, reactions,
@@ -288,7 +288,7 @@ It needs **Node 22.16 or newer**, or **Bun** — CI runs the built command under
 or Windows. SQLite comes from the
 runtime itself, or from tg's own copy when a Linux Node's system SQLite is too old, so there is
 nothing to compile. `tg doctor` says where its files are and whether a
-login exists, without connecting. Details, variables and where the files go:
+session is saved, without connecting; `tg doctor --online` checks the login works. Details, variables and where the files go:
 [docs/installation.md](docs/installation.md).
 
 ### Windows installation

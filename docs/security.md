@@ -14,8 +14,8 @@ servers it talks to, and what to do if the session leaks.
   or a phone number.
 - **The send guard is the shared one**: `permissions`, the recipient list and `sendsPerHour` are
   checked by every command and MCP tool ([below](#the-send-guard)).
-- **`tg` talks to Telegram, npm and my.telegram.org only**, and to model hosts when you download a
-  model ([below](#what-goes-over-the-network)).
+- **`tg` talks to Telegram, npm and my.telegram.org** — through your proxy when you set one —
+  and to model download hosts or explicitly configured embedding/analysis endpoints ([below](#what-goes-over-the-network)).
 - **It does not protect against someone with your user account on this machine**, or an agent
   allowed to change the settings.
 
@@ -97,10 +97,14 @@ downloaded file's name also loses any leading dot.
 - **my.telegram.org**, only during `tg setup` or `tg session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
-- **Hugging Face and GitHub**, only when you run `tg models audio download`. A voice message never goes
+- **Hugging Face and GitHub**, only when you run `tg models audio download` or `tg models text download`. A voice message never goes
   there: a local model runs on this machine.
+- **Configured embedding endpoints** receive conversation text from `conversations embed` after consent,
+  and query text from remote `conversations search`, including MCP searches. Local embeddings send no text.
+- **Configured analysis endpoints** receive bounded message batches only with `conversations build --analyze --chat`,
+  after consent scoped to account, chat and provider; ordinary build sends nothing.
 
-Nothing else. There is no telemetry.
+There is no telemetry.
 
 ## Your own app, and Telegram's terms
 

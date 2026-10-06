@@ -70,7 +70,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `embeddingBaseUrl` | provider default | embedding API endpoint | `--base-url` |
 | `embeddingDims` | model default | integer 1–65,536 | `--dims` |
 | `analysisProvider` | `agent` | `agent`, `openai` or `anthropic` | `build --provider` |
-| `analysisModel` | provider default | analysis model | `build --model` |
+| `analysisModel` | none; required for `--analyze` | analysis model | `build --model` |
 | `analysisBaseUrl` | provider default | analysis API endpoint | `build --base-url` |
 | `limit` | `20` | rows per page of a list | `--limit` |
 | `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` | none (`--timeout` is a different thing) |
@@ -79,13 +79,15 @@ are in [installation.md](installation.md#where-files-go)).
 | `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)) | `--record`, `--no-record` |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
-| `permissions` | everything allowed; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
+| `permissions` | everything allowed except reply rules sending; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sendsPerHour` | `30` | the most sends in any hour ([security.md](security.md#the-send-guard)) | none |
 | `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
 | `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) | `--model` |
 | `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
 | `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
 | `readOtherBots` | `false` | a bot profile only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bot.md](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
+| `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
+| `searchStemmers.cyrillic`, `searchStemmers.latin` | `russian`, `spanish` | the word-stem languages of the whole store, both CLIs and every profile: `russian` or `none`; `spanish`, `english` or `none` ([archive.md](archive.md#repair-and-index-maintenance)) | none |
 
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
 names one. The first word (`tg work …`) and `TG_PROFILE` override it.
@@ -107,7 +109,7 @@ names one. The first word (`tg work …`) and `TG_PROFILE` override it.
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
 `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
-starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`, `tags`, `searches`, `replies`
+starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`, `conversations`, `tags`, `searches`, `replies`, `attachments`
 or `bot`, and must name a known command or checked write. Unknown command keys are refused by
 `config set` with exit 2, including keys inside a whole `permissions` object. `config unset` can remove
 an old unknown key. Reading an existing file with one warns on stderr and continues. **The most specific key you set wins**: with the example above,
@@ -135,7 +137,7 @@ count as `messages`: `messages: deny` stops them too. `config`, `session`, `doct
 `mcp` and the store's own upkeep are never limited.
 
 **The defaults allow everything except two things that cannot be undone**: `messages.delete` and
-`account.sessions.end` are `ask`. A built-in default only tightens: `messages: readonly` still
+`account.sessions.end` are `ask`. Reply rules may not send until you allow it: `replies.send` is `deny`. A built-in default only tightens: `messages: readonly` still
 refuses a deletion, and `messages: allow` keeps the question before a deletion until you set
 `messages.delete` itself.
 
@@ -148,7 +150,7 @@ tg config unset permissions.messages.delete         # back to the default
 To make a profile read-only — here the profile `agent` — set each resource:
 
 ```sh
-for key in messages reactions polls topics chats contacts account; do
+for key in messages reactions polls topics chats contacts account conversations tags searches replies attachments bot; do
   tg agent config set permissions.$key readonly
 done
 ```

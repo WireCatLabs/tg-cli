@@ -74,7 +74,7 @@ tg store jobs cancel <job>                  # stops after the current page; a la
 ## Search
 
 `tg messages search` finds stored messages by their words, sender, chat, date, files, links and your
-own tags; it never asks Telegram. [Message search](search.md) is the guide, with saved searches and
+own tags; by default it never asks Telegram. `--sync-first` explicitly fetches new messages first. [Message search](search.md) is the guide, with saved searches and
 counts. An empty answer means "not in this archive": fetch the chat first.
 
 ## Export
@@ -211,7 +211,7 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the logs say why.
 - **An already revoked login prevents startup.** `serve` checks it before reporting readiness and exits with
   code 4; the installed unit then stays down. Log in with `tg session start`, then `tg server start`.
-  This startup check does not detect every session revoked while the service is already running.
+  A login revoked while the service runs ends it with code 4 too, within about 15 minutes.
   If app credentials are unavailable while a saved session exists, serve exits with code 12 and systemd retries.
   On macOS the agent does not restart after any failure, since launchd cannot exclude one exit code;
   start it again with `tg server start`. Run `tg server install` again to update an older unit.
@@ -269,8 +269,8 @@ The setting affects both messengers and every profile; a profile-locked process 
 
 `tg store repair --dry-run --json` previews structural repair and rolls it back. `store repair` applies it
 without deleting data: mismatched tables are kept as copies, and rows/columns left there are named in the answer.
-Inspect retained copies before deleting one with `store copies delete <exact name>`; `store copies list`
-shows them. Stop processes using the store before repair.
+Inspect retained copies before deleting one with `store copies delete <exact name>`; `store repair`
+names them in its answer. Stop processes using the store before repair.
 
 ## Tester-only reply rules
 
