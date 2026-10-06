@@ -26,6 +26,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   the same check on the top n members, one a second. Every reason says where it came from; a hint, never a
   verdict.
 
+### Fixed
+
+- **`tg mcp --http`: Claude and ChatGPT can finish logging in.** The login page made the browser send its form
+  as coming from nowhere, and `tg` refused it with "Origin not allowed". Now the login works (cli-messaging 0.152.0).
 ## 0.28.0 — 06.10.2026
 
 ### What's new
