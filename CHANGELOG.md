@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.29.0 — 06.10.2026
 
 ### What's new
 
@@ -19,9 +19,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   labelled), whether they have a photo of their own — and, for each chat you share, how many of their
   messages are stored, the first and the last. The phone shows its last four digits unless `--show-phone`. It
   asks Telegram nothing more than `contacts show` does. MCP: `tg_contacts_profile`.
-- Uses cli-messaging 0.150.0, which also brings `contacts check` (bot signals and public ban lists),
-  `contacts context --chat` and `--refresh`, `chats members audit --deep`, `chats members fetch --track` and
-  `--budget`, and `chats members history`.
+- **Record group membership over time.** `tg chats members fetch <chat>` saves profiles, membership changes
+  and a daily count; `--budget` limits pages, and nobody is recorded as having left after a partial read.
+  `--track` starts daily fetching while `tg serve` runs. `chats tracking list|show|add|remove` manages the
+  tracked groups; stopping tracking keeps recorded history. `chats members history --since-time` reads
+  recorded joins, leaves and profile changes without contacting Telegram. The first snapshot records a
+  baseline, not proof that every person joined that day; missed days are not reconstructed.
+  `chats members list --offline` reads the last complete saved roster. Uses cli-messaging 0.152.0.
 - `tg contacts context <person> --chat <chat>` (repeat it for more) gives their newest messages in each chat,
   as time and text only, for an agent to summarise; `-v` adds ids and links, `--limit` is per chat, and `--refresh`
   asks Telegram first with one search by sender per chat.
