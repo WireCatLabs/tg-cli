@@ -10,6 +10,49 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...[
+    "--do",
+    "--kinds",
+    "--chats",
+    "--not-chats",
+    "--words",
+    "--question",
+    "--no-question",
+    "--mentions-me",
+    "--no-mentions-me",
+    "--people",
+    "--not-people",
+    "--contacts-only",
+    "--no-contacts-only",
+    "--template",
+    "--model",
+    "--as-reply",
+    "--no-as-reply",
+    "--per-chat",
+    "--per-person",
+    "--outside",
+    "--days",
+    "--timezone",
+    "--no-hours",
+  ].map((option) => ({
+    command: "replies edit",
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command",
+  })),
+  ...["--reply", "--allow-people", "--allow-chats", "--deny-people", "--deny-chats"].map((option) => ({
+    command: "replies audience",
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command",
+  })),
+  ...["mcp setup", "mcp doctor"].map((command) => ({
+    command,
+    option: "--permission",
+    reason:
+      "cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration",
+  })),
+
   {
     command: "chats members audit",
     option: "--deep",

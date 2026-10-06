@@ -130,7 +130,7 @@ tg agent config set permissions.messages.send ask
 ```
 
 The levels bind you too: in that profile your own `tg agent messages send` asks as well. Two flags
-skip the form for levels at `ask` over stdin/stdout. HTTP always requires a form:
+skip the form for levels at `ask` over stdin/stdout. HTTP requires a form by default; `--http-confirmation permissions` follows the effective levels:
 
 - `tg mcp --allow-dangerous` — no form before a deletion;
 - `tg mcp --yes` — no form before any other change.
@@ -159,7 +159,7 @@ claude mcp add tg -- tg mcp --confirm-send
 ```
 
 Messenger changes at `ask`, and all messenger changes with `--confirm-send`, require a form.
-Local tags, saved searches and conversation updates at `ask`, with `--confirm-send` or over HTTP
+Local tags, saved searches and conversation updates at `ask`, with `--confirm-send` or over HTTP in its default confirmation mode
 refuse with `confirmation_required` before writing; run them through the CLI. Readonly keeps read tools. A send's
 form shows **which chat** — the title and id the
 agent's name resolved to — and **the whole text**. The change goes only after Accept; the form has
@@ -283,7 +283,9 @@ CLI command with the owner's approval.
 
 MCP `tg_inbox` and `tg_review` accept `kinds` and `new`. MCP keeps its own per-chat checkpoints,
 separate from CLI `--new`. `new` cannot be combined with `since_time`, or with `unanswered` on review.
-HTTP writes always require a form, regardless of permission level or confirmation flags.
+HTTP writes require a server form by default. Start with `--http-confirmation permissions`
+to execute effective `allow` tools without elicitation; `ask` still requires a form. Repeat
+`--permission key=level` to override permissions for this server process only ([browser setup](remote.md)).
 
 MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`, `tg_conversations_links_add`,
 `tg_conversations_links_clear` and `tg_conversations_build`, plus the `link-conversations` prompt. Report batch

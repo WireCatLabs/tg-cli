@@ -2280,6 +2280,106 @@ tg flood clear
 
 rules that answer messages for you, kept in a file of this profile
 
+### `tg replies add`
+
+add a rule with every default written out, off until you edit and enable it
+
+**Changes something on this computer only.**
+
+```sh
+tg replies add <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | lower-case letters, digits and -; unique in this profile. |
+
+### `tg replies on`
+
+enable one reply rule; its template must be ready
+
+**Changes something on this computer only.**
+
+```sh
+tg replies on <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the rule's id. |
+
+### `tg replies off`
+
+disable one reply rule
+
+**Changes something on this computer only.**
+
+```sh
+tg replies off <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the rule's id. |
+
+### `tg replies edit`
+
+change only the named fields of a reply rule; lists replace the whole list
+
+**Changes something on this computer only.**
+
+```sh
+tg replies edit <id> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the rule's id. |
+
+| Option | What it does |
+|---|---|
+| `--do <actions>` | actions: reply, task, or both, comma-separated. |
+| `--kinds <kinds>` | chat kinds: dialog, group; comma-separated, empty for any. |
+| `--chats <ids>` | only these chat ids, comma-separated; empty for any. |
+| `--not-chats <ids>` | leave these chat ids out, comma-separated; empty clears. |
+| `--words <words>` | match any of these whole words, comma-separated; empty clears. |
+| `--question` | match only questions. |
+| `--no-question` | do not require a question. |
+| `--mentions-me` | require a mention of you or a reply to you. |
+| `--no-mentions-me` | do not require a mention of you or a reply to you. |
+| `--people <ids>` | only these sender ids, comma-separated; empty for any. |
+| `--not-people <ids>` | leave these sender ids out, comma-separated; empty clears. |
+| `--contacts-only` | match only contacts. |
+| `--no-contacts-only` | do not require a contact. |
+| `--template <text>` | the reply template. |
+| `--model <mode>` | template model mode: fill-only or may-reword; rewording is not yet available. |
+| `--as-reply` | send as a reply to the matched message. |
+| `--no-as-reply` | send without linking to the matched message. |
+| `--per-chat <limit>` | at most this many per chat, such as 1/12h. |
+| `--per-person <limit>` | at most this many per person, such as 1/1d. |
+| `--outside <hours>` | answer outside this 24-hour window, such as 09:00-19:00. |
+| `--days <days>` | days of the working window, such as mon-fri or sat,sun. |
+| `--timezone <zone>` | the IANA timezone for the working window. |
+| `--no-hours` | clear the working window. |
+
+### `tg replies audience`
+
+show the profile's reply audience, or replace its named fields; testers still limit answers
+
+**Changes something on this computer only.**
+
+```sh
+tg replies audience [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--reply <mode>` | answer all or only listed senders and chats: all, listed. |
+| `--allow-people <ids>` | replace allowed sender ids, comma-separated; empty clears. |
+| `--allow-chats <ids>` | replace allowed chat ids, comma-separated; empty clears. |
+| `--deny-people <ids>` | replace denied sender ids, comma-separated; empty clears; deny wins. |
+| `--deny-chats <ids>` | replace denied chat ids, comma-separated; empty clears; deny wins. |
+
 ### `tg replies test`
 
 what the rules would have answered in the stored messages, to whom and why — sends nothing, changes nothing, never connects
@@ -2468,7 +2568,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -2489,7 +2589,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 
 | Option | What it does |
 |---|---|
@@ -2572,12 +2672,14 @@ tg mcp [options]
 
 | Option | What it does |
 |---|---|
+| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
 | `--confirm-send` | show the owner every write in a form from the server first. |
 | `--allow-dangerous` | no form before a deletion whose permission level is ask. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
-| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; every write asks first. |
+| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; every write asks first by default. |
+| `--http-confirmation <mode>` | required: every write needs a server form (default); permissions: follow the profile levels. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
 | `--revoke` | forget every login given to a browser app; each must log in again. |
@@ -2592,6 +2694,7 @@ tg mcp config [options]
 
 | Option | What it does |
 |---|---|
+| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
 | `--confirm-send` | show the owner every write in a form from the server first. |
 | `--allow-dangerous` | no form before a deletion whose permission level is ask. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
@@ -2615,6 +2718,7 @@ tg mcp setup <client> [options]
 | Option | What it does |
 |---|---|
 | `--allow-writes` | acknowledge that this profile offers writing tools. |
+| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
 | `--confirm-send` | show the owner every write in a form from the server first. |
 | `--allow-dangerous` | no form before a deletion whose permission level is ask. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
@@ -2631,6 +2735,7 @@ tg mcp doctor [options]
 
 | Option | What it does |
 |---|---|
+| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
 | `--confirm-send` | show the owner every write in a form from the server first. |
 | `--allow-dangerous` | no form before a deletion whose permission level is ask. |
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |

@@ -259,7 +259,9 @@ Never ask the owner to paste a credential into argv, print one, or fall back to 
 Use `tg chats stats <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
-every HTTP write requires a form. `tg mcp --revoke` forgets browser logins for the profile.
+every HTTP write requires a form by default. The owner can start with `--http-confirmation permissions`
+to let effective `allow` tools run without elicitation, and repeat `--permission key=level` to override
+permissions for this server process. `ask` still needs a form; never change permissions to bypass a refusal. `tg mcp --revoke` forgets browser logins for the profile.
 MCP inbox/review `kinds` and `new` use checkpoints separate from CLI `--new`.
 
 `tg chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
