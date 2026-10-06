@@ -21,6 +21,7 @@
     "skills",
     "README.md",
     "LICENSE",
+    "THIRD_PARTY_NOTICES",
     "install",
     "spec/bot/LICENSE"
   ],
@@ -54,7 +55,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.17.1",
-    "@leemour/cli-messaging": "0.149.0",
+    "@leemour/cli-messaging": "0.150.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "undici": "7.30.0",

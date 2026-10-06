@@ -12,8 +12,8 @@ importers:
         specifier: 0.17.1
         version: 0.17.1(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.149.0
-        version: 0.149.0(@leemour/cli-core@0.17.1(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
+        specifier: 0.150.0
+        version: 0.150.0(@leemour/cli-core@0.17.1(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -459,8 +459,8 @@ packages:
   '@leemour/cli-messaging-sqlite@1.0.0':
     resolution: {integrity: sha512-NFJMG+/2BWIb3JdOMgyV8SFsB7Fuv3wLtUmMt08GZ4KTpgu0WuA7qQmQE6appEgJJuF/97vHj6+AuXw2z3HMHw==}
 
-  '@leemour/cli-messaging@0.149.0':
-    resolution: {integrity: sha512-3HhCXMFcMgaRvl2yt9LBgwFGB2qeCwdLI+HGp7Q4KDJmQFagN2TWPKqpN2GqrkGUhYVYL/VGyEn3Gml0kYZPFA==}
+  '@leemour/cli-messaging@0.150.0':
+    resolution: {integrity: sha512-kKEWmQeNd+57DwyIX1AXNtK9ZStwDjh3SDJM8IexVbDVK2iZpUsb5F4M2eVVCv2uPPy8nlKBKTN4gOJ5R3Gqhg==}
     engines: {node: ^22.16.0 || >=24}
     hasBin: true
     peerDependencies:
@@ -473,6 +473,10 @@ packages:
         optional: true
       unpdf:
         optional: true
+
+  '@leemour/cli-tasks@0.1.0':
+    resolution: {integrity: sha512-XN4e7+jn1DoAQk0fBkaS4clXBHIgvjv4dtTnkVfHiqTB9dgneQxglwY+tohNytWE4PaPAzy3SgPrpbe41IELOA==}
+    engines: {node: '>=22'}
 
   '@modelcontextprotocol/core@2.1.0':
     resolution: {integrity: sha512-YdFj5gMRHr0gYNAhTbQDgjLHiEJdIAUYxomhKseUNye7ZGlISQmUoLh2sveFFCiQ7j2YMffT1kgSND0FSfIFjQ==}
@@ -1061,6 +1065,9 @@ packages:
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
 
+  echarts@6.1.0:
+    resolution: {integrity: sha512-q0yaFPggC9FUdsWH4blavRWFmxdrIodbkoKNAjJudAI6CA9gNPxHtV2RcZNEepZVlk4yvBYkOkbk6HIVpIyHZA==}
+
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
 
@@ -1544,6 +1551,9 @@ packages:
   ts-algebra@2.0.0:
     resolution: {integrity: sha512-FPAhNPFMrkwz76P7cdjdmiShwMynZYN6SgOujD1urY4oNm80Ou9oMdmbR45LotcKOXoy7wSmHkRFE6Mxbrhefw==}
 
+  tslib@2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
+
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
@@ -1688,6 +1698,9 @@ packages:
 
   zod@4.6.5:
     resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
+
+  zrender@6.1.0:
+    resolution: {integrity: sha512-oEGMDB6pOP2S6OwRR4PdVv610zrjnA3Bh+JnSG12fYJlBKjtNAoEb5fSUoCOOINlH96I2fU38/A2UpRKs67xYQ==}
 
 snapshots:
 
@@ -2033,7 +2046,7 @@ snapshots:
 
   '@leemour/cli-messaging-sqlite@1.0.0': {}
 
-  '@leemour/cli-messaging@0.149.0(@leemour/cli-core@0.17.1(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
+  '@leemour/cli-messaging@0.150.0(@leemour/cli-core@0.17.1(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
     dependencies:
       '@anthropic-ai/sdk': 0.131.0(zod@4.6.5)
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
@@ -2041,9 +2054,11 @@ snapshots:
       '@leemour/cli-core': 0.17.1(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging-onnx': 1.0.0
       '@leemour/cli-messaging-sqlite': 1.0.0
+      '@leemour/cli-tasks': 0.1.0
       '@modelcontextprotocol/server': 2.1.0
       '@valibot/to-json-schema': 1.8.0(valibot@1.5.0(typescript@7.0.2))
       commander: 15.0.0
+      echarts: 6.1.0
       lossless-json: 4.3.0
       ogg-opus-decoder: 1.7.5
       qrcode-generator: 2.0.4
@@ -2056,6 +2071,8 @@ snapshots:
       - citty
       - typescript
       - zod
+
+  '@leemour/cli-tasks@0.1.0': {}
 
   '@modelcontextprotocol/core@2.1.0':
     dependencies:
@@ -2544,6 +2561,11 @@ snapshots:
       domelementtype: 2.3.0
       domhandler: 5.0.3
 
+  echarts@6.1.0:
+    dependencies:
+      tslib: 2.3.0
+      zrender: 6.1.0
+
   emoji-regex@8.0.0: {}
 
   end-of-stream@1.4.5:
@@ -2976,6 +2998,8 @@ snapshots:
 
   ts-algebra@2.0.0: {}
 
+  tslib@2.3.0: {}
+
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -3069,3 +3093,7 @@ snapshots:
   yaml@2.9.1: {}
 
   zod@4.6.5: {}
+
+  zrender@6.1.0:
+    dependencies:
+      tslib: 2.3.0

@@ -238,6 +238,40 @@ tg chats members audit <chat> [options]
 |---|---|
 | `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
 | `--min-score <n>` | only members scoring at least this; 1 lists everyone with a reason (default: 2). |
+| `--deep <n>` | also check the top n in full — profile, photos, everything they wrote, and the public ban lists, which are sent their ids — one person a second. |
+
+#### `tg chats members history`
+
+who joined, who left and whose profile changed, oldest first — what chats members fetch recorded in the local store; never asks the messenger
+
+```sh
+tg chats members history <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; everything recorded if not given. |
+
+#### `tg chats members fetch`
+
+read a group's whole member list into the local store's member history: who joined, who left, daily counts and profile changes; someone is recorded as gone only when every member was read
+
+```sh
+tg chats members fetch <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--track` | also fetch it daily while serve runs; chats tracking lists and edits those chats. |
+| `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
 
 #### `tg chats members add`
 
@@ -305,6 +339,54 @@ tg chats stats <chat> [options]
 | `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
 | `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
 | `--timezone <zone>` | the IANA timezone for calendar days. |
+
+### `tg chats tracking`
+
+the chats whose member lists serve fetches daily into the local store — chats members fetch --track adds one
+
+#### `tg chats tracking list`
+
+every tracked chat: since when, and its last member count
+
+```sh
+tg chats tracking list
+```
+
+#### `tg chats tracking show`
+
+one chat: whether it is tracked, and its member count per day for the last 30 days
+
+```sh
+tg chats tracking show <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg chats tracking add`
+
+fetch this chat's member list daily while serve runs, from its next run
+
+```sh
+tg chats tracking add <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg chats tracking remove`
+
+stop fetching it daily; the history already kept stays
+
+```sh
+tg chats tracking remove <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
 ### `tg chats create`
 
@@ -606,6 +688,22 @@ tg contacts show <person>
 |---|---|---|
 | `person` | required | their id, @username, or part of their name. |
 
+### `tg contacts profile`
+
+everything the messenger says about one person — handles, flags, last seen, when they registered — and how many of their messages the store holds in each chat you share, the first and the last
+
+```sh
+tg contacts profile <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+
+| Option | What it does |
+|---|---|
+| `--show-phone` | print the whole phone number. |
+
 ### `tg contacts context`
 
 what the store holds about one person, in every messenger linked to them: shared chats, the last messages each way, their recent messages, where others mentioned them — never connects
@@ -622,6 +720,24 @@ tg contacts context <person> [options]
 |---|---|
 | `--limit <n>` | at most this many messages in each list; 10 if not given. |
 | `--since-time <time>` | nothing older than this ISO 8601 time, or 2h / 1d ago. |
+| `--chat <chat>` | a chat, by id or name; repeat it for more — then their newest messages in each, 20 unless --limit, short unless -v. |
+| `--refresh` | with --chat, read their newest messages in each from the messenger first. |
+
+### `tg contacts check`
+
+whether one person looks like a bot, a fake or a spammer: their profile, what they wrote in the store, and the public ban lists (Combot Anti-Spam (CAS), lols.bot), which are sent their id — a hint, never a verdict
+
+```sh
+tg contacts check <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+
+| Option | What it does |
+|---|---|
+| `--no-registries` | do not ask the public ban lists; nothing about them leaves this machine. |
 
 ### `tg contacts link`
 

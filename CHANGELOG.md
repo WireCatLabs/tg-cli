@@ -3,6 +3,21 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **A person's profile.** `tg contacts profile <person>` shows what Telegram says about someone — every
+  username, bio, birthday, Telegram's own marks (bot, verified, premium, scam, fake, restricted, deleted),
+  when they were last seen (`recently`, `week` and `month` are no longer shown as hidden), whether you are each
+  other's contacts, when the account was made (Telegram's own month, or an estimate from the id, always
+  labelled), whether they have a photo of their own — and, for each chat you share, how many of their
+  messages are stored, the first and the last. The phone shows its last four digits unless `--show-phone`. It
+  asks Telegram nothing more than `contacts show` does. MCP: `tg_contacts_profile`.
+- Uses cli-messaging 0.150.0, which also brings `contacts check` (bot signals and public ban lists),
+  `contacts context --chat` and `--refresh`, `chats members audit --deep`, `chats members fetch --track` and
+  `--budget`, and `chats members history`.
+
 ## 0.28.0 — 06.10.2026
 
 ### What's new

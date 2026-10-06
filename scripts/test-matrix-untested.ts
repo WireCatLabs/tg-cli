@@ -11,6 +11,48 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "chats members audit",
+    option: "--deep",
+    reason:
+      'cli-messaging src/cli/messenger/messenger.test.ts ("chats members audit 7 --deep 1") and src/services/members-audit.test.ts cover the deep check of the top flagged members; this consumer mounts the shared command',
+  },
+  {
+    command: "chats members history",
+    option: "--since-time",
+    reason:
+      'cli-messaging src/services/members-fetch.test.ts ("chats members history") covers the recorded joins, leaves and changes since a time; shared option parsing',
+  },
+  {
+    command: "chats members fetch",
+    option: "--track",
+    reason:
+      'cli-messaging src/cli/messenger/messenger.test.ts ("chats members fetch 7 --track") covers adding a chat to the daily member fetch; this consumer mounts the shared command',
+  },
+  {
+    command: "chats members fetch",
+    option: "--budget",
+    reason:
+      "cli-messaging src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing",
+  },
+  {
+    command: "contacts context",
+    option: "--chat",
+    reason:
+      'cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --chat 11") covers the newest messages per named chat, lean and with -v; this consumer mounts the shared command',
+  },
+  {
+    command: "contacts context",
+    option: "--refresh",
+    reason:
+      'cli-messaging src/cli/messenger/messenger.test.ts ("contacts context 11 --refresh") covers the refusal with --offline and the read before answering; shared option parsing',
+  },
+  {
+    command: "contacts check",
+    option: "--no-registries",
+    reason:
+      'cli-messaging src/cli/messenger/messenger.test.ts ("contacts check 40 --no-registries") covers scoring from local signals alone, no registry asked; this consumer mounts the shared command',
+  },
+  {
     command: "contacts context",
     option: "--limit",
     reason:
