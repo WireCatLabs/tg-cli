@@ -171,26 +171,77 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
   `FLOOD_WAIT` answer says how long to wait
   ([troubleshooting.md](troubleshooting.md#telegram-asks-to-wait-n-s-before-the-next-request)).
 
-## Activity statistics
+## Statistics for group admins
 
 ```sh
 tg stats chats show <chat> --since-time 7d --by day --timezone Europe/Madrid --json
 tg stats chats show <chat> --offline --json
 ```
 
-Counts messages, active senders, replies, threads, reactions, top posts and questions answered from the local
-store. The online command also asks Telegram for joins and leaves; `--offline` and MCP `tg_stats_chats_show`
-omit `members`. When `complete` is false, counts are lower bounds; run the suggested `store fetch`.
+`tg stats chats show` counts messages, active senders, replies, threads, reactions and questions answered for
+a period from the local store. `--by day` or `--by week` adds calendar rows; weeks start on Monday and
+`--timezone` sets their timezone. Views, forwards and comments appear only where Telegram supplied the
+counts and they were stored with the posts. A missing count does not mean zero. Reactions use stored
+counts, without refreshing every post. Questions follow the same rules as `review --unanswered`.
+These are locally computed figures; the command does not request Telegram's official admin statistics.
 
-## Review suspicious members
+The online command also asks Telegram for join and leave events. `--offline` and MCP `tg_stats_chats_show`
+omit `members`, the summary of those events. This differs from `memberCounts`: recorded daily snapshots
+of the group's size, which remain available offline.
 
-`tg chats members audit <chat>` lists members with bot-like signals and reasons; `--budget` caps pages and
-`--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means the list
-is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`; scores need human review.
+When `complete` is false, the available history is incomplete: totals cover only what was read, while
+medians and proportions may differ from those for the whole group. The `fetch` field suggests a command
+to download missing messages. Incomplete event history also limits join and leave counts. Even a full
+message history cannot reconstruct past member profiles or daily rosters from before recording began.
 
-Telegram maps bot/scam/fake/deleted/photo and join/inviter metadata when it is provided.
-Inspect `unknown` for unavailable evidence; scores still require human review.
+### Member snapshots and changes
+
+`tg chats members fetch` reads members into the local store, recording profiles, changes, the day's
+member count and whether the read was complete. `--budget` caps pages. Nobody is recorded as having
+left after a partial read: that requires reading the whole available list and a known group count
+no greater than the number read. A larger budget cannot bypass Telegram's member-list limits.
+
+`--track` adds the group to the tracking list. `chats tracking list` shows all tracked groups;
+`show` shows one group's tracking state and daily counts for the last 30 days. `add` starts tracking
+without fetching immediately; `remove` stops daily fetching and keeps the history already recorded.
+While `tg serve` runs, it fetches tracked groups one at a time, starting its first round a minute after
+connecting, and skips groups already fetched on the current UTC day. Tracking does not start `serve`;
+if it was stopped for several days, the next run records a new snapshot rather than filling missed days.
+
+`tg chats members history` shows recorded joins, leaves and profile changes, oldest first;
+`--since-time` limits the period. It never asks Telegram. A join uses Telegram's join time when known,
+otherwise the first time the person was seen. A leave is dated at the first complete snapshot without
+them, rather than their exact departure. The first fetch records the initial roster: those people did
+not necessarily join that day. `chats members list --offline` reads the last completely saved roster;
+partial reads do not replace it. Without a complete snapshot, this list can be empty even though some
+profiles and events have already been recorded.
+Profiles and history stay in the local store alongside messages.
+
+`tg chats members audit` lists members with bot-like signals and reasons; `--budget` caps pages and
+`--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means
+the list is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`;
+scores need human review. Telegram supplies bot, scam, fake, deleted, photo, join and inviter metadata
+where available. “Never wrote” means no messages were found in the local history, not proof that the
+person never wrote in the group.
 
 `--deep <n>` also checks the top n members in full, one person a second: their profile, their oldest profile
 photo, up to 1,000 stored messages each, and two public spam lists — Combot CAS and lols.bot. Each
 member's id is sent to those lists. The full check lands in `check` on each of those members.
+
+### A weekly report for your group
+
+“Hiking Club” below is a fictional example group. Download its messages with `store fetch` first if
+they are not already stored, then record the current roster and prepare the report:
+
+```sh
+tg chats members fetch "Hiking Club" --track --json
+tg stats chats show "Hiking Club" --since-time 7d --by day --timezone Europe/Madrid --json
+tg chats members history "Hiking Club" --since-time 7d --offline --json
+tg chats tracking show "Hiking Club" --offline --json
+tg chats members audit "Hiking Club" --json
+```
+
+Ask your agent to report messages, active senders, unanswered questions, membership changes and days
+with member snapshots. Keep `complete`, `more`, `unknown` and gaps between snapshots visible in the
+report. Keep `tg serve` running or repeat member fetches for future reports; the first report cannot
+show departures that happened before the first recorded roster.
