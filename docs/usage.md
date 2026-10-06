@@ -648,6 +648,27 @@ secret.** Every setting and variable: [configuration.md](configuration.md).
 - [security.md](security.md) — what reaches the disk, and the send guard
 - [recipes.md](recipes.md) — daily work for an agent
 
+## A person's profile
+
+`tg contacts profile <person>` shows what Telegram says about one person and how active they are in the
+chats you share:
+
+- every username, the bio, the birthday where they show it, and the phone number where Telegram shows it to
+  you — its last four digits unless you add `--show-phone`;
+- Telegram's own marks: `bot`, `verified`, `premium`, `scam`, `fake`, `restricted`, `deleted`, `support`;
+- `seen`: `online`, a time, or `recently`, `week`, `month` when their privacy hides the time, and `hidden`
+  when Telegram says nothing;
+- `contact` and `mutualContact`, and how many groups you share (`commonChatsCount`);
+- `registered`: when the account was made, always with where that comes from — `telegram` (the month
+  Telegram tells you when they first write to you) or `estimate` (guessed from the account id with a
+  community table; past December 2024 there is no estimate);
+- `hasPhoto`: a photo of their own — one you set for them does not count;
+- for each shared chat, how many of their messages your local store holds, the first and the last.
+  `complete: false` means the store does not hold the whole chat, so the count is a minimum.
+
+It asks Telegram exactly what `contacts show` asks, and tells the person nothing. With `--offline` it answers
+from the store.
+
 ## Local person context
 
 `tg contacts context <person>` reads linked identities' stored messages and shared chats without connecting

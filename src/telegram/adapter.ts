@@ -24,6 +24,7 @@ import {
   type PersonCard,
   type PhoneBookEntry,
   type Poll,
+  type ProfileFacts,
   pickChat,
   type Topic,
 } from "@leemour/cli-messaging"
@@ -84,6 +85,7 @@ import {
   toReactionChange,
   toTopic,
 } from "./map.js"
+import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -320,21 +322,7 @@ export class TelegramAdapter {
   /** A person, their bio, and the groups this account shares with them — newest conversation first. */
   contact(reference: string): Promise<PersonCard> {
     return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      const user = await this.#client.getPeer(peer)
-      if (user.type !== "user") throw new CliError("validation_error", `"${reference}" is a chat, not a person`)
-      const [full, [dialog], common] = await Promise.all([
-        this.#client.getFullUser(peer),
-        this.#client.getPeerDialogs(peer),
-        this.#client.getCommonChats(peer),
-      ])
-      const dialogs = common.length > 0 ? await this.#client.getPeerDialogs(common.map((chat) => chat.id)) : []
-      // Telegram's common chats are groups only; the one-to-one chat is shared with them too.
-      const chats = [dialog ?? null, ...dialogs]
-        .filter((one) => one !== null)
-        .map(toChat)
-        .map(({ id, title, kind, lastMessageAt }) => ({ id, title, kind, lastMessageAt }))
-        .sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""))
+      const { user, full, dialog, chats } = await this.#personOf(reference)
       return {
         ...toMember(user),
         description: full.bio || null,
@@ -342,6 +330,33 @@ export class TelegramAdapter {
         chats,
       }
     })
+  }
+
+  /** The same three requests as `contact`, with everything Telegram said kept. */
+  profile(reference: string): Promise<ProfileFacts> {
+    return this.#call(async () => {
+      const { full, chats } = await this.#personOf(reference)
+      return toProfileFacts(full, chats)
+    })
+  }
+
+  async #personOf(reference: string) {
+    const peer = await this.#inputOf(reference)
+    const user = await this.#client.getPeer(peer)
+    if (user.type !== "user") throw new CliError("validation_error", `"${reference}" is a chat, not a person`)
+    const [full, [dialog], common] = await Promise.all([
+      this.#client.getFullUser(peer),
+      this.#client.getPeerDialogs(peer),
+      this.#client.getCommonChats(peer),
+    ])
+    const dialogs = common.length > 0 ? await this.#client.getPeerDialogs(common.map((chat) => chat.id)) : []
+    // Telegram's common chats are groups only; the one-to-one chat is shared with them too.
+    const chats = [dialog ?? null, ...dialogs]
+      .filter((one) => one !== null)
+      .map(toChat)
+      .map(({ id, title, kind, lastMessageAt }) => ({ id, title, kind, lastMessageAt }))
+      .sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""))
+    return { user, full, dialog, chats }
   }
 
   /**

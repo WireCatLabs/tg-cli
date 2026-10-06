@@ -194,6 +194,7 @@ no fields, only the one button. The client's own window shows the arguments as t
 | `tg_chats_show` | `tg chats show` | one chat and who is in it |
 | `tg_contacts_list` | `tg contacts list` | people with a one-to-one chat |
 | `tg_contacts_show` | `tg contacts show` | one person and the chats shared with them |
+| `tg_contacts_profile` | `tg contacts profile` | what Telegram says about one person, and their stored activity per shared chat; the phone always shows its last four digits |
 | `tg_contacts_lookup` | `tg contacts lookup` | who has a phone number, where their privacy allows; adds no contact |
 | `tg_contacts_context` | `tg contacts context` | what the store holds about one person in every messenger linked to them: shared chats, last messages each way, recent messages, mentions; never connects; a message read, so `messages: deny` hides it |
 | `tg_messages_evidence` | `tg messages evidence`, `--limit`, `--before-id` | one local chat evidence packet, newest first, with locators, fingerprints, coverage and `nextBeforeId`; pass the cursor as `before_id`; whole messages within 64 KiB of JSON items, header additional; history coverage unknown; an oversized first message yields an empty byte-truncated packet without a cursor; never connects or marks read; permission `messages.evidence` |
