@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2016 ✅ · 51 ⛔ · 0 ❌** — 398 commands, 1669 options.
+**2024 ✅ · 80 ⛔ · 1 ❌** — 403 commands, 1702 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -434,6 +434,39 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches delete` |  | ✅ |  |
 | `searches clear` |  | ✅ |  |
 | `flood clear` |  | ✅ |  |
+| `replies add` |  | ✅ |  |
+| `replies on` |  | ✅ |  |
+| `replies off` |  | ✅ |  |
+| `replies edit` |  | ✅ |  |
+| `replies edit` | `--do` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--kinds` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--not-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--words` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--question` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--no-question` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--mentions-me` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--no-mentions-me` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--not-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--contacts-only` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--no-contacts-only` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--template` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--model` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--as-reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--no-as-reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--per-chat` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--per-person` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--outside` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--days` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies edit` | `--no-hours` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers rule edits, validation and unchanged files on refusal; this consumer mounts the shared command |
+| `replies audience` |  | ✅ |  |
+| `replies audience` | `--reply` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
+| `replies audience` | `--allow-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
+| `replies audience` | `--allow-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
+| `replies audience` | `--deny-people` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
+| `replies audience` | `--deny-chats` | ⛔ | cli-messaging src/cli/messenger/replies-edit-command.test.ts covers allow/deny audiences and invalid ids; this consumer mounts the shared command |
 | `replies test` |  | ✅ |  |
 | `replies test` | `--since-time` | ⛔ | cli-messaging src/cli/messenger/replies-command.test.ts and src/replies/decide.test.ts cover stored simulation and time selection; shared command |
 | `replies pause` |  | ✅ |  |
@@ -472,16 +505,19 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `upgrade` |  | ✅ |  |
 | `upgrade` | `--check` | ✅ |  |
 | `mcp` |  | ✅ |  |
-| `mcp` | `--confirm-send` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with confirmSend, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` | `--permission` | ❌ |  |
+| `mcp` | `--confirm-send` | ✅ |  |
 | `mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDangerous, and mcp config below shows the flag reaching the server's arguments |
 | `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |
 | `mcp` | `--allow-mark-read` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
 | `mcp` | `--allow-delete` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
 | `mcp` | `--http` | ✅ |  |
+| `mcp` | `--http-confirmation` | ✅ |  |
 | `mcp` | `--port` | ✅ |  |
 | `mcp` | `--public-url` | ✅ |  |
 | `mcp` | `--revoke` | ✅ |  |
 | `mcp config` |  | ✅ |  |
+| `mcp config` | `--permission` | ✅ |  |
 | `mcp config` | `--confirm-send` | ✅ |  |
 | `mcp config` | `--allow-dangerous` | ✅ |  |
 | `mcp config` | `--allow-send` | ✅ |  |
@@ -489,12 +525,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp config` | `--allow-delete` | ✅ |  |
 | `mcp setup` |  | ✅ |  |
 | `mcp setup` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration |
 | `mcp setup` | `--confirm-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp setup` | `--allow-dangerous` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp setup` | `--allow-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp setup` | `--allow-mark-read` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp setup` | `--allow-delete` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp doctor` |  | ✅ |  |
+| `mcp doctor` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration |
 | `mcp doctor` | `--confirm-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
 | `mcp doctor` | `--allow-dangerous` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
 | `mcp doctor` | `--allow-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
