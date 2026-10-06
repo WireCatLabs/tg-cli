@@ -52,8 +52,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   library closed the login file on the signal, before the command had finished with it. Now the command
   closes it, once, after saving what arrived.
 
-### Fixed
-
 - `chats show` gives a supergroup's real member count, which Telegram's chat list showed as missing or
   out of date, and a group's card or invite link gives a basic group's count instead of 0. The member
   list now carries the group's count too, so `chats members fetch` can tell who left a supergroup once
