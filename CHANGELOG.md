@@ -3,6 +3,16 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **MCP writes can run from web clients without server forms.** Start with
+  `--http-confirmation permissions` to use the profile's permission levels; `allow` needs no server
+  form, while `ask` still requires one. Mandatory forms remain the default. Repeat
+  `--permission key=level` to override permissions for this server process without editing config.
+  App approval is separate and cannot be verified by the server. [Browser setup](docs/remote.md).
+
 ## 0.29.0 — 06.10.2026
 
 ### What's new
