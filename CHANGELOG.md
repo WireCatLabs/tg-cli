@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **Estimated registration dates are closer for accounts made in 2022–2025.** When Telegram does not give the
+  month, `contacts profile` estimates it from the id; the estimate now rests on 212 real sign-up dates. Accounts
+  from 2022 no longer look about nine months younger than they are: estimates are off by one to two months in
+  the middle case. Ids up to November 2025 now get an estimate; newer ones still get none.
+
 ## 0.30.0 — 07.10.2026
 
 ### What's new
