@@ -42,6 +42,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg serve` stopped with Ctrl-C or `kill` exits 0.** It printed «database is not open» and exited 1: the
+  Telegram library closes the session database on the signal, and closing the client closed it again.
 - **`messages delete` checks the ids belong to the chat first.** In a private chat or a basic group Telegram
   numbers messages per account and deletes by number alone, so an id from another chat — or the other side's
   number for the same message — deleted a message there. Now any id that is not in the named chat stops the

@@ -21,9 +21,16 @@ class RuntimeSqliteDriver extends BaseSqliteStorageDriver {
 
   _createDatabase(): ISqliteDatabase {
     const database = this.#database
+    let closed = false
     return {
       exec: (sql) => database.exec(sql),
-      close: () => database.close(),
+      // On SIGINT/SIGTERM mtcute's exit hook closes the database itself, then `client.destroy()` closes it
+      // again (`@mtcute/core` storage/sqlite/driver.js `_load` → `beforeExit`); the second would throw.
+      close: () => {
+        if (closed) return
+        closed = true
+        database.close()
+      },
       prepare: <P extends unknown[]>(sql: string): ISqliteStatement<P> => {
         const statement = database.prepare(sql)
         return {
