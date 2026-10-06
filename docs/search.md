@@ -106,7 +106,7 @@ digits and hyphens.
 tg searches create meetings 'library OR cafe' --chat "Book club"
 tg messages search --saved meetings
 tg messages search --saved meetings 'date:today'  # extra words are added with AND
-tg messages stats --saved meetings --by day
+tg stats messages show --saved meetings --by day
 tg searches list
 tg searches history --limit 10
 tg messages search --saved 42                    # a row of the history, by its number
@@ -124,16 +124,16 @@ history is separate from the run records of `tg runs`.
 Saved searches and the history live in the store that tg and max share: both see the same ones, and
 `delete` or `clear` in one changes the other. Tags stay with their account.
 
-## Counting: `messages stats`
+## Counting: `stats messages show`
 
 ```sh
-tg messages stats invoice                        # how many in each chat
-tg messages stats 'date:7d' --by sender
-tg messages stats 'from:me' --by day --timezone Europe/Madrid
-tg messages stats --by hour                      # every stored message
+tg stats messages show invoice                        # how many in each chat
+tg stats messages show 'date:7d' --by sender
+tg stats messages show 'from:me' --by day --timezone Europe/Madrid
+tg stats messages show --by hour                      # every stored message
 ```
 
-`messages stats` counts the messages `messages search` would find with the same query, each one once.
+`stats messages show` counts the messages `messages search` would find with the same query, each one once.
 `--by chat` (the default) and `--by sender` put the largest first; `--by day` and `--by hour` go in
 order. When some chats are not stored in full, the numbers are a lower bound, and stderr says how
 many chats that is.

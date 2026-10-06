@@ -17,8 +17,9 @@ describe("the shared release through the Telegram program", () => {
     })
     const found = await tg(
       [
-        "chats",
         "stats",
+        "chats",
+        "show",
         chat.id,
         "--offline",
         "--since-time",

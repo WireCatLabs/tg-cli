@@ -291,8 +291,9 @@ describe("the archive, from the store", () => {
     const counted = await tg(
       [
         "archive",
-        "messages",
         "stats",
+        "messages",
+        "show",
         "invoice",
         "--by",
         "day",

@@ -174,8 +174,8 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
 ## Activity statistics
 
 ```sh
-tg chats stats <chat> --since-time 7d --by day --timezone Europe/Madrid --json
-tg chats stats <chat> --offline --json
+tg stats chats show <chat> --since-time 7d --by day --timezone Europe/Madrid --json
+tg stats chats show <chat> --offline --json
 ```
 
 Counts messages, active senders, replies, threads, reactions, top posts and questions answered from the local

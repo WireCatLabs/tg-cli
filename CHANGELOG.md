@@ -13,11 +13,25 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   promise` adds what the rules cannot see; `tg tasks close <task> --as done|dismissed` closes one for good;
   `tg tasks stats` counts them per chat. Nothing is sent. MCP: `tg_tasks_list`, `tg_tasks_add`,
   `tg_tasks_close`, `tg_tasks_stats`.
+
+- **Reply rules can be edited from the CLI and use Liquid templates with optional ai blocks.**
+  `replies add|edit|on|off` changes rules and `replies audience` changes profile allow/deny lists.
+  `models.replies` selects the provider; `replies consents` grants profile/endpoint consent with
+  native-chat opt-outs. Ordinary `replies test` previews instructions/fallback without calls;
+  `--ai` explicitly submits stored data. Legacy templates retain their literal fallback with warnings.
+  Sending remains limited to testers and replies.send; see [archive](docs/archive.md#tester-only-reply-rules).
+
 - **MCP writes can run from web clients without server forms.** Start with
   `--http-confirmation permissions` to use the profile's permission levels; `allow` needs no server
   form, while `ask` still requires one. Mandatory forms remain the default. Repeat
   `--permission key=level` to override permissions for this server process without editing config.
   App approval is separate and cannot be verified by the server. [Browser setup](docs/remote.md).
+
+### Changed — may break scripts
+
+- **Statistics use stats messages/chats show.** Legacy messages stats and chats stats paths are
+  removed by the shared SDK; update commands and use stats.messages.show for exact permissions.
+  Parser errors now return exit 2 with a structured validation_error instead of prose/exit 1.
 
 ## 0.29.0 — 06.10.2026
 

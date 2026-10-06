@@ -123,7 +123,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    Use --json for query version/coverage. Empty hits do not prove a message never existed.
    --timezone selects a calendar zone; kind:bot and in:bots differ. Term/body regex differ.
    Dates: `date:today`, `date:7d`; files: `filename:*.pdf`, `size>10MB`, `mime:image`;
-   links: `has:link AND "github.com"`; the owner's labels: `tag:work`. Counts: `tg messages stats`.
+   links: `has:link AND "github.com"`; the owner's labels: `tag:work`. Counts: `tg stats messages show`.
    Guides: [search](https://github.com/leemour/tg-cli/blob/main/docs/search.md),
    [topic search](https://github.com/leemour/tg-cli/blob/main/docs/topic-search.md) (conversations by
    meaning), [query language](https://github.com/leemour/tg-cli/blob/main/docs/query-language.md).
@@ -258,7 +258,7 @@ operations, ask by default. Never retry an `outcome_unknown` write.
 returned credentials go only to that profile's OS keyring, after identity verification.
 Never ask the owner to paste a credential into argv, print one, or fall back to a plaintext file.
 
-Use `tg chats stats <chat> --offline --json` for stored group/channel activity. The online command also
+Use `tg stats chats show <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
 every HTTP write requires a form by default. The owner can start with `--http-confirmation permissions`
@@ -275,8 +275,13 @@ Use tags for local labels/tag: search and searches create/list/show/history/dele
 query parameters are retained separately from runs; --no-record disables that history. flood clear is owner
 maintenance, never an agent retry bypass.
 
-Reply controls: `tg replies test` simulates stored messages without sending; `status`, `pause` and `resume`
-control the profile's rules. Shared `serve` can reply only to configured testers and only with explicit
+Reply controls: `tg replies add|edit|on|off` edit local rules; `replies audience` controls file-level
+allow/deny lists (deny wins). `test` previews stored messages without sending; `status`, `pause` and
+`resume` control the profile's rules. Liquid reads sender/chat facts only; incoming text goes to a
+model only inside ai blocks. Ordinary previews show instruction/fallback with no model call;
+`test --ai` explicitly uses a consented provider. `replies consents grant|revoke` controls profile/
+endpoint consent and `deny|allow` controls native chat opt-outs. Never expand testers or run live
+scenarios without the owner's separate consent. Shared `serve` can reply only to configured testers and only with explicit
 `permissions.replies.send:allow`; the default is deny and an empty tester list answers nobody.
 
 Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and

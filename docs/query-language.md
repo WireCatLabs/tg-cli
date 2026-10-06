@@ -1,6 +1,6 @@
 # Search query language
 
-The reference for queries of `tg messages search`, `tg messages stats` and saved searches. For
+The reference for queries of `tg messages search`, `tg stats messages show` and saved searches. For
 everyday examples start with [message search](search.md).
 
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT,

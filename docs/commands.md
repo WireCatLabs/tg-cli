@@ -322,24 +322,6 @@ tg chats mark-read <chat> [options]
 | `--until <message>` | only up to this message id; the newest by default. |
 | `--topic <id>` | mark only this forum topic read; unsupported by messengers without topics. |
 
-### `tg chats stats`
-
-a group's or channel's numbers for a period: messages, active members, replies, reactions, questions answered, joins and leaves — counted from the local store; joins and leaves are asked of the messenger
-
-```sh
-tg chats stats <chat> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
-| `--timezone <zone>` | the IANA timezone for calendar days. |
-
 ### `tg chats tracking`
 
 the chats whose member lists serve fetches daily into the local store — chats members fetch --track adds one
@@ -942,31 +924,6 @@ tg messages search [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
-
-### `tg messages stats`
-
-how many stored messages match, by chat, sender, day or hour — the local store only; optionally fetches new messages with --sync-first
-
-```sh
-tg messages stats [query] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
-
-| Option | What it does |
-|---|---|
-| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
-| `--max-chats <n>` | refresh at most this many chats (default: 5). |
-| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
-| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
-| `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
-| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
-| `--limit <n>` | how many rows. |
-| `--timezone <zone>` | the IANA timezone for calendar days and hours. |
-| `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
 ### `tg messages send`
 
@@ -2184,7 +2141,7 @@ tg tags list [options]
 
 ## `tg searches`
 
-saved searches and the history of messages search and messages stats, kept in the local store; --saved runs one
+saved searches and the history of messages search and stats messages show, kept in the local store; --saved runs one
 
 ### `tg searches create`
 
@@ -2209,7 +2166,7 @@ tg searches create <name> [query] [options]
 | `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
-| `--by <chat\|sender\|day\|hour>` | what messages stats --saved counts by. |
+| `--by <chat\|sender\|day\|hour>` | what stats messages show --saved counts by. |
 | `--replace` | overwrite a saved search of the same name. |
 
 ### `tg searches show`
@@ -2418,7 +2375,7 @@ tg replies edit <id> [options]
 | `--contacts-only` | match only contacts. |
 | `--no-contacts-only` | do not require a contact. |
 | `--template <text>` | the reply template. |
-| `--model <mode>` | template model mode: fill-only or may-reword; rewording is not yet available. |
+| `--model <mode>` | legacy template mode: fill-only or may-reword; use ai blocks instead. |
 | `--as-reply` | send as a reply to the matched message. |
 | `--no-as-reply` | send without linking to the matched message. |
 | `--per-chat <limit>` | at most this many per chat, such as 1/12h. |
@@ -2446,6 +2403,66 @@ tg replies audience [options]
 | `--deny-people <ids>` | replace denied sender ids, comma-separated; empty clears; deny wins. |
 | `--deny-chats <ids>` | replace denied chat ids, comma-separated; empty clears; deny wins. |
 
+### `tg replies consents`
+
+consent for reply models once per profile and endpoint, with chat opt-outs
+
+#### `tg replies consents show`
+
+show the reply model consent and chat opt-outs; never calls a model
+
+```sh
+tg replies consents show
+```
+
+#### `tg replies consents grant`
+
+allow incoming message data to go to the configured reply model for this profile; chat opt-outs remain
+
+**Changes something on this computer only.**
+
+```sh
+tg replies consents grant
+```
+
+#### `tg replies consents revoke`
+
+revoke the profile's reply model consent immediately; chat opt-outs remain
+
+**Changes something on this computer only.**
+
+```sh
+tg replies consents revoke
+```
+
+#### `tg replies consents deny`
+
+keep this chat's incoming data away from the reply model
+
+**Changes something on this computer only.**
+
+```sh
+tg replies consents deny <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | the native chat id, used as written; never resolved over the network. |
+
+#### `tg replies consents allow`
+
+remove this chat's model opt-out; does not grant profile consent
+
+**Changes something on this computer only.**
+
+```sh
+tg replies consents allow <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | the native chat id, used as written; never resolved over the network. |
+
 ### `tg replies test`
 
 what the rules would have answered in the stored messages, to whom and why — sends nothing, changes nothing, never connects
@@ -2461,6 +2478,7 @@ tg replies test [rule] [options]
 | Option | What it does |
 |---|---|
 | `--since-time <time>` | from this ISO 8601 time, or 2h / 1d ago; 7d ago if not given. |
+| `--ai` | call the configured reply model with stored message data; requires reply consent, otherwise uses fallback. |
 
 ### `tg replies pause`
 
@@ -2485,6 +2503,98 @@ whether the rules may send, which are on, and who they may answer
 ```sh
 tg replies status
 ```
+
+## `tg stats`
+
+statistics about messages, chats and their authors
+
+### `tg stats messages`
+
+message statistics from the local store
+
+#### `tg stats messages show`
+
+how many stored messages match, by chat, sender, day or hour — the local store only; optionally fetches new messages with --sync-first
+
+```sh
+tg stats messages show [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
+
+| Option | What it does |
+|---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
+| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
+| `--limit <n>` | how many rows. |
+| `--timezone <zone>` | the IANA timezone for calendar days and hours. |
+| `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
+
+### `tg stats chats`
+
+statistics about one chat
+
+#### `tg stats chats show`
+
+a group's or channel's numbers for a period: messages, active members, replies, reactions, questions answered, joins and leaves — counted from the local store; joins and leaves are asked of the messenger
+
+```sh
+tg stats chats show <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
+| `--timezone <zone>` | the IANA timezone for calendar days. |
+
+### `tg stats tasks`
+
+task statistics
+
+#### `tg stats tasks show`
+
+per chat: how many tasks are open, the oldest open one, the median time to close
+
+```sh
+tg stats tasks show [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--type <name>` | only this type: question, request, mention or promise. |
+
+### `tg stats charts`
+
+a chart's data from a chat's statistics, and optionally a dark SVG or PNG image
+
+```sh
+tg stats charts <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--chart-kind <messages\|active\|membership>` | what to draw: messages, active authors, or joins and leaves. Default: `messages`. |
+| `--by <day\|week>` | one point per calendar day or week (weeks start on Monday). Default: `day`. |
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--timezone <zone>` | the IANA timezone for calendar days. |
+| `--output <file>` | write a dark image to a new .svg or .png file. |
 
 ## `tg recipients`
 
