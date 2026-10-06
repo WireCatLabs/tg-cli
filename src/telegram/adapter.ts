@@ -45,6 +45,7 @@ import {
   Long,
   MtPeerNotFoundError,
   networkMiddlewares,
+  type Peer,
   PeersIndex,
   type RawUpdateInfo,
   TelegramClient,
@@ -65,6 +66,7 @@ import {
   type EventOf,
   eventOf,
   GROUP_SETTINGS,
+  groupMembersCount,
   peerToChat,
   toAccount,
   toAccountSession,
@@ -325,8 +327,15 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const peer = await this.#inputOf(reference)
       const [dialog] = await this.#client.getPeerDialogs(peer)
-      const chat = dialog ? toChat(dialog) : peerToChat(await this.#client.getPeer(peer))
-      return { ...chat, members: chat.kind === "group" ? await this.#membersOf(peer) : null }
+      const found = dialog ? dialog.peer : await this.#client.getPeer(peer)
+      const chat = dialog ? toChat(dialog) : peerToChat(found)
+      if (chat.kind !== "group") return { ...chat, members: null }
+      const members = await this.#membersOf(peer)
+      return {
+        ...chat,
+        participantsCount: await this.#groupCount(found, members?.total ?? null),
+        members: members?.map((member) => toMember(member.user)) ?? null,
+      }
     })
   }
 
@@ -1084,12 +1093,13 @@ export class TelegramAdapter {
   members(
     reference: string,
     { limit, offset }: { limit?: number; offset: number },
-  ): Promise<Page<GroupMember> & { chatId: string }> {
+  ): Promise<Page<GroupMember> & { chatId: string; participantsCount: number | null }> {
     return this.#call(async () => {
       const peer = await this.#inputOf(reference)
+      const group = await this.#client.getPeer(peer)
       const wanted = Math.min(limit ?? MEMBERS_MAX, MEMBERS_MAX - offset)
       const found: GroupMember[] = []
-      let total = 0
+      let total: number | null = null
       while (found.length < wanted) {
         const size = Math.min(200, wanted - found.length)
         const page = await this.#client.getChatMembers(peer, { offset: offset + found.length, limit: size })
@@ -1098,9 +1108,10 @@ export class TelegramAdapter {
         if (page.length < size) break
       }
       return {
-        chatId: String((await this.#client.getPeer(peer)).id),
+        chatId: String(group.id),
         items: found,
-        hasMore: offset + found.length < Math.min(total, MEMBERS_MAX),
+        hasMore: offset + found.length < Math.min(total ?? 0, MEMBERS_MAX),
+        participantsCount: offset === 0 ? await this.#groupCount(group, total) : null,
       }
     })
   }
@@ -1495,10 +1506,21 @@ export class TelegramAdapter {
     })
   }
 
-  async #membersOf(peer: InputPeerLike): Promise<Member[] | null> {
+  /**
+   * A supergroup's own count is its member list's total: its chat object and its full info both said 1 for a
+   * group of 2, seen live. A list hidden from non-admins answers only part of the group, so then the full info's
+   * count stands, which the shorter list never reaches. A basic group's list total is only the page it read.
+   */
+  async #groupCount(group: Peer, listTotal: number | null): Promise<number | null> {
+    if (group.type !== "chat" || group.raw?._ !== "channel") return groupMembersCount(group)
+    const full = await this.#client.getFullChat(group.id)
+    const hidden = full.full._ === "channelFull" && full.full.participantsHidden === true && !full.isAdmin
+    return hidden || listTotal === null ? groupMembersCount(full) : listTotal || null
+  }
+
+  async #membersOf(peer: InputPeerLike) {
     try {
-      const members = await this.#client.getChatMembers(peer, { limit: 200 })
-      return members.map((member) => toMember(member.user))
+      return await this.#client.getChatMembers(peer, { limit: 200 })
     } catch (error) {
       const known = toCliError(error, this.#login)
       if (known instanceof CliError && known.code === "permission_error") return null

@@ -92,7 +92,7 @@ export const toLinkChat = (chat: FullChat): LinkTarget => ({
   title: chat.title,
   id: String(chat.id),
   username: chat.username,
-  participantsCount: chat.membersCount,
+  participantsCount: groupMembersCount(chat),
   description: chat.bio || null,
   member: chat.isMember,
 })
@@ -122,6 +122,15 @@ export const toAccount = (user: Peer): Account => ({
   username: user.username,
 })
 
+/**
+ * A group's own member count, `null` when unknown. mtcute's `FullChat` answers 0 for a basic group, whose
+ * count is on the chat itself, and a supergroup's chat object usually has none: only its full info does.
+ */
+export const groupMembersCount = (peer: Peer): number | null => {
+  if (peer.type !== "chat") return null
+  return peer.membersCount || (peer.raw?._ === "chat" ? peer.raw.participantsCount : 0) || null
+}
+
 const kindOf = (peer: Peer): ChatKind => {
   if (peer.type === "user") return peer.isSelf ? "saved" : "dialog"
   if (peer.chatType === "channel") return "channel"
@@ -143,7 +152,7 @@ export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Cha
     kind: kindOf(peer),
     unreadCount: null,
     lastMessageAt: null,
-    participantsCount: peer.type === "chat" ? peer.membersCount : null,
+    participantsCount: groupMembersCount(peer),
     ...(metadata ? { providerMetadata: metadata } : {}),
   }
 }

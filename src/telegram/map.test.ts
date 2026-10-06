@@ -177,6 +177,18 @@ describe("a chat", () => {
     })
   })
 
+  it("counts a basic group's members from the chat itself, and an unknown count as null, not 0", () => {
+    const basicFull = peer({
+      type: "chat",
+      chatType: "group",
+      membersCount: 0,
+      raw: { _: "chat", participantsCount: 3 },
+    })
+    expect(peerToChat(basicFull)).toMatchObject({ participantsCount: 3 })
+    const supergroup = peer({ type: "chat", chatType: "supergroup", membersCount: 0, raw: { _: "channel" } })
+    expect(peerToChat(supergroup)).toMatchObject({ participantsCount: null })
+  })
+
   it("carries a dialog's unread count, mentions, last message time, and muted, archived and pinned marks", () => {
     const dialog = {
       peer: peer({ type: "chat", chatType: "group" }),
