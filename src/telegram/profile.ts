@@ -51,11 +51,14 @@ const ID_MONTHS: readonly [number, string][] = [
   [7_500_000_000, "2024-12"],
 ]
 
-/** Past the last point the table knows nothing: no estimate rather than one years off. */
-const NEXT_POINT = 8_000_000_000
+/**
+ * The last point only marks where the table ends: an account made in 2026-10 had an id just above it,
+ * so anything at or past it gets no estimate rather than one years off.
+ */
+const TABLE_END = ID_MONTHS.at(-1)?.[0] ?? 0
 
 export const estimatedRegistration = (id: number): Registered | null => {
-  if (id < 1 || id >= NEXT_POINT) return null
+  if (id < 1 || id >= TABLE_END) return null
   const month = ID_MONTHS.findLast(([from]) => id >= from)?.[1]
   return month ? { at: `${month}-01T00:00:00.000Z`, source: "estimate", precision: "month" } : null
 }
