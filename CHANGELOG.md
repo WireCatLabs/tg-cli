@@ -7,6 +7,12 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **A list of what waits on you.** Since 0.29.0, `review` and `serve` keep a task in the local store for a
+  question nobody answered and a message that mentions you by name, and close it once you answer; now you
+  can see them. `tg tasks list` shows each with the message it points at; `tg tasks add <message> --type
+  promise` adds what the rules cannot see; `tg tasks close <task> --as done|dismissed` closes one for good;
+  `tg tasks stats` counts them per chat. Nothing is sent. MCP: `tg_tasks_list`, `tg_tasks_add`,
+  `tg_tasks_close`, `tg_tasks_stats`.
 - **MCP writes can run from web clients without server forms.** Start with
   `--http-confirmation permissions` to use the profile's permission levels; `allow` needs no server
   form, while `ask` still requires one. Mandatory forms remain the default. Repeat

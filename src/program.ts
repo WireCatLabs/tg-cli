@@ -32,6 +32,7 @@ import {
   skillCommand,
   storeCommand,
   tagsCommand,
+  tasksCommand,
   topicsCommand,
   watchCommand,
 } from "@leemour/cli-messaging/cli"
@@ -116,6 +117,7 @@ const definition: ProgramDefinition = {
       attachmentsCommand(TELEGRAM),
       tagsCommand(TELEGRAM),
       searchesCommand(TELEGRAM),
+      tasksCommand(TELEGRAM),
       floodCommand(TELEGRAM),
       repliesCommand(TELEGRAM),
       recipientsCommand(TELEGRAM),

@@ -108,6 +108,24 @@ group's members see: a new group tells the people added, and a join or a leave s
 send guard, and each person added counts toward the hourly limit
 ([security.md](security.md#the-send-guard)).
 
+## What waits on you
+
+`review` and `serve` keep a list of tasks in the local store. A question nobody answered, and a message
+that mentions you by name, opens a task; your answer closes it. A task points at its message and never
+copies it.
+
+```sh
+tg tasks list --state open                                # what waits on you, oldest first
+tg tasks list --chat "Hiking" --type question,mention
+tg tasks add msg:telegram/<you>/<chat>/<message> --type promise   # what the rules cannot see
+tg tasks close <task> --as dismissed --reason no-reply-needed
+tg tasks stats                                            # open per chat, the oldest, the median time to close
+```
+
+A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
+task — an admin's do not — and a mention by `@username` is not seen. An agent gets the same as
+MCP tools: `tg_tasks_list`, `tg_tasks_add`, `tg_tasks_close`, `tg_tasks_stats` ([mcp.md](mcp.md)).
+
 ## Rules
 
 A group's rules say what `tg chats moderate` looks for and what it may do about it. They live in a

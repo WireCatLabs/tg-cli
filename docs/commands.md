@@ -2264,6 +2264,72 @@ empty the history; saved searches stay
 tg searches clear
 ```
 
+## `tg tasks`
+
+what waits on you — unanswered questions, mentions, requests, promises — kept in the local store; review and serve add them
+
+### `tg tasks list`
+
+tasks, oldest first, with the message each points at
+
+```sh
+tg tasks list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--state <state>` | only tasks in this state: open, done or dismissed. |
+| `--chat <chat>` | only this chat's tasks; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--type <names>` | only these types, comma-separated: question, request, mention, promise. |
+| `--before-time <time>` | only tasks opened before this ISO 8601 time, or 2h / 1d ago. |
+| `--limit <n>` | how many. |
+
+### `tg tasks add`
+
+add a task for a message the rules cannot see — a promise, a request
+
+```sh
+tg tasks add <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `message` | required | a message locator, msg:<provider>/<account>/<chat>/<message>, as review --json shows. |
+
+| Option | What it does |
+|---|---|
+| `--type <name>` | the task's type: question, request, mention or promise. |
+
+### `tg tasks close`
+
+close a task: done, or dismissed when it needs no answer; a closed task stays closed
+
+```sh
+tg tasks close <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
+| `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
+
+### `tg tasks stats`
+
+per chat: how many tasks are open, the oldest open one, the median time to close
+
+```sh
+tg tasks stats [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--type <name>` | only this type: question, request, mention or promise. |
+
 ## `tg flood`
 
 the waits Telegram asked this profile to keep, and a hold on its writes
