@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- Configuration is split into a short guide and full key/type/default/scope/environment reference.
+  The public CLI contract describes headless execution, schemas, bounds, previews and retry rules.
+- Validate portable skill metadata, installed version, command paths and configuration-key coverage in CI.
+  Native login and optional setup questions respect the shared no-input policy.
+
 ## 0.30.0 — 07.10.2026
 
 ### Changed — may break scripts
@@ -31,40 +40,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   The closing summary lines its labels up, the command to try first on top. `--json` output and its keys
   are unchanged; `--quiet` still hides the steps.
 
-<<<<<<< HEAD
-||||||| parent of f2fa641 (feat(cli): adopt agent execution contract and split configuration documentation)
-### Fixed
-
-- **Estimated registration dates are closer for accounts made in 2022–2025.** When Telegram does not give the
-  month, `contacts profile` estimates it from the id; the estimate now rests on 212 real sign-up dates. Accounts
-  from 2022 no longer look about nine months younger than they are: estimates are off by one to two months in
-  the middle case. Ids up to November 2025 now get an estimate; newer ones still get none.
-
-## 0.30.0 — 07.10.2026
-
-### What's new
-
-=======
-### Changed — may break scripts
-
-- Statistics use the stats resource/view hierarchy without old-path aliases. Adopt bounded agent execution,
-  versioned schemas, compact fields, safe previews and conservative write retry guidance from SDK 0.160.0.
-- MCP exposes discovery/read/write tools without server confirmation forms; profile permissions and separate
-  moderation consent remain authoritative. Configure tool approval in the agent application.
-- Split configuration into a short guide and full reference, add the public CLI contract and validate skills in CI.
-
-### Fixed
-
-- **Estimated registration dates are closer for accounts made in 2022–2025.** When Telegram does not give the
-  month, `contacts profile` estimates it from the id; the estimate now rests on 212 real sign-up dates. Accounts
-  from 2022 no longer look about nine months younger than they are: estimates are off by one to two months in
-  the middle case. Ids up to November 2025 now get an estimate; newer ones still get none.
-
-## 0.30.0 — 07.10.2026
-
-### What's new
-
->>>>>>> f2fa641 (feat(cli): adopt agent execution contract and split configuration documentation)
 - **A list of what waits on you.** Since 0.29.0, `review` and `serve` keep a task in the local store for a
   question nobody answered and a message that mentions you by name, and close it once you answer; now you
   can see them. `tg tasks list` shows each with the message it points at; `tg tasks add <message> --type
