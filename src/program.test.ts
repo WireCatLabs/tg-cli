@@ -10,6 +10,19 @@ import { describe, expect, it, vi } from "vitest"
 import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
+describe("topic read capability", () => {
+  it("refuses a topic read rather than marking the whole chat read", async () => {
+    const markRead = vi.fn(async () => {})
+    const result = await tg(["chats", "mark-read", chat.id, "--topic", "12", "--json"], {
+      adapter: () => scripted({ markRead }),
+    })
+    expect(result.code).toBe(2)
+    expect(result.stdout).toEqual([])
+    expect(result.stderr.join()).toContain("mark a forum topic read")
+    expect(markRead).not.toHaveBeenCalled()
+  })
+})
+
 describe("first-run discovery", () => {
   it.each([
     {

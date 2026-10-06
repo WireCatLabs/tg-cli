@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+- Adopt the shared search, graph-context, sync-first and attachment-text interfaces. MCP gains stored time context and agent-linking instructions; account-qualified context locators are validated.
+
 ### What's new
 
 - Local tags, saved searches and --saved execution are available in CLI/MCP. Successful query parameters have

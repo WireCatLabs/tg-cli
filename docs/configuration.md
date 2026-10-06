@@ -65,6 +65,13 @@ are in [installation.md](installation.md#where-files-go)).
 
 | Setting | Default | What it does | Overridden for one run by |
 |---|---|---|---|
+| `embeddingProvider` | `local` | local model or `openai` | `--provider` |
+| `embeddingModel` | provider default | embedding model | `--model` |
+| `embeddingBaseUrl` | provider default | embedding API endpoint | `--base-url` |
+| `embeddingDims` | model default | integer 1–65,536 | `--dims` |
+| `analysisProvider` | `agent` | `agent`, `openai` or `anthropic` | `build --provider` |
+| `analysisModel` | provider default | analysis model | `build --model` |
+| `analysisBaseUrl` | provider default | analysis API endpoint | `build --base-url` |
 | `limit` | `20` | rows per page of a list | `--limit` |
 | `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` | none (`--timeout` is a different thing) |
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
@@ -270,3 +277,10 @@ Over `tg mcp --http`, every write requires a form even with `allow`, `--yes` or 
 The permission levels still decide which tools the profile may use.
 
 `replies.send` defaults to `deny`; enabling a rule alone does not allow sending. The tester list is a separate requirement.
+
+Embedding and analysis settings are independent and may differ by profile. Environment variables
+`TG_EMBEDDING_PROVIDER`, `TG_EMBEDDING_MODEL`, `TG_EMBEDDING_BASE_URL`, `TG_EMBEDDING_DIMS`,
+`TG_ANALYSIS_PROVIDER`, `TG_ANALYSIS_MODEL`, `TG_ANALYSIS_BASE_URL` override configuration; command flags override
+resolved settings. Endpoints must be HTTP/S without embedded credentials, query or fragment. Remote embeddings also
+send MCP search query text. Keys use `models text key set openai|anthropic` and stay outside `config.json`.
+Ordinary `build` does not start remote analysis: explicit `--analyze` is required.

@@ -2,6 +2,7 @@ import { appendFileSync } from "node:fs"
 import { exitCodeFor, processStreams } from "@leemour/cli-core"
 import {
   accountCommand,
+  attachmentsCommand,
   botCommand,
   chatsCommand,
   commandsCommand,
@@ -91,6 +92,7 @@ const definition: ProgramDefinition = {
       serverCommand(TELEGRAM, { unit: { noRestartOn: NO_RESTART_ON } }),
       storeCommand(TELEGRAM),
       conversationsCommand(TELEGRAM),
+      attachmentsCommand(TELEGRAM),
       tagsCommand(TELEGRAM),
       searchesCommand(TELEGRAM),
       floodCommand(TELEGRAM),

@@ -7,7 +7,7 @@ not the words: "where did we talk about renting a flat?" finds a conversation th
 It is not the `topic:` search field, which keeps to one forum topic of a Telegram group. Here a
 conversation is something tg finds itself, in any chat.
 
-Everything on this page runs on your computer, on the messages tg has already stored. Fetch the
+Search uses messages tg has already stored. Graphs and vectors run locally by default; remote providers are selected explicitly. Fetch the
 history first: `tg store fetch <chat>` ([archive](archive.md)).
 
 ## What a conversation is
@@ -44,6 +44,13 @@ tg conversations search "renting a flat"         # every chat you built
 
 Without a downloaded model, search still runs and finds conversations by their words; the answer says
 `"meaning": "unavailable"`. A chat that was never built is not searched: build it first.
+
+The meaning query remains free text. `--filter 'from:me date:7d'` limits conversations before ranking: a single
+message must match the whole strict Lucene filter. The default scope is the active account; `--source
+personal|bots|all|<provider>` widens it explicitly. Hits carry source and locator; `--timezone` selects the
+calendar zone. Filter/source cannot accompany `--refresh`: build and index the desired chats first. With local
+`e5-small`, meaning results require cosine similarity greater than 0.80; exact word matches can still appear below
+that threshold. `--sync-first` fetches messages; `--refresh` builds and embeds locally.
 
 ## Read what was found
 
@@ -94,8 +101,15 @@ The agent reads the instructions, tells you how much text it would read and wait
 it takes the chat a batch at a time (`tg conversations batches next`), decides which earlier message
 each one answers and stores its answer (`tg conversations links add`). The next build uses them.
 Telegram's own replies come first, then the agent's links, then the rules.
-`tg conversations links clear --chat "Book club"` drops the agent's answers. tg itself never calls a
-model to do this. The profile permission `conversations.links` decides whether answers may be stored.
+`tg conversations links clear --chat "Book club"` drops the agent's answers. In this agent-driven workflow, tg does
+not itself call a model. The profile permission `conversations.links` decides whether answers may be stored.
+
+Ordinary `build` uses rules and retained links. `tg conversations build --chat <chat> --analyze` sends bounded
+batches to configured OpenAI-compatible or Anthropic endpoints. An explicit `--chat` is required. It reports
+volume, endpoint and token limit, then requests consent; consent is remembered for that account/chat/provider
+identity until revoked. Defaults are 50 messages per batch and a maximum token reservation of 100,000 per run;
+`--yes` grants consent in scripts. `tg conversations consents list` lists consent; `consents revoke --chat <chat>`
+revokes it. Built-in analysis is CLI-only; keys stay outside config.
 
 ## Privacy and cost
 
@@ -132,6 +146,10 @@ with OpenAI's embeddings API, such as Ollama or LM Studio on your own computer, 
 
 In MCP, `tg_conversations_list`, `tg_conversations_show`, `tg_conversations_search`,
 `tg_conversations_related` and `tg_conversations_status` read what is built; `tg_conversations_refresh`
-catches up on this computer. Linking with an agent and remote models run from the command line only.
+catches up on this computer. MCP offers `tg_conversations_batches_status`, `tg_conversations_batches_next`,
+`tg_conversations_links_add`, `tg_conversations_links_clear` and `tg_conversations_build`, plus the
+`link-conversations` prompt. Report batch cost and obtain the owner's consent before reading batches. Stored links
+require `conversations.links`; rebuild afterwards, including after clearing links. Remote embedding settings also
+affect MCP searches and can send query text.
 The technical side — the rules, pieces, vectors and ranking — is on
 [how search works](https://wirecat.dev/en/docs/search-architecture).
