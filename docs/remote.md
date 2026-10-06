@@ -99,16 +99,15 @@ remote MCP connector. See the app's instructions:
 The login page asks for the code printed in your terminal. It expires after ten minutes;
 a new code is printed after each login. Five wrong codes lock login until the server restarts.
 
-Profile `permissions` decide which commands are available, as over stdin/stdout: a write at `ask` or
-`allow` goes ahead with no form. A web app reads pages and messages from strangers all day — if it
-should not write, serve it a read-only profile. The app's own tool approval is separate: the server
-cannot verify it, and an app set to always allow `tg_write` runs it without another prompt.
+Profile `permissions` decide which commands are available. `deny` and `readonly` block writes;
+`ask` and `allow` permit a requested MCP write without a server form. The app's own approval
+is separate and depends on its settings.
 
-## Overriding permissions for one server
+## Permissions for this server process
 
 Repeat `--permission key=level` to override permissions only for this server process.
 For example, append `--permission messages.send=allow` to enable sending from a read-only profile.
-`--permission messages=allow` overrides saved permissions for the messages resource. The saved configuration, recipient restrictions and hourly limits
+`--permission messages=allow` overrides saved permissions for the messages resource; deletion can be enabled separately with `--permission messages.delete=allow`. The saved configuration, recipient restrictions and hourly limits
 are unchanged. To override a read refusal, name its resource or command with level `allow`.
 See [configuration](configuration.md) for permission keys.
 
@@ -117,7 +116,7 @@ plugin with the `/mcp` address and OAuth. Connect with the terminal code, instal
 and enable it in your Work chat (or mention it with `@`). Local Codex `config.toml` does not
 configure this web connection. Availability can depend on your account or workspace.
 Use dynamic client registration (DCR) when offered; this server advertises DCR and the S256 code challenge.
-The same tools work without MCP prompts or resources.
+The three tools work without MCP prompts, resources or elicitation.
 Follow the [OpenAI connection guide](https://developers.openai.com/plugins/quickstart) and
 [OAuth requirements](https://developers.openai.com/plugins/build/auth).
 

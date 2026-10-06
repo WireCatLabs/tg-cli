@@ -144,10 +144,10 @@ with OpenAI's embeddings API, such as Ollama or LM Studio on your own computer, 
 
 ## For agents
 
-In MCP, `conversations list`, `conversations show`, `conversations search`,
-`conversations related` and `conversations status` read what is built; `conversations refresh`
-catches up on this computer. MCP offers `conversations batches status`, `conversations batches next`,
-`conversations links add`, `conversations links clear` and `conversations build`, plus the
+In MCP, `tg_read` (`command: "conversations list"`), `tg_read` (`command: "conversations show"`), `tg_read` (`command: "conversations search"`),
+`tg_read` (`command: "conversations related"`) and `tg_read` (`command: "conversations status"`) read what is built; `tg_write` (`command: "conversations refresh"`)
+catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`),
+`tg_write` (`command: "conversations links add"`), `tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the
 `link-conversations` prompt. Report batch cost and obtain the owner's consent before reading batches. Stored links
 require `conversations.links`; rebuild afterwards, including after clearing links. Remote embedding settings also
 affect MCP searches and can send query text.

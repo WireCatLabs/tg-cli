@@ -1,7 +1,7 @@
 ---
 name: tg-cli
-description: Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked
-to install or connect Telegram, find a chat or person, read a conversation, or send a message.
+description: >-
+  Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked to install or connect Telegram, find a chat or person, read a conversation, or send a message.
 ---
 
 # tg — the owner's personal Telegram from the command line
@@ -16,6 +16,22 @@ shorter explanation. Command words form one path, not a list of groups: inspect 
 in separate calls. **`tg commands --json`** returns the entire tree when you need an overview;
 do not read it in full before every task. `mutates: true` identifies writes; `local: true` limits
 those writes to this machine. This file holds the traps and boundaries.
+
+## Machine execution
+
+`tg commands schema messages list --json` describes one command's schemas and effects.
+Use `--json --no-input` for headless work; supply credentials explicitly through a pipe.
+`--fields id,text` selects each list item's fields while preserving pagination, coverage and
+operation identifiers. For ids use `--fields id`; `items.id` also works, and `items[].id` is unnecessary.
+`--max-output-bytes` and `--max-input-bytes` set byte budgets; one-shot actions default to 30 seconds,
+changed with `--timeout`. Before a sensitive write, global `--dry-run` checks syntax and permissions
+before action; it opens no messenger connection, reserves no write and leaves targets unresolved.
+See the [CLI contract](https://github.com/leemour/tg-cli/blob/main/docs/cli-contract.md).
+
+MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, arguments}`.
+Use the CLI path such as `stats messages show`; former per-command tool names are gone.
+Bots use `tg_bot_tools_search/read/write` with commands without `bot`. There are no forms;
+profile permissions decide access and `ask` permits the requested MCP write. CLI confirmation remains.
 
 ## Installation readiness
 
@@ -32,7 +48,7 @@ shell PATH from the user/machine environment yourself; do not ask the user to ed
 public or restricted links; a link grants no membership. Dialogs, basic groups and Saved Messages
 return only a locator. Offline validates the stored target, never connects and returns no URL.
 Locators from another account are refused. This differs from graph `messages links`.
-Read-only MCP offers `messages link` with the same result.
+Read-only MCP offers `tg_read` (`command: "messages link"`) with the same result.
 
 ## Boundaries
 
@@ -112,11 +128,12 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 3. **A chat name that fits several chats is an error, not a choice.** Its JSON carries
    `candidates: [{ id, title }]`. Take an id from there and repeat with it; never guess. `me` is
    Saved Messages.
-4. **Repeat a send only with the same `--send-id`.** Exit `14` means the message may have gone. The
-   error carries `--send-id <id>`; Telegram drops a repeat with it, and a repeat without it is a
-   second message to a person. Pin, react, mark read, delete, vote, poll close, folder and contact
-   changes also end in exit `14` when Telegram does not answer; the error says whether a repeat is
-   safe. Never repeat a folder creation before `tg chats folders list`.
+4. **Exit `14` means an unknown write outcome, not permission to replay it.** Inspect
+   `tg sends list --json` by `operationId` and the target chat's history. `operationId` correlates
+   the journal; it is not an idempotency key. Retry a message only when the provider's confirmed
+   deduplication contract applies to the same chat, topic, content and `--send-id`.
+   Never automatically repeat an unknown write based only on its error code.
+
 5. **`tg messages search` reads the local archive by default.** The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
    Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
@@ -232,7 +249,7 @@ An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead
 profile's `permissions` decide which commands it offers, through `tg_tools_search`, `tg_read` and
 `tg_write`; there is no confirmation form. `tg mcp config` prints the entry with full paths.
 
-`tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `me`.
+`tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `tg_bot_read` (`command: "me"`).
 
 `tg <bot> bot store fetch <chat>` imports a channel or supergroup by message number, read-only over
 a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
@@ -261,9 +278,9 @@ Never ask the owner to paste a credential into argv, print one, or fall back to 
 Use `tg stats chats show <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
-HTTP writes follow the same permissions, with no form. The owner can repeat `--permission key=level`
-to override permissions for this server process; never change permissions to bypass a refusal. `tg mcp --revoke` forgets browser logins for the profile.
-MCP inbox/review `kinds` and `new` use checkpoints separate from CLI `--new`.
+MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit the requested write.
+Repeat `--permission key=level` for temporary permissions. Never change permissions to bypass a refusal.
+`tg mcp --revoke` forgets browser logins for the profile.
 
 `tg chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
 Treat scores as hints; check `more` and `unknown`, and review each person before any moderation action.
@@ -293,8 +310,8 @@ details.
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
 stale links are marked and not traversed.
 
-MCP offers `conversations batches status`, `conversations batches next`, `conversations links add`,
-`conversations links clear` and `conversations build`, plus the `link-conversations` prompt. Report batch
+MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`), `tg_write` (`command: "conversations links add"`),
+`tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
 afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
 text.

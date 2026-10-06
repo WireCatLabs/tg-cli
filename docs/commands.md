@@ -2144,6 +2144,151 @@ tg tags list [options]
 | `--tag <tag>` | only this tag. |
 | `--type <names>` | only what is tagged of this type: chat, contact or message. |
 
+## `tg stats`
+
+statistics about messages, chats and their authors
+
+### `tg stats messages`
+
+message statistics from the local store
+
+#### `tg stats messages show`
+
+how many stored messages match, by chat, sender, day or hour — the local store only; optionally fetches new messages with --sync-first
+
+```sh
+tg stats messages show [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
+
+| Option | What it does |
+|---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
+| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
+| `--limit <n>` | how many rows. |
+| `--timezone <zone>` | the IANA timezone for calendar days and hours. |
+| `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
+
+### `tg stats chats`
+
+statistics about one chat
+
+#### `tg stats chats show`
+
+a group's or channel's numbers for a period: messages, active members, replies, reactions, questions answered, joins and leaves — counted from the local store; joins and leaves are asked of the messenger
+
+```sh
+tg stats chats show <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
+| `--timezone <zone>` | the IANA timezone for calendar days. |
+
+### `tg stats tasks`
+
+task statistics
+
+#### `tg stats tasks show`
+
+per chat: how many tasks are open, the oldest open one, the median time to close
+
+```sh
+tg stats tasks show [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--type <name>` | only this type: question, request, mention or promise. |
+
+### `tg stats charts`
+
+a chart's data from a chat's statistics, and optionally a dark SVG or PNG image
+
+```sh
+tg stats charts <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--chart-kind <messages\|active\|membership>` | what to draw: messages, active authors, or joins and leaves. Default: `messages`. |
+| `--by <day\|week>` | one point per calendar day or week (weeks start on Monday). Default: `day`. |
+| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
+| `--timezone <zone>` | the IANA timezone for calendar days. |
+| `--output <file>` | write a dark image to a new .svg or .png file. |
+
+## `tg tasks`
+
+what waits on you — unanswered questions, mentions, requests, promises — kept in the local store; review and serve add them
+
+### `tg tasks list`
+
+tasks, oldest first, with the message each points at
+
+```sh
+tg tasks list [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--state <state>` | only tasks in this state: open, done or dismissed. |
+| `--chat <chat>` | only this chat's tasks; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--type <names>` | only these types, comma-separated: question, request, mention, promise. |
+| `--before-time <time>` | only tasks opened before this ISO 8601 time, or 2h / 1d ago. |
+| `--limit <n>` | how many. |
+
+### `tg tasks add`
+
+add a task for a message the rules cannot see — a promise, a request
+
+```sh
+tg tasks add <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `message` | required | a message locator, msg:<provider>/<account>/<chat>/<message>, as review --json shows. |
+
+| Option | What it does |
+|---|---|
+| `--type <name>` | the task's type: question, request, mention or promise. |
+
+### `tg tasks close`
+
+close a task: done, or dismissed when it needs no answer; a closed task stays closed
+
+```sh
+tg tasks close <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
+| `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
+
 ## `tg searches`
 
 saved searches and the history of messages search and stats messages show, kept in the local store; --saved runs one
@@ -2225,59 +2370,6 @@ empty the history; saved searches stay
 ```sh
 tg searches clear
 ```
-
-## `tg tasks`
-
-what waits on you — unanswered questions, mentions, requests, promises — kept in the local store; review and serve add them
-
-### `tg tasks list`
-
-tasks, oldest first, with the message each points at
-
-```sh
-tg tasks list [options]
-```
-
-| Option | What it does |
-|---|---|
-| `--state <state>` | only tasks in this state: open, done or dismissed. |
-| `--chat <chat>` | only this chat's tasks; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <names>` | only these types, comma-separated: question, request, mention, promise. |
-| `--before-time <time>` | only tasks opened before this ISO 8601 time, or 2h / 1d ago. |
-| `--limit <n>` | how many. |
-
-### `tg tasks add`
-
-add a task for a message the rules cannot see — a promise, a request
-
-```sh
-tg tasks add <message> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `message` | required | a message locator, msg:<provider>/<account>/<chat>/<message>, as review --json shows. |
-
-| Option | What it does |
-|---|---|
-| `--type <name>` | the task's type: question, request, mention or promise. |
-
-### `tg tasks close`
-
-close a task: done, or dismissed when it needs no answer; a closed task stays closed
-
-```sh
-tg tasks close <task> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `task` | required | the task's id, as tasks list shows it. |
-
-| Option | What it does |
-|---|---|
-| `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
-| `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
 
 ## `tg flood`
 
@@ -2495,98 +2587,6 @@ whether the rules may send, which are on, and who they may answer
 ```sh
 tg replies status
 ```
-
-## `tg stats`
-
-statistics about messages, chats and their authors
-
-### `tg stats messages`
-
-message statistics from the local store
-
-#### `tg stats messages show`
-
-how many stored messages match, by chat, sender, day or hour — the local store only; optionally fetches new messages with --sync-first
-
-```sh
-tg stats messages show [query] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
-
-| Option | What it does |
-|---|---|
-| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
-| `--max-chats <n>` | refresh at most this many chats (default: 5). |
-| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
-| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
-| `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
-| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
-| `--limit <n>` | how many rows. |
-| `--timezone <zone>` | the IANA timezone for calendar days and hours. |
-| `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
-
-### `tg stats chats`
-
-statistics about one chat
-
-#### `tg stats chats show`
-
-a group's or channel's numbers for a period: messages, active members, replies, reactions, questions answered, joins and leaves — counted from the local store; joins and leaves are asked of the messenger
-
-```sh
-tg stats chats show <chat> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
-| `--timezone <zone>` | the IANA timezone for calendar days. |
-
-### `tg stats tasks`
-
-task statistics
-
-#### `tg stats tasks show`
-
-per chat: how many tasks are open, the oldest open one, the median time to close
-
-```sh
-tg stats tasks show [options]
-```
-
-| Option | What it does |
-|---|---|
-| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <name>` | only this type: question, request, mention or promise. |
-
-### `tg stats charts`
-
-a chart's data from a chat's statistics, and optionally a dark SVG or PNG image
-
-```sh
-tg stats charts <chat> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--chart-kind <messages\|active\|membership>` | what to draw: messages, active authors, or joins and leaves. Default: `messages`. |
-| `--by <day\|week>` | one point per calendar day or week (weeks start on Monday). Default: `day`. |
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--timezone <zone>` | the IANA timezone for calendar days. |
-| `--output <file>` | write a dark image to a new .svg or .png file. |
 
 ## `tg recipients`
 

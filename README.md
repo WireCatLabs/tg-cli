@@ -480,7 +480,9 @@ In full — what reaches the disk, what goes over the network and what the tool 
 | [remote](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |
 | [commands](docs/commands.md) | every command, option and exit code, generated from the program |
-| [configuration](docs/configuration.md) | every setting and variable, and which one wins |
+| [configuration](docs/configuration.md) | common setup |
+| [configuration reference](docs/configuration-reference.md) | every key, type, default, scope and variable |
+| [CLI contract](docs/cli-contract.md) | output, errors, bounds and agent execution |
 | [diagnostics](docs/diagnostics.md) | `--trace`, `--record`, `runs`, `doctor report`, and what is never recorded |
 | [troubleshooting](docs/troubleshooting.md) | by symptom: what the screen says, and what to do |
 | [security](docs/security.md) | what reaches the disk and the network; the send guard |
@@ -529,5 +531,5 @@ Pull requests, bug reports and ideas are welcome —
 [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) and [docs/dev/TESTING.md](docs/dev/TESTING.md).
 
 For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel
-with an owner-code login and the same permissions. See [remote access](docs/remote.md).
+with an owner-code login. Profile permissions govern writes; the server has no confirmation forms. See [remote access](docs/remote.md).
 Group activity is available with `tg stats chats show <chat>`; [statistics](docs/groups.md#statistics-for-group-admins).

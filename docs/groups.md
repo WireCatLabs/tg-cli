@@ -100,8 +100,8 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
 | `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 
-An agent without a terminal gets the reading half as MCP tools: `review` with `unanswered`,
-`chats events`, `chats members`, `chats inspect` ([mcp.md](mcp.md)).
+An agent without a terminal gets the reading half as MCP tools: `tg_read` (`command: "review"`) with `unanswered`,
+`tg_read` (`command: "chats events"`), `tg_read` (`command: "chats members"`), `tg_read` (`command: "chats inspect"`) ([mcp.md](mcp.md)).
 
 `create`, `join`, `leave`, `update`, `link reset`, `members` and `admins` change something the
 group's members see: a new group tells the people added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
@@ -124,7 +124,7 @@ tg stats tasks show                                            # open per chat, 
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
 task — an admin's do not — and a mention by `@username` is not seen. An agent gets the same as
-MCP tools: `tasks list`, `tasks add`, `tasks close`, `stats tasks show` ([mcp.md](mcp.md)).
+MCP tools: `tg_read` (`command: "tasks list"`), `tg_write` (`command: "tasks add"`), `tg_write` (`command: "tasks close"`), `tg_read` (`command: "stats tasks show"`) ([mcp.md](mcp.md)).
 
 ## Rules
 
@@ -156,7 +156,7 @@ does it. Every action still goes through the send guard and its hourly limit, an
 `--max-actions` (10). The next run starts where this one stopped; `--since-time` looks at a moment
 of your own and leaves that point where it is.
 
-Over MCP, `chats moderate` acts only where a level is `allow`; what asks is listed for you, not
+Over MCP, `tg_write` (`command: "chats moderate"`) acts only where a level is `allow`; what asks is listed for you, not
 done. `newAccount` is not offered: Telegram does not say how old an account is.
 
 ## Limits
@@ -185,7 +185,7 @@ counts and they were stored with the posts. A missing count does not mean zero. 
 counts, without refreshing every post. Questions follow the same rules as `review --unanswered`.
 These are locally computed figures; the command does not request Telegram's official admin statistics.
 
-The online command also asks Telegram for join and leave events. `--offline` and MCP `stats chats show`
+The online command also asks Telegram for join and leave events. `--offline` and MCP `tg_read` (`command: "stats chats show"`)
 omit `members`, the summary of those events. This differs from `memberCounts`: recorded daily snapshots
 of the group's size, which remain available offline.
 

@@ -21,6 +21,8 @@
     "---Reference---",
     "commands",
     "configuration",
+    "configuration-reference",
+    "cli-contract",
     "---When something goes wrong---",
     "diagnostics",
     "troubleshooting",

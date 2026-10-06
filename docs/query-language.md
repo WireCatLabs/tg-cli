@@ -126,10 +126,10 @@ An error carries the position of the problem in the query and a hint.
 
 ## In MCP
 
-`messages search` takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
+`tg_read` (`command: "messages search"`) takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
 `language` chooses `lucene` or `legacy`, `timezone` the calendar zone. `chat` takes an id or a stored
 name; `source`, `newest`, `context` and `limit` work as the command options do; `saved` runs a saved search.
-The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `stats messages show` counts
+The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `tg_read` (`command: "stats messages show"`) counts
 the same queries.
 
 ## The older modes

@@ -51,11 +51,12 @@
     "secrets:scan": "gitleaks git --no-banner --redact .",
     "postinstall": "node install/postinstall.mjs",
     "bot:generate": "node --experimental-strip-types scripts/bot/generate.ts",
-    "bot:generate:check": "node --experimental-strip-types scripts/bot/generate.ts --check"
+    "bot:generate:check": "node --experimental-strip-types scripts/bot/generate.ts --check",
+    "check:agent-docs": "pnpm build && node --experimental-strip-types scripts/check-agent-docs.ts"
   },
   "dependencies": {
     "@leemour/cli-core": "0.17.2",
-    "@leemour/cli-messaging": "0.161.0",
+"@leemour/cli-messaging": "0.161.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "undici": "7.30.0",
