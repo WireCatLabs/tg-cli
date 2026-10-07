@@ -3,14 +3,6 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-### Fixed
-
-- Search catch-up honors readonly or denied `conversations.links` before fetching or queueing
-  preparation, including gap repair. Explicit `--no-catch-up` still permits authorized history reads.
-
-
 ## 0.31.0 — 07.10.2026
 
 ### What's new
@@ -40,6 +32,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **Word and phrase searches include word forms.** Scripted queries may return more messages. Use exact: or --exact for the previous exact-form behavior; explicit text: still matches forms. Archive language settings affect matching.
 
 ### Fixed
+
+### Fixed
+
+- Search catch-up honors readonly or denied `conversations.links` before fetching or queueing
+  preparation, including gap repair. Explicit `--no-catch-up` still permits authorized history reads.
 
 - Person context finds private dialogs without recorded members when the dialog ID is the person's
   ID, restoring direct messages and the last message each way in existing Telegram stores.
