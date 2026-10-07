@@ -497,46 +497,46 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
 | `stats messages top` |  | ✅ |  |
-| `stats messages top` | `--sync-first` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--max-chats` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--sync-time` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--max-messages` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--measure` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--score` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--weights` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--message-kind` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--chat` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--source` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--exact` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--limit` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages top` | `--saved` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages evidence` |  | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages evidence` | `--selection` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages evidence` | `--component` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages evidence` | `--limit` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats messages evidence` | `--cursor` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
+| `stats messages top` | `--sync-first` | ✅ |  |
+| `stats messages top` | `--max-chats` | ✅ |  |
+| `stats messages top` | `--sync-time` | ✅ |  |
+| `stats messages top` | `--max-messages` | ✅ |  |
+| `stats messages top` | `--measure` | ✅ |  |
+| `stats messages top` | `--score` | ✅ |  |
+| `stats messages top` | `--weights` | ✅ |  |
+| `stats messages top` | `--message-kind` | ✅ |  |
+| `stats messages top` | `--chat` | ✅ |  |
+| `stats messages top` | `--source` | ✅ |  |
+| `stats messages top` | `--timezone` | ✅ |  |
+| `stats messages top` | `--exact` | ✅ |  |
+| `stats messages top` | `--limit` | ✅ |  |
+| `stats messages top` | `--saved` | ✅ |  |
+| `stats messages evidence` |  | ✅ |  |
+| `stats messages evidence` | `--selection` | ✅ |  |
+| `stats messages evidence` | `--component` | ✅ |  |
+| `stats messages evidence` | `--limit` | ✅ |  |
+| `stats messages evidence` | `--cursor` | ✅ |  |
 | `stats contacts top` |  | ✅ |  |
-| `stats contacts top` | `--sync-first` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--max-chats` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--sync-time` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--max-messages` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--measure` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--score` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--weights` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--message-kind` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--chat` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--source` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--exact` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--limit` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--saved` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts top` | `--min-messages` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts evidence` |  | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts evidence` | `--selection` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts evidence` | `--component` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts evidence` | `--limit` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
-| `stats contacts evidence` | `--cursor` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
+| `stats contacts top` | `--sync-first` | ✅ |  |
+| `stats contacts top` | `--max-chats` | ✅ |  |
+| `stats contacts top` | `--sync-time` | ✅ |  |
+| `stats contacts top` | `--max-messages` | ✅ |  |
+| `stats contacts top` | `--measure` | ✅ |  |
+| `stats contacts top` | `--score` | ✅ |  |
+| `stats contacts top` | `--weights` | ✅ |  |
+| `stats contacts top` | `--message-kind` | ✅ |  |
+| `stats contacts top` | `--chat` | ✅ |  |
+| `stats contacts top` | `--source` | ✅ |  |
+| `stats contacts top` | `--timezone` | ✅ |  |
+| `stats contacts top` | `--exact` | ✅ |  |
+| `stats contacts top` | `--limit` | ✅ |  |
+| `stats contacts top` | `--saved` | ✅ |  |
+| `stats contacts top` | `--min-messages` | ✅ |  |
+| `stats contacts evidence` |  | ✅ |  |
+| `stats contacts evidence` | `--selection` | ✅ |  |
+| `stats contacts evidence` | `--component` | ✅ |  |
+| `stats contacts evidence` | `--limit` | ✅ |  |
+| `stats contacts evidence` | `--cursor` | ✅ |  |
 | `stats chats show` |  | ✅ |  |
 | `stats chats show` | `--since-time` | ✅ |  |
 | `stats chats show` | `--by` | ✅ |  |
@@ -573,7 +573,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches create` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--regex` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--by` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
-| `searches create` | `--selection` | ⛔ | cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store |
+| `searches create` | `--selection` | ✅ |  |
 | `searches create` | `--replace` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches show` |  | ✅ |  |
 | `searches list` |  | ✅ |  |

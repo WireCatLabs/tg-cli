@@ -50,3 +50,5 @@ What it can do, how agents use it and how it differs from other tools: the
 [Message search](search.md) finds messages by words, people, dates, files and tags;
 [topic search](topic-search.md) finds discussions by what they were about; the
 [query language](query-language.md) is the full reference.
+
+[Message and author rankings](rankings.md): metrics, scores, saved queries and bounded evidence.

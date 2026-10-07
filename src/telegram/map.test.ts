@@ -33,6 +33,44 @@ const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: str
     link: undefined,
   }) as unknown as TgMessage
 
+describe("ranking linkage", () => {
+  it("keeps an explicit cross-chat reply and leaves forum placement ambiguous", () => {
+    const base = tgMessage({ type: "user", id: 777, displayName: "Synthetic person" })
+    expect(
+      toMessage({
+        ...base,
+        replyToMessage: { id: 5, chat: { id: -1007 }, threadId: null, isForumTopic: false },
+      } as never).providerMetadata?.graph,
+    ).toMatchObject({ version: 1, reply: { chatId: "-1007", messageId: "5" } })
+    expect(
+      toMessage({ ...base, replyToMessage: { id: 5, chat: null, threadId: 5, isForumTopic: true } } as never)
+        .providerMetadata?.graph,
+    ).not.toHaveProperty("reply")
+  })
+  it("records automatic copies only with explicit SDK evidence and linked group ids", () => {
+    const base = tgMessage({ type: "chat", id: -1001234567890, displayName: "Synthetic channel" })
+    const forward = {
+      fromMessageId: 9,
+      date: new Date("2026-10-07"),
+      sender: { type: "chat", id: -10044, displayName: "Source" },
+      raw: { savedFromPeer: { _: "peerChannel", channelId: 44 }, savedFromMsgId: 9 },
+    }
+    const mapped = toMessage({
+      ...base,
+      forward,
+      isAutomaticForward: true,
+      replies: { hasComments: true, count: 2, discussion: -10088 },
+    } as never)
+    expect(mapped.providerMetadata?.graph).toMatchObject({
+      discussionChatId: "-10088",
+      discussionSource: { chatId: "-1000000000044", messageId: "9" },
+    })
+    expect(
+      toMessage({ ...base, forward, isAutomaticForward: false } as never).providerMetadata?.graph,
+    ).not.toHaveProperty("discussionSource")
+  })
+})
+
 describe("a Telegram message", () => {
   it("**says when its author is a chat**, so the store makes no person of a channel", () => {
     expect(toMessage(tgMessage({ type: "chat", id: -1001234567890, displayName: "News" })).senderIsChat).toBe(true)
@@ -137,15 +175,21 @@ describe("a message's details", () => {
       views: 10,
       forwards: 2,
       link: "https://t.me/x/7",
+      graph: { version: 1, reply: null },
     })
-    expect(toMessage(with_({ replies: { hasComments: true, count: 4 } })).providerMetadata).toEqual({ comments: 4 })
-    expect(toMessage(with_({ replies: { hasComments: false, count: 9 } }))).not.toHaveProperty("providerMetadata")
+    expect(toMessage(with_({ replies: { hasComments: true, count: 4 } })).providerMetadata).toEqual({
+      comments: 4,
+      graph: { version: 1, reply: null },
+    })
+    expect(toMessage(with_({ replies: { hasComments: false, count: 9 } })).providerMetadata).toEqual({
+      graph: { version: 1, reply: null },
+    })
     const private_ = Object.defineProperty({ ...base }, "link", {
       get: () => {
         throw new Error("not public")
       },
     }) as unknown as TgMessage
-    expect(toMessage(private_)).not.toHaveProperty("providerMetadata")
+    expect(toMessage(private_).providerMetadata).toEqual({ graph: { version: 1, reply: null } })
   })
 
   it("names the chat's title in a live message", () => {

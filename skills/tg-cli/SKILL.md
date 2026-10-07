@@ -390,3 +390,10 @@ changing the chat. Dry-run uses cached data only and cannot be combined with ref
 bounded at 500 chats. A rule score is not a probability. Automatic claims are separate from manual
 labels; rerunning preserves manual labels. Without `--source`, removing a label removes both claims.
 A later explicit auto run can regenerate it. Linking identities never silently combines private notes.
+
+Rank held data with `tg stats messages top` / `tg stats contacts top`, using `--measure` or
+`--score helpful|active|engaging`. Read coverage, quality and exclusions; unknown snapshots
+are not zero and their freshness is unknown. Pass drilldown.selection to the matching
+`stats messages evidence` / `stats contacts evidence`; continue with nextCursor and restart
+without it if contributing data changed.
+Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).

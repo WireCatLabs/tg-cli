@@ -67,3 +67,9 @@ in `adapter.ts` is in [agents.md](agents.md#where-lanes-collide).
 A one-shot command opens with updates off and closes in a `finally`; an open socket keeps Node alive
 and a piped command that prints and never returns is a defect. Only `watch` and `serve` open with
 `listen`; only `serve` catches up on what arrived while nothing listened.
+
+Stored message/author rankings and bounded evidence live in cli-messaging services/store.
+The Telegram mapper retains versioned `providerMetadata.graph` linkage from mtcute 0.32.3:
+explicit reply targets, linked discussion groups and proven automatic channel copies.
+An ambiguous forum-topic link remains unknown. No extra message-store column is needed.
+The [ranking guide](../rankings.md) describes formulas, coverage and cursor limits.
