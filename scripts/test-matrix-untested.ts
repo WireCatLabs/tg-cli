@@ -28,39 +28,6 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-messaging 0.174.0)",
   },
   {
-    command: "store fetch",
-    option: "--all",
-    reason:
-      "cli-messaging src/cli/messenger/backfill.test.ts cover archive preparation; this consumer mounts the shared bounded fetch command.",
-  },
-
-  {
-    command: "metadata refresh",
-    reason:
-      "Shared cli-messaging src/services/private-people.test.ts covers metadata refresh and snapshot retention; this consumer mounts the shared command.",
-  },
-  {
-    command: "metadata refresh",
-    option: "--chat",
-    reason: "Shared private-people.test.ts covers chat resolution for metadata reads.",
-  },
-  {
-    command: "metadata refresh",
-    option: "--limit",
-    reason: "Shared private-people.test.ts covers bounded refresh and invalid limits.",
-  },
-  {
-    command: "tags auto",
-    option: "--refresh-metadata",
-    reason: "Shared private-people.test.ts covers explicit provider refresh and failures.",
-  },
-  {
-    command: "contacts list",
-    option: "--search-notes",
-    reason: "Shared private-people.test.ts covers account-scoped notes search.",
-  },
-
-  {
     command: "stats messages top",
     option: "--sync-first",
     reason:
