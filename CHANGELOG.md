@@ -3,6 +3,16 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg messages comments <channel> <post>` reads the comments under a channel post, and `tg messages send
+  --comment-to <post>` writes one.** Comments live in the channel's discussion group; a post without one is exit `6`.
+- **`tg contacts profile` lists earlier names and usernames** under `aliases`, oldest first, with a `t.me`
+  link for an old username. The local store now keeps a name or username when it changes. See
+  [People](docs/people.md).
+
 ## 0.31.0 — 07.10.2026
 
 ### What's new
@@ -11,8 +21,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   are checked by content hash. Optional bounded local preparation follows history fetches, off by
   default. `store gaps plan` and `store gaps repair` inspect recorded interior gaps and explicitly
   repair them with bounds and resumable jobs; unknown edges and ambiguous pages remain pending.
-- **`tg messages comments <channel> <post>` reads the comments under a channel post, and `tg messages send
-  --comment-to <post>` writes one.** Comments live in the channel's discussion group; a post without one is exit `6`.
 
 - **`tg stats chats official <chat>`**: Telegram's own statistics for a supergroup or channel you administer, as
   its apps show them — totals against the previous period, top posters, admins and inviters (supergroups), recent
