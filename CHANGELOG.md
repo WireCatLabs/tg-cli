@@ -9,10 +9,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - Private account-scoped contact aliases and notes, cached channel metadata and deterministic automatic tags through shared CLI/MCP services. Local metadata survives refresh; auto tags preserve manual labels.
 
-## Unreleased
-
-### What's new
-
 - Rankings retain explicit Telegram reply links and linked channel discussions; ambiguous forum-topic links remain unknown.
 - [The ranking guide](docs/rankings.md) covers measures, scores, coverage, saved selections and evidence. The SDK preserves exclusive date boundaries when replaying saved selections.
 
