@@ -91,6 +91,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed except reply rules sending; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sendsPerHour` | `30` | the most sends in any hour ([security.md](security.md#the-send-guard)) | none |
+| `requestsPerMinute` | `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits.md](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
 | `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
 | `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) | `--model` |
 | `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |

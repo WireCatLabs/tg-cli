@@ -103,7 +103,7 @@ const definition: ProgramDefinition = {
       accountCommand(TELEGRAM),
       chatsCommand(TELEGRAM),
       contactsCommand(TELEGRAM),
-      messagesCommand(TELEGRAM),
+      withoutTopicList(messagesCommand(TELEGRAM)),
       reactionsCommand(TELEGRAM),
       pollsCommand(TELEGRAM),
       modelsCommand(TELEGRAM),
@@ -178,4 +178,11 @@ const logParsed = (file: string, action: Command): void => {
     }
   }
   appendFileSync(file, `${JSON.stringify({ command: words.join(" "), options })}\n`)
+}
+
+/** `messages list --topic` needs the adapter to read one forum topic, which tg does not map yet. */
+const withoutTopicList = (messages: Command): Command => {
+  const list = messages.commands.find((one) => one.name() === "list")
+  if (list) Object.assign(list, { options: list.options.filter((option) => option.attributeName() !== "topic") })
+  return messages
 }
