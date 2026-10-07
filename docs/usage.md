@@ -535,6 +535,8 @@ tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and da
 tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 tg chats link show "Hiking 2027"                   # the invite link, if you may see it
 tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
+tg chats requests list "Hiking 2027"               # who asked to join, newest first
+tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns them away
 tg chats members add "Hiking 2027" @kate 67890     # they are told
 tg chats members remove "Hiking 2027" @kate        # their messages stay
 tg chats admins add "Hiking 2027" @kate --can pin,delete
@@ -545,6 +547,12 @@ A new group is always a supergroup. Someone whose privacy settings stop them bei
 in the answer under `providerMetadata.notAdded`; the group is made anyway. A group whose admins
 approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
+
+In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the
+note a person sent; only admins see them, and reading tells nobody. `accept` and `decline` answer one,
+by the id from the list. An accepted request counts toward the hourly limit, a declined one does not;
+the recipient list checks the group only. Someone who is already a member is answered with
+`already: true`, and a request that is gone ends in exit `6`.
 
 `chats update` changes the title, the description and the two settings Telegram has, in one go; the
 answer is the group as it stands, and `chats show` shows the same settings. Moderation rules —

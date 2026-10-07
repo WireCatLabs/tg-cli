@@ -414,6 +414,28 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-group").map((entry) => entry.action)).toEqual(["update", "link.reset"])
   })
 
+  it("**lists join requests and answers one through the guard**", async () => {
+    const answered: string[] = []
+    const request = { person: { id: "91", name: "Synthetic", username: null }, requestedAt: "2026-10-07T18:00:00.000Z" }
+    const adapter = scripted({
+      people: async (references) => references,
+      joinRequests: async (_chat, { limit }) => ({ items: [request].slice(0, limit), hasMore: false }),
+      answerJoinRequest: async (_chat, person, accept) => {
+        answered.push(`${accept ? "accept" : "decline"} ${person}`)
+        return { already: false }
+      },
+    })
+
+    const listed = await tg(["g-requests", "chats", "requests", "list", "Valencia", "--limit", "1", "--json"], adapter)
+    const accepted = await tg(["g-requests", "chats", "requests", "accept", "Valencia", "91", "--json"], adapter)
+    const declined = await tg(["g-requests", "chats", "requests", "decline", "Valencia", "92", "--json"], adapter)
+
+    expect([listed.code, accepted.code, declined.code]).toEqual([0, 0, 0])
+    expect(JSON.parse(listed.stdout[0] ?? "")).toMatchObject({ items: [request], hasMore: false })
+    expect(answered).toEqual(["accept 91", "decline 92"])
+    expect(journal("g-requests").map((entry) => entry.action)).toEqual(["requests.accept", "requests.decline"])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({

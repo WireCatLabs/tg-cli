@@ -65,6 +65,7 @@ import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import { formatMarkdown } from "./format-markdown.js"
+import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
 import {
   type Account,
   ADMIN_RIGHT_FIELDS,
@@ -1522,6 +1523,23 @@ export class TelegramAdapter {
         throw unknownIfUnanswered(error, "the link may or may not have been replaced; check `tg chats link show`")
       }
       return toGroupCard(await this.#client.getFullChat(peer))
+    })
+  }
+
+  joinRequests(chatId: string, { limit }: { limit: number }) {
+    return this.#call(() => joinRequestsOf(this.#client, Number(chatId), limit))
+  }
+
+  answerJoinRequest(chatId: string, personId: string, accept: boolean) {
+    return this.#call(async () => {
+      try {
+        return await answerJoinRequestOf(this.#client, Number(chatId), Number(personId), accept)
+      } catch (error) {
+        throw unknownIfUnanswered(
+          error,
+          `the request of ${personId} may or may not have been answered; check \`tg chats requests list\``,
+        )
+      }
     })
   }
 
