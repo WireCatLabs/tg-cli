@@ -774,19 +774,24 @@ tg contacts list [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 | `--order <recent\|name>` | newest conversation first, or alphabetical. Default: `recent`. |
-| `--search <text>` | only people whose name or @username contains this. |
+| `--search <text>` | only people whose name, local alias or @username contains this. |
+| `--search-notes <text>` | only people whose private notes contain this text. |
 
 ### `tg contacts show`
 
 one person and the chats you share with them
 
 ```sh
-tg contacts show <person>
+tg contacts show <person> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `person` | required | their id, @username, or part of their name. |
+
+| Option | What it does |
+|---|---|
+| `--with-notes` | include your private notes, subject to contacts.notes.list permission. |
 
 ### `tg contacts profile`
 
@@ -880,6 +885,121 @@ take the whole contact list from the messenger into the local store
 tg contacts sync
 ```
 
+### `tg contacts alias`
+
+a private local display name in the selected account
+
+#### `tg contacts alias set`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg contacts alias set <person> <alias>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+| `alias` | required |  |
+
+#### `tg contacts alias rm`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg contacts alias rm <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+
+### `tg contacts notes`
+
+your private notes on a stored contact, scoped to this account
+
+#### `tg contacts notes list`
+
+
+
+```sh
+tg contacts notes list <person>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+
+#### `tg contacts notes show`
+
+
+
+```sh
+tg contacts notes show <person> <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+| `id` | required |  |
+
+#### `tg contacts notes add`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg contacts notes add <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+
+| Option | What it does |
+|---|---|
+| `--file <path>` | read note text from a file; omitted or - reads stdin. |
+
+#### `tg contacts notes edit`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg contacts notes edit <person> <id> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+| `id` | required |  |
+
+| Option | What it does |
+|---|---|
+| `--file <path>` | read note text from a file; omitted or - reads stdin. |
+| `--revision <number>` | the revision you read before editing. |
+
+#### `tg contacts notes remove`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg contacts notes remove <person> <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required |  |
+| `id` | required |  |
+
 ### `tg contacts add`
 
 add a person to your contacts — `contacts list` still shows only people you have a dialog with
@@ -938,7 +1058,7 @@ tg contacts unblock <person>
 
 ### `tg contacts rename`
 
-give a person a name of your own — they do not see it
+rename the contact in the messenger address book; use contacts alias for a private local name
 
 **Changes something in Telegram.**
 
@@ -2329,9 +2449,28 @@ tg attachments text set <chat> [message] [options]
 
 your own labels on chats, people and messages, kept in the local store and never sent; tag: in a search finds them
 
+### `tg tags auto`
+
+derive local group/channel tags from cached metadata using keyword rules
+
+**Changes something on this computer only.**
+
+```sh
+tg tags auto [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a stored group/channel; repeat to select several. Default: ``. |
+| `--limit <number>` | process at most 1–500 chats. Default: `50`. |
+| `--refresh-metadata` | read current descriptions from the messenger before classifying. |
+| `--dry-run` | preview cached classification without changing the store. |
+
 ### `tg tags add`
 
 put tags on one chat, person or message
+
+**Changes something on this computer only.**
 
 ```sh
 tg tags add <tag> [options]
@@ -2351,6 +2490,8 @@ tg tags add <tag> [options]
 
 take tags off one chat, person or message
 
+**Changes something on this computer only.**
+
 ```sh
 tg tags remove <tag> [options]
 ```
@@ -2364,6 +2505,7 @@ tg tags remove <tag> [options]
 | `--chat <chat>` | the chat to untag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--contact <person>` | the person to untag: their id, @username or name, as the local store knows them. |
 | `--message <message>` | the message to untag: its id in --chat, or a msg: locator alone. |
+| `--source <manual\|auto>` | remove only this ownership claim. |
 
 ### `tg tags list`
 
@@ -2376,6 +2518,7 @@ tg tags list [options]
 | Option | What it does |
 |---|---|
 | `--tag <tag>` | only this tag. |
+| `--source <manual\|auto>` | only labels with this ownership claim. |
 | `--type <names>` | only what is tagged of this type: chat, contact or message. |
 
 ## `tg stats`

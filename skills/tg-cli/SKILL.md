@@ -358,3 +358,10 @@ then repair only with the owner's authorization using `store gaps repair --finge
 and explicit gap/message/time/page/pause bounds. `--background` uses ordinary store jobs.
 These commands and job metadata are also available through MCP discovery and read/write gateways.
 Unknown edges and message-id holes do not prove missing history.
+
+Rank held data with `tg stats messages top` / `tg stats contacts top`, using `--measure` or
+`--score helpful|active|engaging`. Read coverage, quality and exclusions; unknown snapshots
+are not zero and their freshness is unknown. Pass drilldown.selection to the matching
+`stats messages evidence` / `stats contacts evidence`; continue with nextCursor and restart
+without it if contributing data changed.
+Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).

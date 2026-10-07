@@ -178,6 +178,25 @@ export const toMessage = (message: TgMessage): Message => {
     groupedId: message.groupedIdUnique ?? undefined,
     action: message.action?.type,
     link: linkOf(message),
+    graph: {
+      version: 1,
+      ...(reply === null
+        ? { reply: null }
+        : reply?.id != null && !(reply.isForumTopic && reply.id === reply.threadId)
+          ? { reply: { chatId: String(reply.chat?.id ?? message.chat.id), messageId: String(reply.id) } }
+          : {}),
+      ...(message.replies?.hasComments && message.replies.discussion != null
+        ? { discussionChatId: String(message.replies.discussion) }
+        : {}),
+      ...(message.isAutomaticForward && message.forward?.raw.savedFromPeer && message.forward.raw.savedFromMsgId != null
+        ? {
+            discussionSource: {
+              chatId: String(getMarkedPeerId(message.forward.raw.savedFromPeer)),
+              messageId: String(message.forward.raw.savedFromMsgId),
+            },
+          }
+        : {}),
+    },
   })
   return {
     id: String(message.id),

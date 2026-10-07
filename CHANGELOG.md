@@ -3,6 +3,13 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- Rankings retain explicit Telegram reply links and linked channel discussions; ambiguous forum-topic links remain unknown.
+- [The ranking guide](docs/rankings.md) covers measures, scores, coverage, saved selections and evidence. The SDK preserves exclusive date boundaries when replaying saved selections.
+
 ## 0.34.0 — 07.10.2026
 
 ### What's new
