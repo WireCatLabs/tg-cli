@@ -56,6 +56,7 @@ class FakeClient {
   phoneOwner: unknown = null
   contacts: unknown[] = []
   forwardAnswer: unknown = forwarded(60)
+  searchAnswer: unknown = found([7, 5])
   migrationAnswer: unknown = undefined
   topicAnswer: unknown = forwarded(12)
   handleClientUpdate = vi.fn()
@@ -83,6 +84,10 @@ class FakeClient {
       return this.topicAnswer
     }
     if (request._ === "account.getAuthorizations") return { authorizations: this.authorizations }
+    if (request._ === "messages.search" || request._ === "messages.searchGlobal") {
+      if (this.searchAnswer instanceof Error) throw this.searchAnswer
+      return this.searchAnswer
+    }
     if (request._ === "messages.forwardMessages") {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
       return this.forwardAnswer
@@ -213,10 +218,6 @@ class FakeClient {
     this.#record("searchMessages", args)
     return page(this.history, this.historyNext, this.historyTotal)
   }
-  searchGlobal = async (...args: unknown[]) => {
-    this.#record("searchGlobal", args)
-    return page(this.history, this.historyNext, this.historyTotal)
-  }
   getPeerDialogs = async (peer: unknown) => {
     this.#record("getPeerDialogs", [peer])
     const of = (id: unknown) =>
@@ -306,6 +307,25 @@ function fakePoll({ chosen }: { chosen?: number }) {
     isMultiple: false,
     isPublic: true,
     voters: 5,
+  }
+}
+
+/** What Telegram answers a search with: the messages, in a supergroup, among the users and chats they name. */
+function found(ids: number[]) {
+  const { users, chats } = forwarded(0)
+  return {
+    _: "messages.messagesSlice",
+    count: ids.length,
+    messages: ids.map((id) => ({
+      _: "message",
+      id,
+      peerId: { _: "peerChannel", channelId: 500 },
+      fromId: { _: "peerUser", userId: 1 },
+      date: 1790000000,
+      message: `synthetic invoice ${id}`,
+    })),
+    users,
+    chats,
   }
 }
 
@@ -513,37 +533,48 @@ describe("reading", () => {
 
   it("searches one chat on the server with its filters, and every chat without one", async () => {
     const { adapter, client } = await open()
-    client.history = [message(7), message(5)]
-    client.historyNext = { id: 5, date: 0 }
+    const signal = new AbortController().signal
 
     const inChat = await adapter.searchMessages(
       { text: "invoice", chat: "-100500", from: "42", minDate: Date.UTC(2026, 9, 1), maxDate: Date.UTC(2026, 9, 2) },
-      { limit: 2 },
+      { limit: 2, signal },
     )
     const everywhere = await adapter.searchMessages({ text: "invoice" }, { limit: 100 })
 
-    expect(inChat.items.map((one) => one.id)).toEqual(["7", "5"])
-    expect(inChat.hasMore).toBe(true)
-    expect(inChat.chats.map((chat) => chat.id)).toEqual([...new Set(inChat.items.map((one) => one.chatId))])
-    expect(everywhere.hasMore).toBe(false)
-    expect(
-      client.calls.filter((call) => call.method.startsWith("search")).map(({ method, args }) => [method, args]),
-    ).toEqual([
-      [
-        "searchMessages",
-        [
-          {
-            chatId: -100500,
-            query: "invoice",
-            limit: 2,
-            minDate: new Date(Date.UTC(2026, 9, 1)),
-            maxDate: new Date(Date.UTC(2026, 9, 2)),
-            fromUser: 42,
-          },
-        ],
-      ],
-      ["searchGlobal", [{ query: "invoice", limit: 100 }]],
+    expect(inChat.items.map((one) => [one.chatId, one.id, one.chatTitle])).toEqual([
+      ["-1000000000500", "7", "Valencia expats"],
+      ["-1000000000500", "5", "Valencia expats"],
     ])
+    expect(inChat.hasMore).toBe(true)
+    expect(inChat.chats).toMatchObject([{ id: "-1000000000500", title: "Valencia expats" }])
+    expect(everywhere.hasMore).toBe(false)
+    const searches = client.calls.filter(
+      ({ method, args }) => method === "call" && /^messages\.search/.test((args[0] as { _: string })._),
+    )
+    expect(searches.map(({ args }) => args)).toEqual([
+      [
+        expect.objectContaining({
+          _: "messages.search",
+          q: "invoice",
+          limit: 2,
+          minDate: Date.UTC(2026, 9, 1) / 1000,
+          maxDate: Date.UTC(2026, 9, 2) / 1000,
+          peer: { _: "inputPeerChannel", peer: -100500 },
+          fromId: { _: "inputPeerChannel", peer: 42 },
+        }),
+        { floodSleepThreshold: 0, abortSignal: signal },
+      ],
+      [expect.objectContaining({ _: "messages.searchGlobal", q: "invoice", limit: 100 }), { floodSleepThreshold: 0 }],
+    ])
+  })
+
+  it("answers a flood wait on a server search at once, as rate_limited", async () => {
+    const { adapter, client } = await open()
+    client.searchAnswer = new tl.RpcError(420, "FLOOD_WAIT_30")
+
+    await expect(adapter.searchMessages({ text: "invoice" }, { limit: 100 })).rejects.toMatchObject({
+      code: "rate_limited",
+    })
   })
 
   it("**reads past short pages and untrusted counts**, until the library returns no cursor", async () => {

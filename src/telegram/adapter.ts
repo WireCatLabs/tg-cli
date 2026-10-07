@@ -343,24 +343,54 @@ export class TelegramAdapter {
    * Telegram's own text search, newest first: in one chat with `chat`, in every chat otherwise. Its
    * matching is undocumented, so the answer is candidates for the store's strict query.
    */
-  searchMessages(query: ServerQuery, { limit }: { limit: number }): Promise<Page<MessageHit> & { chats: Chat[] }> {
+  searchMessages(
+    query: ServerQuery,
+    { limit, signal }: { limit: number; signal?: AbortSignal },
+  ): Promise<Page<MessageHit> & { chats: Chat[] }> {
     return this.#call(async () => {
-      const dates = {
-        ...(query.minDate === undefined ? {} : { minDate: new Date(query.minDate) }),
-        ...(query.maxDate === undefined ? {} : { maxDate: new Date(query.maxDate) }),
+      const seconds = (ms?: number) => (ms === undefined ? 0 : Math.floor(ms / 1000))
+      const common = {
+        q: query.text,
+        filter: { _: "inputMessagesFilterEmpty" as const },
+        minDate: seconds(query.minDate),
+        maxDate: seconds(query.maxDate),
+        limit,
       }
-      const page =
+      // The raw call, because only it takes these: a flood wait is answered at once instead of slept
+      // through, and the search's time bound cancels the request rather than leaving it to hold the connection.
+      const options = { floodSleepThreshold: 0, ...(signal ? { abortSignal: signal } : {}) }
+      const found =
         query.chat === undefined
-          ? await this.#client.searchGlobal({ query: query.text, limit, ...dates })
-          : await this.#client.searchMessages({
-              chatId: await this.#inputOf(query.chat),
-              query: query.text,
-              limit,
-              ...dates,
-              ...(query.from === undefined ? {} : { fromUser: await this.#inputOf(query.from) }),
-            })
+          ? await this.#client.call(
+              {
+                _: "messages.searchGlobal",
+                ...common,
+                offsetRate: 0,
+                offsetPeer: { _: "inputPeerEmpty" },
+                offsetId: 0,
+              },
+              options,
+            )
+          : await this.#client.call(
+              {
+                _: "messages.search",
+                ...common,
+                peer: await this.#client.resolvePeer(await this.#inputOf(query.chat)),
+                ...(query.from === undefined
+                  ? {}
+                  : { fromId: await this.#client.resolvePeer(await this.#inputOf(query.from)) }),
+                offsetId: 0,
+                addOffset: 0,
+                maxId: 0,
+                minId: 0,
+                hash: Long.ZERO,
+              },
+              options,
+            )
+      if (found._ === "messages.messagesNotModified") return { items: [], hasMore: false, chats: [] }
+      const peers = PeersIndex.from(found)
+      const page = found.messages.filter((one) => one._ !== "messageEmpty").map((one) => new TgMessage(one, peers))
       const chats = new Map(page.map((message) => [String(message.chat.id), peerToChat(message.chat)]))
-      // mtcute sets `next` on every page that is not empty, so only a full page says more may follow.
       return { items: page.map(toMessageHit), hasMore: page.length === limit, chats: [...chats.values()] }
     })
   }
