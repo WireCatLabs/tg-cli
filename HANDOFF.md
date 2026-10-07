@@ -53,7 +53,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 ### 3b. Open right now
 
-1. **Release snapshot: `@leemour/tg-cli@0.35.0`**, with cli-messaging 0.175.0 and cli-core 0.17.2.
+1. **Release snapshot: `@leemour/tg-cli@0.35.0`**, with cli-messaging 0.177.0 and cli-core 0.17.2.
    Archive preparation (`store fetch --all`), coverage/`next`, private people metadata and bulk join-request
    actions are included. [GitHub releases](https://github.com/leemour/tg-cli/releases) confirm publication.
    Releases run from GitHub through `bin/release`
