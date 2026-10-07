@@ -5,6 +5,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+- **`tg contacts profile` and `tg contacts check` estimate the age of accounts made up to August 2026.** The
+  table that guesses a sign-up month from an account id ended at November 2025, so the newest accounts got no
+  estimate. Late-2025 ids now read up to four months later than before, closer to when they were really made.
+  Estimates for 2026 are off by about three months; `source: "estimate"` still marks every guess.
 - **Attachment OCR through the shared gateway.** Agents normally read images/scans themselves and
   write text through `attachments text set`. Explicit bulk processing uses `attachments extract --ocr`,
   `models.ocr` and bounded `--concurrency`; complete text enters the existing `content:` index.

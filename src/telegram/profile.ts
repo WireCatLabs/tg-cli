@@ -7,6 +7,11 @@ import type { FullUser, User } from "@mtcute/node"
  * and the 2021-12 start of 52-bit ids from the Bot API 5.5 changelog. Checked against points left out of the
  * fit, 2022–2025 estimates are off by a median of 1–2 months and at most 4–6 for nine in ten. Ids are not
  * promised to grow with time, so this is an estimate and is always labelled one.
+ *
+ * From 8.0e9 the same fit also takes 195 sign-up dates from the owner's own chats (2026-10-07; only these
+ * rounded bands are kept, no id), which carries the table into 2026. Checked on those dates left out of the fit:
+ * 2025 off by a median of 2 months and at most 3 for nine in ten, 2026 a median of 3 and at most 4 — the 2026
+ * rows rest on five dates, so read them as a season, not a month.
  */
 const ID_MONTHS: readonly [number, string][] = [
   [1, "2013-08"],
@@ -81,10 +86,14 @@ const ID_MONTHS: readonly [number, string][] = [
   [7_800_000_000, "2025-01"],
   [7_834_000_000, "2025-06"],
   [7_900_000_000, "2025-07"],
-  [8_200_000_000, "2025-08"],
-  [8_380_000_000, "2025-10"],
-  [8_480_000_000, "2025-11"],
-  [8_560_000_000, "2025-12"],
+  [8_090_000_000, "2025-08"],
+  [8_200_000_000, "2025-10"],
+  [8_420_000_000, "2025-12"],
+  [8_580_000_000, "2026-01"],
+  [8_680_000_000, "2026-03"],
+  [8_760_000_000, "2026-04"],
+  [8_950_000_000, "2026-08"],
+  [8_960_000_000, "2026-08"],
 ]
 
 /**

@@ -57,7 +57,7 @@ store holds in each chat you share:
   settings show it to you.
 - **`registered`** always says where the date came from:
   - `telegram` — the month Telegram sends when someone writes to you for the first time;
-  - `estimate` — a guess from the account id, using a public table that ends at November 2025.
+  - `estimate` — a guess from the account id, using a table that ends at August 2026.
     Newer ids get no estimate at all rather than a date that may be years off.
 - **`hasPhoto`** counts their own photo and their public one, never a photo you set for them.
 - **`chats`** lists every chat you share, and any other chat where the store holds their messages.

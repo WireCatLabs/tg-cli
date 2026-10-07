@@ -48,8 +48,12 @@ describe("a person's profile from Telegram", () => {
     expect((estimatedRegistration(7_520_000_000)?.at ?? "9999").slice(0, 7) <= "2025-03").toBe(true)
   })
 
+  it("estimates ids made in 2026", () => {
+    expect(estimatedRegistration(8_700_000_000)?.at).toBe("2026-03-01T00:00:00.000Z")
+  })
+
   it("gives no estimate past the table's last point", () => {
-    expect(estimatedRegistration(8_560_000_000)).toBeNull()
+    expect(estimatedRegistration(8_960_000_000)).toBeNull()
     expect(estimatedRegistration(9_000_000_000)).toBeNull()
   })
 })
