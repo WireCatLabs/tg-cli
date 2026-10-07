@@ -92,7 +92,7 @@ describe("the send_as peer", () => {
 })
 
 describe("the saved sender", () => {
-  const full = (value: unknown) => ({ getFullChat: vi.fn(async () => ({ full: value })) })
+  const full = (value: unknown) => ({ getFullChat: vi.fn(async () => ({ full: value }) as never) })
 
   it("is the saved channel of a supergroup, and nothing where it is the account, unset, or not a supergroup", async () => {
     const channel = full({ _: "channelFull", defaultSendAs: { _: "peerChannel", channelId: 2 } })
