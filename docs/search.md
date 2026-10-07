@@ -180,9 +180,9 @@ many chats that is.
 
 ## Asking Telegram too: `--backend`
 
-Telegram can search its own copy of your chats, including messages tg never fetched. Add
-`--backend both` to search Telegram and the archive in one run, or `--backend server` for Telegram's
-results alone. The default is `--backend archive`: the local archive only.
+Telegram can search its own copy of your chats, including messages tg never fetched. By default tg asks
+Telegram and the archive in one run (`--backend both`). `--backend server` shows Telegram's results alone, and
+`--backend archive` searches only the archive.
 
 ```sh
 tg messages search 'invoice' --backend both

@@ -311,10 +311,10 @@ tg messages search "contract" --chat "Book club"
 tg messages search "invoice.*(march|april)" --regex
 ```
 
-Chat and contact searches need **at least three characters**. Local `messages search` uses the
-[strict Lucene profile](search.md): `invoic*` matches prefixes; `invoic` is an exact term.
-It never connects to Telegram: it reads what was fetched or kept by `serve`. Use `--language legacy`
-for the previous discovery behavior. Once you have the chat, use its id.
+Chat and contact searches need **at least three characters**. `messages search` uses the
+[strict Lucene profile](search.md): `invoice` also finds other forms of the word, `invoic*` matches beginnings,
+and `exact:invoice` only that form. It reads what was fetched or kept by `serve`, and asks Telegram's own search
+too (`--backend archive` for the archive only). Use `--language legacy` for the previous discovery behavior. Once you have the chat, use its id.
 
 ## Sending
 
