@@ -401,3 +401,9 @@ are not zero and their freshness is unknown. Pass drilldown.selection to the mat
 `stats messages evidence` / `stats contacts evidence`; continue with nextCursor and restart
 without it if contributing data changed.
 Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).
+
+For questions waiting and selected admin response times, use `stats messages unanswered` and
+`stats contacts responses --answerer <id>`. Known-join newcomer help is `stats chats newcomers <chat>`;
+viewed posts with little stored discussion are `stats messages discussion`. Inspect graph/archive
+quality and use each row’s exact drilldown with `--component report`; missing history/join dates
+are not zero. All four reports read stored data; do not infer historical administrator roles.

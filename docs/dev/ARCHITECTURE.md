@@ -73,3 +73,11 @@ The Telegram mapper retains versioned `providerMetadata.graph` linkage from mtcu
 explicit reply targets, linked discussion groups and proven automatic channel copies.
 An ambiguous forum-topic link remains unknown. No extra message-store column is needed.
 The [ranking guide](../rankings.md) describes formulas, coverage and cursor limits.
+
+## Administrator statistics
+
+The shared stats command mounts unanswered, responses, newcomers and discussion reports.
+Question roots use compiled Lucene selection; explicit reply context extends through a captured
+cutoff in the same SQLite read snapshot. Membership stays preserve actual join versus first-seen.
+CLI and the three-tool MCP frontend call the same shared service; report evidence uses a separate
+versioned selection inside the existing evidence commands. See the [user guide](../rankings.md).
