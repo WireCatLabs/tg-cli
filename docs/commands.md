@@ -438,6 +438,7 @@ tg chats update <chat> [options]
 | `--description <text>` | the new description. |
 | `--all-can-pin <on\|off>` | every member may pin messages. |
 | `--only-admins-add <on\|off>` | only admins may add members. |
+| `--join-approval <on\|off>` | people ask to join, and an admin lets them in; a public group only. |
 
 ### `tg chats link`
 
@@ -454,6 +455,24 @@ tg chats link show <chat>
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg chats link create`
+
+make another invite link; nobody is told until you share it
+
+```sh
+tg chats link create <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
+| `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
 
 #### `tg chats link reset`
 

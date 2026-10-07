@@ -87,6 +87,7 @@ import {
   toGroupMember,
   toInputMedia,
   toInputPoll,
+  toInviteLink,
   toInvitePreview,
   toLinkChat,
   toMember,
@@ -1496,7 +1497,8 @@ export class TelegramAdapter {
       try {
         if (title !== undefined) await this.#client.setChatTitle(peer, title)
         if (description !== undefined) await this.#client.setChatDescription(peer, description)
-        const { allCanPin, onlyAdminsAdd } = settings
+        const { allCanPin, onlyAdminsAdd, joinApproval } = settings
+        if (typeof joinApproval === "boolean") await this.#client.toggleJoinRequests(peer, joinApproval)
         if (typeof allCanPin === "boolean" || typeof onlyAdminsAdd === "boolean") {
           const current = (await this.#client.getFullChat(peer)).defaultPermissions?.raw
           const { _: _kind, untilDate: _until, ...taken } = current ?? { _: "chatBannedRights", untilDate: 0 }
@@ -1523,6 +1525,25 @@ export class TelegramAdapter {
         throw unknownIfUnanswered(error, "the link may or may not have been replaced; check `tg chats link show`")
       }
       return toGroupCard(await this.#client.getFullChat(peer))
+    })
+  }
+
+  createInviteLink(
+    chatId: string,
+    { approval, expiresAt, maxUses }: { approval: boolean; expiresAt?: string; maxUses?: number },
+  ) {
+    return this.#call(async () => {
+      try {
+        return toInviteLink(
+          await this.#client.createInviteLink(Number(chatId), {
+            withApproval: approval,
+            ...(expiresAt === undefined ? {} : { expires: new Date(expiresAt) }),
+            ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
+          }),
+        )
+      } catch (error) {
+        throw unknownIfUnanswered(error, "a link may or may not have been made; it works only once shared")
+      }
     })
   }
 

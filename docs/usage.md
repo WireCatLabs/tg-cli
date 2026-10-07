@@ -535,6 +535,8 @@ tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and da
 tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 tg chats link show "Hiking 2027"                   # the invite link, if you may see it
 tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
+tg chats link create "Hiking 2027" --approval --expire-time 7d --max-uses 20   # another link; who joins asks first
+tg chats update "Trail news" --join-approval on    # a public group: everyone asks first
 tg chats requests list "Hiking 2027"               # who asked to join, newest first
 tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns them away
 tg chats members add "Hiking 2027" @kate 67890     # they are told
@@ -547,6 +549,11 @@ A new group is always a supergroup. Someone whose privacy settings stop them bei
 in the answer under `providerMetadata.notAdded`; the group is made anyway. A group whose admins
 approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
+
+`chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
+first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `7d` from now), and
+`--max-uses` lets at most that many people in. `chats update --join-approval on` makes everyone ask first, but
+Telegram allows it only in a public group; a private group uses a link with `--approval` instead.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the
 note a person sent; only admins see them, and reading tells nobody. `accept` and `decline` answer one,

@@ -436,6 +436,57 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-requests").map((entry) => entry.action)).toEqual(["requests.accept", "requests.decline"])
   })
 
+  it("**turns join approval on and makes a link that needs it** through the guard", async () => {
+    const changed: unknown[] = []
+    const made: unknown[] = []
+    const card = {
+      ...chat,
+      description: null,
+      link: null,
+      settings: {
+        allCanPin: null,
+        onlyAdminsAdd: null,
+        onlyAdminsCall: null,
+        onlyOwnerEditsInfo: null,
+        membersSeeLink: null,
+        joinApproval: true,
+      },
+    }
+    const adapter = scripted({
+      updateGroup: async (_chat, change) => {
+        changed.push(change)
+        return card
+      },
+      createInviteLink: async (_chat, options) => {
+        made.push(options)
+        return { link: "https://t.me/+extra", approval: options.approval, expiresAt: null, maxUses: null }
+      },
+    })
+
+    const on = await tg(["g-approval", "chats", "update", "Valencia", "--join-approval", "on", "--json"], adapter)
+    const link = await tg(
+      [
+        "g-approval",
+        "chats",
+        "link",
+        "create",
+        "Valencia",
+        "--approval",
+        "--expire-time",
+        "7d",
+        "--max-uses",
+        "5",
+        "--json",
+      ],
+      adapter,
+    )
+
+    expect([on.code, link.code]).toEqual([0, 0])
+    expect(changed).toEqual([{ settings: { joinApproval: true } }])
+    expect(made).toEqual([{ approval: true, expiresAt: expect.any(String), maxUses: 5 }])
+    expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create"])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({
