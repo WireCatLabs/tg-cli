@@ -180,6 +180,24 @@ tg attachments text set "Book club" 204 --text-file ./scan.txt
 
 `--download` requires `--output-dir`; without them extraction reads retained files. `list` exposes retained paths and text status, not text contents.
 
+For bulk work, explicitly select the standard model gateway API. Configure an available vision model
+under `models.ocr` and use the ordinary `models text key set` credential command. Replace
+`your-vision-model` in the example with your model's name.
+
+```sh
+tg config set models.ocr.provider openai
+tg config set models.ocr.model your-vision-model
+tg models text key set openai
+tg attachments extract --chat "Book club" --ocr --concurrency 4 --limit 100 --json
+```
+
+`--ocr` sends images to that API; without it no model is called. Concurrency is1–8, default4;
+the file limit is1–500, default100. Pass the returned cursor to continue a bounded scan.
+Scanned PDFs need optional `unpdf` and `@napi-rs/canvas`, with at most20pages per document;
+text-layer pages stay local. Repeats reuse the file hash and model identity. Agent text and old
+indexed text survive failed or cancelled OCR. Inspect failed counts and per-file statuses;
+a provider rate limit stops later API calls in that run. `--offline` conflicts with `--ocr`.
+
 `--thread` follows the stored reply graph; in `messages context` it replaces chronological neighbours. Defaults are
 8 hops, 50 messages, 65,536 bytes and one day around each hit. Change them with `--thread-hops`,
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;

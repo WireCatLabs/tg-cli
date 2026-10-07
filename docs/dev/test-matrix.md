@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2126 ✅ · 51 ⛔ · 0 ❌** — 421 commands, 1756 options.
+**2128 ✅ · 51 ⛔ · 0 ❌** — 421 commands, 1758 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -418,6 +418,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments extract` | `--download` | ✅ |  |
 | `attachments extract` | `--output-dir` | ✅ |  |
 | `attachments extract` | `--limit` | ✅ |  |
+| `attachments extract` | `--ocr` | ✅ |  |
+| `attachments extract` | `--concurrency` | ✅ |  |
 | `attachments list` |  | ✅ |  |
 | `attachments list` | `--chat` | ✅ |  |
 | `attachments list` | `--needs-text` | ✅ |  |

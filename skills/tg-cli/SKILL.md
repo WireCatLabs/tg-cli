@@ -329,6 +329,13 @@ Do not silently substitute a separate model API call. The owner explicitly selec
 for bulk work. If your tools cannot access the file, report that limitation; a path on an MCP
 server does not transfer the file to a remote agent.
 
+When the owner explicitly selects bulk API processing, use `attachments extract --ocr` with
+`models.ocr.provider` and `models.ocr.model`, the ordinary `models text key set` credential command and
+`--concurrency` (1–8, default4). `--limit` is1–500files, default100; continue using cursor.
+Do not add --ocr automatically to ordinary extraction. Scanned PDFs need optional unpdf and
+@napi-rs/canvas, at most20pages. Inspect failed counts and statuses; retries reuse successful
+file caches. Agent text and old indexed text survive failed or cancelled API OCR.
+
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
 tg messages search 'content:invoice'
