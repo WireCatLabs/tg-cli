@@ -48,6 +48,11 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   ],
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
   CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
+  CHAT_PUBLIC_REQUIRED: [
+    "validation_error",
+    "only a public group can ask everyone for approval — make an invite link that needs it: " +
+      "`tg chats link create <chat> --approval`",
+  ],
   MEGAGROUP_REQUIRED: ["validation_error", "that works only in a supergroup"],
   BROADCAST_REQUIRED: ["validation_error", "that works only in a channel"],
 }

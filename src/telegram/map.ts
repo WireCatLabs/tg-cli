@@ -8,6 +8,7 @@ import type {
   Folder,
   GroupCard,
   GroupMember,
+  InviteLink,
   LinkTarget,
   Markup,
   Member,
@@ -24,6 +25,7 @@ import type {
 import type { NewPoll } from "@leemour/cli-messaging/cli"
 import type { Upload } from "@leemour/cli-messaging/sends"
 import {
+  type ChatInviteLink,
   type ChatMember,
   type ChatPreview,
   type DeleteMessageUpdate,
@@ -450,7 +452,7 @@ export const toInputPoll = ({ question, answers, multiple, anonymous, revote }: 
   InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true })
 
 /** The two of max's five group switches Telegram has, as default member permissions. */
-export const GROUP_SETTINGS = ["allCanPin", "onlyAdminsAdd"] as const
+export const GROUP_SETTINGS = ["allCanPin", "onlyAdminsAdd", "joinApproval"] as const
 
 /**
  * max's admin rights in Telegram's words. Telegram has no right to read: an admin always reads, so
@@ -484,9 +486,18 @@ export const toGroupCard = (full: FullChat): GroupCard => {
       onlyAdminsCall: null,
       onlyOwnerEditsInfo: null,
       membersSeeLink: null,
+      joinApproval: full.hasJoinRequests,
     },
   }
 }
+
+/** mtcute reads a link with no use limit as `Infinity`. */
+export const toInviteLink = (made: ChatInviteLink): InviteLink => ({
+  link: made.link,
+  approval: made.approvalNeeded,
+  expiresAt: made.endDate?.toISOString() ?? null,
+  maxUses: Number.isFinite(made.usageLimit) ? made.usageLimit : null,
+})
 
 /**
  * A folder as `chats folders` answers it; `null` for "All chats", which Telegram lists among the

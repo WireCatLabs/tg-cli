@@ -163,6 +163,15 @@ class FakeClient {
   setChatDescription = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   setChatDefaultPermissions = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   exportInviteLink = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ link: "https://t.me/+new" }))
+  toggleJoinRequests = vi.fn(async (..._args: unknown[]): Promise<unknown> => undefined)
+  createInviteLink = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> => ({
+      link: "https://t.me/+extra",
+      approvalNeeded: true,
+      endDate: new Date("2026-10-14T18:00:00Z"),
+      usageLimit: Number.POSITIVE_INFINITY,
+    }),
+  )
   kickChatMember = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   editAdminRights = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   filters: unknown[] = []
@@ -1759,6 +1768,35 @@ describe("making, joining and leaving groups", () => {
       [-100700, { pinMessages: false, sendPolls: true, inviteUsers: true }],
     ])
     expect(() => adapter.updateGroup("-100700", { settings: { onlyAdminsCall: true } })).toThrow(/no group setting/)
+  })
+
+  it("**turns join approval on**, and reads it back from the group", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = { ...full(-100700, "Plans"), hasJoinRequests: true }
+
+    expect(await adapter.updateGroup("-100700", { settings: { joinApproval: true } })).toMatchObject({
+      settings: { joinApproval: true },
+    })
+    expect(client.toggleJoinRequests.mock.calls).toEqual([[-100700, true]])
+    expect(client.setChatDefaultPermissions).not.toHaveBeenCalled()
+  })
+
+  it("**makes another invite link** with approval, an expiry and a limit, and reads no limit as none", async () => {
+    const { adapter, client } = await open()
+
+    expect(
+      await adapter.createInviteLink("-100700", { approval: true, expiresAt: "2026-10-14T18:00:00.000Z", maxUses: 5 }),
+    ).toEqual({
+      link: "https://t.me/+extra",
+      approval: true,
+      expiresAt: "2026-10-14T18:00:00.000Z",
+      maxUses: null,
+    })
+    expect(client.createInviteLink.mock.calls).toEqual([
+      [-100700, { withApproval: true, expires: new Date("2026-10-14T18:00:00.000Z"), usageLimit: 5 }],
+    ])
+    await adapter.createInviteLink("-100700", { approval: false })
+    expect(client.createInviteLink.mock.calls[1]).toEqual([-100700, { withApproval: false }])
   })
 
   it("reads a group, and replaces its link", async () => {
