@@ -213,6 +213,10 @@ class FakeClient {
     this.#record("searchMessages", args)
     return page(this.history, this.historyNext, this.historyTotal)
   }
+  searchGlobal = async (...args: unknown[]) => {
+    this.#record("searchGlobal", args)
+    return page(this.history, this.historyNext, this.historyTotal)
+  }
   getPeerDialogs = async (peer: unknown) => {
     this.#record("getPeerDialogs", [peer])
     const of = (id: unknown) =>
@@ -504,6 +508,41 @@ describe("reading", () => {
     expect(found.hasMore).toBe(true)
     expect(client.calls.find((call) => call.method === "searchMessages")?.args).toEqual([
       { chatId: -100500, fromUser: 42, limit: 2 },
+    ])
+  })
+
+  it("searches one chat on the server with its filters, and every chat without one", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(7), message(5)]
+    client.historyNext = { id: 5, date: 0 }
+
+    const inChat = await adapter.searchMessages(
+      { text: "invoice", chat: "-100500", from: "42", minDate: Date.UTC(2026, 9, 1), maxDate: Date.UTC(2026, 9, 2) },
+      { limit: 2 },
+    )
+    const everywhere = await adapter.searchMessages({ text: "invoice" }, { limit: 100 })
+
+    expect(inChat.items.map((one) => one.id)).toEqual(["7", "5"])
+    expect(inChat.hasMore).toBe(true)
+    expect(inChat.chats.map((chat) => chat.id)).toEqual([...new Set(inChat.items.map((one) => one.chatId))])
+    expect(everywhere.hasMore).toBe(false)
+    expect(
+      client.calls.filter((call) => call.method.startsWith("search")).map(({ method, args }) => [method, args]),
+    ).toEqual([
+      [
+        "searchMessages",
+        [
+          {
+            chatId: -100500,
+            query: "invoice",
+            limit: 2,
+            minDate: new Date(Date.UTC(2026, 9, 1)),
+            maxDate: new Date(Date.UTC(2026, 9, 2)),
+            fromUser: 42,
+          },
+        ],
+      ],
+      ["searchGlobal", [{ query: "invoice", limit: 100 }]],
     ])
   })
 

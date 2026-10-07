@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages search --backend both` asks Telegram as well as the archive.** Telegram's results are saved
+  and checked by the same query, so `exact:`, `-word` and the ranking keep their meaning; each message says
+  whether it came from the archive, Telegram or both. `--backend server` shows Telegram's results alone;
+  `--server-time` bounds the wait (5 s). The default stays the archive ([search](docs/search.md)).
 - **`tg chats mark-read <chat> --topic <id>` marks one forum topic read**, up to `--until` or its newest
   message, and leaves the rest of the chat as it is.
 

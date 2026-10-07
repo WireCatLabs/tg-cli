@@ -10,6 +10,12 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...["--backend", "--server-time"].map((option) => ({
+    command: "messages search",
+    option,
+    reason:
+      "cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages",
+  })),
   {
     command: "messages download",
     option: "--extract",

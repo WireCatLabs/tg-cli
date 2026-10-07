@@ -21,6 +21,7 @@ import {
   type Member,
   type Message,
   type MessageEvent,
+  type MessageHit,
   type OfficialChatStats,
   type Page,
   type PersonCard,
@@ -39,6 +40,7 @@ import type {
   MessengerAdapter,
   NewPoll,
   SendOptions,
+  ServerQuery,
   Transcript,
 } from "@leemour/cli-messaging/cli"
 import {
@@ -334,6 +336,32 @@ export class TelegramAdapter {
       const [chatId, fromUser] = await Promise.all([this.#inputOf(reference), this.#inputOf(person)])
       const page = await this.#client.searchMessages({ chatId, fromUser, limit })
       return { items: page.map(toMessage).reverse(), hasMore: page.total > page.length }
+    })
+  }
+
+  /**
+   * Telegram's own text search, newest first: in one chat with `chat`, in every chat otherwise. Its
+   * matching is undocumented, so the answer is candidates for the store's strict query.
+   */
+  searchMessages(query: ServerQuery, { limit }: { limit: number }): Promise<Page<MessageHit> & { chats: Chat[] }> {
+    return this.#call(async () => {
+      const dates = {
+        ...(query.minDate === undefined ? {} : { minDate: new Date(query.minDate) }),
+        ...(query.maxDate === undefined ? {} : { maxDate: new Date(query.maxDate) }),
+      }
+      const page =
+        query.chat === undefined
+          ? await this.#client.searchGlobal({ query: query.text, limit, ...dates })
+          : await this.#client.searchMessages({
+              chatId: await this.#inputOf(query.chat),
+              query: query.text,
+              limit,
+              ...dates,
+              ...(query.from === undefined ? {} : { fromUser: await this.#inputOf(query.from) }),
+            })
+      const chats = new Map(page.map((message) => [String(message.chat.id), peerToChat(message.chat)]))
+      // mtcute sets `next` on every page that is not empty, so only a full page says more may follow.
+      return { items: page.map(toMessageHit), hasMore: page.length === limit, chats: [...chats.values()] }
     })
   }
 
