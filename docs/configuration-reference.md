@@ -84,6 +84,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a bound on the whole command use `--timeout` | none (`--timeout` is a different thing) |
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
 | `senderColors` | `false` | a colour per sender in the table view of messages | none |
+| `searchCatchUp` | `false` | prepare the fetched or repaired chat’s graph and installed local vectors within explicit bounds; never download models or call remote providers | `--catch-up`, `--no-catch-up` |
 | `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
 | `searchCatchUp` | `false` | `store fetch` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors | `--catch-up`, `--no-catch-up` |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)) | `--record`, `--no-record` |

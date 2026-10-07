@@ -328,3 +328,14 @@ tg attachments text set "Book club" 204 --text-file ./scan.txt
 ```
 
 `--download` requires `--output-dir`; without them extraction reads retained files. `list` exposes retained paths and text status, not text contents.
+
+Extract files with `attachments extract --chat <chat> --from-dir ./files`, or add `--extract`
+to `messages download`. For MCP discover `attachments extract`, then use `tg_write`; bounded
+extraction returns a continuation `cursor` and metadata without file text. After an explicitly
+authorized fetch, `--catch-up` prepares local search within `--catch-up-chunks`,
+`--catch-up-messages` and `--catch-up-time`; `--no-catch-up` overrides profile `searchCatchUp`.
+No models are downloaded and no remote provider is called. First inspect local `store gaps plan`,
+then repair only with the owner's authorization using `store gaps repair --fingerprint <hash>`
+and explicit gap/message/time/page/pause bounds. `--background` uses ordinary store jobs.
+These commands and job metadata are also available through MCP discovery and read/write gateways.
+Unknown edges and message-id holes do not prove missing history.

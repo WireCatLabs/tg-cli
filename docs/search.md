@@ -180,3 +180,30 @@ stale links are marked and not traversed.
 
 PDF extraction needs optional `unpdf`; Word needs optional `mammoth`, installed where `tg` is. For a global npm
 install: `npm install -g unpdf mammoth`. Missing engines are reported; an agent can supply text instead.
+
+## Files, preparation and archive gaps
+
+`tg attachments extract --chat <chat> --from-dir ./files` reads an explicit directory without
+visiting subdirectories. A file needs a unique original name or a complete set of downloader names.
+Do not combine `--from-dir` with `--download` or `--output-dir`.
+`tg messages download <chat> <id> --extract` extracts only files downloaded by this invocation;
+`--all --extract` applies the same rule to the batch. Extraction checks changed bytes by hash and
+preserves agent-written text. Bounded MCP extraction returns a continuation `cursor` and metadata,
+without file text. Discover `attachments extract` through `tg_tools_search` and run it through `tg_write`.
+
+`tg store fetch <chat> --catch-up` prepares only that chat's graph and installed local vectors after
+fetching. Preparation is off by default; profile setting `searchCatchUp: true` enables it, and
+`--no-catch-up` overrides it for one run. Bounds are
+`--catch-up-chunks 500 --catch-up-messages 10000 --catch-up-time 30s`. It never downloads a model
+or calls a remote provider. The separate `prepared` result reports incomplete preparation while
+fetched history remains saved.
+
+`tg store gaps plan <chat>` locally inspects gaps between recorded inclusive coverage ranges.
+Missing message ids and quiet periods alone do not prove missing history; archive edges stay in
+`unknown`. Inspect the plan, then explicitly run `tg store gaps repair <chat> --fingerprint <hash>`.
+Defaults are five gaps, 500 messages and 30 seconds; use `--max-gaps`, `--limit`, `--repair-time`,
+`--page-size` and `--pause` to set bounds. A repeat repairs remaining gaps without deleting unseen
+messages. Ambiguous timestamp pages remain pending. `--background` uses `store jobs show`, `store jobs list` and `store jobs cancel`.
+The same commands are available through MCP discovery and `tg_read` or `tg_write`; job metadata is
+profile-scoped. Repair requires `store.gaps.repair` write permission and message read access.
+Optional catch-up shares the repair's remaining time budget.

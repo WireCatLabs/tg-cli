@@ -7,6 +7,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- File extraction through MCP, explicit directories and `messages download --extract`; changed files
+  are checked by content hash. Optional bounded local preparation follows history fetches, off by
+  default. `store gaps plan` and `store gaps repair` inspect recorded interior gaps and explicitly
+  repair them with bounds and resumable jobs; unknown edges and ambiguous pages remain pending.
+
 - **`tg stats chats official <chat>`**: Telegram's own statistics for a supergroup or channel you administer, as
   its apps show them — totals against the previous period, top posters, admins and inviters (supergroups), recent
   posts and notification share (channels), and every graph as JSON series. Read only. Works where Telegram shows
