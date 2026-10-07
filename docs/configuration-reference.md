@@ -85,6 +85,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
 | `senderColors` | `false` | a colour per sender in the table view of messages | none |
 | `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
+| `searchCatchUp` | `false` | `store fetch` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors | `--catch-up`, `--no-catch-up` |
 | `record` | `false` | keep every run ([diagnostics.md](diagnostics.md)) | `--record`, `--no-record` |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed except reply rules sending; deleting and ending sessions ask | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
@@ -306,7 +307,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed above
 |---|---|---|
 | `defaultProfile` | profile-name string | file root |
 | `limit`, `timeoutMs`, `keepRunsForDays`, `sendsPerHour` | integer ≥ 1 | profile |
-| `color`, `senderColors`, `catchUpMarksRead`, `record`, `readOnly` | boolean | profile |
+| `color`, `senderColors`, `catchUpMarksRead`, `searchCatchUp`, `record`, `readOnly` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
 | `allow` | array of allowed actions; legacy format | profile |
 | `readOtherBots` | boolean or array of profile names | bot only |
