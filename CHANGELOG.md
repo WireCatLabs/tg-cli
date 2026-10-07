@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages comments <channel> <post>` reads the comments under a channel post, and `tg messages send
+  --comment-to <post>` writes one.** Comments live in the channel's discussion group; a post without one is exit `6`.
+
 - **`tg stats chats official <chat>`**: Telegram's own statistics for a supergroup or channel you administer, as
   its apps show them — totals against the previous period, top posters, admins and inviters (supergroups), recent
   posts and notification share (channels), and every graph as JSON series. Read only. Works where Telegram shows

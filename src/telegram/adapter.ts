@@ -10,6 +10,7 @@ import {
   type Chat,
   type ChatCard,
   type ChatEvents,
+  type Discussion,
   type Folder,
   type FolderChange,
   type GroupCard,
@@ -56,6 +57,7 @@ import {
   type User,
 } from "@mtcute/node"
 import type { ProxyServer } from "../proxy.js"
+import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import { formatMarkdown } from "./format-markdown.js"
@@ -273,6 +275,23 @@ export class TelegramAdapter {
       const items = await this.#dialogs(wanted)
       const end = limit === undefined ? items.length : offset + limit
       return { items: items.slice(offset, end), hasMore: items.length > end }
+    })
+  }
+
+  discussionOf(channelId: string, postId: string): Promise<Discussion> {
+    const post = messageNumber(postId, "a post id is a number")
+    return this.#call(() => discussionOf(this.#client, Number(channelId), post))
+  }
+
+  comments(channelId: string, postId: string, { limit, before }: { limit: number; before?: string }) {
+    const post = messageNumber(postId, "a post id is a number")
+    const offset = before === undefined ? undefined : messageNumber(before, "--before-id takes a comment id")
+    return this.#call(async (): Promise<Page<Message>> => {
+      const page = await commentsOf(this.#client, Number(channelId), post, {
+        limit,
+        ...(offset === undefined ? {} : { before: offset }),
+      })
+      return { items: page.items.map(toMessage), hasMore: page.hasMore }
     })
   }
 
