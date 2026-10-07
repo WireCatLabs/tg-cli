@@ -1,5 +1,9 @@
 # Coordinated MAX and Telegram release
 
+**Historical preparation, 2026-10-04.** The versions and draft instructions below describe that batch.
+For the current release snapshot and remaining work, use [HANDOFF.md](../../HANDOFF.md) and the
+[roadmap](../roadmap.md).
+
 Claim: `release/coordinated-026`, 2026-10-04. The owner requested Telegram in the same release batch as MAX, with current shared dependencies and aligned documentation.
 
 Telegram currently pins published cli-core 0.17.0 and cli-messaging 0.139.0. The published Telegram 0.25.0 used messaging 0.137.0. Prepare a provisional 0.26.0 version/changelog PR from current main; include permalink/locator reads, voice connection reuse, transcript-aware unanswered reviews and the unpin permission correction. Review README, user docs and the embedded skill against the source and generated command diff.

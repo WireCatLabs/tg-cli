@@ -1,5 +1,9 @@
 # Release documentation readiness
 
+**Historical preparation, 2026-10-04.** The versions and draft instructions below describe that batch.
+For the current release snapshot and remaining work, use [HANDOFF.md](../../HANDOFF.md) and the
+[roadmap](../roadmap.md).
+
 Claim: docs/release-parity-readiness, 2026-10-04. The owner requested release preparation;
 another agent will publish TG/MAX. No version bump, live account operations or publication here.
 
