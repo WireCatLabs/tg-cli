@@ -102,6 +102,7 @@ const telegram: FetchLike = async (url, init) => {
 }
 
 const tg = async (argv: string[], stdin = "") => {
+  if (stop.signal.aborted) stop = new AbortController()
   const streams = captureStreams()
   const code = await run(argv, {
     streams,

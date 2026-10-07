@@ -21,6 +21,7 @@ jobs:
         pnpm exec cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check
         node --experimental-strip-types scripts/commands.ts
         git diff --exit-code
+        pnpm check:agent-docs
         pnpm docs:check
         pnpm parity:check
 

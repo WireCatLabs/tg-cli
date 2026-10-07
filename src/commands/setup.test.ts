@@ -54,6 +54,7 @@ beforeEach(() => {
   const root = mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? "", "setup-"))
   env = {
     ...process.env,
+    CI: "",
     TG_CONFIG_DIR: join(root, "config"),
     TG_STATE_DIR: join(root, "state"),
     TG_CACHE_DIR: join(root, "cache"),
@@ -99,7 +100,7 @@ const execute = async (argv: string[], environment: Partial<Environment> = {}, o
   const opened = vi.fn(() => scripted({ login, chats, close: closed, ...overrides }))
   const code = await run(argv, {
     streams,
-    tty: false,
+    tty: true,
     stdin: Object.assign(Readable.from([]), { isTTY: true }),
     keyring: memoryKeyring(),
     env,
@@ -113,23 +114,14 @@ describe("setup", () => {
   it("gets the app automatically, logs in, checks five chats and installs the selected skill", async () => {
     input.answers = ["synthetic-number", "synthetic-code"]
     const result = await execute(
-      ["setup", "--agent", "codex", "--json"],
+      ["setup", "--agent", "codex"],
       {},
       {
         me: async () => ({ id: "1", name: "Owner", username: null, phone: "synthetic-phone" }),
       },
     )
     expect(result.code).toBe(0)
-    expect(result.stdout).toHaveLength(1)
-    expect(JSON.parse(result.stdout[0] ?? "")).toMatchObject({
-      profile: "default",
-      session: { reused: false },
-      account: { id: "1" },
-      chats: { checked: 1, hasMore: true },
-      agent: { name: "codex" },
-      next: { inbox: "tg inbox --limit 5", instructions: "tg skill show" },
-    })
-    expect(JSON.parse(result.stdout[0] ?? "").account).not.toHaveProperty("phone")
+    expect(result.stdout.join()).toContain("Telegram is ready")
     expect(result.stdout.join()).not.toMatch(/synthetic-(app-hash|code|number|phone)/)
     expect(result.stderr.join()).not.toMatch(/synthetic-(app-hash|code|number|phone)/)
     expect(registration.calls).toBe(1)
@@ -236,6 +228,27 @@ describe("setup", () => {
     expect(registration.calls).toBe(0)
   })
 
+  it("skips the optional agent question under CI even on a terminal", async () => {
+    existingSession()
+    env.CI = "true"
+    const result = await execute(["setup"], { tty: true })
+    expect(result.code).toBe(0)
+    expect(input.prompts).toEqual([])
+    expect(installSkill).not.toHaveBeenCalled()
+  })
+
+  it.each(["--json", "--jsonl", "--no-input"])(
+    "refuses interactive first login with %s even on a terminal",
+    async (flag) => {
+      const result = await execute(["setup", "--agent", "none", flag], { tty: true })
+      expect(result.code).toBe(2)
+      expect(input.prompts).toEqual([])
+      expect(browser.urls).toEqual([])
+      expect(registration.calls).toBe(0)
+      expect(result.opened).not.toHaveBeenCalled()
+    },
+  )
+
   it("passes a temporary QR image to an agent without a terminal and removes it", async () => {
     withKeys()
     const path = join(env.TG_CACHE_DIR ?? "", "login.png")
@@ -251,7 +264,7 @@ describe("setup", () => {
 
   it("phone login and browser app registration remain available", async () => {
     input.answers = ["12345", "abcdef", "synthetic-number", "synthetic-code", "synthetic-password"]
-    const result = await execute(["setup", "--method", "phone", "--app", "browser", "--agent", "none", "--json"])
+    const result = await execute(["setup", "--method", "phone", "--app", "browser", "--agent", "none"])
     expect(result.code).toBe(0)
     expect(browser.urls).toEqual(["https://my.telegram.org/apps"])
     expect(result.stderr.join()).toContain("API development tools")
@@ -263,7 +276,7 @@ describe("setup", () => {
   it("shows the manual app fallback for this profile without retrying a failed registration", async () => {
     registration.error = new CliError("rate_limited", "synthetic refusal")
     const keyring = memoryKeyring()
-    const result = await execute(["work", "setup", "--app", "auto", "--agent", "none", "--json"], { keyring })
+    const result = await execute(["work", "setup", "--app", "auto", "--agent", "none"], { keyring })
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
     expect(result.stderr.join()).toContain("tg work session start --app browser")
@@ -327,7 +340,7 @@ describe("setup", () => {
     )
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
-    expect(result.stderr.join()).toContain("timeout")
+    expect(result.stderr.join()).toMatch(/timeout|did not finish within/)
     expect(close).toHaveBeenCalled()
     expect(installSkill).not.toHaveBeenCalled()
   })

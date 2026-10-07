@@ -8,6 +8,7 @@ import {
   type Closeable,
   commandWords,
   environmentOf,
+  inputPolicy,
   refuseCommandName,
   rootOf,
   runtime,
@@ -60,7 +61,7 @@ const agentFor = async (
   signal?: AbortSignal,
 ): Promise<Agent> => {
   if (given) return given
-  if (context.format !== "pretty" || !context.stdin.isTTY) return "none"
+  if (context.format !== "pretty" || !context.stdin.isTTY || inputPolicy(context.stdin).noInput) return "none"
   const answer =
     (
       await readSecret(`${" ".repeat(pad)}Agent [codex/cursor/claude/gemini/all/none] (none): `, {

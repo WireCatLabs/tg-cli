@@ -13,7 +13,7 @@ const MT_SECRET = `ee${"00".repeat(16)}${Buffer.from("example.com").toString("he
 describe("config set proxy", () => {
   it("keeps the password in the keyring and the URL without it in the file, and prints neither secret", async () => {
     const keyring = memoryKeyring()
-    const set = await tg(["proxied", "config", "set", "proxy", "-", "--json"], {
+    const set = await tg(["proxied", "config", "set", "proxy", "-", "--max-input-bytes", "64", "--json"], {
       keyring,
       stdin: piped("socks5://u:hunter2@proxy.example:1080"),
     })
@@ -34,6 +34,18 @@ describe("config set proxy", () => {
 
     expect((await tg(["proxied", "config", "unset", "proxy"], { keyring })).code).toBe(0)
     expect(proxySecrets({ keyring }).read("proxied")).toBeUndefined()
+  })
+
+  it("rejects oversized piped proxy credentials before storing them", async () => {
+    const keyring = memoryKeyring()
+    const result = await tg(["bounded-proxy", "config", "set", "proxy", "-", "--max-input-bytes", "4", "--json"], {
+      keyring,
+      stdin: piped("socks5://u:synthetic-secret@proxy.example:1080"),
+    })
+    expect(result.code).toBe(2)
+    expect(json(result.stderr).error.reason).toBe("input_limit")
+    expect(proxySecrets({ keyring }).read("bounded-proxy")).toBeUndefined()
+    expect(result.stderr.join(" ")).not.toContain("synthetic-secret")
   })
 
   it("keeps an MTProxy secret out of the file too, and says the Bot API cannot follow it", async () => {

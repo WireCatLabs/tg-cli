@@ -3,7 +3,7 @@ import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import { beforeEach, describe, expect, it, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
 import type { LoginPrompts } from "../telegram/adapter.js"
@@ -38,11 +38,14 @@ vi.mock("../telegram/registration.js", async (importOriginal) => ({
 }))
 
 beforeEach(() => {
+  vi.stubEnv("CI", "")
   answers.queue = []
   answers.prompts = []
   opened.urls = []
   registered.calls = 0
 })
+
+afterEach(() => vi.unstubAllEnvs())
 
 const terminal = () => Object.assign(Readable.from([]), { isTTY: true })
 
@@ -61,20 +64,29 @@ const loginAdapter = (seen: { prompts?: LoginPrompts; opened?: unknown; loggedOu
 
 const tg = async (argv: string[], environment: Partial<Environment> = {}) => {
   const streams = captureStreams()
-  const code = await run(argv, { streams, tty: false, keyring: memoryKeyring(), stdin: terminal(), ...environment })
+  const code = await run(argv, { streams, tty: true, keyring: memoryKeyring(), stdin: terminal(), ...environment })
   return { code, stdout: streams.stdout, stderr: streams.stderr }
 }
 
 describe("session start", () => {
   it("**logs in by QR code with the stored app** and answers with the account", async () => {
     const seen: { prompts?: LoginPrompts; opened?: unknown } = {}
-    const { code, stdout, stderr } = await tg(["session", "start", "--json"], {
-      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-      adapter: (options) => {
-        seen.opened = options.credentials
-        return loginAdapter(seen)
+    const { code, stdout, stderr } = await tg(
+      [
+        "session",
+        "start",
+        "--qr-file",
+        join(mkdtempSync(join(tmpdir(), "qr-login-")), "synthetic-login.png"),
+        "--json",
+      ],
+      {
+        env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+        adapter: (options) => {
+          seen.opened = options.credentials
+          return loginAdapter(seen)
+        },
       },
-    })
+    )
 
     expect(code).toBe(0)
     expect(JSON.parse(stdout[0] ?? "")).toEqual({
@@ -166,6 +178,7 @@ describe("session start", () => {
 
   it("**refuses to run without a terminal**, since it asks questions", async () => {
     const { code, stdout, stderr } = await tg(["session", "start"], {
+      tty: false,
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
       adapter: () => loginAdapter({}),
     })
@@ -180,6 +193,7 @@ describe("session start", () => {
     const during: { bytes?: Buffer; mode?: number } = {}
     const { code, stderr } = await tg(["session", "start", "--qr-file", path, "--json"], {
       env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      tty: false,
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
       adapter: () => ({
         ...loginAdapter({}),
@@ -202,18 +216,21 @@ describe("session start", () => {
 
   it("--qr-file without a terminal still refuses to ask for what it would have to ask", async () => {
     const { code, stderr } = await tg(["session", "start", "--qr-file", join(tmpdir(), "never.png")], {
+      tty: false,
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
       adapter: () => loginAdapter({}),
     })
 
     expect(code).toBe(2)
     expect(JSON.parse(stderr.at(-1) ?? "").error.message).toContain("needs a terminal to ask for the App api_id")
-    const phone = await tg(["session", "start", "phone", "--qr-file", "x.png"], { adapter: () => loginAdapter({}) })
+    const phone = await tg(["session", "start", "phone", "--qr-file", "x.png", "--json"], {
+      adapter: () => loginAdapter({}),
+    })
     expect(JSON.parse(phone.stderr.at(-1) ?? "").error.message).toContain("--qr-file is for a QR login")
   })
 
   it("refuses a profile named like a command", async () => {
-    const { code, stderr } = await tg(["session", "start"], {
+    const { code, stderr } = await tg(["session", "start", "--qr-file", "synthetic.png", "--json"], {
       env: { ...process.env, TG_PROFILE: "chats", TG_API_ID: "1", TG_API_HASH: "h" },
       adapter: () => loginAdapter({}),
     })

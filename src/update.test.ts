@@ -40,7 +40,7 @@ describe("the daily line about a newer version", () => {
   it("tells a person at a terminal, on stderr, after the command", async () => {
     const { env, environment } = setup()
     const streams = captureStreams()
-    const code = await run(["commands"], { streams, tty: true, env, update: environment })
+    const code = await run(["config", "show"], { streams, tty: true, env, update: environment })
     expect(code).toBe(0)
     expect(streams.stderr.at(-1)).toMatch(/tg 99\.0\.0 is out — you have .+ `tg upgrade` installs it/)
     expect(streams.stdout.join("\n")).not.toContain("99.0.0")

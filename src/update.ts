@@ -50,6 +50,15 @@ export const updateNotice = (
   }: { tty?: boolean; environment?: UpdateEnvironment; env?: NodeJS.ProcessEnv },
 ): Promise<string | undefined> => {
   try {
+    const delimiter = argv.indexOf("--")
+    const options = argv.slice(0, delimiter < 0 ? undefined : delimiter)
+    if (
+      ["--help", "-h", "--version", "-V", "--json", "--jsonl", "--dry-run", "--timeout", "commands"].some((word) =>
+        options.includes(word),
+      )
+    )
+      return Promise.resolve(undefined)
+
     if (argv.includes("upgrade")) return Promise.resolve(undefined)
     const pretty = !argv.includes("--json") && !argv.includes("--jsonl") && (tty ?? process.stdout.isTTY === true)
     // cli-core 0.8 names the command `update` in its line; tg's is `upgrade`.

@@ -12,7 +12,9 @@ order.
 | [installation.md](installation.md) | How do I install it, what does it need, where do its files go, how do I upgrade or remove it? |
 | [usage.md](usage.md) | How do I log in, read, page, send, and use it from a script — in that order? |
 | [sessions.md](sessions.md) | How does login work: QR or phone, the app from my.telegram.org, the keyring, profiles, logout? |
-| [configuration.md](configuration.md) | What can I set, with which variable, and which value wins? |
+| [configuration.md](configuration.md) | How do I configure common behavior? |
+| [configuration-reference.md](configuration-reference.md) | Every key, type, default, scope and variable |
+| [cli-contract.md](cli-contract.md) | Invocation, output, errors, headless runs, bounds and previews |
 | [archive.md](archive.md) | What does the local store keep, how do I fill it, search it, export it, keep it current and back it up? |
 | [search.md](search.md) | How do I find a message by its words, sender, chat, date, file, link or tag, save a search and count? |
 | [topic-search.md](topic-search.md) | How do I find a discussion by what it was about, keep that current, and what leaves my computer? |

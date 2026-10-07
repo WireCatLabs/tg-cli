@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- Configuration is split into a short guide and full key/type/default/scope/environment reference.
+  The public CLI contract describes headless execution, schemas, bounds, previews and retry rules.
+- Validate portable skill metadata, installed version, command paths and configuration-key coverage in CI.
+  Native login and optional setup questions respect the shared no-input policy.
+
 ## 0.30.0 — 07.10.2026
 
 ### Changed — may break scripts
@@ -24,6 +33,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   confirmed are left for you. `--confirm-send`, `--allow-dangerous` and `--http-confirmation` (from
   0.30.0) are accepted with a warning and change nothing; `tg mcp config` no longer writes them.
 
+- **Statistics use `stats messages show`, `stats chats show` and `stats tasks show`.**
+  Legacy `messages stats`, `chats stats` and `tasks stats` paths are removed. Update commands
+  and exact permissions to `stats.messages.show`, `stats.chats.show`, `stats.tasks.show`.
+  MCP: use `tg_read` with the same command path.
+- **Parser errors return exit 2 with a structured validation_error.** Scripts expecting
+  prose or exit 1 must update their error handling.
+
 ### What's new
 
 - **`tg setup` is easier to follow.** Each step is a heading, `[1/5] This computer`, with what happened
@@ -35,8 +51,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   question nobody answered and a message that mentions you by name, and close it once you answer; now you
   can see them. `tg tasks list` shows each with the message it points at; `tg tasks add <message> --type
   promise` adds what the rules cannot see; `tg tasks close <task> --as done|dismissed` closes one for good;
-  `tg stats tasks show` counts them per chat. Nothing is sent. MCP: `tg_tasks_list`, `tg_tasks_add`,
-  `tg_tasks_close`, `tg_stats_tasks_show`.
+  `tg stats tasks show` counts them per chat. Nothing is sent by these commands. MCP: use `tg_read` or `tg_write` with the same command path.
 
 - **Reply rules can be edited from the CLI and use Liquid templates with optional ai blocks.**
   `replies add|edit|on|off` changes rules and `replies audience` changes profile allow/deny lists.
@@ -45,29 +60,19 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `--ai` explicitly submits stored data. Legacy templates retain their literal fallback with warnings.
   Sending remains limited to testers and replies.send; see [archive](docs/archive.md#tester-only-reply-rules).
 
-- **MCP writes can run from web clients without server forms.** Start with
-  `--http-confirmation permissions` to use the profile's permission levels; `allow` needs no server
-  form, while `ask` still requires one. Mandatory forms remain the default. Repeat
+- **MCP writes can run from web clients without server forms.** The profile's permission levels
+  apply to HTTP and stdio alike; `ask` and `allow` permit the requested MCP write. Repeat
   `--permission key=level` to override permissions for this server process without editing config.
   App approval is separate and cannot be verified by the server. [Browser setup](docs/remote.md).
 
 - **Charts can be saved as PNG.** `tg stats charts <chat> --output activity.png` writes a dark-theme
-  chart to a new file; SVG stays available. MCP `tg_stats_charts` with `format: "png"`
+  chart to a new file; SVG stays available. MCP `tg_read` with `command: "stats charts"` and `format: "png"`
   returns an image and JSON without connecting to Telegram or writing a file.
 - **The open-tasks MCP prompt lists pending tasks.** It calls review to refresh tasks,
   then lists them with an optional `chat` filter; closes tasks only after approval and sends nothing.
 - **Browser setup covers Windows, macOS and Linux.** The guide separates PowerShell and
   terminal commands, temporary send permissions, Codex web login, two simultaneous servers
   and stopping individual tunnels. [Browser setup](docs/remote.md).
-
-### Changed — may break scripts
-
-- **Statistics use `stats messages show`, `stats chats show` and `stats tasks show`.**
-  Legacy `messages stats`, `chats stats` and `tasks stats` paths are removed. Update commands
-  and exact permissions to `stats.messages.show`, `stats.chats.show`, `stats.tasks.show`.
-  MCP names are `tg_stats_messages_show`, `tg_stats_chats_show`, `tg_stats_tasks_show`.
-- **Parser errors return exit 2 with a structured validation_error.** Scripts expecting
-  prose or exit 1 must update their error handling.
 
 ### Fixed
 

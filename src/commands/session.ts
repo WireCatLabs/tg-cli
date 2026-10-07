@@ -3,7 +3,14 @@ import { resolve } from "node:path"
 import { CliError, indent } from "@leemour/cli-core"
 import { annotate } from "@leemour/cli-core/commands"
 import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
-import { asFirstWord, commandWords, refuseCommandName, rememberAccount, rootOf } from "@leemour/cli-messaging/cli"
+import {
+  asFirstWord,
+  commandWords,
+  inputPolicy,
+  refuseCommandName,
+  rememberAccount,
+  rootOf,
+} from "@leemour/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"
@@ -108,11 +115,11 @@ export const startSession = async (
   if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
   const input = context.stdin
   // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
-  if (!input.isTTY && qrFile === undefined)
+  if ((!input.isTTY || inputPolicy(input).noInput) && qrFile === undefined)
     throw new CliError("validation_error", `${command} asks questions — run it in a terminal`)
   const ask: Ask = (prompt, echo) => {
     signal?.throwIfAborted()
-    if (!input.isTTY) {
+    if (!input.isTTY || inputPolicy(input).noInput) {
       throw new CliError("validation_error", `\`${command}\` needs a terminal to ask for the ${prompt.trim()}`)
     }
     return readSecret(`${" ".repeat(pad)}${prompt}`, { input, echo, ...(signal === undefined ? {} : { signal }) })

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2085 ✅ · 52 ⛔ · 0 ❌** — 414 commands, 1723 options.
+**2086 ✅ · 51 ⛔ · 0 ❌** — 414 commands, 1723 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -401,6 +401,41 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags list` |  | ✅ |  |
 | `tags list` | `--tag` | ✅ |  |
 | `tags list` | `--type` | ✅ |  |
+| `stats messages show` |  | ✅ |  |
+| `stats messages show` | `--sync-first` | ✅ |  |
+| `stats messages show` | `--max-chats` | ✅ |  |
+| `stats messages show` | `--sync-time` | ✅ |  |
+| `stats messages show` | `--max-messages` | ✅ |  |
+| `stats messages show` | `--by` | ✅ |  |
+| `stats messages show` | `--chat` | ✅ |  |
+| `stats messages show` | `--source` | ✅ |  |
+| `stats messages show` | `--limit` | ✅ |  |
+| `stats messages show` | `--timezone` | ✅ |  |
+| `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
+| `stats chats show` |  | ✅ |  |
+| `stats chats show` | `--since-time` | ✅ |  |
+| `stats chats show` | `--by` | ✅ |  |
+| `stats chats show` | `--timezone` | ✅ |  |
+| `stats tasks show` |  | ✅ |  |
+| `stats tasks show` | `--chat` | ✅ |  |
+| `stats tasks show` | `--type` | ✅ |  |
+| `stats charts` |  | ✅ |  |
+| `stats charts` | `--chart-kind` | ✅ |  |
+| `stats charts` | `--by` | ✅ |  |
+| `stats charts` | `--since-time` | ✅ |  |
+| `stats charts` | `--timezone` | ✅ |  |
+| `stats charts` | `--output` | ✅ |  |
+| `tasks list` |  | ✅ |  |
+| `tasks list` | `--state` | ✅ |  |
+| `tasks list` | `--chat` | ✅ |  |
+| `tasks list` | `--type` | ✅ |  |
+| `tasks list` | `--before-time` | ✅ |  |
+| `tasks list` | `--limit` | ✅ |  |
+| `tasks add` |  | ✅ |  |
+| `tasks add` | `--type` | ✅ |  |
+| `tasks close` |  | ✅ |  |
+| `tasks close` | `--as` | ✅ |  |
+| `tasks close` | `--reason` | ✅ |  |
 | `searches create` |  | ✅ |  |
 | `searches create` | `--chat` | ✅ |  |
 | `searches create` | `--source` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
@@ -418,17 +453,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches history` | `--limit` | ⛔ | cli-messaging src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation |
 | `searches delete` |  | ✅ |  |
 | `searches clear` |  | ✅ |  |
-| `tasks list` |  | ✅ |  |
-| `tasks list` | `--state` | ✅ |  |
-| `tasks list` | `--chat` | ✅ |  |
-| `tasks list` | `--type` | ✅ |  |
-| `tasks list` | `--before-time` | ✅ |  |
-| `tasks list` | `--limit` | ✅ |  |
-| `tasks add` |  | ✅ |  |
-| `tasks add` | `--type` | ✅ |  |
-| `tasks close` |  | ✅ |  |
-| `tasks close` | `--as` | ✅ |  |
-| `tasks close` | `--reason` | ✅ |  |
 | `flood clear` |  | ✅ |  |
 | `replies add` |  | ✅ |  |
 | `replies on` |  | ✅ |  |
@@ -474,30 +498,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `replies pause` |  | ✅ |  |
 | `replies resume` |  | ✅ |  |
 | `replies status` |  | ✅ |  |
-| `stats messages show` |  | ✅ |  |
-| `stats messages show` | `--sync-first` | ✅ |  |
-| `stats messages show` | `--max-chats` | ✅ |  |
-| `stats messages show` | `--sync-time` | ✅ |  |
-| `stats messages show` | `--max-messages` | ✅ |  |
-| `stats messages show` | `--by` | ✅ |  |
-| `stats messages show` | `--chat` | ✅ |  |
-| `stats messages show` | `--source` | ✅ |  |
-| `stats messages show` | `--limit` | ✅ |  |
-| `stats messages show` | `--timezone` | ✅ |  |
-| `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
-| `stats chats show` |  | ✅ |  |
-| `stats chats show` | `--since-time` | ✅ |  |
-| `stats chats show` | `--by` | ✅ |  |
-| `stats chats show` | `--timezone` | ✅ |  |
-| `stats tasks show` |  | ✅ |  |
-| `stats tasks show` | `--chat` | ✅ |  |
-| `stats tasks show` | `--type` | ✅ |  |
-| `stats charts` |  | ✅ |  |
-| `stats charts` | `--chart-kind` | ✅ |  |
-| `stats charts` | `--by` | ✅ |  |
-| `stats charts` | `--since-time` | ✅ |  |
-| `stats charts` | `--timezone` | ✅ |  |
-| `stats charts` | `--output` | ✅ |  |
 | `recipients list` |  | ✅ |  |
 | `recipients add` |  | ✅ |  |
 | `recipients remove` |  | ✅ |  |
@@ -533,7 +533,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `upgrade` | `--check` | ✅ |  |
 | `mcp` |  | ✅ |  |
 | `mcp` | `--permission` | ✅ |  |
-| `mcp` | `--confirm-send` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with confirmSend, and mcp config below shows the flag reaching the server's arguments |
+| `mcp` | `--confirm-send` | ✅ |  |
 | `mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin, as mcp does; cli-messaging's src/mcp/mcp.test.ts drives the server with allowDangerous, and mcp config below shows the flag reaching the server's arguments |
 | `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |
 | `mcp` | `--allow-mark-read` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |

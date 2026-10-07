@@ -137,7 +137,7 @@ one; `TG_PROFILE_LOCK` refuses every other. A typo in a command name is read as 
 Exit code `3`. `config.json` has a setting `tg` does not know, or a value of the wrong type. The error
 names the setting and the profile it is under. It is refused on purpose: a setting silently ignored
 costs half a day. Fix it by hand, or remove it with `tg config unset <setting>`
-([configuration.md](configuration.md#a-typo-is-an-error-not-a-default)).
+([configuration.md](configuration-reference.md#a-typo-is-an-error-not-a-default)).
 
 ## "--limit takes a whole number from 1 upwards"
 
@@ -220,7 +220,7 @@ allow it: `tg recipients add <chat>`. An agent should stop here and ask you.
 
 Exit code `5`, before anything is sent to Telegram. The profile's `permissions` refused it: `deny`
 stops reading too, `readonly` stops a change. The error says which key, where it was set, and the
-command that allows it ([configuration.md](configuration.md#what-a-profile-may-do)). An agent should
+command that allows it ([configuration.md](configuration-reference.md#what-a-profile-may-do)). An agent should
 stop and ask you, not change the setting.
 
 ## "… asks before it acts"
@@ -252,7 +252,7 @@ was a send, check the chat before you repeat it.
 Exit code `10`. The connection could not be made or broke: no network, a firewall, a proxy, or DNS.
 The code in brackets says which (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`). Commands that answer from
 the store work without the network: `tg --offline chats list`. Where Telegram is blocked, set a
-proxy ([configuration.md](configuration.md#through-a-proxy)).
+proxy ([configuration.md](configuration-reference.md#through-a-proxy)).
 
 ## "the proxy … cannot be reached" or "… refused"
 
