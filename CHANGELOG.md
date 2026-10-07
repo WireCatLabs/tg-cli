@@ -21,7 +21,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **`tg messages search` finds other forms of a word** (cli-messaging 0.163.0): `квартира` finds `квартиру`,
+- **`tg messages search` finds other forms of a word** (cli-messaging 0.165.0): `квартира` finds `квартиру`,
   `canción` finds `canciones`, and quoted phrases match every form too. Exact forms come first. For the old,
   exact matching use `exact:квартира` or `--exact` (also on `tg stats messages show`, `tg searches create` and
   the MCP search). Run `tg store migrate` once: until the word stems are built, a search by words answers

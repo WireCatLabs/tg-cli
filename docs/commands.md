@@ -970,8 +970,6 @@ tg messages send <chat> [text] [options]
 | `--file <file>` | attach a file; the text becomes its caption. |
 | `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--as-file` | send the --file as a file to download, a video included. |
-| `--spoiler` | hide the --photo or video behind a spoiler until tapped. |
-| `--caption-above` | show the text above the --photo or --file, not below it. |
 | `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
 | `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
@@ -1499,6 +1497,43 @@ tg topics create <chat> <title> [options]
 | Option | What it does |
 |---|---|
 | `--send-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
+
+### `tg topics edit`
+
+rename, close or reopen a forum topic
+
+**Changes something in Telegram.**
+
+```sh
+tg topics edit <chat> <topic> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the topic id, from `topics list`. |
+
+| Option | What it does |
+|---|---|
+| `--title <title>` | the new title, at most 128 UTF-8 bytes. |
+| `--closed <on\|off>` | on closes the topic to new messages, off reopens it. |
+| `--pinned <on\|off>` | on pins the topic at the top of the list, off unpins it. |
+| `--hidden <on\|off>` | on hides the General topic from the topic list, off shows it. |
+
+### `tg topics order`
+
+put the pinned topics in this order; it pins and unpins nothing
+
+**Changes something in Telegram.**
+
+```sh
+tg topics order <chat> <topic>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the pinned topics' ids, first to last. |
 
 ## `tg watch`
 
