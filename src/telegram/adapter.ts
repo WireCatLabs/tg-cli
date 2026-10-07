@@ -964,7 +964,10 @@ export class TelegramAdapter {
     })
   }
 
-  /** One `random_id` per logical create, as a send has: a retry repeats it and Telegram keeps one poll. */
+  /**
+   * One `random_id` per logical create, as a send has: a retry repeats it and Telegram keeps one poll
+   * (measured 2026-10-08: the second call answered the first poll's message id — unlike topic creation).
+   */
   createPoll(
     chatId: string,
     poll: NewPoll,
