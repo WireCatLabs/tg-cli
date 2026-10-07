@@ -99,6 +99,22 @@ const tg = async (argv: string[], adapter: Adapter) => {
 const journal = (profile: string) => new SendJournal(sendsPathFor(TG, profile)).entries()
 
 describe("the send guard in front of messages send", () => {
+  it("sends --comment-to as a reply in the post's discussion group, which the journal records", async () => {
+    const replies: (string | undefined)[] = []
+    const adapter = scripted({
+      discussionOf: async () => ({ chatId: "-1002", messageId: "900" }),
+      send: async (chatId, text, { sendId, replyTo }) => {
+        replies.push(replyTo)
+        return { sendId, message: message("901", { chatId, text, outgoing: true }) }
+      },
+    })
+    const { code } = await tg(["g-comment", "messages", "send", "Valencia", "nice", "--comment-to", "42"], adapter)
+
+    expect(code).toBe(0)
+    expect(replies).toEqual(["900"])
+    expect(journal("g-comment")).toMatchObject([{ chatId: "-1002", outcome: "sent" }])
+  })
+
   it("lets a send through by default and journals it without its text", async () => {
     const { adapter, sent } = telegram()
     const { code } = await tg(["g-open", "messages", "send", "Valencia", "a secret plan"], adapter)

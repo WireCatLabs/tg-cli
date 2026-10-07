@@ -214,6 +214,26 @@ describe("topics", () => {
   })
 })
 
+describe("messages comments", () => {
+  it("pages a post's comments with --limit and --before-id", async () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      discussionOf: async () => ({ chatId: "-1002", messageId: "900" }),
+      comments: async (_channel, _post, options) => {
+        asked.push(options)
+        return { items: [message("905", { chatId: "-1002" })], hasMore: true }
+      },
+    })
+    const read = await tg(["messages", "comments", chat.id, "42", "--limit", "1", "--before-id", "950", "--json"], {
+      adapter: () => adapter,
+    })
+
+    expect(read.code).toBe(0)
+    expect(json(read.stdout)).toMatchObject({ discussion: { chatId: "-1002", messageId: "900" }, hasMore: true })
+    expect(asked).toEqual([{ limit: 1, before: "950" }])
+  })
+})
+
 describe("contacts profile", () => {
   const described = scripted({
     profile: async () => ({
