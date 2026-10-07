@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2194 ✅ · 65 ⛔ · 0 ❌** — 439 commands, 1820 options.
+**2195 ✅ · 70 ⛔ · 0 ❌** — 441 commands, 1824 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -308,6 +308,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `server uninstall` |  | ✅ |  |
 | `store status` |  | ✅ |  |
 | `store fetch` |  | ✅ |  |
+| `store fetch` | `--all` | ⛔ | cli-messaging src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-messaging 0.174.0) |
 | `store fetch` | `--limit` | ✅ |  |
 | `store fetch` | `--page-size` | ✅ |  |
 | `store fetch` | `--pause` | ✅ |  |
@@ -478,6 +479,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags list` | `--tag` | ✅ |  |
 | `tags list` | `--source` | ⛔ | cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers |
 | `tags list` | `--type` | ✅ |  |
+| `metadata get` |  | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
+| `metadata get` | `--chat` | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
+| `metadata refresh` |  | ✅ |  |
+| `metadata refresh` | `--chat` | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
+| `metadata refresh` | `--limit` | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
 | `stats messages show` |  | ✅ |  |
 | `stats messages show` | `--sync-first` | ✅ |  |
 | `stats messages show` | `--max-chats` | ✅ |  |

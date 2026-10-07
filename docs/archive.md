@@ -44,6 +44,8 @@ tg store fetch "Book club"                    # run again to continue where it s
 tg store fetch "Book club" --since-time 30d   # only back to 30 days ago
 tg store fetch "Book club" --last 5000        # only until the newest 5000 are held
 tg store fetch "Book club" --limit 5000       # up to 5000 messages in this run
+tg store fetch --all                          # every chat, most recently active first: the last 90 days
+tg store fetch --all --since-time 365d        # every chat, back to a year ago
 ```
 
 `store fetch` reads a chat's history page by page, newest first, and saves it. **It is resumable**:

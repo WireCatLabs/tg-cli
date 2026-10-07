@@ -1,9 +1,33 @@
 # Message search
 
-`tg messages search` finds messages in the local archive: the copy of your chats that tg keeps on this
-computer. By default it never connects to Telegram and marks nothing read; `--backend both` also asks
-Telegram ([below](#asking-telegram-too---backend)). A message tg has not fetched cannot be
-found, so fetch the history first: `tg store fetch <chat>` ([archive](archive.md)).
+`tg messages search` finds messages in the local archive, the copy of your chats that tg keeps on this
+computer, and asks Telegram's own search too ([below](#asking-telegram-too---backend)). It marks nothing read.
+
+## Prepare your archive first
+
+Good search needs your chats downloaded. Telegram's search finds a message by its words even if tg never
+fetched it, but everything else reads only the archive: counting with `stats`, topic search, `has:`,
+`filename:`, regex, presets, tags, and the ranking of word forms. Download every chat once:
+
+```sh
+tg store fetch --all --background     # the last 90 days of every chat, as a background job
+tg store jobs show                    # how far it got
+```
+
+Add `--since-time 365d` to go further back, or fetch one chat whole with `tg store fetch "Book club"`
+([archive](archive.md)). After that, `tg serve` keeps the archive current.
+
+Every search says what it searched. In the terminal, when the archive could hold more or nothing was
+found, one line says how many messages and chats were searched, how many chats were never fetched or
+are behind, and the command that fixes it:
+
+```text
+searched 12,430 messages in 37 chats — 5 never fetched; `tg store fetch --all --background` fetches them
+```
+
+With `--json`, `coverage` carries the same: `messages`, `chats`, up to ten `attention` chats and `next`.
+An agent that finds nothing while `next` is set should run it, or ask you, before saying the message does
+not exist.
 
 This page covers everyday searches. Three more pages go further:
 
@@ -102,6 +126,19 @@ A tag is your own label on a chat, a person or one message (`--message <id> --ch
 in the local archive only and is never sent to Telegram. `tag:work` finds messages tagged `work`,
 messages in a chat tagged `work` and messages from a person tagged `work`. A tag is 1–32 letters a–z,
 digits and hyphens.
+
+Groups and channels can be tagged automatically, from their title, username and description — no messages
+and no model:
+
+```sh
+tg metadata refresh --chat "Book club"   # read the chat's description from Telegram; the chat is not changed
+tg tags auto --dry-run                   # what it would tag, without writing
+tg tags auto                             # write the automatic tags
+tg tags list --source auto               # only the automatic ones
+```
+
+Automatic tags never touch yours: a rerun removes only stale automatic ones. Adding a tag the automatic
+run already gave makes it yours.
 
 ## Saved searches and history
 
