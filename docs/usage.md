@@ -408,6 +408,11 @@ An id not in the list is refused. `--send-as` works with files, `tg messages for
 `tg polls create` too — for a forward, the list is the one of the `--to` chat. To repeat an unknown
 outcome, give the same `--send-as` with the `--send-id`.
 
+A group can have a channel saved as its default sender — Telegram does this for the discussion group of your
+channel. There a send, forward or poll **without** `--send-as` is refused (exit `2`) instead of going out as the
+channel: the error names `--send-as <your id>` to post as yourself and `--send-as <channel id>` to post as the
+channel.
+
 ### When the outcome is unknown
 
 Exit code `14` means the connection broke after the message left: **it may have gone**. The error

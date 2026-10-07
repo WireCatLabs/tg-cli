@@ -93,7 +93,7 @@ import {
 } from "./map.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
-import { sendAsIdentities, sendAsIdentities, sendAsPeer } from "./send-as.js"
+import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -445,6 +445,10 @@ export class TelegramAdapter {
 
   sendAsIdentities(chatId: string): Promise<SenderIdentity[]> {
     return this.#call(() => sendAsIdentities(this.#client, chatId))
+  }
+
+  savedSender(chatId: string): Promise<string | null> {
+    return this.#call(() => savedSenderOf(this.#client, chatId, this.self()))
   }
 
   permalink(chatId: string, messageId: string) {

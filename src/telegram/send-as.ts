@@ -40,6 +40,22 @@ export const sendAsIdentities = async (client: Client, chatId: string): Promise<
   return [self, ...others].map((one) => ({ ...one, default: one.id === chosen }))
 }
 
+/**
+ * The group's saved default sender, when it is not the account: Telegram posts as it when a send names none
+ * (measured 2026-10-07: a comment went out as the linked channel). One request, a supergroup only.
+ */
+export const savedSenderOf = async (
+  client: Pick<TelegramClient, "getFullChat">,
+  chatId: string,
+  self: string | null,
+): Promise<string | null> => {
+  if (getBasicPeerType(Number(chatId)) !== "channel") return null
+  const { full } = await client.getFullChat(Number(chatId))
+  if (full._ !== "channelFull" || !full.defaultSendAs) return null
+  const saved = String(getMarkedPeerId(full.defaultSendAs))
+  return saved === self ? null : saved
+}
+
 /** Telegram takes `send_as` in channels and supergroups only; elsewhere the account is the one author. */
 export const sendAsPeer = (chatId: string, sendAs: string, self: string | null): number | undefined => {
   if (!/^-?\d{1,16}$/.test(sendAs) || !Number.isSafeInteger(Number(sendAs))) {

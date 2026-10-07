@@ -1,6 +1,6 @@
 import { tl } from "@mtcute/node"
 import { describe, expect, it, vi } from "vitest"
-import { sendAsIdentities, sendAsPeer } from "./send-as.js"
+import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
 
 const me = { id: 1, displayName: "Owner" }
 const channel = (id: number, title: string, broadcast: boolean) => ({ _: "channel", id, title, broadcast })
@@ -88,5 +88,25 @@ describe("the send_as peer", () => {
     expect(sendAsPeer("42", "1", "1")).toBeUndefined()
     expect(() => sendAsPeer("-7", "-1002", "1")).toThrow("only a supergroup")
     expect(() => sendAsPeer("-1000000001007", "@channel", "1")).toThrow("--send-as takes")
+  })
+})
+
+describe("the saved sender", () => {
+  const full = (value: unknown) => ({ getFullChat: vi.fn(async () => ({ full: value })) })
+
+  it("is the saved channel of a supergroup, and nothing where it is the account, unset, or not a supergroup", async () => {
+    const channel = full({ _: "channelFull", defaultSendAs: { _: "peerChannel", channelId: 2 } })
+    expect(await savedSenderOf(channel, "-1000000001007", "1")).toBe("-1000000000002")
+    expect(
+      await savedSenderOf(
+        full({ _: "channelFull", defaultSendAs: { _: "peerUser", userId: 1 } }),
+        "-1000000001007",
+        "1",
+      ),
+    ).toBeNull()
+    expect(await savedSenderOf(full({ _: "channelFull" }), "-1000000001007", "1")).toBeNull()
+    const basic = full({ _: "chatFull" })
+    expect(await savedSenderOf(basic, "-7", "1")).toBeNull()
+    expect(basic.getFullChat).not.toHaveBeenCalled()
   })
 })
