@@ -1002,7 +1002,7 @@ describe("doctor --online", () => {
 })
 
 describe("mcp", () => {
-it("config leaves out --confirm-send and --allow-dangerous, which show no form any more", async () => {
+  it("config leaves out --confirm-send and --allow-dangerous, which show no form any more", async () => {
     const { code, stdout } = await tg(["mcp", "config", "--confirm-send", "--allow-dangerous", "--json"], {
       mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
     } as never)

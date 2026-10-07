@@ -484,7 +484,7 @@ describe("MCP startup overrides", () => {
     expect(result.stderr.join("")).toContain("--permission takes")
     expect(adapter).not.toHaveBeenCalled()
   })
-it("ignores retired confirmation options and still validates the HTTP public URL", async () => {
+  it("ignores retired confirmation options and still validates the HTTP public URL", async () => {
     const adapter = vi.fn(() => scripted())
     const result = await tg(["mcp", "--http", "--http-confirmation", "permissions", "--confirm-send", "--json"], {
       adapter,

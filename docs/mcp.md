@@ -58,6 +58,7 @@ tg work mcp config                  # another profile
 ```
 
 Review profile permissions before connecting an agent.
+
 ```json
 {
   "mcpServers": {

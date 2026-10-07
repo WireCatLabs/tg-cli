@@ -354,7 +354,7 @@ describe("setup", () => {
     const result = await execute(["setup", "--timeout", "100ms"], { stdin, tty: true })
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
-expect(result.stderr.join()).toContain("did not finish within 100ms")
+    expect(result.stderr.join()).toContain("did not finish within 100ms")
     expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(ended).not.toHaveBeenCalled()
     expect(installSkill).not.toHaveBeenCalled()
