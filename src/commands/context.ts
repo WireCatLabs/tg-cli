@@ -121,6 +121,7 @@ export const TELEGRAM: Messenger = {
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   groupSettings: GROUP_SETTINGS,
   addsWithHistory: false,
+  officialStats: true,
   knowsAccountAge: false,
   adminRights: ADMIN_RIGHTS,
   // Saved Messages is the chat with yourself, so its id is the account's.

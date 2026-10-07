@@ -194,6 +194,33 @@ medians and proportions may differ from those for the whole group. The `fetch` f
 to download missing messages. Incomplete event history also limits join and leave counts. Even a full
 message history cannot reconstruct past member profiles or daily rosters from before recording began.
 
+### Telegram's own statistics
+
+```sh
+tg stats chats official <chat> --json
+```
+
+Telegram computes statistics for admins of large enough supergroups and channels, the same as the Statistics
+screen in its apps. `tg stats chats official` asks for them and prints one JSON object. Telegram picks the
+period, given as `period`. Each total comes with the value for the period before it.
+
+- A supergroup (`kind: "group"`) has members, messages, viewers and posters, the top posters, admins and
+  inviters, and 8 graphs: growth, members, new members by source, languages, messages, actions, hours and
+  weekdays.
+- A channel (`kind: "channel"`) has followers, views, shares and reactions per post and per story, how many
+  followers have notifications on, the recent posts with their counts, and 12 graphs.
+
+Each graph is a list of series over its `x` values: `date` (a day, `YYYY-MM-DD`), `time` (ISO 8601) or
+`number`. When Telegram cannot give a graph, it shows as `{ "error": ... }` and the other graphs are still
+there. The command only reads: nothing is sent, marked read or changed. `--jsonl` is refused.
+
+Telegram answers this only for a chat where it shows you statistics. In a basic group, in a chat you do not
+administer, or in one that is too small, the command fails with a permission or validation error. One run
+costs about 10 to 17 requests: the chat card, the statistics, and each graph Telegram sends later. Name the
+chat by `@username` or id: a title is first looked up in your chat list, which adds a request for each
+100 chats. Telegram keeps statistics on a server of its own, so the first run adds a login key for that server
+to the session file; it is never printed.
+
 ### Member snapshots and changes
 
 `tg chats members fetch` reads members into the local store, recording profiles, changes, the day's

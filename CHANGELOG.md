@@ -5,6 +5,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg stats chats official <chat>`**: Telegram's own statistics for a supergroup or channel you administer, as
+  its apps show them — totals against the previous period, top posters, admins and inviters (supergroups), recent
+  posts and notification share (channels), and every graph as JSON series. Read only. Works where Telegram shows
+  you statistics; elsewhere it fails with a permission or validation error. See [Groups you run](docs/groups.md).
+- cli-messaging 0.162.0 also brings `store gaps repair`, the catch-up options of `store fetch`,
+  `messages download --extract` and `attachments extract --from-dir` / `--cursor`.
+
 ### Changed — may break scripts
 
 - Configuration is split into a short guide and full key/type/default/scope/environment reference.

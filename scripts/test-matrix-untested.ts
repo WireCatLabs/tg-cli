@@ -10,6 +10,43 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  {
+    command: "messages download",
+    option: "--extract",
+    reason:
+      "cli-messaging src/cli/messenger/attachments.test.ts covers reading text layers after a download; this consumer mounts the shared command (cli-messaging 0.162.0)",
+  },
+  ...["--catch-up", "--no-catch-up", "--catch-up-chunks", "--catch-up-messages", "--catch-up-time"].map((option) => ({
+    command: "store fetch",
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0)",
+  })),
+  ...[
+    "--limit",
+    "--max-gaps",
+    "--repair-time",
+    "--page-size",
+    "--pause",
+    "--fingerprint",
+    "--catch-up",
+    "--no-catch-up",
+    "--catch-up-chunks",
+    "--catch-up-messages",
+    "--catch-up-time",
+    "--background",
+  ].map((option) => ({
+    command: "store gaps repair",
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0)",
+  })),
+  ...["--from-dir", "--cursor"].map((option) => ({
+    command: "attachments extract",
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/attachments.test.ts covers extraction from a directory and its cursor; this consumer mounts the shared command (cli-messaging 0.162.0)",
+  })),
   ...["mcp setup", "mcp doctor"].map((command) => ({
     command,
     option: "--permission",
