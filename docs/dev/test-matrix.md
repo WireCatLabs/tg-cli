@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2143 ✅ · 93 ⛔ · 0 ❌** — 431 commands, 1805 options.
+**2147 ✅ · 93 ⛔ · 0 ❌** — 431 commands, 1809 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -141,6 +141,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--before-time` | ✅ |  |
 | `messages list` | `--after-id` | ✅ |  |
 | `messages list` | `--after-time` | ✅ |  |
+| `messages list` | `--topic` | ✅ |  |
 | `messages list` | `--transcribe` | ✅ |  |
 | `messages list` | `--model` | ✅ |  |
 | `messages list` | `--mark-read` | ✅ |  |
@@ -183,6 +184,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--at-time` | ✅ |  |
 | `messages send` | `--spoiler` | ✅ |  |
 | `messages send` | `--caption-above` | ✅ |  |
+| `messages send` | `--filename` | ✅ |  |
+| `messages send` | `--html` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
 | `messages context` | `--thread` | ✅ |  |
@@ -202,6 +205,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages transcribe` | `--model` | ✅ |  |
 | `messages edit` |  | ✅ |  |
 | `messages edit` | `--md` | ✅ |  |
+| `messages edit` | `--html` | ✅ |  |
 | `messages delete` |  | ✅ |  |
 | `messages delete` | `--for-everyone` | ✅ |  |
 | `messages delete` | `--allow-dangerous` | ✅ |  |

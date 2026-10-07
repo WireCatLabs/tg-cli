@@ -64,6 +64,7 @@ import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
+import { formatHtml } from "./format-html.js"
 import { formatMarkdown } from "./format-markdown.js"
 import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
 import {
@@ -157,6 +158,10 @@ const EVENT_PAGES = 10
 export class TelegramAdapter {
   async formatMarkdown(text: string) {
     return formatMarkdown(text)
+  }
+
+  async formatHtml(text: string) {
+    return formatHtml(text)
   }
 
   readonly #client: TelegramClient
@@ -300,6 +305,25 @@ export class TelegramAdapter {
         ...(offset === undefined ? {} : { before: offset }),
       })
       return { items: page.items.map(toMessage), hasMore: page.hasMore }
+    })
+  }
+
+  /** Telegram reads a thread with messages.search and its top message id (core.telegram.org/api/threads). */
+  topicHistory(
+    reference: string,
+    threadId: string,
+    { limit, before }: { limit: number; before?: string },
+  ): Promise<Page<Message>> {
+    const thread = topicNumber(threadId)
+    const offset = before === undefined ? undefined : messageNumber(before, "--before-id takes a message id")
+    return this.#call(async () => {
+      const page = await this.#client.searchMessages({
+        chatId: await this.#inputOf(reference),
+        threadId: thread,
+        limit,
+        ...(offset === undefined ? {} : { offset }),
+      })
+      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined }
     })
   }
 
@@ -1696,6 +1720,24 @@ export class TelegramAdapter {
     return this.#write("the folder may have been deleted — repeating it is safe", async () => {
       await this.#client.deleteFolder(Number(folderId))
     })
+  }
+
+  /** "All chats" (id 0) keeps its place: only Premium accounts may move it, and tg does not list it. */
+  orderFolders(folderIds: string[]): Promise<void> {
+    return this.#write("the folders may be in the new order already — repeating it is safe", async () => {
+      const current = (await this.#filters()).map((one) => (one._ === "dialogFilterDefault" ? 0 : one.id))
+      const order = folderIds.map(Number)
+      const all = current.indexOf(0)
+      if (all >= 0) order.splice(all, 0, 0)
+      await this.#client.setFoldersOrder(order)
+    })
+  }
+
+  joinFolder(link: string): Promise<Folder> {
+    return this.#write(
+      "the folder may have been joined; check `tg chats folders list` before repeating — a repeat joins nothing new",
+      async () => toFolder(await this.#client.joinChatlist(link)) as Folder,
+    )
   }
 
   async #filters(): Promise<tl.TypeDialogFilter[]> {
