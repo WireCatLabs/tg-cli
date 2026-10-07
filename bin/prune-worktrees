@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+# Removes worktrees whose work is already on main, and their local branches. Run it from a
+# terminal: inside the sandbox git cannot delete a worktree or its record.
+#
+#   bin/prune-worktrees           # lists them, asks, then removes
+#
+# A worktree is removed only when its commit is on origin/main or its branch's PR is merged, and
+# nothing in it is uncommitted except build tarballs (*.tgz). Anything else is listed as kept.
+set -eu
+
+cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
+git fetch -q --prune origin
+git worktree prune
+
+main=$(pwd -P)
+list=$(mktemp)
+trap 'rm -f "$list"' EXIT
+
+git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,8)} /^detached/{b=""} /^$/{print w "\t" b; b=""}' |
+  while IFS="$(printf '\t')" read -r tree ref; do
+    [ "$tree" = "$main" ] || [ ! -d "$tree" ] && continue
+    branch=${ref#refs/heads/}
+    dirty=$(git -C "$tree" status --porcelain 2>/dev/null | grep -v '^?? [^/]*\.tgz$' || true)
+    if [ -n "$dirty" ]; then
+      echo "keep  $tree — uncommitted changes"
+      continue
+    fi
+    head=$(git -C "$tree" rev-parse HEAD)
+    if git merge-base --is-ancestor "$head" origin/main; then
+      echo "$tree	$branch" >> "$list"
+    elif [ -n "$branch" ] && [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
+      echo "$tree	$branch" >> "$list"
+    else
+      echo "keep  $tree — not merged"
+    fi
+  done
+
+[ -s "$list" ] || { echo "nothing to remove"; exit 0; }
+echo
+cut -f1 "$list" | sed 's/^/remove /'
+printf '\nRemove these %s worktrees and their local branches? [y/N] ' "$(wc -l < "$list")"
+read -r answer
+[ "$answer" = y ] || exit 1
+
+while IFS="$(printf '\t')" read -r tree branch; do
+  git worktree remove --force "$tree"
+  [ -z "$branch" ] || git branch -D "$branch" > /dev/null
+done < "$list"
+git worktree prune
+echo "removed $(wc -l < "$list")"
