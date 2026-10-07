@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats requests accept|decline <chat> --all [--link <link>]` answers every pending request at once, and
+  `tg chats link list` / `tg chats link revoke` show and stop your invite links.** An `--all` accept is counted
+  against the hourly limit before anyone is let in.
 - Rankings retain explicit Telegram reply links and linked channel discussions; ambiguous forum-topic links remain unknown.
 - [The ranking guide](docs/rankings.md) covers measures, scores, coverage, saved selections and evidence. The SDK preserves exclusive date boundaries when replaying saved selections.
 - **`tg store fetch --all` downloads every chat** — the last 90 days of each, most recently active first;

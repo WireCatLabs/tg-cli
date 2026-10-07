@@ -6,8 +6,13 @@ import { toMember } from "./map.js"
 type Client = Pick<TelegramClient, "getInviteLinkMembers" | "hideJoinRequest">
 
 /** Newest first, as Telegram lists them; `total` counts every pending request, not just this page. */
-export const joinRequestsOf = async (client: Client, chatId: number, limit: number): Promise<Page<JoinRequest>> => {
-  const page = await client.getInviteLinkMembers(chatId, { requested: true, limit })
+export const joinRequestsOf = async (
+  client: Client,
+  chatId: number,
+  limit: number,
+  link?: string,
+): Promise<Page<JoinRequest> & { total: number }> => {
+  const page = await client.getInviteLinkMembers(chatId, { requested: true, limit, ...(link ? { link } : {}) })
   return {
     items: page.map((one) => ({
       person: toMember(one.user),
@@ -15,6 +20,7 @@ export const joinRequestsOf = async (client: Client, chatId: number, limit: numb
       ...(one.bio ? { about: one.bio } : {}),
     })),
     hasMore: page.total > page.length,
+    total: page.total,
   }
 }
 
