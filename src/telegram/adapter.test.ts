@@ -104,6 +104,10 @@ class FakeClient {
     if (current && typeof current === "object") this.fullChats.set(id, { ...current, isForum: true })
   })
   topics: unknown[] = []
+  editForumTopic = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  toggleForumTopicPinned = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  toggleGeneralTopicHidden = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  reorderPinnedForumTopics = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   getForumTopicsById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => this.topics)
   getChatPreview = async (link: string) => {
     this.#record("getChatPreview", [link])
@@ -1054,6 +1058,73 @@ describe("forum setup", () => {
       expect(client.updateForumSettings).not.toHaveBeenCalled()
     },
   )
+  it("renames and closes a topic in one call, takes a repeat as done, and answers what Telegram accepted", async () => {
+    const { adapter, client } = await open()
+    client.topics = [
+      {
+        id: 12,
+        title: "renamed",
+        isClosed: true,
+        isPinned: false,
+        unreadCount: 0,
+        lastMessage: null,
+        date: new Date("2026-10-04T00:00:00Z"),
+      },
+    ]
+
+    expect(await adapter.editTopic("-100500", "12", { title: "renamed", closed: true })).toMatchObject({
+      id: "12",
+      title: "renamed",
+      closed: true,
+    })
+    expect(client.editForumTopic).toHaveBeenCalledWith({ chatId: -100500, topicId: 12, title: "renamed", closed: true })
+
+    client.editForumTopic.mockRejectedValueOnce(new tl.RpcError(400, "TOPIC_NOT_MODIFIED"))
+    await expect(adapter.editTopic("-100500", "12", { closed: true })).resolves.toMatchObject({ closed: true })
+    await expect(adapter.editTopic("-100500", "12", { closed: false, title: "again" })).resolves.toMatchObject({
+      closed: false,
+      title: "again",
+    })
+    expect(client.editForumTopic).toHaveBeenNthCalledWith(2, { chatId: -100500, topicId: 12, closed: true })
+
+    client.editForumTopic.mockRejectedValueOnce(new MtTimeoutError(1000))
+    await expect(adapter.editTopic("-100500", "12", { closed: false })).rejects.toMatchObject({
+      code: "outcome_unknown",
+    })
+    client.topics = []
+    await expect(adapter.editTopic("-100500", "12", { closed: false })).rejects.toMatchObject({ code: "not_found" })
+    expect(() => adapter.editTopic("-100500", "x", { closed: false })).toThrow("--topic")
+  })
+
+  it("pins without editing, and reorders pinned topics by number without force", async () => {
+    const { adapter, client } = await open()
+    client.topics = [
+      {
+        id: 12,
+        title: "synthetic",
+        isClosed: false,
+        isPinned: false,
+        unreadCount: 0,
+        lastMessage: null,
+        date: new Date("2026-10-04T00:00:00Z"),
+      },
+    ]
+
+    expect(await adapter.editTopic("-100500", "12", { pinned: true })).toMatchObject({ pinned: true })
+    expect(client.editForumTopic).not.toHaveBeenCalled()
+    expect(client.toggleForumTopicPinned).toHaveBeenCalledWith({ chatId: -100500, topicId: 12, pinned: true })
+
+    client.topics = [{ ...(client.topics[0] as object), id: 1, title: "General" }]
+    expect(await adapter.editTopic("-100500", "1", { hidden: true })).toMatchObject({ id: "1", hidden: true })
+    expect(client.toggleGeneralTopicHidden).toHaveBeenCalledWith({ chatId: -100500, hidden: true })
+    expect(() => adapter.editTopic("-100500", "12", { hidden: true })).toThrow("only the General topic")
+
+    await adapter.orderPinnedTopics("-100500", ["12", "3"])
+    expect(client.reorderPinnedForumTopics).toHaveBeenCalledWith({ chatId: -100500, order: [12, 3] })
+    client.reorderPinnedForumTopics.mockRejectedValueOnce(new MtTimeoutError(1000))
+    await expect(adapter.orderPinnedTopics("-100500", ["12"])).rejects.toMatchObject({ code: "outcome_unknown" })
+  })
+
   it("creates a topic with the chosen random id and returns its server fields", async () => {
     const { adapter, client } = await open()
     client.fullChat = forumFull(-100500, { isForum: true })
