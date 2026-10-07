@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2227 ✅ · 58 ⛔ · 0 ❌** — 443 commands, 1842 options.
+**2259 ✅ · 60 ⛔ · 0 ❌** — 447 commands, 1872 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -516,6 +516,24 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--timezone` | ✅ |  |
 | `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
+| `stats messages unanswered` |  | ✅ |  |
+| `stats messages unanswered` | `--chat` | ✅ |  |
+| `stats messages unanswered` | `--source` | ✅ |  |
+| `stats messages unanswered` | `--exact` | ✅ |  |
+| `stats messages unanswered` | `--saved` | ✅ |  |
+| `stats messages unanswered` | `--timezone` | ✅ |  |
+| `stats messages unanswered` | `--limit` | ✅ |  |
+| `stats messages unanswered` | `--answerer` | ✅ |  |
+| `stats messages unanswered` | `--older-than` | ✅ |  |
+| `stats messages discussion` |  | ✅ |  |
+| `stats messages discussion` | `--chat` | ✅ |  |
+| `stats messages discussion` | `--source` | ✅ |  |
+| `stats messages discussion` | `--exact` | ✅ |  |
+| `stats messages discussion` | `--saved` | ⛔ | cli-messaging src/services/admin-statistics.test.ts covers shared report saved-run scope and typed overrides; native admin-statistics-adoption.test.ts checks mounted report paths and both evidence targets without connecting |
+| `stats messages discussion` | `--timezone` | ✅ |  |
+| `stats messages discussion` | `--limit` | ✅ |  |
+| `stats messages discussion` | `--min-views` | ✅ |  |
+| `stats messages discussion` | `--max-replies` | ✅ |  |
 | `stats messages top` |  | ✅ |  |
 | `stats messages top` | `--sync-first` | ✅ |  |
 | `stats messages top` | `--max-chats` | ✅ |  |
@@ -536,6 +554,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages evidence` | `--component` | ✅ |  |
 | `stats messages evidence` | `--limit` | ✅ |  |
 | `stats messages evidence` | `--cursor` | ✅ |  |
+| `stats contacts responses` |  | ✅ |  |
+| `stats contacts responses` | `--chat` | ✅ |  |
+| `stats contacts responses` | `--source` | ✅ |  |
+| `stats contacts responses` | `--exact` | ✅ |  |
+| `stats contacts responses` | `--saved` | ✅ |  |
+| `stats contacts responses` | `--timezone` | ✅ |  |
+| `stats contacts responses` | `--limit` | ✅ |  |
+| `stats contacts responses` | `--answerer` | ✅ |  |
 | `stats contacts top` |  | ✅ |  |
 | `stats contacts top` | `--sync-first` | ✅ |  |
 | `stats contacts top` | `--max-chats` | ✅ |  |
@@ -561,6 +587,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats chats show` | `--since-time` | ✅ |  |
 | `stats chats show` | `--by` | ✅ |  |
 | `stats chats show` | `--timezone` | ✅ |  |
+| `stats chats newcomers` |  | ✅ |  |
+| `stats chats newcomers` | `--since-time` | ✅ |  |
+| `stats chats newcomers` | `--until-time` | ✅ |  |
+| `stats chats newcomers` | `--within` | ✅ |  |
+| `stats chats newcomers` | `--saved` | ⛔ | cli-messaging src/services/admin-statistics.test.ts covers shared report saved-run scope and typed overrides; native admin-statistics-adoption.test.ts checks mounted report paths and both evidence targets without connecting |
+| `stats chats newcomers` | `--timezone` | ✅ |  |
+| `stats chats newcomers` | `--limit` | ✅ |  |
+| `stats chats newcomers` | `--answerer` | ✅ |  |
 | `stats chats official` |  | ✅ |  |
 | `stats tasks show` |  | ✅ |  |
 | `stats tasks show` | `--chat` | ✅ |  |

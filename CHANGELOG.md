@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+- Add stored stats reports for unanswered questions, selected admin responses, known-join newcomer help and viewed posts with little discussion; expose bounded evidence and saved report runs.
+
 ### What's new
 
 - **`tg chats folders create|update` take rules**: `--include` contacts, non-contacts, groups, channels or bots,

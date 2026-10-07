@@ -2641,6 +2641,52 @@ tg stats messages show [query] [options]
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
+#### `tg stats messages unanswered`
+
+oldest detected questions without an observed qualifying explicit reply
+
+```sh
+tg stats messages unanswered [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query; none selects every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--exact` | bare words match exact forms rather than stems. |
+| `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--older-than <duration>` | minimum age of a question without an observed qualifying answer. |
+
+#### `tg stats messages discussion`
+
+viewed posts with little recorded discussion
+
+```sh
+tg stats messages discussion [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query; none selects every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--exact` | bare words match exact forms rather than stems. |
+| `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--min-views <n>` | minimum known cumulative views. |
+| `--max-replies <n>` | maximum observed discussion replies. |
+
 #### `tg stats messages top`
 
 rank stored messages by a measure or explainable score; counters are snapshots and freshness is unknown
@@ -2692,6 +2738,28 @@ tg stats messages evidence <message> [options]
 ### `tg stats contacts`
 
 statistics about human authors
+
+#### `tg stats contacts responses`
+
+counts and median/p90 latency for selected human answering identities
+
+```sh
+tg stats contacts responses [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query; none selects every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--exact` | bare words match exact forms rather than stems. |
+| `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
 
 #### `tg stats contacts top`
 
@@ -2763,6 +2831,28 @@ tg stats chats show <chat> [options]
 | `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
 | `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
 | `--timezone <zone>` | the IANA timezone for calendar days. |
+
+#### `tg stats chats newcomers`
+
+known-join members and their help within a join window
+
+```sh
+tg stats chats newcomers <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | from this ISO 8601 time, or 2h / 1d ago; 30d ago if not given. |
+| `--until-time <time>` | through this ISO 8601 time, or 2h / 1d ago. |
+| `--within <duration>` | the help window after a known newcomer join. |
+| `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
 
 #### `tg stats chats official`
 
