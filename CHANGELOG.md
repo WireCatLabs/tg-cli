@@ -5,6 +5,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## 0.31.0 — 07.10.2026
 
+### Fixed
+
+- Search catch-up honors readonly or denied `conversations.links` before fetching or queueing
+  preparation, including gap repair. Explicit `--no-catch-up` still permits authorized history reads.
+
 ### What's new
 
 - File extraction through MCP, explicit directories and `messages download --extract`; changed files
