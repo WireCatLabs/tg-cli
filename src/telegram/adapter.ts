@@ -1614,8 +1614,13 @@ export class TelegramAdapter {
     })
   }
 
-  joinRequests(chatId: string, { limit, link }: { limit: number; link?: string }) {
-    return this.#call(() => joinRequestsOf(this.#client, Number(chatId), limit, link))
+  joinRequests(chatId: string, { limit, link, search }: { limit: number; link?: string; search?: string }) {
+    return this.#call(() =>
+      joinRequestsOf(this.#client, Number(chatId), limit, {
+        ...(link ? { link } : {}),
+        ...(search ? { search } : {}),
+      }),
+    )
   }
 
   answerAllJoinRequests(chatId: string, accept: boolean, link?: string) {

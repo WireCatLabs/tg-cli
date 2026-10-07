@@ -559,6 +559,8 @@ tg chats requests list <chat> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
+| `--search <text>` | only people whose name or @username has this. |
+| `--link <link>` | only people who asked through this invite link; not with --search. |
 
 #### `tg chats requests accept`
 
@@ -686,7 +688,7 @@ tg chats folders update <folder> [options]
 |---|---|
 | `--title <title>` | a new name. |
 | `--add <chat>` | put a chat in it; repeat it for more. |
-| `--remove <chat>` | take a chat out of it; repeat it for more. |
+| `--remove <chat>` | take a chat out of it, and off its excluded and pinned lists; repeat it for more. |
 
 #### `tg chats folders delete`
 

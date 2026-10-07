@@ -30,11 +30,17 @@ describe("join requests", () => {
       total: 3,
     })
     expect(c.getInviteLinkMembers).toHaveBeenCalledWith(-1007, { requested: true, limit: 2 })
-    expect((await joinRequestsOf(c.fake, -1007, 2, "https://t.me/+one")).total).toBe(3)
+    expect((await joinRequestsOf(c.fake, -1007, 2, { link: "https://t.me/+one" })).total).toBe(3)
     expect(c.getInviteLinkMembers).toHaveBeenLastCalledWith(-1007, {
       requested: true,
       limit: 2,
       link: "https://t.me/+one",
+    })
+    await joinRequestsOf(c.fake, -1007, 2, { search: "Ana" })
+    expect(c.getInviteLinkMembers).toHaveBeenLastCalledWith(-1007, {
+      requested: true,
+      limit: 2,
+      requestedSearch: "Ana",
     })
     expect((await joinRequestsOf(client(1, [member(41, null)]).fake, -1007, 5)).hasMore).toBe(false)
   })
