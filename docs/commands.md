@@ -669,6 +669,11 @@ tg chats folders create <title> [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat to put in it, by id or name; repeat it for more. |
+| `--include <kinds>` | every chat of these kinds: contacts, non-contacts, groups, channels, bots. |
+| `--skip <which>` | leave out chats that are muted, read, archived. |
+| `--exclude-chat <chat>` | never show this chat in it; repeat it for more. |
+| `--pin <chat>` | pin this chat at the top of the folder; repeat it for more. |
+| `--emoji <emoji>` | the folder's icon. |
 
 #### `tg chats folders update`
 
@@ -689,6 +694,11 @@ tg chats folders update <folder> [options]
 | `--title <title>` | a new name. |
 | `--add <chat>` | put a chat in it; repeat it for more. |
 | `--remove <chat>` | take a chat out of it, and off its excluded and pinned lists; repeat it for more. |
+| `--include <kinds>` | every chat of these kinds: contacts, non-contacts, groups, channels, bots; replaces what it had, none clears it. |
+| `--skip <which>` | leave out chats that are muted, read, archived; replaces what it had, none clears it. |
+| `--exclude-chat <chat>` | never show this chat in it; repeat it for more. |
+| `--pin <chat>` | pin this chat at the top of the folder; repeat it for more. |
+| `--emoji <emoji>` | the folder's icon. |
 
 #### `tg chats folders delete`
 

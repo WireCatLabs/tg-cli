@@ -47,6 +47,7 @@ import {
   type tl,
   type UploadedFile,
 } from "@mtcute/node"
+import { rulesOf } from "./folder-rules.js"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
 
@@ -529,12 +530,20 @@ export const toInviteLink = (made: ChatInviteLink): InviteLink => ({
  * A folder as `chats folders` answers it; `null` for "All chats", which Telegram lists among the
  * folders but nobody can change. Pinned chats are in the folder too, so they count as added.
  */
+const idsOf = (peers: tl.TypeInputPeer[]) => [...new Set(peers.map((peer) => String(getMarkedPeerId(peer))))]
+
 export const toFolder = (filter: tl.TypeDialogFilter): Folder | null => {
   if (filter._ === "dialogFilterDefault") return null
-  const peers = [...filter.pinnedPeers, ...filter.includePeers]
-  return {
+  const folder: Folder = {
     id: String(filter.id),
     title: filter.title.text,
-    chatIds: [...new Set(peers.map((peer) => String(getMarkedPeerId(peer))))],
+    chatIds: idsOf([...filter.pinnedPeers, ...filter.includePeers]),
   }
+  if (filter.emoticon) folder.emoji = filter.emoticon
+  if (filter.pinnedPeers.length > 0) folder.pinnedChatIds = idsOf(filter.pinnedPeers)
+  if (filter._ === "dialogFilter") {
+    Object.assign(folder, rulesOf(filter))
+    if (filter.excludePeers.length > 0) folder.excludedChatIds = idsOf(filter.excludePeers)
+  }
+  return folder
 }

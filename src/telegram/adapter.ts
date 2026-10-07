@@ -13,6 +13,7 @@ import {
   type Discussion,
   type Folder,
   type FolderChange,
+  type FolderRules,
   type GroupCard,
   type GroupChange,
   type GroupMember,
@@ -64,6 +65,7 @@ import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
+import { ruleFlags } from "./folder-rules.js"
 import { formatHtml } from "./format-html.js"
 import { formatMarkdown } from "./format-markdown.js"
 import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
@@ -1731,14 +1733,19 @@ export class TelegramAdapter {
     return this.#call(async () => (await this.#filters()).map(toFolder).filter((one): one is Folder => one !== null))
   }
 
-  createFolder(title: string, chatIds: string[]): Promise<Folder> {
+  createFolder(title: string, chatIds: string[], rules: FolderRules = {}): Promise<Folder> {
     return this.#write(
       "the folder may have been made; check `tg chats folders list` before repeating — a repeat makes a second one",
       async () => {
-        const includePeers = await Promise.all(chatIds.map((id) => this.#client.resolvePeer(Number(id))))
+        const peers = (ids: string[] = []) => Promise.all(ids.map((id) => this.#client.resolvePeer(Number(id))))
+        const pinned = new Set(rules.pin)
         const made = await this.#client.createFolder({
           title: { _: "textWithEntities", text: title, entities: [] },
-          includePeers,
+          includePeers: await peers(chatIds.filter((id) => !pinned.has(id))),
+          pinnedPeers: await peers(rules.pin),
+          excludePeers: await peers(rules.exclude),
+          ...(rules.emoji === undefined ? {} : { emoticon: rules.emoji }),
+          ...ruleFlags(rules),
         })
         return toFolder(made) as Folder
       },
@@ -1746,23 +1753,45 @@ export class TelegramAdapter {
   }
 
   /** Telegram replaces a folder's chats as a list, so the ones it has are read and only the asked ones change. */
-  updateFolder(folderId: string, { title, add = [], remove = [] }: FolderChange): Promise<Folder> {
+  updateFolder(folderId: string, change: FolderChange): Promise<Folder> {
+    const { title, add = [], remove = [], exclude = [], pin = [], emoji, include, skip } = change
     return this.#write("the folder may have changed — repeating it is safe", async () => {
       const current = (await this.#filters()).find(
         (one) => one._ !== "dialogFilterDefault" && String(one.id) === folderId,
       )
       if (!current || current._ === "dialogFilterDefault") throw new CliError("not_found", `no folder ${folderId}`)
-      const gone = new Set(remove)
-      const kept = current.includePeers.filter((peer) => !gone.has(String(getMarkedPeerId(peer))))
-      const held = new Set(kept.map((peer) => String(getMarkedPeerId(peer))))
-      const added = await Promise.all(
-        add.filter((id) => !held.has(id)).map((id) => this.#client.resolvePeer(Number(id))),
-      )
+      const rulesAsked = include !== undefined || skip !== undefined || exclude.length > 0
+      if (rulesAsked && current._ === "dialogFilterChatlist")
+        throw new CliError("validation_error", "a folder shared by a link holds only its chats; it takes no rules")
+      // A chat sits on one list at a time: pinning or excluding it takes it off the others.
+      const idOf = (peer: tl.TypeInputPeer) => String(getMarkedPeerId(peer))
+      const off = (peers: tl.TypeInputPeer[], ...ids: string[][]) => {
+        const gone = new Set(ids.flat())
+        return peers.filter((peer) => !gone.has(idOf(peer)))
+      }
+      const resolved = (ids: string[], have: tl.TypeInputPeer[]) => {
+        const held = new Set(have.map(idOf))
+        return Promise.all(ids.filter((id) => !held.has(id)).map((id) => this.#client.resolvePeer(Number(id))))
+      }
+      const include0 = off(current.includePeers, remove, pin, exclude)
+      const pinned0 = off(current.pinnedPeers, remove, exclude)
+      const listsChanged = add.length > 0 || remove.length > 0 || pin.length > 0 || exclude.length > 0
+      const excluded0 = current._ === "dialogFilter" ? off(current.excludePeers, remove, add, pin) : []
       const changed = await this.#client.editFolder({
         folder: current._ === "dialogFilter" ? current : current.id,
         modification: {
           ...(title === undefined ? {} : { title: { _: "textWithEntities", text: title, entities: [] } }),
-          ...(add.length > 0 || remove.length > 0 ? { includePeers: [...kept, ...added] } : {}),
+          ...(emoji === undefined ? {} : { emoticon: emoji }),
+          ...ruleFlags({ ...(include === undefined ? {} : { include }), ...(skip === undefined ? {} : { skip }) }),
+          ...(listsChanged
+            ? {
+                includePeers: [...include0, ...(await resolved(add, [...include0, ...pinned0]))],
+                pinnedPeers: [...pinned0, ...(await resolved(pin, pinned0))],
+                ...(current._ === "dialogFilter"
+                  ? { excludePeers: [...excluded0, ...(await resolved(exclude, excluded0))] }
+                  : {}),
+              }
+            : {}),
         },
       })
       return toFolder(changed) as Folder
@@ -1789,7 +1818,15 @@ export class TelegramAdapter {
   joinFolder(link: string): Promise<Folder> {
     return this.#write(
       "the folder may have been joined; check `tg chats folders list` before repeating — a repeat joins nothing new",
-      async () => toFolder(await this.#client.joinChatlist(link)) as Folder,
+      async () => {
+        try {
+          return toFolder(await this.#client.joinChatlist(link)) as Folder
+        } catch (error) {
+          if (tl.RpcError.is(error, "INVITE_SLUG_EXPIRED") || tl.RpcError.is(error, "INVITE_SLUG_INVALID"))
+            throw new CliError("not_found", "this folder link is invalid or has expired")
+          throw error
+        }
+      },
     )
   }
 

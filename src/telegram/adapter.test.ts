@@ -1964,7 +1964,7 @@ describe("chat folders", () => {
     const { adapter, client } = await open()
     client.filters = [{ _: "dialogFilterDefault" }, work]
 
-    expect(await adapter.folders()).toEqual([{ id: "2", title: "Work", chatIds: ["8", "7"] }])
+    expect(await adapter.folders()).toEqual([{ id: "2", title: "Work", chatIds: ["8", "7"], pinnedChatIds: ["8"] }])
   })
 
   it("**changes only the chats asked for**, keeping the rest of the folder", async () => {
@@ -2000,6 +2000,75 @@ describe("chat folders", () => {
 
     expect(client.setFoldersOrder.mock.calls).toEqual([[[4, 0, 2]]])
     expect(client.joinChatlist.mock.calls).toEqual([["https://t.me/addlist/abc"]])
+  })
+
+  it("says plainly when a shared folder link is invalid or expired", async () => {
+    const { adapter, client } = await open()
+    client.joinChatlist.mockRejectedValueOnce(new tl.RpcError(400, "INVITE_SLUG_EXPIRED"))
+
+    await expect(adapter.joinFolder("https://t.me/addlist/old")).rejects.toMatchObject({
+      code: "not_found",
+      message: "this folder link is invalid or has expired",
+    })
+  })
+
+  it("**creates a folder by rules**, a pinned chat not listed twice, and reads the rules back", async () => {
+    const { adapter, client } = await open()
+    client.resolvePeer = (async (peer: unknown) => ({ _: "inputPeerUser", userId: peer, accessHash: 0 })) as never
+
+    const made = await adapter.createFolder("Inbox", ["7", "8"], {
+      include: ["contacts", "channels"],
+      skip: ["archived"],
+      exclude: ["9"],
+      pin: ["8"],
+      emoji: "📥",
+    })
+
+    expect(client.createFolder.mock.calls[0]?.[0]).toMatchObject({
+      includePeers: [{ userId: 7 }],
+      pinnedPeers: [{ userId: 8 }],
+      excludePeers: [{ userId: 9 }],
+      emoticon: "📥",
+      contacts: true,
+      nonContacts: false,
+      broadcasts: true,
+      bots: false,
+      excludeArchived: true,
+      excludeMuted: false,
+    })
+    expect(made).toMatchObject({
+      chatIds: ["8", "7"],
+      emoji: "📥",
+      include: ["contacts", "channels"],
+      skip: ["archived"],
+      excludedChatIds: ["9"],
+      pinnedChatIds: ["8"],
+    })
+  })
+
+  it("**replaces a folder's rule sets, and moves a chat between its lists**", async () => {
+    const { adapter, client } = await open()
+    client.filters = [{ ...work, contacts: true, excludeRead: true }]
+    client.resolvePeer = (async (peer: unknown) => ({ _: "inputPeerUser", userId: peer, accessHash: 0 })) as never
+
+    await adapter.updateFolder("2", { include: [], skip: ["muted"], exclude: ["7"], pin: ["9"] })
+
+    const { modification } = client.editFolder.mock.calls[0]?.[0] ?? { modification: {} }
+    expect(modification).toMatchObject({
+      contacts: false,
+      excludeRead: false,
+      excludeMuted: true,
+      includePeers: [],
+      pinnedPeers: [{ userId: 8 }, { userId: 9 }],
+      excludePeers: [{ userId: 7 }],
+    })
+  })
+
+  it("refuses rules on a folder shared by a link", async () => {
+    const { adapter, client } = await open()
+    client.filters = [{ ...work, _: "dialogFilterChatlist" }]
+
+    await expect(adapter.updateFolder("2", { include: ["bots"] })).rejects.toMatchObject({ code: "validation_error" })
   })
 })
 

@@ -63,11 +63,12 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | `groups invite get`, `groups invite revoke` | `tg chats link show`, `tg chats link reset` |
 | `groups invite edit --request-needed` | `tg chats link create <chat> --approval`, or `tg chats update <chat> --join-approval on` |
 | `groups requests list/approve/decline` | `tg chats requests list`, `tg chats requests accept/decline <chat> <person>` |
-| `groups requests list --query`, `--link` | not in tg yet: `requests list` shows every pending request |
+| `groups requests list --query`, `--link` | `tg chats requests list --search`, `--link` |
 | `groups join`, `groups leave` | `tg chats join <link>`, `tg chats leave <chat>` |
 | `folders list/create/edit/delete` | `tg chats folders list/create/update/delete` |
-| `folders create/edit --include-contacts`, `--exclude-muted` and the other rules | not in tg yet: a tg folder holds the chats you name |
-| `folders create/edit --exclude-chat`, `--pin-chat`, `--emoji` | not in tg yet |
+| `folders create/edit --include-contacts … --include-bots` | `--include contacts,non-contacts,groups,channels,bots` |
+| `folders create/edit --exclude-muted`, `--exclude-read`, `--exclude-archived` | `--skip muted,read,archived` |
+| `folders create/edit --exclude-chat`, `--pin-chat`, `--emoji` | `--exclude-chat`, `--pin`, `--emoji` |
 | `folders reorder` | `tg chats folders order` |
 | `folders chats add/remove` | `tg chats folders update --add/--remove` |
 | `folders chats join` (a shared folder link) | `tg chats folders join <link>` |

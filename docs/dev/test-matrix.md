@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2217 ✅ · 58 ⛔ · 0 ❌** — 443 commands, 1832 options.
+**2227 ✅ · 58 ⛔ · 0 ❌** — 443 commands, 1842 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -101,10 +101,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats folders list` |  | ✅ |  |
 | `chats folders create` |  | ✅ |  |
 | `chats folders create` | `--chat` | ✅ |  |
+| `chats folders create` | `--include` | ✅ |  |
+| `chats folders create` | `--skip` | ✅ |  |
+| `chats folders create` | `--exclude-chat` | ✅ |  |
+| `chats folders create` | `--pin` | ✅ |  |
+| `chats folders create` | `--emoji` | ✅ |  |
 | `chats folders update` |  | ✅ |  |
 | `chats folders update` | `--title` | ✅ |  |
 | `chats folders update` | `--add` | ✅ |  |
 | `chats folders update` | `--remove` | ✅ |  |
+| `chats folders update` | `--include` | ✅ |  |
+| `chats folders update` | `--skip` | ✅ |  |
+| `chats folders update` | `--exclude-chat` | ✅ |  |
+| `chats folders update` | `--pin` | ✅ |  |
+| `chats folders update` | `--emoji` | ✅ |  |
 | `chats folders delete` |  | ✅ |  |
 | `chats folders order` |  | ✅ |  |
 | `chats folders join` |  | ✅ |  |

@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg chats folders create|update` take rules**: `--include` contacts, non-contacts, groups, channels or bots,
+  `--skip` muted, read or archived chats, `--exclude-chat`, `--pin` and `--emoji`. `folders list` shows them.
+- `tg chats folders join` says plainly when a link is invalid or expired (exit 6), and `folders order` answers
+  only each folder's id and title.
+
 ## 0.35.0 — 08.10.2026
 
 ### What's new
