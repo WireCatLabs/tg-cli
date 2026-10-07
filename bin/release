@@ -49,7 +49,7 @@ if [ "$next" != "$version" ]; then
     swap("package.json", `"version": "${o}"`, `"version": "${n}"`)
     swap("src/version.ts", `VERSION = "${o}"`, `VERSION = "${n}"`)
     const today = new Date().toLocaleDateString("en-GB").replaceAll("/", ".")
-    if (taken) swap("CHANGELOG.md", "\n## Unreleased\n", `\n## Unreleased\n\n## ${n} — ${today}\n`)
+    if (taken) swap("CHANGELOG.md", "\n## Unreleased\n", `\n## ${n} — ${today}\n`)
     else swap("CHANGELOG.md", `\n## ${o} — `, `\n## ${n} — `)' "$version" "$next" "$taken"
   git commit -q -am "chore: release $next" -m "bin/release: $why."
   git push -q origin main || {
