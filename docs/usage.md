@@ -374,6 +374,10 @@ no text, no other file. Hidden files and folders, `~/.ssh`, `tg`'s own folders
 and the local store are refused unless you add `--allow-any-file` — that is where keys and tokens
 live.
 
+`--spoiler` blurs a photo or a video until it is tapped; a document or a voice message cannot take one.
+`--caption-above` shows the text above the photo or file. Telegram lets only bots stop forwarding of one
+message; to protect content, turn on the chat's own setting in Telegram.
+
 ### Replying
 
 ```sh

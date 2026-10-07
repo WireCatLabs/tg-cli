@@ -1289,6 +1289,44 @@ describe("sending", () => {
     expect(client.sendMedia).not.toHaveBeenCalled()
   })
 
+  it("hides a photo or a video behind a spoiler, shows the caption above, and refuses a spoiler on a document", async () => {
+    const { adapter, client } = await open()
+    const bytes = new Uint8Array([1, 2, 3])
+    client.sendMedia.mockClear()
+
+    await adapter.send("-100500", "look", {
+      sendId: "1",
+      spoiler: true,
+      captionAbove: true,
+      attachments: [{ kind: "photo", name: "a.jpg", bytes }],
+    })
+    await adapter.send("-100500", "", {
+      sendId: "2",
+      spoiler: true,
+      attachments: [{ kind: "file", name: "trip.mp4", bytes }],
+    })
+    client.uploadFile.mockClear()
+    for (const attachment of [
+      { kind: "file" as const, name: "trip.mp4", bytes, asFile: true as const },
+      { kind: "file" as const, name: "notes.txt", bytes },
+      { kind: "voice" as const, name: "note.ogg", bytes },
+    ]) {
+      await expect(
+        adapter.send("-100500", "", { sendId: "3", spoiler: true, attachments: [attachment] }),
+      ).rejects.toMatchObject({
+        code: "validation_error",
+      })
+    }
+
+    expect(client.uploadFile).not.toHaveBeenCalled()
+    expect(client.sendMedia.mock.calls.map((call) => call[1])).toMatchObject([
+      { type: "photo", spoiler: true },
+      { type: "video", spoiler: true },
+    ])
+    expect(client.sendMedia.mock.calls[0]?.[2]).toMatchObject({ invert: true })
+    expect(client.sendMedia.mock.calls[1]?.[2]).not.toHaveProperty("invert")
+  })
+
   it("sends a voice message as voice, and a video as a video unless asFile", async () => {
     const { adapter, client } = await open()
     const bytes = new Uint8Array([1, 2, 3])

@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg messages send --spoiler` blurs a photo or video until tapped, and `--caption-above` puts the text above
+  it.** A spoiler on a document or voice message is refused.
+
 - **`tg chats send-as <chat>` lists who you may post as in a group, and `--send-as <id>` posts as one of
   them** — on `tg messages send` (files included), `tg messages forward` and `tg polls create`. The list always
   includes you and marks the group's saved choice; reading it changes nothing. An id not in the list is refused.

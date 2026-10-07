@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2128 ✅ · 51 ⛔ · 0 ❌** — 421 commands, 1758 options.
+**2130 ✅ · 51 ⛔ · 0 ❌** — 421 commands, 1760 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -168,6 +168,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--voice` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
 | `messages send` | `--at-time` | ✅ |  |
+| `messages send` | `--spoiler` | ✅ |  |
+| `messages send` | `--caption-above` | ✅ |  |
 | `messages show` |  | ✅ |  |
 | `messages context` |  | ✅ |  |
 | `messages context` | `--thread` | ✅ |  |

@@ -5,8 +5,7 @@
 Every command, option and exit code. This page is **generated from the program itself**, so it
 cannot describe a version that does not exist.
 
-Shared options `--send-as`, `--spoiler` and `--caption-above`, and `chats send-as`,
-are not yet available in Telegram: they refuse rather than send with those features. For the same list as JSON, run `tg commands --json`.
+For the same list as JSON, run `tg commands --json`.
 
 How a command line is built:
 
@@ -977,6 +976,8 @@ tg messages send <chat> [text] [options]
 | `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
 | `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
+| `--spoiler` | hide the --photo or video behind a spoiler until tapped. |
+| `--caption-above` | show the text above the --photo or --file, not below it. |
 
 ### `tg messages show`
 
