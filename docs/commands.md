@@ -1885,19 +1885,20 @@ tg store status [chat]
 
 ### `tg store fetch`
 
-fetch a chat's history into the local store, newest first; run it again to continue
+fetch a chat's history into the local store, newest first; run it again to continue; --all fetches every chat
 
 ```sh
-tg store fetch <chat> [options]
+tg store fetch [chat] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | at most this many messages in this run; 1000 if not given. |
+| `--all` | every chat, most recently active first — what search needs; the last 90d unless --since-time or --last. |
+| `--limit <n>` | at most this many messages in this run, per chat with --all; 1000 if not given. |
 | `--page-size <n>` | how many messages one request asks for; 100 if not given. |
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
 | `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
@@ -2520,6 +2521,37 @@ tg tags list [options]
 | `--tag <tag>` | only this tag. |
 | `--source <manual\|auto>` | only labels with this ownership claim. |
 | `--type <names>` | only what is tagged of this type: chat, contact or message. |
+
+## `tg metadata`
+
+cached group/channel descriptions for local automatic tags
+
+### `tg metadata get`
+
+
+
+```sh
+tg metadata get [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a stored chat. |
+
+### `tg metadata refresh`
+
+
+
+**Changes something on this computer only.**
+
+```sh
+tg metadata refresh [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | stored group/channel; repeat for several. Default: ``. |
+| `--limit <number>` | process at most 1–500 chats. Default: `50`. |
 
 ## `tg stats`
 

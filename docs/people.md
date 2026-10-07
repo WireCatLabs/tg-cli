@@ -200,6 +200,24 @@ tg contacts unlink @example_user
 `contacts context` and `contacts profile` then include both. The link is only ever what you record:
 the same name in both messengers is never taken as the same person.
 
+## Your own names and notes: `contacts alias`, `contacts notes`
+
+```sh
+tg contacts alias set "Bob Synthetic" Bobby            # your own name for a person, on this computer only
+tg contacts alias rm "Bob Synthetic"
+tg contacts notes add "Bob Synthetic" --file note.txt  # or the text from stdin
+tg contacts notes list "Bob Synthetic"
+tg contacts notes edit "Bob Synthetic" <id> --revision 1 --file note.txt
+tg contacts notes remove "Bob Synthetic" <id>
+tg contacts show "Bob Synthetic" --with-notes
+tg contacts list --search-notes flat                   # people whose notes contain this text
+```
+
+Aliases and notes stay in this account's local archive and never reach Telegram. `contacts rename` changes
+the name in your Telegram contacts — a different thing. A command finds a person by your alias unless it
+matches someone else's name; then it needs the id. `--revision` stops an edit of a note that changed since
+you read it.
+
 ## For agents
 
 The MCP server offers the same three reads as commands of `tg_read`: `contacts profile`, `contacts context`

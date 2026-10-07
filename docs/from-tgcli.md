@@ -75,6 +75,6 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 |---|---|
 | `tags set/list/search` on a channel | `tg tags add/remove/list --chat`, and `tag:` in a search |
 | `contacts tags add/rm` | `tg tags add/remove --contact` |
-| `contacts alias set/rm` | `tg contacts rename` sets the name in your Telegram contacts; nobody else sees it |
-| `contacts notes set` | not in tg yet |
-| `tags auto`, `metadata refresh` | not in tg yet |
+| `contacts alias set/rm` | `tg contacts alias set/rm`: a private name on this computer only; `tg contacts rename` changes your Telegram contacts |
+| `contacts notes set` | `tg contacts notes add/edit/remove`, several notes per person, on this computer only |
+| `tags auto`, `metadata refresh` | `tg tags auto`, `tg metadata refresh` |
