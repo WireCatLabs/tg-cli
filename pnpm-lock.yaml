@@ -12,8 +12,8 @@ importers:
         specifier: 0.17.2
         version: 0.17.2(commander@15.0.0)(typescript@7.0.2)
       '@leemour/cli-messaging':
-        specifier: 0.169.0
-        version: 0.169.0(@leemour/cli-core@0.17.2(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
+        specifier: 0.170.0
+        version: 0.170.0(@leemour/cli-core@0.17.2(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)
       '@mtcute/node':
         specifier: 0.32.3
         version: 0.32.3
@@ -459,8 +459,8 @@ packages:
   '@leemour/cli-messaging-sqlite@1.0.0':
     resolution: {integrity: sha512-NFJMG+/2BWIb3JdOMgyV8SFsB7Fuv3wLtUmMt08GZ4KTpgu0WuA7qQmQE6appEgJJuF/97vHj6+AuXw2z3HMHw==}
 
-  '@leemour/cli-messaging@0.169.0':
-    resolution: {integrity: sha512-v3ISydD+CdaMhV+RKEo35C5x+uj1LaTLnPrJ1FVXzdSS71Q00xc+Y0dzXct2rQMBxsMo/HhiQtMaPdp7PSDqbg==}
+  '@leemour/cli-messaging@0.170.0':
+    resolution: {integrity: sha512-+tWl9nqYtvV6dAUWD59EmUvqjh41nSEGGZWGdZQJdyU+a76n56zjYZQe5qeJ8crJ+vdb7MX0xs+y8snUSH+ZoA==}
     engines: {node: ^22.16.0 || >=24}
     hasBin: true
     peerDependencies:
@@ -2143,7 +2143,7 @@ snapshots:
 
   '@leemour/cli-messaging-sqlite@1.0.0': {}
 
-  '@leemour/cli-messaging@0.169.0(@leemour/cli-core@0.17.2(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
+  '@leemour/cli-messaging@0.170.0(@leemour/cli-core@0.17.2(commander@15.0.0)(typescript@7.0.2))(commander@15.0.0)(typescript@7.0.2)(zod@4.6.5)':
     dependencies:
       '@anthropic-ai/sdk': 0.131.0(zod@4.6.5)
       '@bomb.sh/tab': 0.0.22(commander@15.0.0)
