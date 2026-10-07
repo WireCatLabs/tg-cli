@@ -27,8 +27,15 @@ describe("join requests", () => {
         { person: { id: "42", name: "Synthetic 42", username: null }, requestedAt: "2026-10-07T18:00:00.000Z" },
       ],
       hasMore: true,
+      total: 3,
     })
     expect(c.getInviteLinkMembers).toHaveBeenCalledWith(-1007, { requested: true, limit: 2 })
+    expect((await joinRequestsOf(c.fake, -1007, 2, "https://t.me/+one")).total).toBe(3)
+    expect(c.getInviteLinkMembers).toHaveBeenLastCalledWith(-1007, {
+      requested: true,
+      limit: 2,
+      link: "https://t.me/+one",
+    })
     expect((await joinRequestsOf(client(1, [member(41, null)]).fake, -1007, 5)).hasMore).toBe(false)
   })
 

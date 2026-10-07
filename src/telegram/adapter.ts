@@ -1433,8 +1433,8 @@ export class TelegramAdapter {
     })
   }
 
-  /** An invite link, or a public one; a group that asks its admins first is refused, with the request sent. */
-  join(link: string): Promise<GroupCard> {
+  /** An invite link, or a public one; a group that asks its admins first answers `requested`. */
+  join(link: string): Promise<GroupCard | { requested: true }> {
     const typed = link.trim()
     const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
     return this.#call(async () => {
@@ -1444,12 +1444,11 @@ export class TelegramAdapter {
       } catch (error) {
         throw unknownIfUnanswered(error, "you may or may not have joined; check `tg chats list`")
       }
+      if (joined.status === "request_sent") return { requested: true as const }
       if (joined.status !== "ok") {
         throw new CliError(
           "provider_error",
-          joined.status === "request_sent"
-            ? "this group lets admins approve who joins; the request is sent — nothing to repeat"
-            : "this group asks a bot to check who joins, which only the Telegram app can show",
+          "this group asks a bot to check who joins, which only the Telegram app can show",
         )
       }
       return toGroupCard(await this.#client.getFullChat(joined.chat.id))
@@ -1601,8 +1600,43 @@ export class TelegramAdapter {
     })
   }
 
-  joinRequests(chatId: string, { limit }: { limit: number }) {
-    return this.#call(() => joinRequestsOf(this.#client, Number(chatId), limit))
+  joinRequests(chatId: string, { limit, link }: { limit: number; link?: string }) {
+    return this.#call(() => joinRequestsOf(this.#client, Number(chatId), limit, link))
+  }
+
+  answerAllJoinRequests(chatId: string, accept: boolean, link?: string) {
+    return this.#call(async () => {
+      try {
+        await this.#client.hideAllJoinRequests({
+          chatId: Number(chatId),
+          action: accept ? "approve" : "decline",
+          ...(link ? { link } : {}),
+        })
+      } catch (error) {
+        throw unknownIfUnanswered(
+          error,
+          "the requests may or may not have been answered; check `tg chats requests list`",
+        )
+      }
+    })
+  }
+
+  /** Telegram shows an admin only their own links; the creator could ask for others', which we do not. */
+  inviteLinks(chatId: string, { limit, revoked }: { limit: number; revoked: boolean }) {
+    return this.#call(async () => {
+      const page = await this.#client.getInviteLinks(Number(chatId), { limit, revoked })
+      return { items: page.map(toInviteLink), hasMore: page.total > page.length }
+    })
+  }
+
+  revokeInviteLink(chatId: string, link: string) {
+    return this.#call(async () => {
+      try {
+        return toInviteLink(await this.#client.revokeInviteLink(Number(chatId), link))
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the link may or may not have been revoked; check `tg chats link list`")
+      }
+    })
   }
 
   answerJoinRequest(chatId: string, personId: string, accept: boolean) {

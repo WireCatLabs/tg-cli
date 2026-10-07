@@ -554,6 +554,9 @@ tg chats link create "Hiking 2027" --approval --expire-time 7d --max-uses 20   #
 tg chats update "Hiking 2027" --join-approval on   # everyone asks first, by any link
 tg chats requests list "Hiking 2027"               # who asked to join, newest first
 tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns them away
+tg chats requests decline "Hiking 2027" --all      # every pending request at once; --link narrows it
+tg chats link list "Hiking 2027"                   # your links, with how many joined and how many wait
+tg chats link revoke "Hiking 2027" https://t.me/+AbCd   # stop one link
 tg chats members add "Hiking 2027" @kate 67890     # they are told
 tg chats members remove "Hiking 2027" @kate        # their messages stay
 tg chats admins add "Hiking 2027" @kate --can pin,delete
@@ -561,8 +564,9 @@ tg chats admins remove "Hiking 2027" @kate
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
-in the answer under `providerMetadata.notAdded`; the group is made anyway. A group whose admins
-approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
+in the answer under `providerMetadata.notAdded`; the group is made anyway. `chats join` to a group whose
+admins approve who joins answers `requested: true` and exits `0`: the request is sent, and you are in once an
+admin accepts it. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
 
 `chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
@@ -574,7 +578,10 @@ In a group whose admins approve who joins, `chats requests list` shows the pendi
 note a person sent; only admins see them, and reading tells nobody. `accept` and `decline` answer one,
 by the id from the list. An accepted request counts toward the hourly limit, a declined one does not;
 the recipient list checks the group only. Someone who is already a member is answered with
-`already: true`, and a request that is gone ends in exit `6`.
+`already: true`, and a request that is gone ends in exit `6`. `--all` answers every pending request, or
+with `--link` those that came by one link; they are counted first, and an accept that would go over the
+hourly limit is refused before anyone is let in. `chats link list` shows only your own links; revoking the
+group's own link makes Telegram issue a new one, which the answer shows.
 
 `chats update` changes the title, the description and the two settings Telegram has, in one go; the
 answer is the group as it stands, and `chats show` shows the same settings. Moderation rules —

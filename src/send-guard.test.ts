@@ -487,6 +487,47 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create"])
   })
 
+  it("**answers every request and lists and revokes links** through the guard", async () => {
+    const answered: unknown[] = []
+    const link = { link: "https://t.me/+extra", approval: true, expiresAt: null, maxUses: null, pending: 1 }
+    const adapter = scripted({
+      joinRequests: async () => ({ items: [], hasMore: false, total: 1 }),
+      answerAllJoinRequests: async (_chat, accept, by) => {
+        answered.push([accept, by])
+      },
+      inviteLinks: async () => ({ items: [link], hasMore: false }),
+      revokeInviteLink: async () => ({ ...link, revoked: true }),
+    })
+
+    const all = await tg(
+      ["g-bulk", "chats", "requests", "accept", "Valencia", "--all", "--link", "https://t.me/+extra", "--json"],
+      adapter,
+    )
+    const declined = await tg(
+      ["g-bulk", "chats", "requests", "decline", "Valencia", "--all", "--link", "https://t.me/+other", "--json"],
+      adapter,
+    )
+    const listed = await tg(
+      ["g-bulk", "chats", "link", "list", "Valencia", "--revoked", "--limit", "5", "--json"],
+      adapter,
+    )
+    const revoked = await tg(
+      ["g-bulk", "chats", "link", "revoke", "Valencia", "https://t.me/+extra", "--json"],
+      adapter,
+    )
+
+    expect([all.code, declined.code, listed.code, revoked.code]).toEqual([0, 0, 0, 0])
+    expect(answered).toEqual([
+      [true, "https://t.me/+extra"],
+      [false, "https://t.me/+other"],
+    ])
+    expect(journal("g-bulk").map((entry) => entry.action)).toEqual([
+      "requests.accept",
+      "requests.decline",
+      "link.revoke",
+    ])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({

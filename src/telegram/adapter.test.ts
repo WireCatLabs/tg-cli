@@ -164,6 +164,37 @@ class FakeClient {
   setChatDefaultPermissions = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   exportInviteLink = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ link: "https://t.me/+new" }))
   toggleJoinRequests = vi.fn(async (..._args: unknown[]): Promise<unknown> => undefined)
+  hideAllJoinRequests = vi.fn(async (..._args: unknown[]): Promise<unknown> => undefined)
+  getInviteLinks = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> =>
+      Object.assign(
+        [
+          {
+            link: "https://t.me/+extra",
+            approvalNeeded: true,
+            endDate: null,
+            usageLimit: Number.POSITIVE_INFINITY,
+            isPrimary: false,
+            isRevoked: false,
+            pendingApprovals: 2,
+            usage: 1,
+          },
+        ],
+        { total: 3 },
+      ),
+  )
+  revokeInviteLink = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> => ({
+      link: "https://t.me/+fresh",
+      approvalNeeded: false,
+      endDate: null,
+      usageLimit: Number.POSITIVE_INFINITY,
+      isPrimary: true,
+      isRevoked: false,
+      pendingApprovals: 0,
+      usage: 0,
+    }),
+  )
   createInviteLink = vi.fn(
     async (..._args: unknown[]): Promise<unknown> => ({
       link: "https://t.me/+extra",
@@ -1765,11 +1796,11 @@ describe("making, joining and leaving groups", () => {
     expect(client.joinChat.mock.calls[0]).toEqual(["https://t.me/+abc"])
 
     client.joinChat.mockResolvedValueOnce({ status: "request_sent" })
-    await expect(adapter.join("https://t.me/pisos_vlc")).rejects.toMatchObject({
-      code: "provider_error",
-      message: expect.stringContaining("request is sent"),
-    })
+    expect(await adapter.join("https://t.me/pisos_vlc")).toEqual({ requested: true })
     expect(client.joinChat.mock.calls[1]).toEqual(["pisos_vlc"])
+
+    client.joinChat.mockResolvedValueOnce({ status: "webview" })
+    await expect(adapter.join("https://t.me/pisos_vlc")).rejects.toMatchObject({ code: "provider_error" })
   })
 
   it("**changes only the switches asked for**, keeping every other right Telegram holds", async () => {
@@ -1820,6 +1851,40 @@ describe("making, joining and leaving groups", () => {
     ])
     await adapter.createInviteLink("-100700", { approval: false })
     expect(client.createInviteLink.mock.calls[1]).toEqual([-100700, { withApproval: false }])
+  })
+
+  it("**answers every request at once**, by one link or all, and lists and revokes links", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.answerAllJoinRequests("-100700", false, "https://t.me/+extra")
+    await adapter.answerAllJoinRequests("-100700", true)
+    expect(client.hideAllJoinRequests.mock.calls).toEqual([
+      [{ chatId: -100700, action: "decline", link: "https://t.me/+extra" }],
+      [{ chatId: -100700, action: "approve" }],
+    ])
+
+    expect(await adapter.inviteLinks("-100700", { limit: 1, revoked: false })).toEqual({
+      items: [
+        {
+          link: "https://t.me/+extra",
+          approval: true,
+          expiresAt: null,
+          maxUses: null,
+          primary: false,
+          revoked: false,
+          pending: 2,
+          joined: 1,
+        },
+      ],
+      hasMore: true,
+    })
+    expect(client.getInviteLinks.mock.calls).toEqual([[-100700, { limit: 1, revoked: false }]])
+
+    expect(await adapter.revokeInviteLink("-100700", "https://t.me/+old")).toMatchObject({
+      link: "https://t.me/+fresh",
+      primary: true,
+    })
+    expect(client.revokeInviteLink.mock.calls).toEqual([[-100700, "https://t.me/+old"]])
   })
 
   it("reads a group, and replaces its link", async () => {

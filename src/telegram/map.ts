@@ -516,6 +516,10 @@ export const toInviteLink = (made: ChatInviteLink): InviteLink => ({
   approval: made.approvalNeeded,
   expiresAt: made.endDate?.toISOString() ?? null,
   maxUses: Number.isFinite(made.usageLimit) ? made.usageLimit : null,
+  primary: made.isPrimary,
+  revoked: made.isRevoked,
+  pending: made.pendingApprovals,
+  joined: made.usage,
 })
 
 /**
