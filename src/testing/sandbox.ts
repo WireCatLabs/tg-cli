@@ -44,3 +44,6 @@ process.env.TG_TEST_SANDBOX = sandbox
 process.env.TG_TEST_ARGV_LOG = ARGV_LOG
 
 afterAll(() => rmSync(sandbox, { recursive: true, force: true }))
+
+// Unit tests use scripted adapters; request pacing must never introduce a real wait.
+process.env.TG_REQUESTS_PER_MINUTE = "0"
