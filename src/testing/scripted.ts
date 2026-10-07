@@ -2,6 +2,7 @@ import { captureStreams, memoryKeyring } from "@leemour/cli-core"
 import type { Chat, Message } from "@leemour/cli-messaging"
 import type { Adapter, Environment } from "../commands/context.js"
 import { run } from "../program.js"
+import { formatHtml } from "../telegram/format-html.js"
 import { formatMarkdown } from "../telegram/format-markdown.js"
 
 export const chat: Chat = {
@@ -41,6 +42,7 @@ export const message = (id: string, fields: Partial<Message> = {}): Message => (
 /** A Telegram that answers at once and never connects; override what a test asks about. */
 export const scripted = (overrides: Partial<Adapter> = {}): Adapter => ({
   formatMarkdown: async (text) => formatMarkdown(text),
+  formatHtml: async (text) => formatHtml(text),
   self: () => "1",
   login: async () => ({ id: "1", name: "Owner", username: null }),
   me: async () => ({ id: "1", name: "Owner", username: null }),

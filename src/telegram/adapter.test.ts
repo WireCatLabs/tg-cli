@@ -190,6 +190,16 @@ class FakeClient {
     ...params.modification,
   }))
   deleteFolder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  setFoldersOrder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  joinChatlist = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> => ({
+      _: "dialogFilterChatlist",
+      id: 6,
+      title: { _: "textWithEntities", text: "Shared", entities: [] },
+      pinnedPeers: [],
+      includePeers: [{ _: "inputPeerUser", userId: 7, accessHash: 0 }],
+    }),
+  )
   addContact = vi.fn(
     async (params: { userId: unknown; firstName: string; lastName?: string }): Promise<unknown> =>
       user(Number(params.userId), [params.firstName, params.lastName].filter(Boolean).join(" ")),
@@ -523,6 +533,19 @@ describe("reading", () => {
     expect(asked).toEqual([
       [-100500, { limit: 2, offset: { id: 10, date: 0 } }],
       ["someone", { limit: 2 }],
+    ])
+  })
+
+  it("reads one forum topic by Telegram's search in the thread, oldest first", async () => {
+    const { adapter, client } = await open()
+    client.history = [message(9), message(8)]
+    client.historyNext = 8
+
+    const topic = await adapter.topicHistory("-100500", "12", { limit: 2, before: "10" })
+
+    expect(topic).toMatchObject({ items: [{ id: "8" }, { id: "9" }], hasMore: true })
+    expect(client.calls.find((call) => call.method === "searchMessages")?.args).toEqual([
+      { chatId: -100500, threadId: 12, limit: 2, offset: 10 },
     ])
   })
 
@@ -1886,6 +1909,17 @@ describe("chat folders", () => {
     expect(await adapter.createFolder("Home", ["7"])).toEqual({ id: "3", title: "Home", chatIds: ["7"] })
     await adapter.deleteFolder("3")
     expect(client.deleteFolder.mock.calls).toEqual([[3]])
+  })
+
+  it("**orders folders with All chats left where it was**, and joins a shared folder by its link", async () => {
+    const { adapter, client } = await open()
+    client.filters = [work, { _: "dialogFilterDefault" }, { ...work, id: 4 }]
+
+    await adapter.orderFolders(["4", "2"])
+    expect(await adapter.joinFolder("https://t.me/addlist/abc")).toEqual({ id: "6", title: "Shared", chatIds: ["7"] })
+
+    expect(client.setFoldersOrder.mock.calls).toEqual([[[4, 0, 2]]])
+    expect(client.joinChatlist.mock.calls).toEqual([["https://t.me/addlist/abc"]])
   })
 })
 

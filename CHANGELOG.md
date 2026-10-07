@@ -16,6 +16,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   wait Telegram asks for holds the whole profile, and a request that would wait more than 5 minutes fails at
   once with exit code `8`. Bulk work run in parallel takes longer. `requestsPerMinute` or
   `TG_REQUESTS_PER_MINUTE` changes the pace; [limits.md](docs/limits.md) explains all of it.
+- **`tg messages send --html` and `tg messages edit --html` read Telegram's HTML** — `<b>`, `<i>`, `<u>`, `<s>`,
+  `<a href>`, `<code>`, `<pre>`, `<blockquote>`, `<tg-spoiler>` — with line breaks kept as typed
+  ([usage](docs/usage.md#sending)).
+- **`tg messages send --file … --filename <name>`** sends the file under the name others see.
+- **`tg messages list <chat> --topic <id>` reads one forum topic**, back from its newest message or `--before-id`.
+- **`tg chats folders order` puts folders in the order you name**, and **`tg chats folders join <link>`** adds a
+  folder someone shared by a `t.me/addlist/` link, joining every chat in it.
 - **`tg chats link create <chat>` makes another invite link — `--approval` to make whoever joins by it ask first,
   `--expire-time` and `--max-uses` to limit it — and `tg chats update --join-approval on|off` makes everyone ask
   first.** Both work in a private group as well as a public one.

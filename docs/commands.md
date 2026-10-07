@@ -1006,6 +1006,7 @@ tg messages list <chat> [options]
 | `--before-time <time>` | only messages older than this ISO 8601 time, or 2h / 1d ago. |
 | `--after-id <id>` | only messages newer than this message id. |
 | `--after-time <time>` | only messages newer than this ISO 8601 time, or 2h / 1d ago. |
+| `--topic <id>` | only this forum topic; read back from its newest message or --before-id. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
@@ -1079,6 +1080,8 @@ tg messages send <chat> [text] [options]
 | `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
 | `--spoiler` | hide the --photo or video behind a spoiler until tapped. |
 | `--caption-above` | show the text above the --photo or --file, not below it. |
+| `--filename <name>` | the name others see for the --file, instead of its name on disk. |
+| `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
 ### `tg messages show`
 
@@ -1173,6 +1176,7 @@ tg messages edit <chat> <message> [text] [options]
 | Option | What it does |
 |---|---|
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
+| `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
 ### `tg messages delete`
 

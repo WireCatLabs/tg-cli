@@ -124,12 +124,17 @@ This singular command differs from `messages links`, which explains conversation
 ```sh
 tg messages list "Book club"                    # the latest 20, oldest first
 tg messages list "Book club" --limit 50
+tg messages list "Hiking" --topic 12            # one forum topic; topics list shows the ids
 tg messages show "Book club" 4242               # one message
 tg messages context "Book club" 4242            # it, and 5 messages either side
 tg messages context "Book club" 4242 --before-n 2 --after-n 10
 ```
 
 In `context`, the message you asked for is marked `◀` in the terminal and `"anchor": true` in JSON.
+
+`--topic` reads back from the topic's newest message, or from `--before-id`. The General topic (`1`) is
+refused: Telegram gives its messages no topic id, so read the whole chat instead. With `--offline`,
+`--topic` keeps the stored messages of that topic.
 
 ### What needs an answer
 
@@ -324,6 +329,7 @@ tg messages send me "a note to myself"
 tg messages send "Book club" "See you at 7" --silent       # no notification
 tg messages send "Book club" "a link, no card" --no-preview
 tg messages send "Book club" "**Bold** and _italic_" --md  # Telegram Markdown
+tg messages send "Book club" "<b>Bold</b> and <i>italic</i>" --html
 ```
 
 `--md` uses Telegram's formatter: `**bold**` or `*bold*`, `_italic_`, `__underline__`,
@@ -334,6 +340,11 @@ Backslash escapes a mark; word-internal `_` and `*` stay literal. Unclosed inlin
 literal; an unclosed fence is refused. Links support absolute http, https and mailto URLs.
 `messages edit` and media captions use the same formatter. Telegram `__text__` is underline;
 MAX `__text__` is bold. A single `*text*` is now bold in Telegram.
+
+`--html` reads the text as Telegram's HTML, the same as the Bot API's: `<b>`, `<i>`, `<u>`, `<s>`,
+`<a href>`, `<code>`, `<pre language="…">`, `<blockquote>` and `<tg-spoiler>`. Line breaks and spaces
+stay as typed. A mention link (`tg://user?id=`) or a custom emoji is refused. `--md` and `--html`
+cannot go together. `messages edit` takes `--html` too.
 
 ### Text from stdin
 
@@ -366,6 +377,7 @@ tg messages send "Book club" --photo picture.jpg              # recompressed by 
 tg messages send "Book club" --file trip.mp4                  # a video plays in the chat
 tg messages send "Book club" --file trip.mp4 --as-file        # the same video as a file to download
 tg messages send "Book club" --voice note.ogg                 # a voice message, alone, with no text
+tg messages send "Book club" --file 3f9a.pdf --filename "Report Q3.pdf"   # the name others see
 ```
 
 `--photo` takes a `.jpg`, `.png` or `.webp`. A `.mp4` or `.mov` given with `--file` goes as a video
@@ -438,7 +450,7 @@ look in `tg messages scheduled <chat>` instead.
 ### Editing, forwarding, pinning, deleting
 
 ```sh
-tg messages edit "Book club" 4242 "the corrected text"      # your own message; --md as in a send
+tg messages edit "Book club" 4242 "the corrected text"      # your own message; --md or --html as in a send
 tg messages forward "Book club" 4242 --to me                # checked against the chat it goes to
 tg messages pin "Book club" 4242                            # quiet unless --notify
 tg messages unpin "Book club" 4242
@@ -490,10 +502,13 @@ tg chats folders list                              # your folders, in the order 
 tg chats folders create "Trips" --chat "Hiking" --chat @kate
 tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
 tg chats folders delete "Travel"                   # the chats stay
+tg chats folders order "Travel" "Work"             # these first; the rest keep their order after them
+tg chats folders join https://t.me/addlist/AbCdEf  # a folder someone shared: joins every chat in it
 ```
 
 A folder is named by its id or its title exactly. Only you see your folders; each change still goes
-through the guard, as an `account` change.
+through the guard, as an `account` change. `join` is different: the people in those chats see that
+you joined, as with `tg chats join`. "All chats" keeps its place when you `order`.
 
 ### Not in tg yet
 

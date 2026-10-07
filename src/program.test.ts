@@ -542,3 +542,42 @@ describe("MCP startup overrides", () => {
     expect(adapter).not.toHaveBeenCalled()
   })
 })
+
+describe("what tgcli users look for", () => {
+  it("sends and edits Telegram HTML, and sends a file under the name given", async () => {
+    const send = vi.fn(async (_chat: string, text: string, options: SendOptions) => ({
+      message: { ...message("43"), text, outgoing: true },
+      sendId: options.sendId,
+    }))
+    const edit = vi.fn(async (_chat: string, id: string, text: string) => message(id, { text, outgoing: true }))
+    const adapter = () => scripted({ send, edit })
+    const file = join(mkdtempSync(join(tmpdir(), "tg-file-")), "3f9a.pdf")
+    writeFileSync(file, "synthetic")
+
+    const html = await tg(["messages", "send", "me", "<b>bold</b>\nnext", "--html", "--json"], { adapter })
+    const named = await tg(["messages", "send", "me", "--file", file, "--filename", "Report.pdf", "--json"], {
+      adapter,
+    })
+    const edited = await tg(["messages", "edit", "me", "42", "<i>fixed</i>", "--html", "--json"], { adapter })
+    const both = await tg(["messages", "send", "me", "<b>x</b>", "--html", "--md", "--json"], { adapter })
+
+    expect([html.code, named.code, edited.code, both.code]).toEqual([0, 0, 0, 2])
+    expect(send.mock.calls[0]?.[1]).toBe("bold\nnext")
+    expect(send.mock.calls[0]?.[2]).toMatchObject({ formatting: [{ type: "bold", from: 0, length: 4 }] })
+    expect(send.mock.calls[1]?.[2].attachments?.[0]?.name).toBe("Report.pdf")
+    expect(edit.mock.calls[0]?.[2]).toBe("fixed")
+    expect(send).toHaveBeenCalledTimes(2)
+  })
+
+  it("reads one forum topic, and refuses the General topic", async () => {
+    const topicHistory = vi.fn(async () => ({ items: [message("50", { threadId: "12" })], hasMore: false }))
+    const adapter = () => scripted({ topicHistory })
+
+    const topic = await tg(["messages", "list", "Valencia", "--topic", "12", "--json"], { adapter })
+    const general = await tg(["messages", "list", "Valencia", "--topic", "1", "--json"], { adapter })
+
+    expect(JSON.parse(topic.stdout[0] ?? "").items.map((one: { id: string }) => one.id)).toEqual(["50"])
+    expect(topicHistory).toHaveBeenCalledWith("Valencia", "12", { limit: 20 })
+    expect(general.code).toBe(2)
+  })
+})

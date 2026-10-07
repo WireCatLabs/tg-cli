@@ -538,6 +538,13 @@ describe("the send guard in front of the other writes", () => {
       deleteFolder: async (id) => {
         done.push(`delete ${id}`)
       },
+      orderFolders: async (ids) => {
+        done.push(`order ${ids.join(",")}`)
+      },
+      joinFolder: async (link) => {
+        done.push(`join ${link}`)
+        return { id: "4", title: "Shared", chatIds: [] }
+      },
     })
 
     const codes = [
@@ -562,18 +569,24 @@ describe("the send guard in front of the other writes", () => {
         )
       ).code,
       (await tg(["g-folders", "chats", "folders", "delete", "Work"], adapter)).code,
+      (await tg(["g-folders", "chats", "folders", "order", "Work"], adapter)).code,
+      (await tg(["g-folders", "chats", "folders", "join", "https://t.me/addlist/abc"], adapter)).code,
     ]
 
-    expect(codes).toEqual([0, 0, 0, 0])
+    expect(codes).toEqual([0, 0, 0, 0, 0, 0])
     expect(done).toEqual([
       `create Home ${chat.id}`,
       `update 2 {"title":"Job","add":["${chat.id}"],"remove":["${chat.id}"]}`,
       "delete 2",
+      "order 2",
+      "join https://t.me/addlist/abc",
     ])
     expect(journal("g-folders").map((entry) => entry.action)).toEqual([
       "folder-create",
       "folder-update",
       "folder-delete",
+      "folder-order",
+      "folder-join",
     ])
   })
 

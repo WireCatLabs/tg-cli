@@ -18,6 +18,7 @@
     "mcp",
     "remote",
     "recipes",
+    "from-tgcli",
     "---Reference---",
     "commands",
     "configuration",
