@@ -11,6 +11,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - Rankings retain explicit Telegram reply links and linked channel discussions; ambiguous forum-topic links remain unknown.
 - [The ranking guide](docs/rankings.md) covers measures, scores, coverage, saved selections and evidence. The SDK preserves exclusive date boundaries when replaying saved selections.
+- **`tg store fetch --all` downloads every chat** — the last 90 days of each, most recently active first;
+  `--background` runs it as a job. Search needs it: [prepare your archive](docs/search.md#prepare-your-archive-first).
+- **Your own names and notes for people: `tg contacts alias` and `tg contacts notes`**, kept on this computer
+  only; `contacts show --with-notes` and `contacts list --search-notes` show and search them
+  ([people](docs/people.md#your-own-names-and-notes-contacts-alias-contacts-notes)).
+- **Automatic tags for groups and channels: `tg metadata refresh` and `tg tags auto`**, from title and
+  description, never touching your own tags ([search](docs/search.md#tags)).
+- **Every search says what it searched.** One line in the terminal — messages and chats searched, chats never
+  fetched or behind, and the command that fixes it; `coverage.next` in JSON tells an agent what to run.
 
 ## 0.34.0 — 07.10.2026
 
