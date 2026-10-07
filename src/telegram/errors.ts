@@ -50,7 +50,7 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
   CHAT_PUBLIC_REQUIRED: [
     "validation_error",
-    "only a public group can ask everyone for approval — make an invite link that needs it: " +
+    "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
       "`tg chats link create <chat> --approval`",
   ],
   MEGAGROUP_REQUIRED: ["validation_error", "that works only in a supergroup"],

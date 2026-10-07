@@ -8,8 +8,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 ### What's new
 
 - **`tg chats link create <chat>` makes another invite link — `--approval` to make whoever joins by it ask first,
-  `--expire-time` and `--max-uses` to limit it — and `tg chats update --join-approval on|off` makes a public group
-  ask everyone.** A private group gets `CHAT_PUBLIC_REQUIRED` as a plain refusal that names the link to use instead.
+  `--expire-time` and `--max-uses` to limit it — and `tg chats update --join-approval on|off` makes everyone ask
+  first.** Both work in a private group as well as a public one.
 - **`tg chats requests list <chat>` shows who asked to join a group that needs approval, and `tg chats requests
   accept|decline <chat> <person>` answers one.** Only admins see the requests; an accepted one counts toward the
   hourly limit like an added member.
