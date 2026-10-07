@@ -535,3 +535,18 @@ Pull requests, bug reports and ideas are welcome —
 For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel
 with an owner-code login. Profile permissions govern writes; the server has no confirmation forms. See [remote access](docs/remote.md).
 Group activity is available with `tg stats chats show <chat>`; [statistics](docs/groups.md#statistics-for-group-admins).
+
+### Private contact notes and automatic tags
+
+`tg contacts alias set <person> <alias>` keeps a display name locally for the selected account;
+`contacts rename` updates the messenger address book. Write your own notes with
+`contacts notes add <person> --file <path>`, then use `list`, `show`, `edit --revision <n>` and
+`remove`. `contacts show --with-notes` includes notes explicitly; `contacts list --search-notes
+<text>` searches them. Contact refresh preserves notes and aliases; linking people does not
+combine their private metadata.
+
+`tg metadata refresh --chat <id>` caches a group/channel description; `metadata get --chat <id>`
+reads that snapshot. `tags auto --chat <id> --dry-run` previews keyword labels. Use
+`--refresh-metadata` without `--dry-run` for current descriptions. Each run handles at most 500
+chats, 50 by default. Automatic labels preserve manual labels; `tags list|remove --source auto`
+selects generated claims. Classification uses no message text or external model.

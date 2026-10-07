@@ -358,3 +358,35 @@ then repair only with the owner's authorization using `store gaps repair --finge
 and explicit gap/message/time/page/pause bounds. `--background` uses ordinary store jobs.
 These commands and job metadata are also available through MCP discovery and read/write gateways.
 Unknown edges and message-id holes do not prove missing history.
+
+## Private people notes and channel tags
+
+Local aliases and notes belong to the selected account, survive contact refresh, and never
+change messenger profiles or address-book names. `contacts rename` updates the messenger's
+address book; use `contacts alias` for a local name. Duplicate aliases require an explicit id.
+Private notes are separate from the contact's public bio. Read/search them only when relevant.
+
+```sh
+tg contacts alias set 101 'Project lead'
+tg contacts alias rm 101
+tg contacts notes add 101 --file /path/to/own-note.md
+tg contacts notes list 101 --json
+tg contacts notes show 101 NOTE_ID --json
+tg contacts notes edit 101 NOTE_ID --revision 1 --file /path/to/own-note.md
+tg contacts notes remove 101 NOTE_ID
+tg contacts show 101 --with-notes --json
+tg contacts list --search-notes 'follow up' --json
+tg metadata get --chat CHAT_ID --json
+tg metadata refresh --chat CHAT_ID --limit 1 --json
+tg tags auto --chat CHAT_ID --dry-run --json
+tg tags auto --chat CHAT_ID --refresh-metadata --limit 1 --json
+tg tags list --source auto --json
+tg tags remove news --chat CHAT_ID --source auto
+```
+
+Automatic tags use local keyword rules on cached group/channel titles, usernames and descriptions;
+they do not use a model or message contents. Refresh is explicit and reads the messenger without
+changing the chat. Dry-run uses cached data only and cannot be combined with refresh. Limit is
+bounded at 500 chats. A rule score is not a probability. Automatic claims are separate from manual
+labels; rerunning preserves manual labels. Without `--source`, removing a label removes both claims.
+A later explicit auto run can regenerate it. Linking identities never silently combines private notes.

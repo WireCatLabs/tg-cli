@@ -11,6 +11,32 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "metadata refresh",
+    reason:
+      "Shared cli-messaging src/services/private-people.test.ts covers metadata refresh and snapshot retention; this consumer mounts the shared command.",
+  },
+  {
+    command: "metadata refresh",
+    option: "--chat",
+    reason: "Shared private-people.test.ts covers chat resolution for metadata reads.",
+  },
+  {
+    command: "metadata refresh",
+    option: "--limit",
+    reason: "Shared private-people.test.ts covers bounded refresh and invalid limits.",
+  },
+  {
+    command: "tags auto",
+    option: "--refresh-metadata",
+    reason: "Shared private-people.test.ts covers explicit provider refresh and failures.",
+  },
+  {
+    command: "contacts list",
+    option: "--search-notes",
+    reason: "Shared private-people.test.ts covers account-scoped notes search.",
+  },
+
+  {
     command: "stats messages top",
     option: "--sync-first",
     reason:
@@ -547,5 +573,76 @@ export const UNTESTED: Untested[] = [
     option: "--accept-terms",
     reason:
       "phase 5's shared command; it downloads a model over the network, and cli-messaging's tests drive it offline",
+  },
+  {
+    command: "contacts list",
+    option: "--search-notes",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "contacts show",
+    option: "--with-notes",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags auto",
+    option: "--chat",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags auto",
+    option: "--limit",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags auto",
+    option: "--refresh-metadata",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags auto",
+    option: "--dry-run",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags remove",
+    option: "--source",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "tags list",
+    option: "--source",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "contacts notes add",
+    option: "--file",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "contacts notes edit",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "contacts notes edit",
+    option: "--file",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+  },
+  {
+    command: "contacts notes edit",
+    option: "--revision",
+    reason:
+      "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
 ]
