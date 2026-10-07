@@ -1211,6 +1211,46 @@ describe("sending", () => {
     expect(options).toMatchObject({ replyTo: 7 })
   })
 
+  it("sends as the identity it was given, and refuses one that is not a peer id", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.send("-1000000000500", "hola", { sendId: "42", sendAs: "-1002" })
+    expect(() => adapter.send("-1000000000500", "hola", { sendId: "43", sendAs: "@channel" })).toThrow(
+      "--send-as takes",
+    )
+
+    expect(client.sendText.mock.calls[0]?.[2]).toMatchObject({ sendAs: -1002 })
+    expect(client.sendText).toHaveBeenCalledOnce()
+  })
+
+  it("sends a file and creates a poll as the identity it was given", async () => {
+    const { adapter, client } = await open()
+    const bytes = new Uint8Array([1])
+
+    await adapter.send("-1000000000500", "caption", {
+      sendId: "1",
+      sendAs: "-1002",
+      attachments: [{ kind: "file", name: "synthetic.txt", bytes }],
+    })
+    await adapter.createPoll(
+      "-1000000000500",
+      { question: "Friday?", answers: ["yes", "no"], anonymous: false, multiple: false },
+      { sendId: "2", sendAs: "-1002" },
+    )
+
+    expect(client.sendMedia.mock.calls.map((call) => call[2])).toMatchObject([{ sendAs: -1002 }, { sendAs: -1002 }])
+  })
+
+  it("names the identity in the repeat an unknown outcome asks for", async () => {
+    const { adapter, client } = await open()
+    client.sendText.mockRejectedValueOnce(new MtTimeoutError(1))
+
+    await expect(adapter.send("-1000000000500", "hola", { sendId: "42", sendAs: "-1002" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      message: expect.stringContaining("--send-id 42 --send-as -1002"),
+    })
+  })
+
   it("sends silently, without a preview, with each span as a Telegram entity", async () => {
     const { adapter, client } = await open()
 
@@ -1398,6 +1438,15 @@ describe("forwarding", () => {
     expect(request).toMatchObject({ _: "messages.forwardMessages", id: [5], silent: true })
     expect(String((request.randomId as unknown[])[0])).toBe("123456789012345")
     expect(client.handleClientUpdate).toHaveBeenCalledOnce()
+  })
+
+  it("forwards as the identity it was given into a supergroup", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.forward("-100500", "5", "-1000000000500", { sendId: "42", sendAs: "-1002" })
+
+    const request = client.calls.find((call) => call.method === "call")?.args[0] as Record<string, unknown>
+    expect(request).toMatchObject({ sendAs: { _: "inputPeerChannel", peer: -1002 } })
   })
 
   it("makes a timeout an unknown outcome that names the send id to repeat with", async () => {

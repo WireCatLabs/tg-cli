@@ -28,6 +28,7 @@ import {
   type Poll,
   type ProfileFacts,
   pickChat,
+  type SenderIdentity,
   type Topic,
 } from "@leemour/cli-messaging"
 import type {
@@ -92,6 +93,7 @@ import {
 } from "./map.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
+import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -441,6 +443,14 @@ export class TelegramAdapter {
     })
   }
 
+  sendAsIdentities(chatId: string): Promise<SenderIdentity[]> {
+    return this.#call(() => sendAsIdentities(this.#client, chatId))
+  }
+
+  savedSender(chatId: string): Promise<string | null> {
+    return this.#call(() => savedSenderOf(this.#client, chatId, this.self()))
+  }
+
   permalink(chatId: string, messageId: string) {
     const id = messageNumber(messageId, "a message id is a positive Telegram integer")
     if (id <= 0 || id > 2147483647)
@@ -476,11 +486,12 @@ export class TelegramAdapter {
   send(
     chatId: string,
     text: string,
-    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [] }: SendOptions,
+    { sendId, replyTo, threadId, silent, noPreview, markup, formatting, at, attachments = [], sendAs }: SendOptions,
   ): Promise<Sent> {
     const id = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
+    const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, this.self())
     if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
     const spans = formatting ?? markup
     const body = spans ? toFormatted(text, spans) : text
@@ -490,6 +501,7 @@ export class TelegramAdapter {
       ...(answering === undefined ? {} : { replyTo: answering }),
       ...(silent ? { silent } : {}),
       ...(at === undefined ? {} : { schedule: new Date(at) }),
+      ...(author === undefined ? {} : { sendAs: author }),
     }
     return this.#call(async () => {
       const [attachment] = attachments
@@ -505,8 +517,8 @@ export class TelegramAdapter {
       } catch (error) {
         throw unknownIfUnanswered(
           error,
-          `the message may have been sent. Repeat with --send-id ${sendId}, never without it`,
-          { sendId },
+          `the message may have been sent. Repeat with ${repeatWith(sendId, sendAs)}, never without it`,
+          retryDetails(sendId, sendAs),
         )
       }
     })
@@ -688,10 +700,11 @@ export class TelegramAdapter {
     fromChatId: string,
     messageId: string,
     toChatId: string,
-    { sendId, silent }: { sendId: string; silent?: boolean },
+    { sendId, silent, sendAs }: { sendId: string; silent?: boolean; sendAs?: string },
   ): Promise<Message> {
     const id = messageNumber(messageId, "a message id is a number")
     const randomId = parseSendId(sendId)
+    const author = sendAs === undefined ? undefined : sendAsPeer(toChatId, sendAs, this.self())
     return this.#call(async () => {
       try {
         const updates = await this.#client.call({
@@ -701,6 +714,7 @@ export class TelegramAdapter {
           id: [id],
           randomId: [randomId],
           ...(silent ? { silent } : {}),
+          ...(author === undefined ? {} : { sendAs: await this.#client.resolvePeer(author) }),
         })
         this.#client.handleClientUpdate(updates, true)
         const copy = forwardedCopy(updates)
@@ -709,8 +723,8 @@ export class TelegramAdapter {
       } catch (error) {
         throw unknownIfUnanswered(
           error,
-          `the message may have been forwarded. Repeat with --send-id ${sendId}, never without it`,
-          { sendId },
+          `the message may have been forwarded. Repeat with ${repeatWith(sendId, sendAs)}, never without it`,
+          retryDetails(sendId, sendAs),
         )
       }
     })
@@ -820,23 +834,25 @@ export class TelegramAdapter {
   createPoll(
     chatId: string,
     poll: NewPoll,
-    { sendId, silent, threadId }: { sendId: string; silent?: boolean; threadId?: string },
+    { sendId, silent, threadId, sendAs }: { sendId: string; silent?: boolean; threadId?: string; sendAs?: string },
   ): Promise<Sent> {
     const randomId = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
+    const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, this.self())
     return this.#call(async () => {
       try {
         const message = await this.#client.sendMedia(Number(chatId), toInputPoll(poll), {
           randomId,
           ...(thread === undefined || thread === 1 ? {} : { threadId: thread }),
           ...(silent ? { silent } : {}),
+          ...(author === undefined ? {} : { sendAs: author }),
         })
         return { message: toMessage(message), sendId }
       } catch (error) {
         throw unknownIfUnanswered(
           error,
-          `the poll may have been sent. Repeat with --send-id ${sendId}, never without it`,
-          { sendId },
+          `the poll may have been sent. Repeat with ${repeatWith(sendId, sendAs)}, never without it`,
+          retryDetails(sendId, sendAs),
         )
       }
     })
@@ -1729,6 +1745,14 @@ const unknownIfUnanswered = (error: unknown, what: string, details: Record<strin
   }
   return error
 }
+
+const repeatWith = (sendId: string, sendAs: string | undefined): string =>
+  sendAs === undefined ? `--send-id ${sendId}` : `--send-id ${sendId} --send-as ${sendAs}`
+
+const retryDetails = (sendId: string, sendAs: string | undefined) => ({
+  sendId,
+  ...(sendAs === undefined ? {} : { sendAs }),
+})
 
 const topicNumber = (id: string): number => {
   if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) {

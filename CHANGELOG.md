@@ -3,6 +3,20 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg chats send-as <chat>` lists who you may post as in a group, and `--send-as <id>` posts as one of
+  them** — on `tg messages send` (files included), `tg messages forward` and `tg polls create`. The list always
+  includes you and marks the group's saved choice; reading it changes nothing. An id not in the list is refused.
+
+### Changed — may break scripts
+
+- **A send, forward or poll with no `--send-as` to a group that posts as a channel by default is refused** (exit
+  `2`), instead of going out as that channel. The error names `--send-as <your id>` to post as yourself and
+  `--send-as <channel id>` to post as the channel.
+
 ## 0.33.0 — 07.10.2026
 
 - **`tg contacts profile` and `tg contacts check` estimate the age of accounts made up to August 2026.** The
