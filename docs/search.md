@@ -1,7 +1,8 @@
 # Message search
 
 `tg messages search` finds messages in the local archive: the copy of your chats that tg keeps on this
-computer. By default it never connects to Telegram and marks nothing read. A message tg has not fetched cannot be
+computer. By default it never connects to Telegram and marks nothing read; `--backend both` also asks
+Telegram ([below](#asking-telegram-too---backend)). A message tg has not fetched cannot be
 found, so fetch the history first: `tg store fetch <chat>` ([archive](archive.md)).
 
 This page covers everyday searches. Three more pages go further:
@@ -139,6 +140,35 @@ tg stats messages show --by hour                      # every stored message
 `--by chat` (the default) and `--by sender` put the largest first; `--by day` and `--by hour` go in
 order. When some chats are not stored in full, the numbers are a lower bound, and stderr says how
 many chats that is.
+
+## Asking Telegram too: `--backend`
+
+Telegram can search its own copy of your chats, including messages tg never fetched. Add
+`--backend both` to search Telegram and the archive in one run, or `--backend server` for Telegram's
+results alone. The default is `--backend archive`: the local archive only.
+
+```sh
+tg messages search 'invoice' --backend both
+tg messages search 'invoice chat:"Book club" from:Olga' --backend both
+tg messages search 'invoice date:2026-09' --backend server --server-time 10s
+```
+
+Telegram decides on its own what matches a word, and does not document it. So tg treats its answer as
+candidates: it saves them in the archive and runs your query over them with the archive's own rules.
+`exact:`, `-word`, quotes and the ranking mean the same as without `--backend`, and a message is never
+listed twice. A message Telegram returned but your query rejects is not shown; it stays in the archive.
+
+Telegram gets only the words your query requires, one chat, a sender together with a chat, and dates.
+`OR` makes up to three searches. Negations, wildcards, `has:`, `tag:` and presets are applied by tg
+afterwards. A query without words does not ask Telegram. tg waits at most 5 seconds (`--server-time`,
+up to 60 s) and takes up to 100 messages per search; a later answer is dropped. Nothing is marked read.
+
+With `--json`, each message says where it came from (`source`: `archive`, `server` or `both`) and a
+`server` block says what Telegram returned and what failed. `--backend both` never fails because of
+Telegram: offline, without permission or with no words it answers from the archive and says why.
+`--backend server` refuses instead. The permission is `messages.server-search`; a read-only profile
+answers from the archive. `stats messages show` counts the archive only: Telegram's counts follow its
+own rules, not your query.
 
 ## When nothing is found
 

@@ -123,6 +123,7 @@ export const TELEGRAM: Messenger = {
   mediaOptions: ["spoiler", "captionAbove"],
   addsWithHistory: false,
   officialStats: true,
+  serverSearch: true,
   knowsAccountAge: false,
   adminRights: ADMIN_RIGHTS,
   // Saved Messages is the chat with yourself, so its id is the account's.
