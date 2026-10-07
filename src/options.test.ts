@@ -259,6 +259,19 @@ describe("contacts profile", () => {
     expect(masked.chats).toMatchObject([{ id: "7", theirMessages: 0 }])
     expect(whole.phone).toBe("0123")
   })
+
+  it("lists a name the store saw them with before as an alias", async () => {
+    const said = (name: string) =>
+      scripted({
+        history: async () => ({ items: [message("42", { senderId: "7", senderName: name })], hasMore: false }),
+      })
+    await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe Old") })
+    await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe") })
+
+    const shown = json((await tg(["contacts", "profile", "7", "--json"], { adapter: () => described })).stdout)
+
+    expect(shown.aliases).toMatchObject([{ name: "Zoe Old", source: "profile" }])
+  })
 })
 
 describe("contacts list", () => {
