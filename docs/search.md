@@ -166,6 +166,11 @@ details.
 plain text, Word and PDFs with text layers; scans and photos need agent-supplied text. With several attachments,
 choose `--attachment`, starting at 1.
 
+The agent normally reads images/scans with its own OCR or vision tools and writes the text into this
+index. `attachments list --needs-text` returns the saved path, message locator and attachment number.
+Verify write-back with a `content:` search. A path on an MCP server does not transfer the file to a
+remote agent; the agent needs access to the file to read it.
+
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
 tg messages search 'content:invoice'

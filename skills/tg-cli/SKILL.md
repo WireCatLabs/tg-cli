@@ -321,6 +321,14 @@ text.
 plain text, Word and PDFs with text layers; scans and photos need agent-supplied text. With several attachments,
 choose `--attachment`, starting at 1.
 
+By default, perform OCR yourself with the agent's file-reading and vision tools. After downloading
+and local extraction, handle `needs-agent` items: find each `localPath` with `attachments list
+--needs-text`, read the image or scan, and save literal transcription with `attachments text set`.
+Retain the message locator and attachment number; verify the result with a `content:` query.
+Do not silently substitute a separate model API call. The owner explicitly selects API processing
+for bulk work. If your tools cannot access the file, report that limitation; a path on an MCP
+server does not transfer the file to a remote agent.
+
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
 tg messages search 'content:invoice'
