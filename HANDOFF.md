@@ -1,6 +1,6 @@
 # tg-cli + cli-messaging — start here
 
-**State 2026-09-29.** Read this once, then only the files your task needs from §3. It is
+**State 2026-10-08.** Read this once, then only the files your task needs from §3. It is
 context, not history.
 
 ## 1. What this is
@@ -12,7 +12,7 @@ failure. Everything that is not specific to Telegram lives in the npm package
 [`@leemour/cli-messaging`](https://github.com/leemour/cli-messaging) (checkout: `../cli-messaging`),
 which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) also uses.
 **Correction 2026-10-04:** MAX completed its shared command/cache cutover and P7 permissions;
-the coordinated consumer release is prepared in `docs/dev/coordinated-release.md`. Both sit on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
+the October 4 coordinated preparation is historical (`docs/dev/coordinated-release.md`). Both sit on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
 
 The goal beyond the CLI: a local archive of every messenger with search, a cross-messenger contact
 graph and a CRM on top. The full design:
@@ -43,8 +43,8 @@ root help, `setup --help` and `skill show` explain onboarding before login), `up
 `chats list|show`, `contacts list|show`, `messages list|show|context|send|search`, `watch
 [--events]`, `serve`, `store fetch|status|export|jobs`, `recipients`, `sends`, `runs`, `config`,
 `doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
-`--offline` answers the list and show commands from it; `search`, `store status` and `store export`
-only ever read it.
+`--offline` answers list and show commands from it; `store status` and `store export` read only it.
+**Correction 2026-10-08:** word search defaults to the archive plus Telegram; `--backend archive` keeps it local.
 
 The split: **everything messenger-neutral is in cli-messaging** — the commands, saving to the store,
 `--offline`, run records, the send guard, the store and its migrations. tg describes Telegram once —
@@ -53,7 +53,10 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
 
 ### 3b. Open right now
 
-1. **tg is on npm: `@leemour/tg-cli@0.25.0`** (**Correction 2026-10-04:** current npm version; 0.26.0 is a draft candidate), released from GitHub by `bin/release`
+1. **Release snapshot: `@leemour/tg-cli@0.35.0`**, with cli-messaging 0.175.0 and cli-core 0.17.2.
+   Archive preparation (`store fetch --all`), coverage/`next`, private people metadata and bulk join-request
+   actions are included. [GitHub releases](https://github.com/leemour/tg-cli/releases) confirm publication.
+   Releases run from GitHub through `bin/release`
    (trusted publishing works; the workflow publishes and tags). 0.2.0 added what is now `tg upgrade [--check]`
    and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
    `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
