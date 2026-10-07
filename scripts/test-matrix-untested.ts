@@ -304,4 +304,26 @@ export const UNTESTED: Untested[] = [
     reason:
       "phase 5's shared command; it downloads a model over the network, and cli-messaging's tests drive it offline",
   },
+  ...[
+    ["messages search", "--exact"],
+    ["stats messages show", "--exact"],
+    ["searches create", "--exact"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "cli-messaging src/services/messages-stemmed.test.ts covers exact matching against stemmed search; this consumer mounts the shared command (cli-messaging 0.163.0)",
+  })),
+  ...["messages send", "messages forward", "polls create"].map((command) => ({
+    command,
+    option: "--send-as",
+    reason:
+      "cli-messaging src/services/send-as.test.ts covers sending, forwarding and polls as another identity, and src/cli/messenger/messenger.test.ts drives messages send --send-as; this consumer mounts the shared commands (cli-messaging 0.164.0)",
+  })),
+  ...["--title", "--closed", "--pinned", "--hidden"].map((option) => ({
+    command: "topics edit",
+    option,
+    reason:
+      "cli-messaging src/services/topic-edit.test.ts covers renaming, closing, pinning and hiding a topic; this consumer mounts the shared command (cli-messaging 0.164.0)",
+  })),
 ]
