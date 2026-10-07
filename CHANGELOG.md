@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.33.0 — 07.10.2026
 
 - **`tg contacts profile` and `tg contacts check` estimate the age of accounts made up to August 2026.** The
   table that guesses a sign-up month from an account id ended at November 2025, so the newest accounts got no
