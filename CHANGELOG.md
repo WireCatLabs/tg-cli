@@ -33,8 +33,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
-### Fixed
-
 - Search catch-up honors readonly or denied `conversations.links` before fetching or queueing
   preparation, including gap repair. Explicit `--no-catch-up` still permits authorized history reads.
 
