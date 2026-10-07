@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.35.0 — 08.10.2026
 
 ### What's new
 
@@ -14,8 +14,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg chats requests accept|decline <chat> --all [--link <link>]` answers every pending request at once, and
   `tg chats link list` / `tg chats link revoke` show and stop your invite links.** An `--all` accept is counted
   against the hourly limit before anyone is let in.
-- Rankings retain explicit Telegram reply links and linked channel discussions; ambiguous forum-topic links remain unknown.
-- [The ranking guide](docs/rankings.md) covers measures, scores, coverage, saved selections and evidence. The SDK preserves exclusive date boundaries when replaying saved selections.
+- **Rankings retain Telegram reply links and linked channel discussions**, so conversation measures use those
+  links when available; ambiguous forum-topic links remain unknown.
+- [The ranking guide](docs/rankings.md) explains measures, scores, coverage, saved selections and evidence.
+  Replaying a saved selection now preserves exclusive date boundaries.
 - **`tg store fetch --all` downloads every chat** — the last 90 days of each, most recently active first;
   `--background` runs it as a job. Search needs it: [prepare your archive](docs/search.md#prepare-your-archive-first).
 - **Your own names and notes for people: `tg contacts alias` and `tg contacts notes`**, kept on this computer
@@ -23,10 +25,16 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   ([people](docs/people.md#your-own-names-and-notes-contacts-alias-contacts-notes)).
 - **Automatic tags for groups and channels: `tg metadata refresh` and `tg tags auto`**, from title and
   description, never touching your own tags ([search](docs/search.md#tags)).
+
+### Changed — may break scripts
+
 - **Every search says what it searched.** One line in the terminal — messages and chats searched, chats never
   fetched or behind, and the command that fixes it; `coverage.next` in JSON tells an agent what to run.
 
-### Changed — may break scripts
+- **Word search now asks Telegram as well as the local archive by default (`--backend both`).**
+  Previously it searched only the archive unless a backend was chosen. Search can now connect to Telegram;
+  use `--backend archive` for local-only searches. Counting with `stats`, topic search and queries the server
+  cannot answer still read only the archive.
 
 - **`tg chats join` to a group whose admins approve who joins answers `requested: true` and exits `0`**, instead
   of exit `11`: the request was sent all along. A script that treated exit 11 as "request sent" now reads
