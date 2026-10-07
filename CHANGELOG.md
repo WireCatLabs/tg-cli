@@ -3,6 +3,52 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+<<<<<<< HEAD
+- **`tg chats link create <chat>` makes another invite link — `--approval` to make whoever joins by it ask first,
+  `--expire-time` and `--max-uses` to limit it — and `tg chats update --join-approval on|off` makes a public group
+  ask everyone.** A private group gets `CHAT_PUBLIC_REQUIRED` as a plain refusal that names the link to use instead.
+- **`tg chats requests list <chat>` shows who asked to join a group that needs approval, and `tg chats requests
+  accept|decline <chat> <person>` answers one.** Only admins see the requests; an accepted one counts toward the
+  hourly limit like an added member.
+||||||| parent of f20f6ba (feat(stats): preserve Telegram ranking graph and document ranking views)
+=======
+- `stats messages top` and `stats contacts top` rank held messages and their human authors by
+  measures or weighted scores, with explicit coverage, exclusions and structured drilldowns.
+  Their `evidence` views return bounded pages of contributing messages and answer pairs;
+  `searches create --selection` saves a resolved ranking. See [rankings](docs/rankings.md).
+- Store proven Telegram reply links, linked discussion ids and automatic channel copies as
+  versioned metadata. Ambiguous forum-topic links remain unknown for graph calculations.
+>>>>>>> f20f6ba (feat(stats): preserve Telegram ranking graph and document ranking views)
+
+- **`tg messages search --backend both` asks Telegram as well as the archive.** Telegram's results are saved
+  and checked by the same query, so `exact:`, `-word` and the ranking keep their meaning; each message says
+  whether it came from the archive, Telegram or both. `--backend server` shows Telegram's results alone;
+  `--server-time` bounds the wait (5 s). The default stays the archive ([search](docs/search.md)).
+
+- **`tg chats mark-read <chat> --topic <id>` marks one forum topic read**, up to `--until` or its newest
+  message, and leaves the rest of the chat as it is.
+
+- **`tg topics edit <chat> <topic>` renames (`--title`), closes or reopens (`--closed on|off`) and pins or unpins
+  (`--pinned on|off`) a forum topic, and hides or shows the General topic (`--hidden on|off`); `tg topics order
+  <chat> <topic...>` puts the pinned topics in order.** Repeating either is safe.
+
+- **`tg messages send --spoiler` blurs a photo or video until tapped, and `--caption-above` puts the text above
+  it.** A spoiler on a document or voice message is refused.
+
+- **`tg chats send-as <chat>` lists who you may post as in a group, and `--send-as <id>` posts as one of
+  them** — on `tg messages send` (files included), `tg messages forward` and `tg polls create`. The list always
+  includes you and marks the group's saved choice; reading it changes nothing. An id not in the list is refused.
+
+### Changed — may break scripts
+
+- **A send, forward or poll with no `--send-as` to a group that posts as a channel by default is refused** (exit
+  `2`), instead of going out as that channel. The error names `--send-as <your id>` to post as yourself and
+  `--send-as <channel id>` to post as the channel.
+
 ## 0.34.0 — 07.10.2026
 
 ### What's new
