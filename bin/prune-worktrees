@@ -5,7 +5,8 @@
 #   bin/prune-worktrees           # lists them, asks, then removes
 #
 # A worktree is removed only when its commit is on origin/main or its branch's PR is merged, and
-# nothing in it is uncommitted except build tarballs (*.tgz). Anything else is listed as kept.
+# nothing in it is uncommitted except build tarballs (*.tgz), and no process works in it. The rest is
+# listed as kept.
 set -eu
 
 cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
@@ -23,6 +24,10 @@ git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=
     dirty=$(git -C "$tree" status --porcelain 2>/dev/null | grep -v '^?? [^/]*\.tgz$' || true)
     if [ -n "$dirty" ]; then
       echo "keep  $tree — uncommitted changes"
+      continue
+    fi
+    if for proc in /proc/[0-9]*; do readlink "$proc/cwd" 2>/dev/null; done | grep -q "^$tree\(/\|$\)"; then
+      echo "keep  $tree — a running process works in it"
       continue
     fi
     head=$(git -C "$tree" rev-parse HEAD)
