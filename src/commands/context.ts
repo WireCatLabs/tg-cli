@@ -122,6 +122,7 @@ export const TELEGRAM: Messenger = {
   groupSettings: GROUP_SETTINGS,
   mediaOptions: ["spoiler", "captionAbove", "fileName"],
   html: true,
+  folderRules: true,
   addsWithHistory: false,
   officialStats: true,
   serverSearch: true,

@@ -569,6 +569,84 @@ describe("what tgcli users look for", () => {
     expect(send).toHaveBeenCalledTimes(2)
   })
 
+  it("makes a folder by rules, and narrows join requests by name or link", async () => {
+    const createFolder = vi.fn(async (title: string, chatIds: string[], _rules?: unknown) => ({
+      id: "9",
+      title,
+      chatIds,
+    }))
+    const updateFolder = vi.fn(async (id: string, _change: unknown) => ({ id, title: "Inbox", chatIds: [] }))
+    const joinRequests = vi.fn(async () => ({ items: [], hasMore: false }))
+    const adapter = () =>
+      scripted({
+        createFolder,
+        updateFolder,
+        joinRequests,
+        folders: async () => [{ id: "9", title: "Inbox", chatIds: [] }],
+      })
+
+    const made = await tg(
+      [
+        "chats",
+        "folders",
+        "create",
+        "Inbox",
+        "--include",
+        "contacts,bots",
+        "--skip",
+        "muted",
+        "--exclude-chat",
+        "Valencia",
+        "--pin",
+        "Valencia",
+        "--emoji",
+        "📥",
+        "--json",
+      ],
+      { adapter },
+    )
+    const cleared = await tg(["chats", "folders", "update", "Inbox", "--include", "none", "--json"], { adapter })
+    const moved = await tg(
+      [
+        "chats",
+        "folders",
+        "update",
+        "Inbox",
+        "--skip",
+        "read",
+        "--exclude-chat",
+        "Valencia",
+        "--pin",
+        "Valencia",
+        "--emoji",
+        "🗂",
+        "--json",
+      ],
+      { adapter },
+    )
+    const named = await tg(["chats", "requests", "list", "Valencia", "--search", "ana", "--json"], { adapter })
+    const linked = await tg(["chats", "requests", "list", "Valencia", "--link", "https://t.me/+x", "--json"], {
+      adapter,
+    })
+
+    expect([made.code, cleared.code, moved.code, named.code, linked.code]).toEqual([0, 0, 0, 0, 0])
+    expect(createFolder.mock.calls[0]?.[2]).toEqual({
+      include: ["contacts", "bots"],
+      skip: ["muted"],
+      exclude: [chat.id],
+      pin: [chat.id],
+      emoji: "📥",
+    })
+    expect(updateFolder.mock.calls.map((call) => call[1])).toEqual([
+      { include: [] },
+      { skip: ["read"], exclude: [chat.id], pin: [chat.id], emoji: "🗂" },
+    ])
+    expect(joinRequests.mock.calls.map((call) => (call as unknown[])[1])).toEqual([
+      { limit: 20, search: "ana" },
+      { limit: 20, link: "https://t.me/+x" },
+    ])
+  })
+
   it("reads one forum topic, and refuses the General topic", async () => {
     const topicHistory = vi.fn(async () => ({ items: [message("50", { threadId: "12" })], hasMore: false }))
     const adapter = () => scripted({ topicHistory })

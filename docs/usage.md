@@ -506,7 +506,16 @@ tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
 tg chats folders delete "Travel"                   # the chats stay
 tg chats folders order "Travel" "Work"             # these first; the rest keep their order after them
 tg chats folders join https://t.me/addlist/AbCdEf  # a folder someone shared: joins every chat in it
+tg chats folders create "Inbox" --include contacts,groups --skip muted,archived --emoji 📥
+tg chats folders update "Inbox" --exclude-chat "Noisy group" --pin @kate
+tg chats folders update "Inbox" --include none     # no kinds any more; only the chats named in it
 ```
+
+A folder can take every chat of a kind by itself: `--include` with `contacts`, `non-contacts`,
+`groups`, `channels` and `bots`. `--skip` leaves out chats that are `muted`, `read` or `archived`.
+`--exclude-chat` keeps one chat out even when a kind takes it, and `--pin` puts a chat at the top. On
+`update`, `--include` and `--skip` replace what the folder had; `--remove` takes a chat off every list.
+A folder someone shared by a link takes no rules.
 
 A folder is named by its id or its title exactly. Only you see your folders; each change still goes
 through the guard, as an `account` change. `join` is different: the people in those chats see that
@@ -578,7 +587,9 @@ first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `
 whichever link they use.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the
-note a person sent; only admins see them, and reading tells nobody. `accept` and `decline` answer one,
+note a person sent; only admins see them, and reading tells nobody. `--search` finds people by name or
+@username, `--link` keeps those who asked through one invite link; Telegram cannot do both at once.
+`accept` and `decline` answer one,
 by the id from the list. An accepted request counts toward the hourly limit, a declined one does not;
 the recipient list checks the group only. Someone who is already a member is answered with
 `already: true`, and a request that is gone ends in exit `6`. `--all` answers every pending request, or
