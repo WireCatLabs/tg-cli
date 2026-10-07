@@ -369,6 +369,7 @@ function fakePoll({
     isMultiple: multiple,
     isRevotingDisabled: final,
     isCreator: creator,
+    isQuiz: false,
     isPublic: true,
     voters: 5,
   }
@@ -2125,7 +2126,15 @@ describe("polls", () => {
       { id: "MA", text: "yes", voters: null, chosen: false },
       { id: "MQ", text: "no", voters: null, chosen: false },
     ])
-    expect(poll).toMatchObject({ question: "Friday?", anonymous: false, closed: false, voters: null })
+    expect(poll).toMatchObject({
+      question: "Friday?",
+      anonymous: false,
+      closed: false,
+      voters: null,
+      quiz: false,
+      revote: true,
+      creator: true,
+    })
   })
 
   it("**votes with the answer's bytes, not its position**, and refuses an id the poll does not have", async () => {

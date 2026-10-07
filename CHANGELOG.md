@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats requests list --search <name>` or `--link <link>` narrows the requests** — by name, or to those
+  that came by one link; Telegram cannot do both at once.
+- **`tg polls show` says whether a poll is a quiz (`quiz`), whether a vote may change (`revote`), and whether you
+  made it (`creator`)** — only its maker can close it.
 - **`tg polls vote` and `tg polls close` refuse what Telegram would refuse, before sending**: a closed poll, two
   answers in a one-answer poll, a changed or retracted vote where the vote is final, `--retract` with no vote, and
   closing someone else's poll. Telegram's poll refusals now say what to do instead of "Telegram refused: X", and a

@@ -10,9 +10,14 @@ export const joinRequestsOf = async (
   client: Client,
   chatId: number,
   limit: number,
-  link?: string,
+  { link, search }: { link?: string; search?: string } = {},
 ): Promise<Page<JoinRequest> & { total: number }> => {
-  const page = await client.getInviteLinkMembers(chatId, { requested: true, limit, ...(link ? { link } : {}) })
+  const page = await client.getInviteLinkMembers(chatId, {
+    requested: true,
+    limit,
+    ...(link ? { link } : {}),
+    ...(search ? { requestedSearch: search } : {}),
+  })
   return {
     items: page.map((one) => ({
       person: toMember(one.user),

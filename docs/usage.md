@@ -555,6 +555,7 @@ tg chats link reset "Hiking 2027"                  # a new one; the old one stop
 tg chats link create "Hiking 2027" --approval --expire-time 7d --max-uses 20   # another link; who joins asks first
 tg chats update "Hiking 2027" --join-approval on   # everyone asks first, by any link
 tg chats requests list "Hiking 2027"               # who asked to join, newest first
+tg chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
 tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns them away
 tg chats requests decline "Hiking 2027" --all      # every pending request at once; --link narrows it
 tg chats link list "Hiking 2027"                   # your links, with how many joined and how many wait

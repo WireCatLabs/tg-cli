@@ -464,6 +464,9 @@ export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll =>
     multiple: poll.isMultiple,
     anonymous: !poll.isPublic,
     voters: counted ? poll.voters : null,
+    quiz: poll.isQuiz,
+    revote: !poll.isRevotingDisabled,
+    creator: poll.isCreator,
   }
 }
 

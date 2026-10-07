@@ -528,6 +528,25 @@ describe("the send guard in front of the other writes", () => {
     ])
   })
 
+  it("**narrows join requests by name or by link**", async () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      joinRequests: async (_chat, window) => {
+        asked.push(window)
+        return { items: [], hasMore: false, total: 0 }
+      },
+    })
+
+    const byName = await tg(["g-narrow", "chats", "requests", "list", "Valencia", "--search", "Ana", "--json"], adapter)
+    const byLink = await tg(
+      ["g-narrow", "chats", "requests", "list", "Valencia", "--link", "https://t.me/+extra", "--json"],
+      adapter,
+    )
+
+    expect([byName.code, byLink.code]).toEqual([0, 0])
+    expect(asked).toMatchObject([{ search: "Ana" }, { link: "https://t.me/+extra" }])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({
