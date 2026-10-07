@@ -21,11 +21,15 @@ connection is broken. Do not ask an assistant to remove a restriction just to fi
 tg work config set permissions.messages.send ask
 ```
 
-Replace `work` with your profile. For a profile that may read messages but cannot change them:
+Replace `work` with your profile. For a default that allows reading messages and refuses changes:
 
 ```sh
 tg work config set permissions.messages readonly
 ```
+
+More specific keys win: `permissions.messages.send ask` still permits sending, with a question
+in the terminal and without a server form over MCP. Set that key to `readonly` to refuse sends.
+Check other exceptions with `config show`.
 
 This controls messages. Other actions, such as reactions or chat administration, have their own
 permission keys. Use the complete read-only profile examples in

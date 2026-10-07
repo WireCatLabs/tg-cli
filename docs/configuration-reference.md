@@ -45,7 +45,7 @@ It is not a setting of the file.
 When `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set, it says so on stderr, since that also
 changes which login is found ([sessions.md](sessions.md#where-the-parts-are-kept)).
 
-⚠ **It is not a health check.** It reads files: it opens no store, asks no keyring and does not
+⚠ **It is not a health check.** It creates the starter configuration if absent, then reads files. It opens no store, asks no keyring and does not
 connect. Whether the session still works is a question for `tg doctor --online`
 ([troubleshooting.md](troubleshooting.md#first-tg-doctor)).
 

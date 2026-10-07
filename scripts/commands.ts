@@ -28,7 +28,10 @@ const page = commandsPage({
     banner: "<!-- Generated from the command tree by scripts/commands.ts. Do not edit; run `pnpm generate`. -->",
     title: "Commands",
     intro: `Every command, option and exit code. This page is **generated from the program itself**, so it
-cannot describe a version that does not exist. For the same list as JSON, run \`tg commands --json\`.
+cannot describe a version that does not exist.
+
+Shared options \`--send-as\`, \`--spoiler\` and \`--caption-above\`, and \`chats send-as\`,
+are not yet available in Telegram: they refuse rather than send with those features. For the same list as JSON, run \`tg commands --json\`.
 
 How a command line is built:
 

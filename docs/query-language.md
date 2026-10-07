@@ -5,11 +5,14 @@ everyday examples start with [message search](search.md).
 
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT,
 groups, fields, ranges, bounded wildcards and regular expressions. The
-[full reference](https://github.com/leemour/cli-messaging/blob/v0.149.0/docs/search/query-language.md)
+[full reference](https://github.com/leemour/cli-messaging/blob/v0.164.0/docs/search/query-language.md)
 (in Russian) has the generated tables of fields, operators, presets and limits, and executable
 examples; the
-[technical specification](https://github.com/leemour/cli-messaging/blob/v0.149.0/docs/search/query-language-spec.md)
+[technical specification](https://github.com/leemour/cli-messaging/blob/v0.164.0/docs/search/query-language-spec.md)
 describes the grammar and the compiler.
+
+Words and phrases without a field match word forms. `--exact` selects exact forms for words
+without a field; explicit `text:` still matches forms. Archive language settings affect matching.
 
 ## Operators
 
@@ -38,6 +41,7 @@ Fuzzy `~`, proximity, boosts and intervals are refused with an error, not ignore
 | Field | Finds | Example |
 |---|---|---|
 | `text` | words of the message (the default field) | `text:invoice` |
+| `exact` | the exact word or phrase form | `exact:piso`, `exact:"invoice paid"` |
 | `body` | the whole original text, case-sensitive | `body:/.*invoice.*/` |
 | `from` | the sender, by name, @username or id; `me` is you | `from:"Alice Synthetic"` |
 | `chat` | the chat, by title, @username or id | `chat:"Book club"` |
