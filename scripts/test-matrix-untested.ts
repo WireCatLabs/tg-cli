@@ -10,6 +10,244 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  {
+    command: "stats messages top",
+    option: "--sync-first",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--max-chats",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--sync-time",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--max-messages",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--measure",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--score",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--weights",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--message-kind",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--chat",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--source",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--timezone",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--exact",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--limit",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages top",
+    option: "--saved",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages evidence",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages evidence",
+    option: "--selection",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages evidence",
+    option: "--component",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages evidence",
+    option: "--limit",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats messages evidence",
+    option: "--cursor",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--sync-first",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--max-chats",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--sync-time",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--max-messages",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--measure",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--score",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--weights",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--message-kind",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--chat",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--source",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--timezone",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--exact",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--limit",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--saved",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts top",
+    option: "--min-messages",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts evidence",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts evidence",
+    option: "--selection",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts evidence",
+    option: "--component",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts evidence",
+    option: "--limit",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "stats contacts evidence",
+    option: "--cursor",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
+  {
+    command: "searches create",
+    option: "--selection",
+    reason:
+      "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
+  },
   ...["--backend", "--server-time"].map((option) => ({
     command: "messages search",
     option,

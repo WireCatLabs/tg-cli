@@ -165,6 +165,8 @@ An agent connects to `tg` in one of two ways:
 - **Keep an archive.** Fetch a chat's history into the local store, in the background if it is long;
   keep the store current with `tg serve`, as a systemd or launchd service; export a chat as JSON
   lines or Markdown; back the store up and restore it while it is in use ([archive.md](docs/archive.md)).
+- **One request pace per profile**, shared by every command, job and server at once, so bulk work stays
+  under Telegram's limits; long waits stop the run instead of being repeated ([limits.md](docs/limits.md)).
 - **Groups and channels.** Create a group or a channel, join by a link, leave; rename it, add and
   remove members and admins, reset its invite link; who joined and left, forum topics, where an
   invite link leads; moderation rules for links, forwards and floods, applied when you run them

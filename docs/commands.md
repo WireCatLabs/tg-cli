@@ -456,7 +456,7 @@ tg chats update <chat> [options]
 | `--description <text>` | the new description. |
 | `--all-can-pin <on\|off>` | every member may pin messages. |
 | `--only-admins-add <on\|off>` | only admins may add members. |
-| `--join-approval <on\|off>` | people ask to join, and an admin lets them in; a public group only. |
+| `--join-approval <on\|off>` | people ask to join, and an admin lets them in. |
 
 ### `tg chats link`
 
@@ -659,6 +659,34 @@ tg chats folders delete <folder>
 | Argument | | What it is |
 |---|---|---|
 | `folder` | required | folder id, or its title exactly. |
+
+#### `tg chats folders order`
+
+put folders in this order; the ones not named keep theirs after them
+
+**Changes something in Telegram.**
+
+```sh
+tg chats folders order <folders>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `folders` | required | folder ids, or titles exactly, first one first. |
+
+#### `tg chats folders join`
+
+add a folder someone shared by a link; joins every chat in it, and the others there see you joined
+
+**Changes something in Telegram.**
+
+```sh
+tg chats folders join <link>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `link` | required | the folder's link, as t.me/addlist/…. |
 
 ### `tg chats rules`
 
@@ -984,7 +1012,7 @@ tg messages list <chat> [options]
 
 ### `tg messages search`
 
-search the local store — what was read, fetched or kept by serve; optionally fetches new messages with --sync-first
+search the local store and the messenger's server (--backend); optionally fetches new messages with --sync-first
 
 ```sh
 tg messages search [query] [options]
@@ -1005,7 +1033,7 @@ tg messages search [query] [options]
 | `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
 | `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
 | `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
-| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: archive). |
+| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
@@ -2380,6 +2408,107 @@ tg stats messages show [query] [options]
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
+#### `tg stats messages top`
+
+rank stored messages by a measure or explainable score; counters are snapshots and freshness is unknown
+
+```sh
+tg stats messages top [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query; none selects every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--measure <name>` | the ranking metric; not with score or weights. One of: `views`, `reactions`, `forwards`, `comments`, `replies`, `thread-size`. |
+| `--score <preset>` | helpful/active for authors; engaging for either target. One of: `helpful`, `active`, `engaging`. |
+| `--weights <json>` | the complete component weights; replaces preset weights. |
+| `--message-kind <kind>` | select proven all, posts or comments before ranking. One of: `all`, `posts`, `comments`. |
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--timezone <zone>` | the IANA timezone for dates and active days. |
+| `--exact` | bare words match exact forms rather than stems. |
+| `--limit <n>` | ranked rows, 1–100. |
+| `--saved <name\|id>` | run a saved query or ranking run; typed options replace stored options. |
+
+#### `tg stats messages evidence`
+
+a bounded page of messages or answer pairs contributing to one ranking component
+
+```sh
+tg stats messages evidence <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `message` | required | the canonical message locator from the ranking row. |
+
+| Option | What it does |
+|---|---|
+| `--selection <json>` | the resolved ranking selection returned in drilldown. |
+| `--component <name>` | the exposed ranking component. |
+| `--limit <n>` | evidence rows, 1–100; 20 if not given. |
+| `--cursor <cursor>` | continue the same component and stored-evidence fingerprint. |
+
+### `tg stats contacts`
+
+statistics about human authors
+
+#### `tg stats contacts top`
+
+rank the human authors of stored messages by a measure or explainable score; counters are snapshots and freshness is unknown
+
+```sh
+tg stats contacts top [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | a strict Lucene query; none selects every stored message. |
+
+| Option | What it does |
+|---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--measure <name>` | the ranking metric; not with score or weights. One of: `messages`, `words`, `reactions`, `replies`, `answers`, `answer-time`, `threads`, `active-days`. |
+| `--score <preset>` | helpful/active for authors; engaging for either target. One of: `helpful`, `active`, `engaging`. |
+| `--weights <json>` | the complete component weights; replaces preset weights. |
+| `--message-kind <kind>` | select proven all, posts or comments before ranking. One of: `all`, `posts`, `comments`. |
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--timezone <zone>` | the IANA timezone for dates and active days. |
+| `--exact` | bare words match exact forms rather than stems. |
+| `--limit <n>` | ranked rows, 1–100. |
+| `--saved <name\|id>` | run a saved query or ranking run; typed options replace stored options. |
+| `--min-messages <n>` | minimum selected messages per author; 1, or 5 for engaging. |
+
+#### `tg stats contacts evidence`
+
+a bounded page of messages or answer pairs contributing to one ranking component
+
+```sh
+tg stats contacts evidence <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | the exact native person id from the ranking row. |
+
+| Option | What it does |
+|---|---|
+| `--selection <json>` | the resolved ranking selection returned in drilldown. |
+| `--component <name>` | the exposed ranking component. |
+| `--limit <n>` | evidence rows, 1–100; 20 if not given. |
+| `--cursor <cursor>` | continue the same component and stored-evidence fingerprint. |
+
 ### `tg stats chats`
 
 statistics about one chat
@@ -2533,6 +2662,7 @@ tg searches create <name> [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
 | `--by <chat\|sender\|day\|hour>` | what stats messages show --saved counts by. |
+| `--selection <json>` | save the resolved parent ranking query and options from a drilldown. |
 | `--replace` | overwrite a saved search of the same name. |
 
 ### `tg searches show`
@@ -2593,7 +2723,7 @@ the waits Telegram asked this profile to keep, and a hold on its writes
 
 ### `tg flood clear`
 
-forget them and lift the hold, once Telegram no longer limits the account; changes nothing there
+forget them, lift the hold and the profile's pace, once Telegram no longer limits the account; changes nothing there
 
 ```sh
 tg flood clear
@@ -2952,7 +3082,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -2973,7 +3103,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 
 | Option | What it does |
 |---|---|

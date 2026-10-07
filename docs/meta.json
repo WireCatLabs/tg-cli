@@ -25,6 +25,7 @@
     "profiles",
     "configuration-reference",
     "cli-contract",
+    "limits",
     "---When something goes wrong---",
     "diagnostics",
     "troubleshooting",

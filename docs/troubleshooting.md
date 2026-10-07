@@ -195,6 +195,8 @@ asks to wait 3 s before … — waiting, then going on". `serve` and `watch` wai
 wait ends the command with this error. `tg` also remembers the wait: until it ends, the same command fails at once without asking Telegram again, and
 `tg doctor` and `tg server status` list it under `flood`.
 
+How the pace, the waits and parallel commands fit together: [limits.md](limits.md).
+
 ## "Telegram limited this account's messages as spam (PEER_FLOOD)"
 
 Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.

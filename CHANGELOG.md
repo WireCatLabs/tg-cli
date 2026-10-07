@@ -7,6 +7,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg stats messages top` and `tg stats contacts top` rank stored messages and their authors**, and
+  `evidence` under each shows the messages behind a place in the ranking. They read only the local store and
+  ask Telegram nothing; `searches create --selection` saves such a ranking as a search.
+- **Every profile now has one request pace, shared by all `tg` processes using it.** Two commands at once,
+  background `store fetch` jobs, `mcp` and `serve` used to pace themselves separately, so running several
+  multiplied the request rate; now they share one allowance — a burst of 20, then one request a second. A
+  wait Telegram asks for holds the whole profile, and a request that would wait more than 5 minutes fails at
+  once with exit code `8`. Bulk work run in parallel takes longer. `requestsPerMinute` or
+  `TG_REQUESTS_PER_MINUTE` changes the pace; [limits.md](docs/limits.md) explains all of it.
 - **`tg chats link create <chat>` makes another invite link — `--approval` to make whoever joins by it ask first,
   `--expire-time` and `--max-uses` to limit it — and `tg chats update --join-approval on|off` makes everyone ask
   first.** Both work in a private group as well as a public one.
