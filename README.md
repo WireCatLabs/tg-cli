@@ -156,9 +156,9 @@ An agent connects to `tg` in one of two ways:
 - **Read.** Chats, history, one message with its neighbours, other people's unread messages in every
   chat at once (`tg inbox`), everything since the last review (`tg review`), new messages as they
   arrive (`tg watch`), a message's files or a whole chat's, voice messages as text.
-- **Search.** Messages by their text, across everything this machine has kept, locally by default;
-  `--sync-first` explicitly fetches new messages before searching; with `--regex` for a pattern. Chats by part of their title, contacts by part of a name,
-  a person by phone number.
+- **Search.** Messages by their text, across the local archive and Telegram by default;
+  `--backend archive` keeps search local, and `--sync-first` fetches new messages before searching.
+  Use `--regex` for a pattern. Chats by part of their title, contacts by part of a name, a person by phone number.
 - **Write.** Text with Markdown, replies, files, photos, videos and voice messages, silent messages,
   scheduled messages that go out even with this computer off, edits, forwards, pins, reactions,
   polls, deletion — for you or for everyone.

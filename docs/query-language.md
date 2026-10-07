@@ -159,7 +159,8 @@ time and size limits. `--regex` cannot be combined with `--language lucene`.
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
 stale links are marked and not traversed.
 
-Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and
+Word search asks Telegram as well as the local archive by default; `--backend archive` keeps it local.
+`--sync-first` explicitly fetches new messages before searching and
 marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
 `--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
 details.

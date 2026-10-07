@@ -7,14 +7,15 @@ computer, and asks Telegram's own search too ([below](#asking-telegram-too---bac
 
 Good search needs your chats downloaded. Telegram's search finds a message by its words even if tg never
 fetched it, but everything else reads only the archive: counting with `stats`, topic search, `has:`,
-`filename:`, regex, presets, tags, and the ranking of word forms. Download every chat once:
+`filename:`, regex, presets, tags, and the ranking of word forms. Start by downloading every chat:
 
 ```sh
 tg store fetch --all --background     # the last 90 days of every chat, as a background job
 tg store jobs show                    # how far it got
 ```
 
-Add `--since-time 365d` to go further back, or fetch one chat whole with `tg store fetch "Book club"`
+Each run fetches at most 1,000 messages per chat by default; repeat it to continue busy chats.
+Add `--since-time 365d` to go further back, or fetch one chat with `tg store fetch "Book club"`
 ([archive](archive.md)). After that, `tg serve` keeps the archive current.
 
 Every search says what it searched. In the terminal, when the archive could hold more or nothing was
@@ -224,7 +225,8 @@ only. In MCP, `tg_read` (`command: "messages search"`) and `tg_read` (`command: 
 `searches` commands through `tg_read`/`tg_write` manage tags and saved searches. The answer's fields,
 the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).
 
-Search reads the local archive by default. `--sync-first` explicitly fetches new messages before searching and
+Word search asks Telegram as well as the local archive by default; `--backend archive` keeps it local.
+`--sync-first` explicitly fetches new messages before searching and
 marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
 `--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
 details.
