@@ -1765,11 +1765,11 @@ describe("making, joining and leaving groups", () => {
     expect(client.joinChat.mock.calls[0]).toEqual(["https://t.me/+abc"])
 
     client.joinChat.mockResolvedValueOnce({ status: "request_sent" })
-    await expect(adapter.join("https://t.me/pisos_vlc")).rejects.toMatchObject({
-      code: "provider_error",
-      message: expect.stringContaining("request is sent"),
-    })
+    expect(await adapter.join("https://t.me/pisos_vlc")).toEqual({ requested: true })
     expect(client.joinChat.mock.calls[1]).toEqual(["pisos_vlc"])
+
+    client.joinChat.mockResolvedValueOnce({ status: "webview" })
+    await expect(adapter.join("https://t.me/pisos_vlc")).rejects.toMatchObject({ code: "provider_error" })
   })
 
   it("**changes only the switches asked for**, keeping every other right Telegram holds", async () => {

@@ -67,6 +67,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **`tg chats join` to a group whose admins approve who joins answers `requested: true` and exits `0`**, instead
+  of exit `11`: the request was sent all along. A script that treated exit 11 as "request sent" now reads
+  `requested`.
+
 - **A send, forward or poll with no `--send-as` to a group that posts as a channel by default is refused** (exit
   `2`), instead of going out as that channel. The error names `--send-as <your id>` to post as yourself and
   `--send-as <channel id>` to post as the channel.

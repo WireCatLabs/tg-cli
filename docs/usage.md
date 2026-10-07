@@ -561,8 +561,9 @@ tg chats admins remove "Hiking 2027" @kate
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
-in the answer under `providerMetadata.notAdded`; the group is made anyway. A group whose admins
-approve who joins answers that the request was sent. Each goes through the guard as a `chat` change,
+in the answer under `providerMetadata.notAdded`; the group is made anyway. `chats join` to a group whose
+admins approve who joins answers `requested: true` and exits `0`: the request is sent, and you are in once an
+admin accepts it. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
 
 `chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask

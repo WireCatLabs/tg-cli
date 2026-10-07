@@ -1433,8 +1433,8 @@ export class TelegramAdapter {
     })
   }
 
-  /** An invite link, or a public one; a group that asks its admins first is refused, with the request sent. */
-  join(link: string): Promise<GroupCard> {
+  /** An invite link, or a public one; a group that asks its admins first answers `requested`. */
+  join(link: string): Promise<GroupCard | { requested: true }> {
     const typed = link.trim()
     const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
     return this.#call(async () => {
@@ -1444,12 +1444,11 @@ export class TelegramAdapter {
       } catch (error) {
         throw unknownIfUnanswered(error, "you may or may not have joined; check `tg chats list`")
       }
+      if (joined.status === "request_sent") return { requested: true as const }
       if (joined.status !== "ok") {
         throw new CliError(
           "provider_error",
-          joined.status === "request_sent"
-            ? "this group lets admins approve who joins; the request is sent — nothing to repeat"
-            : "this group asks a bot to check who joins, which only the Telegram app can show",
+          "this group asks a bot to check who joins, which only the Telegram app can show",
         )
       }
       return toGroupCard(await this.#client.getFullChat(joined.chat.id))
