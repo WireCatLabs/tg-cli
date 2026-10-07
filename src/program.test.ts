@@ -124,7 +124,7 @@ describe("machine output", () => {
       adapter: () => scripted({ send }),
     })
     expect(result.code).toBe(2)
-    expect(result.stderr.join()).toContain(`this messenger has no ${flag}`)
+    expect(result.stderr.join()).toContain(`unknown option '${flag}'`)
     expect(send).not.toHaveBeenCalled()
   })
 
