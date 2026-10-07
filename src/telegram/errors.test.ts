@@ -98,6 +98,20 @@ describe("refusals a person has to act on", () => {
     expect(known).toMatchObject({ code: "permission_error" })
     expect((known as Error).message).toContain("chats link show")
   })
+
+  it.each([
+    [400, "MESSAGE_POLL_CLOSED", "validation_error", "polls show"],
+    [400, "REVOTE_NOT_ALLOWED", "validation_error", "final"],
+    [400, "OPTIONS_TOO_MUCH", "validation_error", "one answer"],
+    [403, "CHAT_SEND_POLL_FORBIDDEN", "permission_error", "turned polls off"],
+    [400, "BROADCAST_PUBLIC_VOTERS_FORBIDDEN", "validation_error", "--anonymous"],
+    [403, "MESSAGE_AUTHOR_REQUIRED", "permission_error", "only whoever sent"],
+    [400, "POLL_OPTION_DUPLICATE", "validation_error", "same"],
+  ])("explains the poll refusal %i %s", (status, text, code, said) => {
+    const known = toCliError(new tl.RpcError(status, text))
+    expect(known).toMatchObject({ code, details: { providerError: text } })
+    expect((known as Error).message).toContain(said)
+  })
 })
 
 describe("mtcute's own errors", () => {

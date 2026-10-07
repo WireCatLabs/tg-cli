@@ -463,8 +463,8 @@ through the same guard as a send, against the chat it goes to. A deletion cannot
 why it asks first: answer `y`, or add `--allow-dangerous` to skip the question. In a supergroup or a
 channel Telegram deletes only for everyone, so there only `--for-everyone` works.
 
-**What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, and each
-deleted message. A reaction and a quiet pin do not.
+**What counts toward the hourly limit:** a message, a forward, an edit, a pin that notifies, a new poll,
+closing a poll, and each deleted message. A reaction, a vote and a quiet pin do not.
 
 ### Reactions and polls
 
@@ -481,7 +481,9 @@ tg polls close "Book club" 4250            # your own poll; it cannot be reopene
 When you read a chat, reactions show under a message — `👍 3  🔥 1  (you: 🔥)`. A vote in a public poll
 shows your name to everyone in the chat. Vote by the ids `polls show` prints, never by an answer's
 position. `--multiple` lets people pick several answers. People can change their vote only in a poll
-made with `--revote`.
+made with `--revote`. A vote in a closed poll, two answers in a one-answer poll, a changed or retracted vote
+where the vote is final, and `--retract` with no vote are refused before anything is sent; so is closing a
+poll someone else made.
 
 ### Marking a chat read
 

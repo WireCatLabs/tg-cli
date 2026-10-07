@@ -48,6 +48,21 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   ],
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
   CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
+  MESSAGE_AUTHOR_REQUIRED: ["permission_error", "only whoever sent that message may change it"],
+  CHAT_SEND_POLL_FORBIDDEN: ["permission_error", "this chat's admins have turned polls off"],
+  BROADCAST_PUBLIC_VOTERS_FORBIDDEN: [
+    "validation_error",
+    "a channel's polls cannot show who voted — create it with --anonymous",
+  ],
+  MESSAGE_POLL_CLOSED: ["validation_error", "this poll is closed; `tg polls show` has its result"],
+  REVOTE_NOT_ALLOWED: ["validation_error", "this poll takes one vote, and yours is final — it cannot be changed"],
+  OPTIONS_TOO_MUCH: ["validation_error", "this poll takes one answer; give one id"],
+  OPTION_INVALID: ["validation_error", "that is not an answer of this poll — `tg polls show` lists them"],
+  POLL_ANSWERS_INVALID: ["validation_error", "Telegram refused how many answers this poll has"],
+  POLL_ANSWER_INVALID: ["validation_error", "an answer is empty or too long for Telegram"],
+  POLL_OPTION_INVALID: ["validation_error", "an answer is empty or too long for Telegram"],
+  POLL_OPTION_DUPLICATE: ["validation_error", "two answers are the same; each must differ"],
+  POLL_QUESTION_INVALID: ["validation_error", "the question is empty or too long for Telegram"],
   CHAT_PUBLIC_REQUIRED: [
     "validation_error",
     "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
