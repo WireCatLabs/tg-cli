@@ -3,6 +3,13 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+- **Attachment OCR through the shared gateway.** Agents normally read images/scans themselves and
+  write text through `attachments text set`. Explicit bulk processing uses `attachments extract --ocr`,
+  `models.ocr` and bounded `--concurrency`; complete text enters the existing `content:` index.
+  Hash/model caching avoids repeated calls, and failures preserve agent text and old indexed text.
+
 ## 0.32.0 — 07.10.2026
 
 ### What's new
