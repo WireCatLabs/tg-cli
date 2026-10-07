@@ -5,6 +5,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+## 0.32.0 — 07.10.2026
+
 ### What's new
 
 - **`tg messages comments <channel> <post>` reads the comments under a channel post, and `tg messages send
