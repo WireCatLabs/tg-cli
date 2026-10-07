@@ -272,6 +272,15 @@ a provider rate limit stops later API calls in that run. `--offline` conflicts w
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
 stale links are marked and not traversed.
 
+Local extraction also reads BOM-marked UTF-16, high-confidence legacy encodings, ODT, ODS,
+XLSX, PPTX and EPUB without a model or extra installation. It preserves sheet/slide/chapter
+order and saved cell values; it does not calculate formulas or read text inside images.
+Ambiguous encodings need agent inspection or conversion. Source bytes stay unchanged.
+ODT, ODS, XLSX, PPTX and EPUB are limited to 1,000 archive parts and 50 MiB expanded,
+with at most 10 MiB per text XML/HTML part; malformed or partial results are not indexed
+as complete text. Failed local reads can retry; agent text
+and previously good indexed text remain protected.
+
 PDF extraction needs optional `unpdf`; Word needs optional `mammoth`, installed where `tg` is. For a global npm
 install: `npm install -g unpdf mammoth`. Missing engines are reported; an agent can supply text instead.
 

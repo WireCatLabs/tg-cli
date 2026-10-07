@@ -9,6 +9,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Attachment text can be read locally:** ODT, ODS, XLSX, PPTX, EPUB, BOM-marked UTF-16 and
+  high-confidence legacy encodings. No model is called; formulas are not calculated and images
+  remain for the agent. [Search](docs/search.md) explains the limits.
+
 - **`tg chats folders create|update` take rules**: `--include` contacts, non-contacts, groups, channels or bots,
   `--skip` muted, read or archived chats, `--exclude-chat`, `--pin` and `--emoji`. `folders list` shows them.
 - `tg chats folders join` says plainly when a link is invalid or expired (exit 6), and `folders order` answers
