@@ -783,6 +783,26 @@ export class TelegramAdapter {
     })
   }
 
+  /** Telegram reads a topic as a discussion thread, up to a message id: without `until`, the topic's newest. */
+  markTopicRead(chatId: string, topicId: string, until?: string): Promise<void> {
+    const id = topicNumber(topicId)
+    const maxId = until === undefined ? undefined : messageNumber(until, "--until takes a message id")
+    return this.#write("the topic may have been marked read — repeating it is safe", async () => {
+      let readMaxId = maxId
+      if (readMaxId === undefined) {
+        const [topic] = await this.#client.getForumTopicsById(Number(chatId), id)
+        if (!topic) throw new CliError("not_found", `no topic ${topicId} in that chat`)
+        readMaxId = topic.lastMessage.id
+      }
+      await this.#client.call({
+        _: "messages.readDiscussion",
+        peer: await this.#client.resolvePeer(Number(chatId)),
+        msgId: id,
+        readMaxId,
+      })
+    })
+  }
+
   /**
    * mtcute deletes for everyone unless told otherwise, so `revoke` is always passed. In a supergroup or
    * a channel Telegram has no "for me": a deletion there is for everyone, and without `forEveryone` it is refused.

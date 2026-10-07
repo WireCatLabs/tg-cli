@@ -7,6 +7,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats mark-read <chat> --topic <id>` marks one forum topic read**, up to `--until` or its newest
+  message, and leaves the rest of the chat as it is.
+
 - **`tg topics edit <chat> <topic>` renames (`--title`), closes or reopens (`--closed on|off`) and pins or unpins
   (`--pinned on|off`) a forum topic, and hides or shows the General topic (`--hidden on|off`); `tg topics order
   <chat> <topic...>` puts the pinned topics in order.** Repeating either is safe.

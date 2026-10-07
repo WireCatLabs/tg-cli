@@ -2285,3 +2285,24 @@ describe("a write with no answer", () => {
     await expect(adapter.pin("-100500", "5", { notify: false })).rejects.not.toMatchObject({ code: "outcome_unknown" })
   })
 })
+
+describe("marking one forum topic read", () => {
+  it("reads the topic as a thread, up to the message given or its newest", async () => {
+    const { adapter, client } = await open()
+    client.topics = [{ id: 12, lastMessage: { id: 90 } }]
+    const reads = () =>
+      client.calls
+        .filter(({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.readDiscussion")
+        .map(({ args }) => args[0])
+
+    await adapter.markTopicRead("-100500", "12", "40")
+    await adapter.markTopicRead("-100500", "12")
+
+    expect(reads()).toMatchObject([
+      { msgId: 12, readMaxId: 40 },
+      { msgId: 12, readMaxId: 90 },
+    ])
+    client.topics = []
+    await expect(adapter.markTopicRead("-100500", "13")).rejects.toMatchObject({ code: "not_found" })
+  })
+})
