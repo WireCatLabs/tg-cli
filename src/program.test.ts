@@ -11,6 +11,32 @@ import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
 describe("topic read capability", () => {
+  it("refuses topic changes when the adapter has no forum capability", async () => {
+    const send = vi.fn()
+    const result = await tg(
+      [
+        "topics",
+        "edit",
+        chat.id,
+        "12",
+        "--title",
+        "Synthetic title",
+        "--closed",
+        "on",
+        "--pinned",
+        "on",
+        "--hidden",
+        "off",
+        "--json",
+      ],
+      { adapter: () => scripted({ send }) },
+    )
+    expect(result.code).toBe(2)
+    expect(result.stdout).toEqual([])
+    expect(result.stderr.join()).toContain("forum")
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it("refuses a topic read rather than marking the whole chat read", async () => {
     const markRead = vi.fn(async () => {})
     const result = await tg(["chats", "mark-read", chat.id, "--topic", "12", "--json"], {
@@ -80,6 +106,28 @@ describe("first-run discovery", () => {
 })
 
 describe("machine output", () => {
+  it.each([
+    ["messages", "send", "111", "synthetic text"],
+    ["messages", "forward", "111", "42", "--to", "222"],
+    ["polls", "create", "111", "Synthetic question?", "yes", "no"],
+  ])("refuses a blank posting identity before connecting: %j", async (...argv) => {
+    const adapter = vi.fn(() => scripted())
+    const result = await tg([...argv, "--send-as", " ", "--json"], { adapter })
+    expect(result.code).toBe(2)
+    expect(result.stdout).toEqual([])
+    expect(result.stderr.join()).toContain("--send-as needs an id")
+    expect(adapter).not.toHaveBeenCalled()
+  })
+  it.each(["--spoiler", "--caption-above"])("refuses %s for a text-only send", async (flag) => {
+    const send = vi.fn()
+    const result = await tg(["messages", "send", "me", "synthetic text", flag, "--json"], {
+      adapter: () => scripted({ send }),
+    })
+    expect(result.code).toBe(2)
+    expect(result.stderr.join()).toContain(`this messenger has no ${flag}`)
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it.each([
     { argv: ["messages", "send", "me", "synthetic text", "--topic", " ", "--json"] },
     { argv: ["polls", "create", "me", "synthetic question", "one", "two", "--topic", " ", "--json"] },

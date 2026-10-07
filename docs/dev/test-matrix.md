@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2109 ✅ · 51 ⛔ · 0 ❌** — 417 commands, 1743 options.
+**2124 ✅ · 51 ⛔ · 0 ❌** — 420 commands, 1755 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -42,6 +42,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats events` | `--type` | ✅ |  |
 | `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
+| `chats send-as` |  | ✅ |  |
 | `chats members list` |  | ✅ |  |
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
@@ -146,6 +147,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--source` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
 | `messages search` | `--newest` | ✅ |  |
+| `messages search` | `--exact` | ✅ |  |
 | `messages search` | `--context` | ✅ |  |
 | `messages search` | `--language` | ✅ |  |
 | `messages search` | `--timezone` | ✅ |  |
@@ -154,6 +156,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
+| `messages send` | `--send-as` | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
@@ -161,6 +164,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--file` | ✅ |  |
 | `messages send` | `--photo` | ✅ |  |
 | `messages send` | `--as-file` | ✅ |  |
+| `messages send` | `--spoiler` | ✅ |  |
+| `messages send` | `--caption-above` | ✅ |  |
 | `messages send` | `--voice` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
 | `messages send` | `--at-time` | ✅ |  |
@@ -189,6 +194,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
+| `messages forward` | `--send-as` | ✅ |  |
 | `messages forward` | `--send-id` | ✅ |  |
 | `messages pin` |  | ✅ |  |
 | `messages pin` | `--notify` | ✅ |  |
@@ -208,6 +214,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--anonymous` | ✅ |  |
 | `polls create` | `--revote` | ✅ |  |
 | `polls create` | `--silent` | ✅ |  |
+| `polls create` | `--send-as` | ✅ |  |
 | `polls create` | `--send-id` | ✅ |  |
 | `models audio list` |  | ✅ |  |
 | `models audio download` |  | ✅ |  |
@@ -249,6 +256,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics enable` | `--upgrade` | ✅ |  |
 | `topics create` |  | ✅ |  |
 | `topics create` | `--send-id` | ✅ |  |
+| `topics edit` |  | ✅ |  |
+| `topics edit` | `--title` | ✅ |  |
+| `topics edit` | `--closed` | ✅ |  |
+| `topics edit` | `--pinned` | ✅ |  |
+| `topics edit` | `--hidden` | ✅ |  |
+| `topics order` |  | ✅ |  |
 | `watch` |  | ✅ |  |
 | `watch` | `--events` | ✅ |  |
 | `serve` |  | ✅ |  |
@@ -433,6 +446,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--source` | ✅ |  |
 | `stats messages show` | `--limit` | ✅ |  |
 | `stats messages show` | `--timezone` | ✅ |  |
+| `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
 | `stats chats show` |  | ✅ |  |
 | `stats chats show` | `--since-time` | ✅ |  |
@@ -464,6 +478,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches create` | `--source` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--limit` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--newest` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--exact` | ✅ |  |
 | `searches create` | `--context` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--language` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |

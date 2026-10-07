@@ -134,7 +134,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--send-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **`tg messages search` reads the local archive by default.** The default is strict Lucene:
+5. **`tg messages search` reads the local archive by default.** Words and quoted phrases include word forms;
+   use `exact:` or `--exact` for exact forms. Explicit `text:` still matches forms. The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
    Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
    Use --json for query version/coverage. Empty hits do not prove a message never existed.

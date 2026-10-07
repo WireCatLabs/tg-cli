@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.31.0 — 07.10.2026
 
 ### What's new
 
@@ -19,12 +19,17 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - cli-messaging 0.162.0 also brings `store gaps repair`, the catch-up options of `store fetch`,
   `messages download --extract` and `attachments extract --from-dir` / `--cursor`.
 
+- **Configuration, permissions and profiles have separate guides.** Setup starts with file locations and common tasks; the full settings reference remains available.
+
 ### Changed — may break scripts
 
 - Configuration is split into a short guide and full key/type/default/scope/environment reference.
   The public CLI contract describes headless execution, schemas, bounds, previews and retry rules.
 - Validate portable skill metadata, installed version, command paths and configuration-key coverage in CI.
   Native login and optional setup questions respect the shared no-input policy.
+
+- **First settings resolution creates config.json.** Existing files are preserved; environment and flag overrides are not saved. config show may now create the file, and common values report file defaults as their source.
+- **Word and phrase searches include word forms.** Scripted queries may return more messages. Use exact: or --exact for the previous exact-form behavior; explicit text: still matches forms. Archive language settings affect matching.
 
 ## 0.30.0 — 07.10.2026
 

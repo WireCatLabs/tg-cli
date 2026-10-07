@@ -1,81 +1,68 @@
 # Configuration
 
-You can use `tg` without a configuration file. Set a value when you want a different default
-or need to restrict a profile. Every key, default and environment variable is in the
-[configuration reference](configuration-reference.md). Output, errors and agent execution
-are covered by the [CLI contract](cli-contract.md).
+`tg` is configurable. You can save everyday settings, change a value for one command,
+or choose a different profile. Permissions are explained separately in [Permissions](permissions.md).
 
-## Inspect effective values
+## The file
+
+The tools create a starter `config.json` with common defaults when you first run a command that
+loads settings. An existing file is preserved. Use these commands to see its path and current values:
 
 ```sh
 tg config show
-tg work config show --json
 ```
 
-The result names the profile, file path, effective values and the source of each value.
-This reads configuration; `tg doctor --online` checks the login separately. Credentials
-are kept outside the configuration file.
+You can edit the file or use `config set` and `config unset`. Keep login credentials out of it;
+use the login and model-provider setup commands instead.
 
-## Change a value
+| System | Telegram |
+|---|---|
+| Linux | `~/.config/tg-cli/config.json` |
+| macOS | `~/Library/Application Support/tg-cli/config.json` |
+| Windows | `%APPDATA%\tg-cli\config.json` |
 
-```sh
-tg config set limit 50
-tg work config set record true
-tg config set keepRunsForDays 7 --defaults
-tg work config unset limit
+Use `tg.cmd` in PowerShell. The commands above show the actual location if your
+computer uses a custom directory.
+
+## Three ways to set a value
+
+- **File:** a value stays saved for later commands. `tg config set limit 50` saves a result limit.
+- **Environment variable:** a terminal can select a profile or command time limit for its session.
+  For example, `TG_PROFILE` chooses a profile. Not every setting has a variable.
+- **Command option:** a flag such as `--limit 5` changes only this invocation.
+
+## Which value wins?
+
+A command option wins over an environment variable, then the selected profile's saved value,
+then shared file defaults, then the built-in value. Only the supported ways of setting that
+particular value take part. Each messenger's reference lists them.
+
+## A small configuration
+
+```json
+{
+  "defaults": { "limit": 20, "sendsPerHour": 30 },
+  "profiles": { "work": { "limit": 50 } }
+}
 ```
 
-Without `--defaults`, a change belongs to the current profile. `unset` removes that entry,
-so the next layer supplies the value. An unknown key or invalid value fails before writing.
-The [reference](configuration-reference.md#the-file) describes manual file editing and bot settings.
+`tg work chats list` uses 50. Add `--limit 5` to get five for that command.
+Removing the profile's value lets the shared default apply again.
 
-## Which value wins
+## What can I configure?
 
-Command flag → environment → profile entry → file defaults → built-in default.
-Not every setting has every layer. `TG_PROFILE` chooses a profile for the shell; the first
-word of the command overrides it. `TG_TIMEOUT` supplies a command budget; `timeoutMs`
-in the file is the wait for one request.
+Common settings include the number of results, colour, recording, send limits and model providers.
+Read the [settings reference](configuration-reference.md)
+for the available values and supported overrides. Use `config show` after a change to check the result.
 
-Use `config show` to see the source instead of guessing. The complete rules are in the
-[reference](configuration-reference.md#which-value-wins).
+## Profiles and bots
 
-## Permissions
+A profile keeps settings for one account or bot. Put its name before the command, such as
+`tg work config show`. Add `bot` to work as a bot rather than your personal account.
+[Profiles and bots](profiles.md) explains choosing and switching them.
 
-`permissions` maps command paths to `deny`, `readonly`, `ask` or `allow`. Deny blocks the
-operation; readonly permits reads; ask requires confirmation; allow proceeds without it.
-Confirmation never overrides deny.
+<a id="what-a-profile-may-do" />
 
-```sh
-tg agent config set permissions.messages readonly
-tg agent config set permissions.messages.send allow
-```
+<a id="a-question-before-a-change" />
 
-This profile can read and send messages; other message changes remain restricted. Other
-resources are configured separately. Bot paths begin with `bot`. JSON output suppresses
-confirmation prompts; `--yes` answers ask, and message deletion uses `--allow-dangerous`.
-MCP uses the same deny/readonly restrictions; ask and allow permit the requested write without a server form.
-
-Inheritance, defaults and migration are in the
-[permissions reference](configuration-reference.md#what-a-profile-may-do).
-
-## Paths and proxy
-
-On Linux the file is `~/.config/tg-cli/config.json`; other platform paths are listed under
-[installation](installation.md#where-files-go). Directory overrides also change which login
-is found, so use the same environment for login and later commands. `MESSAGING_STORE`
-selects the shared message archive separately.
-
-A proxy is configured through `proxy` or `TG_PROXY`. Schemes, examples and credential handling
-are in the [proxy reference](configuration-reference.md#through-a-proxy).
-
-## Shared archive settings
-
-`searchStemmers.cyrillic` and `searchStemmers.latin` belong to the store, shared by both CLIs
-and every profile. After changing them, run `tg store reindex`; see
-[archive maintenance](archive.md#repair-and-index-maintenance).
-
-## Next
-
-- [Configuration reference](configuration-reference.md): every key and variable.
-- [CLI contract](cli-contract.md): commands, output, errors and agents.
-- [Security](security.md): send limits, credentials and recorded data.
+Read [Permissions](permissions.md) for access and terminal confirmations.

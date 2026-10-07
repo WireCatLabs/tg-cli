@@ -19,15 +19,17 @@ examples; use your own chats and people.
 
 ```sh
 tg messages search invoice
-tg messages search '"invoice paid"'              # the exact phrase
+tg messages search '"invoice paid"'              # words together
 tg messages search 'cafe OR library'
 tg messages search '(cafe OR library) NOT loud'
 tg messages search 'invoic*'                     # every word that starts with "invoic"
 ```
 
-Words next to each other must all be in the message. A word finds that word, in any case and with
-or without accents. Another form of a word is another word: `flat` does not find `flats`; a prefix such
-as `flat*` finds both. Nothing is guessed: no typo correction, no similar words.
+Words next to each other must all be in the message. Search includes word forms, according to
+the archive's language settings: `piso` can find `pisos`. Quotes keep words together and also allow
+word forms. Use `exact:piso` or add `--exact` for words without an explicit field. An explicit
+`text:` still matches forms. Case and accents
+are ignored. Typos are not corrected automatically.
 
 ## People and chats
 
