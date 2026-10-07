@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2122 ✅ · 51 ⛔ · 0 ❌** — 420 commands, 1753 options.
+**2126 ✅ · 51 ⛔ · 0 ❌** — 421 commands, 1756 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -156,6 +156,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
+| `messages send` | `--comment-to` | ✅ |  |
 | `messages send` | `--send-as` | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
@@ -199,6 +200,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages unpin` |  | ✅ |  |
 | `messages scheduled` |  | ✅ |  |
 | `messages link` |  | ✅ |  |
+| `messages comments` |  | ✅ |  |
+| `messages comments` | `--limit` | ✅ |  |
+| `messages comments` | `--before-id` | ✅ |  |
 | `messages links` |  | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |

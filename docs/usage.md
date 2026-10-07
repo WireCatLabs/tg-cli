@@ -382,6 +382,18 @@ tg messages send "Book club" "Agreed" --reply-to 4242
 
 A reply is a send, so every send option works with it.
 
+### Channel comments
+
+```sh
+tg messages comments "Rozetked" 27644              # the comments under post 27644, oldest first
+tg messages comments "Rozetked" 27644 --before-id 3732413
+tg messages send "My channel" "Thanks!" --comment-to 120
+```
+
+Comments live in the channel's discussion group: the answer names it as `discussion`, and a comment is a
+reply there, so the recipient list and the hourly limit count it against that group. A post whose channel
+has no discussion group, or that is closed to comments, ends in exit `6`.
+
 ### When the outcome is unknown
 
 Exit code `14` means the connection broke after the message left: **it may have gone**. The error

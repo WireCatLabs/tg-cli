@@ -692,7 +692,7 @@ tg contacts show <person>
 
 ### `tg contacts profile`
 
-everything the messenger says about one person — handles, flags, last seen, when they registered — and how many of their messages the store holds in each chat you share, the first and the last
+everything the messenger says about one person — handles, flags, last seen, when they registered — and how many of their messages the store holds in each chat you share, the first and the last, and the earlier names and usernames the store saw them with
 
 ```sh
 tg contacts profile <person> [options]
@@ -965,7 +965,8 @@ tg messages send <chat> [text] [options]
 |---|---|
 | `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
-| `--send-as <id>` | post as one of the identities `chats send-as` lists. |
+| `--comment-to <post>` | comment on this post of the channel; it goes to the post's discussion group. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
@@ -1110,7 +1111,7 @@ tg messages forward <chat> <message> [options]
 |---|---|
 | `--to <chat>` | where it goes: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--silent` | deliver it without a notification. |
-| `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
 
 ### `tg messages pin`
@@ -1171,6 +1172,24 @@ tg messages link <chat> [message]
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
 | `message` | optional | the message id. |
+
+### `tg messages comments`
+
+the comments under a channel post, oldest to newest; they live in its discussion group
+
+```sh
+tg messages comments <chat> <post> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | the channel: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `post` | required | the post's message id in the channel. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many. |
+| `--before-id <id>` | only comments older than this comment id. |
 
 ### `tg messages links`
 
@@ -1295,7 +1314,7 @@ tg polls create <chat> <question> <answers> [options]
 | `--anonymous` | nobody sees who voted for what. |
 | `--revote` | people may change their vote. |
 | `--silent` | send without a notification. |
-| `--send-as <id>` | post as one of the identities `chats send-as` lists. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
 
 ## `tg models`
