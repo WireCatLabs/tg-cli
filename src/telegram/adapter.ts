@@ -1747,7 +1747,7 @@ export class TelegramAdapter {
           ...(rules.emoji === undefined ? {} : { emoticon: rules.emoji }),
           ...ruleFlags(rules),
         })
-        return toFolder(made) as Folder
+        return this.#storedFolder(made)
       },
     )
   }
@@ -1794,7 +1794,7 @@ export class TelegramAdapter {
             : {}),
         },
       })
-      return toFolder(changed) as Folder
+      return this.#storedFolder(changed)
     })
   }
 
@@ -1828,6 +1828,18 @@ export class TelegramAdapter {
         }
       },
     )
+  }
+
+  /**
+   * mtcute answers with the folder it sent, but Telegram drops what it does not take — an emoji that is not
+   * one of its folder icons, measured live 2026-10-08 — so the answer is read back.
+   */
+  async #storedFolder(sent: tl.TypeDialogFilter): Promise<Folder> {
+    const stored =
+      sent._ === "dialogFilterDefault"
+        ? undefined
+        : (await this.#filters()).find((one) => one._ !== "dialogFilterDefault" && one.id === sent.id)
+    return toFolder(stored ?? sent) as Folder
   }
 
   async #filters(): Promise<tl.TypeDialogFilter[]> {

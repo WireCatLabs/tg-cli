@@ -515,7 +515,9 @@ A folder can take every chat of a kind by itself: `--include` with `contacts`, `
 `groups`, `channels` and `bots`. `--skip` leaves out chats that are `muted`, `read` or `archived`.
 `--exclude-chat` keeps one chat out even when a kind takes it, and `--pin` puts a chat at the top. On
 `update`, `--include` and `--skip` replace what the folder had; `--remove` takes a chat off every list.
-A folder someone shared by a link takes no rules.
+A folder someone shared by a link takes no rules. `--emoji` must be one of the icons the Telegram app
+offers for folders; Telegram drops any other without an error, and the answer shows the folder as Telegram
+kept it.
 
 A folder is named by its id or its title exactly. Only you see your folders; each change still goes
 through the guard, as an `account` change. `join` is different: the people in those chats see that

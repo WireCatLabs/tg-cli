@@ -207,19 +207,16 @@ class FakeClient {
   editAdminRights = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   filters: unknown[] = []
   getFolders = vi.fn(async () => ({ _: "messages.dialogFilters", filters: this.filters }))
-  createFolder = vi.fn(
-    async (folder: Record<string, unknown>): Promise<unknown> => ({
-      _: "dialogFilter",
-      id: 3,
-      pinnedPeers: [],
-      excludePeers: [],
-      ...folder,
-    }),
-  )
-  editFolder = vi.fn(async (params: { folder: Record<string, unknown>; modification: Record<string, unknown> }) => ({
-    ...params.folder,
-    ...params.modification,
-  }))
+  createFolder = vi.fn(async (folder: Record<string, unknown>): Promise<unknown> => {
+    const made = { _: "dialogFilter", id: 3, pinnedPeers: [], excludePeers: [], ...folder }
+    this.filters = [...this.filters, made]
+    return made
+  })
+  editFolder = vi.fn(async (params: { folder: Record<string, unknown>; modification: Record<string, unknown> }) => {
+    const changed = { ...params.folder, ...params.modification }
+    this.filters = this.filters.map((one) => ((one as { id?: unknown }).id === changed.id ? changed : one))
+    return changed
+  })
   deleteFolder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   setFoldersOrder = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   joinChatlist = vi.fn(
@@ -2062,6 +2059,20 @@ describe("chat folders", () => {
       pinnedPeers: [{ userId: 8 }, { userId: 9 }],
       excludePeers: [{ userId: 7 }],
     })
+  })
+
+  it("answers with the folder Telegram stored, which drops an emoji that is not a folder icon", async () => {
+    const { adapter, client } = await open()
+    client.filters = [work]
+    client.editFolder.mockImplementationOnce(async (params) => {
+      client.filters = [{ ...work, title: { _: "textWithEntities", text: "Job", entities: [] } }]
+      return { ...params.folder, ...params.modification }
+    })
+
+    const changed = await adapter.updateFolder("2", { title: "Job", emoji: "🧪" })
+
+    expect(changed).toMatchObject({ title: "Job" })
+    expect(changed).not.toHaveProperty("emoji")
   })
 
   it("refuses rules on a folder shared by a link", async () => {

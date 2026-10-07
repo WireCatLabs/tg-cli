@@ -11,6 +11,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `--skip` muted, read or archived chats, `--exclude-chat`, `--pin` and `--emoji`. `folders list` shows them.
 - `tg chats folders join` says plainly when a link is invalid or expired (exit 6), and `folders order` answers
   only each folder's id and title.
+- `tg chats folders create|update` answer with the folder as Telegram stored it: an `--emoji` that is not one of
+  its folder icons is dropped by Telegram, and tg used to report it as set.
 
 ## 0.35.0 — 08.10.2026
 
