@@ -519,6 +519,11 @@ For a forum, use `tg topics enable <chat>` and `tg topics create <chat> <title>`
 requires `--upgrade --yes`; keep the new chat id returned by the upgrade. Read `topics list`
 after an unknown creation outcome instead of repeating the creation. Send to its id with
 `tg messages send <chat> <text> --topic <id>` or `tg polls create <chat> <question> <answers> --topic <id>`.
+`tg topics edit <chat> <id> --title <new>` renames a topic, `--closed on` / `--closed off` closes it to new
+messages or reopens it, `--pinned on` / `--pinned off` pins it at the top or unpins it, and on the General
+topic (id 1) `--hidden on` / `--hidden off` hides it from the topic list or shows it again.
+`tg topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
+Repeating any of these is safe.
 
 ```sh
 tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people added are told

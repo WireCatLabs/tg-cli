@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg topics edit <chat> <topic>` renames (`--title`), closes or reopens (`--closed on|off`) and pins or unpins
+  (`--pinned on|off`) a forum topic, and hides or shows the General topic (`--hidden on|off`); `tg topics order
+  <chat> <topic...>` puts the pinned topics in order.** Repeating either is safe.
+
 - **`tg messages send --spoiler` blurs a photo or video until tapped, and `--caption-above` puts the text above
   it.** A spoiler on a document or voice message is refused.
 

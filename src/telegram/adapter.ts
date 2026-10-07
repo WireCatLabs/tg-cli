@@ -30,6 +30,7 @@ import {
   pickChat,
   type SenderIdentity,
   type Topic,
+  type TopicChange,
 } from "@leemour/cli-messaging"
 import type {
   After,
@@ -1077,6 +1078,58 @@ export class TelegramAdapter {
           `the topic may have been created; check topics list and do not repeat this creation`,
           { sendId, retryable: false },
         )
+      }
+    })
+  }
+
+  /**
+   * A repeat answers TOPIC_NOT_MODIFIED: the change is already there, so the topic is read back as for a first.
+   * Pinning is Telegram's own call, made after the edit.
+   */
+  editTopic(chatId: string, topicId: string, { title, closed, pinned, hidden }: TopicChange): Promise<Topic> {
+    const id = topicNumber(topicId)
+    if (hidden !== undefined && id !== 1)
+      throw new CliError("validation_error", "only the General topic (id 1) can be hidden")
+    return this.#call(async () => {
+      const unchanged = (error: unknown) => {
+        if (!tl.RpcError.is(error, "TOPIC_NOT_MODIFIED") && !tl.RpcError.is(error, "PINNED_TOPIC_NOT_MODIFIED"))
+          throw unknownIfUnanswered(error, "the topic may have changed — repeating it is safe")
+      }
+      if (title !== undefined || closed !== undefined) {
+        await this.#client
+          .editForumTopic({
+            chatId: Number(chatId),
+            topicId: id,
+            ...(title === undefined ? {} : { title }),
+            ...(closed === undefined ? {} : { closed }),
+          })
+          .catch(unchanged)
+      }
+      if (pinned !== undefined)
+        await this.#client.toggleForumTopicPinned({ chatId: Number(chatId), topicId: id, pinned }).catch(unchanged)
+      if (hidden !== undefined)
+        await this.#client.toggleGeneralTopicHidden({ chatId: Number(chatId), hidden }).catch(unchanged)
+      const [topic] = await this.#client.getForumTopicsById(Number(chatId), id)
+      if (!topic) throw new CliError("not_found", `no topic ${topicId} in that chat`)
+      // Measured 2026-10-04: a read right after the edit can still show the title and state of edits ago.
+      return {
+        ...toTopic(topic),
+        ...(title === undefined ? {} : { title }),
+        ...(closed === undefined ? {} : { closed }),
+        ...(pinned === undefined ? {} : { pinned }),
+        ...(hidden === undefined ? {} : { hidden }),
+      }
+    })
+  }
+
+  /** Without `force` Telegram only reorders: a topic that is not pinned stays as it is. */
+  orderPinnedTopics(chatId: string, topicIds: string[]): Promise<void> {
+    const order = topicIds.map(topicNumber)
+    return this.#call(async () => {
+      try {
+        await this.#client.reorderPinnedForumTopics({ chatId: Number(chatId), order })
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the pinned topics may have been reordered — repeating it is safe")
       }
     })
   }
