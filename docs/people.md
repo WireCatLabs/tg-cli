@@ -42,6 +42,10 @@ store holds in each chat you share:
       "firstAt": "2023-02-11T09:14:00.000Z", "lastAt": "2026-10-05T18:02:00.000Z", "complete": true },
     { "id": "-1002000002", "title": "Book club", "kind": "group", "theirMessages": 37,
       "firstAt": "2025-06-01T10:00:00.000Z", "lastAt": "2026-09-30T20:41:00.000Z", "complete": false }
+  ],
+  "aliases": [
+    { "name": "Example U.", "username": "example_old", "link": "https://t.me/example_old",
+      "firstSeenAt": "2024-03-02T08:00:00.000Z", "lastSeenAt": "2024-03-02T08:00:00.000Z", "source": "profile" }
   ]
 }
 ```
@@ -53,10 +57,14 @@ store holds in each chat you share:
   settings show it to you.
 - **`registered`** always says where the date came from:
   - `telegram` — the month Telegram sends when someone writes to you for the first time;
-  - `estimate` — a guess from the account id, using a public table that ends at December 2024.
+  - `estimate` — a guess from the account id, using a public table that ends at November 2025.
     Newer ids get no estimate at all rather than a date that may be years off.
 - **`hasPhoto`** counts their own photo and their public one, never a photo you set for them.
 - **`chats`** lists every chat you share, and any other chat where the store holds their messages.
+- **`aliases`** are earlier names and usernames your store saw them with, oldest first, each with a
+  `t.me` link for an old username. `source: profile` — their profile changed while the store watched;
+  `source: messages` — the name on their stored messages, approximate, since a message fetched again
+  carries the newest name. It is empty until the store has seen a change.
 
 ### Counts are what your store holds
 
