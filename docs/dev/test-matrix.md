@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2109 ✅ · 51 ⛔ · 0 ❌** — 417 commands, 1743 options.
+**2104 ✅ · 71 ⛔ · 0 ❌** — 420 commands, 1755 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -42,6 +42,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats events` | `--type` | ✅ |  |
 | `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
+| `chats send-as` |  | ✅ |  |
 | `chats members list` |  | ✅ |  |
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
@@ -146,6 +147,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages search` | `--source` | ✅ |  |
 | `messages search` | `--limit` | ✅ |  |
 | `messages search` | `--newest` | ✅ |  |
+| `messages search` | `--exact` | ✅ |  |
 | `messages search` | `--context` | ✅ |  |
 | `messages search` | `--language` | ✅ |  |
 | `messages search` | `--timezone` | ✅ |  |
@@ -154,6 +156,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
+| `messages send` | `--send-as` | ✅ |  |
 | `messages send` | `--send-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
@@ -161,6 +164,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--file` | ✅ |  |
 | `messages send` | `--photo` | ✅ |  |
 | `messages send` | `--as-file` | ✅ |  |
+| `messages send` | `--spoiler` | ✅ |  |
+| `messages send` | `--caption-above` | ✅ |  |
 | `messages send` | `--voice` | ✅ |  |
 | `messages send` | `--allow-any-file` | ✅ |  |
 | `messages send` | `--at-time` | ✅ |  |
@@ -177,7 +182,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages download` | `--output-dir` | ✅ |  |
 | `messages download` | `--all` | ✅ |  |
 | `messages download` | `--pause` | ✅ |  |
-| `messages download` | `--extract` | ✅ |  |
+| `messages download` | `--extract` | ⛔ | cli-messaging src/cli/messenger/attachments.test.ts covers reading text layers after a download; this consumer mounts the shared command (cli-messaging 0.162.0) |
 | `messages transcribe` |  | ✅ |  |
 | `messages transcribe` | `--local` | ✅ |  |
 | `messages transcribe` | `--model` | ✅ |  |
@@ -189,6 +194,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages forward` |  | ✅ |  |
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
+| `messages forward` | `--send-as` | ✅ |  |
 | `messages forward` | `--send-id` | ✅ |  |
 | `messages pin` |  | ✅ |  |
 | `messages pin` | `--notify` | ✅ |  |
@@ -208,6 +214,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--anonymous` | ✅ |  |
 | `polls create` | `--revote` | ✅ |  |
 | `polls create` | `--silent` | ✅ |  |
+| `polls create` | `--send-as` | ✅ |  |
 | `polls create` | `--send-id` | ✅ |  |
 | `models audio list` |  | ✅ |  |
 | `models audio download` |  | ✅ |  |
@@ -249,6 +256,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics enable` | `--upgrade` | ✅ |  |
 | `topics create` |  | ✅ |  |
 | `topics create` | `--send-id` | ✅ |  |
+| `topics edit` |  | ✅ |  |
+| `topics edit` | `--title` | ✅ |  |
+| `topics edit` | `--closed` | ✅ |  |
+| `topics edit` | `--pinned` | ✅ |  |
+| `topics edit` | `--hidden` | ✅ |  |
+| `topics order` |  | ✅ |  |
 | `watch` |  | ✅ |  |
 | `watch` | `--events` | ✅ |  |
 | `serve` |  | ✅ |  |
@@ -267,27 +280,27 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store fetch` | `--pause` | ✅ |  |
 | `store fetch` | `--since-time` | ✅ |  |
 | `store fetch` | `--last` | ✅ |  |
-| `store fetch` | `--catch-up` | ✅ |  |
-| `store fetch` | `--no-catch-up` | ✅ |  |
-| `store fetch` | `--catch-up-chunks` | ✅ |  |
-| `store fetch` | `--catch-up-messages` | ✅ |  |
-| `store fetch` | `--catch-up-time` | ✅ |  |
+| `store fetch` | `--catch-up` | ⛔ | cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store fetch` | `--no-catch-up` | ⛔ | cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store fetch` | `--catch-up-chunks` | ⛔ | cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store fetch` | `--catch-up-messages` | ⛔ | cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store fetch` | `--catch-up-time` | ⛔ | cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0) |
 | `store fetch` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `store fetch` | `--estimate` | ✅ |  |
 | `store gaps plan` |  | ✅ |  |
 | `store gaps repair` |  | ✅ |  |
-| `store gaps repair` | `--limit` | ✅ |  |
-| `store gaps repair` | `--max-gaps` | ✅ |  |
-| `store gaps repair` | `--repair-time` | ✅ |  |
-| `store gaps repair` | `--page-size` | ✅ |  |
-| `store gaps repair` | `--pause` | ✅ |  |
-| `store gaps repair` | `--fingerprint` | ✅ |  |
-| `store gaps repair` | `--catch-up` | ✅ |  |
-| `store gaps repair` | `--no-catch-up` | ✅ |  |
-| `store gaps repair` | `--catch-up-chunks` | ✅ |  |
-| `store gaps repair` | `--catch-up-messages` | ✅ |  |
-| `store gaps repair` | `--catch-up-time` | ✅ |  |
-| `store gaps repair` | `--background` | ✅ |  |
+| `store gaps repair` | `--limit` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--max-gaps` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--repair-time` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--page-size` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--pause` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--fingerprint` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--catch-up` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--no-catch-up` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--catch-up-chunks` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--catch-up-messages` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--catch-up-time` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `store gaps repair` | `--background` | ⛔ | cli-messaging src/cli/messenger/gaps.test.ts and src/services/archive-gaps.test.ts cover planning and repairing archive gaps; this consumer mounts the shared command (cli-messaging 0.162.0) |
 | `store jobs list` |  | ✅ |  |
 | `store jobs show` |  | ✅ |  |
 | `store jobs cancel` |  | ✅ |  |
@@ -398,8 +411,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed clear` | `--dims` | ✅ |  |
 | `attachments extract` |  | ✅ |  |
 | `attachments extract` | `--chat` | ✅ |  |
-| `attachments extract` | `--from-dir` | ✅ |  |
-| `attachments extract` | `--cursor` | ✅ |  |
+| `attachments extract` | `--from-dir` | ⛔ | cli-messaging src/cli/messenger/attachments.test.ts covers extraction from a directory and its cursor; this consumer mounts the shared command (cli-messaging 0.162.0) |
+| `attachments extract` | `--cursor` | ⛔ | cli-messaging src/cli/messenger/attachments.test.ts covers extraction from a directory and its cursor; this consumer mounts the shared command (cli-messaging 0.162.0) |
 | `attachments extract` | `--download` | ✅ |  |
 | `attachments extract` | `--output-dir` | ✅ |  |
 | `attachments extract` | `--limit` | ✅ |  |
@@ -433,6 +446,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--source` | ✅ |  |
 | `stats messages show` | `--limit` | ✅ |  |
 | `stats messages show` | `--timezone` | ✅ |  |
+| `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
 | `stats chats show` |  | ✅ |  |
 | `stats chats show` | `--since-time` | ✅ |  |
@@ -464,6 +478,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches create` | `--source` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--limit` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--newest` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
+| `searches create` | `--exact` | ✅ |  |
 | `searches create` | `--context` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--language` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--timezone` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |

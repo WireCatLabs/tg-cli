@@ -205,6 +205,18 @@ tg chats show <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
+### `tg chats send-as`
+
+who this account may post as in a chat; changes no saved choice
+
+```sh
+tg chats send-as <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
 ### `tg chats members`
 
 who is in a group
@@ -924,6 +936,7 @@ tg messages search [query] [options]
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many. |
 | `--newest` | newest first instead of best first. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
 | `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
@@ -949,6 +962,7 @@ tg messages send <chat> [text] [options]
 |---|---|
 | `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists. |
 | `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
@@ -956,6 +970,8 @@ tg messages send <chat> [text] [options]
 | `--file <file>` | attach a file; the text becomes its caption. |
 | `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--as-file` | send the --file as a file to download, a video included. |
+| `--spoiler` | hide the --photo or video behind a spoiler until tapped. |
+| `--caption-above` | show the text above the --photo or --file, not below it. |
 | `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from a hidden folder, \~/.ssh or this CLI's own folders. |
 | `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
@@ -1093,6 +1109,7 @@ tg messages forward <chat> <message> [options]
 |---|---|
 | `--to <chat>` | where it goes: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--silent` | deliver it without a notification. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat. |
 | `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
 
 ### `tg messages pin`
@@ -1277,6 +1294,7 @@ tg polls create <chat> <question> <answers> [options]
 | `--anonymous` | nobody sees who voted for what. |
 | `--revote` | people may change their vote. |
 | `--silent` | send without a notification. |
+| `--send-as <id>` | post as one of the identities `chats send-as` lists. |
 | `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
 
 ## `tg models`
@@ -1481,6 +1499,43 @@ tg topics create <chat> <title> [options]
 | Option | What it does |
 |---|---|
 | `--send-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
+
+### `tg topics edit`
+
+rename, close or reopen a forum topic
+
+**Changes something in Telegram.**
+
+```sh
+tg topics edit <chat> <topic> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the topic id, from `topics list`. |
+
+| Option | What it does |
+|---|---|
+| `--title <title>` | the new title, at most 128 UTF-8 bytes. |
+| `--closed <on\|off>` | on closes the topic to new messages, off reopens it. |
+| `--pinned <on\|off>` | on pins the topic at the top of the list, off unpins it. |
+| `--hidden <on\|off>` | on hides the General topic from the topic list, off shows it. |
+
+### `tg topics order`
+
+put the pinned topics in this order; it pins and unpins nothing
+
+**Changes something in Telegram.**
+
+```sh
+tg topics order <chat> <topic>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the pinned topics' ids, first to last. |
 
 ## `tg watch`
 
@@ -2226,6 +2281,7 @@ tg stats messages show [query] [options]
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many rows. |
 | `--timezone <zone>` | the IANA timezone for calendar days and hours. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
 ### `tg stats chats`
@@ -2375,6 +2431,7 @@ tg searches create <name> [query] [options]
 | `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many. |
 | `--newest` | newest first instead of best first. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit. |
 | `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |

@@ -1,0 +1,60 @@
+# Permissions
+
+Permissions belong to a profile: a set of settings for one account or bot. Start with reading
+and allow changes only when you need them. See [profiles and bots](profiles.md).
+
+## Choose an access level
+
+| Level | What happens |
+|---|---|
+| `deny` | The action is refused, including reading. |
+| `readonly` | Reading works; changes are refused. |
+| `ask` | A change asks in the terminal. |
+| `allow` | The action can run without another question. |
+
+A refusal tells you to check the requested action and settings. It does not mean your account
+connection is broken. Do not ask an assistant to remove a restriction just to finish a task.
+
+## Allow one action
+
+```sh
+tg work config set permissions.messages.send ask
+```
+
+Replace `work` with your profile. For a profile that may read messages but cannot change them:
+
+```sh
+tg work config set permissions.messages readonly
+```
+
+This controls messages. Other actions, such as reactions or chat administration, have their own
+permission keys. Use the complete read-only profile examples in
+[settings reference](configuration-reference.md).
+
+## Permissions for a bot
+
+Bot permissions and limits belong to the bot section. To ask before sends in the terminal:
+
+```sh
+tg support config set permissions.bot.messages.send ask --bot
+tg support config set sendsPerHour 30 --bot
+```
+
+## Restrict recipients and repeated sends
+
+A recipient list limits which chats the profile may send to. An hourly send limit helps stop a
+loop. These checks remain active when a particular command is allowed.
+Read the [Security](security.md)
+for the commands to manage these controls.
+
+## A temporary change for an MCP server
+
+Add `--permission messages.send=allow` to the server startup command to allow sending for that
+process. Saved settings stay the same. Over MCP, `ask` does not require a server form: the app controls
+its own approvals and may allow a call without asking again. Use `deny` or `readonly` to refuse changes. [Browser setup](remote.md) explains the full connection.
+
+## Limits and detailed rules
+
+An assistant that can edit configuration files or run unrestricted terminal commands may be able
+to change these settings. Read [Security](security.md) before giving that access.
+For nested permissions and exact command keys, see the messenger's configuration reference.
