@@ -503,7 +503,10 @@ describe("the send guard in front of the other writes", () => {
       ["g-bulk", "chats", "requests", "accept", "Valencia", "--all", "--link", "https://t.me/+extra", "--json"],
       adapter,
     )
-    const declined = await tg(["g-bulk", "chats", "requests", "decline", "Valencia", "--all", "--json"], adapter)
+    const declined = await tg(
+      ["g-bulk", "chats", "requests", "decline", "Valencia", "--all", "--link", "https://t.me/+other", "--json"],
+      adapter,
+    )
     const listed = await tg(
       ["g-bulk", "chats", "link", "list", "Valencia", "--revoked", "--limit", "5", "--json"],
       adapter,
@@ -516,7 +519,7 @@ describe("the send guard in front of the other writes", () => {
     expect([all.code, declined.code, listed.code, revoked.code]).toEqual([0, 0, 0, 0])
     expect(answered).toEqual([
       [true, "https://t.me/+extra"],
-      [false, undefined],
+      [false, "https://t.me/+other"],
     ])
     expect(journal("g-bulk").map((entry) => entry.action)).toEqual([
       "requests.accept",

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2207 ✅ · 58 ⛔ · 0 ❌** — 441 commands, 1824 options.
+**2215 ✅ · 58 ⛔ · 0 ❌** — 443 commands, 1830 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -80,11 +80,19 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats link create` | `--approval` | ✅ |  |
 | `chats link create` | `--expire-time` | ✅ |  |
 | `chats link create` | `--max-uses` | ✅ |  |
+| `chats link list` |  | ✅ |  |
+| `chats link list` | `--revoked` | ✅ |  |
+| `chats link list` | `--limit` | ✅ |  |
+| `chats link revoke` |  | ✅ |  |
 | `chats link reset` |  | ✅ |  |
 | `chats requests list` |  | ✅ |  |
 | `chats requests list` | `--limit` | ✅ |  |
 | `chats requests accept` |  | ✅ |  |
+| `chats requests accept` | `--all` | ✅ |  |
+| `chats requests accept` | `--link` | ✅ |  |
 | `chats requests decline` |  | ✅ |  |
+| `chats requests decline` | `--all` | ✅ |  |
+| `chats requests decline` | `--link` | ✅ |  |
 | `chats admins add` |  | ✅ |  |
 | `chats admins add` | `--can` | ✅ |  |
 | `chats admins remove` |  | ✅ |  |

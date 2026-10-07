@@ -494,6 +494,38 @@ tg chats link create <chat> [options]
 | `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
 
+#### `tg chats link list`
+
+your invite links, newest first, with how many joined and how many wait
+
+```sh
+tg chats link list <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--revoked` | the links you stopped, instead. |
+| `--limit <n>` | how many. |
+
+#### `tg chats link revoke`
+
+stop one link; for the group's own link, the answer is the new one
+
+**Changes something in Telegram.**
+
+```sh
+tg chats link revoke <chat> <link>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `link` | required | the link, as `chats link list` shows it. |
+
 #### `tg chats link reset`
 
 replace the invite link; the old one stops working
@@ -535,13 +567,18 @@ let them in; the group sees them join
 **Changes something in Telegram.**
 
 ```sh
-tg chats requests accept <chat> <person>
+tg chats requests accept <chat> [person] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `person` | required | who asked: an id from `chats requests list`. |
+| `person` | optional | who asked: an id from `chats requests list`. |
+
+| Option | What it does |
+|---|---|
+| `--all` | every pending request, counted against the hourly limit first. |
+| `--link <link>` | with --all: only the requests made by this invite link. |
 
 #### `tg chats requests decline`
 
@@ -550,13 +587,18 @@ turn the request away
 **Changes something in Telegram.**
 
 ```sh
-tg chats requests decline <chat> <person>
+tg chats requests decline <chat> [person] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `person` | required | who asked: an id from `chats requests list`. |
+| `person` | optional | who asked: an id from `chats requests list`. |
+
+| Option | What it does |
+|---|---|
+| `--all` | every pending request, counted against the hourly limit first. |
+| `--link <link>` | with --all: only the requests made by this invite link. |
 
 ### `tg chats admins`
 
