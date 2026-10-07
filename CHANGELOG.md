@@ -31,6 +31,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **First settings resolution creates config.json.** Existing files are preserved; environment and flag overrides are not saved. config show may now create the file, and common values report file defaults as their source.
 - **Word and phrase searches include word forms.** Scripted queries may return more messages. Use exact: or --exact for the previous exact-form behavior; explicit text: still matches forms. Archive language settings affect matching.
 
+### Fixed
+
+- Person context finds private dialogs without recorded members when the dialog ID is the person's
+  ID, restoring direct messages and the last message each way in existing Telegram stores.
+- Interrupted writes preserve their unknown outcome, operation ID and retry information; check the
+  result before retrying a Bot API write that timed out.
+
 ## 0.30.0 — 07.10.2026
 
 ### Changed — may break scripts
