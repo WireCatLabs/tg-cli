@@ -1014,6 +1014,7 @@ tg messages download <chat> [message] [options]
 | `--output-dir <dir>` | where to save them; created if missing. Default: `.`. |
 | `--all` | every file of the chat, newest first; run it again to continue where it stopped. |
 | `--pause <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
+| `--extract` | read text layers from the files this download maps into the local content index. |
 
 ### `tg messages transcribe`
 
@@ -1600,8 +1601,56 @@ tg store fetch <chat> [options]
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
 | `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
 | `--last <n>` | stop once the newest n messages are held. |
+| `--catch-up` | prepare local search after fetch; overrides searchCatchUp. |
+| `--no-catch-up` | skip local preparation after this fetch. |
+| `--catch-up-chunks <n>` | at most this many local vector chunks. |
+| `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
+| `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
 | `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
+
+### `tg store gaps`
+
+inspect recorded interior coverage gaps and explicitly fetch them
+
+#### `tg store gaps plan`
+
+local coverage plan; missing message ids alone do not imply missing history
+
+```sh
+tg store gaps plan <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+#### `tg store gaps repair`
+
+fetch bounded interior gaps and recheck coverage; never delete unseen messages
+
+```sh
+tg store gaps repair <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | total messages in this repair, 500 by default. |
+| `--max-gaps <n>` | at most this many gaps, 5 by default. |
+| `--repair-time <duration>` | time budget for the repair, 30s by default. Default: `30s`. |
+| `--page-size <n>` | messages per provider page. |
+| `--pause <duration>` | provider pause between pages. Default: `1s`. |
+| `--fingerprint <hash>` | refuse if this previously inspected coverage plan changed. |
+| `--catch-up` | prepare local search after repair; overrides searchCatchUp. |
+| `--no-catch-up` | skip local search preparation after repair. |
+| `--catch-up-chunks <n>` | maximum local chunks prepared. |
+| `--catch-up-messages <n>` | maximum stored messages read for preparation. |
+| `--catch-up-time <duration>` | preparation time within the repair's remaining budget. |
+| `--background` | repair as an existing store job; inspect store jobs show. |
 
 ### `tg store jobs`
 
@@ -2049,6 +2098,8 @@ tg attachments extract [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat's files; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--from-dir <dir>` | match files in this nonrecursive directory; needs --chat. |
+| `--cursor <cursor>` | continue from the cursor returned by a bounded extraction. |
 | `--download` | first save the files no download saved yet, from the messenger, into --output-dir. |
 | `--output-dir <dir>` | with --download, where to save them; created if missing. |
 | `--limit <n>` | read at most this many files; run it again to continue. |
@@ -2198,6 +2249,18 @@ tg stats chats show <chat> [options]
 | `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
 | `--by <day\|week>` | also one row per calendar day or week (weeks start on Monday). |
 | `--timezone <zone>` | the IANA timezone for calendar days. |
+
+#### `tg stats chats official`
+
+what Telegram itself computed for a group or channel you administer: totals against the previous period, top people and every graph as JSON series; the messenger picks the period
+
+```sh
+tg stats chats official <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
 ### `tg stats tasks`
 
@@ -2736,7 +2799,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction. |
 
 | Option | What it does |
@@ -2757,7 +2820,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, searchStemmers.cyrillic, searchStemmers.latin. |
 
 | Option | What it does |
 |---|---|
