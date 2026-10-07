@@ -342,7 +342,19 @@ const dialog = (peer: unknown, lastMessageAt = "2026-09-27T10:00:00.000Z") => ({
   lastMessage: { date: new Date(lastMessageAt) },
 })
 
-function fakePoll({ chosen }: { chosen?: number }) {
+function fakePoll({
+  chosen,
+  closed = false,
+  multiple = false,
+  final = false,
+  creator = true,
+}: {
+  chosen?: number
+  closed?: boolean
+  multiple?: boolean
+  final?: boolean
+  creator?: boolean
+}) {
   const answer = (data: string, text: string, voters: number, index: number) => ({
     data: new TextEncoder().encode(data),
     text,
@@ -353,8 +365,10 @@ function fakePoll({ chosen }: { chosen?: number }) {
     type: "poll",
     question: "Friday?",
     answers: [answer("0", "yes", 4, 0), answer("1", "no", 1, 1)],
-    isClosed: false,
-    isMultiple: false,
+    isClosed: closed,
+    isMultiple: multiple,
+    isRevotingDisabled: final,
+    isCreator: creator,
     isPublic: true,
     voters: 5,
   }
@@ -2123,12 +2137,60 @@ describe("polls", () => {
       code: "validation_error",
       message: expect.stringContaining("MA, MQ"),
     })
+    client.found = { ...message(3), media: fakePoll({ chosen: 1 }) }
     await adapter.vote("-100500", "3", [])
 
     expect(voted.answers.map((answer) => answer.voters)).toEqual([4, 1])
     const [first, retract] = client.sendVote.mock.calls.map(([params]) => params as { options: unknown })
     expect(first?.options).toEqual([new Uint8Array([0x31])])
     expect(retract?.options).toBeNull()
+  })
+
+  it.each([
+    ["a closed poll", { closed: true }, ["MA"], "closed"],
+    ["two answers in a one-answer poll", {}, ["MA", "MQ"], "one answer"],
+    ["a changed vote where the vote is final", { chosen: 0, final: true }, ["MQ"], "final"],
+    ["a retraction where the vote is final", { chosen: 0, final: true }, [], "final"],
+    ["a retraction with no vote", {}, [], "not voted"],
+  ] as const)("refuses %s before sending", async (_name, state, answers, said) => {
+    const { adapter, client } = await open()
+    client.found = { ...message(3), media: fakePoll(state) }
+    client.sendVote.mockClear()
+
+    await expect(adapter.vote("-100500", "3", [...answers])).rejects.toMatchObject({
+      message: expect.stringContaining(said),
+    })
+    expect(client.sendVote).not.toHaveBeenCalled()
+  })
+
+  it("lets several answers into a poll that takes them", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(3), media: fakePoll({ multiple: true }) }
+
+    await adapter.vote("-100500", "3", ["MA", "MQ"])
+    expect(client.sendVote).toHaveBeenCalled()
+  })
+
+  it("refuses to close a closed poll, or one made by somebody else, before sending", async () => {
+    const { adapter, client } = await open()
+    client.closePoll.mockClear()
+
+    client.found = { ...message(3), media: fakePoll({ closed: true }) }
+    await expect(adapter.closePoll("-100500", "3")).rejects.toMatchObject({ code: "validation_error" })
+    client.found = { ...message(3), media: fakePoll({ creator: false }) }
+    await expect(adapter.closePoll("-100500", "3")).rejects.toMatchObject({ code: "permission_error" })
+    expect(client.closePoll).not.toHaveBeenCalled()
+  })
+
+  it("calls a timeout reading the poll a timeout, not a vote that may have been cast", async () => {
+    const { adapter, client } = await open()
+    client.getMessages = async () => {
+      throw new MtTimeoutError(1000)
+    }
+
+    const failed = await adapter.vote("-100500", "3", ["MA"]).catch((error: unknown) => error)
+    expect(failed).toMatchObject({ code: expect.not.stringMatching("outcome_unknown") })
+    expect(client.sendVote).not.toHaveBeenCalled()
   })
 
   it("says a message without a poll is not found", async () => {
@@ -2141,6 +2203,7 @@ describe("polls", () => {
   it("closes a poll, and creates one with the send's random_id, public unless anonymous", async () => {
     const { adapter, client } = await open()
     client.sendMedia.mockClear()
+    client.found = { ...message(3), media: fakePoll({}) }
 
     expect((await adapter.closePoll("-100500", "3")).closed).toBe(true)
     await adapter.createPoll(

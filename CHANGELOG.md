@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg polls vote` and `tg polls close` refuse what Telegram would refuse, before sending**: a closed poll, two
+  answers in a one-answer poll, a changed or retracted vote where the vote is final, `--retract` with no vote, and
+  closing someone else's poll. Telegram's poll refusals now say what to do instead of "Telegram refused: X", and a
+  timeout while reading the poll no longer says the vote may have gone.
 - **`tg chats requests accept|decline <chat> --all [--link <link>]` answers every pending request at once, and
   `tg chats link list` / `tg chats link revoke` show and stop your invite links.** An `--all` accept is counted
   against the hourly limit before anyone is let in.

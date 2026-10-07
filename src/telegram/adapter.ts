@@ -98,6 +98,7 @@ import {
   toReactionChange,
   toTopic,
 } from "./map.js"
+import { refuseClose, refuseVote } from "./polls.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
 import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
@@ -931,7 +932,7 @@ export class TelegramAdapter {
   /** Votes by the answers' own bytes, never by index: mtcute would fetch the poll and pick by position. */
   vote(chatId: string, messageId: string, answerIds: string[]): Promise<Poll> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#write("the vote may have been cast — repeating it is safe", async () => {
+    return this.#call(async () => {
       const current = await this.#pollOf(chatId, messageId)
       const known = new Map(current.answers.map((answer) => [answerId(answer.data), answer.data]))
       const unknown = answerIds.filter((answer) => !known.has(answer))
@@ -941,16 +942,26 @@ export class TelegramAdapter {
           `${unknown.join(", ")} ${unknown.length === 1 ? "is" : "are"} not an answer of this poll — its answers are ${[...known.keys()].join(", ")}`,
         )
       }
+      refuseVote(current, answerIds)
       const options = answerIds.length === 0 ? null : answerIds.map((answer) => known.get(answer) as Uint8Array)
-      return toPoll(chatId, messageId, await this.#client.sendVote({ chatId: Number(chatId), message: id, options }))
+      try {
+        return toPoll(chatId, messageId, await this.#client.sendVote({ chatId: Number(chatId), message: id, options }))
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the vote may have been cast — repeating it is safe")
+      }
     })
   }
 
   closePoll(chatId: string, messageId: string): Promise<Poll> {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#write("the poll may have been closed; check `tg polls show` before repeating", async () =>
-      toPoll(chatId, messageId, await this.#client.closePoll({ chatId: Number(chatId), message: id })),
-    )
+    return this.#call(async () => {
+      refuseClose(await this.#pollOf(chatId, messageId))
+      try {
+        return toPoll(chatId, messageId, await this.#client.closePoll({ chatId: Number(chatId), message: id }))
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the poll may have been closed; check `tg polls show` before repeating")
+      }
+    })
   }
 
   /** One `random_id` per logical create, as a send has: a retry repeats it and Telegram keeps one poll. */
