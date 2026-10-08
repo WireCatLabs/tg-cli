@@ -4,6 +4,43 @@
 `--offline` answer from it without asking Telegram. This page covers what it keeps, how to fill it,
 and how to keep it current.
 
+## Check and fill one chat
+
+Check what is saved before downloading more. Limit the download to the chat and period you need.
+
+If the download stops at a limit or a provider wait, run it again to continue, then check coverage. A finished command does not by itself prove complete history. These counts are fictional.
+
+**Your request:**
+
+> Check the saved history for Book club. Download the last 30 days for that chat, then tell me whether any gaps remain.
+
+**Check saved history:**
+
+```sh
+tg store status "Book club" --json
+```
+
+**Download the selected period:**
+
+```sh
+tg store fetch "Book club" --since-time 30d --json
+```
+
+**Check again:**
+
+```sh
+tg store status "Book club" --json
+```
+
+**Example agent answer:**
+
+> | Check | Before | After |
+> | --- | --- | --- |
+> | Saved messages | 30 | 300 |
+> | Requested 30-day message history | Gaps | Held without gaps |
+>
+> This result covers the selected period, not the chat’s entire past.
+
 ## What it keeps
 
 - **Every read.** The chats `chats list` saw, the messages `messages list`, `messages context` and
@@ -29,6 +66,9 @@ is not encrypted ([security.md](security.md#what-reaches-the-disk)).
 
 ```sh
 tg store status                  # per chat: messages stored, the oldest and newest, the stretches held completely
+```
+
+```sh
 tg store status "Book club"      # one chat
 ```
 
@@ -39,12 +79,33 @@ gaps; `store fetch` closes them.
 
 ```sh
 tg store fetch "Book club" --estimate         # what a full fetch would still cost; asks Telegram nothing
+```
+
+```sh
 tg store fetch "Book club"                    # fetch it, newest to oldest
+```
+
+```sh
 tg store fetch "Book club"                    # run again to continue where it stopped
+```
+
+```sh
 tg store fetch "Book club" --since-time 30d   # only back to 30 days ago
+```
+
+```sh
 tg store fetch "Book club" --last 5000        # only until the newest 5000 are held
+```
+
+```sh
 tg store fetch "Book club" --limit 5000       # up to 5000 messages in this run
+```
+
+```sh
 tg store fetch --all                          # every chat, most recently active first: the last 90 days
+```
+
+```sh
 tg store fetch --all --since-time 365d        # every chat, back to a year ago
 ```
 
@@ -67,28 +128,61 @@ A long fetch can run as a job that outlives the command:
 
 ```sh
 tg store fetch "Book club" --background     # prints the job id
+```
+
+```sh
 tg store jobs list                          # background jobs, newest first
+```
+
+```sh
 tg store jobs list --state failed           # only failed ones: running, done, failed, cancelled or died
+```
+
+```sh
 tg store jobs show                          # the newest job, and what the store now holds of its chat
+```
+
+```sh
 tg store jobs show <job>
+```
+
+```sh
 tg store jobs cancel <job>                  # stops after the current page; a later fetch resumes
+```
+
+```sh
 tg store jobs retry <job>                   # a failed or died job again, as a new job with the same options
+```
+
+```sh
 tg store jobs retry --failed                # every chat whose newest job failed or died
+```
+
+```sh
 tg store jobs clear                         # forget finished jobs and their logs; a running job stays
 ```
 
 ## Search
 
 `tg search messages` finds stored messages by their words, sender, chat, date, files, links and your
-own tags; by default it never asks Telegram. `--sync-first` explicitly fetches new messages first. [Message search](search.md) is the guide, with saved searches and
+own tags. Word searches can also query Telegram; choose `--backend archive` to read only saved messages. `--sync-first` explicitly fetches new messages first. [Message search](search.md) is the guide, with saved searches and
 counts. An empty answer means "not in this archive": fetch the chat first.
 
 ## Export
 
 ```sh
 tg store export "Book club" --jsonl > book-club.jsonl       # one message per line, oldest first
+```
+
+```sh
 tg store export "Book club" --json > book-club.json         # { "items": [...] }
+```
+
+```sh
 tg store export "Book club" --format markdown > book-club.md   # a transcript: a heading per day, replies and forwards quoted
+```
+
+```sh
 tg store export "Book club" --output book-club.jsonl --since-time 7d     # the last week, into a file only you can read
 ```
 
@@ -103,7 +197,13 @@ you can read, and prints where it went and how many messages it holds. It never 
 
 ```sh
 tg store export "Book club" "Work" --to ~/tg-export   # a JSON-lines file per chat, and manifest.json
+```
+
+```sh
 tg store export --kind group --to ~/tg-groups          # every stored group
+```
+
+```sh
 tg store export --all --to ~/tg-all                    # every stored chat of this account
 ```
 
@@ -164,9 +264,21 @@ workflow. The profile permission is `messages.evidence`, inheriting `messages`.
 
 ```sh
 tg --offline chats list
+```
+
+```sh
 tg --offline messages list "Book club" --limit 50
+```
+
+```sh
 tg --offline messages show "Book club" 4242
+```
+
+```sh
 tg --offline messages context "Book club" 4242
+```
+
+```sh
 tg --offline contacts list
 ```
 
@@ -189,9 +301,21 @@ second one is refused. **Nothing starts it for you.**
 
 ```sh
 tg server start       # start serve in the background; answers once it listens
+```
+
+```sh
 tg server status      # whether it runs, since when, who started it
+```
+
+```sh
 tg server logs -n 50  # its latest log lines
+```
+
+```sh
 tg server stop
+```
+
+```sh
 tg server restart
 ```
 
@@ -202,7 +326,13 @@ launchd agent on macOS.
 
 ```sh
 tg server install      # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
+```
+
+```sh
 tg server start        # starts it — through the unit, now that there is one
+```
+
+```sh
 tg server status
 systemctl --user enable tg-serve-default    # only if it should start at every login
 ```
@@ -228,10 +358,25 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
 
 ```sh
 tg store info                          # where the file is, its size, its schema, how many rows; changes nothing
+```
+
+```sh
 tg store check                         # integrity, search indexes, disk, and which chats are behind; changes nothing
+```
+
+```sh
 tg store backup ~/tg-store.db          # a copy of the store, while it is in use; --encrypt for a password
+```
+
+```sh
 tg store restore ~/tg-store.db         # put a backup in place of the store
+```
+
+```sh
 tg store migrate                       # bring the store up to this version's schema
+```
+
+```sh
 tg store clear --left --allow-dangerous  # delete the chats you have left, with their messages
 ```
 

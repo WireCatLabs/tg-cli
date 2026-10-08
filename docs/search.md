@@ -3,6 +3,32 @@
 `tg search messages` finds messages in the local archive, the copy of your chats that tg keeps on this
 computer, and asks Telegram's own search too ([below](#asking-telegram-too---backend)). It marks nothing read.
 
+## Try a focused search
+
+Start with a phrase and one chat. This example searches saved history without asking the messenger.
+
+An empty result is not proof that the message never existed. Check the reported history gaps before broadening the search. The examples on this page are fictional.
+
+**Your request:**
+
+> Find the message saying “invoice paid” in Book club. Show the match and any gaps in the history.
+
+**Command:**
+
+```sh
+tg search messages '"invoice paid"' --chat "Book club" --backend archive --json
+```
+
+**Example agent answer:**
+
+> **One matching message in saved history.**
+>
+> | Person | Message |
+> | --- | --- |
+> | Alice Synthetic | Invoice paid yesterday. |
+>
+> History is incomplete: other matches may be missing. I can open this message and its surrounding conversation.
+
 ## Prepare your archive first
 
 Good search needs your chats downloaded. Telegram's search finds a message by its words even if tg never
@@ -11,6 +37,9 @@ fetched it, but everything else reads only the archive: counting with `stats`, t
 
 ```sh
 tg store fetch --all --background     # the last 90 days of every chat, as a background job
+```
+
+```sh
 tg store jobs show                    # how far it got
 ```
 
@@ -45,9 +74,21 @@ examples; use your own chats and people.
 
 ```sh
 tg search messages invoice
+```
+
+```sh
 tg search messages '"invoice paid"'              # words together
+```
+
+```sh
 tg search messages 'cafe OR library'
+```
+
+```sh
 tg search messages '(cafe OR library) NOT loud'
+```
+
+```sh
 tg search messages 'invoic*'                     # every word that starts with "invoic"
 ```
 
@@ -61,10 +102,25 @@ are ignored. Typos are not corrected automatically.
 
 ```sh
 tg search messages 'from:"Alice Synthetic" invoice'
+```
+
+```sh
 tg search messages 'from:("Alice Synthetic" OR "Bob Synthetic") library'
+```
+
+```sh
 tg search messages 'from:me date:7d'             # what you wrote this week
+```
+
+```sh
 tg search messages 'chat:"Book club" library'
+```
+
+```sh
 tg search messages library --chat "Book club"    # the same, as an option
+```
+
+```sh
 tg search messages 'passport kind:private'       # one-to-one chats only
 ```
 
@@ -75,8 +131,17 @@ forum topic of a group; it needs that group in `chat:` or `--chat`.
 
 ```sh
 tg search messages 'date:today'
+```
+
+```sh
 tg search messages 'library date:yesterday'
+```
+
+```sh
 tg search messages 'invoice date:7d'             # from 7 days ago until now; also 30m, 2h
+```
+
+```sh
 tg search messages 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
 ```
 
@@ -87,12 +152,33 @@ another. In a range, `[` and `]` include that day, `{` and `}` exclude it.
 
 ```sh
 tg search messages 'has:file'
+```
+
+```sh
 tg search messages 'filename:*.pdf'
+```
+
+```sh
 tg search messages 'filename:*contract*'         # part of the name
+```
+
+```sh
 tg search messages 'size>10MB'
+```
+
+```sh
 tg search messages 'mime:image'                  # any picture sent as a file
+```
+
+```sh
 tg search messages 'mime:"application/pdf"'      # quote a full type
+```
+
+```sh
 tg search messages 'has:photo chat:"Book club"'
+```
+
+```sh
 tg search messages 'has:link AND "github.com"'   # a link to a site
 ```
 
@@ -105,6 +191,9 @@ text or only in its preview card.
 
 ```sh
 tg search messages 'preset:secret kind:saved'    # something that looks like a password or token
+```
+
+```sh
 tg search messages 'preset:card'
 ```
 
@@ -116,10 +205,25 @@ works or a card is real. The full list is in the [query language](query-language
 
 ```sh
 tg tags add work --chat "Book club"
+```
+
+```sh
 tg tags add work --contact "Bob Synthetic"
+```
+
+```sh
 tg tags list --tag work --type chat
+```
+
+```sh
 tg search messages 'tag:work invoice'
+```
+
+```sh
 tg search messages 'invoice NOT tag:work'
+```
+
+```sh
 tg tags remove work --chat "Book club"
 ```
 
@@ -133,9 +237,21 @@ and no model:
 
 ```sh
 tg metadata refresh --chat "Book club"   # read the chat's description from Telegram; the chat is not changed
+```
+
+```sh
 tg metadata refresh --only-missing       # every stored group and channel with no description read yet
+```
+
+```sh
 tg tags auto --dry-run                   # what it would tag, without writing
+```
+
+```sh
 tg tags auto                             # write the automatic tags
+```
+
+```sh
 tg tags list --source auto               # only the automatic ones
 ```
 
@@ -146,11 +262,29 @@ run already gave makes it yours.
 
 ```sh
 tg searches create meetings 'library OR cafe' --chat "Book club"
+```
+
+```sh
 tg search messages --saved meetings
+```
+
+```sh
 tg search messages --saved meetings 'date:today'  # extra words are added with AND
+```
+
+```sh
 tg stats messages show --saved meetings --by day
+```
+
+```sh
 tg searches list
+```
+
+```sh
 tg searches history --limit 10
+```
+
+```sh
 tg search messages --saved 42                    # a row of the history, by its number
 ```
 
@@ -170,8 +304,17 @@ Saved searches and the history live in the store that tg and max share: both see
 
 ```sh
 tg stats messages show invoice                        # how many in each chat
+```
+
+```sh
 tg stats messages show 'date:7d' --by sender
+```
+
+```sh
 tg stats messages show 'from:me' --by day --timezone Europe/Madrid
+```
+
+```sh
 tg stats messages show --by hour                      # every stored message
 ```
 
@@ -188,7 +331,13 @@ Telegram and the archive in one run (`--backend both`). `--backend server` shows
 
 ```sh
 tg search messages 'invoice' --backend both
+```
+
+```sh
 tg search messages 'invoice chat:"Book club" from:Olga' --backend both
+```
+
+```sh
 tg search messages 'invoice date:2026-09' --backend server --server-time 10s
 ```
 
@@ -243,8 +392,17 @@ remote agent; the agent needs access to the file to read it.
 
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
+```
+
+```sh
 tg search messages 'content:invoice'
+```
+
+```sh
 tg attachments list --chat "Book club" --needs-text
+```
+
+```sh
 tg attachments text set "Book club" 204 --text-file ./scan.txt
 ```
 
@@ -256,8 +414,17 @@ under `models.ocr` and use the ordinary `models text key set` credential command
 
 ```sh
 tg config set models.ocr.provider openai
+```
+
+```sh
 tg config set models.ocr.model your-vision-model
+```
+
+```sh
 tg models text key set openai
+```
+
+```sh
 tg attachments extract --chat "Book club" --ocr --concurrency 4 --limit 100 --json
 ```
 
