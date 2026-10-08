@@ -480,6 +480,7 @@ tg polls voters "Book club" 4250 --answer <answer id>   # who chose it; not in a
 tg polls vote "Book club" 4250 <answer id>
 tg polls vote "Book club" 4250 --retract
 tg polls create "Book club" "Which day?" Monday Tuesday --anonymous
+tg polls create "Book club" "Pizza now?" yes no --close-time 5m   # closes by itself; 5s to 10m
 tg polls close "Book club" 4250            # your own poll; it cannot be reopened
 tg polls create "Book club" "2+2?" 3 4 5 --quiz --correct 2 --solution "Four."   # a quiz; a vote is final
 ```

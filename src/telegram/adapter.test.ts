@@ -2369,6 +2369,18 @@ describe("polls", () => {
     })
   })
 
+  it("closes a poll by itself after the seconds given, and sends no period without them", async () => {
+    const { adapter, client } = await open()
+    client.sendMedia.mockClear()
+    const poll = { question: "Now?", answers: ["yes", "no"], multiple: false, anonymous: false }
+
+    await adapter.createPoll("-100500", { ...poll, closeAfter: 90 }, { sendId: "80" })
+    await adapter.createPoll("-100500", poll, { sendId: "81" })
+
+    expect(client.sendMedia.mock.calls[0]?.[1]).toMatchObject({ type: "poll", closePeriod: 90 })
+    expect(client.sendMedia.mock.calls[1]?.[1]).not.toHaveProperty("closePeriod")
+  })
+
   it("says a message without a poll is not found", async () => {
     const { adapter, client } = await open()
     client.found = message(3)

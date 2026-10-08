@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2313 ✅ · 60 ⛔ · 0 ❌** — 458 commands, 1915 options.
+**2314 ✅ · 60 ⛔ · 0 ❌** — 458 commands, 1916 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -283,6 +283,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--quiz` | ✅ |  |
 | `polls create` | `--correct` | ✅ |  |
 | `polls create` | `--solution` | ✅ |  |
+| `polls create` | `--close-time` | ✅ |  |
 | `models audio list` |  | ✅ |  |
 | `models audio download` |  | ✅ |  |
 | `models text list` |  | ✅ |  |
