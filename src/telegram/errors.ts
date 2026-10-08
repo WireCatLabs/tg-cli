@@ -58,6 +58,8 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   REVOTE_NOT_ALLOWED: ["validation_error", "this poll takes one vote, and yours is final — it cannot be changed"],
   OPTIONS_TOO_MUCH: ["validation_error", "this poll takes one answer; give one id"],
   OPTION_INVALID: ["validation_error", "that is not an answer of this poll — `tg polls show` lists them"],
+  POLL_VOTE_REQUIRED: ["permission_error", "Telegram shows who voted only once you have voted in this poll"],
+  BROADCAST_FORBIDDEN: ["permission_error", "a channel does not show who voted in its polls"],
   POLL_ANSWERS_INVALID: ["validation_error", "Telegram refused how many answers this poll has"],
   POLL_ANSWER_INVALID: ["validation_error", "an answer is empty or too long for Telegram"],
   POLL_OPTION_INVALID: ["validation_error", "an answer is empty or too long for Telegram"],

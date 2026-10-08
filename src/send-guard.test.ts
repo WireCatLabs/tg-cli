@@ -465,26 +465,18 @@ describe("the send guard in front of the other writes", () => {
 
     const on = await tg(["g-approval", "chats", "update", "Valencia", "--join-approval", "on", "--json"], adapter)
     const link = await tg(
-      [
-        "g-approval",
-        "chats",
-        "link",
-        "create",
-        "Valencia",
-        "--approval",
-        "--expire-time",
-        "7d",
-        "--max-uses",
-        "5",
-        "--json",
-      ],
+      ["g-approval", "chats", "link", "create", "Valencia", "--approval", "--expire-time", "7d", "--json"],
       adapter,
     )
+    const limited = await tg(["g-approval", "chats", "link", "create", "Valencia", "--max-uses", "5"], adapter)
 
-    expect([on.code, link.code]).toEqual([0, 0])
+    expect([on.code, link.code, limited.code]).toEqual([0, 0, 0])
     expect(changed).toEqual([{ settings: { joinApproval: true } }])
-    expect(made).toEqual([{ approval: true, expiresAt: expect.any(String), maxUses: 5 }])
-    expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create"])
+    expect(made).toEqual([
+      { approval: true, expiresAt: expect.any(String) },
+      { approval: false, maxUses: 5 },
+    ])
+    expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create", "link.create"])
   })
 
   it("**changes an invite link** through the guard, sending only what was given", async () => {
@@ -788,6 +780,23 @@ describe("the send guard in front of the other writes", () => {
       expect.objectContaining({ outcome: "sent", operationId: answer.operationId }),
     )
     expect(deleted).toEqual(["5,6"])
+  })
+
+  it("**lists who voted**, by one answer and up to a limit, writing nothing", async () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      poll: async (chatId, messageId) => poll(chatId, messageId),
+      pollVoters: async (_chatId, _messageId, window) => {
+        asked.push(window)
+        return { items: [], hasMore: false, total: 0 }
+      },
+    })
+
+    const listed = await tg(["g-voters", "polls", "voters", "Valencia", "3", "--answer", "MA", "--limit", "5"], adapter)
+
+    expect(listed.code).toBe(0)
+    expect(asked).toEqual([{ limit: 5, answerId: "MA" }])
+    expect(journal("g-voters")).toEqual([])
   })
 
   it("reads a poll, votes by id and takes it back, closes it, and creates one with every option", async () => {

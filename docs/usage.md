@@ -476,6 +476,7 @@ closing a poll, and each deleted message. A reaction, a vote and a quiet pin do 
 tg reactions add "Book club" 4242 👍       # replaces the reaction you had
 tg reactions remove "Book club" 4242
 tg polls show "Book club" 4250             # the poll and its answer ids
+tg polls voters "Book club" 4250 --answer <answer id>   # who chose it; not in an anonymous poll
 tg polls vote "Book club" 4250 <answer id>
 tg polls vote "Book club" 4250 --retract
 tg polls create "Book club" "Which day?" Monday Tuesday --anonymous
@@ -571,7 +572,8 @@ tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and da
 tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 tg chats link show "Hiking 2027"                   # the invite link, if you may see it
 tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
-tg chats link create "Hiking 2027" --approval --expire-time 7d --max-uses 20   # another link; who joins asks first
+tg chats link create "Hiking 2027" --approval --expire-time 7d   # another link; who joins asks first
+tg chats link create "Hiking 2027" --max-uses 20   # at most 20 people join by it
 tg chats update "Hiking 2027" --join-approval on   # everyone asks first, by any link
 tg chats requests list "Hiking 2027"               # who asked to join, newest first
 tg chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
@@ -596,7 +598,8 @@ and each person added counts toward the hourly limit.
 first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `7d` from now), and
 `--max-uses` lets at most that many people in. `chats link update` changes the same three on one of your
 links, the group's own one too (`--no-approval` turns approval off, `--expire-time never` takes the expiry
-away); what you leave out stays. Turning approval on drops a use limit: Telegram keeps only one of the two. `chats update --join-approval on` makes everyone ask first,
+away); what you leave out stays. A link that asks first has no use limit, so `--approval` with `--max-uses` is
+refused. `chats update --join-approval on` makes everyone ask first,
 whichever link they use.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the

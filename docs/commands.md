@@ -499,7 +499,7 @@ tg chats link create <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--approval` | who joins by it asks first, and an admin lets them in; it then has no use limit. |
 | `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
 
@@ -552,7 +552,7 @@ tg chats link update <chat> <link> [options]
 
 | Option | What it does |
 |---|---|
-| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--approval` | who joins by it asks first, and an admin lets them in; it then has no use limit. |
 | `--no-approval` | anyone with it joins at once. |
 | `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now; `never` takes the expiry away. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
@@ -1578,6 +1578,24 @@ tg polls show <chat> <message>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the id of the message that carries the poll. |
+
+### `tg polls voters`
+
+who voted for what, newest first; not in an anonymous poll
+
+```sh
+tg polls voters <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of the message that carries the poll. |
+
+| Option | What it does |
+|---|---|
+| `--answer <id>` | only those who chose this answer, as `polls show` prints it. |
+| `--limit <n>` | how many. |
 
 ### `tg polls vote`
 
