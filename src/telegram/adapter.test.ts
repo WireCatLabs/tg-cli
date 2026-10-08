@@ -196,6 +196,14 @@ class FakeClient {
       usage: 0,
     }),
   )
+  editInviteLink = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> => ({
+      link: "https://t.me/+extra",
+      approvalNeeded: false,
+      endDate: null,
+      usageLimit: 5,
+    }),
+  )
   createInviteLink = vi.fn(
     async (..._args: unknown[]): Promise<unknown> => ({
       link: "https://t.me/+extra",
@@ -1928,6 +1936,19 @@ describe("making, joining and leaving groups", () => {
       primary: true,
     })
     expect(client.revokeInviteLink.mock.calls).toEqual([[-100700, "https://t.me/+old"]])
+  })
+
+  it("changes only the given fields of a link", async () => {
+    const { adapter, client } = await open()
+
+    expect(
+      await adapter.updateInviteLink("-100700", "https://t.me/+extra", { approval: false, maxUses: 5 }),
+    ).toMatchObject({ link: "https://t.me/+extra", approval: false, maxUses: 5 })
+    await adapter.updateInviteLink("-100700", "https://t.me/+extra", { expiresAt: "2026-10-14T18:00:00.000Z" })
+    expect(client.editInviteLink.mock.calls).toEqual([
+      [{ chatId: -100700, link: "https://t.me/+extra", withApproval: false, usageLimit: 5 }],
+      [{ chatId: -100700, link: "https://t.me/+extra", expires: new Date("2026-10-14T18:00:00.000Z") }],
+    ])
   })
 
   it("reads a group, and replaces its link", async () => {

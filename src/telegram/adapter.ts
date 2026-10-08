@@ -18,6 +18,7 @@ import {
   type GroupCard,
   type GroupChange,
   type GroupMember,
+  type InviteLinkChange,
   type LinkTarget,
   type Markup,
   type Member,
@@ -1698,6 +1699,24 @@ export class TelegramAdapter {
         return toInviteLink(await this.#client.revokeInviteLink(Number(chatId), link))
       } catch (error) {
         throw unknownIfUnanswered(error, "the link may or may not have been revoked; check `tg chats link list`")
+      }
+    })
+  }
+
+  updateInviteLink(chatId: string, link: string, { approval, expiresAt, maxUses }: InviteLinkChange) {
+    return this.#call(async () => {
+      try {
+        return toInviteLink(
+          await this.#client.editInviteLink({
+            chatId: Number(chatId),
+            link,
+            ...(approval === undefined ? {} : { withApproval: approval }),
+            ...(expiresAt === undefined ? {} : { expires: new Date(expiresAt) }),
+            ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
+          }),
+        )
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the link may or may not have been changed; check `tg chats link list`")
       }
     })
   }

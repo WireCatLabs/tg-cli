@@ -576,6 +576,7 @@ tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns 
 tg chats requests decline "Hiking 2027" --all      # every pending request at once; --link narrows it
 tg chats link list "Hiking 2027"                   # your links, with how many joined and how many wait
 tg chats link revoke "Hiking 2027" https://t.me/+AbCd   # stop one link
+tg chats link update "Hiking 2027" https://t.me/+AbCd --no-approval --max-uses 50   # change only these
 tg chats members add "Hiking 2027" @kate 67890     # they are told
 tg chats members remove "Hiking 2027" @kate        # their messages stay
 tg chats admins add "Hiking 2027" @kate --can pin,delete
@@ -590,7 +591,9 @@ and each person added counts toward the hourly limit.
 
 `chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
 first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `7d` from now), and
-`--max-uses` lets at most that many people in. `chats update --join-approval on` makes everyone ask first,
+`--max-uses` lets at most that many people in. `chats link update` changes the same three on one of your
+extra links (`--no-approval` turns approval off); what you leave out stays, and the group's own link cannot
+be changed. `chats update --join-approval on` makes everyone ask first,
 whichever link they use.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the

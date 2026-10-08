@@ -3,6 +3,13 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg chats link update <chat> <link> [--approval | --no-approval] [--expire-time] [--max-uses]` changes one of
+  your extra invite links**; only what you give changes.
+
 ## 0.37.0 — 08.10.2026
 
 ### What's new
