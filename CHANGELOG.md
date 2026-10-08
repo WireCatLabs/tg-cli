@@ -12,6 +12,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg session start` says "Already logged in"** when the profile's session still works and nothing was asked,
+  with `session end` to log in again; it used to look like a login without a code. `--json` gains
+  `alreadyLoggedIn`.
 - **`tg session start phone --sms` no longer aborts the login when Telegram has no SMS to send**
   (`SEND_CODE_UNAVAILABLE`): it says so and asks for the code Telegram already sent to the app.
 - **`tg` or a command group with no subcommand (`tg account`, `tg chats`) shows its help again** at a terminal,
