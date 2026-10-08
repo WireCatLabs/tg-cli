@@ -595,8 +595,8 @@ and each person added counts toward the hourly limit.
 `chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
 first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `7d` from now), and
 `--max-uses` lets at most that many people in. `chats link update` changes the same three on one of your
-extra links (`--no-approval` turns approval off); what you leave out stays, and the group's own link cannot
-be changed. `chats update --join-approval on` makes everyone ask first,
+links, the group's own one too (`--no-approval` turns approval off, `--expire-time never` takes the expiry
+away); what you leave out stays. Turning approval on drops a use limit: Telegram keeps only one of the two. `chats update --join-approval on` makes everyone ask first,
 whichever link they use.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the
