@@ -91,6 +91,14 @@ tg setup [options]
 
 the logged-in account
 
+### `tg account list`
+
+every profile on this computer, and the account each is logged in as; asks the messenger nothing
+
+```sh
+tg account list
+```
+
 ### `tg account show`
 
 who this profile is logged in as; the phone number shows its last four digits

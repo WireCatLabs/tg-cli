@@ -11,6 +11,9 @@ Put the profile before the command:
 tg work config show
 ```
 
+`tg account list` shows every profile on this computer and the account each is logged in as;
+`tg <profile> session end` logs one out.
+
 Without a name, the tools use the default profile. A setting under `profiles.work` applies to
 that profile; values under `defaults` apply when it has no value of its own.
 Profiles are not separate operating-system users: an assistant with unrestricted file access

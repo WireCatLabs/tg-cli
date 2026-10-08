@@ -3,6 +3,18 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg account list` shows every profile** on this computer, the account each is logged in as and its name.
+  It asks Telegram nothing.
+
+### Fixed
+
+- **`tg` or a command group with no subcommand (`tg account`, `tg chats`) shows its help again** at a terminal,
+  instead of `✗ (outputHelp)`. A script or `--json` gets a `validation_error` saying to give a command.
+
 ## 0.37.0 — 08.10.2026
 
 ### What's new
