@@ -24,6 +24,7 @@ graph and a CRM on top. The full design:
 |---|---|
 | The design, the phases, what is done | [`../cli-messaging/docs/plans/2026-09-26-platform-proposal.md`](../cli-messaging/docs/plans/2026-09-26-platform-proposal.md) — §8 lists every PR with **Done** marks (row 2.4 has the search measurement); §4 the store and the CRM model; §11 the owner's rulings |
 | How `serve` and `watch --events` were designed | [`../cli-messaging/docs/plans/2026-09-27-background-process.md`](../cli-messaging/docs/plans/2026-09-27-background-process.md) |
+| The last tgcli parity work: SMS login, `folders show`, `metadata refresh --only-missing`, job management | [`docs/plans/2026-10-08-tgcli-parity-followups-handoff.md`](docs/plans/2026-10-08-tgcli-parity-followups-handoff.md) |
 | What was measured against real Telegram in the spike | [`docs/plans/2026-09-27-spike-report.md`](docs/plans/2026-09-27-spike-report.md) — FIND-1…6 |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
 | What a user is told — every command | [`README.md`](README.md), then [`docs/index.md`](docs/index.md) and the pages it lists (**Correction 2026-10-01, evening:** the README is the full introduction again, in max's section order — owner's ruling on NEED-500; `index.md` is the short start page of the docs site) |
