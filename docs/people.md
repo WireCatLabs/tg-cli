@@ -213,7 +213,8 @@ tg contacts show "Bob Synthetic" --with-notes
 tg contacts list --search-notes flat                   # people whose notes contain this text
 ```
 
-Aliases and notes stay in this account's local archive and never reach Telegram. `contacts rename` changes
+Aliases and notes stay in the local archive and never reach Telegram. An alias applies in the selected
+account; a note about a person shows in every profile that sees them. `contacts rename` changes
 the name in your Telegram contacts — a different thing. A command finds a person by your alias unless it
 matches someone else's name; then it needs the id. `--revision` stops an edit of a note that changed since
 you read it.

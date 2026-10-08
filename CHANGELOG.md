@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.39.0 — 08.10.2026
 
 ### What's new
 
@@ -20,6 +20,20 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **`tg chats link create` and `update` refuse `--approval` with `--max-uses`.** Telegram dropped a use limit
   when approval was turned on, without saying so; now you choose one.
+- **Latin words are searched by their English and Spanish stems at once.** Before, only Spanish, so English
+  word forms ("budgets" → "budget") matched worse.
+  Watch for: after the update the stem index rebuilds by itself — a small store on open, a large one bit by
+  bit: `tg serve` finishes it in the background, `tg store migrate` at once. Until it is ready a search
+  matches exact word forms, says so on stderr, and `query.stemming.applied` is `false` in JSON. The stem
+  index of Latin text is about twice as large. A `searchStemmers.latin` you set yourself stays, and
+  `tg store reindex` still applies it. Update `max` too: an older one, opening the rebuilt store, answers
+  a stemmed search with "upgrade this tool" ([archive](docs/archive.md#repair-and-index-maintenance)).
+- **Notes about a person (`tg contacts notes`) show in every profile that sees them.** Before, only in the
+  profile where they were written.
+  Why: notes are yours, not one account's; the shared store now keeps them apart from messages, together with
+  notes from `memo`.
+  Watch for: with several Telegram profiles, a person's notes from all of them now show together. Aliases
+  (`contacts alias`) still apply only in their own profile.
 
 ## 0.38.0 — 08.10.2026
 

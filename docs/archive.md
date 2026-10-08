@@ -269,8 +269,11 @@ Run `tg upgrade`. Nothing in the file is lost.
 
 `tg store migrate` builds unfinished indexes; `tg store reindex` rebuilds them. `store info` and
 `store check` show word/stem readiness. Strict search uses stems for word forms; `exact:` and `--exact` select exact forms.
-`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin spanish` set the shared store's
-stemmers (`none` disables one, `english` is also available for Latin); run `store reindex` afterwards.
+`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin english,spanish` set the shared
+store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches the stems of
+both), and `none` disables one; run `store reindex` after your own choice. When a tg update changes the
+default, the stems rebuild by themselves: until they are ready a search matches exact word forms and says so,
+`tg serve` finishes them in the background and `store migrate` at once.
 The setting affects both messengers and every profile; a profile-locked process cannot change it.
 
 `tg store repair --dry-run --json` previews structural repair and rolls it back. `store repair` applies it
