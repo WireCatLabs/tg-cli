@@ -378,8 +378,8 @@ Unknown edges and message-id holes do not prove missing history.
 
 ## Private people notes and channel tags
 
-Local aliases and notes belong to the selected account, survive contact refresh, and never
-change messenger profiles or address-book names. `contacts rename` updates the messenger's
+Local aliases belong to the selected account, notes show in every profile that sees the person;
+both survive contact refresh, and never change messenger profiles or address-book names. `contacts rename` updates the messenger's
 address book; use `contacts alias` for a local name. Duplicate aliases require an explicit id.
 Private notes are separate from the contact's public bio. Read/search them only when relevant.
 

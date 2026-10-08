@@ -98,7 +98,7 @@ are in [installation.md](installation.md#where-files-go)).
 | `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
 | `readOtherBots` | `false` | a bot profile only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bot.md](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
 | `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
-| `searchStemmers.cyrillic`, `searchStemmers.latin` | `russian`, `spanish` | the word-stem languages of the whole store, both CLIs and every profile: `russian` or `none`; `spanish`, `english` or `none` ([archive.md](archive.md#repair-and-index-maintenance)) | none |
+| `searchStemmers.cyrillic`, `searchStemmers.latin` | `russian`, `english,spanish` | the word-stem languages of the whole store, both CLIs and every profile: `russian` or `none`; `english`, `spanish`, both comma-separated, or `none` ([archive.md](archive.md#repair-and-index-maintenance)) | none |
 
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
 names one. The first word (`tg work …`) and `TG_PROFILE` override it.
@@ -324,7 +324,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed above
 | `analysisProvider` | `agent`, `openai`, `anthropic` | profile |
 | `models` | purpose objects described below | profile |
 | `searchStemmers.cyrillic` | `russian`, `none` | shared store, through `config set` |
-| `searchStemmers.latin` | `spanish`, `english`, `none` | shared store, through `config set` |
+| `searchStemmers.latin` | `english`, `spanish`, both comma-separated, `none` | shared store, through `config set` |
 
 ### Models by purpose
 
