@@ -563,6 +563,25 @@ describe("reading", () => {
     expect((await adapter.chat("Valencia")).id).toBe("-1")
   })
 
+  it("refreshes supplied counters by exact message without view increments or read marks", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(42), views: 0, replies: { hasComments: true, count: 4 } }
+    const counters = await adapter.fetchCounters("-100500", "42", ["views", "reactions", "comments"])
+    expect(counters).toMatchObject({
+      views: { value: 0, source: "remote_fetch", observedAt: expect.any(String) },
+      comments: { value: 4 },
+    })
+    expect(counters.reactions).toBeUndefined()
+    expect(client.calls.filter((call) => call.method === "getMessages").map((call) => call.args)).toEqual([
+      [-100500, [42]],
+    ])
+    expect(client.calls.some((call) => /send|readHistory|increment|views/i.test(call.method))).toBe(false)
+    const controller = new AbortController()
+    controller.abort()
+    await expect(adapter.fetchCounters("-100500", "42", ["views"], controller.signal)).rejects.toBeDefined()
+    await adapter.close()
+  })
+
   it("reads history oldest first, from before a message id, by chat id or @username", async () => {
     const { adapter, client } = await open()
     client.history = [message(3), message(2)]
@@ -2371,14 +2390,33 @@ describe("listening", () => {
       },
     )
     await vi.waitFor(() => expect(ready).toBe(true))
-    client.onNewMessage.emit(message(1))
+    client.onNewMessage.emit({ ...message(1), views: 0 })
     client.onEditMessage.emit(message(1))
     client.onDeleteMessage.emit({ messageIds: [1], channelId: null })
+    client.onRawUpdate.emit({
+      update: {
+        _: "updateMessageReactions",
+        peer: { _: "peerChannel", channelId: 500 },
+        msgId: 1,
+        reactions: {
+          _: "messageReactions",
+          min: true,
+          results: [{ reaction: { _: "reactionEmoji", emoticon: "🔥" }, count: 2 }],
+        },
+      },
+      peers: {},
+    })
     client.onRawUpdate.emit({ update: { _: "updateUserStatus" }, peers: {} })
     stop.abort()
     await watching
 
-    expect(events.map((event) => event.event)).toEqual(["message", "edit", "delete"])
+    expect(events.map((event) => event.event)).toEqual(["message", "edit", "delete", "reaction"])
+    expect(events[0]).toMatchObject({
+      message: { counterObservations: { views: { value: 0, source: "remote_update" } } },
+    })
+    expect(events[3]).toMatchObject({
+      counterObservation: { value: 2, source: "remote_update", observedAt: expect.any(String) },
+    })
     expect(client.calls.map((call) => call.method)).toContain("startUpdatesLoop")
     expect(client.onNewMessage.handlers.size + client.onRawUpdate.handlers.size).toBe(0)
   })

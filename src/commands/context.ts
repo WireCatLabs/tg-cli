@@ -115,6 +115,7 @@ const OWN_NUMBERING = ["channel", "supergroup", "gigagroup", "monoforum"]
 export const TELEGRAM: Messenger = {
   app: TG,
   provider: "telegram",
+  counterFields: ["views", "reactions", "comments"],
   name: "Telegram",
   resolveSettings,
   connect: (command, base, options) => telegramOf(command, base).connect(options),
