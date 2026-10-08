@@ -113,3 +113,11 @@ third-party certification.
 
 See the [configuration guide](configuration.md) for common setup and the
 [configuration reference](configuration-reference.md) for every key and environment variable.
+
+## Ambiguous names
+
+You can ask for statistics using a chat or person’s name. The agent can find the chat with
+`chats list`, or the person with `contacts show` / `contacts list` or stored-author rankings from
+`stats contacts top`. Several matches require a choice; a failed lookup needs an explanation
+of what identifying information would help. An unresolved name does not prove that someone
+answered no questions. Results for a selected ID describe only available history.
