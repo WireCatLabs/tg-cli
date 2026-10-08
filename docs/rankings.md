@@ -138,7 +138,6 @@ MCP discovers and invokes these same paths through the existing three-tool front
 is a structured object there. See the [command contract](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-10-07-rankings-contract.md)
 and [CLI standard](https://github.com/leemour/cli-messaging/blob/main/docs/dev/STANDARD.md) for the public interface and standards references.
 
-
 ## Retention from roster observations
 
 Ask your agent: “For the group called Club, show how many newcomers were still observed after one,
