@@ -12,6 +12,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg session start phone --sms` no longer aborts the login when Telegram has no SMS to send**
+  (`SEND_CODE_UNAVAILABLE`): it says so and asks for the code Telegram already sent to the app.
 - **`tg` or a command group with no subcommand (`tg account`, `tg chats`) shows its help again** at a terminal,
   instead of `✗ (outputHelp)`. A script or `--json` gets a `validation_error` saying to give a command.
 

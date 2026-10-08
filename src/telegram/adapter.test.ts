@@ -262,6 +262,10 @@ class FakeClient {
     return user(1, "Owner", { isSelf: true })
   }
   getMe = async () => user(1, "Owner", { isSelf: true })
+  sendCode = vi.fn(async (_params: unknown): Promise<unknown> => ({ type: "app", phoneCodeHash: "first" }))
+  resendCode = vi.fn(async (_params: unknown): Promise<unknown> => ({ type: "sms", phoneCodeHash: "second" }))
+  signIn = vi.fn(async (_params: unknown): Promise<unknown> => user(1, "Owner", { isSelf: true }))
+  checkPassword = vi.fn(async (_password: unknown): Promise<unknown> => user(1, "Owner", { isSelf: true }))
   async *iterDialogs(options: unknown) {
     this.#record("iterDialogs", [options])
     yield* this.dialogs
@@ -2644,19 +2648,89 @@ describe("closing", () => {
     expect(client.calls.find((call) => call.method === "start")?.args[0]).toHaveProperty("qrCodeHandler")
   })
 
-  it("passes forceSms to a phone login that asks for SMS", async () => {
-    const { adapter, client } = await open()
-    await adapter.login({
-      method: "phone",
-      forceSms: true,
-      showQr: () => {},
-      phone: async () => "+34600000000",
-      code: async () => "",
-      password: async () => "",
-      note: () => {},
+  describe("a phone login that asks for SMS", () => {
+    const smsLogin = async (setup: (client: FakeClient) => void, codes = ["11111"], passwords = ["secret"]) => {
+      const { adapter, client } = await open()
+      client.getMe = async () => {
+        throw new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")
+      }
+      setup(client)
+      const notes: string[] = []
+      const account = await adapter.login({
+        method: "phone",
+        forceSms: true,
+        showQr: () => {},
+        phone: async () => "+10000000000",
+        code: async () => codes.shift() ?? "",
+        password: async () => passwords.shift() ?? "",
+        note: (line) => notes.push(line),
+      })
+      return { account, client, notes }
+    }
+    const sendsToApp = (client: FakeClient) => {
+      client.sendCode = vi.fn(async () => ({ type: "app", phoneCodeHash: "first" }))
+      client.signIn = vi.fn(async () => user(1, "Owner", { isSelf: true }))
+    }
+
+    it("**keeps the code sent to the app when Telegram has no SMS**, and says so", async () => {
+      const { account, client, notes } = await smsLogin((client) => {
+        sendsToApp(client)
+        client.resendCode = vi.fn(async () => {
+          throw new tl.RpcError(400, "SEND_CODE_UNAVAILABLE")
+        })
+      })
+
+      expect(account).toEqual({ id: "1", name: "Owner", username: null })
+      expect(client.signIn).toHaveBeenCalledWith({ phone: "+10000000000", phoneCodeHash: "first", phoneCode: "11111" })
+      expect(notes).toEqual(["Telegram offers no SMS for this account", "Telegram sent a login code (app)"])
+      expect(client.calls.some((call) => call.method === "start")).toBe(false)
     })
 
-    expect(client.calls.find((call) => call.method === "start")?.args[0]).toMatchObject({ forceSms: true })
+    it("signs in with the resent code's hash when Telegram sends an SMS", async () => {
+      const { client, notes } = await smsLogin((client) => {
+        sendsToApp(client)
+        client.resendCode = vi.fn(async () => ({ type: "sms", phoneCodeHash: "second" }))
+      })
+
+      expect(client.signIn).toHaveBeenCalledWith(expect.objectContaining({ phoneCodeHash: "second" }))
+      expect(notes).toEqual(["Telegram sent a login code (sms)"])
+    })
+
+    it("asks again for a wrong code, then for the 2FA password", async () => {
+      let tries = 0
+      const { client, notes } = await smsLogin(
+        (client) => {
+          sendsToApp(client)
+          client.resendCode = vi.fn(async () => ({ type: "sms", phoneCodeHash: "second" }))
+          client.signIn = vi.fn(async () => {
+            tries += 1
+            throw new tl.RpcError(400, tries === 1 ? "PHONE_CODE_INVALID" : "SESSION_PASSWORD_NEEDED")
+          })
+          client.checkPassword = vi.fn(async () => user(1, "Owner", { isSelf: true }))
+        },
+        ["00000", "11111"],
+      )
+
+      expect(client.signIn).toHaveBeenCalledTimes(2)
+      expect(client.checkPassword).toHaveBeenCalledWith("secret")
+      expect(notes).toContain("that code was not accepted — try again")
+    })
+
+    it("asks nothing when the session is still logged in", async () => {
+      const { adapter, client } = await open()
+      client.sendCode = vi.fn()
+      await adapter.login({
+        method: "phone",
+        forceSms: true,
+        showQr: () => {},
+        phone: async () => "+10000000000",
+        code: async () => "",
+        password: async () => "",
+        note: () => {},
+      })
+
+      expect(client.sendCode).not.toHaveBeenCalled()
+    })
   })
 })
 

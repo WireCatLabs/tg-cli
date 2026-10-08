@@ -53,16 +53,18 @@ import {
   getMarkedPeerId,
   type InputPeerLike,
   Long,
+  MtcuteError,
   MtPeerNotFoundError,
   networkMiddlewares,
   type Peer,
   PeersIndex,
   type RawUpdateInfo,
+  type SentCode,
   TelegramClient,
   Message as TgMessage,
   type Poll as TgPoll,
   tl,
-  type User,
+  User,
 } from "@mtcute/node"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
@@ -152,6 +154,8 @@ const publicName = (link: string): string =>
     .replace(/[/?].*$/, "")
 
 const SAVED = new Set(["me", "self", "saved"])
+
+const PHONE_CODE_RETRIES = ["PHONE_CODE_EMPTY", "PHONE_CODE_EXPIRED", "PHONE_CODE_INVALID", "PHONE_CODE_HASH_EMPTY"]
 /** Telegram's own cap on a group's member list. */
 const MEMBERS_MAX = 10_000
 /** Pages of 100 that `chats events` reads at most; the rest is `more`. */
@@ -236,9 +240,9 @@ export class TelegramAdapter {
 
   async login(prompts: LoginPrompts): Promise<Account> {
     return this.#call(async () => {
+      if (prompts.method === "phone" && prompts.forceSms) return toAccount(await this.#loginAskingForSms(prompts))
       const user: User = await this.#client.start({
         ...(prompts.method === "qr" ? { qrCodeHandler: prompts.showQr } : { phone: prompts.phone }),
-        ...(prompts.forceSms ? { forceSms: true } : {}),
         code: prompts.code,
         password: prompts.password,
         codeSentCallback: (sent) => prompts.note(`Telegram sent a login code (${sent.type})`),
@@ -246,6 +250,68 @@ export class TelegramAdapter {
       })
       return toAccount(user)
     })
+  }
+
+  /**
+   * mtcute's `start({ forceSms })` without its one failure: when Telegram has no SMS to resend
+   * (`SEND_CODE_UNAVAILABLE`) it aborts the login, though the code it first sent to the app still works.
+   */
+  async #loginAskingForSms(prompts: LoginPrompts): Promise<User> {
+    let needsPassword = false
+    try {
+      return await this.#client.getMe()
+    } catch (error) {
+      if (tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) needsPassword = true
+      else if (!tl.RpcError.is(error, "AUTH_KEY_UNREGISTERED")) throw error
+    }
+    if (!needsPassword) {
+      const phone = await prompts.phone()
+      let sent: SentCode | undefined
+      try {
+        const answer = await this.#client.sendCode({ phone })
+        if (answer instanceof User) return answer
+        sent = answer
+      } catch (error) {
+        if (!tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) throw error
+        needsPassword = true
+      }
+      if (sent) {
+        if (sent.type === "app" || sent.type === "email") {
+          try {
+            sent = await this.#client.resendCode({ phone, phoneCodeHash: sent.phoneCodeHash })
+          } catch (error) {
+            if (!tl.RpcError.is(error, "SEND_CODE_UNAVAILABLE")) throw error
+            prompts.note("Telegram offers no SMS for this account")
+          }
+        }
+        if (sent.type === "email_required") throw new MtcuteError("Email login setup is required to sign in")
+        prompts.note(`Telegram sent a login code (${sent.type})`)
+        for (;;) {
+          try {
+            return await this.#client.signIn({
+              phone,
+              phoneCodeHash: sent.phoneCodeHash,
+              phoneCode: await prompts.code(),
+            })
+          } catch (error) {
+            if (tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) {
+              needsPassword = true
+              break
+            }
+            if (!PHONE_CODE_RETRIES.some((text) => tl.RpcError.is(error, text))) throw error
+            prompts.note("that code was not accepted — try again")
+          }
+        }
+      }
+    }
+    for (;;) {
+      try {
+        return await this.#client.checkPassword(await prompts.password())
+      } catch (error) {
+        if (!tl.RpcError.is(error, "PASSWORD_HASH_INVALID")) throw error
+        prompts.note("that password was not accepted — try again")
+      }
+    }
   }
 
   /** The logged-in user's id from the session, without a request; `null` before a login. */

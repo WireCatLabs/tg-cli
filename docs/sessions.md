@@ -45,7 +45,8 @@ renewed while you wait.
 **Phone:** type the number in international format, then the login code. If the account has a
 cloud password (2FA), `tg` asks for it without showing what you type. With `--app auto`, the phone
 number is asked only once. The code usually arrives in the Telegram app; `--sms` asks for an SMS instead,
-but Telegram chooses, and `tg` says which way it was sent.
+but Telegram chooses, and `tg` says which way it was sent. When Telegram has no SMS for the
+account, `tg` says so and asks for the code from the app.
 
 After either, Telegram lists a new device in the app's list of sessions.
 
