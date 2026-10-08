@@ -1228,42 +1228,6 @@ tg messages list <chat> [options]
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
 
-### `tg messages search`
-
-search the local store and the messenger's server (--backend); optionally fetches new messages with --sync-first
-
-```sh
-tg messages search [query] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; --language legacy keeps discovery; with --saved, more words AND-ed to it. |
-
-| Option | What it does |
-|---|---|
-| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
-| `--max-chats <n>` | refresh at most this many chats (default: 5). |
-| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
-| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
-| `--thread` | the stored reply chain and replies instead of time neighbours; falls back when no graph exists. |
-| `--thread-hops <n>` | at most this many links from the hit (default: 8). |
-| `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
-| `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
-| `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
-| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both). |
-| `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
-| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
-| `--limit <n>` | how many. |
-| `--newest` | newest first instead of best first. |
-| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
-| `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
-| `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
-| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
-| `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
-
 ### `tg messages send`
 
 send a text message; without [text], the text is read from stdin
@@ -1803,25 +1767,6 @@ tg topics list <chat> [options]
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--limit <n>` | how many to show. |
-| `--page <n>` | which page, starting at 1. |
-| `--all` | every row, no paging. |
-
-### `tg topics search`
-
-a forum group's topics whose title matches
-
-```sh
-tg topics search <chat> <text> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `text` | required | words from the topic's title. |
 
 | Option | What it does |
 |---|---|
@@ -2398,37 +2343,6 @@ tg conversations status [options]
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
-### `tg conversations search`
-
-the conversations nearest to a query in meaning and in words, best first, in one chat or every one — meaning after `conversations embed`; runs on this machine
-
-```sh
-tg conversations search <query> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `query` | required | what to look for, in your own words, in any language the model reads. |
-
-| Option | What it does |
-|---|---|
-| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
-| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
-| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
-| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
-| `--max-chats <n>` | at most this many chats; 5 with --sync-first, 20 with --refresh if not given. |
-| `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
-| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
-| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
-| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
-| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
-| `--filter <query>` | strict Lucene filter: any message in a conversation must match; does not change the meaning query. |
-| `--source <source>` | accounts to search: personal, bots, all, or a provider; defaults to the active account. |
-| `--timezone <zone>` | IANA timezone for filter dates; system timezone by default. |
-| `--limit <n>` | how many. |
-| `--refresh` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
-
 ### `tg conversations batches`
 
 windows of a chat for your own AI agent to link: which earlier message each one answers
@@ -2775,7 +2689,7 @@ tg stats messages show [query] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | optional | a strict Lucene query, as for messages search; none counts every stored message; with --saved, more words AND-ed to it. |
+| `query` | optional | a strict Lucene query, as for search messages; none counts every stored message; with --saved, more words AND-ed to it. |
 
 | Option | What it does |
 |---|---|
@@ -3135,7 +3049,7 @@ what waits on you — unanswered questions, mentions, requests, promises — kep
 
 ### `tg tasks list`
 
-tasks, oldest first, with the message each points at
+tasks, oldest first, with their message or note source
 
 ```sh
 tg tasks list [options]
@@ -3151,7 +3065,7 @@ tg tasks list [options]
 
 ### `tg tasks add`
 
-add a task for a message the rules cannot see — a promise, a request
+add a task for a stored message or note — a promise, a request
 
 ```sh
 tg tasks add <message> [options]
@@ -3159,7 +3073,7 @@ tg tasks add <message> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `message` | required | a message locator, msg:<provider>/<account>/<chat>/<message>, as review --json shows. |
+| `message` | required | a message locator, msg:<provider>/<account>/<chat>/<message>, or note:<id>. |
 
 | Option | What it does |
 |---|---|
@@ -3182,13 +3096,167 @@ tg tasks close <task> [options]
 | `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
 | `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
 
+## `tg search`
+
+find things by text: search all for everything the local store holds, or one resource
+
+### `tg search all`
+
+search everything the local store holds — messenger messages, mail and notes — best match first; start here when you do not know where something was written
+
+```sh
+tg search all <query> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges. |
+
+| Option | What it does |
+|---|---|
+| `--only <resources>` | only these, separated by commas: messages, mail, notes. |
+| `--limit <n>` | how many. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+
+### `tg search messages`
+
+search messenger messages in the local store and on the messenger's server (--backend); optionally fetches new messages with --sync-first
+
+```sh
+tg search messages [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; --language legacy keeps discovery; with --saved, more words AND-ed to it. |
+
+| Option | What it does |
+|---|---|
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--max-chats <n>` | refresh at most this many chats (default: 5). |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--thread` | the stored reply chain and replies instead of time neighbours; falls back when no graph exists. |
+| `--thread-hops <n>` | at most this many links from the hit (default: 8). |
+| `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
+| `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
+| `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
+| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both). |
+| `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
+| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
+| `--type <text\|voice\|file>` | only messages of this type: text alone, a voice message, or a file. |
+| `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
+| `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
+| `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
+| `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
+
+### `tg search mail`
+
+search the mail imported into the local store — memo mail import brings it in
+
+```sh
+tg search mail [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this mail thread, by id or subject. |
+| `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
+| `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+
+### `tg search notes`
+
+search the notes — written in memo, or imported from a notes folder — by words and, with the local text model, by meaning; each hit says which found it and what it links to
+
+```sh
+tg search notes <query> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, tag: and date ranges. |
+
+| Option | What it does |
+|---|---|
+| `--type <internal\|file>` | only notes written in memo, or only notes from a folder. |
+| `--folder <id>` | only this notes folder, by its id; repeat it for more. |
+| `--tag <tag>` | only notes with this tag. |
+| `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
+| `--limit <n>` | how many. |
+| `--offset <n>` | skip this many, for the next page. |
+| `--exact` | words as written only; meaning is not searched. |
+| `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
+
+### `tg search conversations`
+
+the conversations nearest to a query in meaning and in words, best first, in one chat or every one — meaning after `conversations embed`; runs on this machine
+
+```sh
+tg search conversations <query> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | required | what to look for, in your own words, in any language the model reads. |
+
+| Option | What it does |
+|---|---|
+| `--model <model>` | local: a model id from `models text list` (default: e5-small); remote: the provider's model. |
+| `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
+| `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
+| `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
+| `--max-chats <n>` | at most this many chats; 5 with --sync-first, 20 with --refresh if not given. |
+| `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
+| `--sync-first` | first fetch new messages within the chat, time and message bounds. |
+| `--sync-time <duration>` | stop fetching after this long (default: 30s). |
+| `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
+| `--filter <query>` | strict Lucene filter: any message in a conversation must match; does not change the meaning query. |
+| `--source <source>` | accounts to search: personal, bots, all, or a provider; defaults to the active account. |
+| `--timezone <zone>` | IANA timezone for filter dates; system timezone by default. |
+| `--limit <n>` | how many. |
+| `--refresh` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
+
+### `tg search topics`
+
+a forum group's topics whose title matches
+
+```sh
+tg search topics <chat> <text> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `text` | required | words from the topic's title. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
+
 ## `tg searches`
 
-saved searches and the history of messages search and stats messages show, kept in the local store; --saved runs one
+saved searches and the history of search messages and stats messages show, kept in the local store; --saved runs one
 
 ### `tg searches create`
 
-save a search under a name without running it; messages search --saved <name> runs it
+save a search under a name without running it; search messages --saved <name> runs it
 
 ```sh
 tg searches create <name> [query] [options]
@@ -3197,7 +3265,7 @@ tg searches create <name> [query] [options]
 | Argument | | What it is |
 |---|---|---|
 | `name` | required | up to 64 letters a–z, digits and hyphens, not only digits. |
-| `query` | optional | the query, as for messages search; none matches every stored message. |
+| `query` | optional | the query, as for search messages; none matches every stored message. |
 
 | Option | What it does |
 |---|---|
@@ -4187,26 +4255,6 @@ tg bot messages unpin <chat> <message>
 | `chat` | required | a chat id, user:<id> for a person, or the title of a chat this bot has seen. |
 | `message` | required | message id. |
 
-#### `tg bot messages search`
-
-search the messages this bot has read, sent or received on this machine — the local copy only, best match first; every word must appear; "a phrase", -word, a OR b, from: chat: after: before: has:; by text, by --from, or both
-
-```sh
-tg bot messages search [query] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `query` | optional | the words to find. |
-
-| Option | What it does |
-|---|---|
-| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
-| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
-| `--limit <n>` | how many. |
-| `--newest` | newest first instead of best first. |
-| `--from <who>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
-
 #### `tg bot messages between`
 
 what two or more people wrote in the chats they have all written in — from the local copy, grouped by chat, oldest first; --limit counts per chat. Common chats are the ones this copy saw each of them write in, not a member list from Telegram
@@ -4224,6 +4272,30 @@ tg bot messages between <people> [options]
 | `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
 | `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
 | `--limit <n>` | how many of the latest messages from each chat. |
+
+### `tg bot search`
+
+find what this bot's local copy holds, by text
+
+#### `tg bot search messages`
+
+search the messages this bot has read, sent or received on this machine — the local copy only, best match first; every word must appear; "a phrase", -word, a OR b, from: chat: after: before: has:; by text, by --from, or both
+
+```sh
+tg bot search messages [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | the words to find. |
+
+| Option | What it does |
+|---|---|
+| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--limit <n>` | how many. |
+| `--newest` | newest first instead of best first. |
+| `--from <who>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
 
 ### `tg bot recipients`
 
