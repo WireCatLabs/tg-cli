@@ -1,5 +1,9 @@
 # ChatGPT, Codex or Claude in the browser
 
+Use this page to connect a browser-based ChatGPT or Claude agent to your Telegram account.
+You will get an HTTPS MCP address with access controlled by your profile permissions.
+If your existing Tailscale connection works, keep it; you do not need a second tunnel.
+
 `tg mcp --http` serves the same tools on `127.0.0.1`, behind your HTTPS tunnel. The HTTP server
 has its own OAuth login for one owner; no separate authentication proxy is needed.
 The local stdin/stdout connection still works as before. The owner confirmed reading and sending through Claude web on 7 October 2026. OpenAI web clients and these platform-specific setup instructions still need
@@ -80,6 +84,36 @@ printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
 tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
 ```
+
+## Alternative: Cloudflare Tunnel
+
+If you already use Cloudflare, route its tunnel to the same local MCP server. A stable hostname
+requires a Cloudflare account and a domain on Cloudflare. Follow the
+[named tunnel setup](https://developers.cloudflare.com/tunnel/get-started/): install `cloudflared`
+for your OS, create the tunnel in the dashboard, start its connector and add a public hostname
+such as `mcp.example.com`. Set its local service to `http://127.0.0.1:8765` and run MCP on that
+same computer.
+
+Start the server in a second terminal:
+
+```sh
+tg mcp --http --port 8765 --public-url https://mcp.example.com
+```
+
+Add `https://mcp.example.com/mcp` to your AI application using OAuth and DCR as described below.
+`--public-url` is the public origin used for sign-in, not the local address or the `/mcp` path.
+The tunnel does not change profile permissions. Check the JSON at
+`https://mcp.example.com/.well-known/oauth-protected-resource/mcp`, then sign-in and tool discovery.
+Stop only this tunnel's dedicated process, preserving unrelated routes.
+
+**Temporary Quick Tunnels have a separate limitation.**
+`cloudflared tunnel --url http://127.0.0.1:8765` creates a random `trycloudflare.com` address
+without an account or domain. However, [Quick Tunnels do not support SSE](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/),
+which our HTTP MCP uses. They are therefore not a ready replacement for Funnel with the current
+server. An isolated test used an additional adapter to turn SSE responses into JSON; that adapter
+is not shipped in the CLI. OAuth and tool-discovery checks do not prove that an agent can read PDFs.
+For regular connections, use Funnel or a named tunnel and verify your client.
+A Quick Tunnel gets a new hostname on restart, requiring an updated connector URL.
 
 ## Run MAX and Telegram together
 
