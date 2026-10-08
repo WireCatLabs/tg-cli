@@ -14,6 +14,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg store jobs list --state <state>`** lists only the background jobs that are running, done, failed,
   cancelled or died.
 
+### Changed — may break scripts
+
+- **`tg chats link create` and `update` refuse `--approval` with `--max-uses`.** Telegram dropped a use limit
+  when approval was turned on, without saying so; now you choose one.
+
 ## 0.38.0 — 08.10.2026
 
 ### What's new

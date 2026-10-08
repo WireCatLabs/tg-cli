@@ -499,7 +499,7 @@ tg chats link create <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--approval` | who joins by it asks first, and an admin lets them in; it then has no use limit. |
 | `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
 
@@ -552,7 +552,7 @@ tg chats link update <chat> <link> [options]
 
 | Option | What it does |
 |---|---|
-| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--approval` | who joins by it asks first, and an admin lets them in; it then has no use limit. |
 | `--no-approval` | anyone with it joins at once. |
 | `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now; `never` takes the expiry away. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |

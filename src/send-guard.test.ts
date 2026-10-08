@@ -465,26 +465,18 @@ describe("the send guard in front of the other writes", () => {
 
     const on = await tg(["g-approval", "chats", "update", "Valencia", "--join-approval", "on", "--json"], adapter)
     const link = await tg(
-      [
-        "g-approval",
-        "chats",
-        "link",
-        "create",
-        "Valencia",
-        "--approval",
-        "--expire-time",
-        "7d",
-        "--max-uses",
-        "5",
-        "--json",
-      ],
+      ["g-approval", "chats", "link", "create", "Valencia", "--approval", "--expire-time", "7d", "--json"],
       adapter,
     )
+    const limited = await tg(["g-approval", "chats", "link", "create", "Valencia", "--max-uses", "5"], adapter)
 
-    expect([on.code, link.code]).toEqual([0, 0])
+    expect([on.code, link.code, limited.code]).toEqual([0, 0, 0])
     expect(changed).toEqual([{ settings: { joinApproval: true } }])
-    expect(made).toEqual([{ approval: true, expiresAt: expect.any(String), maxUses: 5 }])
-    expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create"])
+    expect(made).toEqual([
+      { approval: true, expiresAt: expect.any(String) },
+      { approval: false, maxUses: 5 },
+    ])
+    expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create", "link.create"])
   })
 
   it("**changes an invite link** through the guard, sending only what was given", async () => {
