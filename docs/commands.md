@@ -2506,7 +2506,7 @@ the files of stored messages: their text in the local store, for content: in a s
 
 ### `tg attachments extract`
 
-read the text of downloaded files — plain text, Word, PDF with a text layer — into the local store, for content: in a search
+read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB — into the local store, for content: in a search
 
 ```sh
 tg attachments extract [options]
@@ -2538,6 +2538,26 @@ tg attachments list [options]
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
+
+### `tg attachments show`
+
+read a bounded chunk of one retained attachment; JSON includes base64 bytes
+
+```sh
+tg attachments show <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator alone. |
+| `message` | optional | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--attachment <n>` | file position from 1; required for several files. |
+| `--offset-bytes <n>` | byte offset from 0. |
+| `--chunk-bytes <n>` | bytes to return, 1–1048576 (default524288). |
+| `--if-sha256 <hash>` | require the whole file SHA-256 from the preceding chunk. |
 
 ### `tg attachments text`
 
@@ -2703,6 +2723,60 @@ tg stats messages show [query] [options]
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--saved <name\|id>` | count what a saved search or an earlier run matches; options typed here replace its own. |
 
+#### `tg stats messages counters`
+
+per-counter observations and bounded remote refresh
+
+#### `tg stats messages counters show`
+
+show saved counter values and their observation freshness
+
+```sh
+tg stats messages counters show [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | strict Lucene query over stored messages. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | held accounts of this messenger; refresh uses the active account. |
+| `--exact` | bare words match exact forms. |
+| `--timezone <zone>` | IANA timezone for query dates. |
+| `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
+| `--counters <names>` | distinct views,reactions,comments fields; all three by default. |
+| `--limit <n>` | messages, 1–100; 20 by default. |
+| `--max-age <duration>` | maximum fresh observation age; 24h by default. |
+
+#### `tg stats messages counters refresh`
+
+read authoritative counters for bounded messages and update their local observations
+
+**Changes something on this computer only.**
+
+```sh
+tg stats messages counters refresh [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | strict Lucene query over stored messages. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--source <messenger>` | held accounts of this messenger; refresh uses the active account. |
+| `--exact` | bare words match exact forms. |
+| `--timezone <zone>` | IANA timezone for query dates. |
+| `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
+| `--counters <names>` | distinct views,reactions,comments fields; all three by default. |
+| `--limit <n>` | messages, 1–100; 20 by default. |
+| `--max-messages <n>` | maximum messages to refresh, 1–100. |
+| `--sync-time <duration>` | remote refresh budget; 30s by default, maximum 5m. |
+| `--dry-run` | preview exact stored targets and counter capabilities without connecting. |
+
 #### `tg stats messages unanswered`
 
 oldest detected questions without an observed qualifying explicit reply
@@ -2751,7 +2825,7 @@ tg stats messages discussion [query] [options]
 
 #### `tg stats messages top`
 
-rank stored messages by a measure or explainable score; counters are snapshots and freshness is unknown
+rank stored messages by a measure or explainable score; counters are snapshots with per-field observation freshness
 
 ```sh
 tg stats messages top [query] [options]
@@ -2780,7 +2854,7 @@ tg stats messages top [query] [options]
 
 #### `tg stats messages evidence`
 
-a bounded page of messages or answer pairs contributing to one ranking component
+bounded messages, answer pairs or retention members from an exact drilldown selection
 
 ```sh
 tg stats messages evidence <message> [options]
@@ -2788,7 +2862,7 @@ tg stats messages evidence <message> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `message` | required | the canonical message locator from the ranking row. |
+| `message` | required | the canonical message locator, or retention cohort reference, from drilldown. |
 
 | Option | What it does |
 |---|---|
@@ -2825,7 +2899,7 @@ tg stats contacts responses [query] [options]
 
 #### `tg stats contacts top`
 
-rank the human authors of stored messages by a measure or explainable score; counters are snapshots and freshness is unknown
+rank the human authors of stored messages by a measure or explainable score; counters are snapshots with per-field observation freshness
 
 ```sh
 tg stats contacts top [query] [options]
@@ -2855,7 +2929,7 @@ tg stats contacts top [query] [options]
 
 #### `tg stats contacts evidence`
 
-a bounded page of messages or answer pairs contributing to one ranking component
+bounded messages, answer pairs or retention members from an exact drilldown selection
 
 ```sh
 tg stats contacts evidence <person> [options]
@@ -2915,6 +2989,28 @@ tg stats chats newcomers <chat> [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
 | `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+
+#### `tg stats chats retention`
+
+joining cohorts and observed checkpoint membership from saved roster observations
+
+```sh
+tg stats chats retention <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | joining period starts at ISO 8601 or a relative time; last 90 days by default. |
+| `--until-time <time>` | joining period ends at this time; now by default. |
+| `--checkpoints <durations>` | up to 10 increasing joining ages, comma separated; 1d,7d,30d by default. |
+| `--within <duration>` | activity and early departure window after joining; 7d by default. |
+| `--by <day\|week>` | group joining dates by calendar day or Monday week. One of: `day`, `week`. |
+| `--timezone <zone>` | IANA timezone for joining cohorts. |
+| `--limit <n>` | cohorts and member evidence, 1–100. |
 
 #### `tg stats chats official`
 

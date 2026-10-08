@@ -3,6 +3,17 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.37.0 — 08.10.2026
+
+### What's new
+
+- **Retained files for remote agents:** `attachments show` transfers bounded chunks with whole-file SHA256.
+  MCP returns complete images or binary resources, with a JSON/base64 fallback. Transfer performs no OCR
+  or index write; the agent reads the file and saves literal text ([attachments](docs/attachments.md)).
+
+- The shared dependency also adds observed retention cohorts and counter observations with
+  per-field freshness; unknown values remain explicit.
+
 ## 0.36.0 — 08.10.2026
 
 ### What's new

@@ -419,3 +419,10 @@ For questions waiting and selected admin response times, use `stats messages una
 viewed posts with little stored discussion are `stats messages discussion`. Inspect graph/archive
 quality and use each row’s exact drilldown with `--component report`; missing history/join dates
 are not zero. All four reports read stored data; do not infer historical administrator roles.
+
+
+Remote agents can request retained bytes: discover attachments show through tg_tools_search
+and invoke tg_read. Assemble chunks by nextOffsetBytes, pass if_sha256 and verify SHA256.
+Complete supported images return image content; other files return resource, with format:base64
+as a fallback. Host PDF rendering/file saving depends on host capabilities. Read all pages with
+your own tools, then attachments text set and verify content search. Transfer calls no model.

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2270 ✅ · 60 ⛔ · 0 ❌** — 451 commands, 1879 options.
+**2278 ✅ · 85 ⛔ · 0 ❌** — 455 commands, 1908 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -488,6 +488,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments list` | `--limit` | ✅ |  |
 | `attachments list` | `--page` | ✅ |  |
 | `attachments list` | `--all` | ✅ |  |
+| `attachments show` |  | ✅ |  |
+| `attachments show` | `--attachment` | ✅ |  |
+| `attachments show` | `--offset-bytes` | ✅ |  |
+| `attachments show` | `--chunk-bytes` | ✅ |  |
+| `attachments show` | `--if-sha256` | ✅ |  |
 | `attachments text set` |  | ✅ |  |
 | `attachments text set` | `--attachment` | ✅ |  |
 | `attachments text set` | `--text-file` | ✅ |  |
@@ -527,6 +532,26 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--timezone` | ✅ |  |
 | `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
+| `stats messages counters show` |  | ✅ |  |
+| `stats messages counters show` | `--chat` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--source` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--exact` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--timezone` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--selection` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--counters` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--limit` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters show` | `--max-age` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` |  | ✅ |  |
+| `stats messages counters refresh` | `--chat` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--source` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--exact` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--timezone` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--selection` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--counters` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--limit` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--max-messages` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--sync-time` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats messages counters refresh` | `--dry-run` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
 | `stats messages unanswered` |  | ✅ |  |
 | `stats messages unanswered` | `--chat` | ✅ |  |
 | `stats messages unanswered` | `--source` | ✅ |  |
@@ -606,6 +631,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats chats newcomers` | `--timezone` | ✅ |  |
 | `stats chats newcomers` | `--limit` | ✅ |  |
 | `stats chats newcomers` | `--answerer` | ✅ |  |
+| `stats chats retention` |  | ✅ |  |
+| `stats chats retention` | `--since-time` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--until-time` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--checkpoints` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--within` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--by` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--timezone` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
+| `stats chats retention` | `--limit` | ⛔ | Shared SDK190 observations-command.test.ts and services/counters.test.ts / retention.test.ts cover exact scopes, bounds, dry-run permissions, freshness and cohorts; this consumer mounts those factories. Native offline tests cover the mounted command roots. |
 | `stats chats official` |  | ✅ |  |
 | `stats tasks show` |  | ✅ |  |
 | `stats tasks show` | `--chat` | ✅ |  |
