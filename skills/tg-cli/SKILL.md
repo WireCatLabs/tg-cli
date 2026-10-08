@@ -267,7 +267,7 @@ Forum setup uses `topics enable`: only the owner, explicit `--upgrade --yes` for
 whose chat id changes. Use the returned new id afterwards. `topics create` never enables topics
 implicitly; never retry an unknown create; check `topics list`.
 `topics delete <chat> <id>` permanently deletes the topic and every message in it for everyone.
-The General topic cannot be deleted. It asks first; use `--allow-dangerous` only when explicitly authorized.
+The General topic cannot be deleted. It asks first by default; use `--allow-dangerous` only when explicitly authorized.
 An unknown outcome requires checking `topics list` before retrying.
 An upgrade that succeeded before enable failed is retained; inspect the partial result and never
 promise rollback to a basic group. Do not silently move old message locators to the new id.
