@@ -9,6 +9,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg topics delete <chat> <topic>` deletes a forum topic and every message in it**, for everyone. It asks first;
+  `--allow-dangerous` skips the question.
 - **Attachment text can be read locally:** ODT, ODS, XLSX, PPTX, EPUB, BOM-marked UTF-16 and
   high-confidence legacy encodings. No model is called; formulas are not calculated and images
   remain for the agent. [Search](docs/search.md) explains the limits.

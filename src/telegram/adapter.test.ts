@@ -113,6 +113,7 @@ class FakeClient {
   toggleForumTopicPinned = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   toggleGeneralTopicHidden = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   reorderPinnedForumTopics = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  deleteForumTopicHistory = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   getForumTopicsById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => this.topics)
   getChatPreview = async (link: string) => {
     this.#record("getChatPreview", [link])
@@ -1268,6 +1269,17 @@ describe("forum setup", () => {
     expect(client.reorderPinnedForumTopics).toHaveBeenCalledWith({ chatId: -100500, order: [12, 3] })
     client.reorderPinnedForumTopics.mockRejectedValueOnce(new MtTimeoutError(1000))
     await expect(adapter.orderPinnedTopics("-100500", ["12"])).rejects.toMatchObject({ code: "outcome_unknown" })
+  })
+
+  it("**deletes a topic with its history**, a gone topic is not_found, and a dropped answer is unknown", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.deleteTopic("-100500", "12")
+    expect(client.deleteForumTopicHistory).toHaveBeenCalledWith(-100500, 12)
+    client.deleteForumTopicHistory.mockRejectedValueOnce(new tl.RpcError(400, "TOPIC_ID_INVALID"))
+    await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({ code: "not_found" })
+    client.deleteForumTopicHistory.mockRejectedValueOnce(new MtTimeoutError(1000))
+    await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({ code: "outcome_unknown" })
   })
 
   it("creates a topic with the chosen random id and returns its server fields", async () => {
