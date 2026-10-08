@@ -1032,15 +1032,7 @@ export class TelegramAdapter {
 
   pollVoters(chatId: string, messageId: string, window: { limit: number; answerId?: string }) {
     const id = messageNumber(messageId, "a message id is a number")
-    return this.#call(() =>
-      pollVotersOf(this.#client, Number(chatId), id, {
-        ...window,
-        mine: async () =>
-          (await this.#pollOf(chatId, messageId)).answers
-            .filter((answer) => answer.chosen)
-            .map((answer) => answerId(answer.data)),
-      }),
-    )
+    return this.#call(() => pollVotersOf(this.#client, Number(chatId), id, window))
   }
 
   /** Votes by the answers' own bytes, never by index: mtcute would fetch the poll and pick by position. */
