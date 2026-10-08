@@ -7,7 +7,7 @@
 
 `tg` is a CLI for the owner's personal Telegram account, for agents first; everything
 messenger-neutral lives in `@leemour/cli-messaging` (your worktree `../cli-messaging`). tg already
-keeps a local archive (`store fetch`, `serve`, `store status`, `store export`, `messages search`). This lane
+keeps a local archive (`store fetch`, `serve`, `store status`, `store export`, `search messages`). This lane
 makes it the archiver kfastov/tgcli is — `serve` as a system service, fetching as background jobs,
 Markdown export, regex search — plus max-cli's report and estimate commands. Plan:
 [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), row L5
@@ -20,7 +20,7 @@ Markdown export, regex search — plus max-cli's report and estimate commands. P
 | How agents work here: worktrees, the sandbox, releasing, collisions | [`docs/dev/agents.md`](../dev/agents.md) — **read first** |
 | The store: what it keeps, what may never be dropped, migrations | [`HANDOFF.md`](../../HANDOFF.md) §4 trap 11, `../cli-messaging/src/store/migrations.ts` |
 | How `serve` and `watch --events` were designed | `../cli-messaging/docs/plans/2026-09-27-background-process.md` |
-| What kfastov/tgcli does (the competitor) | `github.com/kfastov/tgcli`: `service install\|start\|stop\|status\|logs`, `backfill --background`, `backfill status\|jobs`, `messages search --regex`, `auth --qr-file` |
+| What kfastov/tgcli does (the competitor) | `github.com/kfastov/tgcli`: `service install\|start\|stop\|status\|logs`, `backfill --background`, `backfill status\|jobs`, `search messages --regex`, `auth --qr-file` |
 | What max-cli does, to copy | `/home/leemour/Projects/AI/max-cli/src/commands/backup.ts` + `src/backup.ts` (estimate), `src/report.ts` + `doctor report`, `src/export.ts` (Markdown), `src/commands/server.ts` (a background server's start/stop/status) — read only |
 | Rulings | [`HANDOFF.md`](../../HANDOFF.md) §5 — **`serve` never starts by itself** (NEED-9) |
 
@@ -30,7 +30,7 @@ Markdown export, regex search — plus max-cli's report and estimate commands. P
 2. `../cli-messaging/src/cli/messenger/backfill-command.ts` — how a chat's history is walked,
    resumable and FLOOD_WAIT-aware; what a background job must wrap.
 3. `../cli-messaging/src/cli/messenger/archive-commands.ts` — `store status` and `store export`.
-4. `../cli-messaging/src/store/store.ts` `find` — the word index behind `messages search`, before
+4. `../cli-messaging/src/store/store.ts` `find` — the word index behind `search messages`, before
    adding `--regex`.
 5. `../cli-messaging/docs/plans/2026-09-27-background-process.md` — why `serve` is shaped as it is.
 
@@ -42,7 +42,7 @@ Markdown export, regex search — plus max-cli's report and estimate commands. P
 | 2 | fetching as jobs: `store fetch --background`, `store jobs list\|show\|cancel` | a job survives the command exiting; `status` shows per-chat progress from `sync_ranges` | tgcli `backfill` |
 | 3 | `store fetch --estimate` — how many requests and how long, before any are made | answers without fetching history | max `backup.ts` |
 | 4 | `store export --format markdown` | a readable transcript of a chat from the store | max `export.ts` |
-| 5 | `messages search --regex` | a regex over the stored text, bounded (`--limit`), no index change needed | tgcli |
+| 5 | `search messages --regex` | a regex over the stored text, bounded (`--limit`), no index change needed | tgcli |
 | 6 | `doctor report [create]` — a problem report with no message text | the file holds versions, paths, errors — never a message, a title or a token | max `report.ts` |
 | 7 | `session start --qr-file <png>` — the login QR as an image an agent can pass on | the PNG decodes to the same login URL | tgcli `auth --qr-file` |
 

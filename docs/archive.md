@@ -79,7 +79,7 @@ tg store jobs clear                         # forget finished jobs and their log
 
 ## Search
 
-`tg messages search` finds stored messages by their words, sender, chat, date, files, links and your
+`tg search messages` finds stored messages by their words, sender, chat, date, files, links and your
 own tags; by default it never asks Telegram. `--sync-first` explicitly fetches new messages first. [Message search](search.md) is the guide, with saved searches and
 counts. An empty answer means "not in this archive": fetch the chat first.
 

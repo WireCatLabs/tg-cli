@@ -134,7 +134,10 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--send-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **`tg messages search` reads the local archive and asks Telegram's search too** (`--backend both`; `archive`
+5. **Start a search with `tg search all`**: messages, mail and notes on this machine in one answer, each hit
+   typed (`message`, `mail`, `note`). Narrow with `tg search messages`, `search mail`, `search notes`,
+   `search conversations` (by meaning) or `search topics`; every search lives under `tg search`.
+   **`tg search messages` reads the local archive and asks Telegram's search too** (`--backend both`; `archive`
    for the archive only). Good search needs downloaded chats: if a search finds nothing and `coverage.next` is
    set, run it (`tg store fetch --all --background`) or ask the owner before saying the message does not exist.
    Words and quoted phrases include word forms;
@@ -155,7 +158,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    `tg store fetch <chat> --estimate` only estimates what it would cost and asks Telegram nothing —
    show the owner that first. A long one goes `--background`; `tg store jobs show` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
-   locator from `messages search`. The message asked for carries `"anchor": true`.
+   locator from `search messages`. The message asked for carries `"anchor": true`.
 9. **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also change the keyring entry.** With them
    the profile looks for another login and may answer "no session" although the owner is logged
    in. `tg config show` says whether they are set.
@@ -247,10 +250,11 @@ tg messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
 tg messages download -1001234567890 4242 --output-dir /tmp/tg --json   # the message's file; answers its path
 tg messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m   # every file of the chat; run it again to continue
 tg messages transcribe -1001234567890 4242 --json   # a voice note as text; can take up to a minute; never download a model yourself
-tg messages search "invoice march" --json          # search what was kept
+tg search all "invoice march" --json               # messages, mail and notes kept on this machine
+tg search messages "invoice march" --json          # Telegram messages only, and Telegram's own search
 tg conversations build --chat -1001234567890 --json   # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
-tg conversations search "<question>" --json         # by meaning, after the owner ran tg conversations embed --chat <chat>
+tg search conversations "<question>" --json         # by meaning, after the owner ran tg conversations embed --chat <chat>
 tg watch --jsonl                                   # new messages as they arrive
 ```
 
@@ -360,7 +364,7 @@ file caches. Agent text and old indexed text survive failed or cancelled API OCR
 
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
-tg messages search 'content:invoice'
+tg search messages 'content:invoice'
 tg attachments list --chat "Book club" --needs-text
 tg attachments text set "Book club" 204 --text-file ./scan.txt
 ```

@@ -278,7 +278,7 @@ describe("tg bot contacts show and the bot's copy reads", () => {
 
     const card = await tg(["sales", "bot", "contacts", "show", "@ann", "--limit", "5", "--json"], fetch)
     const found = await tg(
-      ["sales", "bot", "messages", "search", "team", "--from", "@ann", "--newest", "--limit", "5", "--json"],
+      ["sales", "bot", "search", "messages", "team", "--from", "@ann", "--newest", "--limit", "5", "--json"],
       fetch,
     )
     const between = await tg(["sales", "bot", "messages", "between", "@ann", "Bob", "--limit", "5", "--json"], fetch)
@@ -291,7 +291,7 @@ describe("tg bot contacts show and the bot's copy reads", () => {
     expect(refresh.code).toBe(2)
     expect(across.err).toContain("readOtherBots")
     for (const read of [
-      ["messages", "search", "team", "--all-bots", "--bots", "other"],
+      ["search", "messages", "team", "--all-bots", "--bots", "other"],
       ["messages", "between", "@ann", "Bob", "--all-bots", "--bots", "other"],
     ]) {
       expect((await tg(["sales", "bot", ...read], fetch)).err).toContain("readOtherBots")

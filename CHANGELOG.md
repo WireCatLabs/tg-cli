@@ -13,6 +13,30 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   first, as with `messages send --topic`; topic 1 is General.
 - **`tg attachments show --page <n>` renders one page of a stored PDF as a PNG picture**, for agents that cannot
   open a PDF. Needs the optional PDF renderer; no text recognition runs.
+- **`tg search all "<words>"` searches everything kept on this machine at once**: Telegram and MAX messages, mail
+  imported by memo, and notes. Each hit says whether it is a message, a mail or a note. `--only notes` (or
+  `messages`, `mail`) narrows it.
+- **`tg search mail` and `tg search notes`** search one kind. Notes are found by their words and, with the local
+  text model, by meaning; `--type internal` (written in memo) or `file` (from a notes folder).
+- **`tg search messages --type voice`** (or `text`, `file`) finds only that kind of message.
+
+### Changed — may break scripts
+
+- **Every search moved under `tg search`.** The old commands are gone:
+
+  | Before | Now |
+  |---|---|
+  | `tg messages search` | `tg search messages` |
+  | `tg messages search --source email` | `tg search mail` |
+  | `tg conversations search` | `tg search conversations` |
+  | `tg topics search <chat> <text>` | `tg search topics <chat> <text>` |
+  | `tg bot messages search` | `tg bot search messages` |
+
+  For agents the tools moved the same way: `search messages`, `search conversations`, `search topics`, and the new
+  `search all` to start with.
+- **`tg search messages` never returns mail.** A saved search that names `in:email` now asks for `tg search mail`.
+- **Permissions named after the old paths** (`messages.search`, `conversations.search`, `topics.search`) stop
+  `tg search` until `tg config migrate` renames them, keeping their levels.
 
 ## 0.39.1 — 08.10.2026
 

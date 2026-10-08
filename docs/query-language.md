@@ -1,6 +1,6 @@
 # Search query language
 
-The reference for queries of `tg messages search`, `tg stats messages show` and saved searches. For
+The reference for queries of `tg search messages`, `tg stats messages show` and saved searches. For
 everyday examples start with [message search](search.md).
 
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT,
@@ -130,7 +130,7 @@ An error carries the position of the problem in the query and a hint.
 
 ## In MCP
 
-`tg_read` (`command: "messages search"`) takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
+`tg_read` (`command: "search messages"`) takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
 `language` chooses `lucene` or `legacy`, `timezone` the calendar zone. `chat` takes an id or a stored
 name; `source`, `newest`, `context` and `limit` work as the command options do; `saved` runs a saved search.
 The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `tg_read` (`command: "stats messages show"`) counts
@@ -139,8 +139,8 @@ the same queries.
 ## The older modes
 
 ```sh
-tg messages search 'from:alice after:7d invoice -draft' --language legacy --json
-tg messages search --regex 'invoice\s+\d+' --json
+tg search messages 'from:alice after:7d invoice -draft' --language legacy --json
+tg search messages --regex 'invoice\s+\d+' --json
 ```
 
 `--language legacy` keeps the earlier filters and its correction of typos. `--regex` is a separate

@@ -1,6 +1,6 @@
 # Message search
 
-`tg messages search` finds messages in the local archive, the copy of your chats that tg keeps on this
+`tg search messages` finds messages in the local archive, the copy of your chats that tg keeps on this
 computer, and asks Telegram's own search too ([below](#asking-telegram-too---backend)). It marks nothing read.
 
 ## Prepare your archive first
@@ -44,11 +44,11 @@ examples; use your own chats and people.
 ## Words and phrases
 
 ```sh
-tg messages search invoice
-tg messages search '"invoice paid"'              # words together
-tg messages search 'cafe OR library'
-tg messages search '(cafe OR library) NOT loud'
-tg messages search 'invoic*'                     # every word that starts with "invoic"
+tg search messages invoice
+tg search messages '"invoice paid"'              # words together
+tg search messages 'cafe OR library'
+tg search messages '(cafe OR library) NOT loud'
+tg search messages 'invoic*'                     # every word that starts with "invoic"
 ```
 
 Words next to each other must all be in the message. Search includes word forms, according to
@@ -60,12 +60,12 @@ are ignored. Typos are not corrected automatically.
 ## People and chats
 
 ```sh
-tg messages search 'from:"Alice Synthetic" invoice'
-tg messages search 'from:("Alice Synthetic" OR "Bob Synthetic") library'
-tg messages search 'from:me date:7d'             # what you wrote this week
-tg messages search 'chat:"Book club" library'
-tg messages search library --chat "Book club"    # the same, as an option
-tg messages search 'passport kind:private'       # one-to-one chats only
+tg search messages 'from:"Alice Synthetic" invoice'
+tg search messages 'from:("Alice Synthetic" OR "Bob Synthetic") library'
+tg search messages 'from:me date:7d'             # what you wrote this week
+tg search messages 'chat:"Book club" library'
+tg search messages library --chat "Book club"    # the same, as an option
+tg search messages 'passport kind:private'       # one-to-one chats only
 ```
 
 `kind:` takes `private`, `group`, `channel`, `saved` (Saved Messages) and `bot`. `topic:` keeps to one
@@ -74,10 +74,10 @@ forum topic of a group; it needs that group in `chat:` or `--chat`.
 ## Dates
 
 ```sh
-tg messages search 'date:today'
-tg messages search 'library date:yesterday'
-tg messages search 'invoice date:7d'             # from 7 days ago until now; also 30m, 2h
-tg messages search 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
+tg search messages 'date:today'
+tg search messages 'library date:yesterday'
+tg search messages 'invoice date:7d'             # from 7 days ago until now; also 30m, 2h
+tg search messages 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
 ```
 
 `today`, `yesterday` and calendar dates are days in your computer's time zone; `--timezone` picks
@@ -86,14 +86,14 @@ another. In a range, `[` and `]` include that day, `{` and `}` exclude it.
 ## Files and links
 
 ```sh
-tg messages search 'has:file'
-tg messages search 'filename:*.pdf'
-tg messages search 'filename:*contract*'         # part of the name
-tg messages search 'size>10MB'
-tg messages search 'mime:image'                  # any picture sent as a file
-tg messages search 'mime:"application/pdf"'      # quote a full type
-tg messages search 'has:photo chat:"Book club"'
-tg messages search 'has:link AND "github.com"'   # a link to a site
+tg search messages 'has:file'
+tg search messages 'filename:*.pdf'
+tg search messages 'filename:*contract*'         # part of the name
+tg search messages 'size>10MB'
+tg search messages 'mime:image'                  # any picture sent as a file
+tg search messages 'mime:"application/pdf"'      # quote a full type
+tg search messages 'has:photo chat:"Book club"'
+tg search messages 'has:link AND "github.com"'   # a link to a site
 ```
 
 A file is found by its name, size and type even when the message has no text. `filename:` compares the
@@ -104,8 +104,8 @@ text or only in its preview card.
 ## Passwords, codes and cards
 
 ```sh
-tg messages search 'preset:secret kind:saved'    # something that looks like a password or token
-tg messages search 'preset:card'
+tg search messages 'preset:secret kind:saved'    # something that looks like a password or token
+tg search messages 'preset:card'
 ```
 
 A preset finds messages that *look like* a password, a login code, an API key, a card or IBAN number, a
@@ -118,8 +118,8 @@ works or a card is real. The full list is in the [query language](query-language
 tg tags add work --chat "Book club"
 tg tags add work --contact "Bob Synthetic"
 tg tags list --tag work --type chat
-tg messages search 'tag:work invoice'
-tg messages search 'invoice NOT tag:work'
+tg search messages 'tag:work invoice'
+tg search messages 'invoice NOT tag:work'
 tg tags remove work --chat "Book club"
 ```
 
@@ -146,12 +146,12 @@ run already gave makes it yours.
 
 ```sh
 tg searches create meetings 'library OR cafe' --chat "Book club"
-tg messages search --saved meetings
-tg messages search --saved meetings 'date:today'  # extra words are added with AND
+tg search messages --saved meetings
+tg search messages --saved meetings 'date:today'  # extra words are added with AND
 tg stats messages show --saved meetings --by day
 tg searches list
 tg searches history --limit 10
-tg messages search --saved 42                    # a row of the history, by its number
+tg search messages --saved 42                    # a row of the history, by its number
 ```
 
 `searches create` saves a query with its options and runs nothing; an existing name needs `--replace`.
@@ -175,7 +175,7 @@ tg stats messages show 'from:me' --by day --timezone Europe/Madrid
 tg stats messages show --by hour                      # every stored message
 ```
 
-`stats messages show` counts the messages `messages search` would find with the same query, each one once.
+`stats messages show` counts the messages `search messages` would find with the same query, each one once.
 `--by chat` (the default) and `--by sender` put the largest first; `--by day` and `--by hour` go in
 order. When some chats are not stored in full, the numbers are a lower bound, and stderr says how
 many chats that is.
@@ -187,9 +187,9 @@ Telegram and the archive in one run (`--backend both`). `--backend server` shows
 `--backend archive` searches only the archive.
 
 ```sh
-tg messages search 'invoice' --backend both
-tg messages search 'invoice chat:"Book club" from:Olga' --backend both
-tg messages search 'invoice date:2026-09' --backend server --server-time 10s
+tg search messages 'invoice' --backend both
+tg search messages 'invoice chat:"Book club" from:Olga' --backend both
+tg search messages 'invoice date:2026-09' --backend server --server-time 10s
 ```
 
 Telegram decides on its own what matches a word, and does not document it. So tg treats its answer as
@@ -222,7 +222,7 @@ relevance, and `--context 2` shows two messages around each one found.
 ## For scripts and agents
 
 `--json` returns one object with the messages and what was searched; `--jsonl` streams the messages
-only. In MCP, `tg_read` (`command: "messages search"`) and `tg_read` (`command: "stats messages show"`) take the same queries, and `tags` and
+only. In MCP, `tg_read` (`command: "search messages"`) and `tg_read` (`command: "stats messages show"`) take the same queries, and `tags` and
 `searches` commands through `tg_read`/`tg_write` manage tags and saved searches. The answer's fields,
 the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).
 
@@ -243,7 +243,7 @@ remote agent; the agent needs access to the file to read it.
 
 ```sh
 tg attachments extract --chat "Book club" --download --output-dir ./files
-tg messages search 'content:invoice'
+tg search messages 'content:invoice'
 tg attachments list --chat "Book club" --needs-text
 tg attachments text set "Book club" 204 --text-file ./scan.txt
 ```
