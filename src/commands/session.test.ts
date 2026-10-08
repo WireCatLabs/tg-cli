@@ -128,7 +128,22 @@ describe("session start", () => {
 
     expect(code).toBe(0)
     expect(seen.prompts?.method).toBe("phone")
+    expect(seen.prompts?.forceSms).toBeUndefined()
     expect(answers.prompts).toEqual(["phone number, international format: "])
+  })
+
+  it("asks Telegram for the code by SMS with --sms, and only for a phone login", async () => {
+    const seen: { prompts?: LoginPrompts } = {}
+    answers.queue = ["+34600000000"]
+    const { code } = await tg(["session", "start", "phone", "--sms"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      adapter: () => loginAdapter(seen),
+    })
+    expect(code).toBe(0)
+    expect(seen.prompts?.forceSms).toBe(true)
+
+    const qr = await tg(["session", "start", "--sms", "--json"], { adapter: () => loginAdapter({}) })
+    expect(JSON.parse(qr.stderr.at(-1) ?? "").error.message).toContain("--sms is for a phone login")
   })
 
   it("**opens my.telegram.org the first time**, and keeps the app only once Telegram accepted it", async () => {

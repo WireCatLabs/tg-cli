@@ -133,6 +133,7 @@ and no model:
 
 ```sh
 tg metadata refresh --chat "Book club"   # read the chat's description from Telegram; the chat is not changed
+tg metadata refresh --only-missing       # every stored group and channel with no description read yet
 tg tags auto --dry-run                   # what it would tag, without writing
 tg tags auto                             # write the automatic tags
 tg tags list --source auto               # only the automatic ones

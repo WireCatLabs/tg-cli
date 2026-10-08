@@ -37,6 +37,7 @@ interrupted or expired login, use:
 ```sh
 tg session start                        # QR code: Settings → Devices → Link Desktop Device
 tg session start phone                  # phone number, the code Telegram sends, your 2FA password
+tg session start phone --sms            # the same, asking for the code by SMS instead of in the app
 tg session start --qr-file login.png    # the QR code as a picture, for an agent to show you
 ```
 
@@ -502,6 +503,7 @@ count toward the hourly limit.
 
 ```sh
 tg chats folders list                              # your folders, in the order the app shows them
+tg chats folders show "Trips"                      # one folder, with the names of its chats
 tg chats folders create "Trips" --chat "Hiking" --chat @kate
 tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
 tg chats folders delete "Travel"                   # the chats stay

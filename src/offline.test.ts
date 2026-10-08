@@ -192,3 +192,26 @@ describe("saving to the store", () => {
     expect(JSON.parse(cleared.stdout[0] ?? "")).toEqual({ cleared: true, chats: 1, messages: 1 })
   })
 })
+
+describe("the tgcli parity follow-ups, offline", () => {
+  it("retries no job when none failed, and refreshes metadata only for stored chats that lack it", async () => {
+    const store = freshStore()
+    const state = mkdtempSync(join(tmpdir(), "tg-state-"))
+    const env = { ...process.env, MESSAGING_STORE: store, TG_STATE_DIR: state, TG_API_ID: "1", TG_API_HASH: "h" }
+    const call = async (argv: string[]) => {
+      const out = captureStreams()
+      const code = await run(argv, { streams: out, tty: false, keyring: memoryKeyring(), env, adapter: () => telegram })
+      return { code, answer: JSON.parse(out.stdout[0] ?? "null"), stderr: out.stderr }
+    }
+
+    expect(await call(["store", "jobs", "retry", "--failed", "--json"])).toMatchObject({
+      code: 0,
+      answer: { items: [] },
+    })
+
+    await call(["chats", "list", "--json"])
+    const refreshed = await call(["--offline", "metadata", "refresh", "--only-missing", "--json"])
+    expect(refreshed.code, refreshed.stderr.join("\n")).toBe(0)
+    expect(refreshed.answer).toMatchObject({ hasMore: false })
+  })
+})

@@ -36,6 +36,7 @@ The app is stored only after Telegram has accepted the login.
 ```sh
 tg session start           # a QR code in the terminal
 tg session start phone     # a phone number, the code Telegram sends, and your 2FA password
+tg session start phone --sms   # the same, asking Telegram for the code by SMS
 ```
 
 **QR:** scan the code in the Telegram app: Settings → Devices → Link Desktop Device. The code is
@@ -43,7 +44,8 @@ renewed while you wait.
 
 **Phone:** type the number in international format, then the login code. If the account has a
 cloud password (2FA), `tg` asks for it without showing what you type. With `--app auto`, the phone
-number is asked only once.
+number is asked only once. The code usually arrives in the Telegram app; `--sms` asks for an SMS instead,
+but Telegram chooses, and `tg` says which way it was sent.
 
 After either, Telegram lists a new device in the app's list of sessions.
 

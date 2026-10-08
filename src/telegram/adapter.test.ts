@@ -2584,6 +2584,21 @@ describe("closing", () => {
     expect(account).toEqual({ id: "1", name: "Owner", username: null })
     expect(client.calls.find((call) => call.method === "start")?.args[0]).toHaveProperty("qrCodeHandler")
   })
+
+  it("passes forceSms to a phone login that asks for SMS", async () => {
+    const { adapter, client } = await open()
+    await adapter.login({
+      method: "phone",
+      forceSms: true,
+      showQr: () => {},
+      phone: async () => "+34600000000",
+      code: async () => "",
+      password: async () => "",
+      note: () => {},
+    })
+
+    expect(client.calls.find((call) => call.method === "start")?.args[0]).toMatchObject({ forceSms: true })
+  })
 })
 
 describe("message permalinks", () => {
