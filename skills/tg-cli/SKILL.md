@@ -177,7 +177,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
     folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
     the same `--send-id` is safe here too (measured 2026-09-29).
-**Forum sends:** `messages send --topic` and `polls create --topic` use a topic id from `topics list`.
+**Forum sends:** `messages send --topic`, `messages forward --topic` and `polls create --topic` use a topic id
+    from `topics list` (for a forward, a topic of the `--to` chat); `topics show <chat> <id>` reads one topic.
     Reply targets must belong to that topic. Keep the same chat, topic and `--send-id` on a retry;
     never retry a scheduled send. Missing or closed topics are refused; nothing marks them read.
 **Posting as a channel:** `messages send --send-as <id>` only with an id from `chats send-as <chat>`,
@@ -235,6 +236,7 @@ tg chats events -1001234567890 --since-time 7d --json   # who joined, left, was 
 tg chats members list -1001234567890 --json          # a group's members, paged
 tg chats inspect https://t.me/+AbCd --json           # where an invite leads, without joining
 tg topics list -1001234567890 --json                 # a forum's topics; a message's threadId is one of them
+tg topics show -1001234567890 12 --json              # one topic: title, closed, pinned, last activity
 echo "$PHONE" | tg contacts lookup --json            # a number through stdin, never as an argument
 tg chats show -1001234567890 --json                # one chat and who is in it
 tg contacts show @ivan --json                      # one person and the chats shared with them

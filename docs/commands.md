@@ -1436,6 +1436,7 @@ tg messages forward <chat> <message> [options]
 | `--silent` | deliver it without a notification. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
+| `--topic <id>` | forward into this forum topic of the --to chat. |
 
 ### `tg messages pin`
 
@@ -1827,6 +1828,19 @@ tg topics search <chat> <text> [options]
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
+
+### `tg topics show`
+
+one forum topic: its title, state and last activity
+
+```sh
+tg topics show <chat> <topic>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the topic id, from `topics list`. |
 
 ### `tg topics enable`
 

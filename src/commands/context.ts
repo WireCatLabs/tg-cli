@@ -124,6 +124,8 @@ export const TELEGRAM: Messenger = {
   mediaOptions: ["spoiler", "captionAbove", "fileName"],
   pollQuiz: true,
   pollVoters: true,
+  topicShow: true,
+  forwardTopic: true,
   // mtcute's InputMedia.poll documents 5–600 seconds.
   pollCloseSeconds: [5, 600],
   inviteLinkUpdate: true,

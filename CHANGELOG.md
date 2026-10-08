@@ -7,6 +7,10 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg topics show <chat> <topic>` shows one forum topic**: its title, whether it is closed or pinned, unread
+  messages and last activity.
+- **`tg messages forward --topic <id>` forwards into a forum topic** of the `--to` group. The topic is checked
+  first, as with `messages send --topic`; topic 1 is General.
 - **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents can read
   every page with their own vision and explicitly save searchable text. Requires optional `unpdf`
   and `@napi-rs/canvas`; previewing calls no OCR API and does not index text. If the MCP client
