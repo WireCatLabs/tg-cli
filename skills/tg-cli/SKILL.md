@@ -266,8 +266,17 @@ chats and basic groups are refused. Sending and updates stay on the Bot API.
 Forum setup uses `topics enable`: only the owner, explicit `--upgrade --yes` for a basic group,
 whose chat id changes. Use the returned new id afterwards. `topics create` never enables topics
 implicitly; never retry an unknown create; check `topics list`.
+`topics delete <chat> <id>` permanently deletes the topic and every message in it for everyone.
+The General topic cannot be deleted. It asks first by default; use `--allow-dangerous` only when explicitly authorized.
+An unknown outcome requires checking `topics list` before retrying.
 An upgrade that succeeded before enable failed is retained; inspect the partial result and never
 promise rollback to a basic group. Do not silently move old message locators to the new id.
+
+
+Folder rules: `chats folders create|update --include contacts,groups --skip muted,archived`.
+On update these flags replace the previous rules; `none` clears them. Shared folders take no rules.
+`--exclude-chat` excludes a chat and `--pin` puts it first. The returned emoji is the stored Telegram
+folder icon; unsupported icons can be dropped. `folders order` returns only ids and titles.
 
 
 Full native Bot API: all 185 Telegram Bot API 10.3 methods are exposed through

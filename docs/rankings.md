@@ -75,7 +75,7 @@ narrow chat/date scope when the query exceeds a budget. Selection JSON is capped
 
 ## Find questions and posts that need attention
 
-These reports were added after release 0.34. Use the source build with the new SDK until the next npm release.
+These reports are available in tg 0.36.0.
 
 After loading the relevant history, you can ask your agent: “Show questions in the club that have
 waited more than a day, and open the original messages.” These reports read the stored archive;

@@ -91,7 +91,7 @@ partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` an
    sandbox. `bin/check-agents` (owner, from a terminal) proves the guards hold. Details:
    [`docs/dev/agents.md`](docs/dev/agents.md). The bypass-mode launcher (`bin/agent`) was removed at
    the owner's request: it started sessions without the owner's settings.
-7. **Phase 4** per proposal §8: max-cli moves onto cli-messaging (under max-cli's own rules — NEED-2).
+7. **Phase 4 completed.** Correction 2026-10-08: MAX finished the shared command/cache cutover; the current dependency pin is in each package manifest.
 
 ### 3c. How to change things
 
@@ -153,8 +153,7 @@ Read in this order:
    --limit 3`, `bin/tg messages list me --limit 2`. Print counts and ids in checks, never message text.
 10. **Telegram deduplicates by `random_id`, also across connections** (FIND-6) — that is what makes
     `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
-11. **The store is a system of record, not a cache.** Migrations 1–3 are shipped and frozen (2
-    `sync_ranges`, 3 the word index for message text). The next is **4**, additive; a derived search
+11. **The store is a system of record, not a cache.** Correction 2026-10-08: handwritten migrations 1–5 are frozen; generated migrations begin at 6. Consult the shared migration manifest and claim the next number before implementation; a derived search
     index may be dropped and rebuilt, a base table never. Announce a migration's number to the other
     sessions (`ListAgents`) before writing it.
 12. **An adapter must set `Message.senderIsChat`** for a channel post or a message sent as the group,

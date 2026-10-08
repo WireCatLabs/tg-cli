@@ -557,7 +557,7 @@ topic (id 1) `--hidden on` / `--hidden off` hides it from the topic list or show
 `tg topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
 Repeating any of these is safe.
 `tg topics delete <chat> <id>` deletes a topic and every message in it, for everyone; it cannot be undone, so it
-asks first, and `--allow-dangerous` is the word that skips the question. The General topic cannot be deleted.
+asks first by default; an explicit `topics.delete: allow` or `--allow-dangerous` is the word that skips the question. The General topic cannot be deleted.
 
 ```sh
 tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people added are told
