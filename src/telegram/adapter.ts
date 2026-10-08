@@ -1254,6 +1254,18 @@ export class TelegramAdapter {
     })
   }
 
+  /** Telegram deletes the topic's history with it; a topic that is gone answers TOPIC_ID_INVALID, `not_found`. */
+  deleteTopic(chatId: string, topicId: string): Promise<void> {
+    const topic = topicNumber(topicId)
+    return this.#call(async () => {
+      try {
+        await this.#client.deleteForumTopicHistory(Number(chatId), topic)
+      } catch (error) {
+        throw unknownIfUnanswered(error, "the topic may have been deleted; check `tg topics list` before repeating")
+      }
+    })
+  }
+
   async validateThread(chatId: string, threadId: string, { replyTo }: { replyTo?: string }): Promise<void> {
     const topicId = topicNumber(threadId)
     const replyId = replyTo === undefined ? undefined : messageNumber(replyTo, "--reply-to needs a message id")

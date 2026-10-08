@@ -547,6 +547,23 @@ describe("the send guard in front of the other writes", () => {
     expect(asked).toMatchObject([{ search: "Ana" }, { link: "https://t.me/+extra" }])
   })
 
+  it("**deletes a topic only once the owner says so**", async () => {
+    const deleted: unknown[] = []
+    const adapter = scripted({
+      deleteTopic: async (chatId, topicId) => {
+        deleted.push([chatId, topicId])
+      },
+    })
+
+    const unasked = await tg(["g-topic-del", "topics", "delete", "Valencia", "12", "--json"], adapter)
+    const done = await tg(["g-topic-del", "topics", "delete", "Valencia", "12", "--allow-dangerous", "--json"], adapter)
+
+    expect(unasked.code).not.toBe(0)
+    expect(done.code).toBe(0)
+    expect(deleted).toHaveLength(1)
+    expect(journal("g-topic-del").map((entry) => entry.outcome)).toEqual(["refused", "sent"])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({

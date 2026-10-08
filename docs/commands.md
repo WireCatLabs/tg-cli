@@ -1822,6 +1822,25 @@ tg topics edit <chat> <topic> [options]
 | `--pinned <on\|off>` | on pins the topic at the top of the list, off unpins it. |
 | `--hidden <on\|off>` | on hides the General topic from the topic list, off shows it. |
 
+### `tg topics delete`
+
+delete a forum topic and every message in it, for everyone; it cannot be undone
+
+**Changes something in Telegram.**
+
+```sh
+tg topics delete <chat> <topic> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the topic id, from `topics list`. |
+
+| Option | What it does |
+|---|---|
+| `--allow-dangerous` | go ahead without the question an ask level puts before a deletion. |
+
 ### `tg topics order`
 
 put the pinned topics in this order; it pins and unpins nothing

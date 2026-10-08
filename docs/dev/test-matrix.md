@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2259 ✅ · 60 ⛔ · 0 ❌** — 447 commands, 1872 options.
+**2261 ✅ · 60 ⛔ · 0 ❌** — 448 commands, 1873 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -314,6 +314,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics edit` | `--closed` | ✅ |  |
 | `topics edit` | `--pinned` | ✅ |  |
 | `topics edit` | `--hidden` | ✅ |  |
+| `topics delete` |  | ✅ |  |
+| `topics delete` | `--allow-dangerous` | ✅ |  |
 | `topics order` |  | ✅ |  |
 | `watch` |  | ✅ |  |
 | `watch` | `--events` | ✅ |  |
