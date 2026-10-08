@@ -17,7 +17,14 @@ beforeAll(async () => {
   rememberAccount(TG, "default", account.account, process.env)
   await seedSearchRecipes(db, account)
   await db.saveChats(mail, [
-    { id: "t1", title: "Synthetic invoice thread", kind: "dialog", unreadCount: null, lastMessageAt: null },
+    {
+      id: "t1",
+      title: "Synthetic invoice thread",
+      kind: "dialog",
+      unreadCount: null,
+      lastMessageAt: null,
+      participantsCount: null,
+    },
   ])
   await db.saveMessages(
     mail,
