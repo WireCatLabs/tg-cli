@@ -199,8 +199,8 @@ describe("topics", () => {
     for (const argv of [
       ["topics", "list", "Valencia", "--limit", "2", "--page", "2", "--json"],
       ["topics", "list", "Valencia", "--all", "--json"],
-      ["topics", "search", "Valencia", "pisos", "--limit", "2", "--page", "3", "--json"],
-      ["topics", "search", "Valencia", "pisos", "--all", "--json"],
+      ["search", "topics", "Valencia", "pisos", "--limit", "2", "--page", "3", "--json"],
+      ["search", "topics", "Valencia", "pisos", "--all", "--json"],
     ]) {
       expect((await tg(argv, { adapter: () => adapter })).code).toBe(0)
     }
@@ -618,8 +618,8 @@ describe("messages", () => {
     const { code, stdout } = await tg(
       [
         "searching",
-        "messages",
         "search",
+        "messages",
         "piso",
         "--language",
         "lucene",
@@ -638,7 +638,7 @@ describe("messages", () => {
     expect(json(stdout).items).toHaveLength(1)
     expect(json(stdout).items[0].text).toContain("piso")
     expect(json(stdout).query).toMatchObject({ language: "lucene-v1", timezone: "Europe/Madrid" })
-    const legacy = await tg(["searching", "messages", "search", "pis", "--language", "legacy", "--json"], {
+    const legacy = await tg(["searching", "search", "messages", "pis", "--language", "legacy", "--json"], {
       adapter: () => reads,
     })
     expect(legacy.code).toBe(0)
@@ -658,7 +658,7 @@ describe("messages", () => {
     })
     await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads })
 
-    const argv = ["searching", "messages", "search", "atico", "--newest", "--context", "1", "--source", "telegram"]
+    const argv = ["searching", "search", "messages", "atico", "--newest", "--context", "1", "--source", "telegram"]
     const { code, stdout } = await tg([...argv, "--json"], { adapter: () => reads })
 
     const { items } = json(stdout)

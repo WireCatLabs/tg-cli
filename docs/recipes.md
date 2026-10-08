@@ -130,7 +130,7 @@ Writes to Telegram: **no**. Allow: `Bash(tg messages list:*)`.
 ## Who owes what
 
 Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg messages context:*)`,
-`Bash(tg messages search:*)`.
+`Bash(tg search messages:*)`.
 
 > Run `tg review --new --json` (the first time, the last 3 days; then from the last `--new`, a point per chat).
 > Sort it into three lists: what I owe, what I wait for from others, what needs clarifying. Give each
@@ -155,9 +155,9 @@ Writes to Telegram: **no**. Allow: `Bash(tg chats list:*)`, `Bash(tg messages li
 
 ## Find something that was said
 
-Writes to Telegram: **no**. Allow: `Bash(tg messages search:*)`, `Bash(tg messages context:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg search messages:*)`, `Bash(tg messages context:*)`.
 
-> Search for "invoice" with `tg messages search invoice --json`. For each hit, read
+> Search for "invoice" with `tg search messages invoice --json`. For each hit, read
 > `tg messages context <locator> --json` and tell me who said what, and when.
 
 Search reads only what this machine has kept. For a chat's whole history, fetch it first — that is a

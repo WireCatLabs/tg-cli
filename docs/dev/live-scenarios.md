@@ -43,7 +43,7 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 
 | Id | What | Commands | Puts back |
 |---|---|---|---|
-| S1 | reads answer and exit | `account show`, `account sessions list`, `chats list --limit 3`, `messages list me --limit 2`, `messages search` | nothing changed |
+| S1 | reads answer and exit | `account show`, `account sessions list`, `chats list --limit 3`, `messages list me --limit 2`, `search messages` | nothing changed |
 | S2 | every write once | `pnpm smoke:live` | deletes all it sent |
 | S3 | a scheduled send fires under a new id | `messages send me --at 1m`, `messages scheduled me`, `messages list me` | deleted after it fires |
 | S4 | download and transcribe | `messages download`, `messages transcribe` on a voice note the scenario sends | the note and the files deleted |
@@ -54,7 +54,7 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 
 | Id | What | Commands | Puts back |
 |---|---|---|---|
-| G1 | members and topics | `chats members list`, `topics list`, `topics search` | nothing changed |
+| G1 | members and topics | `chats members list`, `topics list`, `search topics` | nothing changed |
 | G2 | a write seen by B | owner `messages send`; B `messages list` finds it by id | deleted for everyone |
 | G3 | pin, react and a poll in a group | `messages pin`/`unpin`, `reactions add`/`remove`, `polls create`/`vote`/`close` | unpinned, the poll deleted |
 | G4 | mark read is the owner's only | `chats mark-read`; the unread count before and after | cannot be unread: run only with the yes |

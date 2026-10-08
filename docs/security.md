@@ -100,7 +100,7 @@ downloaded file's name also loses any leading dot.
 - **Hugging Face and GitHub**, only when you run `tg models audio download` or `tg models text download`. A voice message never goes
   there: a local model runs on this machine.
 - **Configured embedding endpoints** receive conversation text from `conversations embed` after consent,
-  and query text from remote `conversations search`, including MCP searches. Local embeddings send no text.
+  and query text from remote `search conversations`, including MCP searches. Local embeddings send no text.
 - **Configured analysis endpoints** receive bounded message batches only with `conversations build --analyze --chat`,
   after consent scoped to account, chat and provider; ordinary build sends nothing.
 
