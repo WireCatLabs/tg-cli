@@ -653,6 +653,18 @@ your chat folders, in the order the app shows them
 tg chats folders list
 ```
 
+#### `tg chats folders show`
+
+one chat folder, with the names of the chats in it
+
+```sh
+tg chats folders show <folder>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `folder` | required | the folder's id, or its title exactly. |
+
 #### `tg chats folders create`
 
 create a chat folder
@@ -2067,6 +2079,32 @@ tg store jobs cancel <job>
 |---|---|---|
 | `job` | required | the job id. |
 
+#### `tg store jobs retry`
+
+start a failed or died job again, as a new job; the fetch resumes where the store stopped
+
+```sh
+tg store jobs retry [job] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `job` | optional | the job id. |
+
+| Option | What it does |
+|---|---|
+| `--failed` | every chat whose newest job failed or died. |
+
+#### `tg store jobs clear`
+
+forget finished jobs and remove their logs; a running job is kept
+
+**Changes something on this computer only.**
+
+```sh
+tg store jobs clear
+```
+
 ### `tg store export`
 
 a chat's stored messages as JSON lines, oldest first; never asks the messenger
@@ -2628,6 +2666,7 @@ tg metadata refresh [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | stored group/channel; repeat for several. Default: ``. |
+| `--only-missing` | only chats with no metadata yet; without --chat, every stored group/channel. |
 | `--limit <number>` | process at most 1–500 chats. Default: `50`. |
 
 ## `tg stats`

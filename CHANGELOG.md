@@ -10,6 +10,13 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg polls create --quiz --correct <n> [--solution <text>]` sends a quiz**: one right answer, by its position from
   1, and a vote that is final.
 - Add stored stats reports for unanswered questions, selected admin responses, known-join newcomer help and viewed posts with little discussion; expose bounded evidence and saved report runs.
+- **`tg chats folders show <folder>` lists one folder's chats by name**, with its pinned and excluded chats. Names
+  come from the local archive; Telegram is asked only for chats the archive does not hold.
+- **`tg metadata refresh --only-missing`** reads descriptions only for groups and channels that have none stored yet;
+  without `--chat` it takes every stored group and channel, up to `--limit`.
+- **`tg store jobs retry <job>`** starts a failed or died background fetch again with the same options;
+  `--failed` retries every chat whose newest job failed or died. **`tg store jobs clear`** forgets finished jobs and
+  their logs.
 - **`tg session start phone --sms` asks Telegram to send the login code by SMS** when it would go to the app.
   Telegram decides: the note after the request says how the code was really sent.
 - **`tg topics delete <chat> <topic>` deletes a forum topic and every message in it**, for everyone. It asks first;
