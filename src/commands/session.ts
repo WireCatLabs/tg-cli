@@ -82,7 +82,14 @@ const loggedIn = (
     account,
     session,
     appKeys,
-  }: { profile: string; account: Account; session: string; appKeys: keyof typeof KEYS_IN | null },
+    alreadyLoggedIn,
+  }: {
+    profile: string
+    account: Account
+    session: string
+    appKeys: keyof typeof KEYS_IN | null
+    alreadyLoggedIn: boolean
+  },
   env: NodeJS.ProcessEnv,
 ): string => {
   const who = [account.username ? `@${account.username}` : undefined, `id ${account.id}`].filter(Boolean).join(", ")
@@ -90,7 +97,10 @@ const loggedIn = (
   const portable = session.replaceAll("\\", "/")
   const shown = home && portable.startsWith(`${home}/`) ? `~${portable.slice(home.length)}` : session
   return [
-    `Logged in as ${account.name ?? "you"} (${who}) — profile ${profile}.`,
+    alreadyLoggedIn
+      ? `Already logged in as ${account.name ?? "you"} (${who}) — profile ${profile}; nothing was asked. ` +
+        `\`tg ${asFirstWord(profile)}session end\` first to log in again.`
+      : `Logged in as ${account.name ?? "you"} (${who}) — profile ${profile}.`,
     `Session:  ${shown}`,
     `App keys: ${appKeys ? KEYS_IN[appKeys] : "not stored"}`,
     `Next:     tg chats list · tg server install to keep the archive current`,
@@ -128,7 +138,10 @@ export const startSession = async (
   }
   const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
   let typedPhone: string | undefined
+  // Telegram accepts a session that is still logged in without a question; then nothing here is asked.
+  let asked = false
   const phone = async () => {
+    asked = true
     typedPhone ??= await ask("phone number, international format: ", true)
     return typedPhone
   }
@@ -145,6 +158,7 @@ export const startSession = async (
       method,
       ...(sms ? { forceSms: true } : {}),
       showQr: (url, expires) => {
+        asked = true
         context.renderer.note(
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
         )
@@ -157,8 +171,14 @@ export const startSession = async (
         context.renderer.note(`the QR code is in ${qrPath} — it is replaced when Telegram renews it`)
       },
       phone,
-      code: () => ask("login code: ", true),
-      password: () => ask("2FA password (not shown): ", false),
+      code: () => {
+        asked = true
+        return ask("login code: ", true)
+      },
+      password: () => {
+        asked = true
+        return ask("2FA password (not shown): ", false)
+      },
       note: context.renderer.note,
     })
     signal?.throwIfAborted()
@@ -166,7 +186,7 @@ export const startSession = async (
     if (typed) context.credentials.write(typed)
     rememberAccount(TG, context.profile, account.id, context.env)
     const appKeys = context.credentials.source() ?? null
-    return { profile: context.profile, account, session: context.sessionPath, appKeys }
+    return { profile: context.profile, account, session: context.sessionPath, appKeys, alreadyLoggedIn: !asked }
   } finally {
     // The image is a login token for as long as it is valid; it does not outlive the login.
     if (qrPath) rmSync(qrPath, { force: true })

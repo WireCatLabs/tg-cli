@@ -94,6 +94,7 @@ describe("session start", () => {
       account: { id: "1", name: "Owner", username: null },
       session: join(process.env.TG_STATE_DIR ?? "", "sessions", "default.session"),
       appKeys: "environment",
+      alreadyLoggedIn: false,
     })
     expect(seen.prompts?.method).toBe("qr")
     expect(seen.opened).toEqual({ id: 1, hash: "h" })
@@ -116,6 +117,20 @@ describe("session start", () => {
         "Next:     tg chats list · tg server install to keep the archive current",
       ].join("\n"),
     )
+  })
+
+  it("**says it was already logged in** when Telegram still accepts the session and nothing was asked", async () => {
+    const still = { ...loginAdapter({}), login: async () => ({ id: "1", name: "Owner", username: null }) }
+    const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", HOME: process.env.TG_TEST_SANDBOX ?? "" }
+    const pretty = await tg(["tgtest", "session", "start", "phone"], { tty: true, env, adapter: () => still })
+    const qrFile = join(mkdtempSync(join(tmpdir(), "qr-")), "never.png")
+    const json = await tg(["session", "start", "--qr-file", qrFile, "--json"], { env, adapter: () => still })
+
+    expect(pretty.stdout.join("\n").split("\n")[0]).toBe(
+      "Already logged in as Owner (id 1) — profile tgtest; nothing was asked. `tg tgtest session end` first to log in again.",
+    )
+    expect(json.stderr).toEqual([])
+    expect(JSON.parse(json.stdout[0] ?? "")).toMatchObject({ alreadyLoggedIn: true })
   })
 
   it("logs in by phone number, asking for it on the terminal", async () => {
