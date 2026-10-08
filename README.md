@@ -333,6 +333,7 @@ tg session start                        # a QR code in the terminal: Settings â†
 tg session start phone                  # or a phone number, the code, and your 2FA password
 tg session start --qr-file login.png    # the QR code as a picture, for an agent to show you
 tg account show                         # who you are logged in as
+tg account list                         # every profile here, and who each is logged in as
 ```
 
 Several accounts are several profiles, and the profile is **the first word**, not an option:
