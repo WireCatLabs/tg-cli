@@ -97,6 +97,7 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
 | `tg chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
 | `tg chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
+| `tg chats link update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
 | `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
 | `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 

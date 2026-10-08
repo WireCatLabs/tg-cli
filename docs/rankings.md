@@ -41,8 +41,9 @@ A top page contains 1–100 rows. Text and author predicates select ranked messa
 uses authorized stored messages in the same query period without those text or author filters.
 Graph metrics reject ambiguous date branches: use a common positive date range.
 
-Views, reactions, forwards and comment counters are cumulative stored snapshots. Their
-per-field observation time and freshness are disclosed when supplied by an authoritative read; a date filter selects messages, not reactions
+Views, reactions, forwards and comment counters are cumulative stored snapshots. Views, reactions and
+comments disclose per-field observation time and freshness when supplied by an authoritative read;
+forwards have no such observation field. A date filter selects messages, not reactions
 received within that period. Unknown counters are distinct from zero. Author reaction totals
 can be partial, with known and unknown message counts. `--sync-first` is guarded and bounded;
 it fetches newer messages and does not refresh old counters.
