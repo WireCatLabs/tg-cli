@@ -2082,8 +2082,12 @@ background fetch jobs
 background fetch jobs, newest first
 
 ```sh
-tg store jobs list
+tg store jobs list [options]
 ```
+
+| Option | What it does |
+|---|---|
+| `--state <state>` | only jobs in this state. One of: `running`, `done`, `failed`, `cancelled`, `died`. |
 
 #### `tg store jobs show`
 

@@ -68,6 +68,7 @@ A long fetch can run as a job that outlives the command:
 ```sh
 tg store fetch "Book club" --background     # prints the job id
 tg store jobs list                          # background jobs, newest first
+tg store jobs list --state failed           # only failed ones: running, done, failed, cancelled or died
 tg store jobs show                          # the newest job, and what the store now holds of its chat
 tg store jobs show <job>
 tg store jobs cancel <job>                  # stops after the current page; a later fetch resumes

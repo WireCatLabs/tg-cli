@@ -9,6 +9,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **`tg chats link update --expire-time never` takes a link's expiry away.** The group's own link can be changed
   too; the help no longer says otherwise.
+- **`tg store jobs list --state <state>`** lists only the background jobs that are running, done, failed,
+  cancelled or died.
 
 ## 0.38.0 — 08.10.2026
 

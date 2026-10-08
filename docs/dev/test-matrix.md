@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2309 ✅ · 60 ⛔ · 0 ❌** — 457 commands, 1912 options.
+**2310 ✅ · 60 ⛔ · 0 ❌** — 457 commands, 1913 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -369,6 +369,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store gaps repair` | `--catch-up-time` | ✅ |  |
 | `store gaps repair` | `--background` | ✅ |  |
 | `store jobs list` |  | ✅ |  |
+| `store jobs list` | `--state` | ✅ |  |
 | `store jobs show` |  | ✅ |  |
 | `store jobs cancel` |  | ✅ |  |
 | `store jobs retry` |  | ✅ |  |
