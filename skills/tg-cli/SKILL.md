@@ -409,7 +409,7 @@ A later explicit auto run can regenerate it. Linking identities never silently c
 
 Rank held data with `tg stats messages top` / `tg stats contacts top`, using `--measure` or
 `--score helpful|active|engaging`. Read coverage, quality and exclusions; unknown snapshots
-are not zero and their freshness is unknown. Pass drilldown.selection to the matching
+are not zero and freshness is disclosed per field; legacy observations remain unknown. Pass drilldown.selection to the matching
 `stats messages evidence` / `stats contacts evidence`; continue with nextCursor and restart
 without it if contributing data changed.
 Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).
@@ -419,3 +419,15 @@ For questions waiting and selected admin response times, use `stats messages una
 viewed posts with little stored discussion are `stats messages discussion`. Inspect graph/archive
 quality and use each row’s exact drilldown with `--component report`; missing history/join dates
 are not zero. All four reports read stored data; do not infer historical administrator roles.
+
+Retention: `tg stats chats retention <chat> --checkpoints 1d,7d,30d --within 7d --json`.
+Only known joinedAt defines cohorts. Report observable denominators, unknown/pending and actual snapshot time.
+Partial absence is unknown; checkpoint membership is not continuous survival. Use the cohort drilldown selection
+with `stats messages evidence --component report` for bounded member evidence.
+
+Counters: `tg stats messages counters show --chat <chat> --counters views,reactions,comments --json`.
+Check each field's observedAt/source/freshness (24h default). Refresh is a remote read and local write:
+`stats messages counters refresh --chat <chat> --max-messages 20 --sync-time 30s --dry-run --json`.
+Preview exact targets before refreshing; it never connects. Actual refresh requires write permission and explicit
+chat or pinned selection from show; never implicitly refresh account-wide. Missing/unsupported/failed counters
+remain explicit. Never send, mark read or increment views. Imported/legacy values have unknown freshness.

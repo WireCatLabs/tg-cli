@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2270 ✅ · 60 ⛔ · 0 ❌** — 451 commands, 1879 options.
+**2298 ✅ · 60 ⛔ · 0 ❌** — 454 commands, 1904 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -527,6 +527,26 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages show` | `--timezone` | ✅ |  |
 | `stats messages show` | `--exact` | ✅ |  |
 | `stats messages show` | `--saved` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters |
+| `stats messages counters show` |  | ✅ |  |
+| `stats messages counters show` | `--chat` | ✅ |  |
+| `stats messages counters show` | `--source` | ✅ |  |
+| `stats messages counters show` | `--exact` | ✅ |  |
+| `stats messages counters show` | `--timezone` | ✅ |  |
+| `stats messages counters show` | `--selection` | ✅ |  |
+| `stats messages counters show` | `--counters` | ✅ |  |
+| `stats messages counters show` | `--limit` | ✅ |  |
+| `stats messages counters show` | `--max-age` | ✅ |  |
+| `stats messages counters refresh` |  | ✅ |  |
+| `stats messages counters refresh` | `--chat` | ✅ |  |
+| `stats messages counters refresh` | `--source` | ✅ |  |
+| `stats messages counters refresh` | `--exact` | ✅ |  |
+| `stats messages counters refresh` | `--timezone` | ✅ |  |
+| `stats messages counters refresh` | `--selection` | ✅ |  |
+| `stats messages counters refresh` | `--counters` | ✅ |  |
+| `stats messages counters refresh` | `--limit` | ✅ |  |
+| `stats messages counters refresh` | `--max-messages` | ✅ |  |
+| `stats messages counters refresh` | `--sync-time` | ✅ |  |
+| `stats messages counters refresh` | `--dry-run` | ✅ |  |
 | `stats messages unanswered` |  | ✅ |  |
 | `stats messages unanswered` | `--chat` | ✅ |  |
 | `stats messages unanswered` | `--source` | ✅ |  |
@@ -606,6 +626,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats chats newcomers` | `--timezone` | ✅ |  |
 | `stats chats newcomers` | `--limit` | ✅ |  |
 | `stats chats newcomers` | `--answerer` | ✅ |  |
+| `stats chats retention` |  | ✅ |  |
+| `stats chats retention` | `--since-time` | ✅ |  |
+| `stats chats retention` | `--until-time` | ✅ |  |
+| `stats chats retention` | `--checkpoints` | ✅ |  |
+| `stats chats retention` | `--within` | ✅ |  |
+| `stats chats retention` | `--by` | ✅ |  |
+| `stats chats retention` | `--timezone` | ✅ |  |
+| `stats chats retention` | `--limit` | ✅ |  |
 | `stats chats official` |  | ✅ |  |
 | `stats tasks show` |  | ✅ |  |
 | `stats tasks show` | `--chat` | ✅ |  |

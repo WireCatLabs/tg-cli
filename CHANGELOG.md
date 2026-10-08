@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- Add observed retention cohorts and per-field counter freshness with bounded refresh and exact target dry-run.
+
 - **`tg polls create --quiz --correct <n> [--solution <text>]` sends a quiz**: one right answer, by its position from
   1, and a vote that is final.
 - **Stored administrator reports** find questions without observed answers, selected responder latency, known-join newcomer help and viewed posts with little discussion. Reports provide coverage/evidence; saved runs retain parameters and selections.
