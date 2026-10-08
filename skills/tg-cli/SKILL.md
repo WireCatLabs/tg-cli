@@ -325,7 +325,10 @@ afterwards, including after clearing links. Remote embedding settings also affec
 text.
 
 `content:invoice` searches indexed text extracted from attachments or supplied by an agent. Extraction supports
-plain text, Word and PDFs with text layers; scans and photos need agent-supplied text. With several attachments,
+plain text (UTF-8, BOM-marked UTF-16 and high-confidence legacy encodings), ODT, ODS, XLSX,
+PPTX, EPUB, Word and PDFs with text layers; scans and photos need agent-supplied text.
+Start with local extraction for digital documents. Formulas are not calculated and embedded
+images are not OCRed; uncertain encodings need inspection or conversion. With several attachments,
 choose `--attachment`, starting at 1.
 
 By default, perform OCR yourself with the agent's file-reading and vision tools. After downloading
