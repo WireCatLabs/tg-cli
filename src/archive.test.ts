@@ -167,8 +167,8 @@ describe("the archive, from the store", () => {
       const found = await tg(
         [
           "archive",
-          "conversations",
           "search",
+          "conversations",
           "invoice",
           "--chat",
           CHAT,
@@ -207,7 +207,7 @@ describe("the archive, from the store", () => {
       expect(
         (await tg(["archive", "conversations", "related", CHAT, "101", ...openai, "--json"], store, env)).code,
       ).not.toBe(0)
-      expect((await tg(["archive", "conversations", "search", "invoice", ...openai, "--json"], store, env)).code).toBe(
+      expect((await tg(["archive", "search", "conversations", "invoice", ...openai, "--json"], store, env)).code).toBe(
         0,
       )
       expect(
@@ -319,8 +319,8 @@ describe("the archive, from the store", () => {
     const refreshed = await tg(
       [
         "archive",
-        "conversations",
         "search",
+        "conversations",
         "invoice",
         "--refresh",
         "--max-chats",
@@ -363,7 +363,7 @@ describe("the archive, from the store", () => {
     expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
     expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
 
-    const found = await tg(["archive", "messages", "search", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
+    const found = await tg(["archive", "search", "messages", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
     expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])
   })
 

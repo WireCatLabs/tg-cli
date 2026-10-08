@@ -10,6 +10,12 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  {
+    command: "attachments show",
+    option: "--page",
+    reason:
+      "cli-messaging 0.207.0 src/cli/messenger/attachments.test.ts renders a retained PDF page and refuses non-PDFs; it needs the optional unpdf and @napi-rs/canvas, which tg does not install",
+  },
   ...["--search", "--link"].map((option) => ({
     command: "chats requests list",
     option,
@@ -283,7 +289,7 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
   },
   ...["--backend", "--server-time"].map((option) => ({
-    command: "messages search",
+    command: "search messages",
     option,
     reason:
       "cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages",

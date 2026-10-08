@@ -319,11 +319,11 @@ read. Run `tg upgrade`. Nothing in the store is lost ([archive.md](archive.md#th
 
 ## "nothing recorded for profile … yet — run the command once without --offline"
 
-Exit code `6`. `--offline`, `messages search`, `store status` and `store export` answer only from the
+Exit code `6`. `--offline`, `search messages`, `store status` and `store export` answer only from the
 local store, and this profile has not read anything into it yet. Run one command online first, for
 example `tg chats list`.
 
-## `messages search` finds nothing
+## `search messages` finds nothing
 
 Search reads only what this machine has kept, never Telegram. An empty answer means "not kept", not
 "never said". Read the chat (`tg messages list <chat>`), or fetch its history with `tg store fetch`,

@@ -12,9 +12,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg messages forward --topic <id>` forwards into a forum topic** of the `--to` group. The topic is checked
   first, as with `messages send --topic`; topic 1 is General.
 - **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents can read
-  every page with their own vision and explicitly save searchable text. Requires optional `unpdf`
-  and `@napi-rs/canvas`; previewing calls no OCR API and does not index text. If the MCP client
-  exposes only resource metadata, request `format: base64` and display the PNG with the agent's tools.
 
 ### Changed — may break scripts
 
@@ -24,6 +21,22 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   to explicitly select an unseen opaque ID. Response rows add `identityKnown`; an ID without
   observations has `identityKnown: false` and `status: unknown`. Zero observed answers do not
   prove inactivity ([statistics](docs/rankings.md)).
+
+- **Every search moved under `tg search`.** The old commands are gone:
+
+  | Before | Now |
+  |---|---|
+  | `tg messages search` | `tg search messages` |
+  | `tg messages search --source email` | `tg search mail` |
+  | `tg conversations search` | `tg search conversations` |
+  | `tg topics search <chat> <text>` | `tg search topics <chat> <text>` |
+  | `tg bot messages search` | `tg bot search messages` |
+
+  For agents the tools moved the same way: `search messages`, `search conversations`, `search topics`, and the new
+  `search all` to start with.
+- **`tg search messages` never returns mail.** A saved search that names `in:email` now asks for `tg search mail`.
+- **Permissions named after the old paths** (`messages.search`, `conversations.search`, `topics.search`) stop
+  `tg search` until `tg config migrate` renames them, keeping their levels.
 
 ## 0.39.1 — 08.10.2026
 

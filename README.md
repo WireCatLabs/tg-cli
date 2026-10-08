@@ -370,7 +370,7 @@ tg messages transcribe "Book club" <id>           # a voice message as text
 **Find and keep:**
 
 ```sh
-tg messages search "contract"                     # everything kept, without connecting
+tg search all "contract"                          # messages, mail and notes kept, without connecting
 tg messages evidence "Project Alpha" --json        # bounded evidence for a chat brief
 tg store fetch "Project Alpha" --last 5000 --background
 tg store export "Project Alpha" --format markdown --output alpha.md

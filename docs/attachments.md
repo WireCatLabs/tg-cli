@@ -113,7 +113,7 @@ and check that searching for a phrase finds the original message.”
 tg attachments extract --chat "Study group" --download --output-dir ./files
 tg attachments list --chat "Study group" --needs-text
 tg attachments text set "Study group" 204 --text-file ./scan.txt
-tg messages search 'content:worksheet' --chat "Study group" --backend archive
+tg search messages 'content:worksheet' --chat "Study group" --backend archive
 ```
 
 The agent needs a reader or converter, and vision tools for scans. It can extract a digital

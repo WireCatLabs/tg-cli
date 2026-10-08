@@ -24,7 +24,7 @@ before `tg store fetch <chat> --last 100`. An agent can read `tg skill show` wit
 use `tg setup --agent codex` to select its skill explicitly. `tg setup --help` explains the flags.
 Nothing more is needed to read.
 
-To discover the arguments for a task, use `tg commands messages search --json` for one command
+To discover the arguments for a task, use `tg commands search messages --json` for one command
 or `tg commands messages --json` for a group. Both include global options and exit codes.
 Inspect each command path in a separate call; `tg commands --json` returns the whole tree.
 
@@ -92,7 +92,7 @@ never guesses: a message sent to the wrong conversation cannot be taken back. Ta
 the command with it. An id never changes, so once you have it, use it.
 
 `messages show` and `messages context` also take a `msg:` locator in place of the chat and the id,
-as `messages search --json` prints it for each hit.
+as `search messages --json` prints it for each hit.
 
 A person (`<person>`, in `contacts show`) is an id, an `@username` or part of their name.
 
@@ -308,12 +308,12 @@ the message.
 ```sh
 tg chats list --search book --kind group     # groups with "book" in the title
 tg contacts list --search ann                # people by name or @username
-tg messages search "contract"                # the text of every message this machine has kept
-tg messages search "contract" --chat "Book club"
-tg messages search "invoice.*(march|april)" --regex
+tg search messages "contract"                # the text of every message this machine has kept
+tg search messages "contract" --chat "Book club"
+tg search messages "invoice.*(march|april)" --regex
 ```
 
-Chat and contact searches need **at least three characters**. `messages search` uses the
+Chat and contact searches need **at least three characters**. `search messages` uses the
 [strict Lucene profile](search.md): `invoice` also finds other forms of the word, `invoic*` matches beginnings,
 and `exact:invoice` only that form. It reads what was fetched or kept by `serve`, and asks Telegram's own search
 too (`--backend archive` for the archive only). Use `--language legacy` for the previous discovery behavior. Once you have the chat, use its id.
@@ -544,7 +544,7 @@ tg chats members list "Hiking" --all               # everyone, with their role a
 tg chats events "Hiking"                           # who joined, left, was added or removed — 7 days
 tg chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
 tg topics list "Hiking"                            # a forum group's topics, newest activity first
-tg topics search "Hiking" "gear"
+tg search topics "Hiking" "gear"
 tg topics show "Hiking" 12                         # one topic: title, closed or pinned, last activity
 tg review --chat "Hiking" --unanswered             # questions nobody answered
 ```
@@ -670,7 +670,7 @@ An agent without one (Claude Desktop, Cursor) connects over MCP: [mcp.md](mcp.md
 
 ## What a conversation looks like
 
-`tg messages list` and `tg messages search` print a transcript at a terminal, not a table:
+`tg messages list` and `tg search messages` print a transcript at a terminal, not a table:
 
 ```text
 10:05:12  Anna

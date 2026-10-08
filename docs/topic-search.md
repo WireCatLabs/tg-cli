@@ -29,8 +29,8 @@ agent can link what the rules leave open ([below](#let-your-ai-agent-link-messag
 tg conversations build --chat "Book club"        # find the conversations; again after fetching more
 tg models text download e5-small                 # once: 135 MB, shared with max
 tg conversations embed --chat "Book club"        # resumes where it stopped
-tg conversations search "where do we meet" --chat "Book club"
-tg conversations search "renting a flat"         # every chat you built
+tg search conversations "where do we meet" --chat "Book club"
+tg search conversations "renting a flat"         # every chat you built
 ```
 
 1. **Build** finds the conversations of a chat. A new build replaces the last one, so take a
@@ -73,7 +73,7 @@ New messages reach a conversation only after the next build, and a vector only a
 tg conversations status                          # what is behind, chat by chat
 tg conversations build                           # every chat that changed, and groups never built
 tg conversations embed                           # every built chat with pieces left
-tg conversations search "renting a flat" --refresh   # catch up first, then search
+tg search conversations "renting a flat" --refresh   # catch up first, then search
 ```
 
 `status` counts, for each built chat, the messages the build has not seen (new, edited, deleted) and
@@ -133,7 +133,7 @@ A service can compute the vectors instead, with your own key:
 ```sh
 tg models text key set openai
 tg conversations embed --chat "Book club" --provider openai
-tg conversations search "renting a flat" --provider openai
+tg search conversations "renting a flat" --provider openai
 ```
 
 Then the text of the chat's conversations goes to that service, and each search sends your question.
@@ -144,7 +144,7 @@ with OpenAI's embeddings API, such as Ollama or LM Studio on your own computer, 
 
 ## For agents
 
-In MCP, `tg_read` (`command: "conversations list"`), `tg_read` (`command: "conversations show"`), `tg_read` (`command: "conversations search"`),
+In MCP, `tg_read` (`command: "conversations list"`), `tg_read` (`command: "conversations show"`), `tg_read` (`command: "search conversations"`),
 `tg_read` (`command: "conversations related"`) and `tg_read` (`command: "conversations status"`) read what is built; `tg_write` (`command: "conversations refresh"`)
 catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`),
 `tg_write` (`command: "conversations links add"`), `tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the

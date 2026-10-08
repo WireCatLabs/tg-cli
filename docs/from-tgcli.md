@@ -36,8 +36,8 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | `messages list --chat … --topic …` | `tg messages list <chat> --topic <id>` |
 | `messages list --after/--before` | `--after-time`, `--before-time`, `--after-id`, `--before-id` |
 | `messages show`, `messages context` | `tg messages show`, `tg messages context` |
-| `messages search --after --before --tag --topic --regex` | the query: `date:7d tag:work topic:12`, `--regex` ([query-language.md](query-language.md)) |
-| `messages search --source live/both` | `tg messages search --backend server/both` ([search.md](search.md)) |
+| `search messages --after --before --tag --topic --regex` | the query: `date:7d tag:work topic:12`, `--regex` ([query-language.md](query-language.md)) |
+| `search messages --source live/both` | `tg search messages --backend server/both` ([search.md](search.md)) |
 | `media download` | `tg messages download <chat> <id>`, or a whole chat with `--all` |
 | `contacts search`, `contacts show` | `tg contacts list --search`, `tg contacts show`, `tg contacts profile` |
 

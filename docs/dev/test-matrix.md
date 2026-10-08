@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2318 ✅ · 59 ⛔ · 0 ❌** — 459 commands, 1918 options.
+**2340 ✅ · 59 ⛔ · 0 ❌** — 462 commands, 1937 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -185,28 +185,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--transcribe` | ✅ |  |
 | `messages list` | `--model` | ✅ |  |
 | `messages list` | `--mark-read` | ✅ |  |
-| `messages search` |  | ✅ |  |
-| `messages search` | `--sync-first` | ✅ |  |
-| `messages search` | `--max-chats` | ✅ |  |
-| `messages search` | `--sync-time` | ✅ |  |
-| `messages search` | `--max-messages` | ✅ |  |
-| `messages search` | `--thread` | ✅ |  |
-| `messages search` | `--thread-hops` | ✅ |  |
-| `messages search` | `--thread-messages` | ✅ |  |
-| `messages search` | `--thread-bytes` | ✅ |  |
-| `messages search` | `--thread-within` | ✅ |  |
-| `messages search` | `--backend` | ✅ |  |
-| `messages search` | `--server-time` | ⛔ | cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages |
-| `messages search` | `--chat` | ✅ |  |
-| `messages search` | `--source` | ✅ |  |
-| `messages search` | `--limit` | ✅ |  |
-| `messages search` | `--newest` | ✅ |  |
-| `messages search` | `--exact` | ✅ |  |
-| `messages search` | `--context` | ✅ |  |
-| `messages search` | `--language` | ✅ |  |
-| `messages search` | `--timezone` | ✅ |  |
-| `messages search` | `--regex` | ✅ |  |
-| `messages search` | `--saved` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -317,10 +295,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics list` | `--limit` | ✅ |  |
 | `topics list` | `--page` | ✅ |  |
 | `topics list` | `--all` | ✅ |  |
-| `topics search` |  | ✅ |  |
-| `topics search` | `--limit` | ✅ |  |
-| `topics search` | `--page` | ✅ |  |
-| `topics search` | `--all` | ✅ |  |
 | `topics show` |  | ✅ |  |
 | `topics enable` |  | ✅ |  |
 | `topics enable` | `--upgrade` | ✅ |  |
@@ -430,23 +404,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations status` | `--provider` | ✅ |  |
 | `conversations status` | `--base-url` | ✅ |  |
 | `conversations status` | `--dims` | ✅ |  |
-| `conversations search` |  | ✅ |  |
-| `conversations search` | `--model` | ✅ |  |
-| `conversations search` | `--provider` | ✅ |  |
-| `conversations search` | `--base-url` | ✅ |  |
-| `conversations search` | `--dims` | ✅ |  |
-| `conversations search` | `--max-chats` | ✅ |  |
-| `conversations search` | `--max-chunks` | ✅ |  |
-| `conversations search` | `--sync-first` | ✅ |  |
-| `conversations search` | `--sync-time` | ✅ |  |
-| `conversations search` | `--max-messages` | ✅ |  |
-| `conversations search` | `--chat` | ✅ |  |
-| `conversations search` | `--since-time` | ✅ |  |
-| `conversations search` | `--filter` | ✅ |  |
-| `conversations search` | `--source` | ✅ |  |
-| `conversations search` | `--timezone` | ✅ |  |
-| `conversations search` | `--limit` | ✅ |  |
-| `conversations search` | `--refresh` | ✅ |  |
 | `conversations batches status` |  | ✅ |  |
 | `conversations batches status` | `--chat` | ✅ |  |
 | `conversations batches status` | `--size` | ✅ |  |
@@ -674,6 +631,71 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks close` |  | ✅ |  |
 | `tasks close` | `--as` | ✅ |  |
 | `tasks close` | `--reason` | ✅ |  |
+| `search all` |  | ✅ |  |
+| `search all` | `--only` | ✅ |  |
+| `search all` | `--limit` | ✅ |  |
+| `search all` | `--exact` | ✅ |  |
+| `search all` | `--timezone` | ✅ |  |
+| `search messages` |  | ✅ |  |
+| `search messages` | `--sync-first` | ✅ |  |
+| `search messages` | `--max-chats` | ✅ |  |
+| `search messages` | `--sync-time` | ✅ |  |
+| `search messages` | `--max-messages` | ✅ |  |
+| `search messages` | `--thread` | ✅ |  |
+| `search messages` | `--thread-hops` | ✅ |  |
+| `search messages` | `--thread-messages` | ✅ |  |
+| `search messages` | `--thread-bytes` | ✅ |  |
+| `search messages` | `--thread-within` | ✅ |  |
+| `search messages` | `--backend` | ✅ |  |
+| `search messages` | `--server-time` | ⛔ | cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages |
+| `search messages` | `--chat` | ✅ |  |
+| `search messages` | `--source` | ✅ |  |
+| `search messages` | `--type` | ✅ |  |
+| `search messages` | `--limit` | ✅ |  |
+| `search messages` | `--newest` | ✅ |  |
+| `search messages` | `--exact` | ✅ |  |
+| `search messages` | `--context` | ✅ |  |
+| `search messages` | `--language` | ✅ |  |
+| `search messages` | `--timezone` | ✅ |  |
+| `search messages` | `--regex` | ✅ |  |
+| `search messages` | `--saved` | ✅ |  |
+| `search mail` |  | ✅ |  |
+| `search mail` | `--chat` | ✅ |  |
+| `search mail` | `--limit` | ✅ |  |
+| `search mail` | `--newest` | ✅ |  |
+| `search mail` | `--exact` | ✅ |  |
+| `search mail` | `--context` | ✅ |  |
+| `search mail` | `--timezone` | ✅ |  |
+| `search notes` |  | ✅ |  |
+| `search notes` | `--type` | ✅ |  |
+| `search notes` | `--folder` | ✅ |  |
+| `search notes` | `--tag` | ✅ |  |
+| `search notes` | `--filter` | ✅ |  |
+| `search notes` | `--limit` | ✅ |  |
+| `search notes` | `--offset` | ✅ |  |
+| `search notes` | `--exact` | ✅ |  |
+| `search notes` | `--timezone` | ✅ |  |
+| `search conversations` |  | ✅ |  |
+| `search conversations` | `--model` | ✅ |  |
+| `search conversations` | `--provider` | ✅ |  |
+| `search conversations` | `--base-url` | ✅ |  |
+| `search conversations` | `--dims` | ✅ |  |
+| `search conversations` | `--max-chats` | ✅ |  |
+| `search conversations` | `--max-chunks` | ✅ |  |
+| `search conversations` | `--sync-first` | ✅ |  |
+| `search conversations` | `--sync-time` | ✅ |  |
+| `search conversations` | `--max-messages` | ✅ |  |
+| `search conversations` | `--chat` | ✅ |  |
+| `search conversations` | `--since-time` | ✅ |  |
+| `search conversations` | `--filter` | ✅ |  |
+| `search conversations` | `--source` | ✅ |  |
+| `search conversations` | `--timezone` | ✅ |  |
+| `search conversations` | `--limit` | ✅ |  |
+| `search conversations` | `--refresh` | ✅ |  |
+| `search topics` |  | ✅ |  |
+| `search topics` | `--limit` | ✅ |  |
+| `search topics` | `--page` | ✅ |  |
+| `search topics` | `--all` | ✅ |  |
 | `searches create` |  | ✅ |  |
 | `searches create` | `--chat` | ✅ |  |
 | `searches create` | `--source` | ⛔ | cli-messaging src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
@@ -851,16 +873,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages pin` |  | ✅ |  |
 | `bot messages pin` | `--notify` | ✅ |  |
 | `bot messages unpin` |  | ✅ |  |
-| `bot messages search` |  | ✅ |  |
-| `bot messages search` | `--all-bots` | ✅ |  |
-| `bot messages search` | `--bots` | ✅ |  |
-| `bot messages search` | `--limit` | ✅ |  |
-| `bot messages search` | `--newest` | ✅ |  |
-| `bot messages search` | `--from` | ✅ |  |
 | `bot messages between` |  | ✅ |  |
 | `bot messages between` | `--all-bots` | ✅ |  |
 | `bot messages between` | `--bots` | ✅ |  |
 | `bot messages between` | `--limit` | ✅ |  |
+| `bot search messages` |  | ✅ |  |
+| `bot search messages` | `--all-bots` | ✅ |  |
+| `bot search messages` | `--bots` | ✅ |  |
+| `bot search messages` | `--limit` | ✅ |  |
+| `bot search messages` | `--newest` | ✅ |  |
+| `bot search messages` | `--from` | ✅ |  |
 | `bot recipients list` |  | ✅ |  |
 | `bot recipients add` |  | ✅ |  |
 | `bot recipients remove` |  | ✅ |  |
