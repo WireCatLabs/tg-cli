@@ -1436,6 +1436,7 @@ tg messages forward <chat> <message> [options]
 | `--silent` | deliver it without a notification. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
+| `--topic <id>` | forward into this forum topic of the --to chat. |
 
 ### `tg messages pin`
 
@@ -1827,6 +1828,19 @@ tg topics search <chat> <text> [options]
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
+
+### `tg topics show`
+
+one forum topic: its title, state and last activity
+
+```sh
+tg topics show <chat> <topic>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `topic` | required | the topic id, from `topics list`. |
 
 ### `tg topics enable`
 
@@ -2608,6 +2622,7 @@ tg attachments show <chat> [message] [options]
 | Option | What it does |
 |---|---|
 | `--attachment <n>` | file position from 1; required for several files. |
+| `--page <n>` | render one PDF page as PNG, from 1; optional unpdf/canvas, no OCR. |
 | `--offset-bytes <n>` | byte offset from 0. |
 | `--chunk-bytes <n>` | bytes to return, 1–1048576 (default524288). |
 | `--if-sha256 <hash>` | require the whole file SHA-256 from the preceding chunk. |
@@ -2850,7 +2865,7 @@ tg stats messages unanswered [query] [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 | `--older-than <duration>` | minimum age of a question without an observed qualifying answer. |
 
 #### `tg stats messages discussion`
@@ -2948,7 +2963,7 @@ tg stats contacts responses [query] [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 #### `tg stats contacts top`
 
@@ -3041,7 +3056,7 @@ tg stats chats newcomers <chat> [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 #### `tg stats chats retention`
 

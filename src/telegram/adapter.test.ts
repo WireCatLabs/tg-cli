@@ -947,6 +947,37 @@ describe("reading", () => {
     expect(client.calls.find((call) => call.method === "iterForumTopics")?.args[1]).toEqual({ limit: 3, query: "pis" })
   })
 
+  it("shows one forum topic, and says when the topic or the forum is not there", async () => {
+    const { adapter, client } = await open()
+    client.peer = group(-100500, "synthetic")
+    await expect(adapter.topic("-100500", "4")).rejects.toMatchObject({ code: "validation_error" })
+    client.peer = { ...group(-100500, "synthetic"), isForum: true }
+    client.topics = []
+    await expect(adapter.topic("-100500", "4")).rejects.toMatchObject({ code: "not_found" })
+    client.topics = [
+      {
+        id: 4,
+        title: "Pisos",
+        isClosed: true,
+        isPinned: false,
+        unreadCount: 2,
+        lastMessage: { date: new Date("2026-09-27T10:00:00.000Z") },
+        date: new Date("2026-09-01T10:00:00.000Z"),
+      },
+    ]
+
+    expect(await adapter.topic("-100500", "4")).toEqual({
+      id: "4",
+      title: "Pisos",
+      closed: true,
+      pinned: false,
+      unreadCount: 2,
+      lastMessageAt: "2026-09-27T10:00:00.000Z",
+      createdAt: "2026-09-01T10:00:00.000Z",
+    })
+    expect(client.getForumTopicsById).toHaveBeenLastCalledWith(-100500, 4)
+  })
+
   it("finds a person by phone, and says nobody is there without repeating the number", async () => {
     const { adapter, client } = await open()
     client.phoneOwner = user(21, "Adam", { username: "adam_k" })
@@ -1744,6 +1775,17 @@ describe("forwarding", () => {
 
     const request = client.calls.find((call) => call.method === "call")?.args[0] as Record<string, unknown>
     expect(request).toMatchObject({ sendAs: { _: "inputPeerChannel", peer: -1002 } })
+  })
+
+  it("forwards into a forum topic as its top message, and into General with no topic", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.forward("-100500", "5", "-1000000000500", { sendId: "42", threadId: "12" })
+    await adapter.forward("-100500", "5", "-1000000000500", { sendId: "43", threadId: "1" })
+
+    const requests = client.calls.filter((call) => call.method === "call").map((call) => call.args[0])
+    expect(requests[0]).toMatchObject({ topMsgId: 12 })
+    expect(requests[1]).not.toHaveProperty("topMsgId")
   })
 
   it("makes a timeout an unknown outcome that names the send id to repeat with", async () => {

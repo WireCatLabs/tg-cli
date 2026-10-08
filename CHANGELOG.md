@@ -3,6 +3,17 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg topics show <chat> <topic>` shows one forum topic**: its title, whether it is closed or pinned, unread
+  messages and last activity.
+- **`tg messages forward --topic <id>` forwards into a forum topic** of the `--to` group. The topic is checked
+  first, as with `messages send --topic`; topic 1 is General.
+- **`tg attachments show --page <n>` renders one page of a stored PDF as a PNG picture**, for agents that cannot
+  open a PDF. Needs the optional PDF renderer; no text recognition runs.
+
 ## 0.39.1 — 08.10.2026
 
 ### Fixed
