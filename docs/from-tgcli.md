@@ -12,6 +12,7 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | tgcli | tg |
 |---|---|
 | `auth`, `auth --qr` | `tg session start` (QR by default), `tg session start phone` |
+| `auth --force-sms` | `tg session start phone --sms` |
 | `auth status` | `tg account show`, `tg doctor --online` |
 | `auth logout` | `tg session end` |
 | `accounts add`, `--account <id>` | a profile: `tg work chats list`, or `TG_PROFILE=work` ([profiles.md](profiles.md)) |
