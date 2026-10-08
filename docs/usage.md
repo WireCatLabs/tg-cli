@@ -456,6 +456,7 @@ look in `tg messages scheduled <chat>` instead.
 ```sh
 tg messages edit "Book club" 4242 "the corrected text"      # your own message; --md or --html as in a send
 tg messages forward "Book club" 4242 --to me                # checked against the chat it goes to
+tg messages forward "Book club" 4242 --to "Hiking" --topic 12   # into one topic of a forum
 tg messages pin "Book club" 4242                            # quiet unless --notify
 tg messages unpin "Book club" 4242
 tg messages delete me 4242 4243 --allow-dangerous           # at most 10, for you only
@@ -544,6 +545,7 @@ tg chats events "Hiking"                           # who joined, left, was added
 tg chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
 tg topics list "Hiking"                            # a forum group's topics, newest activity first
 tg topics search "Hiking" "gear"
+tg topics show "Hiking" 12                         # one topic: title, closed or pinned, last activity
 tg review --chat "Hiking" --unanswered             # questions nobody answered
 ```
 
