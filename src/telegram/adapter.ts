@@ -106,6 +106,7 @@ import {
   toReactionChange,
   toTopic,
 } from "./map.js"
+import { pollVotersOf } from "./poll-voters.js"
 import { refuseClose, refuseVote } from "./polls.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
@@ -1027,6 +1028,19 @@ export class TelegramAdapter {
 
   poll(chatId: string, messageId: string): Promise<Poll> {
     return this.#call(async () => toPoll(chatId, messageId, await this.#pollOf(chatId, messageId)))
+  }
+
+  pollVoters(chatId: string, messageId: string, window: { limit: number; answerId?: string }) {
+    const id = messageNumber(messageId, "a message id is a number")
+    return this.#call(() =>
+      pollVotersOf(this.#client, Number(chatId), id, {
+        ...window,
+        mine: async () =>
+          (await this.#pollOf(chatId, messageId)).answers
+            .filter((answer) => answer.chosen)
+            .map((answer) => answerId(answer.data)),
+      }),
+    )
   }
 
   /** Votes by the answers' own bytes, never by index: mtcute would fetch the poll and pick by position. */

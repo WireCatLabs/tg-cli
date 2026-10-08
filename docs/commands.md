@@ -1579,6 +1579,24 @@ tg polls show <chat> <message>
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the id of the message that carries the poll. |
 
+### `tg polls voters`
+
+who voted for what, newest first; not in an anonymous poll
+
+```sh
+tg polls voters <chat> <message> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of the message that carries the poll. |
+
+| Option | What it does |
+|---|---|
+| `--answer <id>` | only those who chose this answer, as `polls show` prints it. |
+| `--limit <n>` | how many. |
+
 ### `tg polls vote`
 
 vote in a poll, or take your vote back; the others see it unless the poll is anonymous

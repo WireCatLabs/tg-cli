@@ -123,6 +123,7 @@ export const TELEGRAM: Messenger = {
   groupSettings: GROUP_SETTINGS,
   mediaOptions: ["spoiler", "captionAbove", "fileName"],
   pollQuiz: true,
+  pollVoters: true,
   inviteLinkUpdate: true,
   html: true,
   folderRules: true,

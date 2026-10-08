@@ -790,6 +790,23 @@ describe("the send guard in front of the other writes", () => {
     expect(deleted).toEqual(["5,6"])
   })
 
+  it("**lists who voted**, by one answer and up to a limit, writing nothing", async () => {
+    const asked: unknown[] = []
+    const adapter = scripted({
+      poll: async (chatId, messageId) => poll(chatId, messageId),
+      pollVoters: async (_chatId, _messageId, window) => {
+        asked.push(window)
+        return { items: [], hasMore: false, total: 0 }
+      },
+    })
+
+    const listed = await tg(["g-voters", "polls", "voters", "Valencia", "3", "--answer", "MA", "--limit", "5"], adapter)
+
+    expect(listed.code).toBe(0)
+    expect(asked).toEqual([{ limit: 5, answerId: "MA" }])
+    expect(journal("g-voters")).toEqual([])
+  })
+
   it("reads a poll, votes by id and takes it back, closes it, and creates one with every option", async () => {
     const { adapter, polled } = telegram()
 

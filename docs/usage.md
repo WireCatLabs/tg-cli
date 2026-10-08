@@ -476,6 +476,7 @@ closing a poll, and each deleted message. A reaction, a vote and a quiet pin do 
 tg reactions add "Book club" 4242 👍       # replaces the reaction you had
 tg reactions remove "Book club" 4242
 tg polls show "Book club" 4250             # the poll and its answer ids
+tg polls voters "Book club" 4250 --answer <answer id>   # who chose it; not in an anonymous poll
 tg polls vote "Book club" 4250 <answer id>
 tg polls vote "Book club" 4250 --retract
 tg polls create "Book club" "Which day?" Monday Tuesday --anonymous
