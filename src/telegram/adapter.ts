@@ -10,6 +10,7 @@ import {
   type Chat,
   type ChatCard,
   type ChatEvents,
+  type CounterField,
   type Discussion,
   type Folder,
   type FolderChange,
@@ -24,6 +25,7 @@ import {
   type MessageEvent,
   type MessageHit,
   type OfficialChatStats,
+  observedCounters,
   type Page,
   type PersonCard,
   type PhoneBookEntry,
@@ -328,7 +330,7 @@ export class TelegramAdapter {
         limit,
         ...(offset === undefined ? {} : { offset }),
       })
-      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined }
+      return { items: page.map(remoteMessage).reverse(), hasMore: page.next !== undefined }
     })
   }
 
@@ -338,7 +340,7 @@ export class TelegramAdapter {
       const offset = before === undefined ? undefined : { id: messageNumber(before), date: 0 }
       const page = await this.#client.getHistory(peer, { limit, ...(offset ? { offset } : {}) })
       // mtcute drops deleted entries and the inexact-count flag. Its iterator follows next, never total.
-      return { items: page.map(toMessage).reverse(), hasMore: page.next !== undefined }
+      return { items: page.map(remoteMessage).reverse(), hasMore: page.next !== undefined }
     })
   }
 
@@ -357,7 +359,7 @@ export class TelegramAdapter {
       const peer = await this.#inputOf(reference)
       const page = await this.#client.getHistory(peer, { limit, reverse: true, offset })
       // As history(): a short page is no end, deleted entries are dropped from it; only an empty one is.
-      return { items: page.map(toMessage).filter(newer), hasMore: page.next !== undefined }
+      return { items: page.map(remoteMessage).filter(newer), hasMore: page.next !== undefined }
     })
   }
 
@@ -366,7 +368,7 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const [chatId, fromUser] = await Promise.all([this.#inputOf(reference), this.#inputOf(person)])
       const page = await this.#client.searchMessages({ chatId, fromUser, limit })
-      return { items: page.map(toMessage).reverse(), hasMore: page.total > page.length }
+      return { items: page.map(remoteMessage).reverse(), hasMore: page.total > page.length }
     })
   }
 
@@ -422,7 +424,11 @@ export class TelegramAdapter {
       const peers = PeersIndex.from(found)
       const page = found.messages.filter((one) => one._ !== "messageEmpty").map((one) => new TgMessage(one, peers))
       const chats = new Map(page.map((message) => [String(message.chat.id), peerToChat(message.chat)]))
-      return { items: page.map(toMessageHit), hasMore: page.length === limit, chats: [...chats.values()] }
+      return {
+        items: page.map((message) => remoteHit(message, "remote_fetch")),
+        hasMore: page.length === limit,
+        chats: [...chats.values()],
+      }
     })
   }
 
@@ -431,7 +437,7 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const peer = await this.#inputOf(reference)
       const page = await this.#client.getHistory(peer, { limit, offset: { id: 0, date: Math.floor(time / 1000) } })
-      const older = page.map(toMessage).filter((message) => Date.parse(message.timestamp) < time)
+      const older = page.map(remoteMessage).filter((message) => Date.parse(message.timestamp) < time)
       return { items: older.reverse(), hasMore: page.next !== undefined }
     })
   }
@@ -508,6 +514,18 @@ export class TelegramAdapter {
    * One request: history from just above the message, shifted `after` messages newer. Telegram's
    * offset id is exclusive, hence the `+ 1`; ids are not contiguous, so the window is cut by position.
    */
+  fetchCounters(reference: string, messageId: string, fields: readonly CounterField[], signal?: AbortSignal) {
+    const id = messageNumber(messageId)
+    return this.#call(async () => {
+      signal?.throwIfAborted()
+      const [found] = await this.#client.getMessages(await this.#inputOf(reference), [id])
+      signal?.throwIfAborted()
+      return found
+        ? (observedCounters(toMessage(found), new Date().toISOString(), fields).counterObservations ?? {})
+        : {}
+    })
+  }
+
   around(reference: string, messageId: string, { before, after }: { before: number; after: number }) {
     const id = messageNumber(messageId, "a message id is a number")
     return this.#call(async () => {
@@ -517,7 +535,7 @@ export class TelegramAdapter {
         addOffset: -after,
         limit: before + 1 + after,
       })
-      const items = page.map(toMessage).reverse()
+      const items = page.map(remoteMessage).reverse()
       const index = items.findIndex((message) => message.id === String(id))
       if (index < 0) throw new CliError("not_found", `no message ${id} in that chat`)
       return items
@@ -638,14 +656,24 @@ export class TelegramAdapter {
    */
   async watch(onEvent: (event: MessageEvent) => void, signal: AbortSignal, onReady?: () => void): Promise<void> {
     const client = this.#client
-    const message = (found: TgMessage) => onEvent({ event: "message", message: toMessageHit(found) })
-    const edit = (found: TgMessage) => onEvent({ event: "edit", message: toMessageHit(found) })
+    const message = (found: TgMessage) => onEvent({ event: "message", message: remoteHit(found, "remote_update") })
+    const edit = (found: TgMessage) => onEvent({ event: "edit", message: remoteHit(found, "remote_update") })
     const deletion = (update: DeleteMessageUpdate) => {
       for (const change of toDeletions(update)) onEvent(change)
     }
     const raw = (info: RawUpdateInfo) => {
       const change = toReactionChange(info)
-      if (change) onEvent(change)
+      if (change?.event === "reaction")
+        onEvent({
+          ...change,
+          counterObservation: {
+            value: change.reactions.total,
+            observedAt: new Date().toISOString(),
+            source: "remote_update",
+            reactions: change.reactions,
+          },
+        })
+      else if (change) onEvent(change)
     }
     client.onNewMessage.add(message)
     client.onEditMessage.add(edit)
@@ -2106,3 +2134,11 @@ const topicNumber = (id: string): number => {
   }
   return Number(id)
 }
+
+const remoteMessage = (message: TgMessage): Message =>
+  observedCounters(toMessage(message), new Date().toISOString(), ["views", "reactions", "comments"])
+
+const remoteHit = (message: TgMessage, source: "remote_fetch" | "remote_update"): MessageHit => ({
+  ...toMessageHit(message),
+  ...observedCounters(toMessage(message), new Date().toISOString(), ["views", "reactions", "comments"], source),
+})

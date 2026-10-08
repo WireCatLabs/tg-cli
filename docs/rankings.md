@@ -42,7 +42,7 @@ uses authorized stored messages in the same query period without those text or a
 Graph metrics reject ambiguous date branches: use a common positive date range.
 
 Views, reactions, forwards and comment counters are cumulative stored snapshots. Their
-freshness is shown for observed fields, while older data stays unknown; a date filter selects messages, not reactions
+per-field observation time and freshness are disclosed when supplied by an authoritative read; a date filter selects messages, not reactions
 received within that period. Unknown counters are distinct from zero. Author reaction totals
 can be partial, with known and unknown message counts. `--sync-first` is guarded and bounded;
 it fetches newer messages and does not refresh old counters.
@@ -106,7 +106,7 @@ join. `--until-time` ends the join cohort. First-seen-only identities are counte
 and incomplete member history are reported; no saved question does not mean no help was needed.
 
 `discussion` examines stored channel posts. It compares known cumulative views with observed direct discussion replies. Provider
-comment snapshots remain separate; their freshness is unknown. Linked discussion needs stored
+comment snapshots remain separate; their observation freshness is disclosed per field; old records remain unknown. Linked discussion needs stored
 link metadata and its group's history. Missing counters or graph links are not zero.
 
 Each row provides `drilldown.command` and exact arguments. Run its existing messages/contacts
@@ -190,3 +190,5 @@ Old/imported messages acquire no guessed timestamps; a legacy writer changing a 
 
 After refresh, run `show` again for the returned selection and inspect each field's observation date.
 A refreshed cumulative count still does not tell you how many views or reactions happened during a date-filtered period.
+
+Telegram supports views, reactions and comments where the remote message supplies them. Counter refresh uses exact message reads and never requests a view increment.

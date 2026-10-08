@@ -81,3 +81,14 @@ Question roots use compiled Lucene selection; explicit reply context extends thr
 cutoff in the same SQLite read snapshot. Membership stays preserve actual join versus first-seen.
 CLI and the three-tool MCP frontend call the same shared service; report evidence uses a separate
 versioned selection inside the existing evidence commands. See the [user guide](../rankings.md).
+
+## Retention and counter observations
+
+The shared migration 24 stores explicit roster batch-member-stay observations and independent latest
+view/reaction/comment observations. Retention cohorts use known joinedAt, checkpoint24h tolerance,
+observed denominators, interval departures and archive-qualified activity; bounded selections reuse
+existing evidence commands and the three-tool MCP frontend. `TelegramAdapter.fetchCounters` uses
+exact `getMessages` reads; history/context attach explicit remote observation timestamps only for
+supplied valid fields. Counter-only writes preserve message bodies, replies, files and tombstones;
+legacy differing values lose freshness. Refresh guards a local write and requests no read mark or
+view increment. See [statistics guide](../rankings.md) and Telegram's [reaction constructor](https://core.telegram.org/constructor/messageReactions).
