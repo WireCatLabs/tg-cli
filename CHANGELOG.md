@@ -26,6 +26,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg chats requests list <chat> --search <name>` finds requests by name or username**, and `--link <link>`
+  lists requests made through one invite link. Choose one filter; they cannot be combined.
 - **`tg chats requests list --search <name>` or `--link <link>` narrows the requests** — by name, or to those
   that came by one link; Telegram cannot do both at once.
 - **`tg polls show` says whether a poll is a quiz (`quiz`), whether a vote may change (`revote`), and whether you
