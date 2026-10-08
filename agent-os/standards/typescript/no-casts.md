@@ -7,6 +7,6 @@
 
 **Why:** A cast tells the compiler to stop checking; a renamed field or a changed library type then fails at runtime instead of at build.
 
-**Open:** `src/` has 97 casts today. New code only, or a cleanup task and a lint rule as well?
+**Scope (owner, 2026-10-08):** new code only for now. Later: remove the 97 existing casts in `src/`, then turn on a lint rule so the standard holds without anyone remembering it.
 
 See: `grep -rnE " as [A-Z]| as unknown" src --include='*.ts'`
