@@ -503,6 +503,7 @@ count toward the hourly limit.
 
 ```sh
 tg chats folders list                              # your folders, in the order the app shows them
+tg chats folders show "Trips"                      # one folder, with the names of its chats
 tg chats folders create "Trips" --chat "Hiking" --chat @kate
 tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
 tg chats folders delete "Travel"                   # the chats stay

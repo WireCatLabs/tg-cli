@@ -21,7 +21,7 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | `server`, `service install/start/stop/status/logs` | `tg serve`, `tg server start/stop/status/logs/install` |
 | MCP over HTTP (`mcp.enabled`) | `tg mcp --http` ([mcp.md](mcp.md), [remote.md](remote.md)) |
 | `sync --once`, `sync --follow` | `tg store fetch`, `tg serve` ([archive.md](archive.md)) |
-| `sync jobs list/add/retry/cancel` | `tg store fetch --background`, `tg store jobs list/show/cancel` |
+| `sync jobs list/add/retry/cancel` | `tg store fetch --background`, `tg store jobs list/show/retry/cancel/clear` |
 | `owner request <id>` | `tg sends list`, and `--send-id` to repeat a send whose outcome was unknown |
 | `doctor` | `tg doctor` |
 
@@ -67,6 +67,7 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | `groups requests list --query`, `--link` | `tg chats requests list --search`, `--link` |
 | `groups join`, `groups leave` | `tg chats join <link>`, `tg chats leave <chat>` |
 | `folders list/create/edit/delete` | `tg chats folders list/create/update/delete` |
+| `folders show` | `tg chats folders show <folder>` |
 | `folders create/edit --include-contacts … --include-bots` | `--include contacts,non-contacts,groups,channels,bots` |
 | `folders create/edit --exclude-muted`, `--exclude-read`, `--exclude-archived` | `--skip muted,read,archived` |
 | `folders create/edit --exclude-chat`, `--pin-chat`, `--emoji` | `--exclude-chat`, `--pin`, `--emoji` |
@@ -83,3 +84,4 @@ Every command takes `--json` ([cli-contract.md](cli-contract.md)).
 | `contacts alias set/rm` | `tg contacts alias set/rm`: a private name on this computer only; `tg contacts rename` changes your Telegram contacts |
 | `contacts notes set` | `tg contacts notes add/edit/remove`, several notes per person, on this computer only |
 | `tags auto`, `metadata refresh` | `tg tags auto`, `tg metadata refresh` |
+| `metadata refresh --only-missing` | `tg metadata refresh --only-missing` |

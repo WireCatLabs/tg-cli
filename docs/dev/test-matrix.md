@@ -7,13 +7,14 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2264 ✅ · 60 ⛔ · 0 ❌** — 448 commands, 1876 options.
+**2270 ✅ · 60 ⛔ · 0 ❌** — 451 commands, 1879 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
 | `session start` |  | ✅ |  |
 | `session start` | `--app` | ✅ |  |
 | `session start` | `--qr-file` | ✅ |  |
+| `session start` | `--sms` | ✅ |  |
 | `session end` |  | ✅ |  |
 | `setup` |  | ✅ |  |
 | `setup` | `--agent` | ✅ |  |
@@ -99,6 +100,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats admins add` | `--can` | ✅ |  |
 | `chats admins remove` |  | ✅ |  |
 | `chats folders list` |  | ✅ |  |
+| `chats folders show` |  | ✅ |  |
 | `chats folders create` |  | ✅ |  |
 | `chats folders create` | `--chat` | ✅ |  |
 | `chats folders create` | `--include` | ✅ |  |
@@ -363,6 +365,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store jobs list` |  | ✅ |  |
 | `store jobs show` |  | ✅ |  |
 | `store jobs cancel` |  | ✅ |  |
+| `store jobs retry` |  | ✅ |  |
+| `store jobs retry` | `--failed` | ✅ |  |
+| `store jobs clear` |  | ✅ |  |
 | `store export` |  | ✅ |  |
 | `store export` | `--format` | ✅ |  |
 | `store export` | `--since-time` | ✅ |  |
@@ -508,6 +513,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `metadata get` | `--chat` | ✅ |  |
 | `metadata refresh` |  | ✅ |  |
 | `metadata refresh` | `--chat` | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
+| `metadata refresh` | `--only-missing` | ✅ |  |
 | `metadata refresh` | `--limit` | ⛔ | cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0) |
 | `stats messages show` |  | ✅ |  |
 | `stats messages show` | `--sync-first` | ✅ |  |
