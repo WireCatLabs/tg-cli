@@ -545,7 +545,8 @@ Group activity is available with `tg stats chats show <chat>`; [statistics](docs
 `contacts rename` updates the messenger address book. Write your own notes with
 `contacts notes add <person> --file <path>`, then use `list`, `show`, `edit --revision <n>` and
 `remove`. `contacts show --with-notes` includes notes explicitly; `contacts list --search-notes
-<text>` searches them. Contact refresh preserves notes and aliases; linking people does not
+<text>` searches them. A contact's notes show in every account that sees the contact; an alias stays in
+its own account. Contact refresh preserves notes and aliases; linking people does not
 combine their private metadata.
 
 `tg metadata refresh --chat <id>` caches a group/channel description; `metadata get --chat <id>`

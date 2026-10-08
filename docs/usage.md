@@ -308,6 +308,7 @@ the message.
 ```sh
 tg chats list --search book --kind group     # groups with "book" in the title
 tg contacts list --search ann                # people by name or @username
+tg search all "contract"                     # messages, mail and notes this machine has kept
 tg search messages "contract"                # the text of every message this machine has kept
 tg search messages "contract" --chat "Book club"
 tg search messages "invoice.*(march|april)" --regex
