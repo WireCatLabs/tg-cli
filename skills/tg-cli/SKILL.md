@@ -439,3 +439,8 @@ Check each field's observedAt/source/freshness (24h default). Refresh is a remot
 Preview exact targets before refreshing; it never connects. Actual refresh requires write permission and explicit
 chat or pinned selection from show; never implicitly refresh account-wide. Missing/unsupported/failed counters
 remain explicit. Never send, mark read or increment views. Imported/legacy values have unknown freshness.
+
+For an extra invite link you own, `tg chats link update <chat> <link>` changes only explicitly supplied
+`--approval` / `--no-approval`, `--expire-time <time>` or `--max-uses <n>` values. Supply at least
+one change; it is a guarded write. Discover its current schema before changing a link.
+MCP uses `tg_write` with command `chats link update`; do not reset a link to edit its settings.
