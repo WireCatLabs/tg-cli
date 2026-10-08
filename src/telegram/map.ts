@@ -471,16 +471,27 @@ export const toPoll = (chatId: string, messageId: string, poll: TgPoll): Poll =>
   }
 }
 
-export const toInputPoll = ({ question, answers, multiple, anonymous, revote, quiz }: NewPoll): InputMediaLike =>
-  quiz
+export const toInputPoll = ({
+  question,
+  answers,
+  multiple,
+  anonymous,
+  revote,
+  quiz,
+  closeAfter,
+}: NewPoll): InputMediaLike => {
+  const closing = closeAfter === undefined ? {} : { closePeriod: closeAfter }
+  return quiz
     ? InputMedia.quiz({
         question,
         answers,
         public: !anonymous,
         correct: quiz.correct,
         ...(quiz.solution === undefined ? {} : { solution: quiz.solution }),
+        ...closing,
       })
-    : InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true })
+    : InputMedia.poll({ question, answers, multiple, public: !anonymous, disableRevoting: revote !== true, ...closing })
+}
 
 /** The two of max's five group switches Telegram has, as default member permissions. */
 export const GROUP_SETTINGS = ["allCanPin", "onlyAdminsAdd", "joinApproval"] as const

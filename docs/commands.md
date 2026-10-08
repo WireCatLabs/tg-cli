@@ -1660,6 +1660,7 @@ tg polls create <chat> <question> <answers> [options]
 | `--quiz` | a quiz: one answer is right, and a vote is final. |
 | `--correct <n>` | with --quiz: the right answer's position, from 1. |
 | `--solution <text>` | with --quiz: what people see once they answered. |
+| `--close-time <delay>` | it closes by itself this long after sending: 5s to 10m, like 90s or 5m. |
 
 ## `tg models`
 

@@ -818,6 +818,8 @@ describe("the send guard in front of the other writes", () => {
         "--multiple",
         "--anonymous",
         "--silent",
+        "--close-time",
+        "90s",
         "--send-id",
         "5",
         "--json",

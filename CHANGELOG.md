@@ -7,6 +7,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg polls create --close-time 5m` closes the poll by itself** that long after sending, from 5 seconds to 10
+  minutes.
 - **`tg polls voters <chat> <message> [--answer <id>]` lists who voted for what** in a poll that is not anonymous.
   When Telegram answers that you must vote first, or that a channel hides its voters, the error says so.
 - **`tg chats link update --expire-time never` takes a link's expiry away.** The group's own link can be changed
