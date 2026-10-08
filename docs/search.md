@@ -1,7 +1,31 @@
-# Message search
+# Search
 
-`tg search messages` finds messages in the local archive, the copy of your chats that tg keeps on this
-computer, and asks Telegram's own search too ([below](#asking-telegram-too---backend)). It marks nothing read.
+Every search is under one group of commands, `tg search`. When you don't know where something was
+written, start with `search all`: it searches the messages, mail and notes kept on this computer in one
+answer, and says what each hit is — a message (`msg:…`) or a note (`note:…`). Searching marks nothing
+read.
+
+```sh
+tg search all 'lease agreement'                   # messages, mail and notes, best match first
+tg search all 'lease' --only messages,notes       # without mail
+tg search messages 'lease' --chat "Book club"     # Telegram messages only, never mail
+tg search mail 'invoice'                          # only the mail memo mail import brought in
+tg search notes 'budget' --type internal          # only notes written in memo
+tg search conversations 'moving to the country'   # conversations close in meaning
+tg search topics "Hiking" "gear"                  # topic titles in one forum group
+```
+
+`search messages` never returns mail, and `search mail` never returns Telegram messages; only
+`search all` covers both. `--type` narrows `search messages` to text, voice or files
+(`text|voice|file`) and `search notes` to notes written in memo or imported from a folder
+(`internal|file`). When a query uses a field mail or notes don't have (`chat:`, `from:`), `search all`
+leaves them out and says so.
+
+Mail and notes reach the archive through [memo](https://github.com/leemour/cli-memo): `memo mail import`
+and `memo import`. Without them, `search all` searches messages only.
+
+The rest of this page is about searching messages, `tg search messages`. It reads the local archive and
+asks Telegram's own search too ([below](#asking-telegram-too---backend)).
 
 ## Prepare your archive first
 
@@ -222,7 +246,7 @@ relevance, and `--context 2` shows two messages around each one found.
 ## For scripts and agents
 
 `--json` returns one object with the messages and what was searched; `--jsonl` streams the messages
-only. In MCP, `tg_read` (`command: "search messages"`) and `tg_read` (`command: "stats messages show"`) take the same queries, and `tags` and
+only. In MCP, `tg_read` (`command: "search all"` or `"search messages"`) and `tg_read` (`command: "stats messages show"`) take the same queries, and `tags` and
 `searches` commands through `tg_read`/`tg_write` manage tags and saved searches. The answer's fields,
 the older `--language legacy` mode and `--regex` are in the [query language](query-language.md).
 
