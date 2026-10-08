@@ -47,5 +47,9 @@ testing:
   string-recorders:
     description: "Record calls as short strings, assert with one toEqual"
 typescript:
+  inference:
+    description: "Let TypeScript infer"
+  no-casts:
+    description: "Narrow types, don't cast them"
   optional-fields:
     description: "Optional fields are spread in, never set to undefined"
