@@ -235,14 +235,16 @@ There are good tools for a Telegram account already. Choose what fits the job.
 | edit, forward, pin, reactions, polls | ✅ | — |
 | deleting messages — for you or for everyone | ✅ | — |
 | marking a chat read on request | ✅ | ✅ |
-| sending into a forum topic; spoilers; protected content; HTML | — | ✅ |
+| sending into a forum topic; spoilers; HTML | ✅ | ✅ |
+| protected content on individual sent messages | — | ✅ |
 | forum topics: list and search | ✅ | ✅ |
 | groups: create | ✅ | — |
 | groups: join, leave | ✅ | ✅ |
 | groups: rename, add and remove members, invite links | ✅ | ✅ |
 | folders | ✅ | ✅ |
 | local tags on chats, contacts and messages | ✅ | ✅ |
-| aliases and notes on chats and contacts | — | ✅ |
+| private aliases and notes for contacts | ✅ | ✅ |
+| notes on chats | — | ✅ |
 | install with Homebrew or Docker | — | ✅ |
 
 **Telegram's own apps** are made for a person. `tg` is made for a script and an agent: one operation
@@ -517,7 +519,7 @@ before the pull request.
 What is coming to `tg`, in the order it is likely to arrive. The order can change. Ideas and
 requests are welcome in [issues](https://github.com/leemour/tg-cli/issues).
 
-- **Richer sending** — several photos in one message, sending into a forum topic
+- **Richer sending** — several photos in one message
   ([usage.md](docs/usage.md#not-in-tg-yet)).
 
 What each released version changed is in [CHANGELOG.md](CHANGELOG.md).
