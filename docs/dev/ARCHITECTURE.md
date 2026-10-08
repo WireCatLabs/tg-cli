@@ -23,6 +23,17 @@ CLI and MCP. The public [compliance audit](https://github.com/leemour/cli-messag
 separates source evidence, isolated observations, intentional differences and follow-up work.
 Shared runtime fixes become available only after this CLI adopts their published version.
 
+### Agent evaluation evidence
+
+Correction 2026-10-08: the [public admin/statistics evaluation](https://github.com/leemour/cli-messaging/blob/main/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) separates independent
+model contexts, synthetic CLI/MCP traces, deterministic fixture checks and live-provider claims.
+Its six contexts and 38 assessed outcomes are a bounded observation, not broad agent conformance;
+original model identity was not captured and MCP used a shell proxy. Read the report's subject
+versions and first-failure record before comparing results with another release.
+[Reproduction tooling](https://github.com/leemour/cli-messaging/tree/main/scripts/evals) belongs to cli-messaging; the
+[user CLI contract](../cli-contract.md) explains what that evidence means for a statistics answer.
+
+
 ## 1. Most of `tg` is not in this repository
 
 Every command except `session`, `setup` and `update` comes from `@leemour/cli-messaging/cli`: the command
