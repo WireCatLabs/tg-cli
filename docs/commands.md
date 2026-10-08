@@ -537,7 +537,7 @@ tg chats link revoke <chat> <link>
 
 #### `tg chats link update`
 
-change one of your extra links; the group's own link cannot be changed
+change one of your invite links, the group's own one too
 
 **Changes something in Telegram.**
 
@@ -554,7 +554,7 @@ tg chats link update <chat> <link> [options]
 |---|---|
 | `--approval` | who joins by it asks first, and an admin lets them in. |
 | `--no-approval` | anyone with it joins at once. |
-| `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
+| `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now; `never` takes the expiry away. |
 | `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
 
 #### `tg chats link reset`
@@ -1017,7 +1017,7 @@ tg contacts alias rm <person>
 
 ### `tg contacts notes`
 
-your private notes on a stored contact, scoped to this account
+your private notes on a stored contact, the same in every account that sees them
 
 #### `tg contacts notes list`
 
@@ -2188,7 +2188,7 @@ tg store check
 
 ### `tg store migrate`
 
-bring the store up to this build's schema, then normalize, index and stem the messages stored before it
+bring the store up to this build's schema, then normalize, index and stem the messages and notes stored before it
 
 ```sh
 tg store migrate
@@ -2196,7 +2196,7 @@ tg store migrate
 
 ### `tg store reindex`
 
-rebuild the word index, its typo vocabulary, the stems and the files' word index from the stored messages; loses no message
+rebuild the word index, its typo vocabulary, the stems, the files' word index and the notes' indexes from what is stored; loses nothing
 
 ```sh
 tg store reindex

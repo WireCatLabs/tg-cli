@@ -88,6 +88,14 @@ class FakeClient {
       if (this.searchAnswer instanceof Error) throw this.searchAnswer
       return this.searchAnswer
     }
+    if (request._ === "messages.editExportedChatInvite") {
+      const { link, requestNeeded, expireDate, usageLimit } = request as Record<string, unknown>
+      return {
+        _: "messages.exportedChatInvite",
+        invite: { _: "chatInviteExported", link, requestNeeded, expireDate, usageLimit, date: 0, adminId: 1 },
+        users: [],
+      }
+    }
     if (request._ === "messages.forwardMessages") {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
       return this.forwardAnswer
@@ -194,14 +202,6 @@ class FakeClient {
       isRevoked: false,
       pendingApprovals: 0,
       usage: 0,
-    }),
-  )
-  editInviteLink = vi.fn(
-    async (..._args: unknown[]): Promise<unknown> => ({
-      link: "https://t.me/+extra",
-      approvalNeeded: false,
-      endDate: null,
-      usageLimit: 5,
     }),
   )
   createInviteLink = vi.fn(
@@ -1942,16 +1942,23 @@ describe("making, joining and leaving groups", () => {
     expect(client.revokeInviteLink.mock.calls).toEqual([[-100700, "https://t.me/+old"]])
   })
 
-  it("changes only the given fields of a link", async () => {
+  it("changes only the given fields of a link, and takes an expiry away with 0", async () => {
     const { adapter, client } = await open()
 
     expect(
       await adapter.updateInviteLink("-100700", "https://t.me/+extra", { approval: false, maxUses: 5 }),
     ).toMatchObject({ link: "https://t.me/+extra", approval: false, maxUses: 5 })
-    await adapter.updateInviteLink("-100700", "https://t.me/+extra", { expiresAt: "2026-10-14T18:00:00.000Z" })
-    expect(client.editInviteLink.mock.calls).toEqual([
-      [{ chatId: -100700, link: "https://t.me/+extra", withApproval: false, usageLimit: 5 }],
-      [{ chatId: -100700, link: "https://t.me/+extra", expires: new Date("2026-10-14T18:00:00.000Z") }],
+    expect(
+      await adapter.updateInviteLink("-100700", "https://t.me/+extra", { expiresAt: "2026-10-14T18:00:00.000Z" }),
+    ).toMatchObject({ expiresAt: "2026-10-14T18:00:00.000Z" })
+    expect(await adapter.updateInviteLink("-100700", "https://t.me/+extra", { expiresAt: null })).toMatchObject({
+      expiresAt: null,
+    })
+    const sent = client.calls.filter((call) => call.method === "call").map((call) => call.args[0])
+    expect(sent).toEqual([
+      expect.objectContaining({ link: "https://t.me/+extra", requestNeeded: false, usageLimit: 5 }),
+      expect.objectContaining({ expireDate: Date.parse("2026-10-14T18:00:00.000Z") / 1000 }),
+      expect.objectContaining({ _: "messages.editExportedChatInvite", expireDate: 0 }),
     ])
   })
 

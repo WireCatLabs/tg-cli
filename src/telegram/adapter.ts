@@ -48,6 +48,7 @@ import type {
   Transcript,
 } from "@leemour/cli-messaging/cli"
 import {
+  ChatInviteLink,
   type DeleteMessageUpdate,
   FileLocation,
   getMarkedPeerId,
@@ -1771,16 +1772,18 @@ export class TelegramAdapter {
 
   updateInviteLink(chatId: string, link: string, { approval, expiresAt, maxUses }: InviteLinkChange) {
     return this.#call(async () => {
+      const peer = await this.#client.resolvePeer(Number(chatId))
       try {
-        return toInviteLink(
-          await this.#client.editInviteLink({
-            chatId: Number(chatId),
-            link,
-            ...(approval === undefined ? {} : { withApproval: approval }),
-            ...(expiresAt === undefined ? {} : { expires: new Date(expiresAt) }),
-            ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
-          }),
-        )
+        // Raw, because mtcute's editInviteLink drops an expiry of 0 — Telegram's "never expires".
+        const answer = await this.#client.call({
+          _: "messages.editExportedChatInvite",
+          peer,
+          link,
+          ...(approval === undefined ? {} : { requestNeeded: approval }),
+          ...(expiresAt === undefined ? {} : { expireDate: expiresAt === null ? 0 : Date.parse(expiresAt) / 1000 }),
+          ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
+        })
+        return toInviteLink(new ChatInviteLink(answer.invite, PeersIndex.from(answer)))
       } catch (error) {
         throw unknownIfUnanswered(error, "the link may or may not have been changed; check `tg chats link list`")
       }

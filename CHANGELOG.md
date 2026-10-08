@@ -3,6 +3,13 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg chats link update --expire-time never` takes a link's expiry away.** The group's own link can be changed
+  too; the help no longer says otherwise.
+
 ## 0.38.0 — 08.10.2026
 
 ### What's new
