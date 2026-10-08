@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2314 ✅ · 60 ⛔ · 0 ❌** — 458 commands, 1916 options.
+**2317 ✅ · 60 ⛔ · 0 ❌** — 459 commands, 1918 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -254,6 +254,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages forward` | `--silent` | ✅ |  |
 | `messages forward` | `--send-as` | ✅ |  |
 | `messages forward` | `--send-id` | ✅ |  |
+| `messages forward` | `--topic` | ✅ |  |
 | `messages pin` |  | ✅ |  |
 | `messages pin` | `--notify` | ✅ |  |
 | `messages unpin` |  | ✅ |  |
@@ -320,6 +321,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics search` | `--limit` | ✅ |  |
 | `topics search` | `--page` | ✅ |  |
 | `topics search` | `--all` | ✅ |  |
+| `topics show` |  | ✅ |  |
 | `topics enable` |  | ✅ |  |
 | `topics enable` | `--upgrade` | ✅ |  |
 | `topics create` |  | ✅ |  |
@@ -501,6 +503,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments list` | `--all` | ✅ |  |
 | `attachments show` |  | ✅ |  |
 | `attachments show` | `--attachment` | ✅ |  |
+| `attachments show` | `--page` | ✅ |  |
 | `attachments show` | `--offset-bytes` | ✅ |  |
 | `attachments show` | `--chunk-bytes` | ✅ |  |
 | `attachments show` | `--if-sha256` | ✅ |  |

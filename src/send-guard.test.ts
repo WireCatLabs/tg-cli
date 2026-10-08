@@ -250,6 +250,50 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-quiet")).toMatchObject([{ kind: "forward", outcome: "sent", chatId: "1", messageId: "70" }])
   })
 
+  it("forwards into a forum topic of the --to chat after checking it there", async () => {
+    const steps: unknown[] = []
+    const adapter = scripted({
+      validateThread: async (chatId, threadId) => {
+        steps.push(["check", chatId, threadId])
+      },
+      forward: async (_from, _id, toChatId, options) => {
+        steps.push(["forward", toChatId, options.threadId])
+        return message("70", { chatId: toChatId, outgoing: true })
+      },
+    })
+
+    const { code } = await tg(
+      ["g-fwd-topic", "messages", "forward", "Valencia", "5", "--to", "me", "--topic", "12"],
+      adapter,
+    )
+
+    expect(code).toBe(0)
+    expect(steps).toEqual([
+      ["check", "1", "12"],
+      ["forward", "1", "12"],
+    ])
+    expect(journal("g-fwd-topic")).toMatchObject([{ kind: "forward", outcome: "sent", threadId: "12" }])
+  })
+
+  it("**shows one forum topic**, writing nothing", async () => {
+    const topic = {
+      id: "12",
+      title: "Pisos",
+      closed: false,
+      pinned: false,
+      unreadCount: 0,
+      lastMessageAt: null,
+      createdAt: null,
+    }
+    const adapter = scripted({ topic: async (_chat, topicId) => ({ ...topic, id: topicId }) })
+
+    const shown = await tg(["g-topic", "topics", "show", "Valencia", "12", "--json"], adapter)
+
+    expect(shown.code).toBe(0)
+    expect(JSON.parse(shown.stdout[0] ?? "")).toEqual(topic)
+    expect(journal("g-topic")).toEqual([])
+  })
+
   it("repeats a forward with the --send-id it is given, and journals that id", async () => {
     const { adapter, forwarded } = telegram()
 

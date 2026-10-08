@@ -89,6 +89,9 @@ describe("shared local attachment readers", () => {
     ).toEqual(Buffer.from(readerText()))
     const refused = await invoke("attachments", "show", "7", "1", "--if-sha256", "0".repeat(64))
     expect(refused.code).not.toBe(0)
+    const notPdf = await invoke("attachments", "show", "7", "1", "--page", "1")
+    expect(notPdf.code).not.toBe(0)
+    expect(notPdf.stderr).toContain("PDF")
   })
 
   it("reads real UTF-16/ODT fixtures through the CLI and indexes content without a model", async () => {

@@ -905,10 +905,11 @@ export class TelegramAdapter {
     fromChatId: string,
     messageId: string,
     toChatId: string,
-    { sendId, silent, sendAs }: { sendId: string; silent?: boolean; sendAs?: string },
+    { sendId, silent, sendAs, threadId }: { sendId: string; silent?: boolean; sendAs?: string; threadId?: string },
   ): Promise<Message> {
     const id = messageNumber(messageId, "a message id is a number")
     const randomId = parseSendId(sendId)
+    const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const author = sendAs === undefined ? undefined : sendAsPeer(toChatId, sendAs, this.self())
     return this.#call(async () => {
       try {
@@ -919,6 +920,7 @@ export class TelegramAdapter {
           id: [id],
           randomId: [randomId],
           ...(silent ? { silent } : {}),
+          ...(thread === undefined || thread === 1 ? {} : { topMsgId: thread }),
           ...(author === undefined ? {} : { sendAs: await this.#client.resolvePeer(author) }),
         })
         this.#client.handleClientUpdate(updates, true)
@@ -1389,6 +1391,18 @@ export class TelegramAdapter {
           throw new CliError("validation_error", "--reply-to belongs to a different topic; choose a message in --topic")
         }
       }
+    })
+  }
+
+  topic(reference: string, topicId: string): Promise<Topic> {
+    const id = topicNumber(topicId)
+    return this.#call(async () => {
+      const input = await this.#inputOf(reference)
+      const peer = await this.#client.getPeer(input)
+      if (peer.type !== "chat" || !peer.isForum) throw new CliError("validation_error", "that chat has no topics")
+      const [topic] = await this.#client.getForumTopicsById(input, id)
+      if (!topic) throw new CliError("not_found", "that forum topic does not exist; check `topics list`")
+      return toTopic(topic)
     })
   }
 
