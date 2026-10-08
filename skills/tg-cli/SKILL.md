@@ -444,3 +444,12 @@ For an extra invite link you own, `tg chats link update <chat> <link>` changes o
 `--approval` / `--no-approval`, `--expire-time <time>` or `--max-uses <n>` values. Supply at least
 one change; it is a guarded write. Discover its current schema before changing a link.
 MCP uses `tg_write` with command `chats link update`; do not reset a link to edit its settings.
+
+## Names in statistics requests
+
+The owner may name a chat or person naturally. Find the chat with `chats list`, the person
+with `contacts show` / `contacts list`, or stored authors with `stats contacts top`; use the confirmed ID
+in the intended account for the report. If several candidates match, show them and ask the
+owner to choose. Never guess an ID or turn an unresolved name into a claim of zero activity.
+After a failed lookup, explain which name, @username or account clarification would help.
+Counts describe only observed history.
