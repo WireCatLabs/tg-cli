@@ -3,13 +3,6 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-### Fixed
-
-- **`tg polls voters --answer <id>` names the answer** of each vote; it listed them with no answer. Without
-  `--answer`, it no longer says more voters remain when it has shown them all.
-
 ## 0.39.0 — 08.10.2026
 
 ### What's new
@@ -41,6 +34,11 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   notes from `memo`.
   Watch for: with several Telegram profiles, a person's notes from all of them now show together. Aliases
   (`contacts alias`) still apply only in their own profile.
+
+### Fixed
+
+- **`tg polls voters --answer <id>` names the answer** of each vote; it listed them with no answer. Without
+  `--answer`, it no longer says more voters remain when it has shown them all.
 
 ## 0.38.0 — 08.10.2026
 
