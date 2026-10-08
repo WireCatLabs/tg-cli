@@ -1,195 +1,242 @@
-# Ranking stored messages and authors
+# Statistics
 
-Statistics use `stats → resource → view`. The executable is `tg`.
-The commands read the local store and do not connect by default. Fetch the relevant history
-first; a ranking describes held data, not all activity in the messenger.
+See which messages attracted attention, who needs an answer and how group membership changes. Reports use saved history. If the relevant messages are missing, [download the history](archive.md) first.
 
-```sh
-tg stats messages top 'chat:room date:[2026-10-01 TO 2026-10-08}' --measure reactions --limit 10 --json
-tg stats contacts top 'chat:room date:[2026-10-01 TO 2026-10-08}' --score helpful --min-messages 3 --json
-tg stats contacts top --weights '{"messages":0.4,"active-days":0.6}' --timezone Europe/Madrid --json
-```
+The requests, names and results below are fictional examples. Replace the chat name with yours. Tables show how an agent can present its answer; commands with `--json` return data for it.
 
-## Measures and scores
+## Messages people react to
 
-| Target | Measures | Default |
-|---|---|---|
-| Messages | views, reactions, forwards, comments, replies, thread-size | reactions |
-| Human authors | messages, words, reactions, replies, answers, answer-time, threads, active-days | messages |
+Find the messages with the most recorded reactions.
 
-`answer-time` sorts ascending by median milliseconds; the other measures sort descending.
-`--message-kind posts` or `comments` selects proven kinds before aggregation.
-Unknown old linkage is reported rather than guessed. Linked channel comments may live in a
-stored discussion group; the answer lists expanded discussion chats and their coverage.
+**Your request:**
 
-`--score helpful` weights answers 0.5, replies from others 0.25 and reactions 0.25.
-`--score active` weights active days 0.6 and messages 0.4. Both apply to authors.
-`--score engaging` weights reactions and nonself replies equally; author scores use per-message
-rates and require five selected messages unless `--min-messages` overrides that threshold.
-`--weights` replaces every preset weight. Names must be supported components for the target,
-weights finite and nonnegative, and at least one positive. `--measure` conflicts with scores.
+> Show the three most-reacted-to messages in Hiking.
 
-Score version 1 normalizes each component against the maximum among all eligible rows before
-`--limit`: `100 × sum(weight × value / maximum) / sum(weight)`. A zero maximum contributes zero.
-Missing positive components exclude a row from scoring. A zero weight ignores that component.
-The response includes maxima, component values, contributions and exclusion counts.
-
-## Scope and quality
-
-Queries use strict Lucene with `--chat`, `--source`, `--exact` and `--timezone` as in message search.
-A top page contains 1–100 rows. Text and author predicates select ranked messages; reply context
-uses authorized stored messages in the same query period without those text or author filters.
-Graph metrics reject ambiguous date branches: use a common positive date range.
-
-Views, reactions, forwards and comment counters are cumulative stored snapshots. Views, reactions and
-comments disclose per-field observation time and freshness when supplied by an authoritative read;
-forwards have no such observation field. A date filter selects messages, not reactions
-received within that period. Unknown counters are distinct from zero. Author reaction totals
-can be partial, with known and unknown message counts. `--sync-first` is guarded and bounded;
-it fetches newer messages and does not refresh old counters.
-
-Answers are a heuristic: a question contains `?` after URL removal, and its first direct reply
-by another known human author is credited. Self replies and channel identities do not qualify.
-Words use version 1 letter/digit runs with URLs removed. Active days use the selected timezone.
-Coverage and graph quality tell you when held history is incomplete. No metric proves helpfulness.
-
-## Follow the evidence
-
-Each row returns `drilldown.selection` and exact `drilldown.evidence.arguments` for its evidence
-command. Pass that selection as JSON, with the emitted message locator or native person id:
+**Command:**
 
 ```sh
-tg stats messages evidence msg:telegram/fixture/room/101 --selection "$selection" --component replies --limit 20 --json
-tg stats contacts evidence 42 --selection "$selection" --component answers --limit 20 --json
+tg stats messages top --chat "Hiking" --measure reactions --limit 3 --json
 ```
 
-Replies include their parent; answers include the question and credited answer. Snapshot metrics
-show measured messages, not lists of viewers or reactors. Author `messages` evidence exposes
-all selected messages even when ranking by a score. Active-day evidence lists underlying
-messages; its one-per-message contributions are not summed into distinct days.
+**Example agent answer:**
 
-Evidence includes `total`, `included`, `hasMore` and `nextCursor`. Continue with the same
-arguments and `--cursor`. A changed contributing row rejects the cursor; restart without it.
-Each page retains complete rows within a 64 KiB items budget. An oversized single row directs
-you to `messages show`. Fingerprinting is bounded to 50,000 rows and 8 MiB of stored inputs;
-narrow chat/date scope when the query exceeds a budget. Selection JSON is capped at 64 KiB.
+> | Message | Reactions |
+> | --- | ---: |
+> | Packing list | 18 |
+> | Trip photos | 11 |
+> | New route | 7 |
 
-## Find questions and posts that need attention
+Your agent can open the original messages so you can check the context. Counters are cumulative totals, not reactions received only during a selected period.
 
-These reports are available in tg 0.36.0.
+## Who answers questions
 
-After loading the relevant history, you can ask your agent: “Show questions in the club that have
-waited more than a day, and open the original messages.” These reports read the stored archive;
-an empty report cannot prove that nobody asked a question when history is missing.
+Compare people by their observed answers to questions.
+
+**Your request:**
+
+> Who answered the most questions in Hiking? Show three people.
+
+**Command:**
 
 ```sh
-tg stats messages unanswered --chat Club --older-than 24h --json
-tg stats contacts responses --chat Club --answerer 42 --answerer 73 --json
-tg stats chats newcomers Club --since-time 2026-10-01T00:00:00Z --within 7d --json
-tg stats messages discussion --chat News --min-views 100 --max-replies 0 --json
+tg stats contacts top --chat "Hiking" --measure answers --limit 3 --json
 ```
 
-`unanswered` orders detected questions by age. A question contains `?` outside URLs; this is a
-heuristic. Only a direct explicit reply from another identifiable human qualifies. A later reply
-can answer a question even when its date/text does not match the question query. Replies to oneself
-and the next speaker without a reply link do not qualify. `no-observed-answer` describes saved
-history, rather than proof that no answer exists in the messenger.
+**Example agent answer:**
 
-`responses` requires the identities to measure with repeated `--answerer`. They are user-selected
-people, not verified past administrator roles. It shows response count, median and p90 latency in
-milliseconds; no response gives null timings. P90 uses the nearest rank, rounded up. Without
-`--answerer`, unanswered and newcomer reports accept any other identifiable human. Bare ids need
-one scoped account; use `person:<provider>/<account>/<id>` for multiple accounts.
+> | Person | Answers |
+> | --- | ---: |
+> | Alex Rivera | 4 |
+> | Lena | 2 |
+> | Sam | 1 |
 
-`newcomers` defaults to joins in the last 30 days and questions within seven days after a known
-join. `--until-time` ends the join cohort. First-seen-only identities are counted separately in
-`summary.unknownJoin`, not assigned a joining date. A rejoin is a separate stay. Pending help windows
-and incomplete member history are reported; no saved question does not mean no help was needed.
+Answer counts help you find examples of participation; they do not prove a person’s helpfulness.
 
-`discussion` examines stored channel posts. It compares known cumulative views with observed direct discussion replies. Provider
-comment snapshots remain separate; their observation freshness is disclosed per field; old records remain unknown. Linked discussion needs stored
-link metadata and its group's history. Missing counters or graph links are not zero.
+<a id="find-questions-and-posts-that-need-attention" />
 
-Each row provides `drilldown.command` and exact arguments. Run its existing messages/contacts
-`evidence` command with `--component report` and the returned selection. Follow `nextCursor` with
-the same arguments. The captured cutoff remains fixed; changed evidence requires a fresh report.
-Evidence items fit within 64 KiB. Narrow the chat/date scope if the 50,000-node or 8 MiB budget is
-exceeded. Look at `quality.archives` and `quality.graph` before drawing conclusions, then open the
-returned message locator with `messages show` to check the original context.
+## Questions waiting for an answer
 
-You can save a report's returned selection with `searches create waiting --selection "$selection"`
-and rerun the matching view with `--saved waiting`. Resolved accounts, chat, root dates and answerers
-remain pinned; typed report options replace inherited values. Each new run captures a fresh observation
-cutoff for replies. A saved report cannot run as a different report kind or an ordinary ranking.
-Report history stores parameters and resolved selections, never result messages. Evidence is not recorded.
+Find older questions without an observed direct answer.
 
-## Save a resolved ranking
+**Your request:**
+
+> Which questions in Hiking have waited more than a day?
+
+**Command:**
 
 ```sh
-tg searches create weekly --selection "$selection"
-tg stats contacts top --saved weekly --limit 20 --json
+tg stats messages unanswered --chat "Hiking" --older-than 24h --json
 ```
 
-Use the matching message/contacts target. Resolved ids and date boundaries stay pinned;
-additional query words narrow the saved scope. Typed ranking options replace stored ones.
-Pinned selections read held data and refuse `--sync-first`; run an ordinary query to refresh.
-History records parameters, not result bodies. Evidence is never recorded as search history.
+**Example agent answer:**
 
-MCP discovers and invokes these same paths through the existing three-tool frontend. Selection
-is a structured object there. See the [command contract](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-10-07-rankings-contract.md)
-and [CLI standard](https://github.com/leemour/cli-messaging/blob/main/docs/dev/STANDARD.md) for the public interface and standards references.
+> **One question has no observed answer.**
+>
+> | From | Question | Waiting |
+> | --- | --- | --- |
+> | Ira | Who will bring the cooking pot? | 2 days |
+>
+> History is incomplete: an answer may be missing from the archive.
 
-## Retention from roster observations
+Questions are detected by a question mark outside links. A direct reply from another known person qualifies; an unrelated next message does not close the question.
 
-Ask your agent: “For the group called Club, show how many newcomers were still observed after one,
-seven and thirty days. Show unknown observations and members who wrote within their first week.”
-The answer needs known joining dates and saved member-list observations. A first sighting is not a joining date.
+## How quickly someone replies
+
+See the number of answers and waiting times for a selected person.
+
+**Your request:**
+
+> How quickly does Alex Rivera answer questions in Hiking? Show an example.
+
+**Command:**
 
 ```sh
-tg stats chats retention Club --checkpoints 1d,7d,30d --within 7d --timezone Europe/Madrid --json
+tg stats contacts responses --chat "Hiking" --answerer "Alex Rivera" --json
 ```
 
-The default joining period is the last 90 days, grouped by Monday week. `--by day`, `--since-time`
-and `--until-time` change the cohorts. Checkpoints accept up to ten increasing positive durations.
-Each checkpoint uses the first saved roster observation at or after its target, within 24 hours.
-Evidence includes its actual time and lag. Presence is observable even in a partial list;
-absence needs a complete list. No qualifying observation means unknown; a future checkpoint is pending.
-The reported rate is present / observable. Eligible, unknown and pending counts stay visible.
-This is observed membership at checkpoints; it does not prove uninterrupted membership.
+**Example agent answer:**
 
-Departures have an interval after the last positive sighting and at or before the first complete absence.
-An interval crossing the first-week boundary cannot prove an early departure. Rejoining starts a separate stay.
-A saved message proves observed activity. No message means no observed message; `archiveCovered` shows
-whether the archive covers the full window. The report does not infer a silent-member rate for the whole group.
-Copy a cohort's `drilldown` arguments into `stats messages evidence --component report` to page through members.
-Selections pin the cutoff; changed observations invalidate the cursor. Evidence pages are bounded to 64 KiB.
+> | Metric | Result |
+> | --- | --- |
+> | Observed answers | 1 |
+> | Median waiting time | 2 days |
+> | p90 waiting time | 2 days |
+>
+> Both values come from one answer, so the sample is small. I can open the question and its linked answer.
 
-## Check and refresh counters
+The median is the middle observed waiting time; p90 is the upper boundary for about 90% of answers. Selecting a person does not establish that they were an administrator in the past.
 
-Ask your agent: “Check how old the view and reaction counts are for the selected Club messages.
-Preview a refresh of at most twenty messages, then refresh those exact targets.”
-A message's sending date and the time it was saved do not establish when its counters were observed.
+## Help for newcomers
+
+Check whether people who recently joined received answers to their questions.
+
+**Your request:**
+
+> Did newcomers to Hiking get help during their first week?
+
+**Command:**
 
 ```sh
-tg stats messages counters show --chat Club --counters views,reactions --max-age 24h --limit 20 --json
-tg stats messages counters refresh --chat Club --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
+tg stats chats newcomers "Hiking" --within 7d --json
 ```
 
-`show` reads locally and returns each field's value, `observedAt`, source, age and `freshness`:
-`fresh`, `stale` or `unknown`. The default threshold is 24 hours. Missing or invalid fields are unknown,
-not zero. Views, reactions and comments are independent; refreshing one does not freshen the others.
-The returned `selection` pins exact locators and can be passed as JSON with `--selection`.
-It conflicts with extra query and scope options.
+**Example agent answer:**
 
-`refresh` reads the messenger and writes local observations. It requires an explicit chat or pinned selection,
-uses the active account, defaults to twenty messages and 30 seconds, and caps messages at 100 and time at five minutes.
-`--dry-run` resolves exact targets and supported counters without connecting. The real refresh uses
-`stats.messages.counters.refresh` write permission and message read permission. It sends no messages,
-marks nothing read and requests no view increment. Unsupported, missing, failed and interrupted work
-remain explicit in the result. Counter-only writes preserve message bodies, replies, attachments and tombstones.
-Old/imported messages acquire no guessed timestamps; a legacy writer changing a value makes its freshness unknown.
+> | Newcomer | Questions | Answered |
+> | --- | ---: | ---: |
+> | Kate | 2 | 2 |
+> | Oleg | 1 | 0 |
+>
+> Oleg has no observed answer. One person’s joining date is unknown, so their first week was not calculated.
 
-After refresh, run `show` again for the returned selection and inspect each field's observation date.
-A refreshed cumulative count still does not tell you how many views or reactions happened during a date-filtered period.
+By default, the report selects joins from the last 30 days. First seeing someone in the archive does not establish their joining date.
 
-Telegram supports views, reactions and comments where the remote message supplies them. Counter refresh uses exact message reads and never requests a view increment.
+<a id="retention-from-roster-observations" />
+
+## Do newcomers stay?
+
+Compare observed membership one day, one week and one month after joining.
+
+**Your request:**
+
+> How many Hiking newcomers stayed after a day, a week and a month? Show gaps in the data.
+
+**Command:**
+
+```sh
+tg stats chats retention "Hiking" --checkpoints 1d,7d,30d --within 7d --timezone UTC --json
+```
+
+**Example agent answer:**
+
+> | After joining | Stayed among observable members | Unknown | Not due yet |
+> | --- | --- | ---: | ---: |
+> | 1 day | 1 of 1 — 100% | 1 | 1 |
+> | 7 days | 1 of 2 — 50% | 0 | 1 |
+> | 30 days | No observable denominator | 2 | 1 |
+>
+> The denominators differ, so these percentages are not a complete retention curve. No observed message does not prove that someone was silent.
+
+This needs known joining dates and saved member lists. Absence from a partial list remains unknown. [Member observations](groups.md) help collect data for later reports.
+
+## Posts without discussion
+
+Find viewed posts with little recorded discussion.
+
+**Your request:**
+
+> Which posts in News received views but no discussion?
+
+**Command:**
+
+```sh
+tg stats messages discussion --chat "News" --min-views 100 --max-replies 0 --json
+```
+
+**Example agent answer:**
+
+> | Post | Stored views | Observed replies |
+> | --- | ---: | ---: |
+> | New route | 240 | 0 |
+>
+> This is an absence of discussion in available history. Missing comments could change the conclusion.
+
+<a id="check-and-refresh-counters" />
+
+## How fresh are the counts?
+
+Check when views and reactions were observed separately.
+
+**Your request:**
+
+> Check the age of Hiking’s view and reaction counts without refreshing anything.
+
+**Command:**
+
+```sh
+tg stats messages counters show --chat "Hiking" --counters views,reactions --max-age 24h --limit 20 --json
+```
+
+**Example agent answer:**
+
+> | Message field | Value | Observed |
+> | --- | ---: | --- |
+> | Views | 0 | 1 hour ago — fresh |
+> | Reactions | 0 | 3 days ago — stale |
+>
+> Fields have independent freshness. A missing value is shown as unknown, not zero.
+
+### Preview a refresh
+
+Before fetching new counters, ask for the exact messages and limits.
+
+```sh
+tg stats messages counters refresh --chat "Hiking" --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
+```
+
+> **Plan:** at most 20 messages, up to 30 seconds. Views and reactions are supported.
+> This is a preview: no connection or refresh has occurred.
+
+A real refresh needs your request. It reads counters from Telegram and saves observations locally; it sends no messages, marks nothing read and requests no view increment. Comments can also be refreshed where Telegram supplies them.
+
+<a id="scope-and-quality" />
+
+<a id="names-and-unknown-response-activity" />
+
+## If a name or history is unknown
+
+When several people match, the agent shows candidates and asks you to choose. Failing to identify someone does not mean zero activity. Even an explicitly selected ID without observations remains unknown: JSON exposes `identityKnown: false`, `status: unknown`.
+
+An empty report with incomplete history does not establish that there were no questions or answers. Ask the agent to open the source messages and show the available-history limits.
+
+<a id="measures-and-scores" />
+
+<a id="follow-the-evidence" />
+
+<a id="save-a-resolved-ranking" />
+
+## More control
+
+You can select a period, choose a measure or combined score, and save a selection for another report. Scoring formulas, exact evidence arguments and page limits live in the [shared statistics specification](https://github.com/leemour/cli-messaging/blob/main/docs/rankings.md) and [command reference](commands.md).
+
+To verify a finding, ask the agent to open the question, answer or members behind that report row. Before the next report, [check archive coverage](archive.md).

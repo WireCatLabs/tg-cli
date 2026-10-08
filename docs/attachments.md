@@ -51,6 +51,12 @@ tg attachments list --chat "Study group" --needs-text --json
 A download never overwrites an existing file. `localPath` names a file on the computer running
 the CLI; a remote agent needs access to the bytes, not only that path.
 
+Remote agents can receive a retained PDF through `attachments show`, or request each page with
+`--page` when their client cannot open PDFs. This uses optional local rendering engines; the
+agent recognizes the text. If image content is inaccessible, request MCP `format: base64` and
+display the PNG with the agent's tools. See [remote PDF reading](remote.md#read-pdf-pages-without-a-local-file-handoff)
+for an example and limits.
+
 ## How content is read
 
 Scans and images use the agent's own OCR or visual tools by default. API OCR is explicitly

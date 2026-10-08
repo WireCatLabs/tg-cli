@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2339 ✅ · 60 ⛔ · 0 ❌** — 462 commands, 1937 options.
+**2340 ✅ · 59 ⛔ · 0 ❌** — 462 commands, 1937 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -646,7 +646,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--thread-messages` | ✅ |  |
 | `search messages` | `--thread-bytes` | ✅ |  |
 | `search messages` | `--thread-within` | ✅ |  |
-| `search messages` | `--backend` | ⛔ | cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages |
+| `search messages` | `--backend` | ✅ |  |
 | `search messages` | `--server-time` | ⛔ | cli-messaging src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages |
 | `search messages` | `--chat` | ✅ |  |
 | `search messages` | `--source` | ✅ |  |

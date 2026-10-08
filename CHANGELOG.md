@@ -3,7 +3,7 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.40.0 — 09.10.2026
 
 ### What's new
 
@@ -11,16 +11,16 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   messages and last activity.
 - **`tg messages forward --topic <id>` forwards into a forum topic** of the `--to` group. The topic is checked
   first, as with `messages send --topic`; topic 1 is General.
-- **`tg attachments show --page <n>` renders one page of a stored PDF as a PNG picture**, for agents that cannot
-  open a PDF. Needs the optional PDF renderer; no text recognition runs.
-- **`tg search all "<words>"` searches everything kept on this machine at once**: Telegram and MAX messages, mail
-  imported by memo, and notes. Each hit says whether it is a message, a mail or a note. `--only notes` (or
-  `messages`, `mail`) narrows it.
-- **`tg search mail` and `tg search notes`** search one kind. Notes are found by their words and, with the local
-  text model, by meaning; `--type internal` (written in memo) or `file` (from a notes folder).
-- **`tg search messages --type voice`** (or `text`, `file`) finds only that kind of message.
+- **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents can read
 
 ### Changed — may break scripts
+
+- **Statistics `--answerer` accepts stored names, aliases and @usernames.** Resolution stays local
+  to the selected history’s accounts; ambiguous names return scoped candidates. Unknown names now
+  fail instead of producing a fabricated zero-answer identity. Use `person:provider/account/id`
+  to explicitly select an unseen opaque ID. Response rows add `identityKnown`; an ID without
+  observations has `identityKnown: false` and `status: unknown`. Zero observed answers do not
+  prove inactivity ([statistics](docs/rankings.md)).
 
 - **Every search moved under `tg search`.** The old commands are gone:
 

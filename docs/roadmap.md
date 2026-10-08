@@ -13,3 +13,5 @@ requests are welcome in [issues](https://github.com/leemour/tg-cli/issues).
 What each released version changed is in [CHANGELOG.md](../CHANGELOG.md).
 
 Retained file transfer to remote AI agents is implemented: [attachment guide](attachments.md).
+Agents whose clients cannot open PDFs can receive individual pages as images:
+[remote PDF reading](remote.md#read-pdf-pages-without-a-local-file-handoff).

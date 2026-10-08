@@ -13,60 +13,118 @@ An agent with a terminal (Claude Code, Codex) needs the [skill](recipes.md#once-
 one without (Claude Desktop, Cursor) needs the [MCP server](mcp.md). Below: what you say, what the
 agent calls, and what you get back.
 
+The names, messages and results below are fictional. Commands are separate from the answer: the agent reads the data and presents it for you.
+
 ### An admin's morning: who is waiting for an answer
 
-```text
-You:    What is still unanswered in "Hiking"?
-Agent:  (tg review --chat "Hiking" --unanswered 4h --json)
-        Unanswered for more than 4 hours — 3 questions:
-        · Lena, 08:12 — "What time do we leave on Saturday?"
-        · Artem, yesterday 22:40 — a reply to your post about the route: "Are the tents shared?"
-        · Ira, yesterday 19:05 — "Who brings the pot?"
-        You or the admins answered the rest.
+Start with questions that have been waiting for you or the admins.
+
+**Your request:**
+
+> What in Hiking has been waiting for an answer for more than four hours?
+
+**Command:**
+
+```sh
+tg review --chat "Hiking" --unanswered 4h --json
 ```
 
-A question is a message with `?` in it, or a reply to you or to an admin; a `?` inside a link does not
-count. It is answered when you or an admin replied to it, or were the next to speak after the person
-who asked. When Telegram does not say who the group's admins are, only your answers count, and the
-command says so.
+**Example agent answer:**
+
+> **3 questions are waiting for an answer.**
+>
+> | Person | Question | Waiting |
+> | --- | --- | --- |
+> | Lena | What time do we leave on Saturday? | 6 hours |
+> | Sam | Are the tents shared? | 12 hours |
+> | Ira | Who will bring the cooking pot? | 15 hours |
+>
+> Open a question to check the surrounding conversation.
+
+These are `review` rules: a question mark outside a link, or a reply to you/an admin, can open a question. Your or an admin’s reply or next message can close it. The [statistics report](rankings.md) counts linked direct answers and can give a different result. If Telegram does not expose the admin list, only your answers count and the result says so.
 
 ### Newcomers this week
 
-```text
-You:    Who joined "Hiking" this week?
-Agent:  (tg chats events "Hiking" --type join,add --json)
-        Five people:
-        · Kate — added by Lena, Tuesday
-        · Oleg — joined by the link, Wednesday
-        · …
+Review joining events. A new account is a reason to check, not proof of spam.
+
+**Your request:**
+
+> Who joined Hiking this week? Show anyone worth reviewing.
+
+**Command:**
+
+```sh
+tg chats events "Hiking" --type join,add --since-time 7d --json
 ```
 
-`chats events` reads the group's service messages, so it sees what Telegram kept in the chat's
-history: who joined, left, was added or removed, and by whom. `tg chats members list` gives everyone
-in the group with their role and when they were last seen.
+**Example agent answer:**
+
+> | Newcomer | How they joined |
+> | --- | --- |
+> | Kate | Added by Lena |
+> | Oleg | Joined himself |
+>
+> Review Oleg’s available profile information before drawing conclusions. Account age alone is not grounds for removal.
+
+Events cover available history only. The current member list can be checked separately.
 
 ### A link that leaked
 
-```text
-You:    The invite link to "Hiking" ended up in a public chat. Replace it, and stop members adding people.
-Agent:  (tg chats link reset "Hiking" --json)
-        (tg chats update "Hiking" --only-admins-add on --json)
-        Done: the old link no longer works, the new one is https://t.me/+…, and only admins can add
-        people now.
+Replace an invite link only when you have asked for that change.
+
+**Your request:**
+
+> The Hiking invite link leaked. Replace it and let only admins add people.
+
+**Replace the link:**
+
+```sh
+tg chats link reset "Hiking" --json
 ```
 
-`link reset` answers the group as it now stands, new link included; `chats update` answers the same,
-so the agent can say what changed without reading the group again.
+**Restrict member additions:**
+
+```sh
+tg chats update "Hiking" --only-admins-add on --json
+```
+
+**Example agent answer:**
+
+> | Setting | Result |
+> | --- | --- |
+> | Previous invite link | Replaced |
+> | Who can add members | Admins only |
+>
+> The new private link is in the requested result; share it only with intended recipients.
+
+These commands change the group. The example request authorises both changes; a request to inspect a link would not.
 
 ### A weekly report
 
-```text
-You:    Sum up the week in "Hiking".
-Agent:  (tg review --chat "Hiking" --since-time 2026-09-20T00:00 --json)
-        Decided: we leave on 4 October, at 7:00 from the station.
-        Taken on: Lena — food, Artem — tents.
-        Open: who brings the pot — asked three times, no answer.
+Ask for a short recap of decisions, commitments and open questions.
+
+**Your request:**
+
+> Summarise the week in Hiking.
+
+**Command:**
+
+```sh
+tg review --chat "Hiking" --since-time 7d --json
 ```
+
+**Example agent answer:**
+
+> **Decided:** leave at 7:00 from the station.
+>
+> **Committed:**
+>
+> - Lena — food.
+> - Sam — tents.
+>
+> **Still open:** who will bring the cooking pot.
+>
+> I can show the source messages if you want to verify the recap.
 
 ### On a schedule
 
@@ -117,12 +175,30 @@ send guard, and each person added counts toward the hourly limit
 that mentions you by name, opens a task; your answer closes it. A task points at its message and never
 copies it.
 
+what waits on you, oldest first
+
 ```sh
-tg tasks list --state open                                # what waits on you, oldest first
+tg tasks list --state open
+```
+
+```sh
 tg tasks list --chat "Hiking" --type question,mention
-tg tasks add msg:telegram/<you>/<chat>/<message> --type promise   # what the rules cannot see
+```
+
+what the rules cannot see
+
+```sh
+tg tasks add msg:telegram/<you>/<chat>/<message> --type promise
+```
+
+```sh
 tg tasks close <task> --as dismissed --reason no-reply-needed
-tg stats tasks show                                            # open per chat, the oldest, the median time to close
+```
+
+open per chat, the oldest, the median time to close
+
+```sh
+tg stats tasks show
 ```
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
@@ -135,14 +211,46 @@ A group's rules say what `tg chats moderate` looks for and what it may do about 
 file of this profile, never in Telegram, and nothing watches the group in the background: a rule acts
 only when you run `chats moderate`.
 
+the defaults, marked not saved, until the first change
+
 ```sh
-tg chats rules show "Hiking"                       # the defaults, marked not saved, until the first change
-tg chats rules set "Hiking" links delete           # a message with a link is deleted
-tg chats rules set "Hiking" blocked 12345,67890    # these people…
-tg chats rules set "Hiking" blockedPeople remove   # …are removed when they write or join
-tg chats rules set "Hiking" consent.delete allow   # delete without asking
-tg chats moderate "Hiking" --dry-run               # what it would do, doing nothing
-tg chats moderate "Hiking"                         # judge what is new since the last run, and act
+tg chats rules show "Hiking"
+```
+
+a message with a link is deleted
+
+```sh
+tg chats rules set "Hiking" links delete
+```
+
+these people…
+
+```sh
+tg chats rules set "Hiking" blocked 12345,67890
+```
+
+…are removed when they write or join
+
+```sh
+tg chats rules set "Hiking" blockedPeople remove
+```
+
+delete without asking
+
+```sh
+tg chats rules set "Hiking" consent.delete allow
+```
+
+what it would do, doing nothing
+
+```sh
+tg chats moderate "Hiking" --dry-run
+```
+
+judge what is new since the last run, and act
+
+```sh
+tg chats moderate "Hiking"
 ```
 
 | Rule | What it looks for |
@@ -176,26 +284,33 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
 
 ## Statistics for group admins
 
+See the week’s activity: messages, people who wrote and replies. For more specific questions—who
+answers, who needs help and whether newcomers stay—open [Statistics](rankings.md).
+
+**Your request:**
+
+> Show Hiking’s activity this week and point out gaps in the history.
+
+**Command:**
+
 ```sh
-tg stats chats show <chat> --since-time 7d --by day --timezone Europe/Madrid --json
-tg stats chats show <chat> --offline --json
+tg stats chats show "Hiking" --since-time 7d --offline --json
 ```
 
-`tg stats chats show` counts messages, active senders, replies, threads, reactions and questions answered for
-a period from the local store. `--by day` or `--by week` adds calendar rows; weeks start on Monday and
-`--timezone` sets their timezone. Views, forwards and comments appear only where Telegram supplied the
-counts and they were stored with the posts. A missing count does not mean zero. Reactions use stored
-counts, without refreshing every post. Questions follow the same rules as `review --unanswered`.
-These are locally computed figures; the command does not request Telegram's official admin statistics.
+**Example agent answer:**
 
-The online command also asks Telegram for join and leave events. `--offline` and MCP `tg_read` (`command: "stats chats show"`)
-omit `members`, the summary of those events. This differs from `memberCounts`: recorded daily snapshots
-of the group's size, which remain available offline.
+> | Metric | In available history |
+> | --- | ---: |
+> | Messages | 120 |
+> | People who wrote | 18 |
+> | Replies | 30 |
+>
+> History is incomplete: these are observed counts, not the group’s full totals.
+> This local request did not fetch joining or leaving events.
 
-When `complete` is false, the available history is incomplete: totals cover only what was read, while
-medians and proportions may differ from those for the whole group. The `fetch` field suggests a command
-to download missing messages. Incomplete event history also limits join and leave counts. Even a full
-message history cannot reconstruct past member profiles or daily rosters from before recording began.
+Without `--offline`, the CLI also fetches joining and leaving events. Saved daily member observations
+remain available locally. Recording start dates and gaps matter: the first report cannot reconstruct
+past member lists.
 
 ### Telegram's own statistics
 
@@ -265,9 +380,21 @@ they are not already stored, then record the current roster and prepare the repo
 
 ```sh
 tg chats members fetch "Hiking Club" --track --json
+```
+
+```sh
 tg stats chats show "Hiking Club" --since-time 7d --by day --timezone Europe/Madrid --json
+```
+
+```sh
 tg chats members history "Hiking Club" --since-time 7d --offline --json
+```
+
+```sh
 tg chats tracking show "Hiking Club" --offline --json
+```
+
+```sh
 tg chats members audit "Hiking Club" --json
 ```
 
