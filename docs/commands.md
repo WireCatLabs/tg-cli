@@ -527,6 +527,28 @@ tg chats link revoke <chat> <link>
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `link` | required | the link, as `chats link list` shows it. |
 
+#### `tg chats link update`
+
+change one of your extra links; the group's own link cannot be changed
+
+**Changes something in Telegram.**
+
+```sh
+tg chats link update <chat> <link> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `link` | required | the link, as `chats link list` shows it. |
+
+| Option | What it does |
+|---|---|
+| `--approval` | who joins by it asks first, and an admin lets them in. |
+| `--no-approval` | anyone with it joins at once. |
+| `--expire-time <time>` | it stops working then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
+| `--max-uses <n>` | at most this many people join by it, 1 to 99999. |
+
 #### `tg chats link reset`
 
 replace the invite link; the old one stops working

@@ -487,6 +487,30 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-approval").map((entry) => entry.action)).toEqual(["settings", "link.create"])
   })
 
+  it("**changes an invite link** through the guard, sending only what was given", async () => {
+    const changes: unknown[] = []
+    const adapter = scripted({
+      updateInviteLink: async (_chat, link, change) => {
+        changes.push(change)
+        return { link, approval: false, expiresAt: null, maxUses: change.maxUses ?? null }
+      },
+    })
+
+    const update = (...options: string[]) =>
+      tg(["g-link-update", "chats", "link", "update", "Valencia", "https://t.me/+extra", ...options], adapter)
+
+    const on = await update("--approval", "--expire-time", "7d")
+    const off = await update("--no-approval", "--max-uses", "5")
+    const nothing = await update()
+
+    expect([on.code, off.code, nothing.code]).toEqual([0, 0, 2])
+    expect(changes).toEqual([
+      { approval: true, expiresAt: expect.any(String) },
+      { approval: false, maxUses: 5 },
+    ])
+    expect(journal("g-link-update").map((entry) => entry.action)).toEqual(["link.update", "link.update"])
+  })
+
   it("**answers every request and lists and revokes links** through the guard", async () => {
     const answered: unknown[] = []
     const link = { link: "https://t.me/+extra", approval: true, expiresAt: null, maxUses: null, pending: 1 }
