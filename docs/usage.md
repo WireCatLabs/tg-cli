@@ -53,6 +53,7 @@ For CI, `TG_API_ID` and `TG_API_HASH` give the app without the keyring; they win
 ```sh
 tg account show                # who this profile is logged in as; the phone as its last four digits
 tg account show --show-phone   # the whole phone number
+tg account list                # every profile on this computer and the account each is logged in as
 tg account sessions list       # every device and app logged in to the account; ends nothing
 tg session end                 # log out on Telegram's side, and delete the session here
 ```
