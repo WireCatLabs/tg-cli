@@ -37,6 +37,7 @@ interrupted or expired login, use:
 ```sh
 tg session start                        # QR code: Settings → Devices → Link Desktop Device
 tg session start phone                  # phone number, the code Telegram sends, your 2FA password
+tg session start phone --sms            # the same, asking for the code by SMS instead of in the app
 tg session start --qr-file login.png    # the QR code as a picture, for an agent to show you
 ```
 

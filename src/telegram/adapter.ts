@@ -127,6 +127,7 @@ export interface AdapterOptions {
 
 export interface LoginPrompts {
   method: "qr" | "phone"
+  forceSms?: boolean
   showQr: (url: string, expires: Date) => void
   phone: () => Promise<string>
   code: () => Promise<string>
@@ -234,6 +235,7 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const user: User = await this.#client.start({
         ...(prompts.method === "qr" ? { qrCodeHandler: prompts.showQr } : { phone: prompts.phone }),
+        ...(prompts.forceSms ? { forceSms: true } : {}),
         code: prompts.code,
         password: prompts.password,
         codeSentCallback: (sent) => prompts.note(`Telegram sent a login code (${sent.type})`),

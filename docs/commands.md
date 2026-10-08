@@ -58,6 +58,7 @@ tg session start [method] [options]
 |---|---|
 | `--app <how>` | the first time only: how to get this profile's app from my.telegram.org. One of: `browser`, `auto`. Default: `browser`. |
 | `--qr-file <png>` | write the QR code to this PNG instead of drawing it, for an agent to pass on. |
+| `--sms` | phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse. |
 
 ### `tg session end`
 

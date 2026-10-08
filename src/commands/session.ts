@@ -101,6 +101,7 @@ export interface StartSessionOptions {
   method: "qr" | "phone"
   app: "browser" | "auto"
   qrFile?: string
+  sms?: boolean
   command?: string
   progress?: (step: "app" | "login") => void
   signal?: AbortSignal
@@ -110,9 +111,10 @@ export interface StartSessionOptions {
 
 export const startSession = async (
   context: CommandContext,
-  { method, app, qrFile, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
+  { method, app, qrFile, sms, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
 ) => {
   if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
+  if (sms && method !== "phone") throw new CliError("validation_error", "--sms is for a phone login")
   const input = context.stdin
   // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
   if ((!input.isTTY || inputPolicy(input).noInput) && qrFile === undefined)
@@ -141,6 +143,7 @@ export const startSession = async (
   try {
     const account = await telegram.login({
       method,
+      ...(sms ? { forceSms: true } : {}),
       showQr: (url, expires) => {
         context.renderer.note(
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
@@ -184,6 +187,7 @@ export const sessionCommand = () => {
         .default("browser"),
     )
     .option("--qr-file <png>", "write the QR code to this PNG instead of drawing it, for an agent to pass on")
+    .option("--sms", "phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse")
     .addHelpText(
       "after",
       "\nFirst time? Use `tg setup` for login, a check of five chats and an agent skill.\n" +
@@ -191,6 +195,7 @@ export const sessionCommand = () => {
         "  tg session start                 QR login; app registration opens in your browser\n" +
         "  tg session start --app auto      Obtain app ID/hash automatically\n" +
         "  tg session start phone           Phone number, login code and optional 2FA password\n" +
+        "  tg session start phone --sms     The same, with the code by SMS if Telegram agrees\n" +
         "  tg work session start            Log in to the work profile\n" +
         "\nScan in Telegram: Settings > Devices > Link Desktop Device.\n" +
         "For an interrupted or expired session, finish this login, then rerun `tg setup`.\n" +
@@ -200,8 +205,13 @@ export const sessionCommand = () => {
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
-      const { app, qrFile } = this.opts<{ app: "browser" | "auto"; qrFile?: string }>()
-      const answer = await startSession(context, { method, app, ...(qrFile === undefined ? {} : { qrFile }) })
+      const { app, qrFile, sms } = this.opts<{ app: "browser" | "auto"; qrFile?: string; sms?: boolean }>()
+      const answer = await startSession(context, {
+        method,
+        app,
+        ...(qrFile === undefined ? {} : { qrFile }),
+        ...(sms ? { sms } : {}),
+      })
       if (context.format !== "pretty") context.renderer.result(answer)
       else context.streams.data(loggedIn(answer, context.env))
     })

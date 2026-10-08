@@ -10,6 +10,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg polls create --quiz --correct <n> [--solution <text>]` sends a quiz**: one right answer, by its position from
   1, and a vote that is final.
 - Add stored stats reports for unanswered questions, selected admin responses, known-join newcomer help and viewed posts with little discussion; expose bounded evidence and saved report runs.
+- **`tg session start phone --sms` asks Telegram to send the login code by SMS** when it would go to the app.
+  Telegram decides: the note after the request says how the code was really sent.
 - **`tg topics delete <chat> <topic>` deletes a forum topic and every message in it**, for everyone. It asks first;
   `--allow-dangerous` skips the question.
 - **Attachment text can be read locally:** ODT, ODS, XLSX, PPTX, EPUB, BOM-marked UTF-16 and
