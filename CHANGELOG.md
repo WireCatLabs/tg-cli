@@ -7,7 +7,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **Agents can read one folder's chats by name over MCP**, as `tg chats folders show` does (`chats_folders_show`).
+- **Agents can read one folder's chats by name over MCP**, as `tg chats folders show` does (`tg_read`, command: `chats folders show`).
 - **`tg chats link update <chat> <link> [--approval | --no-approval] [--expire-time] [--max-uses]` changes one of
   your extra invite links**; only what you give changes.
 

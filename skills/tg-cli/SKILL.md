@@ -277,7 +277,7 @@ Folder rules: `chats folders create|update --include contacts,groups --skip mute
 On update these flags replace the previous rules; `none` clears them. Shared folders take no rules.
 `--exclude-chat` excludes a chat and `--pin` puts it first. The returned emoji is the stored Telegram
 folder icon; unsupported icons can be dropped. `folders order` returns only ids and titles.
-`folders list` gives chat ids only; `folders show <folder>` (MCP `chats_folders_show`) names them.
+`folders list` gives chat ids only; `folders show <folder>` (MCP `tg_read` with command `chats folders show`) names them.
 
 
 Full native Bot API: all 185 Telegram Bot API 10.3 methods are exposed through
