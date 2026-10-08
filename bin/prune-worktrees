@@ -11,7 +11,17 @@ set -eu
 
 cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 git fetch -q --prune origin
+# A folder deleted by hand leaves its record, and the record keeps its branch from being deleted.
+orphans=$(git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,19)} /^$/{print w "\t" b; b=""}' |
+  while IFS="$(printf '\t')" read -r tree branch; do
+    [ ! -d "$tree" ] && [ -n "$branch" ] && echo "$branch"
+  done)
 git worktree prune
+for branch in $orphans; do
+  if [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
+    git branch -D "$branch" > /dev/null && echo "deleted branch $branch — its folder was gone and its PR merged"
+  fi
+done
 
 main=$(pwd -P)
 list=$(mktemp)
