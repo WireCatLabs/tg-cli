@@ -121,6 +121,7 @@ export const TELEGRAM: Messenger = {
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   groupSettings: GROUP_SETTINGS,
   mediaOptions: ["spoiler", "captionAbove", "fileName"],
+  pollQuiz: true,
   html: true,
   folderRules: true,
   addsWithHistory: false,

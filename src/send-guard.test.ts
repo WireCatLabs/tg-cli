@@ -564,6 +564,38 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-topic-del").map((entry) => entry.outcome)).toEqual(["refused", "sent"])
   })
 
+  it("**creates a quiz** with its right answer and solution", async () => {
+    const polls: unknown[] = []
+    const adapter = scripted({
+      createPoll: async (_chat, poll, { sendId }) => {
+        polls.push(poll)
+        return { sendId, message: message("81", { outgoing: true }) }
+      },
+    })
+
+    const made = await tg(
+      [
+        "g-quiz",
+        "polls",
+        "create",
+        "Valencia",
+        "2+2?",
+        "3",
+        "4",
+        "--quiz",
+        "--correct",
+        "2",
+        "--solution",
+        "four",
+        "--json",
+      ],
+      adapter,
+    )
+
+    expect(made.code).toBe(0)
+    expect(polls).toMatchObject([{ quiz: { correct: 1, solution: "four" } }])
+  })
+
   it("**adds and removes members and admins through the guard**", async () => {
     const done: string[] = []
     const adapter = scripted({
