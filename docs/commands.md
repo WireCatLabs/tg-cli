@@ -2506,7 +2506,7 @@ the files of stored messages: their text in the local store, for content: in a s
 
 ### `tg attachments extract`
 
-read the text of downloaded files — plain text, Word, PDF with a text layer — into the local store, for content: in a search
+read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB — into the local store, for content: in a search
 
 ```sh
 tg attachments extract [options]
@@ -2538,6 +2538,26 @@ tg attachments list [options]
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
+
+### `tg attachments show`
+
+read a bounded chunk of one retained attachment; JSON includes base64 bytes
+
+```sh
+tg attachments show <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator alone. |
+| `message` | optional | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--attachment <n>` | file position from 1; required for several files. |
+| `--offset-bytes <n>` | byte offset from 0. |
+| `--chunk-bytes <n>` | bytes to return, 1–1048576 (default524288). |
+| `--if-sha256 <hash>` | require the whole file SHA-256 from the preceding chunk. |
 
 ### `tg attachments text`
 

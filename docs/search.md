@@ -311,3 +311,7 @@ messages. Ambiguous timestamp pages remain pending. `--background` uses `store j
 The same commands are available through MCP discovery and `tg_read` or `tg_write`; job metadata is
 profile-scoped. Repair requires `store.gaps.repair` write permission and message read access.
 Optional catch-up shares the repair's remaining time budget.
+
+Remote agents can receive retained file bytes, assemble bounded chunks and verify their hash
+through [attachments show](attachments.md). File delivery does not recognize or index text;
+read all pages with your own tools and use attachments text set, then verify content search.

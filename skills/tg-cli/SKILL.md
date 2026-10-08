@@ -420,6 +420,13 @@ viewed posts with little stored discussion are `stats messages discussion`. Insp
 quality and use each row’s exact drilldown with `--component report`; missing history/join dates
 are not zero. All four reports read stored data; do not infer historical administrator roles.
 
+
+Remote agents can request retained bytes: discover attachments show through tg_tools_search
+and invoke tg_read. Assemble chunks by nextOffsetBytes, pass if_sha256 and verify SHA256.
+Complete supported images return image content; other files return resource, with format:base64
+as a fallback. Host PDF rendering/file saving depends on host capabilities. Read all pages with
+your own tools, then attachments text set and verify content search. Transfer calls no model.
+
 Retention: `tg stats chats retention <chat> --checkpoints 1d,7d,30d --within 7d --json`.
 Only known joinedAt defines cohorts. Report observable denominators, unknown/pending and actual snapshot time.
 Partial absence is unknown; checkpoint membership is not continuous survival. Use the cohort drilldown selection
