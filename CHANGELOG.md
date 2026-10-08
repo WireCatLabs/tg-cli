@@ -3,14 +3,14 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.36.0 — 08.10.2026
 
 ### What's new
 
 - **`tg polls create --quiz --correct <n> [--solution <text>]` sends a quiz**: one right answer, by its position from
   1, and a vote that is final.
-- Add stored stats reports for unanswered questions, selected admin responses, known-join newcomer help and viewed posts with little discussion; expose bounded evidence and saved report runs.
-- **`tg topics delete <chat> <topic>` deletes a forum topic and every message in it**, for everyone. It asks first;
+- **Stored administrator reports** find questions without observed answers, selected responder latency, known-join newcomer help and viewed posts with little discussion. Reports provide coverage/evidence; saved runs retain parameters and selections.
+- **`tg topics delete <chat> <topic>` deletes a forum topic and every message in it**, for everyone. It asks first by default;
   `--allow-dangerous` skips the question.
 - **Attachment text can be read locally:** ODT, ODS, XLSX, PPTX, EPUB, BOM-marked UTF-16 and
   high-confidence legacy encodings. No model is called; formulas are not calculated and images
@@ -18,6 +18,8 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **`tg chats folders create|update` take rules**: `--include` contacts, non-contacts, groups, channels or bots,
   `--skip` muted, read or archived chats, `--exclude-chat`, `--pin` and `--emoji`. `folders list` shows them.
+### Changed — may break scripts
+
 - `tg chats folders join` says plainly when a link is invalid or expired (exit 6), and `folders order` answers
   only each folder's id and title.
 - `tg chats folders create|update` answer with the folder as Telegram stored it: an `--emoji` that is not one of
@@ -27,8 +29,6 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **`tg chats requests list <chat> --search <name>` finds requests by name or username**, and `--link <link>`
-  lists requests made through one invite link. Choose one filter; they cannot be combined.
 - **`tg chats requests list --search <name>` or `--link <link>` narrows the requests** — by name, or to those
   that came by one link; Telegram cannot do both at once.
 - **`tg polls show` says whether a poll is a quiz (`quiz`), whether a vote may change (`revote`), and whether you
@@ -57,16 +57,14 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **Every search says what it searched.** One line in the terminal — messages and chats searched, chats never
   fetched or behind, and the command that fixes it; `coverage.next` in JSON tells an agent what to run.
 
+- **Word search now asks Telegram as well as the local archive by default (`--backend both`).**
+  Previously it searched only the archive unless a backend was chosen. Search can now connect to Telegram;
+  use `--backend archive` for local-only searches. Counting with `stats`, topic search and queries the server
+  cannot answer still read only the archive.
+
 - **`tg chats join` to a group whose admins approve who joins answers `requested: true` and exits `0`**, instead
   of exit `11`: the request was sent all along. A script that treated exit 11 as "request sent" now reads
   `requested`.
-
-### Fixed
-
-- **The guides now describe Telegram's search default correctly.** Word search has asked Telegram as well as
-  the archive since tg 0.34 (`--backend both`); older guidance said it stayed local. Use `--backend archive`
-  for local-only searches. Counts with `stats`, topic search and queries the server cannot answer still read
-  only the archive.
 
 ## 0.34.0 — 07.10.2026
 
@@ -98,7 +96,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 - **`tg messages search --backend both` asks Telegram as well as the archive.** Telegram's results are saved
   and checked by the same query, so `exact:`, `-word` and the ranking keep their meaning; each message says
   whether it came from the archive, Telegram or both. `--backend server` shows Telegram's results alone;
-  `--server-time` bounds the wait (5 s). The default is both sources; `--backend archive` keeps it local ([search](docs/search.md)).
+  `--server-time` bounds the wait (5 s). The default stays the archive ([search](docs/search.md)).
 
 - **`tg chats mark-read <chat> --topic <id>` marks one forum topic read**, up to `--until` or its newest
   message, and leaves the rest of the chat as it is.
