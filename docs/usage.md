@@ -372,6 +372,8 @@ does not.
 
 ### Files, photos and voice messages
 
+See [File attachments](attachments.md) for sending, downloading, formats, agent OCR and searchable text.
+
 ```sh
 tg messages send "Book club" "The agenda" --file agenda.pdf   # byte for byte; the text is the caption
 tg messages send "Book club" --photo picture.jpg              # recompressed by Telegram

@@ -45,3 +45,12 @@ for code and documents. This page lists only where `tg` differs or adds.
   under `Changed — may break scripts`.
 - Each entry says what changed as a user sees it, why when that is not obvious, and what to watch
   for — as max-cli's changelog section describes. No internal ids, no file paths.
+
+
+## Documentation authoring
+
+Before documentation work, read the [shared authoring rules](https://github.com/leemour/cli-docs/blob/main/docs/AUTHORING.md).
+Every user guide starts with a brief explanation of when to use it and what result the reader
+will get; mention a prerequisite only when it changes the next step. Keep titles short and
+task-specific. A new sidebar page needs a relevant icon and a contextual incoming link.
+Preserve released command facts and existing URLs/anchors.
