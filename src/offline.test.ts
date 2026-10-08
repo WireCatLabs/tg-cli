@@ -208,6 +208,10 @@ describe("the tgcli parity follow-ups, offline", () => {
       code: 0,
       answer: { items: [] },
     })
+    expect(await call(["store", "jobs", "list", "--state", "failed", "--json"])).toMatchObject({
+      code: 0,
+      answer: { items: [] },
+    })
 
     await call(["chats", "list", "--json"])
     const refreshed = await call(["--offline", "metadata", "refresh", "--only-missing", "--json"])
