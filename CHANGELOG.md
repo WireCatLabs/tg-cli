@@ -3,6 +3,17 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.40.0 — 08.10.2026
+
+### Changed — may break scripts
+
+- **Statistics `--answerer` accepts stored names, aliases and @usernames.** Resolution stays local
+  to the selected history’s accounts; ambiguous names return scoped candidates. Unknown names now
+  fail instead of producing a fabricated zero-answer identity. Use `person:provider/account/id`
+  to explicitly select an unseen opaque ID. Response rows add `identityKnown`; an ID without
+  observations has `identityKnown: false` and `status: unknown`. Zero observed answers do not
+  prove inactivity ([statistics](docs/rankings.md)).
+
 ## 0.39.1 — 08.10.2026
 
 ### Fixed

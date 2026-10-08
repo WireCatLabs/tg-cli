@@ -121,3 +121,9 @@ You can ask for statistics using a chat or person’s name. The agent can find t
 `stats contacts top`. Several matches require a choice; a failed lookup needs an explanation
 of what identifying information would help. An unresolved name does not prove that someone
 answered no questions. Results for a selected ID describe only available history.
+
+Statistics `--answerer` resolves stored names, aliases and @usernames locally in the selected
+accounts. Unknown names return `not_found`; ambiguous names return `validation_error` with
+scoped candidates. Explicit unseen IDs produce response rows with `identityKnown: false` and
+`status: unknown`; zero observed answers do not establish inactivity. A bare numeric ID requires
+one selected account, and a scoped `person:provider/account/id` must belong to the query.

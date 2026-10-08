@@ -416,7 +416,7 @@ without it if contributing data changed.
 Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).
 
 For questions waiting and selected admin response times, use `stats messages unanswered` and
-`stats contacts responses --answerer <id>`. Known-join newcomer help is `stats chats newcomers <chat>`;
+`stats contacts responses --answerer <person>`. Known-join newcomer help is `stats chats newcomers <chat>`;
 viewed posts with little stored discussion are `stats messages discussion`. Inspect graph/archive
 quality and use each row’s exact drilldown with `--component report`; missing history/join dates
 are not zero. All four reports read stored data; do not infer historical administrator roles.
@@ -453,3 +453,8 @@ in the intended account for the report. If several candidates match, show them a
 owner to choose. Never guess an ID or turn an unresolved name into a claim of zero activity.
 After a failed lookup, explain which name, @username or account clarification would help.
 Counts describe only observed history.
+
+Statistics `--answerer` also accepts stored names, aliases and @usernames directly, without
+connecting. Resolve ambiguity using the returned candidates in the intended account; never
+guess. `identityKnown: false` with `status: unknown` means the explicit ID was not observed,
+so zero answers do not prove zero activity.

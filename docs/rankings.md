@@ -193,3 +193,15 @@ After refresh, run `show` again for the returned selection and inspect each fiel
 A refreshed cumulative count still does not tell you how many views or reactions happened during a date-filtered period.
 
 Telegram supports views, reactions and comments where the remote message supplies them. Counter refresh uses exact message reads and never requests a view increment.
+
+## Names and unknown response activity
+
+`--answerer` accepts a stored name, local alias, @username or ID. Names resolve only within
+the selected history’s accounts, without connecting to Telegram. Several matches return scoped
+candidates for you to choose; an unknown name is a lookup error rather than an invented zero-answer
+person. Use `person:provider/account/id` to explicitly select an unseen opaque ID.
+
+Response rows expose `identityKnown`. An explicit ID without stored identity observations has
+`identityKnown: false` and `status: unknown`. Its zero observed answers do not prove inactivity.
+Even known-person counts describe only available history. Saved reports pin resolved IDs, so a
+later rename does not change the selected person.

@@ -2850,7 +2850,7 @@ tg stats messages unanswered [query] [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 | `--older-than <duration>` | minimum age of a question without an observed qualifying answer. |
 
 #### `tg stats messages discussion`
@@ -2948,7 +2948,7 @@ tg stats contacts responses [query] [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 #### `tg stats contacts top`
 
@@ -3041,7 +3041,7 @@ tg stats chats newcomers <chat> [options]
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--limit <n>` | report rows, 1–100; 20 if not given. |
-| `--answerer <id>` | a scoped human identity whose explicit reply qualifies; repeat it for more. |
+| `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 #### `tg stats chats retention`
 
