@@ -8,8 +8,6 @@ and how to keep it current.
 
 Check what is saved before downloading more. Limit the download to the chat and period you need.
 
-If the download stops at a limit or a provider wait, run it again to continue, then check coverage. A finished command does not by itself prove complete history. These counts are fictional.
-
 **Your request:**
 
 > Check the saved history for Book club. Download the last 30 days for that chat, then tell me whether any gaps remain.
@@ -40,6 +38,8 @@ tg store status "Book club" --json
 > | Requested 30-day message history | Gaps | Held without gaps |
 >
 > This result covers the selected period, not the chat’s entire past.
+
+If the download stops at a limit or a provider wait, run it again to continue, then check coverage. A finished command does not by itself prove complete history. These counts are fictional.
 
 ## What it keeps
 

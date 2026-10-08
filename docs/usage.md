@@ -14,8 +14,6 @@ tg [profile] [options] <resource> <action> [arguments]
 
 Once your account is connected, ask for a short recap. This task reads messages; it sends nothing.
 
-The recap below is fictional. Ask the agent to open the source messages before relying on its interpretation. Setup, message actions and permissions are explained in the sections below.
-
 **Your request:**
 
 > Summarise the five latest messages in Book club. Show decisions and open questions. Send nothing.
@@ -33,6 +31,8 @@ tg messages list "Book club" --limit 5 --json
 > **Still open:** which meeting place to use.
 >
 > I can show the messages behind this recap. Nothing was sent.
+
+The recap below is fictional. Ask the agent to open the source messages before relying on its interpretation. Setup, message actions and permissions are explained in the sections below.
 
 ## Get started
 

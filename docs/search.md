@@ -7,8 +7,6 @@ computer, and asks Telegram's own search too ([below](#asking-telegram-too---bac
 
 Start with a phrase and one chat. This example searches saved history without asking the messenger.
 
-An empty result is not proof that the message never existed. Check the reported history gaps before broadening the search. The examples on this page are fictional.
-
 **Your request:**
 
 > Find the message saying “invoice paid” in Book club. Show the match and any gaps in the history.
@@ -28,6 +26,8 @@ tg search messages '"invoice paid"' --chat "Book club" --backend archive --json
 > | Alice Synthetic | Invoice paid yesterday. |
 >
 > History is incomplete: other matches may be missing. I can open this message and its surrounding conversation.
+
+An empty result is not proof that the message never existed. Check the reported history gaps before broadening the search. The examples on this page are fictional.
 
 ## Prepare your archive first
 
