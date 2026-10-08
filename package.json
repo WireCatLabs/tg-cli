@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@leemour/cli-core": "0.17.2",
-    "@leemour/cli-messaging": "0.206.0",
+    "@leemour/cli-messaging": "0.208.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "undici": "7.30.0",
@@ -66,12 +66,14 @@
     "@biomejs/biome": "^2.5.14",
     "@cspell/dict-en-gb": "^5.0.34",
     "@cspell/dict-ru_ru": "^2.3.2",
+    "@napi-rs/canvas": "1.0.10",
     "@types/node": "^22.20.4",
     "@vitest/coverage-v8": "5.0.2",
     "cspell": "^10.3.6",
     "lefthook": "^2.1.14",
     "rumdl": "^0.2.78",
     "typescript": "^7.0.2",
+    "unpdf": "1.8.1",
     "vitest": "^5.0.2"
   }
 }

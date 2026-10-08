@@ -424,9 +424,13 @@ are not zero. All four reports read stored data; do not infer historical adminis
 
 Remote agents can request retained bytes: discover attachments show through tg_tools_search
 and invoke tg_read. Assemble chunks by nextOffsetBytes, pass if_sha256 and verify SHA256.
-Complete supported images return image content; other files return resource, with format:base64
-as a fallback. Host PDF rendering/file saving depends on host capabilities. Read all pages with
-your own tools, then attachments text set and verify content search. Transfer calls no model.
+If the client cannot open a PDF, request every page using page:1..pdf.pageCount; optional
+unpdf/@napi-rs/canvas render locally. The page returns image content; if only metadata is visible,
+request format:base64 and display the PNG with the agent's image tools. Inspect the actual pixels
+of every page; receiving Base64 is not reading. pdf.sourceSha256 identifies the source PDF,
+top-level sha256 the PNG. No external OCR API or automatic indexing: save your own literal
+transcription with attachments text set and verify content search. If pixels remain inaccessible,
+report that limit and never substitute old indexed text. Quality depends on resolution, language and layout.
 
 Retention: `tg stats chats retention <chat> --checkpoints 1d,7d,30d --within 7d --json`.
 Only known joinedAt defines cohorts. Report observable denominators, unknown/pending and actual snapshot time.

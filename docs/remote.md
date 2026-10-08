@@ -237,3 +237,30 @@ models.ocr. It calls the configured external model and sends supported images/sc
 PDF pages to it; it is not automatically triggered by transfer or agent OCR.
 
 For format support and searchable text, see [File attachments](attachments.md).
+
+## Read PDF pages without a local file handoff
+
+If the client cannot pass received PDF bytes to its document reader, request one page as PNG.
+The MCP server renders locally; the agent reads the image with its own vision. Install optional
+`unpdf` with rendering support and `@napi-rs/canvas` as described under
+[attachment engines](attachments.md#dependencies-and-missing-engines).
+
+```sh
+tg attachments show msg:telegram/500/7/204 --attachment 1 --page 1 --json
+```
+
+Use `tg_read`, command: `attachments show`, with `page: 1` and the chosen message locator.
+The default returns image content. If the client exposes only metadata, request `format: base64`,
+then decode and display the PNG with the agent's image tools. Receiving a Base64 string is not
+visual inspection. Read pages 1 through `pdf.pageCount`; if neither format exposes the pixels,
+report the client limitation instead of inventing text.
+
+`pdf.sourceSha256` and `pdf.sourceBytes` identify the original PDF; top-level `sha256` and
+`totalBytes` identify the rendered page image. `--if-sha256` checks the source PDF. `--page`
+cannot be combined with `--offset-bytes` or `--chunk-bytes`. PDFs are bounded to 20 pages and
+50 MiB, PNG dimensions to 2000 pixels per side, and each preview to 1 MiB. The optional engines
+are not installed with the CLI.
+
+Page previews call no external OCR API and do not index text. After viewing every page, the agent
+explicitly calls `attachments text set` and verifies a `content:` query. Check numbers and complex
+layouts against the images; quality depends on the source document and the agent's tools.

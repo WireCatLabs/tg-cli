@@ -3,7 +3,14 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## 0.40.0 — 08.10.2026
+## 0.40.0 — 09.10.2026
+
+### What's new
+
+- **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents can read
+  every page with their own vision and explicitly save searchable text. Requires optional `unpdf`
+  and `@napi-rs/canvas`; previewing calls no OCR API and does not index text. If the MCP client
+  exposes only resource metadata, request `format: base64` and display the PNG with the agent's tools.
 
 ### Changed — may break scripts
 
