@@ -63,6 +63,10 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   POLL_OPTION_INVALID: ["validation_error", "an answer is empty or too long for Telegram"],
   POLL_OPTION_DUPLICATE: ["validation_error", "two answers are the same; each must differ"],
   POLL_QUESTION_INVALID: ["validation_error", "the question is empty or too long for Telegram"],
+  QUIZ_CORRECT_ANSWERS_EMPTY: ["validation_error", "a quiz needs its right answer: --correct <n>"],
+  QUIZ_CORRECT_ANSWERS_TOO_MUCH: ["validation_error", "a quiz takes one right answer"],
+  QUIZ_CORRECT_ANSWER_INVALID: ["validation_error", "--correct names no answer of this quiz"],
+  QUIZ_MULTIPLE_INVALID: ["validation_error", "a quiz takes one answer; not with --multiple"],
   CHAT_PUBLIC_REQUIRED: [
     "validation_error",
     "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +

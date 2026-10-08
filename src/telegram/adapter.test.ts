@@ -2294,6 +2294,30 @@ describe("polls", () => {
     expect(client.sendVote).not.toHaveBeenCalled()
   })
 
+  it("creates a quiz with its right answer and solution", async () => {
+    const { adapter, client } = await open()
+    client.sendMedia.mockClear()
+
+    await adapter.createPoll(
+      "-100500",
+      {
+        question: "2+2?",
+        answers: ["3", "4"],
+        multiple: false,
+        anonymous: false,
+        quiz: { correct: 1, solution: "four" },
+      },
+      { sendId: "79" },
+    )
+
+    expect(client.sendMedia.mock.calls[0]?.[1]).toMatchObject({
+      type: "quiz",
+      correct: 1,
+      solution: "four",
+      public: true,
+    })
+  })
+
   it("says a message without a poll is not found", async () => {
     const { adapter, client } = await open()
     client.found = message(3)

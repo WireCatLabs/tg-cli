@@ -1596,6 +1596,9 @@ tg polls create <chat> <question> <answers> [options]
 | `--silent` | send without a notification. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
 | `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
+| `--quiz` | a quiz: one answer is right, and a vote is final. |
+| `--correct <n>` | with --quiz: the right answer's position, from 1. |
+| `--solution <text>` | with --quiz: what people see once they answered. |
 
 ## `tg models`
 
