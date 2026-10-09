@@ -3,6 +3,17 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.40.1 — 09.10.2026
+
+### Fixed
+
+- **`tg search all` found nothing on a fresh store.** It searched only accounts already in the store, so
+  before the first save it looked nowhere; it now always includes this profile's account and asks the
+  server the way `tg search messages` does.
+- **`tg search mail` with no mail imported answers an empty result** with a note on stderr, instead of
+  failing.
+- **Notes found only by a weak match in meaning are dropped**, so a rare word no longer returns every note.
+
 ## 0.40.0 — 09.10.2026
 
 ### What's new
