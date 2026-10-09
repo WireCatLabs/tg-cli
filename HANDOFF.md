@@ -1,7 +1,6 @@
-# tg-cli + cli-messaging — start here
+# tg-cli — start here
 
-**State 2026-10-08.** Read this once, then only the files your task needs from §3. It is
-context, not history.
+Read this once, then only the files your task needs.
 
 ## 1. What this is
 
@@ -10,96 +9,30 @@ context, not history.
 operation per call, one JSON value on stdout when piped, a typed error and a fixed exit code on
 failure. Everything that is not specific to Telegram lives in the npm package
 [`@leemour/cli-messaging`](https://github.com/leemour/cli-messaging) (checkout: `../cli-messaging`),
-which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) also uses.
-**Correction 2026-10-04:** MAX completed its shared command/cache cutover and P7 permissions;
-the October 4 coordinated preparation is historical (`docs/dev/coordinated-release.md`). Both sit on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
-
-The goal beyond the CLI: a local archive of every messenger with search, a cross-messenger contact
-graph and a CRM on top. The full design:
-[the platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md).
+which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) also uses. Both sit
+on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
 
 ## 2. Entry points
 
 | Question | Where |
 |---|---|
-| The design, the phases, what is done | [`../cli-messaging/docs/plans/2026-09-26-platform-proposal.md`](../cli-messaging/docs/plans/2026-09-26-platform-proposal.md) — §8 lists every PR with **Done** marks (row 2.4 has the search measurement); §4 the store and the CRM model; §11 the owner's rulings |
-| How `serve` and `watch --events` were designed | [`../cli-messaging/docs/plans/2026-09-27-background-process.md`](../cli-messaging/docs/plans/2026-09-27-background-process.md) |
-| The last tgcli parity work: SMS login, `folders show`, `metadata refresh --only-missing`, job management | [`docs/plans/2026-10-08-tgcli-parity-followups-handoff.md`](docs/plans/2026-10-08-tgcli-parity-followups-handoff.md) |
-| What was measured against real Telegram in the spike | [`docs/plans/2026-09-27-spike-report.md`](docs/plans/2026-09-27-spike-report.md) — FIND-1…6 |
+| What a user is told — every command | [`README.md`](README.md), then [`docs/index.md`](docs/index.md); every command and option: [`docs/commands.md`](docs/commands.md) (generated) |
+| How tg is built, tested and written | [`docs/dev/ARCHITECTURE.md`](docs/dev/ARCHITECTURE.md), [`docs/dev/TESTING.md`](docs/dev/TESTING.md), [`docs/dev/CONVENTIONS.md`](docs/dev/CONVENTIONS.md) |
+| Open work | [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md); the shared package's: [cli-messaging BACKLOG](https://github.com/leemour/cli-messaging/blob/main/docs/dev/BACKLOG.md) |
+| How agents run here (worktrees, guards, `bin/tg-live`) | [`docs/dev/agents.md`](docs/dev/agents.md) |
+| Live checks before a release | [`docs/dev/live-scenarios.md`](docs/dev/live-scenarios.md) |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
-| What a user is told — every command | [`README.md`](README.md), then [`docs/index.md`](docs/index.md) and the pages it lists (**Correction 2026-10-01, evening:** the README is the full introduction again, in max's section order — owner's ruling on NEED-500; `index.md` is the short start page of the docs site) |
-| How tg is built, tested and written | [`docs/dev/ARCHITECTURE.md`](docs/dev/ARCHITECTURE.md), [`docs/dev/TESTING.md`](docs/dev/TESTING.md), [`docs/dev/CONVENTIONS.md`](docs/dev/CONVENTIONS.md); what each release changed: [`CHANGELOG.md`](CHANGELOG.md) |
-| How max-cli does something | `../max-cli/docs/dev/ARCHITECTURE.md` — the source most of cli-messaging was copied from. **Read only** |
+| How max-cli does something | `../max-cli/docs/dev/ARCHITECTURE.md` — **read only** |
 
-No session journal and no backlog file exist in these two repositories; the proposal's §8 table is
-the backlog.
+Releases run from GitHub through `bin/release` (trusted publishing; the workflow publishes and tags).
+A cli-messaging change reaches tg through a cli-messaging release and a pin bump here.
 
-## 3. Where things stand, and what to read for the next task
-
-### 3a. Done — Phases 1 and 2 of the proposal (2026-09-27)
-
-`tg` uses **`@leemour/cli-messaging`** (**Correction 2026-10-01:** the version is the pin in
-`package.json`, not one written here). What it does now: login (`session`), guided first run (`setup`; **Correction 2026-10-03:**
-root help, `setup --help` and `skill show` explain onboarding before login), `upgrade`, `account show`,
-`chats list|show`, `contacts list|show`, `messages list|show|context|send|search`, `watch
-[--events]`, `serve`, `store fetch|status|export|jobs`, `recipients`, `sends`, `runs`, `config`,
-`doctor`, `commands`, `complete`. Every read is saved to a local store shared by all messenger CLIs;
-`--offline` answers list and show commands from it; `store status` and `store export` read only it.
-**Correction 2026-10-08:** word search defaults to the archive plus Telegram; `--backend archive` keeps it local.
-
-The split: **everything messenger-neutral is in cli-messaging** — the commands, saving to the store,
-`--offline`, run records, the send guard, the store and its migrations. tg describes Telegram once —
-`TELEGRAM` in `src/commands/context.ts` (how to connect, the chat help, `me` → Saved Messages, the
-partner of a dialog, `doctor`'s Telegram checks) — and keeps only `session` and the adapter.
-
-### 3b. Open right now
-
-1. **Release snapshot: `@leemour/tg-cli@0.35.0`**, with cli-messaging 0.177.0 and cli-core 0.17.2.
-   Archive preparation (`store fetch --all`), coverage/`next`, private people metadata and bulk join-request
-   actions are included. [GitHub releases](https://github.com/leemour/tg-cli/releases) confirm publication.
-   Releases run from GitHub through `bin/release`
-   (trusted publishing works; the workflow publishes and tags). 0.2.0 added what is now `tg upgrade [--check]`
-   and the daily "a newer version exists" line on stderr (`src/update.ts`; it wraps cli-messaging's
-   `run` in `src/program.ts`). A real `npm install -g` into a throwaway prefix detected `npm`; the
-   pnpm and bun paths are covered only by the path patterns in `@leemour/cli-core/update`.
-2. **Not yet seen live:** a reaction update (`watch --events` / `serve` handle them through mtcute's
-   raw update stream; 150 s of listening saw none). Edits and deletions are confirmed.
-3. **Search ranking quality is unmeasured** — it needs a person to judge the results.
-4. **Done in cli-messaging 0.21.0:** a failure *before* a command runs (a usage error, a config that
-   will not load, a command that never opens a run) is kept as a run by `run()`; tg passes
-   `configuration: CONFIG` in its program definition for that. The command path stops at the first
-   word that is not a command, so `--timeout 30s chats list` is kept as bare `tg` (as in max-cli).
-5. **Phase 3 is done** (the owner: MCP may send, as max-cli; aim at feature parity with max-cli —
-   proposal §8 has the Phase 3 rows and the parity tiers P1–P3): `tg mcp` with read tools,
-   `--allow-send` / `--confirm-send`, the `reply` and `find` prompts, the `tg://chat/{id}` resource
-   (`../cli-messaging/src/mcp/`; a write tool carries `permission` and goes through `guardedSend` in
-   `messages-command.ts`; user docs in [`docs/mcp.md`](docs/mcp.md)), and `tg skill show`
-   (**Correction 2026-10-01:** since cli-messaging 0.77.0 the profile's `permissions` levels decide
-   which tools an agent gets; `--allow-send`, `--allow-mark-read` and `--allow-delete` only warn)
-   ([`skills/tg-cli/SKILL.md`](skills/tg-cli/SKILL.md) — keep it in step with every new command).
-   `tg inbox` shipped (**Correction 2026-10-01:** the version stamp is dropped, see `CHANGELOG.md`). **Parity now runs in parallel lanes** — the plan:
-   [`2026-09-29-parity-lanes.md`](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md); how agents
-   run them: [`docs/dev/agents.md`](docs/dev/agents.md); each lane's handoff: [`docs/lanes/`](docs/lanes/)
-   (standard: [`docs/dev/handoff-standard.md`](docs/dev/handoff-standard.md)). **Every parity command
-   PR adds its MCP tool in the same PR.** Live MCP check:
-   the scratch client pattern — spawn `bin/tg mcp` with the SDK's `StdioClientTransport`, and pass
-   `XDG_RUNTIME_DIR` in its `env`, or the keyring is out of reach.
-6. **Lanes are ordinary Claude Code sessions** (2026-09-29): `bin/lane <lane>` makes the worktrees,
-   then the owner starts `claude` in `.worktrees/<lane>/tg-cli`. The guards in `.claude/` (the Bash
-   sandbox, the hooks refusing a sandbox escape and edits outside tg-cli, cli-messaging and cli-core,
-   `sudo` denied) are the owner's; agents cannot edit them. A plain `bin/tg …` runs outside the
-   sandbox. `bin/check-agents` (owner, from a terminal) proves the guards hold. Details:
-   [`docs/dev/agents.md`](docs/dev/agents.md). The bypass-mode launcher (`bin/agent`) was removed at
-   the owner's request: it started sessions without the owner's settings.
-7. **Phase 4 completed.** Correction 2026-10-08: MAX finished the shared command/cache cutover; the current dependency pin is in each package manifest.
-
-### 3c. How to change things
+## 3. How to change things
 
 **A new adapter method** takes the path `around`, `chat`, `contact` and `watch` took:
 `MessengerAdapter` in `../cli-messaging/src/cli/messenger/port.ts` → a line in `observed.ts` (run
 events) and `stored.ts` (saving) → the store if it should work `--offline` → a command in its
-resource's `<resource>-command.ts` (**Correction 2026-10-01:** `commands.ts` was split per resource
-on 2026-09-29, cli-messaging 3eb944b) → `TelegramAdapter` and its mapping in `map.ts` → the test fakes in tg
+resource's `<resource>-command.ts` → `TelegramAdapter` and its mapping in `map.ts` → the test fakes in tg
 (`src/program.test.ts`, `src/runs.test.ts`, `src/send-guard.test.ts`, `src/offline.test.ts`,
 `src/contract.test.ts`).
 
@@ -117,7 +50,7 @@ Read in this order:
 | `src/commands/context.ts` | what only Telegram has (credentials, the session file, `connect`) and the `TELEGRAM` description |
 | `../cli-messaging/src/cli/messenger/context.ts` | how a shared command connects inside `--timeout`, saves to the store and answers `--offline` |
 | `../cli-messaging/src/cli/messenger/port.ts` | `MessengerAdapter` — what an adapter must do for the shared commands |
-| `../cli-messaging/src/cli/messenger/messages-command.ts` | the shared message commands; `sendText` is the shape of a write: resolve → guard.check → send → guard.record. **Correction 2026-10-01:** `commands.ts` was split into one `<resource>-command.ts` per resource on 2026-09-29 (cli-messaging 3eb944b) |
+| `../cli-messaging/src/cli/messenger/messages-command.ts` | the shared message commands; `sendText` is the shape of a write: resolve → guard.check → send → guard.record. |
 | `../cli-messaging/src/cli/messenger/watch-command.ts` | `listenUntilStopped` — how `watch` and `serve` end |
 | `../cli-messaging/src/cli/messenger/stored.ts` | which reads and events are saved, and why `resolve` and `chat` are not |
 | `../cli-messaging/src/cli/messenger/observed.ts` | which ids and counts a run record names per adapter call |
@@ -153,9 +86,8 @@ Read in this order:
    --limit 3`, `bin/tg messages list me --limit 2`. Print counts and ids in checks, never message text.
 10. **Telegram deduplicates by `random_id`, also across connections** (FIND-6) — that is what makes
     `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
-11. **The store is a system of record, not a cache.** Correction 2026-10-08: handwritten migrations 1–5 are frozen; generated migrations begin at 6. Consult the shared migration manifest and claim the next number before implementation; a derived search
-    index may be dropped and rebuilt, a base table never. Announce a migration's number to the other
-    sessions (`ListAgents`) before writing it.
+11. **The store is a system of record, not a cache.** Consult the shared migration manifest and claim the next number before implementation; a derived search
+    index may be dropped and rebuilt, a base table never. Take a migration's number in cli-messaging's `COORDINATION.md` before writing it.
 12. **An adapter must set `Message.senderIsChat`** for a channel post or a message sent as the group,
     or the store makes a person of a channel.
 13. **`watch` starts from now; `serve` catches up.** Both open their own connection with updates on
@@ -182,28 +114,20 @@ Read in this order:
     commands are otherwise free — the sandbox was tried and turned off for the friction it caused
     ([`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
 21. **A worktree is a lane's, never shared** (`.worktrees/<lane>/`, gitignored). It has its own copy
-    of the login and an empty message store; never point it at the main checkout's `.tg/`. **Correction 2026-10-01:** for the live
+    of the login and an empty message store; never point it at the main checkout's `.tg/`. For the live
     checks, `bin/tg-live` runs a worktree's build with the main checkout's logins (`default`, and the
     test account `tgtest`) and the worktree's own store — no second login per worktree.
 
-22. **Another session also changes the shared store** — migration 4 (`account_identities`,
-    cli-messaging #48, a breaking `savePeople`) came from max-cli's side on 2026-09-29, and max-cli's
-    personal accounts move into the store next. Fetch before a store change; the next migration
-    number lives in the lanes plan §4.
+22. **Another session may change the shared store.** Fetch before a store change; the next
+    migration number is in cli-messaging's [`COORDINATION.md`](https://github.com/leemour/cli-messaging/blob/main/docs/dev/COORDINATION.md).
 
-## 5. Decisions you will make yourself — make them knowingly
+## 5. Rulings in force
 
-- what Phase 3 (MCP) exposes first.
-
-Already ruled, do not reopen: one shared store for all messengers (NEED-1); max-cli stays untouched
-until Phase 4 (NEED-2); every user registers their own `api_id` (NEED-3); publish cli-messaging on
-npm while it is 0.x (NEED-5); tg is on npm and releases from GitHub (NEED-8, NEED-13, NEED-14); each session releases its own
-cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9, the default); the MCP server may send, as max-cli's (NEED-15 → B);
-aim at feature parity with max-cli and cover kfastov/tgcli, in parallel lanes (NEED-15, and
-[the lanes plan](../cli-messaging/docs/plans/2026-09-29-parity-lanes.md)); Claude may commit, push and
-open and merge PRs without a prompt (NEED-17 → A, `.claude/settings.json`); `inbox` and `review` open
-tier P1 (NEED-18 → A). NEED-1…4 in the PR texts of 2026-09-28 are these, numbered before the
-project's list was checked.
+One shared store for all messengers (NEED-1); every user registers their own `api_id` (NEED-3);
+tg is on npm and releases from GitHub (NEED-8, NEED-13, NEED-14); each session releases its own
+cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9); the MCP server may send,
+as max-cli's (NEED-15 → B); feature parity with max-cli and kfastov/tgcli (NEED-15); Claude may
+commit, push, open and merge PRs without a prompt (NEED-17 → A).
 
 ## 6. How to check
 
@@ -228,5 +152,3 @@ PRs to be merged once green.
 - **`../cli-core`** — use, do not change; it has its own release process.
 - **mtcute's sources** beyond the `.d.ts` of the method you call.
 - **`.tg/`** in the checkout — the owner's live session and store; never print, copy or commit it.
-- **`CLEANUP.md`** in both repositories lists leftover local branches, waiting for the owner's OK.
-- **The spike report's history** — it is evidence, not instructions; the findings are in §4.

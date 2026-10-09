@@ -25,7 +25,9 @@ for code and documents. This page lists only where `tg` differs or adds.
 - **English**, in every document of this repository, user pages included.
 - **User pages** — `README.md` and the pages directly under `docs/` — state current facts only: no
   correction marks, no struck-out text, no internal ids. `pnpm docs:check` enforces it.
-- **Developer pages** (`docs/dev/`, `HANDOFF.md`) correct a wrong sentence in place and mark it.
+- **Developer pages** (`docs/dev/`, `HANDOFF.md`) state the current facts too: rewrite a wrong or
+  outdated sentence with no mark; git keeps the old text. A finished plan or handoff is deleted, a
+  done backlog item is deleted in the PR that ships it. `CHANGELOG.md` is the one place for history.
 - **Link, do not copy.** A link to a sibling repository uses its GitHub URL, so it works for a
   reader who has only this one; `pnpm docs:check` checks every link inside this repository.
 - **Every option a user page names exists**, or the parity manifest plans it for that command (docs

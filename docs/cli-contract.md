@@ -86,7 +86,7 @@ To assess an agent's statistics answer, ask for source evidence and archive cove
 counter is not zero, and missing messages in incomplete history do not prove a member was silent.
 The [ranking guide](rankings.md) explains how to interpret those limits.
 
-The [public agent evaluation report](https://github.com/leemour/cli-messaging/blob/main/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) records synthetic CLI and MCP tasks covering
+The [public agent evaluation report](https://github.com/leemour/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) records synthetic CLI and MCP tasks covering
 selected responders, response latency, observed retention, counter freshness, exact previews,
 permission refusal and evidence recovery after source changes. Six fresh contexts produced 38
 assessed outcomes. This small, correlated sample is not a reliability percentage or a guarantee

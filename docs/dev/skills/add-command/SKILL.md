@@ -46,8 +46,7 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 - `annotate(command, { mutates: true })` on anything that writes. Nothing sends, marks read or
   deletes unless the typed command asks for it (rule 1). Anything that cannot be undone gets the
   level `ask` in cli-messaging's built-in permission defaults, so it asks first; `--allow-dangerous`
-  answers yes for a deletion, `--yes` for the rest (**Correction 2026-10-01:** it used to say
-  `--allow-dangerous` was simply required).
+  answers yes for a deletion, `--yes` for the rest.
 - In machine mode, stdout carries one JSON value and nothing else (rule 2). A list is
   `{ items, limit, hasMore }`.
 - Errors are a `CliError(<code>, <sentence that says what to do>)`. The code decides the exit code.

@@ -14,7 +14,7 @@ failed.
 | Kind | Where | Lifetime |
 |---|---|---|
 | **The project handoff** | [`HANDOFF.md`](../../HANDOFF.md) | one file, overwritten; never a log |
-| **A task handoff** — a lane, a thread of work | [`docs/lanes/<lane>.md`](../lanes/), linked from [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md) | lives as long as the lane; **read instead of** the project handoff |
+| **A task handoff** — a lane, a thread of work | a file beside the plan it serves | deleted when its work is merged; **read instead of** the project handoff |
 
 ## Five blocks, in this order
 
@@ -53,4 +53,4 @@ A task handoff adds, after block 3:
 ## When a lane ends
 
 Its handoff's "what will bite" items that outlive the lane move into [`HANDOFF.md`](../../HANDOFF.md)
-§4; the lane's row in the lanes plan is marked done; the handoff file stays as the record.
+§4, and the handoff file is deleted.
