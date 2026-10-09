@@ -22,7 +22,7 @@ Who gets a reply, and when anything is sent:
   counts as no, because a background server has nobody to ask. A new rule is also off until you turn
   it on.
 
-The full option lists are in [commands.md](commands.md#tg-replies).
+The full option lists are in [the auto-reply commands](commands.md#tg-replies).
 
 ## Create and enable a rule
 
