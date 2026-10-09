@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process"
 import { realpathSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
@@ -36,6 +37,13 @@ export const tgScript = (): string => fileURLToPath(new URL("./bin/tg.js", impor
 
 export const runUpdate = (argv: string[], environment: UpdateEnvironment = {}): number =>
   environment.spawn ? environment.spawn(argv) : runPackageManager(argv)
+
+export const restartServer = (profile: string, env: NodeJS.ProcessEnv, environment: UpdateEnvironment = {}): number => {
+  const argv = [tgScript(), profile, "server", "restart"]
+  return environment.spawn
+    ? environment.spawn([process.execPath, ...argv])
+    : (spawnSync(process.execPath, argv, { env, shell: false, stdio: ["ignore", 2, 2] }).status ?? 1)
+}
 
 /**
  * The daily "a newer version exists" line, or `undefined`. Started beside the command and awaited

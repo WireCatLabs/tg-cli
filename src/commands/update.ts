@@ -3,9 +3,10 @@ import {
   outputFor,
   servingProfiles,
   upgradeCommand as sharedUpgradeCommand,
+  usableProfileName,
 } from "@leemour/cli-messaging/cli"
 import { TG } from "../app.js"
-import { installer, latest, PACKAGE, runUpdate, tgScript, type UpdateEnvironment } from "../update.js"
+import { installer, latest, PACKAGE, restartServer, runUpdate, type UpdateEnvironment } from "../update.js"
 import type { Environment } from "./context.js"
 
 export const upgradeCommand = () =>
@@ -30,7 +31,12 @@ const restartServers = (env: NodeJS.ProcessEnv, environment: UpdateEnvironment) 
   const restarted: string[] = []
   const left: string[] = []
   for (const profile of servingProfiles(TG, env)) {
-    const code = runUpdate([process.execPath, tgScript(), profile, "server", "restart"], environment)
+    try {
+      usableProfileName(profile)
+    } catch {
+      continue
+    }
+    const code = restartServer(profile, env, environment)
     ;(code === 0 ? restarted : left).push(profile)
   }
   return { restarted, left }
