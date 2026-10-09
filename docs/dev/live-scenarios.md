@@ -4,7 +4,7 @@ What a person checks on the real Telegram before a change ships. The suite never
 ([TESTING.md](TESTING.md)), so these are the other half, run by hand. The `test-live` skill picks
 the ones a change touches; the `release` skill runs `pnpm smoke:live`. The rules for running them
 are shared with max-cli: cli-messaging's
-[RELEASING.md, "Live checks"](https://github.com/leemour/cli-messaging/blob/main/docs/dev/RELEASING.md#live-checks).
+[RELEASING.md, "Live checks"](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/RELEASING.md#live-checks).
 
 **Nothing on this page names a real chat, person or id.** This repository is public. The scenarios
 name roles. The cast (which group, which account, their ids, the profile names) and the dated

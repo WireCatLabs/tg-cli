@@ -12,7 +12,7 @@ request description.
 Before anything: [HANDOFF.md](../../../../HANDOFF.md) §3c and §4 (the path a new method takes, and what
 bites), and [CLAUDE.md](../../../../CLAUDE.md) (the five rules). Names, options and answer shapes follow
 cli-messaging's
-[STANDARD.md](https://github.com/leemour/cli-messaging/blob/main/docs/dev/STANDARD.md): tg and max
+[STANDARD.md](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/STANDARD.md): tg and max
 answer the same command the same way.
 
 ## 0. Where it goes
@@ -20,7 +20,7 @@ answer the same command the same way.
 - **Messenger-neutral** (most commands: messages, chats, reactions, polls, the store): the command
   lives in **cli-messaging**, and tg only implements the adapter method. Max gets it too.
 - **Telegram only** (`session`, a Telegram concept nothing else has): `src/commands/` here, and a
-  line in [cli-messaging's `parity.json`](https://github.com/leemour/cli-messaging/blob/main/parity.json)
+  line in [cli-messaging's `parity.json`](https://github.com/WireCatLabs/cli-messaging/blob/main/parity.json)
   saying it is one-sided, and why.
 
 Work in a worktree off `origin/main`, one per repository you touch: `git switch -c feat/<name>

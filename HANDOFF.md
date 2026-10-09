@@ -8,9 +8,9 @@ Read this once, then only the files your task needs.
 [mtcute](https://mtcute.dev), not the Bot API). It is built for agents and scripts first: one
 operation per call, one JSON value on stdout when piped, a typed error and a fixed exit code on
 failure. Everything that is not specific to Telegram lives in the npm package
-[`@leemour/cli-messaging`](https://github.com/leemour/cli-messaging) (checkout: `../cli-messaging`),
-which `max` ([max-cli](https://github.com/leemour/max-cli), a MAX messenger CLI) also uses. Both sit
-on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
+[`@leemour/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
+which `max` ([max-cli](https://github.com/WireCatLabs/max-cli), a MAX messenger CLI) also uses. Both sit
+on [`@leemour/cli-core`](https://github.com/WireCatLabs/cli-core).
 
 ## 2. Entry points
 
@@ -18,7 +18,7 @@ on [`@leemour/cli-core`](https://github.com/leemour/cli-core).
 |---|---|
 | What a user is told — every command | [`README.md`](README.md), then [`docs/index.md`](docs/index.md); every command and option: [`docs/commands.md`](docs/commands.md) (generated) |
 | How tg is built, tested and written | [`docs/dev/ARCHITECTURE.md`](docs/dev/ARCHITECTURE.md), [`docs/dev/TESTING.md`](docs/dev/TESTING.md), [`docs/dev/CONVENTIONS.md`](docs/dev/CONVENTIONS.md) |
-| Open work | [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md); the shared package's: [cli-messaging BACKLOG](https://github.com/leemour/cli-messaging/blob/main/docs/dev/BACKLOG.md) |
+| Open work | [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md); the shared package's: [cli-messaging BACKLOG](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/BACKLOG.md) |
 | How agents run here (worktrees, guards, `bin/tg-live`) | [`docs/dev/agents.md`](docs/dev/agents.md) |
 | Live checks before a release | [`docs/dev/live-scenarios.md`](docs/dev/live-scenarios.md) |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
@@ -119,7 +119,7 @@ Read in this order:
     test account `tgtest`) and the worktree's own store — no second login per worktree.
 
 22. **Another session may change the shared store.** Fetch before a store change; the next
-    migration number is in cli-messaging's [`COORDINATION.md`](https://github.com/leemour/cli-messaging/blob/main/docs/dev/COORDINATION.md).
+    migration number is in cli-messaging's [`COORDINATION.md`](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/COORDINATION.md).
 
 ## 5. Rulings in force
 

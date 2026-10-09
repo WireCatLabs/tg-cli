@@ -59,7 +59,7 @@ stdin/stdout connection keeps working as before.
 | Gemini | only adults in the US with a personal Google account | [connected apps](https://support.google.com/gemini/answer/17209137?hl=en) |
 
 The setup steps for each operating system have not all been tried on that system. If a step does
-not work, [open an issue](https://github.com/leemour/tg-cli/issues).
+not work, [open an issue](https://github.com/WireCatLabs/tg-cli/issues).
 
 ## Start the tunnel and server
 

@@ -1,6 +1,6 @@
 # Conventions
 
-`tg` follows [max-cli's conventions](https://github.com/leemour/max-cli/blob/main/docs/dev/CONVENTIONS.md)
+`tg` follows [max-cli's conventions](https://github.com/WireCatLabs/max-cli/blob/main/docs/dev/CONVENTIONS.md)
 for code and documents. This page lists only where `tg` differs or adds.
 
 ## Code
@@ -11,9 +11,9 @@ for code and documents. This page lists only where `tg` differs or adds.
 - **mtcute stays in `src/telegram/`**, and its objects become domain models in `map.ts` alone
   ([ARCHITECTURE.md](ARCHITECTURE.md#1-most-of-tg-is-not-in-this-repository)).
 - **Command names, options, output shapes and MCP tools** follow the
-  [standard for tg and max](https://github.com/leemour/cli-messaging/blob/main/docs/dev/STANDARD.md) in
+  [standard for tg and max](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/STANDARD.md) in
   cli-messaging — one standard for both CLIs; a new verb or option is added there first. Every command
-  and option is in its [parity manifest](https://github.com/leemour/cli-messaging/blob/main/parity.json),
+  and option is in its [parity manifest](https://github.com/WireCatLabs/cli-messaging/blob/main/parity.json),
   and `pnpm parity:check` fails on one that is not.
 - **Messenger-neutral code goes to cli-messaging**, not here. If a change would help `max` too, it
   belongs there.
@@ -51,7 +51,7 @@ for code and documents. This page lists only where `tg` differs or adds.
 
 ## Documentation authoring
 
-Before documentation work, read the [shared authoring rules](https://github.com/leemour/cli-docs/blob/main/docs/AUTHORING.md).
+Before documentation work, read the [shared authoring rules](https://github.com/WireCatLabs/cli-docs/blob/main/docs/AUTHORING.md).
 Every user guide starts with a brief explanation of when to use it and what result the reader
 will get; mention a prerequisite only when it changes the next step. Keep titles short and
 task-specific. A new sidebar page needs a relevant icon and a contextual incoming link.

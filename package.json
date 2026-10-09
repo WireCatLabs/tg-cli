@@ -6,7 +6,7 @@
   "author": "Viacheslav Ptsarev",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/leemour/tg-cli.git"
+    "url": "git+https://github.com/WireCatLabs/tg-cli.git"
   },
   "type": "module",
   "engines": {

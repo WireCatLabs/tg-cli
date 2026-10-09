@@ -386,7 +386,7 @@ describe("doctor report", () => {
   it("**explains itself, then writes a report with no message text in it**", async () => {
     const store = await backfilled()
     const explained = await tg(["archive", "doctor", "report", "--json"], store)
-    expect(explained.answer).toMatchObject({ sendTo: "https://github.com/leemour/tg-cli/issues/new" })
+    expect(explained.answer).toMatchObject({ sendTo: "https://github.com/WireCatLabs/tg-cli/issues/new" })
 
     const runs = join(process.env.TG_STATE_DIR ?? "", "runs", "2026-09-29", "20260929T100000Z-chats-list-abc123")
     mkdirSync(runs, { recursive: true })

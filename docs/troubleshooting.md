@@ -417,7 +417,7 @@ It holds no message text, chat titles, names, phone numbers, session or app cred
 is kept by itself, even without `--record` ([failed runs](diagnostics.md#a-failed-run-is-always-kept)).
 
 Send it as a new issue at
-[github.com/leemour/tg-cli/issues](https://github.com/leemour/tg-cli/issues/new): say what you did
+[github.com/WireCatLabs/tg-cli/issues](https://github.com/WireCatLabs/tg-cli/issues/new): say what you did
 and what happened, and attach the file. Issues are public, the file too: read it before you attach
 it.
 

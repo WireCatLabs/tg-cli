@@ -33,7 +33,7 @@ order.
 What changed between versions: [CHANGELOG.md](../CHANGELOG.md).
 
 [meta.json](meta.json) is the sidebar of the docs portal: every page above, in order. It follows
-[the shared page structure](https://github.com/leemour/cli-docs/blob/main/docs/STRUCTURE.md); a new
+[the shared page structure](https://github.com/WireCatLabs/cli-docs/blob/main/docs/STRUCTURE.md); a new
 page goes into it too. This index is for contributors and stays out of the portal.
 
 ## The reference is generated
@@ -47,5 +47,5 @@ committed page differs from what the program says. The same list, as JSON, is `t
 - [dev/CONVENTIONS.md](dev/CONVENTIONS.md) — how code and documents are written here
 - [dev/TESTING.md](dev/TESTING.md) — how to check a change, and what each check is for
 - [dev/BACKLOG.md](dev/BACKLOG.md) — open work; the shared package
-  [cli-messaging](https://github.com/leemour/cli-messaging) holds everything that is not specific to
+  [cli-messaging](https://github.com/WireCatLabs/cli-messaging) holds everything that is not specific to
   Telegram

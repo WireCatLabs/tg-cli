@@ -138,7 +138,7 @@ tg doctor report create --run <run-id>    # about this one
 ```
 
 It writes a JSON file — what `tg doctor` shows plus the run — and says where to send it: a new issue
-at [github.com/leemour/tg-cli/issues](https://github.com/leemour/tg-cli/issues/new). Read it before
+at [github.com/WireCatLabs/tg-cli/issues](https://github.com/WireCatLabs/tg-cli/issues/new). Read it before
 you send it. It holds no message text, and every id appears as a label, not as Telegram's number.
 [How to report a problem](troubleshooting.md#report-a-problem) lists everything the file holds.
 
