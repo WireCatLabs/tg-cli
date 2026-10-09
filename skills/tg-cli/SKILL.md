@@ -69,7 +69,7 @@ Read-only MCP offers `tg_read` (`command: "messages link"`) with the same result
   retry. Tell the owner the send did not go, and why.
 - **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg chats mark-read` and
   `tg messages list --mark-read` mark a chat read, and the other side sees it: only when the owner asked.
-- **Not for:** mass mailing or other people's accounts; automatic replies go only to the people and chats the owner allows, with explicit permission.
+- **Not for:** mass mailing or other people's accounts; automatic replies follow the owner's rules and audience, and send only with explicit permission.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 
 ## First setup
@@ -320,8 +320,8 @@ allow/deny lists (deny wins). `test` previews stored messages without sending; `
 model only inside ai blocks. Ordinary previews show instruction/fallback with no model call;
 `test --ai` explicitly uses a consented provider. `replies consents grant|revoke` controls profile/
 endpoint consent and `deny|allow` controls native chat opt-outs. Never widen the audience or run live
-scenarios without the owner's separate consent. Shared `serve` can reply only to whom the audience allows and only with explicit
-`permissions.replies.send:allow`; the default is deny, and a new file's audience allows nobody.
+scenarios without the owner's separate consent. Shared `serve` replies to everyone a rule matches unless the audience limits it, and only with explicit
+`permissions.replies.send:allow`; the default is deny.
 
 Search reads the local archive and asks Telegram's search by default; `coverage` says what the archive held and
 `coverage.next` what to fetch. `--sync-first` explicitly fetches new messages before searching and

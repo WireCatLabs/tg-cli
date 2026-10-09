@@ -2,7 +2,7 @@
 
 This page is about answering Telegram messages automatically when you cannot answer yourself — for
 example, a short "I will answer in the morning" to people who write after working hours. By the end
-you have a working auto-reply: a rule with your reply text, sent only to the people you allow, a way
+you have a working auto-reply: a rule with your reply text, a choice of who may get it, a way
 to check what it would answer before it sends anything, and ready-made texts from
 [Drafts and reply templates](https://wirecat.dev/en/docs/drafts-and-templates).
 
@@ -13,12 +13,14 @@ A few words used below:
 - The **audience** is the list of people and chats that may get a reply at all, whatever a rule says.
 - `tg serve` is the background process that receives new messages and applies the rules.
 
-Two things keep it from writing to people you did not mean:
+Who gets a reply, and when anything is sent:
 
-- **Replies go only to people and chats you allow.** A new rules file allows nobody, so nobody gets
-  a reply until you add someone with `tg replies audience --reply listed --allow-people …`.
-- **Sending is off until you turn it on.** `permissions.replies.send` must be `allow`. `ask` counts as
-  no, because a background server has nobody to ask.
+- **Replies go to everyone your rules match, unless you limit the audience.** Answer only selected
+  people with `tg replies audience --reply listed --allow-people …`, or leave some out with
+  `--deny-people` and `--deny-chats`.
+- **Nothing is sent until you turn sending on.** `permissions.replies.send` must be `allow`. `ask`
+  counts as no, because a background server has nobody to ask. A new rule is also off until you turn
+  it on.
 
 The full option lists are in [commands.md](commands.md#tg-replies).
 
@@ -33,14 +35,20 @@ tg replies edit away --per-chat 1/12h --per-person 1/1d
 
 `add` creates a rule that is off, with every setting written out. The rules live in
 `<profile>.replies.json`, in the same folder as the `configFile` that `tg config show --json` names.
-Allow the people who may get replies, by their Telegram ids, comma-separated. `tg contacts show <name>
---json` prints a person's id as `id`:
+By default the rules answer everyone they match. To answer only selected people, list their Telegram
+ids, comma-separated; `tg contacts show <name> --json` prints a person's id as `id`:
 
 ```sh
 tg replies audience --reply listed --allow-people 1000001
 ```
 
-The file then holds:
+To answer everyone except some people or chats, keep `--reply all` and deny them:
+
+```sh
+tg replies audience --deny-people 1000002 --deny-chats -1002000002
+```
+
+After the first command the file holds:
 
 ```json
 {
@@ -87,9 +95,8 @@ The first time you set working hours, give the window, the days and the time zon
 that you can change one. A wrong edit does not overwrite the file, and the other rules, the audience and
 the record of what was answered stay as they were.
 
-`tg replies audience` shows who the whole file may answer. A new file is `--reply listed` with empty
-lists, so it answers nobody. `--reply listed` answers only the allowed people and chats; `--reply all`
-answers anyone a rule matches. `--allow-people`, `--allow-chats`, `--deny-people` and `--deny-chats`
+`tg replies audience` shows who the whole file may answer. A new file is `--reply all`: it answers
+anyone a rule matches. `--reply listed` answers only the allowed people and chats. `--allow-people`, `--allow-chats`, `--deny-people` and `--deny-chats`
 replace those lists, and a denial wins over an allowance. A `task` action opens a task on this computer
 and is not limited by the audience.
 

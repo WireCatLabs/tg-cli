@@ -480,7 +480,7 @@ In full — what reaches the disk, what goes over the network and what the tool 
 | [archive](docs/archive.md) | the local store: fetch, search, export, `--offline`, `serve` as a service, backup |
 | [groups](docs/groups.md) | groups you run: unanswered questions, newcomers, a weekly report |
 | [people](docs/people.md) | one person: profile, what they said in each chat, does the account look like a bot |
-| [replies](docs/replies.md) | answer messages by your rules, only to people you allow |
+| [replies](docs/replies.md) | answer messages by your rules, to everyone or only the people you choose |
 | [mcp](docs/mcp.md) | Claude Desktop, Cursor and other clients without a terminal |
 | [remote](docs/remote.md) | ChatGPT or Claude in the browser, through a login proxy and a tunnel |
 | [recipes](docs/recipes.md) | an agent's daily work: summary, who owes what, unanswered, on a schedule |

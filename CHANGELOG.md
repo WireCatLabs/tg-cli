@@ -7,15 +7,15 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **Auto-replies go only to the people and chats you allow; the separate `testers` list is gone.** A new
-  rules file allows nobody, so nobody gets a reply until you run
-  `tg replies audience --reply listed --allow-people <ids>`. A rules file that still has `testers` keeps
+- **Auto-replies answer everyone your rules match, unless you limit the audience; the separate `testers`
+  list is gone.** `tg replies audience --reply listed --allow-people <ids>` answers only selected people;
+  `--deny-people` and `--deny-chats` leave some out. Nothing is sent until `permissions.replies.send` is
+  `allow`, and a new rule is off until you turn it on. A rules file that still has `testers` keeps
   answering exactly the same people: they become the allowed people (only those the audience also allowed,
   if it was already `listed`). Allowed chats in such a file are dropped, because they would open replies to
   everyone in those chats; deny lists stay. The file is rewritten without `testers` on your next
   `tg replies` edit.
-- **`tg replies status --json` no longer has `testers`**; the `audience` counts and the warning "nobody is
-  answered" say the same. In `tg replies test` and `serve`, a sender outside the audience is skipped with
+- **`tg replies status --json` no longer has `testers`**; the `audience` counts say who may be answered. In `tg replies test` and `serve`, a sender outside the audience is skipped with
   "not on the allow list" instead of "not a test account".
 
 ## 0.41.0 — 09.10.2026

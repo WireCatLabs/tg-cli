@@ -430,8 +430,8 @@ names them in its answer. Stop processes using the store before repair.
 
 `tg replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
 Rules live in the profile's replies file. `replies status`, `pause` and `resume` inspect/control them.
-Actual shared `serve` replies require both an explicit `replies.send:allow` permission and an audience
-that allows the sender or chat. Sending is denied by default; a new file allows nobody. Edits, messages
+Actual shared `serve` replies require an explicit `replies.send:allow` permission, and go to everyone a
+rule matches unless the audience limits them. Sending is denied by default. Edits, messages
 from before startup and already answered messages are ignored. `ask` cannot send from an unattended service.
 
 Create a disabled rule with `tg replies add away`, edit it with `replies edit away --template`, then
@@ -445,7 +445,7 @@ all three fields. Invalid edits preserve the file, other rules, the audience and
 
 `tg replies audience` shows the profile's audience; `--reply all|listed`, `--allow-people`,
 `--allow-chats`, `--deny-people` and `--deny-chats` replace its named fields. Deny wins; listed with
-an empty allow list answers nobody, and a new file starts that way. A rule's
+an empty allow list answers nobody; a new file answers everyone a rule matches. A rule's
 local task can open even where an answer is forbidden.
 
 Templates use Liquid variables `sender.firstName`, `sender.name`, `chat.title`, `chat.kind`, and
