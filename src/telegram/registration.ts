@@ -74,7 +74,7 @@ export const registerApp = async (
     hash,
     app_title: "tg-cli",
     app_shortname: shortName,
-    app_url: "https://github.com/leemour/tg-cli",
+    app_url: "https://github.com/WireCatLabs/tg-cli",
     app_platform: "desktop",
     app_desc: "A command line interface for my own account",
   })

@@ -82,7 +82,7 @@ It keeps the full text of every message it has seen. The file is readable by you
 is not encrypted ([what reaches the disk](security.md#what-reaches-the-disk)).
 
 **It is one file for every account and every messenger CLI** built on the same library, such as
-[max-cli](https://github.com/leemour/max-cli):
+[max-cli](https://github.com/WireCatLabs/max-cli):
 
 ```text
 ~/.local/share/cli-messaging/messages.db       # Linux; MESSAGING_STORE moves it

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/leemour/tg-cli/main/docs/design/logo_text.png" alt="Tg CLI" width="480">
+  <img src="https://raw.githubusercontent.com/WireCatLabs/tg-cli/main/docs/design/logo_text.png" alt="Tg CLI" width="480">
 </p>
 
 # tg-cli
@@ -17,7 +17,7 @@ tg messages send "Book club" "Running 15 minutes late"
 ```
 
 [![npm](https://img.shields.io/npm/v/@leemour/tg-cli)](https://www.npmjs.com/package/@leemour/tg-cli)
-[![CI](https://github.com/leemour/tg-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/leemour/tg-cli/actions/workflows/ci.yml)
+[![CI](https://github.com/WireCatLabs/tg-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/WireCatLabs/tg-cli/actions/workflows/ci.yml)
 [![Node](https://img.shields.io/node/v/@leemour/tg-cli)](https://nodejs.org/)
 [![Bun](https://img.shields.io/badge/bun-tested-f9f1e1)](https://bun.sh/)
 [![npm downloads](https://img.shields.io/npm/dm/@leemour/tg-cli)](https://www.npmjs.com/package/@leemour/tg-cli)
@@ -477,8 +477,8 @@ bin/tg chats list --limit 5
 ```
 
 Everything that is not specific to Telegram — the commands, the store, the send guard, the MCP
-server — lives in [cli-messaging](https://github.com/leemour/cli-messaging), shared with
-[max-cli](https://github.com/leemour/max-cli). Telegram-specific code lives only in `src/telegram/`,
+server — lives in [cli-messaging](https://github.com/WireCatLabs/cli-messaging), shared with
+[max-cli](https://github.com/WireCatLabs/max-cli). Telegram-specific code lives only in `src/telegram/`,
 and a lint rule keeps [mtcute](https://mtcute.dev), the Telegram library underneath, there.
 
 To work on `cli-messaging` at the same time, point the dependency at a checkout for the length of
@@ -488,7 +488,7 @@ before the pull request.
 ## Roadmap
 
 What is coming to `tg`, in the order it is likely to arrive. The order can change. Ideas and
-requests are welcome in [issues](https://github.com/leemour/tg-cli/issues).
+requests are welcome in [issues](https://github.com/WireCatLabs/tg-cli/issues).
 
 - **Richer sending** — several photos in one message
   ([usage.md](docs/usage.md#not-in-tg-yet)).
@@ -502,7 +502,7 @@ MIT — see [LICENSE](LICENSE).
 ## Contributing
 
 Pull requests, bug reports and ideas are welcome —
-[issues](https://github.com/leemour/tg-cli/issues). How the code is built and how to test it:
+[issues](https://github.com/WireCatLabs/tg-cli/issues). How the code is built and how to test it:
 [docs/dev/ARCHITECTURE.md](docs/dev/ARCHITECTURE.md) and [docs/dev/TESTING.md](docs/dev/TESTING.md).
 
 For browser connectors, `tg mcp --http --public-url https://<name>.ts.net` serves behind your tunnel

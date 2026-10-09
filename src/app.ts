@@ -10,7 +10,7 @@ export const TG: AppIdentity = {
   envPrefix: "TG",
   description: "A personal Telegram account from the command line, for agents and scripts",
   version: VERSION,
-  issues: "https://github.com/leemour/tg-cli/issues/new",
+  issues: "https://github.com/WireCatLabs/tg-cli/issues/new",
   locale: "en-GB",
 }
 

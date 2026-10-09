@@ -2,7 +2,7 @@
 
 This page lists what is planned for `tg` and is not in it yet. Read it before you build a workaround
 for a missing feature: it may already be on the way. The order is approximate and can change. To
-suggest something, open an [issue on GitHub](https://github.com/leemour/tg-cli/issues).
+suggest something, open an [issue on GitHub](https://github.com/WireCatLabs/tg-cli/issues).
 
 ## Next
 

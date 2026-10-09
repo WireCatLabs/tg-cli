@@ -261,6 +261,6 @@ An empty report with incomplete history does not establish that there were no qu
 
 ## More control
 
-You can select a period, choose a measure or combined score, and save a selection for another report. Scoring formulas, exact evidence arguments and page limits live in the [shared statistics specification](https://github.com/leemour/cli-messaging/blob/main/docs/rankings.md) and the [command reference for statistics](commands.md#tg-stats).
+You can select a period, choose a measure or combined score, and save a selection for another report. Scoring formulas, exact evidence arguments and page limits live in the [shared statistics specification](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/rankings.md) and the [command reference for statistics](commands.md#tg-stats).
 
 To verify a finding, ask the agent to open the question, answer or members behind that report row. Before the next report, [check archive coverage](archive.md).

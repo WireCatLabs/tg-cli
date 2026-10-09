@@ -6,7 +6,7 @@ description: Prepare, check and publish a tg-cli release — run release:check, 
 # Release tg-cli
 
 The steps tg and max share are in cli-messaging's
-[RELEASING.md](https://github.com/leemour/cli-messaging/blob/main/docs/dev/RELEASING.md). Read it
+[RELEASING.md](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/RELEASING.md). Read it
 first. This skill orders them for tg and adds what is tg's.
 
 **tg releases without asking**: no signed report, no sign-off. You merge and publish yourself once

@@ -28,7 +28,7 @@ operation identifiers. For ids use `--fields id`; `items.id` also works, and `it
 `--max-output-bytes` and `--max-input-bytes` set byte budgets; one-shot actions default to 30 seconds,
 changed with `--timeout`. Before a sensitive write, global `--dry-run` checks syntax and permissions
 before action; it opens no messenger connection, reserves no write and leaves targets unresolved.
-See the [CLI contract](https://github.com/leemour/tg-cli/blob/main/docs/cli-contract.md).
+See the [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-contract.md).
 
 MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, arguments}`.
 Use the CLI path such as `stats messages show`; former per-command tool names are gone.
@@ -150,9 +150,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    --timezone selects a calendar zone; kind:bot and in:bots differ. Term/body regex differ.
    Dates: `date:today`, `date:7d`; files: `filename:*.pdf`, `size>10MB`, `mime:image`;
    links: `has:link AND "github.com"`; the owner's labels: `tag:work`. Counts: `tg stats messages show`.
-   Guides: [search](https://github.com/leemour/tg-cli/blob/main/docs/search.md),
-   [topic search](https://github.com/leemour/tg-cli/blob/main/docs/topic-search.md) (conversations by
-   meaning), [query language](https://github.com/leemour/tg-cli/blob/main/docs/query-language.md).
+   Guides: [search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/search.md),
+   [topic search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/topic-search.md) (conversations by
+   meaning), [query language](https://github.com/WireCatLabs/tg-cli/blob/main/docs/query-language.md).
 
 6. **`tg store export` exports only what was kept**, and never asks Telegram. `tg store status` says
    how much of each chat is kept.
@@ -435,7 +435,7 @@ Rank held data with `tg stats messages top` / `tg stats contacts top`, using `--
 are not zero and freshness is disclosed per field; legacy observations remain unknown. Pass drilldown.selection to the matching
 `stats messages evidence` / `stats contacts evidence`; continue with nextCursor and restart
 without it if contributing data changed.
-Guide: [rankings](https://github.com/leemour/tg-cli/blob/main/docs/rankings.md).
+Guide: [rankings](https://github.com/WireCatLabs/tg-cli/blob/main/docs/rankings.md).
 
 For questions waiting and selected admin response times, use `stats messages unanswered` and
 `stats contacts responses --answerer <person>`. Known-join newcomer help is `stats chats newcomers <chat>`;

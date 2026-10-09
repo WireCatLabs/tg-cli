@@ -14,7 +14,7 @@ a release: Actions → Windows and macOS → Run workflow ([windows.yml](../../.
 What only the real Telegram can check, and how, is [live-scenarios.md](live-scenarios.md); the
 `release`, `test-live` and `add-command` skills in [`skills/`](skills/) walk an agent through it.
 The reasons behind each rule below are in
-[max-cli's TESTING.md](https://github.com/leemour/max-cli/blob/main/docs/dev/TESTING.md), where they
+[max-cli's TESTING.md](https://github.com/WireCatLabs/max-cli/blob/main/docs/dev/TESTING.md), where they
 were learnt.
 
 ## No test touches the owner's account or files
@@ -88,7 +88,7 @@ or, when it truly cannot run offline, an entry there naming where it is checked 
 
 ## How agents' statistics answers were evaluated
 
-The [public agent evaluation report](https://github.com/leemour/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md)
+The [public agent evaluation report](https://github.com/WireCatLabs/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md)
 records synthetic CLI and MCP tasks covering selected responders, response latency, observed
 retention, counter freshness, exact previews, permission refusal and evidence recovery after source
 changes. Six fresh contexts produced 38 assessed outcomes. This small, correlated sample is not a
@@ -96,7 +96,7 @@ reliability percentage or a guarantee about anyone's agent. MCP used a shell pro
 messenger or native network adapter participated. The original runs did not record the exact model
 identity.
 
-To reproduce, use the [fixture and reproduction instructions](https://github.com/leemour/cli-messaging/tree/main/scripts/evals).
+To reproduce, use the [fixture and reproduction instructions](https://github.com/WireCatLabs/cli-messaging/tree/main/scripts/evals).
 Record model/SDK versions, clock/seed, prompts and first failures. Model answers can differ on a
 rerun; deterministic fixture checks and independent model evaluations are reported separately. What
 a user should check in an agent's statistics answer stays in

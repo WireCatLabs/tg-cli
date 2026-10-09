@@ -2,7 +2,7 @@
 
 You need to find something that was written: a message, an agreement, a file someone sent, a code from
 months ago. This page shows how to search everything tg has saved on this computer — Telegram messages,
-and the mail and notes that [memo](https://github.com/leemour/cli-memo) imported — and how to ask
+and the mail and notes that [memo](https://github.com/WireCatLabs/cli-memo) imported — and how to ask
 Telegram's own search at the same time.
 
 After reading it you can find messages by words, people, chats, dates, files and links, save a search

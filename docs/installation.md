@@ -117,7 +117,7 @@ The first commands to read your chats are in [logging in and the first commands]
 For working on the code, or for a version that is not released yet:
 
 ```sh
-git clone https://github.com/leemour/tg-cli.git
+git clone https://github.com/WireCatLabs/tg-cli.git
 cd tg-cli
 pnpm install
 pnpm build
@@ -144,7 +144,7 @@ other tools:
   sends (`sends/`), the list of allowed recipients (`profiles/`), the saved point of `inbox --new`
   (`inbox/`), background fetch jobs, and the log and lock of `serve`.
 - **the local store** is shared with other messenger tools built on the same library, such as
-  [max-cli](https://github.com/leemour/max-cli). [The local store](archive.md) page describes it.
+  [max-cli](https://github.com/WireCatLabs/max-cli). [The local store](archive.md) page describes it.
 - **speech models** are downloaded only when you ask (`tg models audio download`), for
   `messages transcribe --local`.
 
