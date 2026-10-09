@@ -3,6 +3,21 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **Auto-replies answer everyone your rules match, unless you limit the audience; the separate `testers`
+  list is gone.** `tg replies audience --reply listed --allow-people <ids>` answers only selected people;
+  `--deny-people` and `--deny-chats` leave some out. Nothing is sent until `permissions.replies.send` is
+  `allow`, and a new rule is off until you turn it on. A rules file that still has `testers` keeps
+  answering exactly the same people: they become the allowed people (only those the audience also allowed,
+  if it was already `listed`). Allowed chats in such a file are dropped, because they would open replies to
+  everyone in those chats; deny lists stay. The file is rewritten without `testers` on your next
+  `tg replies` edit.
+- **`tg replies status --json` no longer has `testers`**; the `audience` counts say who may be answered. In `tg replies test` and `serve`, a sender outside the audience is skipped with
+  "not on the allow list" instead of "not a test account".
+
 ## 0.41.0 — 09.10.2026
 
 ### Changed — may break scripts
@@ -370,7 +385,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   `models.replies` selects the provider; `replies consents` grants profile/endpoint consent with
   native-chat opt-outs. Ordinary `replies test` previews instructions/fallback without calls;
   `--ai` explicitly submits stored data. Legacy templates retain their literal fallback with warnings.
-  Sending remains limited to testers and replies.send; see [archive](docs/archive.md#tester-only-reply-rules).
+  Sending remains limited to testers and replies.send; see [archive](docs/archive.md#reply-rules).
 
 - **MCP writes can run from web clients without server forms.** The profile's permission levels
   apply to HTTP and stdio alike; `ask` and `allow` permit the requested MCP write. Repeat

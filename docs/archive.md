@@ -426,12 +426,12 @@ without deleting data: mismatched tables are kept as copies, and rows/columns le
 Inspect retained copies before deleting one with `store copies delete <exact name>`; `store repair`
 names them in its answer. Stop processes using the store before repair.
 
-## Tester-only reply rules
+## Reply rules
 
 `tg replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
 Rules live in the profile's replies file. `replies status`, `pause` and `resume` inspect/control them.
-Actual shared `serve` replies require both an explicit `replies.send:allow` permission and a configured
-`testers` list. Sending is denied by default; missing/empty testers means nobody is answered. Edits, messages
+Actual shared `serve` replies require an explicit `replies.send:allow` permission, and go to everyone a
+rule matches unless the audience limits them. Sending is denied by default. Edits, messages
 from before startup and already answered messages are ignored. `ask` cannot send from an unattended service.
 
 Create a disabled rule with `tg replies add away`, edit it with `replies edit away --template`, then
@@ -441,11 +441,11 @@ include `--do reply,task`, `--kinds`, `--chats`, `--not-chats`, `--words`, `--qu
 `--no-question`, `--mentions-me` / `--no-mentions-me`, `--people`, `--not-people`, `--contacts-only` /
 `--no-contacts-only`, `--as-reply` / `--no-as-reply`, `--per-chat`, `--per-person`, and the hours
 fields `--outside`, `--days`, `--timezone` (`--no-hours` clears them). First setting hours requires
-all three fields. Invalid edits preserve the file, other rules, testers and reply history.
+all three fields. Invalid edits preserve the file, other rules, the audience and reply history.
 
 `tg replies audience` shows the profile's audience; `--reply all|listed`, `--allow-people`,
 `--allow-chats`, `--deny-people` and `--deny-chats` replace its named fields. Deny wins; listed with
-an empty allow list answers nobody. Testers still limit answers on top of the audience. A rule's
+an empty allow list answers nobody; a new file answers everyone a rule matches. A rule's
 local task can open even where an answer is forbidden.
 
 Templates use Liquid variables `sender.firstName`, `sender.name`, `chat.title`, `chat.kind`, and
