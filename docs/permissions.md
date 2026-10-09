@@ -1,7 +1,19 @@
 # Permissions
 
-Permissions belong to a profile: a set of settings for one account or bot. Start with reading
-and allow changes only when you need them. See [profiles and bots](profiles.md).
+Use this page before you let an AI agent, a script or another person work with your Telegram
+account through `tg`. It shows how to decide, for each profile, what may only be read, what asks
+you first, and what may go ahead without a question. By the end you can make a profile read-only,
+allow one action such as sending, and know which other checks still apply.
+
+Words this page uses:
+
+- **Profile**: a named set of settings for one account or bot, such as `work`
+  ([profiles and bots](profiles.md)).
+- **Permission key**: the name of a command or a group of commands, such as `messages` or
+  `messages.send`. A longer key is more specific.
+- **Access level**: what happens when that command runs: `deny`, `readonly`, `ask` or `allow`.
+
+Start with reading, and allow changes only when you need them.
 
 ## Choose an access level
 
@@ -32,8 +44,8 @@ in the terminal and without a server form over MCP. Set that key to `readonly` t
 Check other exceptions with `config show`.
 
 This controls messages. Other actions, such as reactions or chat administration, have their own
-permission keys. Use the complete read-only profile examples in
-[settings reference](configuration-reference.md).
+permission keys. A complete read-only profile and every key are in
+[what a profile may do](configuration-reference.md#what-a-profile-may-do).
 
 ## Permissions for a bot
 
@@ -48,8 +60,7 @@ tg support config set sendsPerHour 30 --bot
 
 A recipient list limits which chats the profile may send to. An hourly send limit helps stop a
 loop. These checks remain active when a particular command is allowed.
-Read the [Security](security.md)
-for the commands to manage these controls.
+The commands to manage them are in [the send guard](security.md#the-send-guard).
 
 ## A temporary change for an MCP server
 
@@ -60,5 +71,6 @@ its own approvals and may allow a call without asking again. Use `deny` or `read
 ## Limits and detailed rules
 
 An assistant that can edit configuration files or run unrestricted terminal commands may be able
-to change these settings. Read [Security](security.md) before giving that access.
-For nested permissions and exact command keys, see the messenger's configuration reference.
+to change these settings. Read [security](security.md) before giving that access.
+For nested permissions and exact command keys, see
+[what a profile may do](configuration-reference.md#what-a-profile-may-do).

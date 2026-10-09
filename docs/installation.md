@@ -1,16 +1,29 @@
 # Installation
 
-`tg` is one command, installed as an ordinary npm package. It builds nothing at install time: SQLite
-comes from the runtime itself, so there is no native module to compile. It starts nothing in the
-background by itself either. Global npm installation can install the bundled agent instructions
-and, on Windows, repair the user PATH. It never logs in or reads chats during installation.
+Read this page before the first run of `tg`, or when you move it to another computer, upgrade it or
+remove it. At the end, `tg` is installed, you have checked that it starts, and you know where it keeps
+its files. Logging in to Telegram is the next step, on its own page.
+
+The words this page uses:
+
+- **npm package**: the way `tg` is distributed. npm (or pnpm, or Bun) downloads it and puts the `tg`
+  command on your computer. The package is **`@leemour/tg-cli`**; the command it installs is **`tg`**.
+- **Node** or **Bun**: the program that runs `tg`. Install one of them first.
+- **PATH**: the list of folders your terminal looks in when you type a command. `tg` works by its
+  bare name only when its folder is on PATH.
+- **Keyring**: the password store of your operating system. `tg` keeps your Telegram app keys there.
+- **Skill**: a short instruction file that tells your AI agent how to use `tg`.
+
+Installation builds nothing: SQLite comes from the runtime itself, so there is no native module to
+compile. It starts nothing in the background. A global npm installation can install the bundled
+skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 
 ## What it needs
 
 - **Node 22.16+ (22.x) or 24+** with npm. The command also supports **Bun**.
 - Linux, macOS or Windows.
 - **Your own Telegram app** from [my.telegram.org](https://my.telegram.org/apps). `tg` asks for it at
-  the first login and can register it for you ([sessions.md](sessions.md#the-app-from-mytelegramorg)).
+  the first login and can register it for you ([your Telegram app](sessions.md#the-app-from-mytelegramorg)).
 
 ## Install
 
@@ -21,8 +34,6 @@ npm install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-
 pnpm add -g @leemour/tg-cli
 bun add -g @leemour/tg-cli
 ```
-
-The package is **`@leemour/tg-cli`**; the command it installs is **`tg`**.
 
 To try it without installing:
 
@@ -40,32 +51,31 @@ tg doctor        # where its files are, and whether a login exists; connects to 
 
 ## First run
 
-`tg --help` shows setup and the agent instructions immediately after installation. `tg skill show`
-works before login: an agent should read it before connecting Telegram. `tg commands --json`
-lists the available commands and flags. These hints work even when the package manager skips
-installation scripts.
+`tg --help` shows setup and the agent instructions right after installation. `tg skill show`
+prints the skill and works before login. `tg commands --json` lists the commands and options.
+These work even when the package manager skipped the installation scripts.
 
-Run this in a local terminal:
+Run setup in a local terminal:
 
 ```sh
 tg setup --agent codex
 tg setup --help              # examples, login choices and Windows instructions
 ```
 
-Choose `codex`, `cursor`, `claude`, `gemini`, `all` or `none`. Without `--agent`, the command asks
-at a terminal; `--json` and non-terminal runs default to `none`. Allow about five minutes for
-app registration, login, a check of the first five chats and skill installation. Downloading chat
-history is separate and can take longer: choose a chat and the amount before running the suggested
-`store fetch` command. Setup starts no background service.
+`--agent` chooses which agent gets the skill: `codex`, `cursor`, `claude`, `gemini`, `all` or
+`none`. Without `--agent`, the command asks at a terminal; `--json` and runs without a terminal
+choose `none`. Allow about five minutes for app registration, login, a check of the first five
+chats and the skill. Downloading chat history is separate and can take longer: choose a chat and
+the amount before you run the suggested `store fetch` command. Setup starts no background service.
 
-`tg setup --app browser` opens the manual app registration instructions; `--method phone` uses
-a phone login instead of QR. The app-registration code from my.telegram.org and the account-login
-code are separate steps. Repeating setup checks your existing session without another login.
-If a login was interrupted or Telegram ended the session, finish `tg session start` first and
-then rerun setup. See [sessions.md](sessions.md).
+`tg setup --app browser` opens the manual app registration instructions; `--method phone` logs in
+by phone number instead of QR code. The code from my.telegram.org (for the app) and the code for
+the account login are two separate steps. Running setup again checks your existing session and
+does not log in again. If a login was interrupted or Telegram ended the session, finish
+`tg session start` first and then run setup again. See [login, sessions and profiles](sessions.md).
 
 Without a global installation, use `npm exec --yes --package=@leemour/tg-cli -- tg setup --agent codex`.
-Setup suggests subsequent commands in the same form.
+Setup then suggests the next commands in the same form.
 
 ### Windows: one install command
 
@@ -75,40 +85,36 @@ Run this in PowerShell with Node.js 22.16+ or 24+ installed:
 & ([scriptblock]::Create((Invoke-RestMethod 'https://wirecat.dev/install.ps1'))) -Tool tg -Agent all
 ```
 
-The installer installs the npm package, preserves existing user PATH entries, adds the npm command
-folder once, updates the current PowerShell PATH and installs the bundled skill before login.
-It verifies that bare `tg` starts. `-Agent codex|cursor|claude|gemini|all|none` selects where the
-skill goes; default `all` installs both supported directories. Repeating installation refreshes
-the skill without duplicating PATH. The installer also completes these steps when npm lifecycle
-scripts are disabled.
+The installer installs the npm package, keeps the existing user PATH entries, adds the npm command
+folder once, updates the PATH of the current PowerShell and installs the skill. It checks that bare
+`tg` starts. `-Agent codex|cursor|claude|gemini|all|none` selects where the skill goes; the default
+`all` installs it in both supported folders. Running it again refreshes the skill and does not add
+PATH twice. It also does these steps when npm installation scripts are turned off.
 
-PowerShell's execution policy is unchanged. The installer removes only npm's generated `tg.ps1`
-shim for this package, keeping `tg.cmd`, so bare `tg` works under a restricted policy too.
-An unrelated script with that name is left untouched and reported as a conflict.
+PowerShell's execution policy is not changed. The installer removes only npm's generated `tg.ps1`
+shim for this package and keeps `tg.cmd`, so bare `tg` works under a restricted policy too. An
+unrelated script with that name is left alone and reported as a conflict.
 
-Global npm installation also repairs persistent Windows PATH and installs both skills when its
-postinstall script is allowed:
+A global npm installation also repairs the saved Windows PATH and installs the skill, when npm
+allows its installation script:
 
 ```powershell
 npm.cmd install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli
 ```
 
-Newer npm versions can skip lifecycle scripts unless allowed. `--ignore-scripts` explicitly skips
-this package hook too. For agent-led setup, use npm and verify the command, installed skill and
-shell PATH before login. The optional PowerShell installer updates the terminal running it as well
-as persistent PATH; an npm child process cannot update its parent's environment. Agents launched before installation should refresh their shell PATH
-from the user and machine environment themselves, without asking the user to edit PATH.
+Newer npm versions skip installation scripts unless you allow them, and `--ignore-scripts` skips
+this one too. npm cannot change the PATH of the terminal that started it, so open a new terminal
+after an npm installation. The PowerShell installer above updates the current terminal as well.
 
-The global hook runs only for a global npm installation, never for project dependencies or npx.
-`TG_INSTALL_AGENT=codex|cursor|claude|gemini|all|none` selects the skill; `none` explicitly opts out.
-An agent reads `tg skill show` and verifies its installed skill before guiding account login.
-No separate Windows executable is needed.
+The installation script runs only for a global npm installation, never for a project dependency or
+npx. `TG_INSTALL_AGENT=codex|cursor|claude|gemini|all|none` selects the skill; `none` turns it off.
+No separate Windows program is needed.
 
-The first reading commands are in [usage.md](usage.md#log-in).
+The first commands to read your chats are in [logging in and the first commands](usage.md#log-in).
 
 ## From source
 
-For working on the code, or for a version before it is released:
+For working on the code, or for a version that is not released yet:
 
 ```sh
 git clone https://github.com/leemour/tg-cli.git
@@ -122,7 +128,8 @@ real profile. `node dist/bin/tg.js` uses the real directories below.
 
 ## Where files go
 
-Three directories per the conventions of the operating system, plus two shared ones:
+Three directories follow the conventions of the operating system, and two more are shared with
+other tools:
 
 | What | Linux | macOS | Windows |
 |---|---|---|---|
@@ -134,10 +141,10 @@ Three directories per the conventions of the operating system, plus two shared o
 
 - **settings** hold `config.json`, and `credentials.json` only on a machine with no keyring.
 - **state** holds the login (`sessions/<profile>.session`), recorded runs (`runs/`), the journal of
-  sends (`sends/`), the list of allowed recipients (`profiles/`), `inbox --new`'s saved point
-  (`inbox/`), background fetch jobs, and `serve`'s log and lock.
-- **the local store** is shared with other messenger CLIs built on the same library, such as
-  [max-cli](https://github.com/leemour/max-cli). It is described in [archive.md](archive.md).
+  sends (`sends/`), the list of allowed recipients (`profiles/`), the saved point of `inbox --new`
+  (`inbox/`), background fetch jobs, and the log and lock of `serve`.
+- **the local store** is shared with other messenger tools built on the same library, such as
+  [max-cli](https://github.com/leemour/max-cli). [The local store](archive.md) page describes it.
 - **speech models** are downloaded only when you ask (`tg models audio download`), for
   `messages transcribe --local`.
 
@@ -154,7 +161,7 @@ Each directory can be moved with a variable: `TG_CONFIG_DIR`, `TG_STATE_DIR`, `T
 ## Shell completion
 
 Tab completes commands, options and their values. Where a chat is expected, it offers chats from the
-local store. One line in your shell's startup file:
+local store. Add one line to your shell's startup file:
 
 ```sh
 echo 'source <(tg complete zsh)' >> ~/.zshrc      # zsh
@@ -173,17 +180,16 @@ tg upgrade            # with the package manager that installed tg: npm, pnpm or
 tg upgrade --check    # only say whether a newer version exists; installs nothing
 ```
 
-`tg upgrade` also restarts a background `serve` it finds running, so the server does not keep running
-the old code. It never runs by itself.
+After an update, `tg upgrade` restarts each background `serve` that `tg` started, so the server does
+not keep running the old code. A `serve` you started by hand is not restarted: `tg` names it on
+stderr with the command that restarts it. `tg upgrade` never runs by itself.
 
 ### Upgrade JSON result
 
-`tg upgrade --check --json` reports current and available versions without installing.
-The common result contains `current`, `latest`, `newer`, `installer`, `command`, `updated` and
-`restarted`, the profiles whose servers restarted after the update. Checks, unchanged versions
-and updates with no restart return an empty array; previous fields remain.
-Telegram retains its managed-server restart policy; a server that needs a manual restart is named
-on stderr. Scripts checking the exact set of JSON keys should allow the `restarted` field on all paths.
+`tg upgrade --check --json` reports the current and the available version without installing.
+The result has `current`, `latest`, `newer`, `installer`, `command`, `updated` and `restarted`.
+`restarted` lists the profiles whose servers were restarted after the update; it is an empty list
+after a check, when there is no newer version, or when no server was restarted.
 
 Once a day, at a terminal, `tg` says on stderr that a newer version is on npm. It never says so with
 `--json`, into a pipe, with `--quiet` or in CI. To turn it off: `tg config set updateCheck false
@@ -193,11 +199,13 @@ From source: `git pull && pnpm install && pnpm build`. From npx: `npx @leemour/t
 
 ## Uninstall
 
-Removing the command leaves your data. Log out first, while `tg` is still there:
+Removing the command leaves your data. Log out first, while `tg` is still there. `support` below is
+an example name of a bot profile; repeat that line for each bot you connected.
 
 ```sh
 tg server uninstall                  # if you installed the background unit; stop it first
 tg session end                       # logs out on Telegram's side and deletes the session file
+tg support bot auth remove           # forgets the token of the bot profile "support"
 npm uninstall -g @leemour/tg-cli
 rm -rf ~/.config/tg-cli ~/.local/share/tg-cli ~/.cache/tg-cli
 ```
@@ -210,4 +218,4 @@ else uses it: it holds the messages every one of them has read.
 
 ## Next
 
-[usage.md](usage.md) — log in, and the first commands.
+[Log in and run the first commands](usage.md#log-in).

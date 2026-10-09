@@ -1,18 +1,49 @@
 # Search query language
 
-The reference for queries of `tg search messages`, `tg stats messages show` and saved searches. For
-everyday examples start with [message search](search.md).
+If you use an AI agent with tg, you do not need to learn this language: describe what you want in
+plain words and the agent writes the query. This page is for people who type searches themselves, and
+for anyone who wants every filter: exact operators, every field, presets, date rules and limits.
 
-The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT,
-groups, fields, ranges, bounded wildcards and regular expressions. The
-[full reference](https://github.com/leemour/cli-messaging/blob/v0.164.0/docs/search/query-language.md)
+It is the reference for the queries of `tg search messages`, `tg search all`, `tg stats messages show`,
+saved searches, and the `--filter` of [topic search](topic-search.md). For everyday examples start with
+[message search](search.md).
+
+Terms used on this page:
+
+- **Query**: the text you search for, for example `invoice from:me date:7d`.
+- **Field**: a name and a colon that limit one part of the query to one property of a message, such as
+  `from:` (the sender) or `date:` (when it was sent). Words without a field search the message text.
+- **Operator**: a word or sign that joins conditions, such as `AND`, `OR` and `NOT`.
+- **Word forms**: the same word with different endings. `piso` and `pisos` are forms of one word.
+
+The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT, groups,
+fields, ranges, bounded wildcards and regular expressions. "Strict" means that anything it does not
+support is an error, never silently ignored. The
+[full reference](https://github.com/leemour/cli-messaging/blob/v0.212.0/docs/search/query-language.md)
 (in Russian) has the generated tables of fields, operators, presets and limits, and executable
 examples; the
-[technical specification](https://github.com/leemour/cli-messaging/blob/v0.164.0/docs/search/query-language-spec.md)
+[technical specification](https://github.com/leemour/cli-messaging/blob/v0.212.0/docs/search/query-language-spec.md)
 describes the grammar and the compiler.
 
-Words and phrases without a field match word forms. `--exact` selects exact forms for words
-without a field; explicit `text:` still matches forms. Archive language settings affect matching.
+## What it can do
+
+| You want | Write |
+|---|---|
+| messages with all of these words, in any form | `invoice paid` |
+| these words together, in this order | `"invoice paid"` |
+| one word or another, without a third | `(cafe OR library) NOT loud` |
+| only this exact form of a word | `exact:piso`, or `--exact` for every word without a field |
+| words that start with something | `invo*` |
+| a sender, a chat, a kind of chat | `from:me`, `chat:"Book club"`, `kind:private` |
+| a period | `date:7d`, `date:[2026-01-01 TO 2026-02-01}` |
+| files by name, type or size | `filename:*.pdf`, `mime:image`, `size>10MB` |
+| text that looks like a password, card or phone | `preset:secret`, `preset:card` |
+| your own labels | `tag:work` |
+| a pattern | `text:/pass(port)?/` |
+
+Words and phrases without a field match word forms. `--exact` selects exact forms for words without a
+field; an explicit `text:` still matches forms. The store's language settings decide which forms
+match ([word forms](archive.md#repair-and-index-maintenance)).
 
 ## Operators
 
@@ -34,7 +65,8 @@ without a field; explicit `text:` still matches forms. Archive language settings
 `alpha OR beta gamma` means `(alpha OR beta) AND gamma`; `alpha OR beta AND gamma` means
 `alpha OR (beta AND gamma)`. Use brackets for clarity. Lowercase `and`, `or`, `not` are plain words. A
 query with only `NOT` finds nothing: give a positive condition, for example `kind:group NOT preset:secret`.
-Fuzzy `~`, proximity, boosts and intervals are refused with an error, not ignored.
+Fuzzy `~`, proximity, boosts and intervals are refused with an error, not ignored. Typos are not
+corrected: to catch several endings, use a wildcard such as `invo*`.
 
 ## Fields
 
@@ -58,7 +90,7 @@ Fuzzy `~`, proximity, boosts and intervals are refused with an error, not ignore
 | `tag` | your own local tag on the message, its chat or its sender | `tag:work` |
 
 Field names are case-sensitive. An unknown field, value or combination is an error, never an empty
-answer and never plain text. A name that the archive does not know is not looked up on Telegram.
+answer and never plain text. A name that the store does not know is not looked up on Telegram.
 
 `kind:bot` selects a chat with a bot; `in:bots` selects the archives of `tg bot` accounts. `topic:`
 needs exactly one chat in `chat:` or `--chat`, since topic numbers repeat across groups. `filename`,
@@ -66,6 +98,8 @@ needs exactly one chat in `chat:` or `--chat`, since topic numbers repeat across
 expression, so quote a full type: `mime:"application/pdf"`.
 
 ## Presets
+
+A preset finds text by its shape. Use it to find a password, a code or a card number that someone sent.
 
 | Preset | A candidate is |
 |---|---|
@@ -107,64 +141,49 @@ are folded the same way.
 whose entire text is pay, case-sensitive; to find it anywhere use `body:/.*pay.*/`. This is
 Lucene's regular-expression syntax, without JavaScript lookaround, backreferences, anchors or flags.
 
-On a large archive a short prefix such as `a*` can expand to more than 10,000 words and is refused;
-lengthen it. Long
-queries, deep nesting, large patterns and slow scans are refused with `query_limit`, not cut short:
-narrow the chat, the dates or the pattern.
+On a large store a short prefix such as `a*` can expand to more than 10,000 words and is refused;
+lengthen it. Long queries, deep nesting, large patterns and slow scans are refused with `query_limit`,
+not cut short: narrow the chat, the dates or the pattern.
+
+### A JavaScript regular expression: `--regex`
+
+```sh
+tg search messages --regex 'invoice\s+\d+' --json
+```
+
+`--regex` is a separate mode. The words you give are one JavaScript regular expression, not a query in
+this language. It is case-insensitive, tested against the full text of every stored message, and runs
+in an isolated worker with time and size limits. A saved search keeps its `--regex`; you cannot add
+`--regex` when you run one with `--saved`.
 
 ## The answer
 
 `--json` returns `{ items, page, limit, hasMore, corrections, completeness, wordsReady, query, coverage }`,
 even when nothing matched. `--jsonl` streams the items only.
 
-- `query` — the language version, the time zone and the order used.
-- `coverage` — which accounts and chats were searched. `lastSyncedAt` is the oldest time a chat in scope
+- `query`: the language version, the time zone and the order used.
+- `coverage`: which accounts and chats were searched. `lastSyncedAt` is the oldest time a chat in scope
   was fetched by `store fetch`, `null` if any chat never was. `inventoryComplete` means every account in
   scope has once listed all its chats; it does not promise a complete history.
-- `completeness` — per chat: whether its stored history reaches the start and has gaps.
-- `wordsReady` — whether the word index is complete. When it is `false`, a query with words fails with
+- `completeness`: per chat, whether its stored history reaches the start and has gaps.
+- `wordsReady`: whether the word index is complete. When it is `false`, a query with words fails with
   `index_not_ready` and the command that finishes it, `tg store migrate`; a query without words runs.
 - `hasMore` is about the page, not about whether Telegram holds more.
 
 An error carries the position of the problem in the query and a hint.
 
-## In MCP
+## Over MCP
 
-`tg_read` (`command: "search messages"`) takes the query as `text`, or as a versioned syntax tree in `ast` (not both);
-`language` chooses `lucene` or `legacy`, `timezone` the calendar zone. `chat` takes an id or a stored
-name; `source`, `newest`, `context` and `limit` work as the command options do; `saved` runs a saved search.
-The query history follows the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out. The answer has the same fields as `--json`. `tg_read` (`command: "stats messages show"`) counts
-the same queries.
+When an agent searches through tg's MCP server, `tg_read` (`command: "search messages"`) takes the
+query as `text`, or as a versioned syntax tree in `ast` (not both), and `timezone` for the calendar
+zone. `chat` takes an id or a stored name; `source`, `newest`, `context` and `limit` work as the
+command options do; `saved` runs a saved search. `thread`, `thread_hops`, `thread_messages`,
+`thread_bytes`, `thread_within` and `sync_first` match the options `--thread…` and `--sync-first`;
+`sync_first` is offered only with `messages.sync-first: allow`. The answer has the same fields as
+`--json`. `tg_read` (`command: "stats messages show"`) counts the same queries. The query history follows
+the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out.
 
-## The older modes
+## Next
 
-```sh
-tg search messages 'from:alice after:7d invoice -draft' --language legacy --json
-tg search messages --regex 'invoice\s+\d+' --json
-```
-
-`--language legacy` keeps the earlier filters and its correction of typos. `--regex` is a separate
-mode: a JavaScript regular expression, case-insensitive, over the full text, in an isolated worker with
-time and size limits. `--regex` cannot be combined with `--language lucene`.
-
-| Legacy | Strict |
-|---|---|
-| `after:2026-01-01` | `date:[2026-01-01 TO *]` |
-| `before:2026-02-01` | `date:[* TO 2026-02-01}` |
-| `after:7d` | `date:7d` |
-| automatic prefix and typo correction | `invo*` explicitly; typos only in `--language legacy` |
-
-`--thread` follows the stored reply graph; in `messages context` it replaces chronological neighbours. Defaults are
-8 hops, 50 messages, 65,536 bytes and one day around each hit. Change them with `--thread-hops`,
-`--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
-stale links are marked and not traversed.
-
-Word search asks Telegram as well as the local archive by default; `--backend archive` keeps it local.
-`--sync-first` explicitly fetches new messages before searching and
-marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
-`--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh
-details.
-
-MCP uses `thread`, `thread_hops`, `thread_messages`, `thread_bytes`, `thread_within` and `sync_first`. `sync_first`
-is exposed only with `messages.sync-first: allow`. Ordinary `messages_context` with `offline: true` reads stored
-messages.
+- [Message search](search.md): everyday searches, saved searches and counting.
+- [Topic search](topic-search.md): find a discussion by its meaning when you do not know its words.

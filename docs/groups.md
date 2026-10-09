@@ -1,17 +1,48 @@
 # Groups you run
 
-`tg` helps the admin of a group: it shows the questions nobody answered, who joined and who added
-them, and what a week in the group came to. It reads without marking anything read, so checking on a
-group does not tell its members you looked.
+Use this page when you are an admin of a Telegram group and want help keeping it in order. You
+will learn how to find questions nobody answered, see who joined and who added them, sum up a week,
+remove spam by your own rules and keep a history of the member list. Reading marks nothing read,
+so checking on a group does not tell its members you looked.
 
-Everything here works from your personal account. The commands in full:
-[usage.md](usage.md#groups-and-channels); every option: [commands.md](commands.md).
+Everything here works from your personal account, in groups where you are an admin. Some words on
+this page:
+
+- **An admin** is a member with rights to manage the group. Some commands count only your answers
+  and the admins' answers.
+- **The local store** is the copy of messages that `tg` keeps on this computer. Reports and tasks
+  use it, so they see only what was downloaded.
+- **A task** is something that waits on you, such as a question nobody answered. `tg` opens and
+  closes tasks in the local store.
+- **Rules** say what `tg chats moderate` looks for, such as links or flooding, and what it may do.
+- **A member snapshot** is the member list saved on one day. Snapshots over time show who joined
+  and who left.
+
+## What you can do
+
+| Task | Command |
+| --- | --- |
+| Find questions that wait for an answer | `tg review --unanswered` |
+| See who joined, left, was added or removed | `tg chats events` |
+| Sum up a week: decisions, promises, open questions | `tg review --since-time 7d` |
+| Keep a list of what waits on you | `tg tasks list` |
+| Remove spam by your own rules | `tg chats rules set`, `tg chats moderate` |
+| Replace a leaked invite link | `tg chats link reset` |
+| Let people in, or turn them away | `tg chats requests list\|accept\|decline` |
+| See the week's activity and Telegram's own statistics | `tg stats chats show`, `tg stats chats official` |
+| Save the member list every day | `tg chats members fetch --track` |
+| Find members that look like bots or spammers | `tg chats members audit` |
+
+The full list of group commands is [below](#what-there-is). Details of each command are in
+[groups and channels in the usage guide](usage.md#groups-and-channels); every option is in the
+[command reference](commands.md).
 
 ## With an agent
 
-An agent with a terminal (Claude Code, Codex) needs the [skill](recipes.md#once-first);
-one without (Claude Desktop, Cursor) needs the [MCP server](mcp.md). Below: what you say, what the
-agent calls, and what you get back.
+Your AI agent (for example Claude Code, Codex, Cursor or Gemini CLI) can run these checks for you.
+An agent with a terminal needs the [tg skill](recipes.md#once-first); an agent in an app without a
+terminal needs the [MCP server](mcp.md). Below: what you say, what the agent runs, and what you get
+back.
 
 The names, messages and results below are fictional. Commands are separate from the answer: the agent reads the data and presents it for you.
 
@@ -99,6 +130,32 @@ tg chats update "Hiking" --only-admins-add on --json
 
 These commands change the group. The example request authorises both changes; a request to inspect a link would not.
 
+### Spam cleanup with your approval
+
+First see what the rules suggest, without any action.
+
+**Your request:**
+
+> Check Hiking for spam. Do not delete anything yet; show the suggestions.
+
+**Command:**
+
+```sh
+tg chats moderate "Hiking" --dry-run --json
+```
+
+**Example agent answer:**
+
+> **Suggested action:** delete a message with an invite link.
+>
+> | Found | Suggestion | Status |
+> | --- | --- | --- |
+> | Invite link | Delete the message | Preview only |
+>
+> Nothing was deleted. Confirm the exact message if you want the action applied.
+
+Real actions need your request and the profile's permissions. A preview does not give permission to delete.
+
 ### A weekly report
 
 Ask for a short recap of decisions, commitments and open questions.
@@ -135,7 +192,7 @@ No agent is needed for a list of open questions: it is an ordinary command.
 ```
 
 cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot reach the keyring:
-[recipes.md](recipes.md#running-on-a-schedule).
+see [running on a schedule](recipes.md#running-on-a-schedule).
 
 ## What there is
 
@@ -144,7 +201,7 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
 | `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
-| `tg topics list\|search <chat>` | a forum group's topics |
+| `tg topics list <chat>`, `tg search topics <chat> <text>` | a forum group's topics; search finds them by title |
 | `tg topics show <chat> <id>` | one topic: title, closed or pinned, unread count, last activity |
 | `tg topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
 | `tg topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
@@ -159,15 +216,18 @@ cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot r
 | `tg chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
 | `tg chats link update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
 | `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
+| `tg chats requests list\|accept\|decline <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
+| `tg chats rules show\|set\|unset <chat>` | the group's rules |
+| `tg chats moderate <chat>` | check the group by its rules; does what the rules allow |
 | `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 
-An agent without a terminal gets the reading half as MCP tools: `tg_read` (`command: "review"`) with `unanswered`,
-`tg_read` (`command: "chats events"`), `tg_read` (`command: "chats members"`), `tg_read` (`command: "chats inspect"`) ([mcp.md](mcp.md)).
+An agent connected over the [MCP server](mcp.md) can run the same commands, as far as the
+profile's permissions allow.
 
 `create`, `join`, `leave`, `update`, `link reset`, `members` and `admins` change something the
 group's members see: a new group tells the people added, and a join or a leave shows in the chat. Each goes through the profile's permissions and the
 send guard, and each person added counts toward the hourly limit
-([security.md](security.md#the-send-guard)).
+(see [the send guard](security.md#the-send-guard)).
 
 ## What waits on you
 
@@ -175,7 +235,7 @@ send guard, and each person added counts toward the hourly limit
 that mentions you by name, opens a task; your answer closes it. A task points at its message and never
 copies it.
 
-what waits on you, oldest first
+See what waits on you, oldest first, then only questions and mentions in one group:
 
 ```sh
 tg tasks list --state open
@@ -185,7 +245,7 @@ tg tasks list --state open
 tg tasks list --chat "Hiking" --type question,mention
 ```
 
-what the rules cannot see
+Add what the rules cannot see, such as a promise you made, or close a task that needs no answer:
 
 ```sh
 tg tasks add msg:telegram/<you>/<chat>/<message> --type promise
@@ -195,15 +255,15 @@ tg tasks add msg:telegram/<you>/<chat>/<message> --type promise
 tg tasks close <task> --as dismissed --reason no-reply-needed
 ```
 
-open per chat, the oldest, the median time to close
+See open tasks per chat, the oldest one and the median time to close:
 
 ```sh
 tg stats tasks show
 ```
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
-task — an admin's do not — and a mention by `@username` is not seen. An agent gets the same as
-MCP tools: `tg_read` (`command: "tasks list"`), `tg_write` (`command: "tasks add"`), `tg_write` (`command: "tasks close"`), `tg_read` (`command: "stats tasks show"`) ([mcp.md](mcp.md)).
+task — an admin's do not — and a mention by `@username` is not seen. An agent connected over MCP
+gets the same commands.
 
 ## Rules
 
@@ -211,54 +271,56 @@ A group's rules say what `tg chats moderate` looks for and what it may do about 
 file of this profile, never in Telegram, and nothing watches the group in the background: a rule acts
 only when you run `chats moderate`.
 
-the defaults, marked not saved, until the first change
+Show the rules. Until your first change, they are the defaults, marked as not saved:
 
 ```sh
 tg chats rules show "Hiking"
 ```
 
-a message with a link is deleted
+Delete a message that has a link:
 
 ```sh
 tg chats rules set "Hiking" links delete
 ```
 
-these people…
+Block these people by id…
 
 ```sh
 tg chats rules set "Hiking" blocked 12345,67890
 ```
 
-…are removed when they write or join
+…and remove them when they write or join:
 
 ```sh
 tg chats rules set "Hiking" blockedPeople remove
 ```
 
-delete without asking
+Delete without asking you first:
 
 ```sh
 tg chats rules set "Hiking" consent.delete allow
 ```
 
-what it would do, doing nothing
+See what the check would do, without doing it:
 
 ```sh
 tg chats moderate "Hiking" --dry-run
 ```
 
-judge what is new since the last run, and act
+Check what is new since the last run, and act:
 
 ```sh
 tg chats moderate "Hiking"
 ```
 
-| Rule | What it looks for |
-|---|---|
-| `links`, `invites`, `forwards` | a message with a link, an invite link to another group, a forwarded message |
-| `blocked`, `blockedNames`, `blockedPeople` | people by id or by part of their name, and what to do with them |
-| `flood.messages`, `flood.minutes`, `flood.action` | more than so many messages from one person within so many minutes |
-| `trusted` | people never acted on; the group's admins and you never are either |
+| Rule | Default | What it looks for |
+|---|---|---|
+| `links`, `invites`, `forwards` | `report` | a message with a link, an invite link to another group, a forwarded message |
+| `blocked`, `blockedNames` | — | people by id, or by part of their name, comma-separated |
+| `blockedPeople` | `report` | what to do with a message or a join of a blocked person |
+| `flood.messages`, `flood.minutes`, `flood.action` | 5, 1, `report` | more than so many messages from one person within so many minutes |
+| `trusted` | — | people never acted on; the group's admins and you never are either |
+| `consent.delete`, `consent.remove` | `ask` | how far you allow each action |
 
 Each rule's action is `report`, `delete` or `remove`. Whether a `delete` or a `remove` happens
 is the group's level for it, `consent.delete` and `consent.remove`: `deny` never, `readonly` only
@@ -267,8 +329,15 @@ does it. Every action still goes through the send guard and its hourly limit, an
 `--max-actions` (10). The next run starts where this one stopped; `--since-time` looks at a moment
 of your own and leaves that point where it is.
 
-Over MCP, `tg_write` (`command: "chats moderate"`) acts only where a level is `allow`; what asks is listed for you, not
+An agent connected over MCP acts only where a level is `allow`; what asks is listed for you, not
 done. `newAccount` is not offered: Telegram does not say how old an account is.
+
+## With a bot
+
+If your bot is an admin of the group, it can run the same check: `tg <bot> bot chats moderate`. A
+person the bot removes cannot come back by the link unless you add `--no-ban`. The bot judges only
+messages it saw or imported on this computer, and it does not judge joins. See
+[moderating a group with a bot](bot.md#moderating-a-group-by-its-rules).
 
 ## Limits
 
@@ -280,7 +349,7 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
   schedule runs it.
 - **Telegram's rate limits apply.** Reading every member of a large group is many requests; a
   `FLOOD_WAIT` answer says how long to wait
-  ([troubleshooting.md](troubleshooting.md#telegram-asks-to-wait-n-s-before-the-next-request)).
+  (see [when Telegram asks to wait](troubleshooting.md#telegram-asks-to-wait-n-s-before-the-next-request)).
 
 ## Statistics for group admins
 

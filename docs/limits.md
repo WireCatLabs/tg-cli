@@ -1,9 +1,20 @@
 # Limits, waits and background jobs
 
-Telegram limits how fast one account may ask it for things. Ask too fast and it answers "wait N
-seconds" (FLOOD_WAIT); keep asking during the wait and the waits grow. Write to too many strangers and
-it limits the account as spam. `tg` keeps every profile under a pace, waits out what Telegram asks for
-when the wait is short, and stops when it is long. This page is all of it in one place.
+Use this page when a command waits, stops with a rate-limit error, or when you plan to download a lot
+of history or run several commands at once. It explains how fast `tg` talks to Telegram, why it
+sometimes waits, and what to do when it stops. By the end you will know which waits are normal, how
+to change the pace, and when to try again.
+
+Words this page uses:
+
+- **Pace**: how many requests a profile may send to Telegram per minute. `tg` keeps every profile
+  under it.
+- **FLOOD_WAIT**: Telegram's answer "wait N seconds". If you keep asking during the wait, the waits
+  grow.
+- **Spam limit** (PEER_FLOOD): Telegram limits an account that writes to too many strangers.
+- **Background job**: a download that keeps running after the command that started it ends.
+
+`tg` waits out short waits from Telegram and stops when a wait is long.
 
 ## The pace: one allowance per profile
 
@@ -56,11 +67,11 @@ to be done; `tg flood clear` lifts it early if you know Telegram no longer limit
 ## Writes
 
 - **30 sends an hour** per profile by default (`sendsPerHour`), counted across processes; see
-  [security.md](security.md#the-send-guard).
+  [the send guard](security.md#the-send-guard).
 - **Spam limit (PEER_FLOOD)** and a frozen account hold every write; reads still work. See
-  [troubleshooting.md](troubleshooting.md).
+  [troubleshooting](troubleshooting.md).
 - A send that may or may not have arrived is never repeated by `tg`; see
-  [usage.md](usage.md#when-the-outcome-is-unknown).
+  [when the outcome is unknown](usage.md#when-the-outcome-is-unknown).
 
 ## Bulk reads
 
@@ -74,12 +85,12 @@ to be done; `tg flood clear` lifts it early if you know Telegram no longer limit
 `store fetch --background` and `store gaps repair --background` start a job that outlives the command:
 one job per chat at a time, each in its own process, all on the profile's one pace. `tg store jobs
 list` shows them, `tg store jobs cancel <job>` stops one after its current page. See
-[archive.md](archive.md#in-the-background).
+[downloading in the background](archive.md#in-the-background).
 
 ## Bots
 
 A bot's own Bot API limits are separate from the account's. `tg` respects the `retry_after` Telegram
-sends back; a long one ends the run. See [bot.md](bot.md).
+sends back; a long one ends the run. See [bots](bot.md).
 
 ## One login, several processes
 

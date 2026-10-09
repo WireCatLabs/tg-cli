@@ -1,6 +1,30 @@
 # Statistics
 
-See which messages attracted attention, who needs an answer and how group membership changes. Reports use saved history. If the relevant messages are missing, [download the history](archive.md) first.
+Use this page when you run or follow a group or channel and want facts instead of a feeling: which
+messages attracted attention, who answers questions, which questions still wait, and whether
+newcomers stay. You will learn what to ask your AI agent, which command it runs, what the answer
+looks like and where the numbers can mislead.
+
+Some words on this page:
+
+- **Saved history** is the copy of messages that `tg` keeps on this computer. Every report counts
+  only this copy. If the relevant messages are missing, [download the history](archive.md) first.
+- **Observed** means seen in saved history. An answer, a join or a reaction that was never
+  downloaded is not counted, so a missing value is unknown, not zero.
+- **A counter** is a number Telegram keeps on a message, such as views or reactions.
+
+## What you can find out
+
+| Question | Command |
+| --- | --- |
+| Which messages got the most reactions | `tg stats messages top` |
+| Who answers questions most | `tg stats contacts top` |
+| Which questions wait for an answer | `tg stats messages unanswered` |
+| How quickly one person replies | `tg stats contacts responses` |
+| Whether newcomers got help | `tg stats chats newcomers` |
+| Whether newcomers stay | `tg stats chats retention` |
+| Which posts were viewed but not discussed | `tg stats messages discussion` |
+| How fresh views and reactions are | `tg stats messages counters show` |
 
 The requests, names and results below are fictional examples. Replace the chat name with yours. Tables show how an agent can present its answer; commands with `--json` return data for it.
 
@@ -157,7 +181,7 @@ tg stats chats retention "Hiking" --checkpoints 1d,7d,30d --within 7d --timezone
 >
 > The denominators differ, so these percentages are not a complete retention curve. No observed message does not prove that someone was silent.
 
-This needs known joining dates and saved member lists. Absence from a partial list remains unknown. [Member observations](groups.md) help collect data for later reports.
+This needs known joining dates and saved member lists. Absence from a partial list remains unknown. [Saved member lists of groups you run](groups.md#member-snapshots-and-changes) help collect data for later reports.
 
 ## Posts without discussion
 
@@ -237,6 +261,6 @@ An empty report with incomplete history does not establish that there were no qu
 
 ## More control
 
-You can select a period, choose a measure or combined score, and save a selection for another report. Scoring formulas, exact evidence arguments and page limits live in the [shared statistics specification](https://github.com/leemour/cli-messaging/blob/main/docs/rankings.md) and [command reference](commands.md).
+You can select a period, choose a measure or combined score, and save a selection for another report. Scoring formulas, exact evidence arguments and page limits live in the [shared statistics specification](https://github.com/leemour/cli-messaging/blob/main/docs/rankings.md) and the [command reference for statistics](commands.md#tg-stats).
 
 To verify a finding, ask the agent to open the question, answer or members behind that report row. Before the next report, [check archive coverage](archive.md).

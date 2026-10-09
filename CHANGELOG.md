@@ -240,7 +240,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   multiplied the request rate; now they share one allowance — a burst of 20, then one request a second. A
   wait Telegram asks for holds the whole profile, and a request that would wait more than 5 minutes fails at
   once with exit code `8`. Bulk work run in parallel takes longer. `requestsPerMinute` or
-  `TG_REQUESTS_PER_MINUTE` changes the pace; [limits.md](docs/limits.md) explains all of it.
+  `TG_REQUESTS_PER_MINUTE` changes the pace; [the limits page](docs/limits.md) explains all of it.
 - **`tg messages send --html` and `tg messages edit --html` read Telegram's HTML** — `<b>`, `<i>`, `<u>`, `<s>`,
   `<a href>`, `<code>`, `<pre>`, `<blockquote>`, `<tg-spoiler>` — with line breaks kept as typed
   ([usage](docs/usage.md#sending)).
@@ -773,7 +773,7 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
 
 - **`tg <name> bot contacts show --refresh`** says the same as in `max`: its help no longer names the
   messenger (cli-messaging 0.109.0).
-- **The bot page is complete** ([docs/bot.md](docs/bot.md)): how to find a chat's id, sending files and
+- **The bot page is complete** ([the bot guide](docs/bot.md)): how to find a chat's id, sending files and
   their limits, and the exit codes a script sees.
 - **`tg <name> bot contacts show`, `bot messages search` and `bot messages between`** read what the bot
   kept on this computer. See [the bot page](docs/bot.md#what-the-bot-kept).

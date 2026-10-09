@@ -1,7 +1,28 @@
 # Diagnostics: what a command did
 
-When a command fails or takes too long, `tg` can show what it did, keep a record of it, and turn the
-record into a report you can attach to an issue. None of it holds message text.
+Use this page when a command fails, hangs or takes too long, and you want to see why. By the end you
+can watch a command's requests as they happen, keep a record of a run, check your installation and
+send a problem report that holds no message text.
+
+A few words this page uses:
+
+- A **run** is one call of `tg`, from start to exit.
+- A **run record** is a folder that keeps what one run did: its command, its outcome and one line per
+  request to Telegram. It never holds message text, names or titles.
+- **`tg doctor`** checks the installation: the version, the login, the settings and the local store.
+- A **problem report** is one JSON file made from `tg doctor` and a failed run. You attach it to an
+  issue.
+
+## What you can do
+
+| Task | Command | Keeps anything? |
+|---|---|---|
+| See each request as it happens | `tg --trace …` | no, prints to stderr only |
+| Keep a record of one run | `tg --record …` | yes, a run record |
+| Find a failed run later | `tg runs list` | a failed run is kept by itself |
+| Keep a record of every run | `tg config set record true` | yes, every run |
+| Check the installation | `tg doctor`, `tg doctor --online` | no |
+| Make a problem report | `tg doctor report create` | yes, one file you send |
 
 ## Show it: `--trace`
 
@@ -17,7 +38,7 @@ with ids, counts, duration and an error code if there was one.
 ← messages.list    chat -1001234567890  118ms  5 messages
 ```
 
-It also passes on the log lines of the Telegram library underneath. stdout is unchanged, so a pipe
+It also passes on the log lines of the Telegram library underneath. stdout does not change, so a pipe
 still gets only data.
 
 ## Keep it: `--record`
@@ -26,11 +47,11 @@ still gets only data.
 tg --record chats list
 tg runs list                 # recorded runs, newest first
 tg runs show <run-id>        # one run: its outcome, and one line per operation
-tg runs path <run-id>        # the directory that holds it
+tg runs path <run-id>        # the folder that holds it
 ```
 
-A run is a directory under `runs/<day>/` in the state directory (`~/.local/share/tg-cli/runs/` on
-Linux), named by its time and its command, with two files:
+A run record is a folder under `runs/<day>/` in the state folder (`~/.local/share/tg-cli/runs/` on
+Linux). Its name is the time and the command. It holds two files:
 
 - `run.json` — the command, the profile, the version of `tg`, Node and the system, when it started
   and ended, how many requests it made, the outcome and the error code;
@@ -38,16 +59,18 @@ Linux), named by its time and its command, with two files:
 
 ## A failed run is always kept
 
-When a command ends in an error, its run is kept even without `--record`, marked
-`"keptBecauseFailed": true` in `run.json`. That holds for every command and every error: a bad
-option, an unknown command, a check before any work, commands that never connect (`models`,
-`server`, `upgrade`). A failure before the command even started, such as a config file that does not
-load, is kept as a run named `tg`. The record holds only the command's words, such as
-`messages list`, never what followed them.
+When a command ends in an error, its run is kept even without `--record`. `run.json` then has
+`"keptBecauseFailed": true`. This is true for every command and every error: a bad option, an
+unknown command, a check before any work, and commands that never connect (`models`, `server`,
+`upgrade`). A failure before the command started, such as a config file that does not load, is kept
+as a run named `tg`. The record holds only the command's words, such as `messages list`, never what
+followed them.
 
-A successful run leaves no diagnostic record unless requested; successful search/statistics queries have separate history. So a problem report always has a failure to
-attach, while query history has its own controls. `--no-record`, or `"record": false` in the
-settings, turns this off too.
+A successful run leaves no record unless you ask for one. So a problem report always has a failure to
+attach. `--no-record`, or `"record": false` in the settings, turns this off too.
+
+Successful searches and statistics queries keep their own history, apart from run records. It has its
+own controls: see [saved searches and history](search.md#saved-searches-and-history).
 
 ## When to record every run
 
@@ -56,9 +79,8 @@ tg config set record true          # this profile
 tg --no-record chats list          # but not this one
 ```
 
-Then every run is kept. The default is the other way round on purpose: a run that worked is not
-written until you ask. A messenger that keeps a folder of whom you read and when would be a diary
-of your life nobody asked for.
+Then every run is kept. By default a run that worked is not written until you ask. A messenger tool
+that keeps a folder of whom you read and when would be a diary of your life that nobody asked for.
 
 ## How long it lives
 
@@ -68,7 +90,7 @@ by the folder's name, so nothing has to be opened to decide.
 
 ## What is never in a record
 
-A recorded run and `--trace` carry an operation's name, ids, counts, durations and error codes. They
+A run record and `--trace` carry an operation's name, ids, counts, durations and error codes. They
 never carry:
 
 - the text of a message, or a caption;
@@ -76,7 +98,7 @@ never carry:
 - **what you typed as `<chat>`**, because a typed chat is often a title;
 - a phone number, a login code, a 2FA password, the session or the app hash.
 
-The same goes for a report made from a run.
+The same is true for a report made from a run.
 
 ## Check the installation: `tg doctor`
 
@@ -95,19 +117,18 @@ the runs kept.
 - **`files`** and **`telegram.session.files`** name each private file or folder that other users of
   this machine can read: the session, the store, their SQLite `-wal` and `-shm` files, the send
   journal and the runs folder. Each has the `chmod` command that fixes it. `doctor` never changes a
-  mode itself. Windows is not checked.
+  file mode itself. Windows is not checked.
 - **`online.clock`** (with `--online`) compares this computer's clock with Telegram's.
   `skewMs` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
   refuses a request stamped more than 30 seconds ahead of its own clock.
 - **`online.standing`** (with `--online`) is `active`, `frozen`, `banned`, `deactivated` or
-  `revoked`, or `unknown` when Telegram's answer could not tell. A frozen account can read but not write. It comes with the date it was frozen, the date
-  Telegram will delete it, and the appeal link, where Telegram gives them. Logging in again does not
-  reopen an account Telegram closed.
+  `revoked`, or `unknown` when Telegram's answer could not tell. A frozen account can read but not
+  write. Where Telegram gives them, it comes with the date the account was frozen, the date Telegram
+  will delete it, and the appeal link. Logging in again does not reopen an account Telegram closed.
 - **`flood`** lists the waits Telegram asked this profile to keep (`deadlines`) and a hold on its
-  sends (`sendBlock`). `doctor` reads only, with one
-  exception: **`doctor --online` writes the frozen hold.** When it reads the account frozen, it holds
-  sends until Telegram's date; when it reads it active, it lifts that hold. It never lifts a hold for
-  a spam limit — `tg flood clear` does that.
+  sends (`sendBlock`). `doctor` only reads, with one exception: **`doctor --online` writes the frozen
+  hold.** When it reads the account as frozen, it holds sends until Telegram's date. When it reads it
+  as active, it lifts that hold. It never lifts a hold for a spam limit — `tg flood clear` does that.
 
 ## A problem report
 
@@ -119,6 +140,7 @@ tg doctor report create --run <run-id>    # about this one
 It writes a JSON file — what `tg doctor` shows plus the run — and says where to send it: a new issue
 at [github.com/leemour/tg-cli/issues](https://github.com/leemour/tg-cli/issues/new). Read it before
 you send it. It holds no message text, and every id appears as a label, not as Telegram's number.
+[How to report a problem](troubleshooting.md#report-a-problem) lists everything the file holds.
 
 If no failed run is kept, run the failing command again; its failure is kept by itself.
 
@@ -138,15 +160,5 @@ The whole file is in the folder `tg runs path <run-id>` prints.
 
 ## Next
 
-- [troubleshooting.md](troubleshooting.md) — what an error means and what to do
-- [security.md](security.md) — what reaches the disk at all
-
-## Command discovery for scripts
-
-`tg commands --json` lists commands, global options and exit codes without connecting to an
-account. `cli` names the tool, `version` is the installed package version, and `contract` is the
-shared JSON contract version (`0`). It changes for incompatible response field changes; a package
-upgrade alone does not change `contract`. Scripts can read individual fields instead of comparing
-the whole JSON output with a saved string.
-
-Search/statistics query history is separate from run records; see [query history and --no-record](search.md).
+- [What an error means and what to do](troubleshooting.md)
+- [What reaches the disk at all](security.md)
