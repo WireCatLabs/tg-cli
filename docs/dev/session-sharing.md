@@ -1,6 +1,6 @@
 # Several processes on one Telegram session
 
-**TASK-366, 2026-10-04.** The question: what happens when `tg serve`, one-shot commands, `tg mcp` and
+The question: what happens when `tg serve`, one-shot commands, `tg mcp` and
 `tg watch` use one profile's session at the same time? Short answer: the session file itself is
 safe. **Telegram's rules are not met:** every process opens its own main connection on the same
 login, and Telegram's docs say that revokes the login. Fixing it needs one process to own the
@@ -131,7 +131,7 @@ It is not a reason to skip (c).
 An interim step, if (c) waits: refuse `watch` while `serve` runs (the existing lock). `serve`
 already keeps the store current, so nothing is lost.
 
-## 6. Measured 2026-10-04, and what reopens (c)
+## 6. What was measured, and what reopens (c)
 
 Run on `tgtest` with the owner's yes:
 

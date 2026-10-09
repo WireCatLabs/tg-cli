@@ -1,8 +1,8 @@
 # Architecture
 
-**Status 2026-09-29.** (**Correction 2026-10-01:** the versions stamped here went stale within days;
-the cli-messaging version tg builds on is the pin in `package.json`.) This page is the map of `tg`'s own
-code and its seams. What the project is and what is open lives in [HANDOFF.md](../../HANDOFF.md);
+This page is the map of `tg`'s own code and its seams; the cli-messaging version tg builds on is the
+pin in `package.json`. What the project is lives in [HANDOFF.md](../../HANDOFF.md), open work in
+[BACKLOG.md](BACKLOG.md);
 the shared design lives in cli-messaging and in
 [max-cli's ARCHITECTURE.md](https://github.com/leemour/max-cli/blob/main/docs/dev/ARCHITECTURE.md),
 which most of cli-messaging was copied from.
@@ -25,7 +25,7 @@ Shared runtime fixes become available only after this CLI adopts their published
 
 ### Agent evaluation evidence
 
-Correction 2026-10-08: the [public admin/statistics evaluation](https://github.com/leemour/cli-messaging/blob/main/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) separates independent
+the [public admin/statistics evaluation](https://github.com/leemour/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) separates independent
 model contexts, synthetic CLI/MCP traces, deterministic fixture checks and live-provider claims.
 Its six contexts and 38 assessed outcomes are a bounded observation, not broad agent conformance;
 original model identity was not captured and MCP used a shell proxy. Read the report's subject
@@ -70,7 +70,7 @@ mocks the class and keeps mtcute's real helpers).
 
 ## 3. Adding an adapter method
 
-The path is in [HANDOFF.md §3c](../../HANDOFF.md#3c-how-to-change-things); how lanes avoid colliding
+The path is in [HANDOFF.md §3](../../HANDOFF.md#3-how-to-change-things); how lanes avoid colliding
 in `adapter.ts` is in [agents.md](agents.md#where-lanes-collide).
 
 ## 4. One command, one connection, and it closes

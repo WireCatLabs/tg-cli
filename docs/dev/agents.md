@@ -1,35 +1,24 @@
 # Running agents on tg-cli
 
-Several Claude Code sessions work at once, each on a **lane** of
-[the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md), each in worktrees of
+Several Claude Code sessions work at once, each on a **lane** — one thread of work — in worktrees of
 its own. Each is an ordinary Claude Code session the owner starts in the lane's folder; the guards in
 `.claude/` keep it inside. This file is how.
 
-## SEC-24 (closed 2026-09-29)
-
-`bin/check-agents` (2026-09-29) found the private key `~/.ssh/id_ed25519` readable inside the
-sandbox. The sandbox reads the whole machine unless a path is in `denyRead`, and `allowRead` only
-re-opens paths inside a `denyRead` ([the sandbox docs](https://code.claude.com/docs/en/sandboxing)),
-so nothing ever closed `~/.ssh`. Fix: [`bin/finish-agent-setup`](../../bin/finish-agent-setup), run
-by the owner from a terminal, adds `denyRead: ["~/.ssh"]` and then runs `bin/check-agents`: 6c
-fails, 6 and 6b still work — measured.
 
 ## Start the lanes in parallel
 
 1. `bin/check-agents` — every item as its label says (6c must fail).
 2. `bin/lane <lane>` for each lane, then one terminal or zellij tab per lane:
-   `cd .worktrees/<lane>/tg-cli && claude`, told to read `docs/lanes/<lane>.md`.
+   `cd .worktrees/<lane>/tg-cli && claude`, told which handoff to read.
 3. Each lane works through its handoff alone: PR per item, merge on green, release its own work.
-   Watch GitHub, not the terminals. When one finishes, write the next lane's handoff (L4 media or
-   L5 archive, [the lanes plan](../../../cli-messaging/docs/plans/2026-09-29-parity-lanes.md)) and
-   `bin/lane <new>`.
+   Watch GitHub, not the terminals.
 
 ## Start a lane
 
 ```sh
 bin/lane l1-reading     # .worktrees/l1-reading/{tg-cli,cli-messaging}: install, build, copy the login in
 bin/trust-folder .worktrees/l1-reading/tg-cli .worktrees/l1-reading/cli-messaging   # from a terminal; or accept Claude's trust dialog
-cd .worktrees/l1-reading/tg-cli && claude   # then: "read docs/lanes/l1-reading.md and follow it"
+cd .worktrees/l1-reading/tg-cli && claude   # then point it at its handoff
 bin/lane --remove l1-reading   # at the end; refuses while either worktree has uncommitted work
 ```
 
@@ -65,7 +54,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 
 ## Rules for a lane
 
-- **Read your handoff, not HANDOFF.md.** `docs/lanes/<lane>.md` says what to read, in order.
+- **Read your handoff first.** It says what to read, in order.
 - **A branch and a PR per item**, off `origin/main`, in both repositories: `git switch -c feat/<item>
   --no-track origin/main`. The worktree's own `lane/<lane>` branch is only where it parks.
 - **Rebase-merge your PR once CI is green**, then start the next item without waiting.
@@ -73,8 +62,8 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
   version`, a `chore: release` PR raising it from what is really published, `bin/release`. Another
   lane may release first — `bin/release` refuses a version already on npm, so rebase, raise the
   number again, retry. Then tg: `pnpm add @leemour/cli-messaging@<v>`.
-- **A store migration is announced before it is written**: the lanes plan §4 names the next free
-  number; take it by editing that line in a PR of its own, merged first.
+- **A store migration number is taken before the migration is written**: cli-messaging's
+  `docs/dev/COORDINATION.md` names the next free number; take it in a PR of its own, merged first.
 - **Do not touch another lane's worktree or branch**, even to help.
 
 ## Where lanes collide
@@ -85,7 +74,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | `tg-cli/src/telegram/adapter.ts`, `map.ts` | every lane adds methods. Add yours as a group at the end of the class; a rebase conflict here is two groups, keep both |
 | `MessengerAdapter` in `port.ts` | a new method is optional (`edit?`), asked for with `capability()`; the wrappers pass it through (`throughWrapper`) — no edit to `observed.ts`/`stored.ts` unless you want ids in the run or a save |
 | `mcp/tools/<resource>.ts` | one file per resource; a new one is a file and a line in `tools.ts` |
-| `README.md`, `docs/mcp.md`, `skills/tg-cli/SKILL.md`, the proposal §8 | lists; on a conflict keep both rows |
+| `README.md`, `docs/mcp.md`, `skills/tg-cli/SKILL.md` | lists; on a conflict keep both rows |
 | the version in `package.json` | see releasing, above |
 | `docs/dev/test-matrix.md` | generated — on a conflict run `pnpm test:matrix` and commit what it writes, never merge it by hand. A new command or option needs a test through `run()` or an entry in `scripts/test-matrix-untested.ts`, or CI fails ([TESTING.md](TESTING.md#every-command-and-option-has-a-test-or-a-reason)) |
 | coverage (`pnpm test:coverage`) | every file keeps at least 50 % of its lines; a new adapter group comes with its cases in `src/telegram/adapter.test.ts` ([TESTING.md](TESTING.md#coverage-has-a-floor)) |

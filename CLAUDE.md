@@ -1,8 +1,8 @@
 # tg-cli — working rules
 
 **Start with [`HANDOFF.md`](HANDOFF.md)** — what this is, what to read for your task, and what will
-bite. A lane agent starts with its own `docs/lanes/<lane>.md` instead ([`docs/dev/agents.md`](docs/dev/agents.md)). The design lives in cli-messaging's
-[platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md).
+bite. A lane agent starts with its own handoff instead ([`docs/dev/agents.md`](docs/dev/agents.md)). Open work is
+[`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md).
 
 1. **This is the owner's real Telegram account.** Nothing sends unless the command typed asked for
    it; live checks send only to Saved Messages, and go through `bin/tg`, never `node dist/bin/tg.js`.

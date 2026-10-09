@@ -45,6 +45,6 @@ committed page differs from what the program says. The same list, as JSON, is `t
 - [dev/ARCHITECTURE.md](dev/ARCHITECTURE.md) — how tg is built, and which seams you may not cross
 - [dev/CONVENTIONS.md](dev/CONVENTIONS.md) — how code and documents are written here
 - [dev/TESTING.md](dev/TESTING.md) — how to check a change, and what each check is for
-- [the platform proposal](https://github.com/leemour/cli-messaging/blob/main/docs/plans/2026-09-26-platform-proposal.md)
-  — the design shared with [cli-messaging](https://github.com/leemour/cli-messaging), which holds
-  everything that is not specific to Telegram
+- [dev/BACKLOG.md](dev/BACKLOG.md) — open work; the shared package
+  [cli-messaging](https://github.com/leemour/cli-messaging) holds everything that is not specific to
+  Telegram

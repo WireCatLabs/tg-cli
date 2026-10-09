@@ -31,7 +31,9 @@ Notable changes to `@leemour/tg-cli`. One section per version, newest first; ver
   messages and last activity.
 - **`tg messages forward --topic <id>` forwards into a forum topic** of the `--to` group. The topic is checked
   first, as with `messages send --topic`; topic 1 is General.
-- **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents can read
+- **`tg attachments show --page 1` returns a retained PDF page as PNG.** Remote agents whose clients
+  cannot open an embedded PDF can read it page by page as images; rendering needs the optional
+  `unpdf` and `@napi-rs/canvas` packages.
 
 ### Changed — may break scripts
 
