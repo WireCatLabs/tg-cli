@@ -4,7 +4,7 @@ What is coming to `tg`, in the order it is likely to arrive. The order can chang
 requests are welcome in [issues](https://github.com/leemour/tg-cli/issues).
 
 - **Richer sending** — several photos in one message ([usage.md](usage.md#not-in-tg-yet)).
-- **Your own notes on chats** — what [tgcli](from-tgcli.md) keeps beside its tags.
+- **Your own notes on chats** — what [tgcli](https://github.com/kfastov/tgcli) keeps beside its tags.
 - **What `max` gained in October** — muting a chat, privacy settings, call history, a chat's media,
   stickers, deleting or clearing a chat for yourself, a group photo, pressing a bot's buttons, starting a
   bot and opening its mini app.

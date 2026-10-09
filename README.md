@@ -213,39 +213,9 @@ messengers, AI agents, internal services. Write to [info@neirox.ai](mailto:info@
 
 ## How it differs
 
-There are good tools for a Telegram account already. Choose what fits the job.
-
-| | tg-cli | [tgcli](https://github.com/kfastov/tgcli) |
-|---|:-:|:-:|
-| what it is | a terminal tool and an MCP server | a terminal tool, an archiver and an MCP server |
-| MCP server | ✅ stdin/stdout or HTTP behind your tunnel | ✅ over HTTP, from its background service |
-| a skill for agents with a terminal | ✅ | ✅ |
-| limits for an agent: read-only, allowed actions, allowed chats, an hourly cap, confirming each send | ✅ | — |
-| a message never sent twice after a broken connection | ✅ | — (retries a failed send) |
-| unread in every chat; "who owes what"; unanswered questions | ✅ | — |
-| voice messages as text | ✅ Telegram or a model on this machine | — |
-| a local archive, searched without connecting | ✅ | ✅ |
-| keeping the archive current as a system service | ✅ systemd, launchd | ✅ |
-| fetching history in the background | ✅ | ✅ |
-| export as JSON lines or Markdown | ✅ | — |
-| new messages as they arrive | ✅ `tg watch` | ✅ `sync --follow`, into the archive |
-| reading, sending text, photos and files | ✅ | ✅ |
-| sending videos and voice messages | ✅ | — |
-| scheduled sending | ✅ | ✅ |
-| edit, forward, pin, reactions, polls | ✅ | — |
-| deleting messages — for you or for everyone | ✅ | — |
-| marking a chat read on request | ✅ | ✅ |
-| sending into a forum topic; spoilers; HTML | ✅ | ✅ |
-| protected content on individual sent messages | — | ✅ |
-| forum topics: list and search | ✅ | ✅ |
-| groups: create | ✅ | — |
-| groups: join, leave | ✅ | ✅ |
-| groups: rename, add and remove members, invite links | ✅ | ✅ |
-| folders | ✅ | ✅ |
-| local tags on chats, contacts and messages | ✅ | ✅ |
-| private aliases and notes for contacts | ✅ | ✅ |
-| notes on chats | — | ✅ |
-| install with Homebrew or Docker | — | ✅ |
+There are good tools for a Telegram account already. Choose what fits the job:
+[Compared with other tools](docs/compare.md) puts `tg` next to tgcli, telegram-mcp and tdl, feature by
+feature.
 
 **Telegram's own apps** are made for a person. `tg` is made for a script and an agent: one operation
 per call, the same shape of answer every time, a limit on what an agent may send, your messages
