@@ -103,4 +103,13 @@ describe("tg upgrade and a running server", () => {
     expect(result).toMatchObject({ updated: true, restarted: [] })
     expect(stderr).toContain("`tg work server restart`")
   })
+
+  it("ignores lock files whose names are not usable profiles", async () => {
+    serving("work")
+    serving("bad&name")
+    const { ran, result } = await update([])
+    expect(ran).toHaveLength(2)
+    expect(result.restarted).toEqual(["work"])
+    expect(JSON.stringify(ran)).not.toContain("bad&name")
+  })
 })

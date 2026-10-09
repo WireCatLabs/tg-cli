@@ -3,6 +3,14 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- After an upgrade, server restarts invoke Node directly with separate arguments and preserve the
+  selected environment, including installation paths with spaces on Windows. Invalid profile names
+  in lock files are skipped.
+
 ## 0.42.0 — 09.10.2026
 
 ### Changed — may break scripts
