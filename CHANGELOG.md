@@ -3,6 +3,15 @@
 Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **The message store drops the copies kept for older versions** (store version 28, cli-messaging 0.212.0).
+  Notes, contact notes, relations and entities written before the notes refactor are copied into their new
+  tables once, during the upgrade. After it, an older tg, max or memo refuses the store with "upgrade this
+  tool" — update all three together.
+
 ## 0.40.1 — 09.10.2026
 
 ### Fixed
