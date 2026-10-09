@@ -27,6 +27,7 @@ order.
 | [security.md](security.md) | What reaches the disk, what never does, and what stops a send going to the wrong place? |
 | [troubleshooting.md](troubleshooting.md) | Something does not work: what the screen says, and what to do |
 | [commands.md](commands.md) | Every command, option and exit code — **generated** from the program |
+| [compare.md](compare.md) | How does tg compare with tgcli, telegram-mcp and tdl, and when does another tool fit better? |
 | [roadmap.md](roadmap.md) | What is coming next? |
 
 What changed between versions: [CHANGELOG.md](../CHANGELOG.md).
