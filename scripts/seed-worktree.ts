@@ -71,9 +71,15 @@ export const unseed = (relativeOrAbsolute: string): string => {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [main, worktree] = process.argv.slice(2).filter((word) => !word.startsWith("--"))
-  if (process.argv.includes("--remove") && main) {
-    process.stderr.write(`${unseed(main)}\n`)
+  const paths = process.argv.slice(2).filter((word) => !word.startsWith("--"))
+  const [main, worktree] = paths
+  if (process.argv.includes("--remove")) {
+    // `<main> <worktree> --remove` used to unseed the first path: the main checkout lost its app keys (BUG-173).
+    if (paths.length !== 1) {
+      process.stderr.write("--remove takes the worktree alone: node scripts/seed-worktree.ts <worktree> --remove\n")
+      process.exit(2)
+    }
+    process.stderr.write(`${unseed(paths[0] as string)}\n`)
   } else if (!main || !worktree) {
     process.stderr.write(
       "usage: node scripts/seed-worktree.ts <main checkout> <worktree> [--force] | <worktree> --remove\n",
