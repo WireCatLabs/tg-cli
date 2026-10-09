@@ -124,8 +124,8 @@ What each part does:
 | System | Path |
 |---|---|
 | Linux | `~/.config/tg-cli/config.json` |
-| macOS | `~/Library/Application Support/tg-cli/config.json` |
-| Windows | `%APPDATA%\tg-cli\config.json` |
+| macOS | `~/Library/Preferences/tg-cli/config.json` |
+| Windows | `%APPDATA%\tg-cli\Config\config.json` |
 
 `tg config show` prints the path this computer actually uses, and every setting with its value. In
 PowerShell, type `tg.cmd` instead of `tg`. An existing file is never replaced by the starter file.

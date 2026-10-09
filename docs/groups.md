@@ -201,7 +201,7 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 | `tg review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
 | `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
-| `tg topics list\|search <chat>` | a forum group's topics |
+| `tg topics list <chat>`, `tg search topics <chat> <text>` | a forum group's topics; search finds them by title |
 | `tg topics show <chat> <id>` | one topic: title, closed or pinned, unread count, last activity |
 | `tg topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
 | `tg topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
