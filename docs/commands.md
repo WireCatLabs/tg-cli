@@ -3434,7 +3434,7 @@ tg replies edit <id> [options]
 
 ### `tg replies audience`
 
-show the profile's reply audience, or replace its named fields; testers still limit answers
+show the reply audience, who the rules may answer, or replace its named fields; a new file answers nobody
 
 **Changes something on this computer only.**
 

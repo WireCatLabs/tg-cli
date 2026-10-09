@@ -1,10 +1,22 @@
 # Auto-replies
 
-`tg serve` can answer incoming messages by rules you write. Two things keep it from writing to
-people you did not mean:
+This page is about answering Telegram messages automatically when you cannot answer yourself — for
+example, a short "I will answer in the morning" to people who write after working hours. By the end
+you have a working auto-reply: a rule with your reply text, sent only to the people you allow, and a
+way to check what it would answer before it sends anything. Ready-made texts, and how a reply template
+differs from a draft, are on [Drafts and reply templates](https://wirecat.dev/en/docs/drafts-and-templates).
 
-- **It answers only test accounts.** A reply goes only to a sender listed in `testers` in the rules
-  file. A new file has an empty `testers`, so nobody gets a reply until you add your own test account.
+A few words used below:
+
+- A **rule** says which incoming messages to answer and what to do: reply, open a task, or both.
+- A **template** is the reply text. It can include the sender's name and the time.
+- The **audience** is the list of people and chats that may get a reply at all, whatever a rule says.
+- `tg serve` is the background process that receives new messages and applies the rules.
+
+Two things keep it from writing to people you did not mean:
+
+- **Replies go only to people and chats you allow.** A new rules file allows nobody, so nobody gets
+  a reply until you add someone with `tg replies audience --reply listed --allow-people …`.
 - **Sending is off until you turn it on.** `permissions.replies.send` must be `allow`. `ask` counts as
   no, because a background server has nobody to ask.
 
@@ -21,10 +33,24 @@ tg replies edit away --per-chat 1/12h --per-person 1/1d
 
 `add` creates a rule that is off, with every setting written out. The rules live in
 `<profile>.replies.json`, in the same folder as the `configFile` that `tg config show --json` names.
-Put the id of your test account in its `testers`:
+Allow the people who may get replies, by their Telegram ids, comma-separated. `tg contacts show <name>
+--json` prints a person's id as `id`:
+
+```sh
+tg replies audience --reply listed --allow-people 1000001
+```
+
+The file then holds:
 
 ```json
-{ "testers": [{ "id": "1000001" }], "rules": [ … ] }
+{
+  "audience": {
+    "reply": "listed",
+    "allow": { "people": ["1000001"], "chats": [] },
+    "deny": { "people": [], "chats": [] }
+  },
+  "rules": [ … ]
+}
 ```
 
 Rule ids are lower-case letters, digits and `-`, and each is unique. A rule that replies cannot be
@@ -58,15 +84,19 @@ empty string clears it.
 | Working hours | `--outside`, `--days`, `--timezone`, `--no-hours` |
 
 The first time you set working hours, give the window, the days and the time zone together; after
-that you can change one. A wrong edit does not overwrite the file, and the other rules, `testers` and
+that you can change one. A wrong edit does not overwrite the file, and the other rules, the audience and
 the record of what was answered stay as they were.
 
-`tg replies audience` shows who the whole file may answer. `--reply all` allows anyone; `--reply listed`
-only the allowed lists. `--allow-people`, `--allow-chats`, `--deny-people` and `--deny-chats` replace
-those lists, and a denial wins over an allowance. `testers` still applies on top of the audience. A
-`task` action opens a task on this computer and is not limited by the audience.
+`tg replies audience` shows who the whole file may answer. A new file is `--reply listed` with empty
+lists, so it answers nobody. `--reply listed` answers only the allowed people and chats; `--reply all`
+answers anyone a rule matches. `--allow-people`, `--allow-chats`, `--deny-people` and `--deny-chats`
+replace those lists, and a denial wins over an allowance. A `task` action opens a task on this computer
+and is not limited by the audience.
 
 ## Templates and a model
+
+Examples of reply texts for common cases, and when to keep a draft instead, are on
+[Drafts and reply templates](https://wirecat.dev/en/docs/drafts-and-templates).
 
 A template can use `sender.firstName`, `sender.name`, `chat.title`, `chat.kind` and `now` (in the
 rule's time zone, or UTC without working hours), with filters such as `{{ now | date: "%H:%M" }}`. The
@@ -104,6 +134,7 @@ see its text; it still sends nothing to Telegram.
 
 ## What a rule never answers
 
+- Anyone the audience does not allow.
 - Your own messages, channels, bots, and messages sent on behalf of a chat.
 - An edited message, a message already handled, and anything that arrived before `serve` started.
 - In a group, a message that neither mentions you nor replies to you, unless the rule names that group

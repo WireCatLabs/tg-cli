@@ -121,9 +121,11 @@ describe("SDK148 local commands through the consumer", () => {
     expect(cleared.code, cleared.err).toBe(0)
     expect(JSON.parse(cleared.out)).toMatchObject({ cleared: { deadlines: [], sendBlock: null } })
   })
-  it("keeps reply sending denied when no testers are configured", async () => {
+  it("keeps reply sending denied and answers nobody until someone is allowed", async () => {
     const status = await cli(["replies", "status", "--json"])
     expect(status.code, status.err).toBe(0)
-    expect(JSON.parse(status.out)).toMatchObject({ send: "deny", testers: 0 })
+    expect(JSON.parse(status.out)).toMatchObject({ send: "deny", audience: { reply: "listed", allow: 0 } })
+    expect(JSON.parse(status.out)).not.toHaveProperty("testers")
+    expect(status.err).toContain("nobody is answered")
   })
 })
