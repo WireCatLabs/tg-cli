@@ -1,17 +1,21 @@
 # Roadmap
 
-What is coming to `tg`, in the order it is likely to arrive. The order can change. Ideas and
-requests are welcome in [issues](https://github.com/leemour/tg-cli/issues).
+This page lists what is planned for `tg` and is not in it yet. Read it before you build a workaround
+for a missing feature: it may already be on the way. The order is approximate and can change. To
+suggest something, open an [issue on GitHub](https://github.com/leemour/tg-cli/issues).
 
-- **Richer sending** — several photos in one message ([usage.md](usage.md#not-in-tg-yet)).
-- **Your own notes on chats** — what [tgcli](https://github.com/kfastov/tgcli) keeps beside its tags.
-- **What `max` gained in October** — muting a chat, privacy settings, call history, a chat's media,
-  stickers, deleting or clearing a chat for yourself, a group photo, pressing a bot's buttons, starting a
-  bot and opening its mini app.
-  [Private names and notes for people](people.md#your-own-names-and-notes-contacts-alias-contacts-notes) are already supported.
+## Next
 
-What each released version changed is in [CHANGELOG.md](../CHANGELOG.md).
+- **Richer sending.** Several photos in one message. Until then, see
+  [what tg cannot send yet](usage.md#not-in-tg-yet).
 
-Retained file transfer to remote AI agents is implemented: [attachment guide](attachments.md).
-Agents whose clients cannot open PDFs can receive individual pages as images:
-[remote PDF reading](remote.md#read-pdf-pages-without-a-local-file-handoff).
+## Later
+
+- **Your own notes on chats.** Private notes on a chat, like the ones
+  [tgcli](https://github.com/kfastov/tgcli) keeps beside its tags. Private names and notes for people already work:
+  [your own names and notes for people](people.md#your-own-names-and-notes-contacts-alias-contacts-notes).
+- **What `max` can do and `tg` cannot yet.** Muting a chat, privacy settings, call history, a chat's
+  media, stickers, deleting or clearing a chat for yourself, a group photo, pressing a bot's buttons,
+  starting a bot and opening its mini app.
+
+What each released version changed is in the [changelog](../CHANGELOG.md).

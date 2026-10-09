@@ -1,10 +1,22 @@
 # Security: what reaches the disk, and what stops a send
 
-`tg` works with your real Telegram account. What it shares with every WireCat tool — the local
-store, the send guard, what an agent may do over MCP, other people's text on your screen, how to
-report a vulnerability — is on the [shared security page](https://wirecat.dev/en/docs/security).
-This page is what only Telegram adds: where the login lives, the files only `tg` writes, which
-servers it talks to, and what to do if the session leaks.
+Read this page before you give an AI agent or a script access to your Telegram account through `tg`,
+or when you want to know what `tg` keeps on your computer. It explains where your login is kept, what
+`tg` writes to disk, which servers it talks to, what stops an unwanted send, and what to do if your
+login leaks. By the end you can judge what someone with access to this computer, or an agent with
+access to `tg`, could do.
+
+Words this page uses:
+
+- **Session**: the file that keeps you logged in to Telegram. Whoever has it can use your account.
+- **Local store**: the database on your computer where `tg` and `max` keep the messages they have
+  read. It is shared by both tools and is not encrypted.
+- **Send guard**: the checks every change goes through before it reaches Telegram: permissions, the
+  list of allowed recipients and the hourly send limit.
+
+What every WireCat tool has in common — the local store, the send guard, what an agent may do over
+MCP, other people's text on your screen, how to report a vulnerability — is on the
+[shared security page](https://wirecat.dev/en/docs/security). This page covers what only Telegram adds.
 
 ## In short
 
@@ -55,7 +67,7 @@ encrypted. Besides those, `tg` writes:
 | a backup — only `tg store backup` | the file you name | a copy of the whole store | `0600` |
 
 The exact paths on this machine: `tg doctor`. The folders on each system:
-[installation.md](installation.md#where-files-go).
+[where files go](installation.md#where-files-go).
 
 If the computer is lost, end the session from another device: in the Telegram app, Settings →
 Devices, end the session that `tg` created. That makes the session file useless.
@@ -93,7 +105,7 @@ downloaded file's name also loses any leading dot.
 - **Telegram**, over MTProto for personal-account commands, including files and photos. Bot commands
   use the HTTPS Bot API; `bot store fetch` uses a separate MTProto bot session for history.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
-  `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration.md](configuration.md)).
+  `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration](configuration.md)).
 - **my.telegram.org**, only during `tg setup` or `tg session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
@@ -124,21 +136,6 @@ code the site sends you in Telegram, and nothing else.
 
 Every login adds a device to the list in the Telegram app: Settings → Devices.
 
-## If the session leaked
-
-1. In the Telegram app: Settings → Devices, end the session `tg` created. Or run `tg session end` on
-   this machine, which ends it on Telegram's side and deletes the file.
-2. Log in again: `tg session start`.
-
-## Next
-
-- [Shared security page](https://wirecat.dev/en/docs/security) — the store, the guard, agents and
-  MCP, reporting a vulnerability
-- [diagnostics.md](diagnostics.md) — what exactly is recorded, and what never is
-- [sessions.md](sessions.md) — the app, the keyring, profiles, logging out
-- [mcp.md](mcp.md) — what an agent can do over MCP, and what each level and flag changes
-- [configuration.md](configuration.md) — `permissions` and `sendsPerHour`
-
 ## Global installation changes
 
 The global npm postinstall installs the bundled skill in the user's agent directories; on Windows
@@ -147,3 +144,18 @@ this package. The `.cmd` launcher remains. Project installs and npx do not perfo
 `TG_INSTALL_AGENT=none` skips skill installation. The standalone Windows installer performs the
 same preparation even when npm scripts are disabled. It does not change execution policy, machine
 PATH, credentials or account state. Installation never logs in or reads chats.
+
+## If the session leaked
+
+1. In the Telegram app: Settings → Devices, end the session `tg` created. Or run `tg session end` on
+   this machine, which ends it on Telegram's side and deletes the file.
+2. Log in again: `tg session start`.
+
+## Next
+
+- [Shared security page](https://wirecat.dev/en/docs/security): the store, the guard, agents and
+  MCP, reporting a vulnerability
+- [Diagnostics](diagnostics.md): what exactly is recorded, and what never is
+- [Login, sessions and profiles](sessions.md): the app, the keyring, profiles, logging out
+- [MCP](mcp.md): what an agent can do over MCP, and what each level and flag changes
+- [Permissions](permissions.md): how to set `permissions` and `sendsPerHour`

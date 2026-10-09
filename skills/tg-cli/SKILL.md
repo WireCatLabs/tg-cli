@@ -15,7 +15,9 @@ Both include arguments, options, global options and exit codes. Use `tg <command
 shorter explanation. Command words form one path, not a list of groups: inspect different groups
 in separate calls. **`tg commands --json`** returns the entire tree when you need an overview;
 do not read it in full before every task. `mutates: true` identifies writes; `local: true` limits
-those writes to this machine. This file holds the traps and boundaries.
+those writes to this machine. `commands --json` connects to no account. Its `contract` field is the shared JSON contract
+version; it changes only when response fields change incompatibly, not with a package upgrade, so
+check that field rather than comparing whole outputs. This file holds the traps and boundaries.
 
 ## Machine execution
 
@@ -263,6 +265,10 @@ profile's `permissions` decide which commands it offers, through `tg_tools_searc
 `tg_write`; there is no confirmation form. `tg mcp config` prints the entry with full paths.
 
 `tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `tg_bot_read` (`command: "me"`).
+Bot commands print data only on stdout with `--json`, in the same message shape as the account. Bot exit codes:
+`4` no bot token or Telegram rejected it, `5` the bot profile's permissions, `6` a chat title the bot has not
+seen (use the id), `7` the chat is not on the bot's recipient list or an `ask` level got no answer — tell the
+owner the `bot recipients add` command, never add it yourself — `8` the bot's `sendsPerHour`, `14` unknown outcome.
 
 `tg <bot> bot store fetch <chat>` imports a channel or supergroup by message number, read-only over
 a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
@@ -334,7 +340,9 @@ details.
 `--thread-messages`, `--thread-bytes`, `--thread-within`. Without a graph it falls back to chronological context;
 stale links are marked and not traversed.
 
-MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`), `tg_write` (`command: "conversations links add"`),
+In MCP, `tg_read` with `command` `"conversations list"`, `"conversations show"`, `"search conversations"`,
+`"conversations related"` and `"conversations status"` reads what is built; `tg_write` (`command: "conversations refresh"`)
+catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`), `tg_write` (`command: "conversations links add"`),
 `tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
 afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
@@ -388,6 +396,14 @@ Local aliases belong to the selected account, notes show in every profile that s
 both survive contact refresh, and never change messenger profiles or address-book names. `contacts rename` updates the messenger's
 address book; use `contacts alias` for a local name. Duplicate aliases require an explicit id.
 Private notes are separate from the contact's public bio. Read/search them only when relevant.
+
+To summarise what one person said, call `contacts context <person> --chat <chat> --limit <n>` (MCP:
+`chats` and `limit`); the answer is `{ at, text }` per message. Ask for `-v` (MCP `detail: 1`) only when
+you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked
+with `contacts link`; `contacts profile` and `--chat` read the named account only. `contacts profile`
+never prints a whole phone number unless the owner asks for `--show-phone`; MCP always hides it.
+`contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
+`--no-registries` (MCP `registries: false`) unless the owner accepts that. Its score is a hint, not a verdict.
 
 ```sh
 tg contacts alias set 101 'Project lead'

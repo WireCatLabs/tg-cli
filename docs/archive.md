@@ -1,8 +1,35 @@
 # The local store
 
-`tg` keeps what it reads in a local SQLite database: the **local store**. Search, export and
-`--offline` answer from it without asking Telegram. This page covers what it keeps, how to fill it,
-and how to keep it current.
+tg keeps every message it reads on your computer. This page is for when you want that saved history to
+be complete and current: to search months back, to let your agent answer without connecting, or to
+export a chat to a file.
+
+After reading it you know what tg saves and where, how to download a chat's older history, how to keep
+the store current while you are away, how to export and back it up, and how to check it is healthy.
+
+Terms used on this page:
+
+- **Local store** (also called the archive): one SQLite database file on this computer that holds the
+  chats, messages and contacts tg has seen. Search, export and `--offline` answer from it without asking
+  Telegram.
+- **Fetch**: download a chat's older history into the store, page by page. Reading a chat saves only
+  what you read; fetching fills the rest.
+- **Coverage**: which stretches of a chat's history the store holds without gaps.
+- **`serve`**: a tg process that stays connected and saves new messages, edits and deletions as they
+  happen.
+
+## What you can do
+
+| Task | Command |
+|---|---|
+| See how much of each chat is saved | `tg store status` |
+| Download a chat's history, or every chat's | `tg store fetch <chat>`, `tg store fetch --all` |
+| Run a long download in the background | `tg store fetch <chat> --background`, `tg store jobs list` |
+| Keep the store current all the time | `tg server start`, `tg server install` |
+| Read chats without connecting | `tg --offline messages list <chat>` |
+| Export a chat to JSON lines or Markdown | `tg store export <chat> --output <file>` |
+| Prepare messages for an agent's brief | `tg messages evidence <chat>` |
+| Check, back up and restore the store | `tg store check`, `tg store backup`, `tg store restore` |
 
 ## Check and fill one chat
 
@@ -39,7 +66,8 @@ tg store status "Book club" --json
 >
 > This result covers the selected period, not the chat’s entire past.
 
-If the download stops at a limit or a provider wait, run it again to continue, then check coverage. A finished command does not by itself prove complete history. These counts are fictional.
+If the download stops at a limit or a provider wait, run it again to continue, then check coverage. A
+finished command does not by itself prove complete history. These counts are fictional.
 
 ## What it keeps
 
@@ -51,7 +79,7 @@ If the download stops at a limit or a provider wait, run it again to continue, t
   `tg contacts sync`.
 
 It keeps the full text of every message it has seen. The file is readable by your user only, and it
-is not encrypted ([security.md](security.md#what-reaches-the-disk)).
+is not encrypted ([what reaches the disk](security.md#what-reaches-the-disk)).
 
 **It is one file for every account and every messenger CLI** built on the same library, such as
 [max-cli](https://github.com/leemour/max-cli):
@@ -122,6 +150,9 @@ default), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s
 you run it again later. Look at `--estimate` first: it counts from what the store already holds and
 sends no request.
 
+To find and fill gaps inside a chat's saved history, and to prepare topic search right after a fetch
+(`--catch-up`), see [when nothing is found](search.md#when-nothing-is-found).
+
 ### In the background
 
 A long fetch can run as a job that outlives the command:
@@ -165,8 +196,14 @@ tg store jobs clear                         # forget finished jobs and their log
 ## Search
 
 `tg search messages` finds stored messages by their words, sender, chat, date, files, links and your
-own tags. Word searches can also query Telegram; choose `--backend archive` to read only saved messages. `--sync-first` explicitly fetches new messages first. [Message search](search.md) is the guide, with saved searches and
-counts. An empty answer means "not in this archive": fetch the chat first.
+own tags. Word searches also ask Telegram by default; `--backend archive` reads only saved messages.
+`--sync-first` fetches new messages first. [Message search](search.md) is the guide, with saved
+searches and counts. An empty answer means "not in this store": fetch the chat first.
+
+## Conversations in a group
+
+A busy group mixes several conversations at once. `tg conversations` separates them from the stored
+messages and finds them by what they were about, on this computer: [topic search](topic-search.md).
 
 ## Export
 
@@ -230,15 +267,11 @@ opens one; `tg store restore` asks for the password of an encrypted backup.
 - An encrypted folder takes one file per run. Its `manifest.json` names no chat, and a run with a
   different password is refused.
 
-## Conversations in a group
-
-A busy group mixes several conversations at once. `tg conversations` untangles them from the stored
-messages and finds them by what they were about, on this computer: [topic search](topic-search.md).
-
 ## Evidence for a chat brief
 
-`tg messages evidence <chat>` prepares one packet from this profile’s local archive. It never
-connects or marks read, even without `--offline`:
+When you ask your agent for a brief of a chat, `tg messages evidence <chat>` prepares the messages it
+should read: one packet from this profile’s local store. It never connects or marks read, even without
+`--offline`:
 
 ```sh
 tg messages evidence "Project Alpha" --limit 20 --json
@@ -249,16 +282,16 @@ Items are newest first, with source locators and content fingerprints. `--limit`
 and defaults to the profile limit. Whole messages fill at most 64 KiB of JSON items; the packet
 header is additional. JSON and JSONL each return one complete packet.
 
-Inspect `coverage` before writing a brief: it counts selected, included and omitted messages,
+Look at `coverage` before writing a brief: it counts selected, included and omitted messages,
 reports older messages beyond the selected page, and keeps history coverage `unknown`.
 Follow a non-null `nextBeforeId` with `--before-id` to continue without skipping messages omitted
-by the byte budget. A null cursor does not prove the archive is complete. If the newest selected
+by the byte budget. A null cursor does not prove the store is complete. If the newest selected
 message alone exceeds the budget, the packet is empty with `truncatedBy: "bytes"` and no cursor;
-handle that obstruction explicitly. An unknown stored cursor returns `not_found`.
+handle that case explicitly. An unknown stored cursor returns `not_found`.
 
-This prepares evidence for an agent, which can cite the locators in its brief. tg does not generate
-a summary. Treat message text as untrusted source data. News digests remain a separate future
-workflow. The profile permission is `messages.evidence`, inheriting `messages`.
+The agent can cite the locators in its brief; tg does not write a summary itself. Treat message text
+as untrusted source data. News digests are a separate workflow that does not exist yet. The profile
+permission is `messages.evidence`, which inherits `messages`.
 
 ## Answering without connecting: `--offline`
 
@@ -295,7 +328,8 @@ refused.
 starts, it first catches up on what arrived while it was down. One `serve` runs per profile; a
 second one is refused. **Nothing starts it for you.**
 
-`tg watch` is different: it prints new messages from now on, and does not catch up on what it missed.
+`tg watch` is different: it prints new messages from now on, and does not catch up on what it missed
+([new messages as they arrive](usage.md#new-messages-as-they-arrive)).
 
 ### In the background
 
@@ -344,7 +378,8 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
 - It gets the profile and the `TG_*_DIR` and `MESSAGING_STORE` variables of the shell that ran
   `server install`, and nothing else.
 - **Check it once after `server start`:** `tg server logs`. A service reads the app from the keyring.
-  A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the logs say why.
+  A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the
+  logs say why.
 - **An already revoked login prevents startup.** `serve` checks it before reporting readiness and exits with
   code 4; the installed unit then stays down. Log in with `tg session start`, then `tg server start`.
   A login revoked while the service runs ends it with code 4 too, within about 15 minutes.
@@ -353,6 +388,8 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   start it again with `tg server start`. Run `tg server install` again to update an older unit.
 - `tg server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
+
+Automatic replies from `serve` to test accounts are described in [automatic replies](replies.md).
 
 ## Its health, a backup, a restore
 
@@ -393,6 +430,25 @@ tg store clear --left --allow-dangerous  # delete the chats you have left, with 
 - **`migrate`** is needed only when `info` or `check` says the file is behind this version. Take a
   backup first. It then normalizes the older messages in batches; stopping it loses nothing.
 
+## Repair and index maintenance
+
+`tg store migrate` builds unfinished indexes; `tg store reindex` rebuilds them. `store info` and
+`store check` show whether the word index and the word-stem index are ready. Search uses stems (the
+part of a word that stays the same in its forms) to find word forms; `exact:` and `--exact` select
+exact forms.
+
+`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin english,spanish` set the
+shared store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches
+the stems of both), and `none` disables one; run `store reindex` after your own choice. When a tg
+update changes the default, the stems rebuild by themselves: until they are ready a search matches
+exact word forms and says so, `tg serve` finishes them in the background and `store migrate` at once.
+The setting affects both messengers and every profile; a profile-locked process cannot change it.
+
+`tg store repair --dry-run --json` previews a structural repair and rolls it back. `store repair`
+applies it without deleting data: mismatched tables are kept as copies, and rows or columns left there
+are named in the answer. Inspect the copies before deleting one with `store copies delete <exact name>`;
+`store repair` names them in its answer. Stop processes that use the store before a repair.
+
 ## The store and other versions
 
 The store's layout has a version. A newer `tg` or another CLI may upgrade the file; an older `tg`
@@ -405,28 +461,10 @@ the message store was written by a newer version (schema N, needs at least M; th
 
 Run `tg upgrade`. Nothing in the file is lost.
 
-## Next
-
-- [recipes.md](recipes.md) — search and export in an agent's daily work
-- [security.md](security.md) — what the store means for the privacy of your messages
-
-## Repair and index maintenance
-
-`tg store migrate` builds unfinished indexes; `tg store reindex` rebuilds them. `store info` and
-`store check` show word/stem readiness. Strict search uses stems for word forms; `exact:` and `--exact` select exact forms.
-`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin english,spanish` set the shared
-store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches the stems of
-both), and `none` disables one; run `store reindex` after your own choice. When a tg update changes the
-default, the stems rebuild by themselves: until they are ready a search matches exact word forms and says so,
-`tg serve` finishes them in the background and `store migrate` at once.
-The setting affects both messengers and every profile; a profile-locked process cannot change it.
-
-`tg store repair --dry-run --json` previews structural repair and rolls it back. `store repair` applies it
-without deleting data: mismatched tables are kept as copies, and rows/columns left there are named in the answer.
-Inspect retained copies before deleting one with `store copies delete <exact name>`; `store repair`
-names them in its answer. Stop processes using the store before repair.
-
 ## Reply rules
+
+[Automatic replies](replies.md) is the guide to reply rules. This section is the detailed reference
+for how `serve` applies them.
 
 `tg replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
 Rules live in the profile's replies file. `replies status`, `pause` and `resume` inspect/control them.
@@ -478,3 +516,9 @@ Consent, configuration, pause, rule and audience changes during a model call are
 `tg replies test` shows instructions/fallback without model calls. `tg replies test --ai` explicitly
 sends stored message data to the consented model, still sends no messenger reply and changes no
 reply history; it cannot be combined with `--offline`.
+
+## Next
+
+- [Message search](search.md): find what the store holds.
+- [Recipes](recipes.md): search and export in your agent's daily work.
+- [Security](security.md): what the store means for the privacy of your messages.
