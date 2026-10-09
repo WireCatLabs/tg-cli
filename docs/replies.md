@@ -2,9 +2,9 @@
 
 This page is about answering Telegram messages automatically when you cannot answer yourself — for
 example, a short "I will answer in the morning" to people who write after working hours. By the end
-you have a working auto-reply: a rule with your reply text, sent only to the people you allow, and a
-way to check what it would answer before it sends anything. Ready-made texts, and how a reply template
-differs from a draft, are on [Drafts and reply templates](https://wirecat.dev/en/docs/drafts-and-templates).
+you have a working auto-reply: a rule with your reply text, sent only to the people you allow, a way
+to check what it would answer before it sends anything, and ready-made texts from
+[Drafts and reply templates](https://wirecat.dev/en/docs/drafts-and-templates).
 
 A few words used below:
 
