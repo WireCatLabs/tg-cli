@@ -354,6 +354,9 @@ tg review --transcribe
 tg messages list "Book club" --transcribe --model gigaam-v3
 ```
 
+Local transcription requires a complete mono or stereo Ogg Opus recording of at most 10 minutes.
+Split longer recordings first. This limit applies to the local model path.
+
 Telegram transcribes for Premium accounts, and a few messages a week on the free trial. Without it,
 a model on this machine does the work, and the recording never leaves the computer. A model is
 downloaded once, and only when you ask:

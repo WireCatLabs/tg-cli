@@ -87,6 +87,9 @@ agent reads the text. If the picture does not show, ask for MCP `format: base64`
 with the agent's tools. See [reading PDF pages remotely](remote.md#read-pdf-pages-without-a-local-file-handoff)
 for an example and limits.
 
+Retained-file transfer refuses hidden files and folders, the CLI's own folders and the message
+store, including symlink targets. Save the intended attachment in an ordinary downloads folder.
+
 ## How content is read
 
 Scans and images are read by your agent with its own OCR or vision tools by default.
@@ -112,13 +115,16 @@ calls no model, and downloading never does.
 
 CSV and JSON become searchable text, not structured database tables. HTML/XML text is source,
 not a rendered web page. Short or ambiguous legacy text stays for the agent. Original bytes
-do not change. ODT, ODS, XLSX, PPTX and EPUB allow up to 1,000 archive parts and 50 MiB expanded,
+do not change. DOCX, ODT, ODS, XLSX, PPTX and EPUB allow up to 1,000 archive parts and 50 MiB expanded,
 with at most 10 MiB per text XML/HTML part. Damaged or partial results are not indexed as complete.
 Failed reads can retry; agent text and earlier good indexed text stay protected.
 
 Voice messages are handled apart from documents: Telegram can provide a transcript where
 available, or `messages transcribe --local` uses a downloaded local model. It does not use
 `models.ocr`; see [voice messages](usage.md#voice-messages).
+
+Local PDF text extraction allows at most 20 pages and stops after 30 seconds. Split larger PDFs
+before extracting their text.
 
 ## Dependencies and missing engines
 

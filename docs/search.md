@@ -335,6 +335,10 @@ extracts only the files this run downloaded; `--all --extract` does the same for
 Extraction notices changed files by their hash and keeps text your agent wrote. Over MCP, a bounded
 extraction returns a continuation `cursor` and metadata, without file text.
 
+`--from-dir` refuses hidden files and folders, the CLI's own folders and the message store.
+MCP extraction downloads also require `output_dir` outside these locations. Local PDF text
+extraction allows at most 20 pages and 30 seconds.
+
 ## Passwords, codes and cards
 
 ```sh
