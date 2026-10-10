@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.43.0 — 10.10.2026
 
 ### Changed — may break scripts
 
@@ -11,11 +11,22 @@ Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One secti
   `npm install -g @wirecat/tg-cli`; the `tg` command is the same. Uninstall `@leemour/tg-cli` first — both
   packages provide `tg`. `@leemour/tg-cli` gets no new versions.
 
+- Local transcription accepts complete mono or stereo Ogg Opus recordings up to 10 minutes.
+  Split longer recordings first. PDF text extraction supports at most 20 pages and 30 seconds.
+- MCP text results and write arguments expose invisible controls, including decoded formatting.
+  Subdivision flag emoji stay intact; ordinary CLI machine JSON preserves original strings.
+
 ### Fixed
 
 - After an upgrade, server restarts invoke Node directly with separate arguments and preserve the
   selected environment, including installation paths with spaces on Windows. Invalid profile names
   in lock files are skipped.
+
+### Security
+
+- Attachment directory extraction and retained-file transfer refuse hidden paths, CLI-owned folders
+  and the message store, including symlink targets. MCP extraction downloads also refuse those locations.
+- DOCX extraction applies the bounded office archive reader before loading document content.
 
 ## 0.42.0 — 09.10.2026
 

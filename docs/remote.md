@@ -215,6 +215,9 @@ its login by itself. After 30 days without use, it asks for a new code.
 Profile `permissions` decide which commands are available. The server shows no approval forms;
 the app's own approval is separate and depends on its settings.
 
+MCP makes hidden Unicode controls visible in text results and write arguments; subdivision flag emoji
+stay intact. Ordinary CLI machine JSON preserves original strings.
+
 ## Permissions for this server process
 
 The server cannot see whether the app asked you before a call. If the app always allows a tool,

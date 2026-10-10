@@ -106,8 +106,9 @@ Agent:  Draft: "Boris, hi! How is the mock-up going?" Send it?
 You:    Yes.
 ```
 
-Set sending to `ask` in the profile's `permissions`, and each message waits for your yes. Reading
-marks nothing read. Ready requests, a schedule and limits for each job: [recipes.md](docs/recipes.md).
+Set sending to `ask` in the profile's `permissions` for confirmation in the terminal. Over MCP,
+`ask` permits the requested write; configure approval in the agent app. Reading marks nothing read.
+Ready requests, a schedule and limits for each job: [recipes.md](docs/recipes.md).
 
 ## Groups you run
 

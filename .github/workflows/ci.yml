@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   ci:
-    uses: WireCatLabs/cli-core/.github/workflows/node-ci.yml@2b029a5c7531b7f50c77643fc623dddcebf68344 # v0.11.0
+    uses: WireCatLabs/cli-core/.github/workflows/node-ci.yml@5940608f735c6de554b6180275ad58b01149b31b # v0.18.1
     with:
       bun-run: pnpm build && pnpm smoke:bun
       # The test matrix is rebuilt from this run's argv log, so the diff also catches a stale
