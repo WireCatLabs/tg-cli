@@ -207,7 +207,8 @@ app), so apps that support only tools can use them.
 The app opens the `tg` login page. Check the line that says where the login goes: it must be the
 app you are connecting, such as `chatgpt.com` or `claude.ai`. Then type the access code from your
 terminal. The code expires after ten minutes; a new code is printed after each login. Five wrong
-codes lock the login page until the server restarts.
+codes pause login attempts for 30 seconds. Retry afterwards and use the fresh code printed in the
+terminal.
 
 The app stays logged in as long as it uses the connection at least once every 30 days; it renews
 its login by itself. After 30 days without use, it asks for a new code.
@@ -257,9 +258,9 @@ Those apps must log in again with a new code. This does not end your Telegram se
   `https://<device>.<network>.ts.net/.well-known/oauth-protected-resource/mcp` in a browser. It
   must show a short JSON. If it does not, Funnel is not running, is not enabled in your Tailscale
   network, or points at another port.
-- **The login page says "Too many wrong codes":** after five wrong codes it is locked until
-  `tg mcp --http` restarts. If you did not type them, someone found your address: restart, and
-  think about a new device name in Tailscale.
+- **The login page says "Too many wrong codes":** wait 30 seconds and retry. Use the fresh code
+  printed in the terminal. If attempts keep failing without your input, review access to the
+  tunnel address.
 - **The app connects, but there are no tools:** `tg mcp doctor` checks that the MCP server starts
   and lists its tools. It does not check the Telegram login or the tunnel. A command that goes to
   Telegram, such as `tg account show`, checks the account connection.

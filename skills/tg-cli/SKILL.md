@@ -409,8 +409,9 @@ To summarise what one person said, call `contacts context <person> --chat <chat>
 you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked
 with `contacts link`; `contacts profile` and `--chat` read the named account only. `contacts profile`
 never prints a whole phone number unless the owner asks for `--show-phone`; MCP always hides it.
-`contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
-`--no-registries` (MCP `registries: false`) unless the owner accepts that. Its score is a hint, not a verdict.
+CLI `contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
+`--no-registries` unless the owner accepts that. MCP keeps registries off unless explicitly asked
+with `registries: true`. Its score is a hint, not a verdict.
 
 ```sh
 tg contacts alias set 101 'Project lead'
@@ -491,3 +492,8 @@ Statistics `--answerer` also accepts stored names, aliases and @usernames direct
 connecting. Resolve ambiguity using the returned candidates in the intended account; never
 guess. `identityKnown: false` with `status: unknown` means the explicit ID was not observed,
 so zero answers do not prove zero activity.
+
+
+For agent-facing CLI output, use `--agent-json`, or `--agent-json --jsonl` for streams. Hidden control
+and direction characters are visible in strings and keys. Raw `--json` keeps the original values;
+MCP already uses the safe form. MCP contact checks query registries only with `registries: true`.

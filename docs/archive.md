@@ -223,6 +223,8 @@ tg store export "Book club" --format markdown > book-club.md   # a transcript: a
 tg store export "Book club" --output book-club.jsonl --since-time 7d     # the last week, into a file only you can read
 ```
 
+Markdown transcripts quote message bodies and escape untrusted formatting and link labels.
+
 Export writes only what the store holds and never asks Telegram. Check `tg store status` first, and
 fetch the history if you need all of it.
 

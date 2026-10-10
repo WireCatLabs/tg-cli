@@ -361,7 +361,7 @@ describe("the archive, from the store", () => {
 
     const transcript = await tg(["archive", "store", "export", CHAT, "--format", "markdown"], store)
     expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
-    expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
+    expect(transcript.stdout.join("\n")).toContain("invoice \\#8 due")
 
     const found = await tg(["archive", "search", "messages", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
     expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])

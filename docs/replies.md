@@ -116,8 +116,9 @@ Thanks, {{ sender.firstName | default: "there" }}!
 {% ai %}Briefly confirm you got the message; I will answer tomorrow.{% else %}I will answer tomorrow.{% endai %}
 ```
 
-The block's body is an instruction to the model. The incoming text goes to the model separately, as
-data. When no model is set up, there is no consent, or the call fails, the `else` text is sent; without
+The owner's text in the block is the instruction. Interpolated names and titles become references
+to separate untrusted template data. JSON previews show those values in `templateValues`. The
+incoming text also goes to the model separately as data. When no model is set up, there is no consent, or the call fails, the `else` text is sent; without
 an `else`, the message gets no reply and the reason is recorded.
 
 Choose the model with `models.replies.provider` (`openai` or `anthropic`), `models.replies.model` and,

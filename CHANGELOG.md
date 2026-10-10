@@ -3,6 +3,24 @@
 Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.45.0 — 10.10.2026
+
+### Changed — may break scripts
+
+- Reply JSON previews keep template values in `templateValues`, with insertion references in model instructions.
+
+- Markdown exports quote message bodies and escape untrusted formatting and link labels. Transcript parsers must account for this framing.
+- MCP contact registry queries require explicit `registries: true`; ordinary CLI contact-check defaults remain unchanged.
+
+### What's new
+
+- `--agent-json` makes hidden control and direction characters visible in JSON strings and keys, without changing raw `--json`. Combine it with `--jsonl` for streams; MCP already uses safe output.
+
+### Fixed
+
+- HTTP login recovers after a bounded throttle; embedding requests refuse credential-bearing redirects. MCP checks current permissions for tools and chat resources, and reply model blocks keep metadata separate from instructions.
+- Windows maintenance commands use absolute PATH entries. Downloaded filenames apply Windows rules only on Windows, and model downloads use exclusive random temporary names.
+
 ## 0.44.0 — 10.10.2026
 
 ### What's new

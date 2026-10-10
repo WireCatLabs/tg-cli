@@ -24,6 +24,7 @@ whole shell session; without either, the profile is `default`.
 | `-V, --version` | output the version number. |
 | `-v, --verbose` | more detail in what is shown: -v ids, -vv everything we know. Default: `0`. |
 | `--json` | machine-readable output: one JSON value on stdout, nothing else. |
+| `--agent-json` | JSON for AI agents: invisible controls are visible; ordinary --json preserves text. |
 | `--jsonl` | machine-readable output: one JSON object per line, for streaming and jq. |
 | `--quiet` | diagnostics off; a failure is still said. |
 | `--trace` | the connection's own log lines on stderr — never message content. |
@@ -3814,7 +3815,7 @@ tg mcp [options]
 | `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
 | `--allow-mark-read` | no longer used — the profile's permissions decide. |
 | `--allow-delete` | no longer used — the profile's permissions decide. |
-| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel. |
+| `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; the profile's permissions decide. |
 | `--http-confirmation <mode>` | no longer used — writes show no form; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |

@@ -11,6 +11,12 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "search messages",
+    option: "--regex",
+    reason:
+      "The imported search command is exercised against synthetic stored data in cli-messaging search command and service suites; consumer parity verifies its mount, without a Telegram RPC",
+  },
+  {
     command: "attachments show",
     option: "--page",
     reason:

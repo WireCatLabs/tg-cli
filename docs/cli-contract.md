@@ -50,7 +50,8 @@ override a denied permission for the messages, chats or tasks underneath.
 
 ## Output and errors
 
-`--json` produces JSON. `--jsonl` produces one JSON value per line, for commands that can stream.
+`--agent-json` makes control and direction characters visible in JSON strings and keys. Combine it
+with `--jsonl` for streams; raw `--json` preserves original values. `--json` produces JSON. `--jsonl` produces one JSON value per line, for commands that can stream.
 In a pipe, JSON is chosen automatically. stdout carries data; stderr carries diagnostics. An explicit
 JSON flag wins over an attached terminal. `--help` and `--version` print text on stdout, exit with
 `0` and do not run the command.

@@ -659,3 +659,15 @@ describe("what tgcli users look for", () => {
     expect(general.code).toBe(2)
   })
 })
+
+it("renders agent JSON safely while raw JSON retains account values", async () => {
+  const name = "Synthetic\u202eName"
+  const adapter = () => scripted({ me: async () => ({ id: "1", name, username: null }) })
+  const raw = await tg(["account", "show", "--json"], { adapter })
+  const safe = await tg(["account", "show", "--agent-json"], { adapter })
+  expect(raw.code).toBe(0)
+  expect(safe.code).toBe(0)
+  expect(JSON.stringify(JSON.parse(raw.stdout.join("")))).toContain("\u202e")
+  expect(JSON.stringify(JSON.parse(safe.stdout.join("")))).not.toContain("\u202e")
+  expect(safe.stdout.join("")).toContain("\\u202e")
+})
