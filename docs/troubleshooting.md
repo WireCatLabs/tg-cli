@@ -78,6 +78,8 @@ The folder npm installs commands into is not on your `PATH`.
 
 Without installing, `npx @wirecat/tg-cli doctor` works too.
 
+<a id="npx-leemourtg-cli-runs-an-old-version" />
+
 ### `npx @wirecat/tg-cli` runs an old version
 
 npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
