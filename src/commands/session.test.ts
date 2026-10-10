@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
-import { captureStreams, memoryKeyring } from "@leemour/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
@@ -14,8 +14,8 @@ const answers = vi.hoisted(() => ({ queue: [] as string[], prompts: [] as string
 const opened = vi.hoisted(() => ({ urls: [] as string[] }))
 const registered = vi.hoisted(() => ({ calls: 0 }))
 
-vi.mock("@leemour/cli-messaging", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@leemour/cli-messaging")>()),
+vi.mock("@wirecat/cli-messaging", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@wirecat/cli-messaging")>()),
   readSecret: async (prompt: string) => {
     answers.prompts.push(prompt)
     return answers.queue.shift() ?? ""

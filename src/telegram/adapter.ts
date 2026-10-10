@@ -1,8 +1,28 @@
 import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
-import { CliError, isCliError } from "@leemour/cli-core"
-import type { TextSpan } from "@leemour/cli-messaging"
+import {
+  ChatInviteLink,
+  type DeleteMessageUpdate,
+  FileLocation,
+  getMarkedPeerId,
+  type InputPeerLike,
+  Long,
+  MtcuteError,
+  MtPeerNotFoundError,
+  networkMiddlewares,
+  type Peer,
+  PeersIndex,
+  type RawUpdateInfo,
+  type SentCode,
+  TelegramClient,
+  Message as TgMessage,
+  type Poll as TgPoll,
+  tl,
+  User,
+} from "@mtcute/node"
+import { CliError, isCliError } from "@wirecat/cli-core"
+import type { TextSpan } from "@wirecat/cli-messaging"
 import {
   type AccountSession,
   type AdminRight,
@@ -36,7 +56,7 @@ import {
   type SenderIdentity,
   type Topic,
   type TopicChange,
-} from "@leemour/cli-messaging"
+} from "@wirecat/cli-messaging"
 import type {
   After,
   Download,
@@ -46,27 +66,7 @@ import type {
   SendOptions,
   ServerQuery,
   Transcript,
-} from "@leemour/cli-messaging/cli"
-import {
-  ChatInviteLink,
-  type DeleteMessageUpdate,
-  FileLocation,
-  getMarkedPeerId,
-  type InputPeerLike,
-  Long,
-  MtcuteError,
-  MtPeerNotFoundError,
-  networkMiddlewares,
-  type Peer,
-  PeersIndex,
-  type RawUpdateInfo,
-  type SentCode,
-  TelegramClient,
-  Message as TgMessage,
-  type Poll as TgPoll,
-  tl,
-  User,
-} from "@mtcute/node"
+} from "@wirecat/cli-messaging/cli"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"

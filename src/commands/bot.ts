@@ -1,12 +1,12 @@
 import { existsSync } from "node:fs"
-import { CliError } from "@leemour/cli-core"
+import { CliError } from "@wirecat/cli-core"
 import {
   type BotMessenger,
   BotTokenStore,
   botCopy,
   environmentOf,
   type RunBotCommand,
-} from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging/cli"
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"

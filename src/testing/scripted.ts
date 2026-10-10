@@ -1,5 +1,5 @@
-import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import type { Chat, Message } from "@leemour/cli-messaging"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import type { Chat, Message } from "@wirecat/cli-messaging"
 import type { Adapter, Environment } from "../commands/context.js"
 import { run } from "../program.js"
 import { formatHtml } from "../telegram/format-html.js"

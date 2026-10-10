@@ -2,19 +2,19 @@ import { spawnSync } from "node:child_process"
 import { realpathSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import type { FetchLike } from "@leemour/cli-core/http"
+import type { FetchLike } from "@wirecat/cli-core/http"
 import {
   type Installer,
   installerOf,
   latestVersion,
   runUpdate as runPackageManager,
   updateNotice as sharedNotice,
-} from "@leemour/cli-core/update"
+} from "@wirecat/cli-core/update"
 import { resolveSettings } from "./app.js"
 import { pathsFor } from "./paths.js"
 import { VERSION } from "./version.js"
 
-export const PACKAGE = "@leemour/tg-cli"
+export const PACKAGE = "@wirecat/tg-cli"
 
 /** npm, the clock, the terminal and the package manager as `tg upgrade` sees them — faked in a test. */
 export interface UpdateEnvironment {

@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto"
-import { CliError, singleLine } from "@leemour/cli-core"
+import { CliError, singleLine } from "@wirecat/cli-core"
 import type { ApiCredentials } from "./credentials.js"
 
 /**

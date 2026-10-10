@@ -1,4 +1,4 @@
-import { captureStreams, memoryKeyring } from "@leemour/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
 import { createProgram, run } from "./program.js"

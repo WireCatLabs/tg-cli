@@ -1,5 +1,5 @@
-import type { AppIdentity } from "@leemour/cli-messaging/cli"
-import { type Configuration, settingsFor } from "@leemour/cli-messaging/cli"
+import type { AppIdentity } from "@wirecat/cli-messaging/cli"
+import { type Configuration, settingsFor } from "@wirecat/cli-messaging/cli"
 import * as v from "valibot"
 import { proxySetting } from "./proxy.js"
 import { VERSION } from "./version.js"

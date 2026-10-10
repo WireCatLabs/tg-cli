@@ -70,7 +70,7 @@ interpretation. Setup, message actions and permissions are explained in the sect
 ## Get started
 
 ```sh
-npm install -g @leemour/tg-cli
+npm install -g @wirecat/tg-cli
 ```
 
 ```sh

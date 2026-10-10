@@ -1,9 +1,15 @@
 # Changelog
 
-Notable changes to `@leemour/tg-cli`. One section per version, newest first; versions follow
+Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
 ## Unreleased
+
+### Changed — may break scripts
+
+- **The package is now `@wirecat/tg-cli`, and the repository is `WireCatLabs/tg-cli`.** Install with
+  `npm install -g @wirecat/tg-cli`; the `tg` command is the same. Uninstall `@leemour/tg-cli` first — both
+  packages provide `tg`. `@leemour/tg-cli` gets no new versions.
 
 ### Fixed
 

@@ -16,12 +16,12 @@ tg inbox                                          # other people's unread messag
 tg messages send "Book club" "Running 15 minutes late"
 ```
 
-[![npm](https://img.shields.io/npm/v/@leemour/tg-cli)](https://www.npmjs.com/package/@leemour/tg-cli)
+[![npm](https://img.shields.io/npm/v/@wirecat/tg-cli)](https://www.npmjs.com/package/@wirecat/tg-cli)
 [![CI](https://github.com/WireCatLabs/tg-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/WireCatLabs/tg-cli/actions/workflows/ci.yml)
-[![Node](https://img.shields.io/node/v/@leemour/tg-cli)](https://nodejs.org/)
+[![Node](https://img.shields.io/node/v/@wirecat/tg-cli)](https://nodejs.org/)
 [![Bun](https://img.shields.io/badge/bun-tested-f9f1e1)](https://bun.sh/)
-[![npm downloads](https://img.shields.io/npm/dm/@leemour/tg-cli)](https://www.npmjs.com/package/@leemour/tg-cli)
-[![License: MIT](https://img.shields.io/npm/l/@leemour/tg-cli)](LICENSE)
+[![npm downloads](https://img.shields.io/npm/dm/@wirecat/tg-cli)](https://www.npmjs.com/package/@wirecat/tg-cli)
+[![License: MIT](https://img.shields.io/npm/l/@wirecat/tg-cli)](LICENSE)
 
 ## The bot
 
@@ -243,18 +243,18 @@ yours through that API ([bot.md](docs/bot.md)).
 
 ## Install
 
-The package is **`@leemour/tg-cli`**; the command it installs is **`tg`**.
+The package is **`@wirecat/tg-cli`**; the command it installs is **`tg`**.
 
 Try it without installing:
 
 ```sh
-npx @leemour/tg-cli --help
+npx @wirecat/tg-cli --help
 ```
 
 Install it:
 
 ```sh
-npm install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli     # or: pnpm add -g @leemour/tg-cli, bun add -g @leemour/tg-cli
+npm install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli     # or: pnpm add -g @wirecat/tg-cli, bun add -g @wirecat/tg-cli
 tg --version
 tg setup                        # guided first run; allow about five minutes
 ```
@@ -482,7 +482,7 @@ server — lives in [cli-messaging](https://github.com/WireCatLabs/cli-messaging
 and a lint rule keeps [mtcute](https://mtcute.dev), the Telegram library underneath, there.
 
 To work on `cli-messaging` at the same time, point the dependency at a checkout for the length of
-the change — `pnpm add @leemour/cli-messaging@link:../cli-messaging` — and put the version back
+the change — `pnpm add @wirecat/cli-messaging@link:../cli-messaging` — and put the version back
 before the pull request.
 
 ## Roadmap

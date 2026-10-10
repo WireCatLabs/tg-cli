@@ -1,29 +1,4 @@
 import { extname } from "node:path"
-import { CliError } from "@leemour/cli-core"
-import type {
-  AccountSession,
-  Attachment,
-  Chat,
-  ChatKind,
-  Folder,
-  GroupCard,
-  GroupMember,
-  InviteLink,
-  LinkTarget,
-  Markup,
-  Member,
-  Message,
-  MessageChange,
-  MessageHit,
-  Poll,
-  ProviderMetadata,
-  QuotedMessage,
-  Reactions,
-  TextSpan,
-  Topic,
-} from "@leemour/cli-messaging"
-import type { NewPoll } from "@leemour/cli-messaging/cli"
-import type { Upload } from "@leemour/cli-messaging/sends"
 import {
   type ChatInviteLink,
   type ChatMember,
@@ -47,6 +22,31 @@ import {
   type tl,
   type UploadedFile,
 } from "@mtcute/node"
+import { CliError } from "@wirecat/cli-core"
+import type {
+  AccountSession,
+  Attachment,
+  Chat,
+  ChatKind,
+  Folder,
+  GroupCard,
+  GroupMember,
+  InviteLink,
+  LinkTarget,
+  Markup,
+  Member,
+  Message,
+  MessageChange,
+  MessageHit,
+  Poll,
+  ProviderMetadata,
+  QuotedMessage,
+  Reactions,
+  TextSpan,
+  Topic,
+} from "@wirecat/cli-messaging"
+import type { NewPoll } from "@wirecat/cli-messaging/cli"
+import type { Upload } from "@wirecat/cli-messaging/sends"
 import { rulesOf } from "./folder-rules.js"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */

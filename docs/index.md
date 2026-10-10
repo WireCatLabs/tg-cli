@@ -33,7 +33,7 @@ code for each kind of failure. This is why scripts and agents can rely on it.
 ## Get started
 
 ```sh
-npm install -g @leemour/tg-cli
+npm install -g @wirecat/tg-cli
 tg setup                  # guided app registration, login and agent skill
 tg inbox                  # other people's unread messages, in every chat; nothing is marked read
 tg messages list me       # Saved Messages, the latest 20

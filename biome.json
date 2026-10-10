@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["@leemour/cli-core/biome"],
+  "extends": ["@wirecat/cli-core/biome"],
   "files": {
     "includes": ["**", "!**/dist", "!**/node_modules", "!pnpm-lock.yaml", "!.claude/settings.json"]
   },
@@ -16,7 +16,7 @@
                 "patterns": [
                   {
                     "group": ["@mtcute/*", "@mtcute/**"],
-                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @leemour/cli-messaging"
+                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-messaging"
                   }
                 ]
               }
@@ -36,7 +36,7 @@
                 "patterns": [
                   {
                     "group": ["@mtcute/*", "@mtcute/**"],
-                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @leemour/cli-messaging"
+                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-messaging"
                   },
                   {
                     "group": ["../telegram/map.js", "../telegram/errors.js", "**/telegram/map*", "**/telegram/errors*"],

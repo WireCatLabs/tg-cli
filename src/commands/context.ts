@@ -1,6 +1,6 @@
 import { existsSync, statSync } from "node:fs"
 import { dirname } from "node:path"
-import { CliError, type KeyringStore } from "@leemour/cli-core"
+import { CliError, type KeyringStore } from "@wirecat/cli-core"
 import {
   asFirstWord,
   type BaseContext,
@@ -12,7 +12,7 @@ import {
   type MessengerContext,
   messengerContext,
   type ServerSystem,
-} from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging/cli"
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"

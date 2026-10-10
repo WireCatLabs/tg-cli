@@ -1,12 +1,12 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
-import { captureStreams } from "@leemour/cli-core"
+import { captureStreams } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { run } from "./program.js"
 import { type UpdateEnvironment, updateNotice } from "./update.js"
 
 const PNPM =
-  "/home/a/.local/share/pnpm/store/v11/links/@leemour/tg-cli/0.1.0/x/node_modules/@leemour/tg-cli/dist/update.js"
+  "/home/a/.local/share/pnpm/store/v11/links/@wirecat/tg-cli/0.1.0/x/node_modules/@wirecat/tg-cli/dist/update.js"
 
 const setup = (latest: string | Error = "99.0.0") => {
   const home = mkdtempSync(join(process.env.TG_TEST_SANDBOX as string, "update-"))

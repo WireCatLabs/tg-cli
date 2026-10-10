@@ -1,6 +1,6 @@
-import { CliError } from "@leemour/cli-core"
-import type { Upload } from "@leemour/cli-messaging/sends"
 import type { TelegramClient, UploadedFile } from "@mtcute/node"
+import { CliError } from "@wirecat/cli-core"
+import type { Upload } from "@wirecat/cli-messaging/sends"
 import { toCliError } from "./errors.js"
 import { toUploadParams } from "./map.js"
 

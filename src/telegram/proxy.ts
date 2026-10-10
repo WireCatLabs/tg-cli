@@ -1,5 +1,3 @@
-import { CliError, Credentials, type KeyringStore } from "@leemour/cli-core"
-import { fromFile, type Settings } from "@leemour/cli-messaging/cli"
 import {
   HttpProxyConnectionError,
   HttpProxyTcpTransport,
@@ -8,6 +6,8 @@ import {
   SocksProxyConnectionError,
   SocksProxyTcpTransport,
 } from "@mtcute/node"
+import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-core"
+import { fromFile, type Settings } from "@wirecat/cli-messaging/cli"
 import { APP, isolated, pathsFor } from "../paths.js"
 import { type ProxyServer, parseProxy, proxyError, proxyLabel } from "../proxy.js"
 

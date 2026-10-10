@@ -8,9 +8,9 @@ Read this once, then only the files your task needs.
 [mtcute](https://mtcute.dev), not the Bot API). It is built for agents and scripts first: one
 operation per call, one JSON value on stdout when piped, a typed error and a fixed exit code on
 failure. Everything that is not specific to Telegram lives in the npm package
-[`@leemour/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
+[`@wirecat/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
 which `max` ([max-cli](https://github.com/WireCatLabs/max-cli), a MAX messenger CLI) also uses. Both sit
-on [`@leemour/cli-core`](https://github.com/WireCatLabs/cli-core).
+on [`@wirecat/cli-core`](https://github.com/WireCatLabs/cli-core).
 
 ## 2. Entry points
 
@@ -38,8 +38,8 @@ resource's `<resource>-command.ts` → `TelegramAdapter` and its mapping in `map
 
 **A cli-messaging change reaches tg in three steps** (NEED-10 → C: each session releases its own
 PRs): merge the feature PR **without** a version bump; right before releasing, `git fetch` and
-`npm view @leemour/cli-messaging version`, raise the version in a `chore: release` PR, merge, run
-`bin/release` in `../cli-messaging`; then in tg `pnpm add @leemour/cli-messaging@<v>` and add the
+`npm view @wirecat/cli-messaging version`, raise the version in a `chore: release` PR, merge, run
+`bin/release` in `../cli-messaging`; then in tg `pnpm add @wirecat/cli-messaging@<v>` and add the
 version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. To try an unreleased cli-messaging in
 tg first, `pnpm pack` it and `pnpm add` the tarball — never commit that `file:` path.
 

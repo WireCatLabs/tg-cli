@@ -1,6 +1,6 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
-import { docsProblems } from "@leemour/cli-core/release"
+import { docsProblems } from "@wirecat/cli-core/release"
 import { describe, expect, it } from "vitest"
 import { docsRules } from "./checks.ts"
 

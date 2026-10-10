@@ -2,8 +2,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
-import { CliError, captureStreams, memoryKeyring } from "@leemour/cli-core"
-import { installSkill } from "@leemour/cli-core/skill"
+import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { installSkill } from "@wirecat/cli-core/skill"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
@@ -14,8 +14,8 @@ const input = vi.hoisted(() => ({ answers: [] as string[], prompts: [] as string
 const registration = vi.hoisted(() => ({ calls: 0, error: undefined as Error | undefined }))
 const browser = vi.hoisted(() => ({ urls: [] as string[] }))
 
-vi.mock("@leemour/cli-messaging", async (original) => ({
-  ...(await original<typeof import("@leemour/cli-messaging")>()),
+vi.mock("@wirecat/cli-messaging", async (original) => ({
+  ...(await original<typeof import("@wirecat/cli-messaging")>()),
   readSecret: async (prompt: string, options: { signal?: AbortSignal }) => {
     input.prompts.push(prompt)
     if (input.cancel) throw new CliError("cancelled", "cancelled")
@@ -26,8 +26,8 @@ vi.mock("@leemour/cli-messaging", async (original) => ({
     return input.answers.shift() ?? ""
   },
 }))
-vi.mock("@leemour/cli-core/skill", async (original) => ({
-  ...(await original<typeof import("@leemour/cli-core/skill")>()),
+vi.mock("@wirecat/cli-core/skill", async (original) => ({
+  ...(await original<typeof import("@wirecat/cli-core/skill")>()),
   installSkill: vi.fn((_app, _skill, options: { targets: string[] }) =>
     options.targets.map((target) => join(process.env.TG_TEST_SANDBOX ?? "", target, "tg-cli", "SKILL.md")),
   ),
@@ -431,11 +431,11 @@ describe("setup", () => {
   it("keeps the profile in next commands when running through npm exec", async () => {
     existingSession("work")
     const result = await execute(["work", "setup", "--agent", "none", "--json"], {
-      update: { scriptPath: "/home/test/.npm/_npx/key/node_modules/@leemour/tg-cli/dist/bin/tg.js" },
+      update: { scriptPath: "/home/test/.npm/_npx/key/node_modules/@wirecat/tg-cli/dist/bin/tg.js" },
     })
     expect(result.code).toBe(0)
     expect(JSON.parse(result.stdout[0] ?? "").next.inbox).toMatch(
-      /npm(?:\.cmd)? exec --yes --package=@leemour\/tg-cli -- tg work inbox --limit 5/,
+      /npm(?:\.cmd)? exec --yes --package=@wirecat\/tg-cli -- tg work inbox --limit 5/,
     )
   })
 })

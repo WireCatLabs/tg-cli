@@ -1,12 +1,12 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
-import { captureStreams } from "@leemour/cli-core"
+import { captureStreams } from "@wirecat/cli-core"
 import { describe, expect, it, onTestFinished } from "vitest"
 import { run } from "../program.js"
 import type { UpdateEnvironment } from "../update.js"
 
 const PNPM =
-  "/home/a/.local/share/pnpm/store/v11/links/@leemour/tg-cli/0.1.0/x/node_modules/@leemour/tg-cli/dist/update.js"
+  "/home/a/.local/share/pnpm/store/v11/links/@wirecat/tg-cli/0.1.0/x/node_modules/@wirecat/tg-cli/dist/update.js"
 
 const update = async (
   argv: string[],
@@ -37,7 +37,7 @@ describe("tg upgrade", () => {
       latest: "99.0.0",
       newer: true,
       installer: "pnpm",
-      command: "pnpm add -g @leemour/tg-cli@latest",
+      command: "pnpm add -g @wirecat/tg-cli@latest",
       updated: false,
       restarted: [],
     })
@@ -46,7 +46,7 @@ describe("tg upgrade", () => {
   it("runs the package manager that installed tg, and says it did", async () => {
     const { code, ran, result } = await update([])
     expect(code).toBe(0)
-    expect(ran).toEqual([["pnpm", "add", "-g", "@leemour/tg-cli@latest"]])
+    expect(ran).toEqual([["pnpm", "add", "-g", "@wirecat/tg-cli@latest"]])
     expect(result).toMatchObject({ updated: true })
   })
 

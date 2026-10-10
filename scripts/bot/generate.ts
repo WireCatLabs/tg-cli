@@ -11,7 +11,7 @@ import {
   typesGenerator,
   valibotGenerator,
   writeArtifacts,
-} from "@leemour/cli-core/codegen"
+} from "@wirecat/cli-core/codegen"
 import { adaptBotApi, type BotApiSource } from "./source-adapter.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..")

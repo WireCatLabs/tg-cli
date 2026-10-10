@@ -7,7 +7,7 @@ its files. Logging in to Telegram is the next step, on its own page.
 The words this page uses:
 
 - **npm package**: the way `tg` is distributed. npm (or pnpm, or Bun) downloads it and puts the `tg`
-  command on your computer. The package is **`@leemour/tg-cli`**; the command it installs is **`tg`**.
+  command on your computer. The package is **`@wirecat/tg-cli`**; the command it installs is **`tg`**.
 - **Node** or **Bun**: the program that runs `tg`. Install one of them first.
 - **PATH**: the list of folders your terminal looks in when you type a command. `tg` works by its
   bare name only when its folder is on PATH.
@@ -28,17 +28,17 @@ skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 ## Install
 
 ```sh
-npm install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli
+npm install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
 # The global install puts the skill in .agents and .claude. Then: tg setup
 
-pnpm add -g @leemour/tg-cli
-bun add -g @leemour/tg-cli
+pnpm add -g @wirecat/tg-cli
+bun add -g @wirecat/tg-cli
 ```
 
 To try it without installing:
 
 ```sh
-npx @leemour/tg-cli --help
+npx @wirecat/tg-cli --help
 ```
 
 Check that it works:
@@ -74,7 +74,7 @@ the account login are two separate steps. Running setup again checks your existi
 does not log in again. If a login was interrupted or Telegram ended the session, finish
 `tg session start` first and then run setup again. See [login, sessions and profiles](sessions.md).
 
-Without a global installation, use `npm exec --yes --package=@leemour/tg-cli -- tg setup --agent codex`.
+Without a global installation, use `npm exec --yes --package=@wirecat/tg-cli -- tg setup --agent codex`.
 Setup then suggests the next commands in the same form.
 
 ### Windows: one install command
@@ -99,7 +99,7 @@ A global npm installation also repairs the saved Windows PATH and installs the s
 allows its installation script:
 
 ```powershell
-npm.cmd install -g --allow-scripts=@leemour/tg-cli --foreground-scripts @leemour/tg-cli
+npm.cmd install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
 ```
 
 Newer npm versions skip installation scripts unless you allow them, and `--ignore-scripts` skips
@@ -195,7 +195,7 @@ Once a day, at a terminal, `tg` says on stderr that a newer version is on npm. I
 `--json`, into a pipe, with `--quiet` or in CI. To turn it off: `tg config set updateCheck false
 --defaults`, or `TG_NO_UPDATE_CHECK=1`.
 
-From source: `git pull && pnpm install && pnpm build`. From npx: `npx @leemour/tg-cli@latest`.
+From source: `git pull && pnpm install && pnpm build`. From npx: `npx @wirecat/tg-cli@latest`.
 
 ## Uninstall
 
@@ -206,7 +206,7 @@ an example name of a bot profile; repeat that line for each bot you connected.
 tg server uninstall                  # if you installed the background unit; stop it first
 tg session end                       # logs out on Telegram's side and deletes the session file
 tg support bot auth remove           # forgets the token of the bot profile "support"
-npm uninstall -g @leemour/tg-cli
+npm uninstall -g @wirecat/tg-cli
 rm -rf ~/.config/tg-cli ~/.local/share/tg-cli ~/.cache/tg-cli
 ```
 

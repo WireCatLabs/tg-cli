@@ -76,11 +76,11 @@ The folder npm installs commands into is not on your `PATH`.
   `Get-Command tg -All` in PowerShell) lists every one; call ours by its full path, or put its folder
   first.
 
-Without installing, `npx @leemour/tg-cli doctor` works too.
+Without installing, `npx @wirecat/tg-cli doctor` works too.
 
-### `npx @leemour/tg-cli` runs an old version
+### `npx @wirecat/tg-cli` runs an old version
 
-npx keeps what it downloaded. Ask for the newest: `npx @leemour/tg-cli@latest`.
+npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
 
 ## Login and profiles
 

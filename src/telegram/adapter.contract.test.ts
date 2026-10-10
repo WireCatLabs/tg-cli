@@ -1,8 +1,8 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
-import type { Contact, Member } from "@leemour/cli-messaging"
-import { contractCases, type IdMaker, type Seed } from "@leemour/cli-messaging/testing"
 import { MtPeerNotFoundError } from "@mtcute/node"
+import type { Contact, Member } from "@wirecat/cli-messaging"
+import { contractCases, type IdMaker, type Seed } from "@wirecat/cli-messaging/testing"
 import { describe, it, vi } from "vitest"
 import { TelegramAdapter } from "./adapter.js"
 
