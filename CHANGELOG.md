@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- Search troubleshooting distinguishes archive-only discovery/offline requests from ordinary
+  server-backed word search, so an empty local archive does not imply Telegram was searched.
+
 ## 0.44.0 — 10.10.2026
 
 ### What's new

@@ -78,6 +78,8 @@ The folder npm installs commands into is not on your `PATH`.
 
 Without installing, `npx @wirecat/tg-cli doctor` works too.
 
+<a id="npx-leemourtg-cli-runs-an-old-version" />
+
 ### `npx @wirecat/tg-cli` runs an old version
 
 npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
@@ -363,13 +365,14 @@ read. Run `tg upgrade`. Nothing in the store is lost ([the store and other versi
 
 ### "nothing recorded for profile … yet — run the command once without --offline"
 
-Exit code `6`. `--offline`, `search messages`, `store status` and `store export` answer only from the
+Exit code `6`. `--offline`, `store status` and `store export` answer only from the
 local store, and this profile has not read anything into it yet. Run one command online first, for
 example `tg chats list`.
 
 ### `search messages` finds nothing
 
-Search reads only what this machine has kept, never Telegram. An empty answer means "not kept", not
+Archive search (`--backend archive`, `--offline` or `--discover`) reads only what this machine has kept.
+Without those options, ordinary word search can also ask Telegram. An empty answer means "not kept", not
 "never said". Read the chat (`tg messages list <chat>`), or fetch its history with `tg store fetch`,
 then search again ([searching the store](archive.md#search)). `tg store check` says which chats are behind.
 
