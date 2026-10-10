@@ -3,6 +3,12 @@
 Notable changes to `@wirecat/tg-cli` (`@leemour/tg-cli` up to 0.42.0). One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.43.1 — 10.10.2026
+
+### Changed — may break scripts
+
+- **The project is now licensed under Apache License 2.0.** See `LICENSE` for the terms.
+
 ## 0.43.0 — 10.10.2026
 
 ### Changed — may break scripts

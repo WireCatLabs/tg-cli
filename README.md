@@ -21,7 +21,7 @@ tg messages send "Book club" "Running 15 minutes late"
 [![Node](https://img.shields.io/node/v/@wirecat/tg-cli)](https://nodejs.org/)
 [![Bun](https://img.shields.io/badge/bun-tested-f9f1e1)](https://bun.sh/)
 [![npm downloads](https://img.shields.io/npm/dm/@wirecat/tg-cli)](https://www.npmjs.com/package/@wirecat/tg-cli)
-[![License: MIT](https://img.shields.io/npm/l/@wirecat/tg-cli)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
 ## The bot
 
@@ -498,7 +498,7 @@ What each released version changed is in [CHANGELOG.md](CHANGELOG.md).
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+Apache License 2.0 — see [LICENSE](LICENSE).
 
 ## Contributing
 
