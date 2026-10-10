@@ -139,7 +139,11 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 5. **Start a search with `tg search all`**: messages, mail and notes on this machine in one answer, each hit
    typed (`message`, `mail`, `note`). Narrow with `tg search messages`, `search mail`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg search`.
-   **`tg search messages` reads the local archive and asks Telegram's search too** (`--backend both`; `archive`
+   For a natural question or uncertain wording, use `tg search messages '<question>' --discover`
+   or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
+   and includes eligible direct replies. Inspect missing terms, parent links and the messages;
+   the first result and its score do not establish an answer. Explicit syntax remains strict.
+   **Without `--discover`, `tg search messages` also asks Telegram's search** (`--backend both`; `archive`
    for the archive only). Good search needs downloaded chats: if a search finds nothing and `coverage.next` is
    set, run it (`tg store fetch --all --background`) or ask the owner before saying the message does not exist.
    Words and quoted phrases include word forms;
@@ -329,7 +333,7 @@ endpoint consent and `deny|allow` controls native chat opt-outs. Never widen the
 scenarios without the owner's separate consent. Shared `serve` replies to everyone a rule matches unless the audience limits it, and only with explicit
 `permissions.replies.send:allow`; the default is deny.
 
-Search reads the local archive and asks Telegram's search by default; `coverage` says what the archive held and
+Ordinary search also asks Telegram; `--discover` reads only the archive, even with `--backend both`; `coverage` says what the archive held and
 `coverage.next` what to fetch. `--sync-first` explicitly fetches new messages before searching and
 marks nothing read: at most 5 chats, 500 messages and 30 seconds. Change these bounds with `--max-chats`,
 `--max-messages`, `--sync-time`. Failed or incomplete refresh retains local results with stale coverage and refresh

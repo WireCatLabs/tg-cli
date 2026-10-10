@@ -19,6 +19,30 @@ Terms used on this page:
 - **Coverage**: what a search could see — how many chats and messages were saved, and which chats were
   never downloaded or are behind.
 
+## When you remember the question rather than its wording
+
+Ask your agent to find messages answering a question and show the supporting messages. For example:
+“Find when the Helix daily export runs in the project chat, and check whether the schedule changed.”
+The agent can use archive discovery to find partial word matches and direct replies, then inspect
+those messages before answering. This needs downloaded history; it does not download a model.
+
+For command-line control:
+
+```sh
+tg search messages 'What time does Helix export run?' --discover --chat 990 --json
+```
+
+This searches the local archive only. Chat, sender and date filters still apply. In MCP, pass
+`discover: true` to the message-search tool. `query.discovery` describes the bounded candidate pool;
+`items[].discovery.missingTerms` names unmatched terms, and `parent` links a reply to its matching
+parent. A high score is not answer confidence: a question, proposal or old decision can rank first.
+Read the evidence and check [archive coverage](archive.md) before concluding that a fact is absent.
+
+Without `--discover`, the usual strict search remains. Boolean syntax, quoted phrases, wildcards,
+AST requests, `--exact` and `--newest` keep strict behavior. Discovery does not combine with legacy,
+regular-expression search or `--backend server`. Meaning-based conversation search remains a
+separate [topic-search option](topic-search.md).
+
 ## What you can do
 
 Every search is under one group of commands, `tg search`. When you don't know where something was
@@ -27,7 +51,7 @@ written, start with `search all`.
 | Task | Command |
 |---|---|
 | Search messages, mail and notes in one answer | `tg search all '<query>'` |
-| Search Telegram messages only, also on Telegram's server | `tg search messages '<query>'` |
+| Search Telegram messages only; without `--discover`, also on Telegram's server | `tg search messages '<query>'` |
 | Search only the mail memo imported | `tg search mail '<query>'` |
 | Search notes written in memo or imported from a folder | `tg search notes '<query>'` |
 | Find a discussion by what it was about | `tg search conversations '<question>'` ([topic search](topic-search.md)) |
@@ -72,8 +96,8 @@ don't have (`chat:`, `from:`), `search all` leaves them out and says so.
 Mail and notes reach the store through memo: `memo mail import` and `memo import`. Without them,
 `search all` searches messages only.
 
-The rest of this page is about searching messages, `tg search messages`. It reads the local store and
-asks Telegram's own search too ([below](#asking-telegram-too---backend)).
+The rest of this page is about searching messages, `tg search messages`. It reads the local store;
+ordinary search also asks Telegram ([below](#asking-telegram-too---backend)); discovery searches only the archive, even with `--backend both`.
 
 ## Try a focused search
 
@@ -477,8 +501,8 @@ many chats that is.
 
 ## Asking Telegram too: `--backend`
 
-Telegram can search its own copy of your chats, including messages tg never fetched. By default tg asks
-Telegram and the store in one run (`--backend both`). `--backend server` shows Telegram's results alone,
+Telegram can search its own copy of your chats, including messages tg never fetched. Without `--discover`, tg asks
+Telegram and the store by default in one run (`--backend both`). `--backend server` shows Telegram's results alone,
 and `--backend archive` searches only the store.
 
 ```sh
