@@ -4,7 +4,7 @@ import {
   servingProfiles,
   upgradeCommand as sharedUpgradeCommand,
   usableProfileName,
-} from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging/cli"
 import { TG } from "../app.js"
 import { installer, latest, PACKAGE, restartServer, runUpdate, type UpdateEnvironment } from "../update.js"
 import type { Environment } from "./context.js"

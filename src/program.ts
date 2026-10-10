@@ -1,5 +1,5 @@
 import { appendFileSync } from "node:fs"
-import { exitCodeFor, processStreams } from "@leemour/cli-core"
+import { exitCodeFor, processStreams } from "@wirecat/cli-core"
 import {
   accountCommand,
   attachmentsCommand,
@@ -38,7 +38,7 @@ import {
   tasksCommand,
   topicsCommand,
   watchCommand,
-} from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"

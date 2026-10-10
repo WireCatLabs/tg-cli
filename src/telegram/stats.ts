@@ -1,3 +1,4 @@
+import type { tl } from "@mtcute/node"
 import type {
   OfficialChannelStats,
   OfficialGraph,
@@ -5,8 +6,7 @@ import type {
   OfficialGroupStats,
   OfficialPerson,
   OfficialValue,
-} from "@leemour/cli-messaging"
-import type { tl } from "@mtcute/node"
+} from "@wirecat/cli-messaging"
 
 export type GraphOf = (graph: tl.TypeStatsGraph) => Promise<OfficialGraph | OfficialGraphError>
 

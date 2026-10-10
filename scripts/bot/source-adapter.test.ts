@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs"
-import { applyOverrides, generate, manifestGenerator, type Override, validateModel } from "@leemour/cli-core/codegen"
+import { applyOverrides, generate, manifestGenerator, type Override, validateModel } from "@wirecat/cli-core/codegen"
 import { describe, expect, it } from "vitest"
 import { adaptBotApi, type BotApiSource } from "./source-adapter.js"
 

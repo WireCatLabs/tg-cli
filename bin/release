@@ -10,7 +10,7 @@
 set -eu
 
 cd "$(dirname "$0")/.."
-package=@leemour/tg-cli
+package=@wirecat/tg-cli
 
 mode=ci
 case "${1:-}" in
@@ -31,7 +31,7 @@ git merge -q --ff-only origin/main
 # One release at a time on this machine, across every package: two sessions published at once on 2026-10-08.
 lock="${XDG_RUNTIME_DIR:-/tmp}/leemour-release.lock"; exec 9>"$lock"; flock -n 9 || { echo "another release is running: $(cat "$lock.who" 2>/dev/null)" >&2; exit 1; }; echo "$(basename "$PWD") pid $$ since $(date -u +%H:%M)" > "$lock.who"
 # Two hours between releases, so a broken one is noticed before the next lands on top of it.
-times=$(npm view "@leemour/tg-cli" time --json --prefer-online 2>/dev/null || echo '{}')
+times=$(npm view "@wirecat/tg-cli" time --json --prefer-online 2>/dev/null || echo '{}')
 opens=$(node -e 'const t = JSON.parse(process.argv[1]); delete t.created; delete t.modified
   const opens = Math.max(0, ...Object.values(t).map(Date.parse)) + 2 * 3600e3
   if (Date.now() < opens) console.log(new Date(opens).toISOString().slice(11, 16) + " UTC")' "$times")

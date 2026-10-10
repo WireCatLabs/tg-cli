@@ -1,4 +1,4 @@
-import { CliError } from "@leemour/cli-core"
+import { CliError } from "@wirecat/cli-core"
 import type {
   AdminRight,
   Attachment,
@@ -8,8 +8,8 @@ import type {
   Message,
   QuotedMessage,
   TextSpan,
-} from "@leemour/cli-messaging"
-import type { BotChatAdmin, BotEvent } from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging"
+import type { BotChatAdmin, BotEvent } from "@wirecat/cli-messaging/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
 export interface User {

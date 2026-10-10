@@ -1,8 +1,8 @@
 import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
-import { CliError, indent, renderPretty } from "@leemour/cli-core"
-import { annotate } from "@leemour/cli-core/commands"
-import { installSkill, type SkillTarget } from "@leemour/cli-core/skill"
-import { readSecret } from "@leemour/cli-messaging"
+import { CliError, indent, renderPretty } from "@wirecat/cli-core"
+import { annotate } from "@wirecat/cli-core/commands"
+import { installSkill, type SkillTarget } from "@wirecat/cli-core/skill"
+import { readSecret } from "@wirecat/cli-messaging"
 import {
   asFirstWord,
   type Closeable,
@@ -13,8 +13,8 @@ import {
   rootOf,
   runtime,
   withDeadline,
-} from "@leemour/cli-messaging/cli"
-import { levelFor } from "@leemour/cli-messaging/sends"
+} from "@wirecat/cli-messaging/cli"
+import { levelFor } from "@wirecat/cli-messaging/sends"
 import { Command, Option } from "commander"
 import { TG } from "../app.js"
 import { pathsFor } from "../paths.js"
@@ -100,7 +100,7 @@ export const setupCommand = () =>
         "\nSetup checks five chats. Choose a chat and an amount of history before:\n" +
         "  tg store fetch <chat> --last 100\n" +
         "\nWindows: use tg.cmd or npm.cmd if PowerShell blocks scripts. Without PATH:\n" +
-        "  npm.cmd exec --yes --package=@leemour/tg-cli -- tg setup\n",
+        "  npm.cmd exec --yes --package=@wirecat/tg-cli -- tg setup\n",
     )
     .addOption(
       new Option("--agent <agent>", "install the skill for this agent; asks at a terminal, otherwise none").choices(
@@ -144,7 +144,7 @@ export const setupCommand = () =>
       const prefix = `tg ${asFirstWord(context.profile)}`
       const command =
         installer(environmentOf<Environment>(this).update) === "npx"
-          ? `npm${process.platform === "win32" ? ".cmd" : ""} exec --yes --package=@leemour/tg-cli -- ${prefix}`
+          ? `npm${process.platform === "win32" ? ".cmd" : ""} exec --yes --package=@wirecat/tg-cli -- ${prefix}`
           : prefix
       const cancellation = new AbortController()
       const closeables: Closeable[] = [

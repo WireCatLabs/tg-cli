@@ -1,5 +1,5 @@
-import { CliError, isCliError } from "@leemour/cli-core"
-import type { BotAction, BotAdapter, BotChatRef, BotSendOptions } from "@leemour/cli-messaging/cli"
+import { CliError, isCliError } from "@wirecat/cli-core"
+import type { BotAction, BotAdapter, BotChatRef, BotSendOptions } from "@wirecat/cli-messaging/cli"
 import { formatMarkdown } from "../telegram/format-markdown.js"
 import {
   ADMIN_RIGHT_FIELDS,

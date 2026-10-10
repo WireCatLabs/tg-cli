@@ -10,7 +10,7 @@
 import { readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { changelogProblems, docsProblems, structureProblems } from "@leemour/cli-core/release"
+import { changelogProblems, docsProblems, structureProblems } from "@wirecat/cli-core/release"
 import { CHANGELOG, docsRules } from "./release/checks.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")

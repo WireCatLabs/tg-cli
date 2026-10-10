@@ -1,6 +1,6 @@
-import { CliError } from "@leemour/cli-core"
-import { type FormattedText, type TextSpan, validateFormattedText } from "@leemour/cli-messaging"
 import { thtml, type tl } from "@mtcute/node"
+import { CliError } from "@wirecat/cli-core"
+import { type FormattedText, type TextSpan, validateFormattedText } from "@wirecat/cli-messaging"
 
 const PLAIN: Partial<Record<tl.TypeMessageEntity["_"], TextSpan["type"]>> = {
   messageEntityBold: "bold",

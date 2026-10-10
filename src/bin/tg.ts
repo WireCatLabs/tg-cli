@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ensureSqlite } from "@leemour/cli-messaging/sqlite-runtime"
+import { ensureSqlite } from "@wirecat/cli-messaging/sqlite-runtime"
 
 await ensureSqlite()
 // A static import would load the whole program, and its SQLite, before ensureSqlite could swap it.

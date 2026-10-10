@@ -36,7 +36,7 @@ versions and first-failure record before comparing results with another release.
 
 ## 1. Most of `tg` is not in this repository
 
-Every command except `session`, `setup` and `update` comes from `@leemour/cli-messaging/cli`: the command
+Every command except `session`, `setup` and `update` comes from `@wirecat/cli-messaging/cli`: the command
 tree, `run()`, the output contract, the store and `--offline`, run records, the send guard, `mcp`.
 `tg` hands it one description of Telegram and one adapter.
 

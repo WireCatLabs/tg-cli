@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from "node:fs"
 import { basename } from "node:path"
-import { CliError } from "@leemour/cli-core"
-import type { ManifestOperation } from "@leemour/cli-core/codegen"
+import { CliError } from "@wirecat/cli-core"
+import type { ManifestOperation } from "@wirecat/cli-core/codegen"
 import {
   type ApiCommandInput,
   apiPlainJson,
@@ -12,8 +12,8 @@ import {
   checkApiParameter,
   generatedApiCommand,
   prepareRpcApiBody,
-} from "@leemour/cli-messaging/cli"
-import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@leemour/cli-messaging/sends"
+} from "@wirecat/cli-messaging/cli"
+import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@wirecat/cli-messaging/sends"
 import type { Command } from "commander"
 import { definitions } from "../bot/generated/definitions.js"
 import { operations } from "../bot/generated/manifest.js"

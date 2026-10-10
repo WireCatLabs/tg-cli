@@ -2,8 +2,8 @@ import { chmodSync, existsSync, mkdirSync, mkdtempSync, writeFileSync } from "no
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import type { Chat, Message } from "@leemour/cli-messaging"
-import { type AccountKey, openStore } from "@leemour/cli-messaging/store"
+import type { Chat, Message } from "@wirecat/cli-messaging"
+import { type AccountKey, openStore } from "@wirecat/cli-messaging/store"
 import { describe, expect, it } from "vitest"
 import { sessionModes, TELEGRAM } from "./context.js"
 

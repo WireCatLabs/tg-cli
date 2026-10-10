@@ -1,8 +1,8 @@
 import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { CliError, indent } from "@leemour/cli-core"
-import { annotate } from "@leemour/cli-core/commands"
-import { type Account, qrPng, readSecret, terminalQr } from "@leemour/cli-messaging"
+import { CliError, indent } from "@wirecat/cli-core"
+import { annotate } from "@wirecat/cli-core/commands"
+import { type Account, qrPng, readSecret, terminalQr } from "@wirecat/cli-messaging"
 import {
   asFirstWord,
   commandWords,
@@ -10,7 +10,7 @@ import {
   refuseCommandName,
   rememberAccount,
   rootOf,
-} from "@leemour/cli-messaging/cli"
+} from "@wirecat/cli-messaging/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"

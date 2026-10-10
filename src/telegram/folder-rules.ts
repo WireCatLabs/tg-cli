@@ -1,5 +1,5 @@
-import type { FolderKind, FolderSkip } from "@leemour/cli-messaging"
 import type { tl } from "@mtcute/node"
+import type { FolderKind, FolderSkip } from "@wirecat/cli-messaging"
 
 type KindFlag = "contacts" | "nonContacts" | "groups" | "broadcasts" | "bots"
 type SkipFlag = "excludeMuted" | "excludeRead" | "excludeArchived"

@@ -19,5 +19,5 @@ messaging="$here/../cli-messaging"
 [ -f "$messaging/package.json" ] || { echo "no cli-messaging beside $here" >&2; exit 1; }
 packs=$(mktemp -d)
 (cd "$messaging" && rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo && pnpm build >/dev/null && pnpm pack --pack-destination "$packs" >/dev/null)
-pnpm add "$packs"/leemour-cli-messaging-*.tgz >/dev/null
-echo "trying $(basename "$packs"/leemour-cli-messaging-*.tgz) — bin/try-messaging --undo before committing"
+pnpm add "$packs"/wirecat-cli-messaging-*.tgz >/dev/null
+echo "trying $(basename "$packs"/wirecat-cli-messaging-*.tgz) — bin/try-messaging --undo before committing"

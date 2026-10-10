@@ -1,5 +1,5 @@
 import { join } from "node:path"
-import { type Paths, pathsAreOverridden, resolvePaths } from "@leemour/cli-core"
+import { type Paths, pathsAreOverridden, resolvePaths } from "@wirecat/cli-core"
 import { TG } from "./app.js"
 
 export const APP = TG.appName

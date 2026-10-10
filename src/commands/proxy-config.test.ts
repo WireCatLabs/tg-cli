@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { Readable } from "node:stream"
-import { memoryKeyring } from "@leemour/cli-core/testing"
+import { memoryKeyring } from "@wirecat/cli-core/testing"
 import { describe, expect, it } from "vitest"
 import { proxySecrets } from "../telegram/proxy.js"
 import { tg } from "../testing/scripted.js"

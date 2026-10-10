@@ -58,10 +58,10 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 - **A branch and a PR per item**, off `origin/main`, in both repositories: `git switch -c feat/<item>
   --no-track origin/main`. The worktree's own `lane/<lane>` branch is only where it parks.
 - **Rebase-merge your PR once CI is green**, then start the next item without waiting.
-- **Release your own merged work** (NEED-10 → C): `git fetch`, `npm view @leemour/cli-messaging
+- **Release your own merged work** (NEED-10 → C): `git fetch`, `npm view @wirecat/cli-messaging
   version`, a `chore: release` PR raising it from what is really published, `bin/release`. Another
   lane may release first — `bin/release` refuses a version already on npm, so rebase, raise the
-  number again, retry. Then tg: `pnpm add @leemour/cli-messaging@<v>`.
+  number again, retry. Then tg: `pnpm add @wirecat/cli-messaging@<v>`.
 - **A store migration number is taken before the migration is written**: cli-messaging's
   `docs/dev/COORDINATION.md` names the next free number; take it in a PR of its own, merged first.
 - **Do not touch another lane's worktree or branch**, even to help.

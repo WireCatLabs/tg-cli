@@ -1,4 +1,3 @@
-import { CliError, type ErrorCode, isCliError } from "@leemour/cli-core"
 import {
   MtArgumentError,
   MtcuteError,
@@ -12,6 +11,7 @@ import {
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
+import { CliError, type ErrorCode, isCliError } from "@wirecat/cli-core"
 
 const { RpcError } = tl
 

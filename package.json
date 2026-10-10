@@ -1,5 +1,5 @@
 {
-  "name": "@leemour/tg-cli",
+  "name": "@wirecat/tg-cli",
   "version": "0.42.0",
   "description": "A local command line interface for a personal Telegram account, built for agents and scripts",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "test:matrix": "vitest run >/dev/null && tsc --build --force >/dev/null && cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check",
     "test:slow": "vitest run --reporter=json --outputFile=coverage/tests.json >/dev/null; cli-dev slow-tests",
     "smoke:bun": "bun run scripts/smoke.ts",
-    "docs:check": "node --experimental-strip-types scripts/docs-check.ts && cspell --no-progress --no-summary README.md 'docs/*.md' && rumdl check --config node_modules/@leemour/cli-core/config/rumdl.toml --disable MD028 README.md docs/*.md",
+    "docs:check": "node --experimental-strip-types scripts/docs-check.ts && cspell --no-progress --no-summary README.md 'docs/*.md' && rumdl check --config node_modules/@wirecat/cli-core/config/rumdl.toml --disable MD028 README.md docs/*.md",
     "parity:check": "pnpm build && node dist/bin/tg.js commands --json | cli-messaging-parity tg && node dist/bin/tg.js commands --json | cli-messaging-parity tg --pages README.md docs/*.md",
     "smoke:live": "pnpm build && node --experimental-strip-types scripts/smoke-live.ts",
     "release:check": "pnpm build && node --experimental-strip-types scripts/release-check.ts",
@@ -55,8 +55,8 @@
     "check:agent-docs": "pnpm build && node --experimental-strip-types scripts/check-agent-docs.ts"
   },
   "dependencies": {
-    "@leemour/cli-core": "0.17.2",
-    "@leemour/cli-messaging": "0.213.0",
+    "@wirecat/cli-core": "0.18.1",
+    "@wirecat/cli-messaging": "0.215.0",
     "@mtcute/node": "0.32.3",
     "commander": "15.0.0",
     "undici": "7.30.0",

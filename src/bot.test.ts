@@ -1,6 +1,6 @@
 import { Readable } from "node:stream"
-import { captureStreams, memoryKeyring } from "@leemour/cli-core"
-import { botCopy, ChatRegistry, commandLookup, createBotServer } from "@leemour/cli-messaging/cli"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { botCopy, ChatRegistry, commandLookup, createBotServer } from "@wirecat/cli-messaging/cli"
 import type { Command } from "commander"
 import { beforeEach, describe, expect, it } from "vitest"
 import { TG } from "./app.js"

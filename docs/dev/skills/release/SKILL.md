@@ -78,7 +78,7 @@ code. Each one gets **holds** or **broken**, with `path:line`.
 ## 6. Raise the version and publish
 
 ```sh
-npm view @leemour/tg-cli version                 # what is really published
+npm view @wirecat/tg-cli version                 # what is really published
 # package.json: the next version; then
 pnpm version:sync                                # src/version.ts follows package.json
 # CHANGELOG.md: "## Unreleased" becomes "## <version> — DD.MM.YYYY"

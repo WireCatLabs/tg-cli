@@ -15,7 +15,7 @@
 import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from "node:fs"
 import { join, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
-import { Credentials } from "@leemour/cli-core"
+import { Credentials } from "@wirecat/cli-core"
 
 const SERVICE = "tg-cli"
 const COPIED = ["sessions", "accounts", "profiles"]

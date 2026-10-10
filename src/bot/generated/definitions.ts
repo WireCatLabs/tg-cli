@@ -2,7 +2,7 @@
 // Source: spec/bot/api.json
 // Run: pnpm bot:generate
 
-import type { SchemaNode } from "@leemour/cli-core/codegen"
+import type { SchemaNode } from "@wirecat/cli-core/codegen"
 
 export const definitions: Readonly<Record<string, SchemaNode>> = {
   Update: {

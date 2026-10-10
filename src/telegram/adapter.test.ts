@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
-import type { MessageEvent } from "@leemour/cli-messaging"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
+import type { MessageEvent } from "@wirecat/cli-messaging"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   FLOOD_SLEEP,

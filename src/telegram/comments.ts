@@ -1,6 +1,6 @@
-import { CliError } from "@leemour/cli-core"
-import type { Discussion } from "@leemour/cli-messaging"
 import { getMarkedPeerId, Long, PeersIndex, type TelegramClient, Message as TgMessage, tl } from "@mtcute/node"
+import { CliError } from "@wirecat/cli-core"
+import type { Discussion } from "@wirecat/cli-messaging"
 
 type Client = Pick<TelegramClient, "call" | "resolvePeer">
 

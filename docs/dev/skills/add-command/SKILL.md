@@ -35,7 +35,7 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 3. The command in cli-messaging `src/cli/messenger/`, in a file of its own. A write is resolve →
    guard check → write → guard record, as `sendText` does, so read-only profiles, the recipient list
    and the send journal apply.
-4. Release cli-messaging (its `bin/release`), then `pnpm add @leemour/cli-messaging@<v>` here and
+4. Release cli-messaging (its `bin/release`), then `pnpm add @wirecat/cli-messaging@<v>` here and
    add the version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`.
 5. `TelegramAdapter` in `src/telegram/adapter.ts`, at the end of the class as a group, and its mapping
    in `src/telegram/map.ts`: the only file that knows mtcute's shapes. No mtcute type crosses
