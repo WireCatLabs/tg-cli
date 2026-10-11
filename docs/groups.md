@@ -264,6 +264,27 @@ tg tasks add msg:telegram/<you>/<chat>/<message> --type promise
 tg tasks close <task> --as dismissed --reason no-reply-needed
 ```
 
+Give a task a title, a due date and a date to look at it again, and link the messages and chats it
+belongs to. The next-check date is for you or your agent; tg never reminds anyone:
+
+```sh
+tg tasks plan <task> --title "Send Anna the contract" --due 2d --check 1d
+```
+
+```sh
+tg tasks link <task> msg:telegram/<you>/<chat>/<message> --chat "Hiking"
+```
+
+See what needs a look today: tasks overdue or due soon, chats where someone waits for your answer, and
+chats where you wait for theirs. It reads the local store, not the messages' text:
+
+```sh
+tg tasks agenda
+```
+
+`tg skill show follow-ups` prints a daily routine for an AI agent that drafts replies from this list
+and sends nothing.
+
 See open tasks per chat, the oldest one and the median time to close:
 
 ```sh

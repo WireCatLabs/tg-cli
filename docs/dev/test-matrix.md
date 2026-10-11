@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2357 ✅ · 64 ⛔ · 0 ❌** — 465 commands, 1956 options.
+**2361 ✅ · 79 ⛔ · 0 ❌** — 469 commands, 1971 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -635,6 +635,25 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks list` | `--limit` | ✅ |  |
 | `tasks add` |  | ✅ |  |
 | `tasks add` | `--type` | ✅ |  |
+| `tasks add` | `--title` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks add` | `--description` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
+| `tasks add` | `--due` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks add` | `--check` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks plan` |  | ✅ |  |
+| `tasks plan` | `--title` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
+| `tasks plan` | `--description` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
+| `tasks plan` | `--due` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks plan` | `--check` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks link` |  | ✅ |  |
+| `tasks link` | `--chat` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks link` | `--kind` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks show` |  | ✅ |  |
+| `tasks agenda` |  | ✅ |  |
+| `tasks agenda` | `--due` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks agenda` | `--unanswered` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
+| `tasks agenda` | `--waiting` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks agenda` | `--within` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks agenda` | `--kind` | ⛔ | cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks close` |  | ✅ |  |
 | `tasks close` | `--as` | ✅ |  |
 | `tasks close` | `--reason` | ✅ |  |
