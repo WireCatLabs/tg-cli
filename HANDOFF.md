@@ -10,7 +10,7 @@ operation per call, one JSON value on stdout when piped, a typed error and a fix
 failure. Everything that is not specific to Telegram lives in the npm package
 [`@wirecat/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
 which `max` ([max-cli](https://github.com/WireCatLabs/max-cli), a MAX messenger CLI) also uses. Both sit
-on [`@wirecat/cli-core`](https://github.com/WireCatLabs/cli-core).
+on [`@wirecat/cli-core`](https://github.com/WireCatLabs/cli-base).
 
 ## 2. Entry points
 
