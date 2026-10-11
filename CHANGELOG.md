@@ -19,6 +19,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - Shared store 0.247.0: a meeting context records facts with `fact.add`; `memory.add` no longer takes the kind `fact`.
 
+### Fixed
+
+- Pin shared package 0.248.0, which includes the task follow-up parity entries. Release checks
+  now recognize task plans, links, cards, agenda and their options.
+
 ## 0.49.0 — 11.10.2026
 
 ### What's new
