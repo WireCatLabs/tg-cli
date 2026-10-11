@@ -3,6 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg schedule`: run a command or an agent on a timer**, through systemd (Linux), launchd (macOS) or Task
+  Scheduler (Windows). `tg schedule command <name> --every 2h -- messages list <chat>` runs a tg command; a read
+  saves what it reads. `tg schedule agent <name> claude "<prompt>" --at 08:30` starts an agent (claude or codex), at
+  most hourly. The agent runs with `TG_READ_ONLY=1` and cannot send; its answer is kept as `latest.md` beside the
+  schedule and a desktop notification says it is ready. `--once 2h` runs once and then removes the schedule.
+  `tg schedule list`, `run` and `remove`.
+- **`tg server install` suggests the command for a daily follow-up review**, and turns nothing on.
+- **`TG_READ_ONLY=1` refuses every write of the process**, above the config file and `--permission`.
+
 ## 0.50.0 — 11.10.2026
 
 ### What's new
