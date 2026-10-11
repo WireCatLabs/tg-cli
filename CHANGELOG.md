@@ -17,6 +17,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **On macOS tg keeps its files where it does on Linux**: `~/.config/tg-cli`, `~/.local/share/tg-cli` and
+  `~/.cache/tg-cli` instead of `~/Library/…`. The first run moves the old folders there, with the shared store and
+  the speech models, and points an installed `tg server` agent at its new log. While a `tg serve` or MCP server is
+  running it prints one warning, keeps using the old folders for that run and tries again next time. Linux and
+  Windows are unchanged.
 - **Purging an account also removes the people only that account had seen.** A person stays while another
   account, a tag, a note or any other record points at them.
 - **Mail is searched by meaning thread by thread.** The first index pass after the upgrade cuts every thread again
