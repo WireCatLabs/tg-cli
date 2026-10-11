@@ -1,7 +1,7 @@
 import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
-import { CliError, indent, renderPretty } from "@wirecat/cli-core"
-import { annotate } from "@wirecat/cli-core/commands"
-import { installSkill, type SkillTarget } from "@wirecat/cli-core/skill"
+import { CliError, indent, renderPretty } from "@wirecat/cli-base"
+import { annotate } from "@wirecat/cli-base/commands"
+import { installSkill, type SkillTarget } from "@wirecat/cli-base/skill"
 import { readSecret } from "@wirecat/cli-messaging"
 import {
   asFirstWord,

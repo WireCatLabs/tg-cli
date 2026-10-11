@@ -1,6 +1,6 @@
 {
   "name": "@wirecat/tg-cli",
-  "version": "0.50.0",
+  "version": "0.51.0",
   "description": "A local command line interface for a personal Telegram account, built for agents and scripts",
   "license": "Apache-2.0",
   "author": "Viacheslav Ptsarev",
@@ -62,9 +62,9 @@
     "security:no-leak": "cli-testing security no-leak . contracts/no-leak.json"
   },
   "dependencies": {
-    "@mtcute/node": "0.32.3",
-    "@wirecat/cli-core": "0.20.0",
-    "@wirecat/cli-messaging": "0.250.1",
+    "@mtcute/node": "0.32.4",
+    "@wirecat/cli-base": "0.21.0",
+    "@wirecat/cli-messaging": "0.253.0",
     "commander": "15.0.0",
     "undici": "7.30.0",
     "valibot": "1.5.0"
@@ -74,16 +74,16 @@
     "@cspell/dict-en-gb": "5.0.34",
     "@cspell/dict-es-es": "3.0.9",
     "@cspell/dict-ru_ru": "2.3.3",
-    "@napi-rs/canvas": "1.0.10",
+    "@napi-rs/canvas": "1.0.11",
     "@types/node": "^22.20.4",
-    "@vitest/coverage-v8": "5.0.2",
-    "@wirecat/cli-testing": "0.3.0",
+    "@vitest/coverage-v8": "5.0.3",
+    "@wirecat/cli-testing": "0.4.0",
     "cspell": "10.3.6",
     "lefthook": "2.1.16",
     "markdownlint-cli2": "0.23.3",
-    "rumdl": "^0.2.78",
+    "rumdl": "^0.2.79",
     "typescript": "^7.0.2",
     "unpdf": "1.8.1",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.3"
   }
 }

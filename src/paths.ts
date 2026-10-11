@@ -1,5 +1,5 @@
 import { join } from "node:path"
-import { type Paths, pathsAreOverridden, resolvePaths } from "@wirecat/cli-core"
+import { type Paths, pathsAreOverridden, resolvePaths } from "@wirecat/cli-base"
 import { TG } from "./app.js"
 
 export const APP = TG.appName
@@ -7,7 +7,7 @@ export const APP = TG.appName
 export const pathsFor = (env: NodeJS.ProcessEnv = process.env): Paths =>
   resolvePaths({ appName: TG.appName, prefix: TG.envPrefix, env })
 
-/** A throwaway config directory must not share the real keyring entry (cli-core `isolated`). */
+/** A throwaway config directory must not share the real keyring entry (cli-base `isolated`). */
 export const isolated = (env: NodeJS.ProcessEnv = process.env) =>
   pathsAreOverridden({ appName: TG.appName, prefix: TG.envPrefix, env })
 

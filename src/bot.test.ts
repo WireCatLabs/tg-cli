@@ -1,5 +1,5 @@
 import { Readable } from "node:stream"
-import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { botCopy, ChatRegistry, commandLookup, createBotServer } from "@wirecat/cli-messaging/cli"
 import type { Command } from "commander"
 import { beforeEach, describe, expect, it } from "vitest"

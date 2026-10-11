@@ -6,7 +6,7 @@ import {
   SocksProxyConnectionError,
   SocksProxyTcpTransport,
 } from "@mtcute/node"
-import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-core"
+import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-base"
 import { fromFile, type Settings } from "@wirecat/cli-messaging/cli"
 import { APP, isolated, pathsFor } from "../paths.js"
 import { type ProxyServer, parseProxy, proxyError, proxyLabel } from "../proxy.js"

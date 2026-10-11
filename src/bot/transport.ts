@@ -1,4 +1,4 @@
-import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@wirecat/cli-core"
+import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@wirecat/cli-base"
 import type { EventSink } from "@wirecat/cli-messaging/cli"
 import { apiJson, apiPlainJson, parseApiJson } from "@wirecat/cli-messaging/cli"
 

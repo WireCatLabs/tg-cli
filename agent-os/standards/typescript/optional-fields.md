@@ -5,7 +5,7 @@
 - A small helper returning the optional object is fine (`proxyOption(through)`).
 - Build the whole object at once with conditional spreads; never add a property after creating it.
 
-**Why:** An object built once has one type the compiler checks; adding keys later fails to type-check or widens the type. The compiler does not force the spread (`exactOptionalPropertyTypes` is off in cli-core's base tsconfig).
+**Why:** An object built once has one type the compiler checks; adding keys later fails to type-check or widens the type. The compiler does not force the spread (`exactOptionalPropertyTypes` is off in cli-base's base tsconfig).
 
 **Open:** Why this pattern (about 200 places) — style, a downstream library that checks `in`, or a plan to turn `exactOptionalPropertyTypes` on?
 

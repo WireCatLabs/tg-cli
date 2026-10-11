@@ -1,6 +1,6 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
-import { captureStreams } from "@wirecat/cli-core"
+import { captureStreams } from "@wirecat/cli-base"
 import { describe, expect, it, onTestFinished } from "vitest"
 import { run } from "../program.js"
 import type { UpdateEnvironment } from "../update.js"

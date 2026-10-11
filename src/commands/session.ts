@@ -1,7 +1,7 @@
 import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
 import { resolve } from "node:path"
-import { CliError, indent } from "@wirecat/cli-core"
-import { annotate } from "@wirecat/cli-core/commands"
+import { CliError, indent } from "@wirecat/cli-base"
+import { annotate } from "@wirecat/cli-base/commands"
 import { type Account, qrPng, readSecret, terminalQr } from "@wirecat/cli-messaging"
 import {
   asFirstWord,

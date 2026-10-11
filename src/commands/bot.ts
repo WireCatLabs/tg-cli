@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs"
-import { CliError } from "@wirecat/cli-core"
+import { CliError } from "@wirecat/cli-base"
 import {
   type BotMessenger,
   BotTokenStore,

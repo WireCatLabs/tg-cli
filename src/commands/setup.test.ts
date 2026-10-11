@@ -2,8 +2,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
-import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-core"
-import { installSkill } from "@wirecat/cli-core/skill"
+import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
+import { installSkill } from "@wirecat/cli-base/skill"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
@@ -26,8 +26,8 @@ vi.mock("@wirecat/cli-messaging", async (original) => ({
     return input.answers.shift() ?? ""
   },
 }))
-vi.mock("@wirecat/cli-core/skill", async (original) => ({
-  ...(await original<typeof import("@wirecat/cli-core/skill")>()),
+vi.mock("@wirecat/cli-base/skill", async (original) => ({
+  ...(await original<typeof import("@wirecat/cli-base/skill")>()),
   installSkill: vi.fn((_app, _skill, options: { targets: string[] }) =>
     options.targets.map((target) => join(process.env.TG_TEST_SANDBOX ?? "", target, "tg-cli", "SKILL.md")),
   ),

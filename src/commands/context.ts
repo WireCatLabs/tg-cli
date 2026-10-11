@@ -1,6 +1,6 @@
 import { existsSync, statSync } from "node:fs"
 import { dirname } from "node:path"
-import { CliError, type KeyringStore } from "@wirecat/cli-core"
+import { CliError, type KeyringStore } from "@wirecat/cli-base"
 import {
   asFirstWord,
   type BaseContext,

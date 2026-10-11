@@ -1,4 +1,4 @@
-import { CliError, isCliError } from "@wirecat/cli-core"
+import { CliError, isCliError } from "@wirecat/cli-base"
 import { readSecret } from "@wirecat/cli-messaging"
 import { environmentOf } from "@wirecat/cli-messaging/cli"
 import type { Command } from "commander"

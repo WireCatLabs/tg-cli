@@ -1,4 +1,4 @@
-import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-core"
+import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-base"
 import { APP, isolated, pathsFor } from "../paths.js"
 
 /** The app registration from my.telegram.org. Every user brings their own (`NEED-3`). */

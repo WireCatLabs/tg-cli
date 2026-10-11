@@ -60,7 +60,7 @@ not import the mapping or the error translation (`biome.json`, `noRestrictedImpo
 (`Environment` in `src/commands/context.ts`, extending cli-messaging's `BaseEnvironment`):
 
 - `adapter` — a scripted Telegram in place of `TelegramAdapter.open`. Every command test uses it.
-- `keyring` — `memoryKeyring()` from cli-core, so no test reaches the OS keychain.
+- `keyring` — `memoryKeyring()` from cli-base, so no test reaches the OS keychain.
 - `streams`, `tty`, `stdin` — captured output and a pretend terminal.
 - `signal` — ends `watch` and `serve` instead of Ctrl-C.
 - `update` — the package manager and npm answers for `tg upgrade` and the daily notice.

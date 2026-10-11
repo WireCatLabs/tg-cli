@@ -1,5 +1,5 @@
 import type { Poll as TgPoll } from "@mtcute/node"
-import { CliError } from "@wirecat/cli-core"
+import { CliError } from "@wirecat/cli-base"
 
 /** What Telegram would refuse anyway, said before anything is sent — the same checks max-cli makes. */
 export const refuseVote = (poll: TgPoll, answerIds: readonly string[]): void => {

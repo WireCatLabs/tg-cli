@@ -1,5 +1,5 @@
 /**
- * Writes `docs/commands.md` from the command tree itself, with cli-core's `commandsPage` — the same
+ * Writes `docs/commands.md` from the command tree itself, with cli-base's `commandsPage` — the same
  * generator max-cli uses, so the two pages read alike.
  *
  *   pnpm generate
@@ -13,7 +13,7 @@
 import { writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { COMMANDS_PAGE_LABELS, commandsPage, describeOptions, describeProgram } from "@wirecat/cli-core/commands"
+import { COMMANDS_PAGE_LABELS, commandsPage, describeOptions, describeProgram } from "@wirecat/cli-base/commands"
 import { createProgram } from "../dist/program.js"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")

@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { Readable } from "node:stream"
-import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import type { Message } from "@wirecat/cli-messaging"
 import { unitScope } from "@wirecat/cli-messaging/background"
 import type { ServerSystem } from "@wirecat/cli-messaging/cli"

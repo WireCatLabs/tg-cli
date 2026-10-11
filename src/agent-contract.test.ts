@@ -1,4 +1,4 @@
-import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { describe, expect, it, vi } from "vitest"
 import { run } from "./program.js"
 
