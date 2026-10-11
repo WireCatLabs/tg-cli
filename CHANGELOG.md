@@ -3,7 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.49.0 — 11.10.2026
+
+### What's new
+
+- **Search takes the colon spelling of a comparison.** `date:>=2026-01-01` (and `:>`, `:<`, `:<=`) is the
+  same as `date>=2026-01-01`; before, it failed with `invalid_syntax`. A refused `after:` or `before:` now
+  names its replacement: `after:2026-09-01` says to use `date>=2026-09-01`.
 
 ### Changed — may break scripts
 
