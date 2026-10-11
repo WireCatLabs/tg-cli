@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/WireCatLabs/tg-cli/main/docs/design/logo_text.png" alt="Tg CLI" width="480">
+  <img src="https://raw.githubusercontent.com/WireCatLabs/tg-cli/main/docs/images/social-preview.png" alt="Telegram CLI for AI agents" width="100%">
 </p>
 
 # tg — Telegram CLI for AI agents
