@@ -1984,6 +1984,94 @@ remove this profile's unit; stop it first
 tg server uninstall
 ```
 
+## `tg schedule`
+
+run a tg command or an agent later or on a timer (systemd, launchd, Task Scheduler); an agent cannot send
+
+### `tg schedule command`
+
+run tg <args…> on a timer — reads save what they read, so this is how a chat's history fills the store
+
+```sh
+tg schedule command <name> <args> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | lowercase letters, digits and dashes. |
+| `args` | required | the tg command after its name, e.g. -- messages list <chat> --limit 50. |
+
+| Option | What it does |
+|---|---|
+| `--every <duration>` | repeat: 30m, 2h, 1d. |
+| `--at <HH:MM>` | every day at this local time. |
+| `--once <when>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+
+### `tg schedule agent`
+
+start an agent (claude or codex) with a prompt on a timer; it runs with TG_READ_ONLY=1, so it reads and drafts and cannot send — its answer is kept and you are notified
+
+```sh
+tg schedule agent <name> <harness> <prompt> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | lowercase letters, digits and dashes. |
+| `harness` | required | the agent to start. One of: `claude`, `codex`. |
+| `prompt` | required | what to do, e.g. "run the daily follow-up review: tg skill show follow-ups". |
+
+| Option | What it does |
+|---|---|
+| `--max-cost <usd>` | claude only: stop a run that costs more than this, in US dollars. |
+| `--every <duration>` | repeat: 30m, 2h, 1d. |
+| `--at <HH:MM>` | every day at this local time. |
+| `--once <when>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+
+### `tg schedule list`
+
+the schedules, when they run and how their last run went
+
+```sh
+tg schedule list
+```
+
+### `tg schedule run`
+
+run a schedule now, as its timer would, and wait for it
+
+```sh
+tg schedule run <name>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required |  |
+
+### `tg schedule remove`
+
+stop a schedule and remove its timer; its past output stays
+
+```sh
+tg schedule remove <name>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required |  |
+
+### `tg schedule exec`
+
+what a timer runs, given the schedule's file; to run one by hand, use run
+
+```sh
+tg schedule exec <file>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `file` | required |  |
+
 ## `tg store`
 
 the local store of messages
