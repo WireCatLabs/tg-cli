@@ -3,6 +3,12 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed
+
+- **Shared store 0.242.0** keeps existing project/task IDs and adds short keys for new owner projects plus validated task dependency APIs.
+
 ## 0.48.1 — 11.10.2026
 
 ### Fixed
