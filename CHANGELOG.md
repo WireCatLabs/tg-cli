@@ -3,6 +3,22 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **Tasks get a plan, links and a daily agenda** (shared store 0.247.0, version 4). `tg tasks add` takes
+  `--title`, `--description`, `--due` and `--check`; `tg tasks plan <task>` changes them later, `none` clearing a
+  date. The next check is when an agent should look at the task again, not a reminder: nothing reaches the owner.
+  `tg tasks link` links a task to messages, chats, people, documents and URLs; `tg tasks show` prints the plan with
+  its links. `tg tasks agenda` lists, without one message's text, the tasks overdue or due soon, the chats owed an
+  answer (`owed`), those waiting on others (`waiting`) and those whose newest message is not stored (`unsynced`).
+  `tg skill show follow-ups` is the daily routine for an agent: drafts only, it never sends.
+
+### Changed — may break scripts
+
+- Shared store 0.247.0: a meeting context records facts with `fact.add`; `memory.add` no longer takes the kind `fact`.
+
 ## 0.49.0 — 11.10.2026
 
 ### What's new

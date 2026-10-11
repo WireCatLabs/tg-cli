@@ -3110,6 +3110,75 @@ tg tasks add <message> [options]
 | Option | What it does |
 |---|---|
 | `--type <name>` | the task's type: question, request, mention or promise. |
+| `--title <text>` | one line: the action and its object — send Alex the API token. |
+| `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
+| `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--check <when>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+
+### `tg tasks plan`
+
+set a task's title, description, due date and next check; nothing reaches the messenger
+
+```sh
+tg tasks plan <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--title <text>` | one line: the action and its object — send Alex the API token. |
+| `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
+| `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--check <when>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+
+### `tg tasks link`
+
+link a task to what it concerns — messages, chats, people, documents, URLs — to read around later
+
+```sh
+tg tasks link <task> [targets] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+| `targets` | optional | msg: locators, person:<id>, document:<id>, note:<id>, or a URL. |
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from. |
+
+### `tg tasks show`
+
+one task: its plan and everything linked to it
+
+```sh
+tg tasks show <task>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+### `tg tasks agenda`
+
+what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one
+
+```sh
+tg tasks agenda [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--due <span>` | list tasks due within this: 30m, 2h, 1d (default 1d). |
+| `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
+| `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
+| `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
+| `--kind <kinds>` | only these chat kinds, comma-separated (default dialog,group). |
 
 ### `tg tasks close`
 
@@ -8248,7 +8317,7 @@ tg skill show [name]
 
 | Argument | | What it is |
 |---|---|---|
-| `name` | optional | one of the skills shipped for a task: link-conversations. |
+| `name` | optional | one of the skills shipped for a task: follow-ups, link-conversations. |
 
 ### `tg skill install`
 
