@@ -61,7 +61,7 @@ match ([word forms](archive.md#repair-and-index-maintenance)).
 | group | `(alpha OR beta) gamma` | brackets set the order |
 | field group | `from:(alice OR bob)` | the field applies to each value |
 | range | `date:[2026-01-01 TO 2026-02-01}` | `[ ]` include, `{ }` exclude, `*` open |
-| comparison | `size>10MB`, `date>=7d` | an open range |
+| comparison | `size>10MB`, `date>=7d`, `date:>=7d` | an open range; the colon form is the same |
 | wildcard | `invo*`, `te?t` | `*` any characters, `?` one |
 | regex | `text:/pass(port)?/` | a bounded Lucene regular expression |
 
