@@ -1,6 +1,10 @@
 #!/usr/bin/env node
+import { migrateFolders } from "@wirecat/cli-messaging/background"
 import { ensureSqlite } from "@wirecat/cli-messaging/sqlite-runtime"
 
+// Before anything resolves a path, and with the identity spelled out: ../app.js would load the program
+// and its SQLite before ensureSqlite.
+migrateFolders({ command: "tg", appName: "tg-cli", envPrefix: "TG" })
 await ensureSqlite()
 // A static import would load the whole program, and its SQLite, before ensureSqlite could swap it.
 const { run } = await import("../program.js")
