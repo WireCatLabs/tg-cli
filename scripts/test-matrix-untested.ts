@@ -691,4 +691,33 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-messaging src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
+  ...[
+    ["tasks add", "--title"],
+    ["tasks add", "--due"],
+    ["tasks add", "--check"],
+    ["tasks plan", "--due"],
+    ["tasks plan", "--check"],
+    ["tasks link", "--chat"],
+    ["tasks link", "--kind"],
+    ["tasks agenda", "--due"],
+    ["tasks agenda", "--waiting"],
+    ["tasks agenda", "--within"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      'cli-messaging src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0)',
+  })),
+  ...[
+    ["tasks add", "--description"],
+    ["tasks plan", "--title"],
+    ["tasks plan", "--description"],
+    ["tasks agenda", "--unanswered"],
+    ["tasks agenda", "--kind"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "cli-messaging src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0)",
+  })),
 ]
