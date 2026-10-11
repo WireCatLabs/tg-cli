@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- Shared store 0.246.0 checks new labels against canonical names and aliases before creation.
+  Similar names require owner review; reuse an existing label or its explicit alias. Existing
+  labels and data remain, and canonical/alias automatic matches share one claim.
+
 ## 0.48.1 — 11.10.2026
 
 ### What's new
