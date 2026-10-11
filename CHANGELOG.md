@@ -3,6 +3,30 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`--source` takes a list of accounts and groups** in `search messages`, `search mail` and
+  `search conversations`: `--source group:work,tg:mila,email:me@work.example` searches exactly those. An entry is a
+  group, `app:account` (a profile of any app — `max:default` works from tg — the account's id or its name) or a
+  bare `--source` word. `config set accountGroups.<name> <list>` saves a group for every app.
+- **The shared store upgrades to version 2 the first time tg opens it.** Facts — what was said, asked, decided or
+  promised — get their own table beside memories; memories saved as kind `fact` move there, and task assignments
+  are copied into their own table. An older tg, max or memo still opens the upgraded store.
+
+### Changed — may break scripts
+
+- **Purging an account also removes the people only that account had seen.** A person stays while another
+  account, a tag, a note or any other record points at them.
+- **Mail is searched by meaning thread by thread.** The first index pass after the upgrade cuts every thread again
+  and embeds the mail once more; search by words is unchanged.
+
+### Fixed
+
+- **Purging an account that held meetings no longer fails**, and a purge drops the vectors only it used.
+- On `@wirecat/cli-messaging` 0.238.0.
+
 ## 0.47.0 — 11.10.2026
 
 ### What's new
