@@ -1,7 +1,7 @@
 import { mkdtempSync, readdirSync, readFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { CliError } from "@wirecat/cli-core"
+import { CliError } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-messaging"
 import { describe, expect, it } from "vitest"
 import { NO_RESTART_ON } from "./program.js"
@@ -670,7 +670,7 @@ describe("messages", () => {
 
     expect(code).toBe(0)
     expect(json(stdout).items).toHaveLength(1)
-    expect(json(stdout).items[0].text).toContain("piso")
+    expect(json(stdout).items[0].excerpt).toContain("piso")
     expect(json(stdout).query).toMatchObject({ language: "lucene-v1", timezone: "Europe/Madrid" })
     const legacy = await tg(["searching", "search", "messages", "pis", "--language", "legacy", "--json"], {
       adapter: () => reads,

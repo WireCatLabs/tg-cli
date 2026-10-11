@@ -2,14 +2,14 @@ import { spawnSync } from "node:child_process"
 import { realpathSync } from "node:fs"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import type { FetchLike } from "@wirecat/cli-core/http"
+import type { FetchLike } from "@wirecat/cli-base/http"
 import {
   type Installer,
   installerOf,
   latestVersion,
   runUpdate as runPackageManager,
   updateNotice as sharedNotice,
-} from "@wirecat/cli-core/update"
+} from "@wirecat/cli-base/update"
 import { resolveSettings } from "./app.js"
 import { pathsFor } from "./paths.js"
 import { VERSION } from "./version.js"
@@ -69,7 +69,7 @@ export const updateNotice = (
 
     if (argv.includes("upgrade")) return Promise.resolve(undefined)
     const pretty = !argv.includes("--json") && !argv.includes("--jsonl") && (tty ?? process.stdout.isTTY === true)
-    // cli-core 0.8 names the command `update` in its line; tg's is `upgrade`.
+    // cli-base 0.8 names the command `update` in its line; tg's is `upgrade`.
     return sharedNotice({
       argv,
       packageName: PACKAGE,

@@ -21,7 +21,7 @@ import {
   tl,
   User,
 } from "@mtcute/node"
-import { CliError, isCliError } from "@wirecat/cli-core"
+import { CliError, isCliError } from "@wirecat/cli-base"
 import type { TextSpan } from "@wirecat/cli-messaging"
 import {
   type AccountSession,

@@ -11,7 +11,7 @@ import {
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
-import { CliError, type ErrorCode, isCliError } from "@wirecat/cli-core"
+import { CliError, type ErrorCode, isCliError } from "@wirecat/cli-base"
 
 const { RpcError } = tl
 

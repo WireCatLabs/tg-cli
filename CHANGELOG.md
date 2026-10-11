@@ -3,9 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.51.0 — 12.10.2026
 
 ### What's new
+
+- **`--brief` and `--full` on every command.** `--brief` keeps a found message's reference, chat, time,
+  sender, excerpt and score; `--full` keeps everything.
+- **`tg search all` names who wrote each hit** and how it was found (by words or by meaning).
 
 - **`tg schedule`: run a command or an agent on a timer**, through systemd (Linux), launchd (macOS) or Task
   Scheduler (Windows). `tg schedule command <name> --every 2h -- messages list <chat>` runs a tg command; a read
@@ -15,6 +19,14 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `tg schedule list`, `run` and `remove`.
 - **`tg server install` suggests the command for a daily follow-up review**, and turns nothing on.
 - **`TG_READ_ONLY=1` refuses every write of the process**, above the config file and `--permission`.
+
+### Changed — may break scripts
+
+- **`tg search messages` answers an excerpt, not the whole text.** Each hit carries `excerpt`, about 240
+  characters around the first query word, instead of `text`; `--full` or `tg messages show <ref>` gives the
+  whole message. Null `editedAt`, `replyTo`, `forwardedFrom` and `reactions` are left out of machine output. A
+  script that read `text` from search hits reads `excerpt` or adds `--full`.
+
 
 ## 0.50.0 — 11.10.2026
 

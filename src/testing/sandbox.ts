@@ -8,7 +8,7 @@ import { ARGV_LOG } from "./argv-log.js"
  * **`pnpm test` must not be able to touch anything the owner has** — config, the keyring entry, the
  * Telegram session, or the shared message store. max-cli learnt this on 2026-09-22, when a test run
  * migrated the owner's real cache and lost its history. The same variables also scope the keyring
- * entry (cli-core `isolated`), so a test cannot overwrite the real app credentials either.
+ * entry (cli-base `isolated`), so a test cannot overwrite the real app credentials either.
  */
 const sandbox = mkdtempSync(join(process.platform === "darwin" ? "/tmp" : tmpdir(), "tg-test-"))
 

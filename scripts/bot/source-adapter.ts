@@ -1,4 +1,4 @@
-import type { ApiModel, ApiParameter, ApiSchema, SchemaNode } from "@wirecat/cli-core/codegen"
+import type { ApiModel, ApiParameter, ApiSchema, SchemaNode } from "@wirecat/cli-base/codegen"
 
 interface Field {
   name: string

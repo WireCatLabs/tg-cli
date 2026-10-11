@@ -11,6 +11,6 @@ methods are marked sensitive and must never print their token. Financial mutatio
 removals are guarded as destructive. No method is classified from its name during generation.
 
 Generate and check offline with `pnpm bot:generate` and `pnpm bot:generate:check`.
-Only the source adapter lives here; all generators come from cli-core.
+Only the source adapter lives here; all generators come from cli-base.
 
 The npm package includes `spec/bot/LICENSE` because generated artifacts derive from this snapshot.

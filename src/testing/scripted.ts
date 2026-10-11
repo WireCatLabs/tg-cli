@@ -1,4 +1,4 @@
-import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import type { Chat, Message } from "@wirecat/cli-messaging"
 import type { Adapter, Environment } from "../commands/context.js"
 import { run } from "../program.js"

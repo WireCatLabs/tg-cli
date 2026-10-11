@@ -1,5 +1,5 @@
 import { appendFileSync } from "node:fs"
-import { exitCodeFor, processStreams } from "@wirecat/cli-core"
+import { exitCodeFor, processStreams } from "@wirecat/cli-base"
 import {
   accountCommand,
   attachmentsCommand,

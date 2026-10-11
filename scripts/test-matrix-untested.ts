@@ -335,7 +335,7 @@ export const UNTESTED: Untested[] = [
     command,
     option: "--permission",
     reason:
-      "cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration",
+      "cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration",
   })),
 
   {
@@ -599,13 +599,13 @@ export const UNTESTED: Untested[] = [
     command: "mcp setup",
     option,
     reason:
-      "registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home",
+      "registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home",
   })),
   ...["--confirm-send", "--allow-dangerous", "--allow-send", "--allow-mark-read", "--allow-delete"].map((option) => ({
     command: "mcp doctor",
     option,
     reason:
-      "starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account",
+      "starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account",
   })),
   {
     command: "store fetch",
@@ -767,4 +767,10 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-messaging src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --once is parsed by the same code (0.250.1)",
   },
+  ...["--brief", "--full"].map((option) => ({
+    command: "",
+    option,
+    reason:
+      "cli-messaging src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0)",
+  })),
 ]

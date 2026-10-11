@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { storePath } from "@wirecat/cli-messaging/store"
 import { describe, expect, it } from "vitest"
 import { run } from "./program.js"

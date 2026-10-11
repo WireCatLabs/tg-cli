@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2366 ✅ · 87 ⛔ · 0 ❌** — 475 commands, 1978 options.
+**2366 ✅ · 89 ⛔ · 0 ❌** — 475 commands, 1980 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -866,20 +866,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp config` | `--allow-mark-read` | ✅ |  |
 | `mcp config` | `--allow-delete` | ✅ |  |
 | `mcp setup` |  | ✅ |  |
-| `mcp setup` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration |
-| `mcp setup` | `--confirm-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-dangerous` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-send` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-mark-read` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-delete` | ⛔ | registers an external client's local configuration; cli-core's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration |
+| `mcp setup` | `--confirm-send` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-dangerous` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-send` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-mark-read` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
+| `mcp setup` | `--allow-delete` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp doctor` |  | ✅ |  |
-| `mcp doctor` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-core checks the external child handshake and registration |
-| `mcp doctor` | `--confirm-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-dangerous` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-send` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-mark-read` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-delete` | ⛔ | starts a separate MCP process; cli-core's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--permission` | ⛔ | cli-messaging src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration |
+| `mcp doctor` | `--confirm-send` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-dangerous` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-send` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-mark-read` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
+| `mcp doctor` | `--allow-delete` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
 | `bot auth set` |  | ✅ |  |
 | `bot auth show` |  | ✅ |  |
 | `bot auth remove` |  | ✅ |  |
@@ -2460,6 +2460,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--max-input-bytes` | ✅ |  |
 | *global* | `--max-output-bytes` | ✅ |  |
 | *global* | `--fields` | ✅ |  |
+| *global* | `--brief` | ⛔ | cli-messaging src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
+| *global* | `--full` | ⛔ | cli-messaging src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--dry-run` | ✅ |  |
 | *global* | `--yes` | ✅ |  |
 | *global* | `--record` | ✅ |  |

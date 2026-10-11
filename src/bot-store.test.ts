@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-core"
+import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { BotTokenStore } from "@wirecat/cli-messaging/cli"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"

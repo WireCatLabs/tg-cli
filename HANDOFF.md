@@ -10,7 +10,7 @@ operation per call, one JSON value on stdout when piped, a typed error and a fix
 failure. Everything that is not specific to Telegram lives in the npm package
 [`@wirecat/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
 which `max` ([max-cli](https://github.com/WireCatLabs/max-cli), a MAX messenger CLI) also uses. Both sit
-on [`@wirecat/cli-core`](https://github.com/WireCatLabs/cli-base).
+on [`@wirecat/cli-base`](https://github.com/WireCatLabs/cli-base).
 
 ## 2. Entry points
 
@@ -61,7 +61,7 @@ Read in this order:
 
 ## 4. What will bite
 
-1. **A linked `cli-messaging` brings its own copy of cli-core and commander.** An error from one is
+1. **A linked `cli-messaging` brings its own copy of cli-base and commander.** An error from one is
    not an `instanceof` the other, and TypeScript says `TS2883 … cannot be named`. `run()` recognises
    errors by shape (`isCliFailure`). Use `pnpm pack` + `pnpm add` of the tarball instead of a link.
 2. **mtcute writes to stdout by default** — its log handler and its login prompts. The adapter
@@ -109,7 +109,7 @@ Read in this order:
 19. **A local `tsc --build` can leave `dist` without JavaScript** after `pnpm typecheck` (declarations
     only) and a deleted `dist`, from stale build info. A clean clone builds correctly — which is what
     the release workflow uses. Locally: `rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo` first.
-20. **File edits outside this project, cli-messaging and cli-core are refused by a hook**
+20. **File edits outside this project, cli-messaging and cli-base are refused by a hook**
     (`.claude/hooks/writes-stay-inside.sh`), in every permission mode; `sudo` is denied. Shell
     commands are otherwise free — the sandbox was tried and turned off for the friction it caused
     ([`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.

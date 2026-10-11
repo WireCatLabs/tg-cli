@@ -1,7 +1,7 @@
 import { readFileSync, statSync } from "node:fs"
 import { basename } from "node:path"
-import { CliError } from "@wirecat/cli-core"
-import type { ManifestOperation } from "@wirecat/cli-core/codegen"
+import { CliError } from "@wirecat/cli-base"
+import type { ManifestOperation } from "@wirecat/cli-base/codegen"
 import {
   type ApiCommandInput,
   apiPlainJson,

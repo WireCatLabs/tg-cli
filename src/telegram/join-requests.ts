@@ -1,5 +1,5 @@
 import { type TelegramClient, tl } from "@mtcute/node"
-import { CliError } from "@wirecat/cli-core"
+import { CliError } from "@wirecat/cli-base"
 import type { JoinRequest, Page } from "@wirecat/cli-messaging"
 import { toMember } from "./map.js"
 
