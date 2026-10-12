@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **The skill warns about three mistakes an agent made while testing.** It compared a plain word in one tool with
+  `content:` in another, read `ref` where a search answers `locator` (or `items` where notes answer `hits`), and
+  reported a bug fixed in a newer version; a zsh loop over `$c` passed a command path as one argument.
+
 ## 0.51.0 — 12.10.2026
 
 ### What's new

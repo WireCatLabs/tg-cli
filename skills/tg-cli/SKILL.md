@@ -205,6 +205,16 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 18. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since-time <time>`. `--since-time` takes a time, never a message id.
+19. **A plain word reads what a message says; the text of its files only with `content:`.** Compare like
+    with like: `tg search messages 'content:invoice'` with `memo search messages 'content:invoice'`, never a
+    plain word in one tool with `content:` in the other.
+20. **Each search keeps its `--json` list and references under its own keys.** `search messages` and
+    `search mail`: `items[].locator`; `search all`: `items[].ref` with `kind`; `search notes`: `hits[].ref`.
+    memo's searches answer the same way.
+21. **Before reporting a bug, compare `tg -V` with `npm view @wirecat/tg-cli version`** (memo:
+    `memo --version`, `@wirecat/cli-memo`). An older install may lack the fix. In a zsh loop over command
+    paths, `$c` is not split into words: `tg $c --help` passes `search messages` as one argument; write
+    `${=c}`.
 
 ## The usual path
 
