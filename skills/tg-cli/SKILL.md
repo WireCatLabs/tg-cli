@@ -205,9 +205,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 18. **`tg inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg inbox` (unread) or
     `tg inbox --since-time <time>`. `--since-time` takes a time, never a message id.
-19. **A plain word reads what a message says; the text of its files only with `content:`.** Compare like
-    with like: `tg search messages 'content:invoice'` with `memo search messages 'content:invoice'`, never a
-    plain word in one tool with `content:` in the other.
+19. **`content:` narrows a search to the text of files, `filename:` to their names.** Compare like with
+    like: `tg search messages 'content:invoice'` with `memo search messages 'content:invoice'`, a plain word
+    with a plain word — never a plain word in one tool with `content:` in the other.
 20. **Each search keeps its `--json` list and references under its own keys.** `search messages` and
     `search mail`: `items[].locator`; `search all`: `items[].ref` with `kind`; `search notes`: `hits[].ref`.
     memo's searches answer the same way.
