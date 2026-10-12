@@ -31,6 +31,10 @@ Options:
                               disables)
   --fields <paths>            comma-separated item or object fields: id,text;
                               preserve pagination and operation ids
+  --brief                     found messages and mail as reference, title, time,
+                              sender and excerpt only
+  --full                      found messages and mail with their whole text and
+                              every provider field
   --dry-run                   preview parsed arguments and permissions before
                               running the action
   --yes                       go ahead without the question an ask level puts
@@ -63,6 +67,9 @@ Commands:
   server                      `tg serve` in the background: start, stop,
                               restart, status, logs; install adds a systemd or
                               launchd unit
+  schedule                    run a tg command or an agent later or on a timer
+                              (systemd, launchd, Task Scheduler); an agent
+                              cannot send
   store                       the local store of messages
   conversations               the conversations inside a chat, found in the
                               stored messages by replies, mentions and who wrote
