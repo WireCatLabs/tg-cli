@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`tg default mcp config` and `mcp install` name the profile.** The entry left out a profile named `default`, so
+  its MCP server stopped on its first call, since tg no longer assumes a profile (cli-messaging 0.260.0).
+
 ## 0.52.0 — 13.10.2026
 
 ### What's new
