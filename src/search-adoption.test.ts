@@ -234,7 +234,7 @@ describe("shared search adoption", () => {
       gaps: [{ from: 4, to: 6 }],
       unknown: { older: true, newer: true },
     })
-    const invalid = await invoke(["store", "fetch", "7", "--no-catch-up", "--catch-up-chunks", "1"])
+    const invalid = await invoke(["messages", "sync", "7", "--no-catch-up", "--catch-up-chunks", "1"])
     expect(invalid.code).toBe(2)
     expect(invalid.stderr).toContain("catch-up budgets need")
     const repair = await invoke([
@@ -273,7 +273,7 @@ describe("shared search adoption", () => {
           }),
         )
         for (const argv of [
-          ["store", "fetch", "7", "--catch-up"],
+          ["messages", "sync", "7", "--catch-up"],
           ["store", "gaps", "repair", "19", "--catch-up"],
           ["store", "gaps", "repair", "19", "--catch-up", "--background"],
         ]) {
@@ -281,7 +281,7 @@ describe("shared search adoption", () => {
           expect(result.code, result.stderr).toBe(5)
         }
       }
-      const skipped = await invoke(["store", "fetch", "7", "--no-catch-up"])
+      const skipped = await invoke(["messages", "sync", "7", "--no-catch-up"])
       expect(skipped.code).toBe(2)
       expect(skipped.stderr).toContain("--offline")
     } finally {
@@ -327,8 +327,8 @@ describe("shared search adoption", () => {
     expect(all.code).toBe(2)
     expect(all.stderr).toContain("--offline")
     const fetch = await invoke([
-      "store",
-      "fetch",
+      "messages",
+      "sync",
       "7",
       "--catch-up",
       "--catch-up-chunks",

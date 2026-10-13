@@ -84,23 +84,24 @@ export const setupCommand = () =>
     .addHelpText(
       "after",
       "\nExamples:\n" +
-        "  tg setup                         Guided setup in your local terminal\n" +
-        "  tg setup --agent codex           Install the skill for Codex\n" +
+        "  tg personal setup                Guided setup of profile personal in your local terminal\n" +
+        "  tg personal setup --agent codex  Install the skill for Codex\n" +
         "  tg work setup --agent claude     Set up a separate work profile\n" +
-        "  tg setup --app browser           Get app ID/hash through my.telegram.org\n" +
-        "  tg setup --method phone          Use a phone login instead of QR\n" +
+        "  tg personal setup --app browser  Get app ID/hash through my.telegram.org\n" +
+        "  tg personal setup --method phone Use a phone login instead of QR\n" +
+        "\nThe first word names the profile; every later command names it too.\n" +
         "\nAllow about 5 minutes. App registration and account login are separate steps.\n" +
         "Scan the QR in Telegram: Settings > Devices > Link Desktop Device.\n" +
         "Enter codes, app hashes and passwords only in the terminal.\n" +
         "\nAgents: read `tg skill show` first. First login needs a local terminal.\n" +
         "With stored app keys and no 2FA input, an agent can use:\n" +
-        "  tg setup --qr-file login.png --agent codex --json\n" +
+        "  tg personal setup --qr-file login.png --agent codex --json\n" +
         "The QR image is removed when login ends. Machine mode skips agent installation\n" +
         "unless --agent is given. Existing sessions are checked without another login.\n" +
         "\nSetup checks five chats. Choose a chat and an amount of history before:\n" +
-        "  tg store fetch <chat> --last 100\n" +
+        "  tg personal messages sync <chat> --last 100\n" +
         "\nWindows: use tg.cmd or npm.cmd if PowerShell blocks scripts. Without PATH:\n" +
-        "  npm.cmd exec --yes --package=@wirecat/tg-cli -- tg setup\n",
+        "  npm.cmd exec --yes --package=@wirecat/tg-cli -- tg personal setup\n",
     )
     .addOption(
       new Option("--agent <agent>", "install the skill for this agent; asks at a terminal, otherwise none").choices(
@@ -226,7 +227,7 @@ export const setupCommand = () =>
           instructions: `${command}skill show`,
           inbox: `${command}inbox --limit 5`,
           chats: `${command}chats list --limit 5`,
-          history: `${command}store fetch <chat> --last 100`,
+          history: `${command}messages sync <chat> --last 100`,
           historyStatus: `${command}store status`,
           ...(agent === "none" ? { skill: `${command}skill install`, mcp: `${command}mcp config` } : {}),
         }

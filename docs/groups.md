@@ -14,7 +14,7 @@ this page:
   use it, so they see only what was downloaded.
 - **A task** is something that waits on you, such as a question nobody answered. `tg` opens and
   closes tasks in the local store.
-- **Rules** say what `tg chats moderate` looks for, such as links or flooding, and what it may do.
+- **Rules** say what `tg personal chats moderate` looks for, such as links or flooding, and what it may do.
 - **A member snapshot** is the member list saved on one day. Snapshots over time show who joined
   and who left.
 
@@ -22,16 +22,16 @@ this page:
 
 | Task | Command |
 | --- | --- |
-| Find questions that wait for an answer | `tg review --unanswered` |
-| See who joined, left, was added or removed | `tg chats events` |
-| Sum up a week: decisions, promises, open questions | `tg review --since-time 7d` |
-| Keep a list of what waits on you | `tg tasks list` |
-| Remove spam by your own rules | `tg chats rules set`, `tg chats moderate` |
-| Replace a leaked invite link | `tg chats link reset` |
-| Let people in, or turn them away | `tg chats requests list\|accept\|decline` |
-| See the week's activity and Telegram's own statistics | `tg stats chats show`, `tg stats chats official` |
-| Save the member list every day | `tg chats members fetch --track` |
-| Find members that look like bots or spammers | `tg chats members audit` |
+| Find questions that wait for an answer | `tg personal review --unanswered` |
+| See who joined, left, was added or removed | `tg personal chats events` |
+| Sum up a week: decisions, promises, open questions | `tg personal review --since-time 7d` |
+| Keep a list of what waits on you | `tg personal tasks list` |
+| Remove spam by your own rules | `tg personal chats rules set`, `tg personal chats moderate` |
+| Replace a leaked invite link | `tg personal chats link reset` |
+| Let people in, or turn them away | `tg personal chats requests list\|accept\|decline` |
+| See the week's activity and Telegram's own statistics | `tg personal stats chats show`, `tg personal stats chats official` |
+| Save the member list every day | `tg personal chats members fetch --track` |
+| Find members that look like bots or spammers | `tg personal chats members audit` |
 
 The full list of group commands is [below](#what-there-is). Details of each command are in
 [groups and channels in the usage guide](usage.md#groups-and-channels); every option is in the
@@ -57,7 +57,7 @@ Start with questions that have been waiting for you or the admins.
 **Command:**
 
 ```sh
-tg review --chat "Hiking" --unanswered 4h --json
+tg personal review --chat "Hiking" --unanswered 4h --json
 ```
 
 **Example agent answer:**
@@ -85,7 +85,7 @@ Review joining events. A new account is a reason to check, not proof of spam.
 **Command:**
 
 ```sh
-tg chats events "Hiking" --type join,add --since-time 7d --json
+tg personal chats events "Hiking" --type join,add --since-time 7d --json
 ```
 
 **Example agent answer:**
@@ -110,13 +110,13 @@ Replace an invite link only when you have asked for that change.
 **Replace the link:**
 
 ```sh
-tg chats link reset "Hiking" --json
+tg personal chats link reset "Hiking" --json
 ```
 
 **Restrict member additions:**
 
 ```sh
-tg chats update "Hiking" --only-admins-add on --json
+tg personal chats update "Hiking" --only-admins-add on --json
 ```
 
 **Example agent answer:**
@@ -141,7 +141,7 @@ First see what the rules suggest, without any action.
 **Command:**
 
 ```sh
-tg chats moderate "Hiking" --dry-run --json
+tg personal chats moderate "Hiking" --dry-run --json
 ```
 
 **Example agent answer:**
@@ -167,7 +167,7 @@ Ask for a short recap of decisions, commitments and open questions.
 **Command:**
 
 ```sh
-tg review --chat "Hiking" --since-time 7d --json
+tg personal review --chat "Hiking" --since-time 7d --json
 ```
 
 **Example agent answer:**
@@ -188,7 +188,7 @@ tg review --chat "Hiking" --since-time 7d --json
 No agent is needed for a list of open questions: it is an ordinary command.
 
 ```cron
-0 9,21 * * * tg review --chat "Hiking" --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
+0 9,21 * * * tg personal review --chat "Hiking" --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
 ```
 
 cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot reach the keyring:
@@ -198,28 +198,28 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 
 | Command | What it does |
 |---|---|
-| `tg review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
-| `tg chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
-| `tg chats members list <chat>` | everyone in the group, with their role and when they were last seen |
-| `tg topics list <chat>`, `tg search topics <chat> <text>` | a forum group's topics; search finds them by title |
-| `tg topics show <chat> <id>` | one topic: title, closed or pinned, unread count, last activity |
-| `tg topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
-| `tg topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
-| `tg messages send <chat> <text> --topic <id>`, `tg polls create <chat> <question> <answers> --topic <id>` | send a message or poll into a forum topic |
-| `tg messages forward <chat> <message> --to <forum> --topic <id>` | forward a message into a topic of the `--to` forum |
-| `tg chats inspect <link>` | where an invite or public link leads; joins nothing |
-| `tg chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
-| `tg chats join <link>`, `tg chats leave <chat>` | join by a link, leave |
-| `tg chats update <chat>` | the title, the description, and whether members may pin (`--all-can-pin`) or add people (`--only-admins-add`) |
-| `tg chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
-| `tg chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
-| `tg chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
-| `tg chats link update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
-| `tg chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
-| `tg chats requests list\|accept\|decline <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
-| `tg chats rules show\|set\|unset <chat>` | the group's rules |
-| `tg chats moderate <chat>` | check the group by its rules; does what the rules allow |
-| `tg messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
+| `tg personal review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
+| `tg personal chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
+| `tg personal chats members list <chat>` | everyone in the group, with their role and when they were last seen |
+| `tg personal topics list <chat>`, `tg personal search topics <chat> <text>` | a forum group's topics; search finds them by title |
+| `tg personal topics show <chat> <id>` | one topic: title, closed or pinned, unread count, last activity |
+| `tg personal topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
+| `tg personal topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
+| `tg personal messages send <chat> <text> --topic <id>`, `tg personal polls create <chat> <question> <answers> --topic <id>` | send a message or poll into a forum topic |
+| `tg personal messages forward <chat> <message> --to <forum> --topic <id>` | forward a message into a topic of the `--to` forum |
+| `tg personal chats inspect <link>` | where an invite or public link leads; joins nothing |
+| `tg personal chats create <title> [person...]` | a new group (a supergroup), or a channel with `--channel` |
+| `tg personal chats join <link>`, `tg personal chats leave <chat>` | join by a link, leave |
+| `tg personal chats update <chat>` | the title, the description, and whether members may pin (`--all-can-pin`) or add people (`--only-admins-add`) |
+| `tg personal chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
+| `tg personal chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
+| `tg personal chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
+| `tg personal chats link update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
+| `tg personal chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
+| `tg personal chats requests list\|accept\|decline <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
+| `tg personal chats rules show\|set\|unset <chat>` | the group's rules |
+| `tg personal chats moderate <chat>` | check the group by its rules; does what the rules allow |
+| `tg personal messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
 
 Only the group owner can enable topics. An existing supergroup needs no upgrade. Upgrading a basic
 group gives it a new chat id; the local store keeps older messages under the original id and does not
@@ -228,7 +228,7 @@ merge the two histories.
 In a forum topic, text, photo and file captions and scheduled sends all keep the topic, and an explicit
 reply must belong to that topic. A closed or missing topic is refused before anything is sent. When the
 outcome of a send is unknown, repeat it with the same `--send-id`, chat and topic; for a scheduled send,
-check `tg messages scheduled <chat>` instead of repeating it.
+check `tg personal messages scheduled <chat>` instead of repeating it.
 
 An agent connected over the [MCP server](mcp.md) can run the same commands, as far as the
 profile's permissions allow.
@@ -247,39 +247,39 @@ copies it.
 See what waits on you, oldest first, then only questions and mentions in one group:
 
 ```sh
-tg tasks list --state open
+tg personal tasks list --state open
 ```
 
 ```sh
-tg tasks list --chat "Hiking" --type question,mention
+tg personal tasks list --chat "Hiking" --type question,mention
 ```
 
 Add what the rules cannot see, such as a promise you made, or close a task that needs no answer:
 
 ```sh
-tg tasks add msg:telegram/<you>/<chat>/<message> --type promise
+tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise
 ```
 
 ```sh
-tg tasks close <task> --as dismissed --reason no-reply-needed
+tg personal tasks close <task> --as dismissed --reason no-reply-needed
 ```
 
 Give a task a title, a due date and a date to look at it again, and link the messages and chats it
 belongs to. The next-check date is for you or your agent; tg never reminds anyone:
 
 ```sh
-tg tasks plan <task> --title "Send Anna the contract" --due 2d --check 1d
+tg personal tasks plan <task> --title "Send Anna the contract" --due 2d --check 1d
 ```
 
 ```sh
-tg tasks link <task> msg:telegram/<you>/<chat>/<message> --chat "Hiking"
+tg personal tasks link <task> msg:telegram/<you>/<chat>/<message> --chat "Hiking"
 ```
 
 See what needs a look today: tasks overdue or due soon, chats where someone waits for your answer, and
 chats where you wait for theirs. It reads the local store, not the messages' text:
 
 ```sh
-tg tasks agenda
+tg personal tasks agenda
 ```
 
 `tg skill show follow-ups` prints a daily routine for an AI agent that drafts replies from this list
@@ -288,7 +288,7 @@ and sends nothing.
 See open tasks per chat, the oldest one and the median time to close:
 
 ```sh
-tg stats tasks show
+tg personal stats tasks show
 ```
 
 A closed task stays closed, and a dismissed one never comes back. Only your own answers close a
@@ -297,50 +297,50 @@ gets the same commands.
 
 ## Rules
 
-A group's rules say what `tg chats moderate` looks for and what it may do about it. They live in a
+A group's rules say what `tg personal chats moderate` looks for and what it may do about it. They live in a
 file of this profile, never in Telegram, and nothing watches the group in the background: a rule acts
 only when you run `chats moderate`.
 
 Show the rules. Until your first change, they are the defaults, marked as not saved:
 
 ```sh
-tg chats rules show "Hiking"
+tg personal chats rules show "Hiking"
 ```
 
 Delete a message that has a link:
 
 ```sh
-tg chats rules set "Hiking" links delete
+tg personal chats rules set "Hiking" links delete
 ```
 
 Block these people by id…
 
 ```sh
-tg chats rules set "Hiking" blocked 12345,67890
+tg personal chats rules set "Hiking" blocked 12345,67890
 ```
 
 …and remove them when they write or join:
 
 ```sh
-tg chats rules set "Hiking" blockedPeople remove
+tg personal chats rules set "Hiking" blockedPeople remove
 ```
 
 Delete without asking you first:
 
 ```sh
-tg chats rules set "Hiking" consent.delete allow
+tg personal chats rules set "Hiking" consent.delete allow
 ```
 
 See what the check would do, without doing it:
 
 ```sh
-tg chats moderate "Hiking" --dry-run
+tg personal chats moderate "Hiking" --dry-run
 ```
 
 Check what is new since the last run, and act:
 
 ```sh
-tg chats moderate "Hiking"
+tg personal chats moderate "Hiking"
 ```
 
 | Rule | Default | What it looks for |
@@ -393,7 +393,7 @@ answers, who needs help and whether newcomers stay—open [Statistics](rankings.
 **Command:**
 
 ```sh
-tg stats chats show "Hiking" --since-time 7d --offline --json
+tg personal stats chats show "Hiking" --since-time 7d --offline --json
 ```
 
 **Example agent answer:**
@@ -414,11 +414,11 @@ past member lists.
 ### Telegram's own statistics
 
 ```sh
-tg stats chats official <chat> --json
+tg personal stats chats official <chat> --json
 ```
 
 Telegram computes statistics for admins of large enough supergroups and channels, the same as the Statistics
-screen in its apps. `tg stats chats official` asks for them and prints one JSON object. Telegram picks the
+screen in its apps. `tg personal stats chats official` asks for them and prints one JSON object. Telegram picks the
 period, given as `period`. Each total comes with the value for the period before it.
 
 - A supergroup (`kind: "group"`) has members, messages, viewers and posters, the top posters, admins and
@@ -440,7 +440,7 @@ to the session file; it is never printed.
 
 ### Member snapshots and changes
 
-`tg chats members fetch` reads members into the local store, recording profiles, changes, the day's
+`tg personal chats members fetch` reads members into the local store, recording profiles, changes, the day's
 member count and whether the read was complete. `--budget` caps pages. Nobody is recorded as having
 left after a partial read: that requires reading the whole available list and a known group count
 no greater than the number read. A larger budget cannot bypass Telegram's member-list limits.
@@ -448,11 +448,11 @@ no greater than the number read. A larger budget cannot bypass Telegram's member
 `--track` adds the group to the tracking list. `chats tracking list` shows all tracked groups;
 `show` shows one group's tracking state and daily counts for the last 30 days. `add` starts tracking
 without fetching immediately; `remove` stops daily fetching and keeps the history already recorded.
-While `tg serve` runs, it fetches tracked groups one at a time, starting its first round a minute after
+While `tg personal serve` runs, it fetches tracked groups one at a time, starting its first round a minute after
 connecting, and skips groups already fetched on the current UTC day. Tracking does not start `serve`;
 if it was stopped for several days, the next run records a new snapshot rather than filling missed days.
 
-`tg chats members history` shows recorded joins, leaves and profile changes, oldest first;
+`tg personal chats members history` shows recorded joins, leaves and profile changes, oldest first;
 `--since-time` limits the period. It never asks Telegram. A join uses Telegram's join time when known,
 otherwise the first time the person was seen. A leave is dated at the first complete snapshot without
 them, rather than their exact departure. The first fetch records the initial roster: those people did
@@ -461,7 +461,7 @@ partial reads do not replace it. Without a complete snapshot, this list can be e
 profiles and events have already been recorded.
 Profiles and history stay in the local store alongside messages.
 
-`tg chats members audit` lists members with bot-like signals and reasons; `--budget` caps pages and
+`tg personal chats members audit` lists members with bot-like signals and reasons; `--budget` caps pages and
 `--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means
 the list is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`;
 scores need human review. Telegram supplies bot, scam, fake, deleted, photo, join and inviter metadata
@@ -474,30 +474,30 @@ member's id is sent to those lists. The full check lands in `check` on each of t
 
 ### A weekly report for your group
 
-“Hiking Club” below is a fictional example group. Download its messages with `store fetch` first if
+“Hiking Club” below is a fictional example group. Download its messages with `messages sync` first if
 they are not already stored, then record the current roster and prepare the report:
 
 ```sh
-tg chats members fetch "Hiking Club" --track --json
+tg personal chats members fetch "Hiking Club" --track --json
 ```
 
 ```sh
-tg stats chats show "Hiking Club" --since-time 7d --by day --timezone Europe/Madrid --json
+tg personal stats chats show "Hiking Club" --since-time 7d --by day --timezone Europe/Madrid --json
 ```
 
 ```sh
-tg chats members history "Hiking Club" --since-time 7d --offline --json
+tg personal chats members history "Hiking Club" --since-time 7d --offline --json
 ```
 
 ```sh
-tg chats tracking show "Hiking Club" --offline --json
+tg personal chats tracking show "Hiking Club" --offline --json
 ```
 
 ```sh
-tg chats members audit "Hiking Club" --json
+tg personal chats members audit "Hiking Club" --json
 ```
 
 Ask your agent to report messages, active senders, unanswered questions, membership changes and days
 with member snapshots. Keep `complete`, `more`, `unknown` and gaps between snapshots visible in the
-report. Keep `tg serve` running or repeat member fetches for future reports; the first report cannot
+report. Keep `tg personal serve` running or repeat member fetches for future reports; the first report cannot
 show departures that happened before the first recorded roster.

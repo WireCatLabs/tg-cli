@@ -7,7 +7,7 @@ languages: an English question finds a discussion in Spanish or Russian.
 
 After reading this page you can prepare a chat for topic search, ask questions in your own words, read
 the results, and decide when ordinary word search is the better tool. Topic search uses only the messages
-tg has already saved on this computer, so download the history first: `tg store fetch <chat>`
+tg has already saved on this computer, so download the history first: `tg personal messages sync <chat>`
 ([download a chat's history](archive.md#fetch-a-chats-history)).
 
 Terms used on this page:
@@ -28,18 +28,18 @@ a Telegram group. A conversation here is something tg finds by itself, in any ch
 
 | Task | Command |
 |---|---|
-| Find a discussion by its subject, in one chat or in every prepared chat | `tg search conversations "<question>"` |
-| See the conversations of a chat, newest first | `tg conversations list --chat <chat>` |
-| Read one conversation from start to end | `tg conversations show <id>` |
-| Open the whole conversation a message belongs to | `tg conversations show <chat> <message>` |
-| Find other conversations about the same thing, in every chat | `tg conversations related <chat> <message>` |
-| Limit results to a person, a period or a word | `tg search conversations "<question>" --filter '<query>'` |
-| See what is out of date and catch up | `tg conversations status`, `tg search conversations "<question>" --refresh` |
+| Find a discussion by its subject, in one chat or in every prepared chat | `tg personal search conversations "<question>"` |
+| See the conversations of a chat, newest first | `tg personal conversations list --chat <chat>` |
+| Read one conversation from start to end | `tg personal conversations show <id>` |
+| Open the whole conversation a message belongs to | `tg personal conversations show <chat> <message>` |
+| Find other conversations about the same thing, in every chat | `tg personal conversations related <chat> <message>` |
+| Limit results to a person, a period or a word | `tg personal search conversations "<question>" --filter '<query>'` |
+| See what is out of date and catch up | `tg personal conversations status`, `tg personal search conversations "<question>" --refresh` |
 | Let your own AI agent improve how messages are grouped | `tg skill show link-conversations` |
 
 ## Topic search or word search?
 
-| | [Word search](search.md) (`tg search messages`) | Topic search (`tg search conversations`) |
+| | [Word search](search.md) (`tg personal search messages`) | Topic search (`tg personal search conversations`) |
 |---|---|---|
 | You know | the exact words, a name, a date, a file | only what it was about |
 | It finds | single messages that contain your words | whole conversations about your question |
@@ -65,12 +65,12 @@ Prepare one chat once, then ask as many questions as you like.
 **What happens, step by step:**
 
 ```sh
-tg store fetch "Book club"                       # 1. download the history, if it is not saved yet
-tg conversations build --chat "Book club"        # 2. separate the chat into conversations
-tg models text download e5-small                 # 3. once: download the model, 135 MB, shared with max
-tg conversations embed --chat "Book club"        # 4. compute a vector for each piece
-tg search conversations "where do we meet" --chat "Book club"   # 5. ask
-tg conversations show 91                         # 6. read the conversation that was found
+tg personal messages sync "Book club"              # 1. download the history, if it is not saved yet
+tg personal conversations build --chat "Book club"  # 2. separate the chat into conversations
+tg personal models text download e5-small        # 3. once: download the model, 135 MB, shared with max
+tg personal conversations embed --chat "Book club"  # 4. compute a vector for each piece
+tg personal search conversations "where do we meet" --chat "Book club"  # 5. ask
+tg personal conversations show 91                # 6. read the conversation that was found
 ```
 
 Steps 2 to 4 run on your computer and never ask Telegram. `embed` continues where it stopped if you
@@ -92,7 +92,7 @@ Topic search has three stages. The first two prepare a chat once; the third runs
 
 ### 1. Build: separate the chat into conversations
 
-`tg conversations build` reads the saved messages of a chat, oldest first, and decides for each
+`tg personal conversations build` reads the saved messages of a chat, oldest first, and decides for each
 message which earlier message it continues. It uses no AI and does not ask Telegram. The links come from,
 in this order:
 
@@ -112,7 +112,7 @@ discussions into one. A new build replaces the last one, so take a conversation'
 
 ### 2. Embed: turn each piece into a vector
 
-`tg conversations embed` cuts each conversation into pieces of about 1,200 characters, at message
+`tg personal conversations embed` cuts each conversation into pieces of about 1,200 characters, at message
 boundaries. Each line of a piece is "sender: text". A message longer than a piece is split into
 overlapping parts, so the model reads all of a long message, not only its start. Messages without text
 add nothing. The model then turns each piece into a vector and tg saves it. The text of the piece is not
@@ -120,7 +120,7 @@ saved again; only its vector and a fingerprint that shows when the text changes.
 
 ### 3. Search: by meaning and by words at the same time
 
-`tg search conversations` looks for your question in two ways and joins the results:
+`tg personal search conversations` looks for your question in two ways and joins the results:
 
 - **By meaning.** The question becomes a vector too. tg compares it with the vectors of all pieces and
   ranks each conversation by its closest piece. With the default model `e5-small`, a match by meaning must
@@ -151,7 +151,7 @@ In the terminal each result is one line:
 - the conversation number, when it started and ended, how many messages and people, its first message;
 - `(messages 4185–4192)`: the piece that matched best (or the message, when only words found it), so
   you know where to start reading;
-- the message locator (`msg:…`), which `tg messages show` and `tg messages context` accept;
+- the message locator (`msg:…`), which `tg personal messages show` and `tg personal messages context` accept;
 - `stale` when the text changed after its vector was computed: the score is for the old text.
 
 With `--json`, the answer also has `meaning` (`searched` or `unavailable`), the `model` used and
@@ -160,11 +160,11 @@ were never built. When something limited the search, stderr names the chats and 
 it, for example `conversations embed --chat <chat>`.
 
 ```sh
-tg conversations list --chat "Book club" --since-time 7d
-tg conversations show 91                         # one conversation, oldest first
-tg conversations show "Book club" 204            # the conversation message 204 is in
-tg conversations related "Book club" 204         # other conversations about the same thing, in every chat
-tg messages links "Book club" 204                # why that message is where it is
+tg personal conversations list --chat "Book club" --since-time 7d
+tg personal conversations show 91                # one conversation, oldest first
+tg personal conversations show "Book club" 204   # the conversation message 204 is in
+tg personal conversations related "Book club" 204  # other conversations about the same thing, in every chat
+tg personal messages links "Book club" 204       # why that message is where it is
 ```
 
 `related` uses the vectors `embed` saved and runs no model, so it answers quickly. It is search by
@@ -175,7 +175,7 @@ meaning only.
 **You remember the subject, not the words.**
 
 ```sh
-tg search conversations "who is bringing food to the picnic"
+tg personal search conversations "who is bringing food to the picnic"
 ```
 
 This searches every prepared chat. It can find a conversation where people wrote "I'll take sandwiches"
@@ -184,7 +184,7 @@ and "Bob has the drinks", which word search would miss.
 **The discussion was in another language.**
 
 ```sh
-tg search conversations "renting a flat" --chat "Valencia expats"
+tg personal search conversations "renting a flat" --chat "Valencia expats"
 ```
 
 With the default model, this can find a discussion written in Spanish about a "piso".
@@ -194,33 +194,33 @@ conversation qualifies when at least one of its messages matches the whole filte
 still matched by meaning.
 
 ```sh
-tg search conversations "budget for the trip" --filter 'from:"Alice Synthetic" date:30d'
+tg personal search conversations "budget for the trip" --filter 'from:"Alice Synthetic" date:30d'
 ```
 
 ```sh
-tg search conversations "contract terms" --filter 'has:file' --timezone Europe/Madrid
+tg personal search conversations "contract terms" --filter 'has:file' --timezone Europe/Madrid
 ```
 
 **Start from one message.** You found a message with word search and want everything else on that
 subject:
 
 ```sh
-tg search messages '"deposit back"' --chat "Valencia expats"
-tg conversations related "Valencia expats" 5120
+tg personal search messages '"deposit back"' --chat "Valencia expats"
+tg personal conversations related "Valencia expats" 5120
 ```
 
 **Search your bots' chats too.** By default topic search uses the active account. `--source personal`,
 `bots`, `all` or a messenger name widens it; each result then says which account it came from.
 
 ```sh
-tg search conversations "delivery delayed" --source all
+tg personal search conversations "delivery delayed" --source all
 ```
 
 **Fetch new messages before you ask.** `--sync-first` downloads new messages first, within the chat,
 time and message bounds of message search.
 
 ```sh
-tg search conversations "where do we meet" --chat "Book club" --sync-first
+tg personal search conversations "where do we meet" --chat "Book club" --sync-first
 ```
 
 ## Keep it current
@@ -228,10 +228,10 @@ tg search conversations "where do we meet" --chat "Book club" --sync-first
 New messages reach a conversation only after the next build, and a vector only after the next embed.
 
 ```sh
-tg conversations status                          # what is behind, chat by chat
-tg conversations build                           # every chat that changed, and groups never built
-tg conversations embed                           # every built chat with pieces left
-tg search conversations "renting a flat" --refresh   # catch up first, then search
+tg personal conversations status                 # what is behind, chat by chat
+tg personal conversations build                  # every chat that changed, and groups never built
+tg personal conversations embed                  # every built chat with pieces left
+tg personal search conversations "renting a flat" --refresh  # catch up first, then search
 ```
 
 `status` counts, for each built chat, the messages the build has not seen (new, edited, deleted), the
@@ -240,12 +240,12 @@ pieces whose vector is current, stale or missing, and how many groups were never
 2,000 pieces a run (`--max-chunks`); run them again to go on. They never download a model.
 `--refresh` cannot be combined with `--filter` or `--source`: build and embed the chats you want first.
 
-When the rules change in a new version, `status` and `tg store check` name the chats built with the
+When the rules change in a new version, `status` and `tg personal store check` name the chats built with the
 older rules; build them again.
 
 When a message is deleted, its text leaves the vectors too.
 
-`tg store fetch <chat> --catch-up` can also build and embed a chat right after it downloads it
+`tg personal messages sync <chat> --catch-up` can also build and embed a chat right after it downloads it
 ([download a chat's history](archive.md#fetch-a-chats-history)).
 
 ## Let your AI agent link messages
@@ -255,22 +255,22 @@ Cursor or Gemini CLI) can add them:
 
 ```sh
 tg skill show link-conversations                 # the agent's instructions
-tg conversations batches status --chat "Book club"   # how many messages and batches, how much text
+tg personal conversations batches status --chat "Book club"  # how many messages and batches, how much text
 ```
 
 The agent reads the instructions, tells you how much text it would read and waits for your yes. Then it
-takes the chat a batch at a time (`tg conversations batches next`), decides which earlier message each one
-answers and saves its answer (`tg conversations links add`). The next build uses them: Telegram's own
-replies come first, then the agent's links, then the rules. `tg conversations links clear --chat "Book club"`
+takes the chat a batch at a time (`tg personal conversations batches next`), decides which earlier message each one
+answers and saves its answer (`tg personal conversations links add`). The next build uses them: Telegram's own
+replies come first, then the agent's links, then the rules. `tg personal conversations links clear --chat "Book club"`
 drops the agent's answers; build again afterwards. In this workflow tg itself does not call a model. The
 profile permission `conversations.links` decides whether answers may be saved.
 
 tg can also send the batches to a model service itself. Ordinary `build` uses rules and saved links;
-`tg conversations build --chat <chat> --analyze` sends bounded batches to a configured OpenAI-compatible
+`tg personal conversations build --chat <chat> --analyze` sends bounded batches to a configured OpenAI-compatible
 or Anthropic endpoint. An explicit `--chat` is required. Before the first batch it shows the volume, the
 endpoint and the token limit, and asks for consent. Consent is remembered for that account, chat and
 provider until you revoke it. Defaults are 50 messages per batch (`--size`) and at most 100,000 tokens
-reserved per run (`--max-tokens`); `--yes` grants consent in scripts. `tg conversations consents list`
+reserved per run (`--max-tokens`); `--yes` grants consent in scripts. `tg personal conversations consents list`
 lists consents; `consents revoke --chat <chat>` revokes them. Built-in analysis works only from the
 command line, not over MCP, and keys never go into the settings file.
 
@@ -280,8 +280,8 @@ By default nothing leaves your computer. The model runs here, and a model is dow
 ask:
 
 ```sh
-tg models text list                              # the models, and which are downloaded
-tg models text download embeddinggemma --accept-terms
+tg personal models text list                     # the models, and which are downloaded
+tg personal models text download embeddinggemma --accept-terms
 ```
 
 `e5-small` is the default: small and fast, about 100 languages. `embeddinggemma` finds more but runs
@@ -295,16 +295,16 @@ little over 20 minutes, once. Later runs embed only what changed.
 A service can compute the vectors instead, with your own key:
 
 ```sh
-tg models text key set openai
-tg conversations embed --chat "Book club" --provider openai
-tg search conversations "renting a flat" --provider openai
+tg personal models text key set openai
+tg personal conversations embed --chat "Book club" --provider openai
+tg personal search conversations "renting a flat" --provider openai
 ```
 
 Then the text of the chat's conversations goes to that service, and each search sends your question.
 Before sending anything, `embed` says how many pieces, at most how many tokens and at most what price,
 and waits for your yes (`--yes` in scripts; `--max-tokens` sets a limit). `--base-url` takes any server
 with OpenAI's embeddings API, such as Ollama or LM Studio on your own computer, with `--model` and
-`--dims`. `tg models text key remove openai` forgets the key. Remote embedding settings also apply to
+`--dims`. `tg personal models text key remove openai` forgets the key. Remote embedding settings also apply to
 searches your agent runs over MCP, so its questions go to that service too.
 
 ## Next

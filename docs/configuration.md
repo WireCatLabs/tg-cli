@@ -35,7 +35,7 @@ way to override it, in the [settings reference](configuration-reference.md#the-f
 | `proxy` | a proxy server to reach Telegram through, where it is blocked ([proxy setup](configuration-reference.md#through-a-proxy)) | none |
 | `transcribeWith` | who turns voice messages into text: `auto`, `messenger` or `local` | `auto` |
 | `updateCheck` | once a day, say when a newer `tg` exists | `true` |
-| `defaultProfile` | which profile a command uses when you do not name one | `default` |
+| `defaultProfile` | which profile a command uses when you do not name one | none: a command that uses an account stops and lists the profiles |
 
 The file never holds a secret. It has no place for your session, the app hash, a phone number or a
 proxy password. The session is a file of its own, and the app hash and a proxy password go to your
@@ -58,7 +58,7 @@ added:
 - `defaults` applies to every profile.
 - `profiles.work` applies only to the profile `work` and wins over `defaults`.
 
-So `tg work chats list` shows 50 rows, and `tg chats list` shows 20. Add `--limit 5` to get five
+So `tg work chats list` shows 50 rows, and `tg personal chats list` shows 20. Add `--limit 5` to get five
 for one command. Remove the profile's `limit` and the value from `defaults` applies again.
 
 <details>
@@ -111,7 +111,7 @@ What each part does:
   messages is refused. At most 10 sends an hour. Telegram is reached through a SOCKS5 proxy. Voice
   messages are turned into text on this computer.
 - `personal.defaults`: applies only to commands for personal accounts, never to `tg … bot`.
-  Here, `store fetch` also prepares fetched chats for search.
+  Here, `messages sync` also prepares fetched chats for search.
 - `bot.defaults`: applies only to bot commands (`tg shop bot …`). Bots may read and send, and
   nothing else.
 - `bot.profiles.shop`: the bot `shop` may send 200 messages an hour and may not read what other

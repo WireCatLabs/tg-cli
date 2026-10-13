@@ -30,7 +30,7 @@ skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 
 ```sh
 npm install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
-# The global install puts the skill in .agents and .claude. Then: tg setup
+# The global install puts the skill in .agents and .claude. Then: tg personal setup
 
 pnpm add -g @wirecat/tg-cli
 bun add -g @wirecat/tg-cli
@@ -47,7 +47,7 @@ Check that it works:
 ```sh
 tg --version
 tg --help
-tg doctor        # where its files are, and whether a login exists; connects to nothing
+tg personal doctor  # where its files are, and whether a login exists; connects to nothing
 ```
 
 ## First run
@@ -59,23 +59,23 @@ These work even when the package manager skipped the installation scripts.
 Run setup in a local terminal:
 
 ```sh
-tg setup --agent codex
-tg setup --help              # examples, login choices and Windows instructions
+tg personal setup --agent codex
+tg setup --help     # examples, login choices and Windows instructions
 ```
 
 `--agent` chooses which agent gets the skill: `codex`, `cursor`, `claude`, `gemini`, `all` or
 `none`. Without `--agent`, the command asks at a terminal; `--json` and runs without a terminal
 choose `none`. Allow about five minutes for app registration, login, a check of the first five
 chats and the skill. Downloading chat history is separate and can take longer: choose a chat and
-the amount before you run the suggested `store fetch` command. Setup starts no background service.
+the amount before you run the suggested `messages sync` command. Setup starts no background service.
 
-`tg setup --app browser` opens the manual app registration instructions; `--method phone` logs in
+`tg personal setup --app browser` opens the manual app registration instructions; `--method phone` logs in
 by phone number instead of QR code. The code from my.telegram.org (for the app) and the code for
 the account login are two separate steps. Running setup again checks your existing session and
 does not log in again. If a login was interrupted or Telegram ended the session, finish
-`tg session start` first and then run setup again. See [login, sessions and profiles](sessions.md).
+`tg personal session start` first and then run setup again. See [login, sessions and profiles](sessions.md).
 
-Without a global installation, use `npm exec --yes --package=@wirecat/tg-cli -- tg setup --agent codex`.
+Without a global installation, use `npm exec --yes --package=@wirecat/tg-cli -- tg personal setup --agent codex`.
 Setup then suggests the next commands in the same form.
 
 ### Windows: one install command
@@ -146,10 +146,10 @@ other tools:
   (`inbox/`), background fetch jobs, and the log and lock of `serve`.
 - **the local store** is shared with other messenger tools built on the same library, such as
   [max-cli](https://github.com/WireCatLabs/max-cli). [The local store](archive.md) page describes it.
-- **speech models** are downloaded only when you ask (`tg models audio download`), for
+- **speech models** are downloaded only when you ask (`tg personal models audio download`), for
   `messages transcribe --local`.
 
-`tg doctor` prints the exact paths on this machine.
+`tg personal doctor` prints the exact paths on this machine.
 
 Each directory can be moved with a variable: `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR`,
 `MESSAGING_STORE` (the store file itself) and `CLI_COMMON_CACHE_DIR` (the models).
@@ -177,7 +177,7 @@ A Tab **never connects to Telegram**. With no local store yet, only commands and
 ## Upgrade
 
 **When updating from the old `messages.db`, preserve any local-only data first.** The current store is `wirecat.db`; opening the default store deletes the old `messages.db` and its `-wal`/`-shm` files.
-Before running the new version, close old programs and copy any needed file and companions to another folder. `tg store fetch --all` restores server messages, not old local notes or tags.
+Before running the new version, close old programs and copy any needed file and companions to another folder. `tg personal messages sync --all` restores server messages, not old local notes or tags.
 Login stays ([the store and other versions](archive.md#the-store-and-other-versions)).
 
 ```sh
@@ -208,14 +208,14 @@ Removing the command leaves your data. Log out first, while `tg` is still there.
 an example name of a bot profile; repeat that line for each bot you connected.
 
 ```sh
-tg server uninstall                  # if you installed the background unit; stop it first
-tg session end                       # logs out on Telegram's side and deletes the session file
+tg personal server uninstall         # if you installed the background unit; stop it first
+tg personal session end              # logs out on Telegram's side and deletes the session file
 tg support bot auth remove           # forgets the token of the bot profile "support"
 npm uninstall -g @wirecat/tg-cli
 rm -rf ~/.config/tg-cli ~/.local/share/tg-cli ~/.cache/tg-cli
 ```
 
-`tg session end` does not remove the app id and hash from the keyring. They sit under the service
+`tg personal session end` does not remove the app id and hash from the keyring. They sit under the service
 `tg-cli`; remove that entry with your system's keyring tool if you want them gone.
 
 The local store is shared with other tools. Delete `~/.local/share/cli-messaging/` only if nothing

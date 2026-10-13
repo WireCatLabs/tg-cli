@@ -65,7 +65,9 @@ export const completeGlobalInstall = ({
     )
     note("tg: agent skill installed. Agent: read tg skill show before login; verify the installed skill is loaded.")
   }
-  note("tg: guided account login: tg setup. Allow about five minutes; history downloads are separate.")
+  note(
+    "tg: guided account login: tg personal setup (any profile name in place of personal). Allow about five minutes; history downloads are separate.",
+  )
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

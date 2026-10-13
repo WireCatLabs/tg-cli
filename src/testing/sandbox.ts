@@ -28,7 +28,8 @@ process.env.XDG_CONFIG_HOME = join(sandbox, "xdg")
 delete process.env.TG_API_ID
 delete process.env.TG_API_HASH
 delete process.env.TG_BOT_TOKEN
-delete process.env.TG_PROFILE
+// No profile is assumed; tests run as `default`, and one that means "none named" passes its own env.
+process.env.TG_PROFILE = "default"
 delete process.env.TG_PROFILE_LOCK
 delete process.env.TG_TIMEOUT
 delete process.env.TG_PROXY

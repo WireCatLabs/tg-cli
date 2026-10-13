@@ -104,7 +104,7 @@ describe("search <resource> adoption", () => {
     )
   })
 
-  it("search notes narrows by type, folder, tag and filter, and pages with --offset", async () => {
+  it("search notes narrows by type, source, tag and filter, and pages with --offset", async () => {
     const internal = await invoke([
       "search",
       "notes",
@@ -123,7 +123,8 @@ describe("search <resource> adoption", () => {
     ])
     expect(internal.code).toBe(0)
     expect(internal.answer.hits).toHaveLength(1)
-    const elsewhere = await invoke(["search", "notes", "invoice", "--folder", "fld_none", "--tag", "work"])
-    expect(elsewhere.answer.hits).toHaveLength(0)
+    const elsewhere = await invoke(["search", "notes", "invoice", "--source", "notes:fld_none", "--tag", "work"])
+    expect(elsewhere.code).toBe(2)
+    expect(elsewhere.stderr).toContain("no notes account")
   })
 })

@@ -18,7 +18,7 @@ Terms used on this page:
 - **Send guard**: the checks every send passes — a read-only profile, the list of allowed recipients
   and an hourly limit ([the send guard](security.md#the-send-guard)).
 
-Each command does one thing, prints its answer and exits. Only `tg watch`, `tg serve` and `tg mcp`
+Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp`
 stay running, and each of them says so.
 
 ```sh
@@ -29,18 +29,18 @@ tg [profile] [options] <resource> <action> [arguments]
 
 | Area | What you can do | Start with |
 |---|---|---|
-| Read | chats, messages, one message and its neighbours, forum topics | `tg chats list`, `tg messages list <chat>` |
-| Catch up | other people's unread messages; what you promised and what is open | `tg inbox`, `tg review` |
-| Voice | turn voice messages into text, on this computer | `tg messages transcribe` |
-| Files | download a message's files or a whole chat's | `tg messages download` |
-| People | contacts, a person's profile, a bot check | `tg contacts list`, `tg contacts profile` |
-| Search | messages, files, dates, people; discussions by meaning | `tg search messages`, `tg search conversations` |
-| Send | text, files, voice, replies, scheduled messages | `tg messages send` |
-| Change | edit, forward, pin, delete, react, vote, mark read | `tg messages edit`, `tg reactions add` |
-| Organize | folders | `tg chats folders list` |
-| Groups | members, invite links, join requests, topics, admins | `tg chats members list`, `tg chats link create` |
-| Follow | new messages as they arrive; keep the local store current | `tg watch`, `tg server start` |
-| Check | what a command did; what a profile may do | `tg runs list`, `tg config show` |
+| Read | chats, messages, one message and its neighbours, forum topics | `tg personal chats list`, `tg personal messages list <chat>` |
+| Catch up | other people's unread messages; what you promised and what is open | `tg personal inbox`, `tg personal review` |
+| Voice | turn voice messages into text, on this computer | `tg personal messages transcribe` |
+| Files | download a message's files or a whole chat's | `tg personal messages download` |
+| People | contacts, a person's profile, a bot check | `tg personal contacts list`, `tg personal contacts profile` |
+| Search | messages, files, dates, people; discussions by meaning | `tg personal search messages`, `tg personal search conversations` |
+| Send | text, files, voice, replies, scheduled messages | `tg personal messages send` |
+| Change | edit, forward, pin, delete, react, vote, mark read | `tg personal messages edit`, `tg personal reactions add` |
+| Organize | folders | `tg personal chats folders list` |
+| Groups | members, invite links, join requests, topics, admins | `tg personal chats members list`, `tg personal chats link create` |
+| Follow | new messages as they arrive; keep the local store current | `tg personal watch`, `tg personal server start` |
+| Check | what a command did; what a profile may do | `tg personal runs list`, `tg config show` |
 
 ## Read a chat with your agent
 
@@ -53,7 +53,7 @@ Once your account is connected, ask for a short recap. This task reads messages;
 **Command:**
 
 ```sh
-tg messages list "Book club" --limit 5 --json
+tg personal messages list "Book club" --limit 5 --json
 ```
 
 **Example agent answer:**
@@ -74,20 +74,20 @@ npm install -g @wirecat/tg-cli
 ```
 
 ```sh
-tg setup                  # guided app registration, login and agent skill
+tg personal setup         # guided app registration, login and agent skill
 ```
 
 ```sh
-tg chats list --limit 5   # your newest chats
+tg personal chats list --limit 5  # your newest chats
 ```
 
 ```sh
-tg messages list me       # Saved Messages, the latest 20
+tg personal messages list me  # Saved Messages, the latest 20
 ```
 
 Allow about five minutes for setup. History downloads are separate: choose a chat and an amount
-before `tg store fetch <chat> --last 100`. An agent can read `tg skill show` without logging in;
-`tg setup --agent codex` selects the skill for one agent explicitly. `tg setup --help` explains the
+before `tg personal messages sync <chat> --last 100`. An agent can read `tg skill show` without logging in;
+`tg personal setup --agent codex` selects the skill for one agent explicitly. `tg setup --help` explains the
 flags. Nothing more is needed to read.
 
 To discover the arguments for a task, use `tg commands search messages --json` for one command
@@ -96,24 +96,24 @@ Inspect each command path in a separate call; `tg commands --json` returns the w
 
 ## Log in
 
-`tg setup` is the first-run command. It defaults to automatic app registration and QR login;
+`tg personal setup` is the first-run command. It defaults to automatic app registration and QR login;
 `--app browser` and `--method phone` choose the alternatives. For login alone, or to finish an
 interrupted or expired login, use:
 
 ```sh
-tg session start                        # QR code: Settings → Devices → Link Desktop Device
+tg personal session start               # QR code: Settings → Devices → Link Desktop Device
 ```
 
 ```sh
-tg session start phone                  # phone number, the code Telegram sends, your 2FA password
+tg personal session start phone         # phone number, the code Telegram sends, your 2FA password
 ```
 
 ```sh
-tg session start phone --sms            # the same, asking for the code by SMS instead of in the app
+tg personal session start phone --sms   # the same, asking for the code by SMS instead of in the app
 ```
 
 ```sh
-tg session start --qr-file login.png    # the QR code as a picture, for an agent to show you
+tg personal session start --qr-file login.png  # the QR code as a picture, for an agent to show you
 ```
 
 The first login also asks for your own Telegram app from my.telegram.org; `--app auto` fills in the
@@ -126,11 +126,11 @@ to every process on the machine in `ps`, and stays in your shell history.
 For CI, `TG_API_ID` and `TG_API_HASH` give the app without the keyring; they win over it.
 
 ```sh
-tg account show                # who this profile is logged in as; the phone as its last four digits
+tg personal account show       # who this profile is logged in as; the phone as its last four digits
 ```
 
 ```sh
-tg account show --show-phone   # the whole phone number
+tg personal account show --show-phone  # the whole phone number
 ```
 
 ```sh
@@ -138,11 +138,11 @@ tg account list                # every profile on this computer and the account 
 ```
 
 ```sh
-tg account sessions list       # every device and app logged in to the account; ends nothing
+tg personal account sessions list  # every device and app logged in to the account; ends nothing
 ```
 
 ```sh
-tg session end                 # log out on Telegram's side, and delete the session here
+tg personal session end        # log out on Telegram's side, and delete the session here
 ```
 
 `session end` ends the session on Telegram's side too: the device disappears from the app's list.
@@ -153,7 +153,7 @@ To end a session from elsewhere, use the app: Settings → Devices.
 Several accounts live side by side. The profile is the first word, not an option:
 
 ```sh
-tg chats list             # profile "default"
+tg personal chats list    # profile "personal"
 ```
 
 ```sh
@@ -189,24 +189,24 @@ A person (`<person>`, in `contacts show`) is an id, an `@username` or part of th
 ## Reading
 
 **Reading marks nothing read.** No command below shows the other side that you looked. Only
-`tg chats mark-read` and `tg messages list --mark-read` do ([below](#marking-a-chat-read)).
+`tg personal chats mark-read` and `tg personal messages list --mark-read` do ([below](#marking-a-chat-read)).
 
 ### Chats
 
 ```sh
-tg chats list                              # newest first, archived chats included
+tg personal chats list                     # newest first, archived chats included
 ```
 
 ```sh
-tg chats list --unread --kind group        # only groups with unread messages
+tg personal chats list --unread --kind group  # only groups with unread messages
 ```
 
 ```sh
-tg chats list --search book                # titles containing "book"; at least 3 characters
+tg personal chats list --search book       # titles containing "book"; at least 3 characters
 ```
 
 ```sh
-tg chats show "Book club"                  # kind, unread count, last message, who is in it
+tg personal chats show "Book club"         # kind, unread count, last message, who is in it
 ```
 
 `--kind` is one of `dialog` (one-to-one), `group`, `channel` or `saved`. The filters look at
@@ -215,27 +215,27 @@ every returned chat. Groups and channels have [their own section](#groups-and-ch
 ### Messages
 
 ```sh
-tg messages list "Book club"                    # the latest 20, oldest first
+tg personal messages list "Book club"           # the latest 20, oldest first
 ```
 
 ```sh
-tg messages list "Book club" --limit 50
+tg personal messages list "Book club" --limit 50
 ```
 
 ```sh
-tg messages list "Hiking" --topic 12            # one forum topic; topics list shows the ids
+tg personal messages list "Hiking" --topic 12   # one forum topic; topics list shows the ids
 ```
 
 ```sh
-tg messages show "Book club" 4242               # one message
+tg personal messages show "Book club" 4242      # one message
 ```
 
 ```sh
-tg messages context "Book club" 4242            # it, and 5 messages either side
+tg personal messages context "Book club" 4242   # it, and 5 messages either side
 ```
 
 ```sh
-tg messages context "Book club" 4242 --before-n 2 --after-n 10
+tg personal messages context "Book club" 4242 --before-n 2 --after-n 10
 ```
 
 In `context`, the message you asked for is marked `◀` in the terminal and `"anchor": true` in JSON.
@@ -246,7 +246,7 @@ refused: Telegram gives its messages no topic id, so read the whole chat instead
 
 ### Message links
 
-`tg messages link <chat> <message>` or `tg messages link <msg:locator>` returns
+`tg personal messages link <chat> <message>` or `tg personal messages link <msg:locator>` returns
 `{ locator, url, access, reason }`. Channel and supergroup permalinks can be public or restricted;
 a link grants no membership. Dialogs, basic groups and Saved Messages return a locator. Offline
 validates the stored target and returns no permalink. A locator for another account is refused.
@@ -256,19 +256,19 @@ This singular command differs from `messages links`, which explains conversation
 ### What needs an answer
 
 ```sh
-tg inbox                     # other people's unread messages, in every chat
+tg personal inbox            # other people's unread messages, in every chat
 ```
 
 ```sh
-tg inbox --since-time 2h     # everything that came in during the last two hours
+tg personal inbox --since-time 2h  # everything that came in during the last two hours
 ```
 
 ```sh
-tg inbox --new               # what arrived since the last --new — for scheduled runs
+tg personal inbox --new      # what arrived since the last --new — for scheduled runs
 ```
 
 ```sh
-tg inbox --new --jsonl       # the same for a script: one message per line
+tg personal inbox --new --jsonl  # the same for a script: one message per line
 ```
 
 `inbox` shows other people's messages, never yours, each with its chat. It leaves out muted and
@@ -287,15 +287,15 @@ how to read the rest.
 ### Who owes what: `review`
 
 ```sh
-tg review                                  # the last 3 days
+tg personal review                         # the last 3 days
 ```
 
 ```sh
-tg review --since-time 2026-09-23T09:00    # from where the last review ended
+tg personal review --since-time 2026-09-23T09:00  # from where the last review ended
 ```
 
 ```sh
-tg review --chat "Book club" --json
+tg personal review --chat "Book club" --json
 ```
 
 Every message — yours and other people's — in every chat where something happened since `--since-time`.
@@ -310,11 +310,11 @@ move the boundary. It reads at most 20 chats in one run.
 #### Unanswered questions
 
 ```sh
-tg review --unanswered                     # questions nobody answered in 24 hours
+tg personal review --unanswered            # questions nobody answered in 24 hours
 ```
 
 ```sh
-tg review --chat "Neighbours" --unanswered 4h
+tg personal review --chat "Neighbours" --unanswered 4h
 ```
 
 `--unanswered [hours]` keeps only questions waiting for you or for a group's admins. A question is a
@@ -331,27 +331,27 @@ questions. Keep the previous boundary until `complete` is true.
 ### Voice messages
 
 ```sh
-tg messages transcribe "Book club" 4242          # by Telegram where it can, else a model here
+tg personal messages transcribe "Book club" 4242  # by Telegram where it can, else a model here
 ```
 
 ```sh
-tg messages transcribe "Book club" 4242 --local  # only the model on this machine
+tg personal messages transcribe "Book club" 4242 --local  # only the model on this machine
 ```
 
 ```sh
-tg messages list "Book club" --transcribe        # every voice message shown that has no text yet
+tg personal messages list "Book club" --transcribe  # every voice message shown that has no text yet
 ```
 
 ```sh
-tg inbox --transcribe
+tg personal inbox --transcribe
 ```
 
 ```sh
-tg review --transcribe
+tg personal review --transcribe
 ```
 
 ```sh
-tg messages list "Book club" --transcribe --model gigaam-v3
+tg personal messages list "Book club" --transcribe --model gigaam-v3
 ```
 
 Local transcription requires a complete mono or stereo Ogg Opus recording without a fixed
@@ -362,11 +362,11 @@ a model on this machine does the work, and the recording never leaves the comput
 downloaded once, and only when you ask:
 
 ```sh
-tg models audio list                   # the models, which is downloaded, which is the default
+tg personal models audio list          # the models, which is downloaded, which is the default
 ```
 
 ```sh
-tg models audio download parakeet-v3   # once, checked against the sha256 this version expects
+tg personal models audio download parakeet-v3  # once, checked against the sha256 this version expects
 ```
 
 | Model | Languages | Size |
@@ -384,11 +384,11 @@ take minutes.
 ### Files
 
 ```sh
-tg messages download "Book club" 4242 --output-dir ~/Downloads   # one message's files
+tg personal messages download "Book club" 4242 --output-dir ~/Downloads  # one message's files
 ```
 
 ```sh
-tg messages download "Book club" --all --output-dir ~/tg-files   # every file of the chat, newest first
+tg personal messages download "Book club" --all --output-dir ~/tg-files  # every file of the chat, newest first
 ```
 
 Photos, files, videos and voice notes are saved; the folder is created if it is missing. A file
@@ -400,35 +400,35 @@ readable only by you. Sending files, formats and searchable text: [file attachme
 ### People
 
 ```sh
-tg contacts list                       # people you have a one-to-one chat with, newest first
+tg personal contacts list              # people you have a one-to-one chat with, newest first
 ```
 
 ```sh
-tg contacts list --order name --search ann
+tg personal contacts list --order name --search ann
 ```
 
 ```sh
-tg contacts show @example_user         # their bio and the chats you share
+tg personal contacts show @example_user  # their bio and the chats you share
 ```
 
 ```sh
-tg contacts lookup                     # who has a phone number — asks for it, or reads it from stdin
+tg personal contacts lookup            # who has a phone number — asks for it, or reads it from stdin
 ```
 
 ```sh
-tg contacts sync                       # your whole Telegram contact list into the local store
+tg personal contacts sync              # your whole Telegram contact list into the local store
 ```
 
 ```sh
-tg contacts profile @example_user      # flags, last seen, registered, messages per shared chat
+tg personal contacts profile @example_user  # flags, last seen, registered, messages per shared chat
 ```
 
 ```sh
-tg contacts context @example_user --chat "Book club"   # their latest messages there
+tg personal contacts context @example_user --chat "Book club"  # their latest messages there
 ```
 
 ```sh
-tg contacts check @example_user        # does the account look like a bot or a spammer
+tg personal contacts check @example_user  # does the account look like a bot or a spammer
 ```
 
 `contacts list` is the people you have a one-to-one chat with. `contacts sync` brings in the rest of
@@ -439,35 +439,35 @@ where: [people](people.md).
 Changing the address book and your profile:
 
 ```sh
-tg contacts add @example_user          # under the name they show
+tg personal contacts add @example_user  # under the name they show
 ```
 
 ```sh
-tg contacts rename @example_user Ann "from work"   # a name only you see
+tg personal contacts rename @example_user Ann "from work"  # a name only you see
 ```
 
 ```sh
-tg contacts remove @example_user       # the chat stays
+tg personal contacts remove @example_user  # the chat stays
 ```
 
 ```sh
-tg contacts block @example_user        # they need not be a contact
+tg personal contacts block @example_user  # they need not be a contact
 ```
 
 ```sh
-tg contacts unblock @example_user
+tg personal contacts unblock @example_user
 ```
 
 ```sh
-tg contacts import people.txt          # one "number, name" per line; never numbers as arguments
+tg personal contacts import people.txt  # one "number, name" per line; never numbers as arguments
 ```
 
 ```sh
-tg account update --first-name Ann --description "about me" --photo me.jpg
+tg personal account update --first-name Ann --description "about me" --photo me.jpg
 ```
 
 ```sh
-tg account sessions end --others       # logs out every other device, your phone too; asks first
+tg personal account sessions end --others  # logs out every other device, your phone too; asks first
 ```
 
 `contacts import` answers how many it sent and who Telegram knew, never a number. `account sessions
@@ -479,15 +479,15 @@ A list shows `limit` rows (20 by default). `chats list`, `contacts list`, `chats
 `topics` take `--page` and `--all`:
 
 ```sh
-tg contacts list --limit 5             # five a page
+tg personal contacts list --limit 5    # five a page
 ```
 
 ```sh
-tg contacts list --limit 5 --page 2    # the sixth to the tenth
+tg personal contacts list --limit 5 --page 2  # the sixth to the tenth
 ```
 
 ```sh
-tg contacts list --all                 # every row, no paging
+tg personal contacts list --all        # every row, no paging
 ```
 
 ⚠ **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
@@ -497,23 +497,23 @@ that arrives between page one and page two moves someone across the border.
 page exactly:
 
 ```sh
-tg messages list "Book club" --before-id 4242   # older than message 4242
+tg personal messages list "Book club" --before-id 4242  # older than message 4242
 ```
 
 ```sh
-tg messages list "Book club" --after-id 4242    # newer than 4242, oldest first
+tg personal messages list "Book club" --after-id 4242  # newer than 4242, oldest first
 ```
 
 ```sh
-tg messages list "Book club" --after-time 2h    # what came in during the last two hours
+tg personal messages list "Book club" --after-time 2h  # what came in during the last two hours
 ```
 
 ```sh
-tg messages list "Book club" --after-time 2026-09-20T09:00
+tg personal messages list "Book club" --after-time 2026-09-20T09:00
 ```
 
 ```sh
-tg messages list "Book club" --before-time 1d   # what came before this time yesterday
+tg personal messages list "Book club" --before-time 1d  # what came before this time yesterday
 ```
 
 In the terminal, the line that names the next page goes to stderr. `--before-id` and `--after-id` take
@@ -524,27 +524,27 @@ the message.
 ### Find a chat, then write to it
 
 ```sh
-tg chats list --search book --kind group     # groups with "book" in the title
+tg personal chats list --search book --kind group  # groups with "book" in the title
 ```
 
 ```sh
-tg contacts list --search ann                # people by name or @username
+tg personal contacts list --search ann       # people by name or @username
 ```
 
 ```sh
-tg search all "contract"                     # messages, mail and notes this machine has kept
+tg personal search all "contract"            # messages, mail and notes this machine has kept
 ```
 
 ```sh
-tg search messages "contract"                # the text of every message this machine has kept
+tg personal search messages "contract"       # the text of every message this machine has kept
 ```
 
 ```sh
-tg search messages "contract" --chat "Book club"
+tg personal search messages "contract" --chat "Book club"
 ```
 
 ```sh
-tg search messages "invoice.*(march|april)" --regex
+tg personal search messages "invoice.*(march|april)" --regex
 ```
 
 Chat and contact searches need **at least three characters**. `search messages` uses the
@@ -560,26 +560,26 @@ chat, use its id.
 the text are already in the line you typed. Every send goes through the send guard: a read-only
 profile, the profile's `allow` list, the list of allowed recipients and the hourly limit
 ([the send guard](security.md#the-send-guard)). Every attempt is logged, never its text:
-`tg sends list`.
+`tg personal sends list`.
 
 ```sh
-tg messages send me "a note to myself"
+tg personal messages send me "a note to myself"
 ```
 
 ```sh
-tg messages send "Book club" "See you at 7" --silent       # no notification
+tg personal messages send "Book club" "See you at 7" --silent  # no notification
 ```
 
 ```sh
-tg messages send "Book club" "a link, no card" --no-preview
+tg personal messages send "Book club" "a link, no card" --no-preview
 ```
 
 ```sh
-tg messages send "Book club" "**Bold** and _italic_" --md  # Telegram Markdown
+tg personal messages send "Book club" "**Bold** and _italic_" --md  # Telegram Markdown
 ```
 
 ```sh
-tg messages send "Book club" "<b>Bold</b> and <i>italic</i>" --html
+tg personal messages send "Book club" "<b>Bold</b> and <i>italic</i>" --html
 ```
 
 `--md` uses Telegram's formatter: `**bold**` or `*bold*`, `_italic_`, `__underline__`,
@@ -602,22 +602,22 @@ Leave out the text and it is read from stdin. That is the only way to send sever
 keeps the text out of `ps` and your shell history:
 
 ```sh
-printf 'first line\n\nthird line' | tg messages send me
-tg messages send "Book club" < note.txt
+printf 'first line\n\nthird line' | tg personal messages send me
+tg personal messages send "Book club" < note.txt
 ```
 
 ### Sending later
 
 ```sh
-tg messages send "Book club" "Tomorrow" --at-time 2026-10-01T09:00   # local time
+tg personal messages send "Book club" "Tomorrow" --at-time 2026-10-01T09:00  # local time
 ```
 
 ```sh
-tg messages send "Book club" "In two hours" --at-time 2h        # or 30m, 1d from now
+tg personal messages send "Book club" "In two hours" --at-time 2h  # or 30m, 1d from now
 ```
 
 ```sh
-tg messages scheduled "Book club"                               # what waits to be sent there
+tg personal messages scheduled "Book club"                      # what waits to be sent there
 ```
 
 `--at-time` hands the message to Telegram, which sends it even with this machine off. The time is rounded
@@ -628,27 +628,27 @@ does not.
 ### Files, photos and voice messages
 
 ```sh
-tg messages send "Book club" "The agenda" --file agenda.pdf   # byte for byte; the text is the caption
+tg personal messages send "Book club" "The agenda" --file agenda.pdf  # byte for byte; the text is the caption
 ```
 
 ```sh
-tg messages send "Book club" --photo picture.jpg              # recompressed by Telegram
+tg personal messages send "Book club" --photo picture.jpg     # recompressed by Telegram
 ```
 
 ```sh
-tg messages send "Book club" --file trip.mp4                  # a video plays in the chat
+tg personal messages send "Book club" --file trip.mp4         # a video plays in the chat
 ```
 
 ```sh
-tg messages send "Book club" --file trip.mp4 --as-file        # the same video as a file to download
+tg personal messages send "Book club" --file trip.mp4 --as-file  # the same video as a file to download
 ```
 
 ```sh
-tg messages send "Book club" --voice note.ogg                 # a voice message, alone, with no text
+tg personal messages send "Book club" --voice note.ogg        # a voice message, alone, with no text
 ```
 
 ```sh
-tg messages send "Book club" --file 3f9a.pdf --filename "Report Q3.pdf"   # the name others see
+tg personal messages send "Book club" --file 3f9a.pdf --filename "Report Q3.pdf"  # the name others see
 ```
 
 `--photo` takes a `.jpg`, `.png` or `.webp`. A `.mp4` or `.mov` given with `--file` goes as a video
@@ -665,7 +665,7 @@ search inside files: [file attachments](attachments.md).
 ### Replying
 
 ```sh
-tg messages send "Book club" "Agreed" --reply-to 4242
+tg personal messages send "Book club" "Agreed" --reply-to 4242
 ```
 
 A reply is a send, so every send option works with it.
@@ -673,43 +673,43 @@ A reply is a send, so every send option works with it.
 ### Reactions and polls
 
 ```sh
-tg reactions add "Book club" 4242 👍       # replaces the reaction you had
+tg personal reactions add "Book club" 4242 👍  # replaces the reaction you had
 ```
 
 ```sh
-tg reactions remove "Book club" 4242
+tg personal reactions remove "Book club" 4242
 ```
 
 ```sh
-tg polls show "Book club" 4250             # the poll and its answer ids
+tg personal polls show "Book club" 4250    # the poll and its answer ids
 ```
 
 ```sh
-tg polls voters "Book club" 4250 --answer <answer id>   # who chose it; not in an anonymous poll
+tg personal polls voters "Book club" 4250 --answer <answer id>  # who chose it; not in an anonymous poll
 ```
 
 ```sh
-tg polls vote "Book club" 4250 <answer id>
+tg personal polls vote "Book club" 4250 <answer id>
 ```
 
 ```sh
-tg polls vote "Book club" 4250 --retract
+tg personal polls vote "Book club" 4250 --retract
 ```
 
 ```sh
-tg polls create "Book club" "Which day?" Monday Tuesday --anonymous
+tg personal polls create "Book club" "Which day?" Monday Tuesday --anonymous
 ```
 
 ```sh
-tg polls create "Book club" "Pizza now?" yes no --close-time 5m   # closes by itself; 5s to 10m
+tg personal polls create "Book club" "Pizza now?" yes no --close-time 5m  # closes by itself; 5s to 10m
 ```
 
 ```sh
-tg polls close "Book club" 4250            # your own poll; it cannot be reopened
+tg personal polls close "Book club" 4250   # your own poll; it cannot be reopened
 ```
 
 ```sh
-tg polls create "Book club" "2+2?" 3 4 5 --quiz --correct 2 --solution "Four."   # a quiz; a vote is final
+tg personal polls create "Book club" "2+2?" 3 4 5 --quiz --correct 2 --solution "Four."  # a quiz; a vote is final
 ```
 
 When you read a chat, reactions show under a message — `👍 3  🔥 1  (you: 🔥)`. A vote in a public poll
@@ -722,31 +722,31 @@ poll someone else made.
 ### Editing, forwarding, pinning, deleting
 
 ```sh
-tg messages edit "Book club" 4242 "the corrected text"      # your own message; --md or --html as in a send
+tg personal messages edit "Book club" 4242 "the corrected text"  # your own message; --md or --html as in a send
 ```
 
 ```sh
-tg messages forward "Book club" 4242 --to me                # checked against the chat it goes to
+tg personal messages forward "Book club" 4242 --to me       # checked against the chat it goes to
 ```
 
 ```sh
-tg messages forward "Book club" 4242 --to "Hiking" --topic 12   # into one topic of a forum
+tg personal messages forward "Book club" 4242 --to "Hiking" --topic 12  # into one topic of a forum
 ```
 
 ```sh
-tg messages pin "Book club" 4242                            # quiet unless --notify
+tg personal messages pin "Book club" 4242                   # quiet unless --notify
 ```
 
 ```sh
-tg messages unpin "Book club" 4242
+tg personal messages unpin "Book club" 4242
 ```
 
 ```sh
-tg messages delete me 4242 4243 --allow-dangerous           # at most 10, for you only
+tg personal messages delete me 4242 4243 --allow-dangerous  # at most 10, for you only
 ```
 
 ```sh
-tg messages delete me 4242 --allow-dangerous --for-everyone
+tg personal messages delete me 4242 --allow-dangerous --for-everyone
 ```
 
 An edit reaches people who may have read the old text already. A forward is a new message: it goes
@@ -763,11 +763,11 @@ Exit code `14` means the connection broke after the message left: **it may have 
 carries a `--send-id`. Repeat with it, and Telegram drops the second copy:
 
 ```sh
-tg messages send "Book club" "See you at 7" --send-id <id from the error>
+tg personal messages send "Book club" "See you at 7" --send-id <id from the error>
 ```
 
 ```sh
-tg messages forward "Book club" 4242 --to me --send-id <id from the error>
+tg personal messages forward "Book club" 4242 --to me --send-id <id from the error>
 ```
 
 A forward and a poll carry one too. A repeat without it is a second message to a person.
@@ -775,25 +775,25 @@ A file is uploaded before the message is sent: tg tries a dropped upload three t
 fails the error says nothing was sent — that one you can simply run again.
 Other writes — pin, react, mark read, delete, vote, folders, contacts — end in exit `14` the same way
 when Telegram does not answer; the message says whether repeating is safe. A folder creation is not:
-look in `tg chats folders list` first, or you may get two. A message sent with `--at-time` is never repeated:
-look in `tg messages scheduled <chat>` instead.
+look in `tg personal chats folders list` first, or you may get two. A message sent with `--at-time` is never repeated:
+look in `tg personal messages scheduled <chat>` instead.
 
 ### Marking a chat read
 
 ```sh
-tg chats mark-read "Book club"               # up to the newest message
+tg personal chats mark-read "Book club"      # up to the newest message
 ```
 
 ```sh
-tg chats mark-read "Book club" --until 4242  # only up to this one
+tg personal chats mark-read "Book club" --until 4242  # only up to this one
 ```
 
 ```sh
-tg chats mark-read "Hiking" --topic 12       # only this forum topic
+tg personal chats mark-read "Hiking" --topic 12  # only this forum topic
 ```
 
 ```sh
-tg messages list "Book club" --mark-read     # read it, and mark it read up to the newest shown
+tg personal messages list "Book club" --mark-read  # read it, and mark it read up to the newest shown
 ```
 
 The other side sees that you read it. It goes through the guard as the action `read`, and does not
@@ -802,43 +802,43 @@ count toward the hourly limit.
 ### Folders
 
 ```sh
-tg chats folders list                              # your folders, in the order the app shows them
+tg personal chats folders list                     # your folders, in the order the app shows them
 ```
 
 ```sh
-tg chats folders show "Trips"                      # one folder, with the names of its chats
+tg personal chats folders show "Trips"             # one folder, with the names of its chats
 ```
 
 ```sh
-tg chats folders create "Trips" --chat "Hiking" --chat @kate
+tg personal chats folders create "Trips" --chat "Hiking" --chat @kate
 ```
 
 ```sh
-tg chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
+tg personal chats folders update "Trips" --title "Travel" --add "Climbing" --remove @kate
 ```
 
 ```sh
-tg chats folders delete "Travel"                   # the chats stay
+tg personal chats folders delete "Travel"          # the chats stay
 ```
 
 ```sh
-tg chats folders order "Travel" "Work"             # these first; the rest keep their order after them
+tg personal chats folders order "Travel" "Work"    # these first; the rest keep their order after them
 ```
 
 ```sh
-tg chats folders join https://t.me/addlist/AbCdEf  # a folder someone shared: joins every chat in it
+tg personal chats folders join https://t.me/addlist/AbCdEf  # a folder someone shared: joins every chat in it
 ```
 
 ```sh
-tg chats folders create "Inbox" --include contacts,groups --skip muted,archived --emoji 📥
+tg personal chats folders create "Inbox" --include contacts,groups --skip muted,archived --emoji 📥
 ```
 
 ```sh
-tg chats folders update "Inbox" --exclude-chat "Noisy group" --pin @kate
+tg personal chats folders update "Inbox" --exclude-chat "Noisy group" --pin @kate
 ```
 
 ```sh
-tg chats folders update "Inbox" --include none     # no kinds any more; only the chats named in it
+tg personal chats folders update "Inbox" --include none  # no kinds any more; only the chats named in it
 ```
 
 A folder can take every chat of a kind by itself: `--include` with `contacts`, `non-contacts`,
@@ -851,20 +851,20 @@ kept it.
 
 A folder is named by its id or its title exactly. Only you see your folders; each change still goes
 through the guard, as an `account` change. `join` is different: the people in those chats see that
-you joined, as with `tg chats join`. "All chats" keeps its place when you `order`.
+you joined, as with `tg personal chats join`. "All chats" keeps its place when you `order`.
 
 ### Channel comments
 
 ```sh
-tg messages comments "Rozetked" 27644              # the comments under post 27644, oldest first
+tg personal messages comments "Rozetked" 27644     # the comments under post 27644, oldest first
 ```
 
 ```sh
-tg messages comments "Rozetked" 27644 --before-id 3732413
+tg personal messages comments "Rozetked" 27644 --before-id 3732413
 ```
 
 ```sh
-tg messages send "My channel" "Thanks!" --comment-to 120
+tg personal messages send "My channel" "Thanks!" --comment-to 120
 ```
 
 Comments live in the channel's discussion group: the answer names it as `discussion`, and a comment is a
@@ -876,16 +876,16 @@ has no discussion group, or that is closed to comments, ends in exit `6`.
 In a group where you may post as one of your channels, list who you can be, then pick one:
 
 ```sh
-tg chats send-as "Book club"
+tg personal chats send-as "Book club"
 ```
 
 ```sh
-tg messages send "Book club" "Meeting moved to 8" --send-as <id from the list>
+tg personal messages send "Book club" "Meeting moved to 8" --send-as <id from the list>
 ```
 
 The list always has you, and `default` marks the group's saved choice; reading it changes nothing.
-An id not in the list is refused. `--send-as` works with files, `tg messages forward` and
-`tg polls create` too — for a forward, the list is the one of the `--to` chat. To repeat an unknown
+An id not in the list is refused. `--send-as` works with files, `tg personal messages forward` and
+`tg personal polls create` too — for a forward, the list is the one of the `--to` chat. To repeat an unknown
 outcome, give the same `--send-as` with the `--send-id`.
 
 A group can have a channel saved as its default sender — Telegram does this for the discussion group of your
@@ -903,35 +903,35 @@ Everything for a group you run — moderation rules, checks, the full list of se
 [groups you run](groups.md).
 
 ```sh
-tg chats inspect https://t.me/+AbCdEf              # where an invite or public link leads; does not join
+tg personal chats inspect https://t.me/+AbCdEf     # where an invite or public link leads; does not join
 ```
 
 ```sh
-tg chats members list "Hiking" --all               # everyone, with their role and when last seen
+tg personal chats members list "Hiking" --all      # everyone, with their role and when last seen
 ```
 
 ```sh
-tg chats events "Hiking"                           # who joined, left, was added or removed — 7 days
+tg personal chats events "Hiking"                  # who joined, left, was added or removed — 7 days
 ```
 
 ```sh
-tg chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
+tg personal chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
 ```
 
 ```sh
-tg topics list "Hiking"                            # a forum group's topics, newest activity first
+tg personal topics list "Hiking"                   # a forum group's topics, newest activity first
 ```
 
 ```sh
-tg search topics "Hiking" "gear"
+tg personal search topics "Hiking" "gear"
 ```
 
 ```sh
-tg topics show "Hiking" 12                         # one topic: title, closed or pinned, last activity
+tg personal topics show "Hiking" 12                # one topic: title, closed or pinned, last activity
 ```
 
 ```sh
-tg review --chat "Hiking" --unanswered             # questions nobody answered
+tg personal review --chat "Hiking" --unanswered    # questions nobody answered
 ```
 
 All of these only read. `events` reads the chat's service messages: who did what, and to whom. The
@@ -939,105 +939,105 @@ names are `join`, `leave`, `add`, `remove`, `create`, `title` and `pin`.
 
 These change something, and the people in the chat see it.
 
-For a forum, use `tg topics enable <chat>` and `tg topics create <chat> <title>`. A basic group
+For a forum, use `tg personal topics enable <chat>` and `tg personal topics create <chat> <title>`. A basic group
 requires `--upgrade --yes`; keep the new chat id returned by the upgrade. Read `topics list`
 after an unknown creation outcome instead of repeating the creation. Send to its id with
-`tg messages send <chat> <text> --topic <id>` or `tg polls create <chat> <question> <answers> --topic <id>`.
-`tg topics edit <chat> <id> --title <new>` renames a topic, `--closed on` / `--closed off` closes it to new
+`tg personal messages send <chat> <text> --topic <id>` or `tg personal polls create <chat> <question> <answers> --topic <id>`.
+`tg personal topics edit <chat> <id> --title <new>` renames a topic, `--closed on` / `--closed off` closes it to new
 messages or reopens it, `--pinned on` / `--pinned off` pins it at the top or unpins it, and on the General
 topic (id 1) `--hidden on` / `--hidden off` hides it from the topic list or shows it again.
-`tg topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
+`tg personal topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
 Repeating any of these is safe.
-`tg topics delete <chat> <id>` deletes a topic and every message in it, for everyone; it cannot be undone, so it
+`tg personal topics delete <chat> <id>` deletes a topic and every message in it, for everyone; it cannot be undone, so it
 asks first by default; an explicit `topics.delete: allow` or `--allow-dangerous` skips the question. The
 General topic cannot be deleted.
 
 ```sh
-tg chats create "Hiking 2027" @olga 12345          # a supergroup; the people added are told
+tg personal chats create "Hiking 2027" @olga 12345  # a supergroup; the people added are told
 ```
 
 ```sh
-tg chats create "Trail news" --channel             # a channel; people join it by its link
+tg personal chats create "Trail news" --channel    # a channel; people join it by its link
 ```
 
 ```sh
-tg chats join https://t.me/+AbCdEf                 # by an invite link, or a public one
+tg personal chats join https://t.me/+AbCdEf        # by an invite link, or a public one
 ```
 
 ```sh
-tg chats leave "Hiking 2027"
+tg personal chats leave "Hiking 2027"
 ```
 
 ```sh
-tg chats update "Hiking 2027" --title "Hiking 2028" --description "routes and dates"
+tg personal chats update "Hiking 2027" --title "Hiking 2028" --description "routes and dates"
 ```
 
 ```sh
-tg chats update "Hiking 2027" --all-can-pin off --only-admins-add on
+tg personal chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 ```
 
 ```sh
-tg chats link show "Hiking 2027"                   # the invite link, if you may see it
+tg personal chats link show "Hiking 2027"          # the invite link, if you may see it
 ```
 
 ```sh
-tg chats link reset "Hiking 2027"                  # a new one; the old one stops working
+tg personal chats link reset "Hiking 2027"         # a new one; the old one stops working
 ```
 
 ```sh
-tg chats link create "Hiking 2027" --approval --expire-time 7d   # another link; who joins asks first
+tg personal chats link create "Hiking 2027" --approval --expire-time 7d  # another link; who joins asks first
 ```
 
 ```sh
-tg chats link create "Hiking 2027" --max-uses 20   # at most 20 people join by it
+tg personal chats link create "Hiking 2027" --max-uses 20  # at most 20 people join by it
 ```
 
 ```sh
-tg chats update "Hiking 2027" --join-approval on   # everyone asks first, by any link
+tg personal chats update "Hiking 2027" --join-approval on  # everyone asks first, by any link
 ```
 
 ```sh
-tg chats requests list "Hiking 2027"               # who asked to join, newest first
+tg personal chats requests list "Hiking 2027"      # who asked to join, newest first
 ```
 
 ```sh
-tg chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
+tg personal chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
 ```
 
 ```sh
-tg chats requests accept "Hiking 2027" 67890       # let them in; decline turns them away
+tg personal chats requests accept "Hiking 2027" 67890  # let them in; decline turns them away
 ```
 
 ```sh
-tg chats requests decline "Hiking 2027" --all      # every pending request at once; --link narrows it
+tg personal chats requests decline "Hiking 2027" --all  # every pending request at once; --link narrows it
 ```
 
 ```sh
-tg chats link list "Hiking 2027"                   # your links, with how many joined and how many wait
+tg personal chats link list "Hiking 2027"          # your links, with how many joined and how many wait
 ```
 
 ```sh
-tg chats link revoke "Hiking 2027" https://t.me/+AbCd   # stop one link
+tg personal chats link revoke "Hiking 2027" https://t.me/+AbCd  # stop one link
 ```
 
 ```sh
-tg chats link update "Hiking 2027" https://t.me/+AbCd --no-approval --max-uses 50   # change only these
+tg personal chats link update "Hiking 2027" https://t.me/+AbCd --no-approval --max-uses 50  # change only these
 ```
 
 ```sh
-tg chats members add "Hiking 2027" @kate 67890     # they are told
+tg personal chats members add "Hiking 2027" @kate 67890  # they are told
 ```
 
 ```sh
-tg chats members remove "Hiking 2027" @kate        # their messages stay
+tg personal chats members remove "Hiking 2027" @kate  # their messages stay
 ```
 
 ```sh
-tg chats admins add "Hiking 2027" @kate --can pin,delete
+tg personal chats admins add "Hiking 2027" @kate --can pin,delete
 ```
 
 ```sh
-tg chats admins remove "Hiking 2027" @kate
+tg personal chats admins remove "Hiking 2027" @kate
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
@@ -1078,11 +1078,11 @@ stdout and nothing else** — no spinner, no tick, no warning. Notes, warnings a
 in every mode. This is what lets a script, or your agent, rely on the answer.
 
 ```sh
-tg chats list --json | jq -r '.items[].id'
+tg personal chats list --json | jq -r '.items[].id'
 ```
 
 ```sh
-tg messages list me --jsonl | jq -r .text     # one message per line
+tg personal messages list me --jsonl | jq -r .text  # one message per line
 ```
 
 - `--json`: one JSON value. **Every list is one object**, always the same shape:
@@ -1105,10 +1105,10 @@ tg messages list me --jsonl | jq -r .text     # one message per line
   something in Telegram.
 
 ```sh
-if ! tg messages send "Book club" "See you at 7" --json > /dev/null; then
+if ! tg personal messages send "Book club" "See you at 7" --json > /dev/null; then
   case $? in
     14) echo "it may have gone — repeat only with the same --send-id" ;;
-    4)  echo "run tg session start" ;;
+    4)  echo "run tg personal session start" ;;
   esac
 fi
 ```
@@ -1116,7 +1116,7 @@ fi
 ## Connect your AI agent
 
 An AI agent that runs commands in a terminal (for example Claude Code, Codex or Gemini CLI) reads tg's
-skill file: the rules and traps that `--help` cannot explain. `tg setup` installs it, and so does
+skill file: the rules and traps that `--help` cannot explain. `tg personal setup` installs it, and so does
 `tg skill install` (`--for claude`, `agents` or `all`, the default). To install it by hand:
 
 ```sh
@@ -1133,7 +1133,7 @@ An agent without a terminal (for example Claude Desktop or Cursor) connects over
 
 ## What a conversation looks like
 
-`tg messages list` and `tg search messages` print a transcript at a terminal, not a table:
+`tg personal messages list` and `tg personal search messages` print a transcript at a terminal, not a table:
 
 ```text
 10:05:12  Anna
@@ -1154,23 +1154,23 @@ about the message.
 ## New messages as they arrive
 
 ```sh
-tg watch                           # new messages, until Ctrl-C or --timeout
+tg personal watch                  # new messages, until Ctrl-C or --timeout
 ```
 
 ```sh
-tg watch --jsonl                   # one message per line, as messages list --jsonl
+tg personal watch --jsonl          # one message per line, as messages list --jsonl
 ```
 
 ```sh
-tg watch --jsonl | ./on-message.sh
+tg personal watch --jsonl | ./on-message.sh
 ```
 
 ```sh
-tg watch --events --jsonl          # edits, deletions and reactions too
+tg personal watch --events --jsonl  # edits, deletions and reactions too
 ```
 
 ```sh
-tg watch --jsonl --timeout 2m      # a timeout ends it normally, with exit code 0
+tg personal watch --jsonl --timeout 2m  # a timeout ends it normally, with exit code 0
 ```
 
 With `--events` every line names its event: `message`, `edit`, `delete` or `reaction`. Without it,
@@ -1182,15 +1182,15 @@ store current, including what came in while this machine was off, use `serve`, i
 as a system service ([keeping the store current](archive.md#keeping-it-current-serve)):
 
 ```sh
-tg server start           # serve in the background; answers once it is connected
+tg personal server start  # serve in the background; answers once it is connected
 ```
 
 ```sh
-tg server status
+tg personal server status
 ```
 
 ```sh
-tg server install         # a systemd user unit or a launchd agent; starts nothing
+tg personal server install  # a systemd user unit or a launchd agent; starts nothing
 ```
 
 ## What a command did
@@ -1204,7 +1204,7 @@ tg --record chats list         # keep it, show nothing
 ```
 
 ```sh
-tg runs list                   # what was kept, newest first
+tg personal runs list          # what was kept, newest first
 ```
 
 A failed run is always kept. A record holds operations, ids, counts and durations — never a message,
@@ -1215,23 +1215,23 @@ a name, a chat title, a phone number or a key. In full: [diagnostics](diagnostic
 Everything `tg` reads is kept on this machine, so that it can answer without the network:
 
 ```sh
-tg chats list --offline                           # only from the store, never connect
+tg personal chats list --offline                  # only from the store, never connect
 ```
 
 ```sh
-tg store fetch "Project Alpha" --estimate         # how much a fetch would take
+tg personal messages sync "Project Alpha" --estimate  # how much a fetch would take
 ```
 
 ```sh
-tg store fetch "Project Alpha" --background       # a chat's history, as a job
+tg personal messages sync "Project Alpha" --background  # a chat's history, as a job
 ```
 
 ```sh
-tg store export "Project Alpha" --format markdown --output alpha.md
+tg personal store export "Project Alpha" --format markdown --output alpha.md
 ```
 
 ```sh
-tg store backup ~/tg-store.db                     # a copy of the store, while it is in use
+tg personal store backup ~/tg-store.db            # a copy of the store, while it is in use
 ```
 
 An ordinary command still asks Telegram. `--offline` is for when there is no network, or when
@@ -1270,9 +1270,9 @@ secret.** Every setting and variable: [configuration](configuration.md).
 
 ## One person
 
-`tg contacts profile <person>` shows what Telegram says about one person and how active they are in the
-chats you share. `tg contacts check <person>` scores them as a possible bot, fake or spammer, with every
-reason. `tg contacts context <person>` reads what the store holds about them: without `--chat`, across every
+`tg personal contacts profile <person>` shows what Telegram says about one person and how active they are in the
+chats you share. `tg personal contacts check <person>` scores them as a possible bot, fake or spammer, with every
+reason. `tg personal contacts context <person>` reads what the store holds about them: without `--chat`, across every
 account linked to them with `contacts link`; with `--chat`, their newest messages in each chat you name. What each one asks Telegram or a public spam list, and what it sends where:
 [people](people.md).
 

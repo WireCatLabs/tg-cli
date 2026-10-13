@@ -7,7 +7,7 @@ agent.
 
 Some words on this page:
 
-- **A bot** is a separate Telegram account that a program runs. `tg bot` works with it through
+- **A bot** is a separate Telegram account that a program runs. `tg personal bot` works with it through
   Telegram's official [Bot API](https://core.telegram.org/bots/api). It has nothing to do with your
   own account: the bot has its own name, its own chats and its own token, and `tg …` without the
   word `bot` is still you (see [using your own account](usage.md)).
@@ -77,10 +77,10 @@ profile is for your account:
 ```sh
 tg sales bot auth set
 tg support bot auth set
-tg bot list --check       # every name with a bot token, and which bot each is
+tg personal bot list --check  # every name with a bot token, and which bot each is
 ```
 
-Without a name it is the `defaultProfile` setting, else `default`. `TG_PROFILE` sets it for the shell.
+Without a name it is `TG_PROFILE`, else the `defaultProfile` setting; with neither, the command stops and lists the profiles.
 
 ## The token
 
@@ -212,9 +212,9 @@ tg sales bot store fetch -1001234567890 --last 200 --pause 1s
 
 `--from` starts at that message, inclusive, and must name the same chat. Without it, the command
 uses the newest message the bot has kept for the chat. If there is none, it reads the newest from
-the existing `default` personal session. If neither knows a number, it exits with code `2` and asks for `--from`.
-It uses the bot profile's Telegram app credentials (`api_id` and `api_hash`), or the existing
-`default` profile's credentials; `TG_API_ID` and `TG_API_HASH` also work. No personal login is made.
+the same profile's personal session, if it has one. If neither knows a number, it exits with code `2` and asks for `--from`.
+It uses the profile's own Telegram app credentials (`api_id` and `api_hash`), never another profile's;
+`TG_API_ID` and `TG_API_HASH` also work. No personal login is made.
 
 - `--limit` bounds messages fetched in this run (1,000 by default).
 - `--page-size` bounds the message numbers requested per page, at most 100.
@@ -252,7 +252,7 @@ chat. `--types` takes Telegram's update names.
 ## Moderating a group by its rules
 
 A bot that is an admin of a group can judge what is new there by the group's rules, as
-`tg chats moderate` does for your account (see [rules for groups you run](groups.md#rules)):
+`tg personal chats moderate` does for your account (see [rules for groups you run](groups.md#rules)):
 
 ```sh
 tg sales bot chats rules set -1001234567890 invites delete   # invite links to other chats: delete
@@ -372,11 +372,11 @@ A refused or failed command says why in its error message and ends with a code:
 
 Every code is in the [command reference](commands.md). `--trace` and `--record` work for a bot too:
 each Bot API request is a line on stderr, never with its address, since the token is in it. A failed
-run is kept and shows in `tg runs list` (see [diagnostics](diagnostics.md)).
+run is kept and shows in `tg personal runs list` (see [diagnostics](diagnostics.md)).
 
 ## The bot for an agent (MCP)
 
-`tg <name> bot mcp` serves the bot to your AI agent, as `tg mcp` serves your account:
+`tg <name> bot mcp` serves the bot to your AI agent, as `tg personal mcp` serves your account:
 
 ```sh
 claude mcp add sales-bot -- tg sales bot mcp

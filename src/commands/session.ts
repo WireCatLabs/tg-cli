@@ -103,7 +103,7 @@ const loggedIn = (
       : `Logged in as ${account.name ?? "you"} (${who}) — profile ${profile}.`,
     `Session:  ${shown}`,
     `App keys: ${appKeys ? KEYS_IN[appKeys] : "not stored"}`,
-    `Next:     tg chats list · tg server install to keep the archive current`,
+    `Next:     tg ${asFirstWord(profile)}chats list · tg ${asFirstWord(profile)}server install to keep the archive current`,
   ].join("\n")
 }
 
@@ -210,15 +210,15 @@ export const sessionCommand = () => {
     .option("--sms", "phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse")
     .addHelpText(
       "after",
-      "\nFirst time? Use `tg setup` for login, a check of five chats and an agent skill.\n" +
+      "\nFirst time? Use `tg personal setup` for login, a check of five chats and an agent skill.\n" +
         "\nExamples:\n" +
-        "  tg session start                 QR login; app registration opens in your browser\n" +
-        "  tg session start --app auto      Obtain app ID/hash automatically\n" +
-        "  tg session start phone           Phone number, login code and optional 2FA password\n" +
-        "  tg session start phone --sms     The same, with the code by SMS if Telegram agrees\n" +
+        "  tg personal session start             QR login; app registration opens in your browser\n" +
+        "  tg personal session start --app auto  Obtain app ID/hash automatically\n" +
+        "  tg personal session start phone       Phone number, login code and optional 2FA password\n" +
+        "  tg personal session start phone --sms The same, with the code by SMS if Telegram agrees\n" +
         "  tg work session start            Log in to the work profile\n" +
         "\nScan in Telegram: Settings > Devices > Link Desktop Device.\n" +
-        "For an interrupted or expired session, finish this login, then rerun `tg setup`.\n" +
+        "For an interrupted or expired session, finish this login, then rerun `tg <profile> setup`.\n" +
         "Agents: read `tg skill show`; --qr-file needs stored app keys and no 2FA input\n" +
         "when running without a terminal. The temporary image is removed after login.\n",
     )

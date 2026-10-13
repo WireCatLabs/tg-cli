@@ -19,13 +19,13 @@ Some words on this page:
 
 | Task | Command |
 | --- | --- |
-| Send a file, a photo, a video or a voice message | `tg messages send --file`, `--photo`, `--voice` |
-| Download the files of a message or a chat | `tg messages download` |
-| Read text from saved files on this computer | `tg attachments extract` |
-| See which files still need text | `tg attachments list --needs-text` |
-| Save text that your agent read | `tg attachments text set` |
-| Find a message by the text of its file | `tg search messages 'content:…'` |
-| Read scans in bulk with an external model | `tg attachments extract --ocr` |
+| Send a file, a photo, a video or a voice message | `tg personal messages send --file`, `--photo`, `--voice` |
+| Download the files of a message or a chat | `tg personal messages download` |
+| Read text from saved files on this computer | `tg personal attachments extract` |
+| See which files still need text | `tg personal attachments list --needs-text` |
+| Save text that your agent read | `tg personal attachments text set` |
+| Find a message by the text of its file | `tg personal search messages 'content:…'` |
+| Read scans in bulk with an external model | `tg personal attachments extract --ocr` |
 
 ## What you can send
 
@@ -41,10 +41,10 @@ whether it accepts a particular file.
 | Other audio and video | `--file`; it is not converted into a voice message | `--file`, as a file |
 
 ```sh
-tg messages send "Study group" "Worksheet" --file worksheet.pdf
-tg messages send "Study group" --photo picture.jpg
-tg messages send "Study group" --file trip.mp4 --as-file
-tg messages send "Study group" --voice note.ogg
+tg personal messages send "Study group" "Worksheet" --file worksheet.pdf
+tg personal messages send "Study group" --photo picture.jpg
+tg personal messages send "Study group" --file trip.mp4 --as-file
+tg personal messages send "Study group" --voice note.ogg
 ```
 
 `--filename` changes the displayed name, not the format. A bot sends with its own name and its
@@ -64,8 +64,8 @@ Downloading saves media without reading its text or converting its format.
 | Attachment without downloadable media | Does not produce a file |
 
 ```sh
-tg messages download "Study group" 204 --output-dir ./files --json
-tg attachments list --chat "Study group" --needs-text --json
+tg personal messages download "Study group" 204 --output-dir ./files --json
+tg personal attachments list --chat "Study group" --needs-text --json
 ```
 
 A download never overwrites an existing file. `localPath` in the answer names a file on the
@@ -159,10 +159,10 @@ text, and check that searching for a phrase finds the original message.” The a
 like these:
 
 ```sh
-tg attachments extract --chat "Study group" --download --output-dir ./files
-tg attachments list --chat "Study group" --needs-text
-tg attachments text set "Study group" 204 --text-file ./scan.txt
-tg search messages 'content:worksheet' --chat "Study group" --backend archive
+tg personal attachments extract --chat "Study group" --download --output-dir ./files
+tg personal attachments list --chat "Study group" --needs-text
+tg personal attachments text set "Study group" 204 --text-file ./scan.txt
+tg personal search messages 'content:worksheet' --chat "Study group" --backend archive
 ```
 
 `--attachment` picks one file of a message with several, counting from 1. Receiving the bytes and
@@ -216,7 +216,7 @@ You need a vision model, its endpoint and a key. Settings, storing the key and c
 After setup:
 
 ```sh
-tg attachments extract --chat "Study group" --ocr --concurrency 4 --limit 20 --json
+tg personal attachments extract --chat "Study group" --ocr --concurrency 4 --limit 20 --json
 ```
 
 A repeat uses the file's hash and the model target; good saved text stays after an error, a cancel
@@ -253,5 +253,5 @@ Previously good indexed text is preserved when a replacement fails.
 After ten attempts, failures above 50% stop new items. `MESSAGING_BATCH_MAX_ERROR_PERCENT` sets
 a whole percentage from 1 to 100. Rate limits or authentication failures stop earlier; concurrent
 requests already in flight may still finish. Honor the provider's wait and resume unfinished work.
-Search partial diagnostic records with `tg runs search --status partial --json` or MCP `tg_read` with `command: "runs search"`
+Search partial diagnostic records with `tg personal runs search --status partial --json` or MCP `tg_read` with `command: "runs search"`
 ([diagnostics](diagnostics.md)).

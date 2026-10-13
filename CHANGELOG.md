@@ -5,11 +5,29 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **Built on cli-messaging 0.256.0, where `store fetch` is now `messages sync`** (same arguments, options and JSON).
+  `store fetch` still runs as a hidden, deprecated name; the docs and the skill use `messages sync`.
+  `bot store fetch` keeps its name.
+
 ### Fixed
 
 - **The skill warns about three mistakes an agent made while testing.** It compared a plain word in one tool with
   `content:` in another, read `ref` where a search answers `locator` (or `items` where notes answer `hits`), and
   reported a bug fixed in a newer version; a zsh loop over `$c` passed a command path as one argument.
+
+### Changed — may break scripts
+
+- **`tg` never picks a profile for you.** A command that uses an account and names no profile (no first
+  word, no `TG_PROFILE`, no `defaultProfile` in the config file) stops with exit code `2` instead of using
+  `default`, also when `default` is the only profile. **This breaks every existing one-profile setup**:
+  `tg chats list` now fails. The error lists the profiles here, so the fix is in the message:
+  `tg default chats list`, `export TG_PROFILE=default`, or `"defaultProfile": "default"` in the config file.
+  On a new computer the first login is `tg personal setup` (any name). `--help`, `--version`, `commands`,
+  `skill show`, `account list` and `config show` still run without a profile. MCP clients and scheduled
+  jobs that start `tg mcp` or `tg serve` without a profile need one added. A bot's `store fetch` uses only
+  its own profile's app credentials and personal session, never `default`'s.
 
 ## 0.51.0 — 12.10.2026
 

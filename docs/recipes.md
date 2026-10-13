@@ -12,7 +12,7 @@ Terms on this page:
 - **Skill** — a file that tells the agent how to use `tg`. `tg skill install` puts it where the agent
   looks for it.
 - **MCP client** — an AI app without a terminal, such as Claude Desktop. It reaches `tg` through the
-  MCP server `tg mcp` instead of running commands.
+  MCP server `tg personal mcp` instead of running commands.
 - **Headless mode** — the agent takes one request, does it and exits, with no conversation. Claude
   Code calls it `-p` mode; Codex calls it `codex exec`.
 - **cron** — the scheduler built into Linux and macOS. It starts a command at set times.
@@ -45,7 +45,7 @@ Terms on this page:
 3. Save the requests below in files, for example in `~/tg-recipes/`. The schedule commands read the
    request from a file.
 
-An MCP client needs no skill. Connect the MCP server (`tg mcp config` prints the entry for its
+An MCP client needs no skill. Connect the MCP server (`tg personal mcp config` prints the entry for its
 settings) and use its ready prompts: `catch-up`, `review`, `reply`, `find`. See
 [the MCP server's prompts](mcp.md#prompts-and-chats-by-).
 
@@ -55,11 +55,11 @@ An agent on a schedule works without you, so put the limits into settings, not i
 agent can misread "send nothing". It cannot get around a setting that it is not allowed to change.
 
 **Limit what the agent may run.** This is a setting of the agent. For example, Claude Code in `-p`
-mode runs only the commands in `--allowedTools`. With no `tg messages send` in the list, the agent
+mode runs only the commands in `--allowedTools`. With no `tg personal messages send` in the list, the agent
 cannot call it:
 
 ```sh
-claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg inbox:*)"
+claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg personal inbox:*)"
 ```
 
 Codex has no such list. Its sandbox closes the network and file writes by default, and `tg` needs
@@ -74,7 +74,7 @@ for key in messages reactions polls topics chats contacts account conversations 
 done
 tg config show                       # check the permissions in force
 tg config set sendsPerHour 5         # or: at most five sends an hour
-tg recipients add "Book club"        # and only to the chats on this list
+tg personal recipients add "Book club"  # and only to the chats on this list
 ```
 
 `readonly` on one resource does not cover the others: `messages` alone still lets the agent react,
@@ -84,7 +84,7 @@ read.
 
 `permissions` limits your own commands too, until you change it back:
 `tg config unset permissions.messages`. To limit only the agent, give it a profile of its own. Every
-attempt to send, refused ones included, is in `tg sends list`. See
+attempt to send, refused ones included, is in `tg personal sends list`. See
 [the send guard](security.md#the-send-guard) and
 [what a profile may do](configuration-reference.md#what-a-profile-may-do).
 
@@ -99,7 +99,7 @@ the agent opened a chat.
 - **cron and `claude -p`.** No app needed, on any computer that is on at that time:
 
   ```cron
-  30 8 * * * claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg inbox:*)" >> ~/tg-recipes/morning.log 2>&1
+  30 8 * * * claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg personal inbox:*)" >> ~/tg-recipes/morning.log 2>&1
   ```
 
   cron starts jobs with an almost empty environment. On Linux this breaks `tg` in two ways:
@@ -136,9 +136,9 @@ of yours.
 
 ## Morning summary
 
-Writes to Telegram: **no**. Allow: `Bash(tg inbox:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg personal inbox:*)`.
 
-> Run `tg inbox --new --json`. Group the messages by chat. For each chat, one line: who writes and
+> Run `tg personal inbox --new --json`. Group the messages by chat. For each chat, one line: who writes and
 > what they want. Put first what needs an answer today. Fold adverts and service notifications into
 > one line at the end.
 
@@ -147,9 +147,9 @@ starts there. The first run looks back 24 hours.
 
 ### Since when is "new"
 
-- `tg inbox` — unread, as Telegram counts it: what you have not opened on any device.
-- `tg inbox --new` — since the last `--new` run. Only `tg` knows that point; nobody else sees it.
-- `tg inbox --since-time 2d` — the last two days; the saved point stays where it was.
+- `tg personal inbox` — unread, as Telegram counts it: what you have not opened on any device.
+- `tg personal inbox --new` — since the last `--new` run. Only `tg` knows that point; nobody else sees it.
+- `tg personal inbox --since-time 2d` — the last two days; the saved point stays where it was.
 
 None of them marks anything read. To do that, add `--mark-read`, or turn on `catchUpMarksRead` in the
 [settings](configuration.md). The other side then sees that you read it.
@@ -161,27 +161,27 @@ channels and a summary of your conversations can run apart, at different times. 
 point, so one run never hides what the other has not shown yet.
 
 ```cron
-30 8 * * * claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg inbox:*)"
-0 19 * * * claude -p "$(cat ~/tg-recipes/news.md)" --allowedTools "Bash(tg inbox:*)"
+30 8 * * * claude -p "$(cat ~/tg-recipes/morning.md)" --allowedTools "Bash(tg personal inbox:*)"
+0 19 * * * claude -p "$(cat ~/tg-recipes/news.md)" --allowedTools "Bash(tg personal inbox:*)"
 ```
 
-In `morning.md`, `tg inbox --new --kind dialog,group --json`; in `news.md`, `tg inbox --new --kind
+In `morning.md`, `tg personal inbox --new --kind dialog,group --json`; in `news.md`, `tg personal inbox --new --kind
 channel --json` and a request to pick what matters. Without `--kind`, everything together.
 
 ## Weekly report on a chat
 
-Writes to Telegram: **no**. Allow: `Bash(tg messages list:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg personal messages list:*)`.
 
-> Read the last 7 days of the chat "Book club": `tg messages list "Book club" --after-time 7d --limit 200
+> Read the last 7 days of the chat "Book club": `tg personal messages list "Book club" --after-time 7d --limit 200
 > --json`. If the answer says `"hasMore": true`, read on. Write a report: what was decided, who took
 > on what and by when, which questions are still open. Give each point its date and author.
 
 ## Who owes what
 
-Writes to Telegram: **no**. Allow: `Bash(tg review:*)`, `Bash(tg messages context:*)`,
-`Bash(tg search messages:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg personal review:*)`, `Bash(tg personal messages context:*)`,
+`Bash(tg personal search messages:*)`.
 
-> Run `tg review --new --transcribe --json` (the first time, the last 3 days; then from the last
+> Run `tg personal review --new --transcribe --json` (the first time, the last 3 days; then from the last
 > `--new`, a point per chat). Sort it into three lists: what I owe, what I wait for from others, what
 > needs clarifying. Give each point its chat, date and the message ids it rests on; a deadline only if
 > one was named. Before you call something overdue, check whether it was done later or in a work
@@ -194,26 +194,26 @@ keeps its point and comes back. In an MCP client it is the `review` prompt.
 
 ## What you have not answered
 
-The shortest form is `tg review --since-time 7d --unanswered --json`: questions nobody answered — to
+The shortest form is `tg personal review --since-time 7d --unanswered --json`: questions nobody answered — to
 you in one-to-one chats, to you or to the admins in groups. The recipe below is wider: it also catches
 requests without a question mark.
 
-Writes to Telegram: **no**. Allow: `Bash(tg chats list:*)`, `Bash(tg messages list:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg personal chats list:*)`, `Bash(tg personal messages list:*)`.
 
-> Run `tg chats list --kind dialog --limit 30 --json`. For every chat whose last message is from the
-> last 7 days, read `tg messages list <chat id> --limit 5 --json`. Show the chats where the last
+> Run `tg personal chats list --kind dialog --limit 30 --json`. For every chat whose last message is from the
+> last 7 days, read `tg personal messages list <chat id> --limit 5 --json`. Show the chats where the last
 > message is not mine and asks a question or makes a request: who, about what, and how many days ago.
 
 ## Find something that was said
 
-Writes to Telegram: **no**. Allow: `Bash(tg search messages:*)`, `Bash(tg messages context:*)`.
+Writes to Telegram: **no**. Allow: `Bash(tg personal search messages:*)`, `Bash(tg personal messages context:*)`.
 
-> Search for "invoice" with `tg search messages invoice --json`. For each hit, read
-> `tg messages context <locator> --json` and tell me who said what, and when.
+> Search for "invoice" with `tg personal search messages invoice --json`. For each hit, read
+> `tg personal messages context <locator> --json` and tell me who said what, and when.
 
 By default, search looks both in the copy on this computer and on Telegram's server. The local copy
 holds only what `tg` has saved. To search a chat's whole history locally, fetch it first. That is a
-request from your account, so do it yourself: `tg store fetch <chat>`. See
+request from your account, so do it yourself: `tg personal messages sync <chat>`. See
 [fetching a chat's history](archive.md#fetch-a-chats-history).
 
 ## Draft a reply
@@ -224,23 +224,23 @@ schedule.
 > Read the last 20 messages of the chat with @example_user and suggest an answer to their last
 > question. Do not send it — show me the text.
 
-Once you agree, the agent sends it: `tg messages send @example_user "…"`. An MCP client connects with
-`tg mcp`. Leave `tg_write` unapproved in the client, and it asks you before each send. The profile's
+Once you agree, the agent sends it: `tg personal messages send @example_user "…"`. An MCP client connects with
+`tg personal mcp`. Leave `tg_write` unapproved in the client, and it asks you before each send. The profile's
 permissions still limit what it may write. See [the MCP server](mcp.md).
 
 ## A group you run
 
-Writes to Telegram: **only if the group's rules allow it**. Allow: `Bash(tg review:*)`,
-`Bash(tg chats events:*)`, `Bash(tg chats members list:*)`, `Bash(tg chats moderate:*)`.
+Writes to Telegram: **only if the group's rules allow it**. Allow: `Bash(tg personal review:*)`,
+`Bash(tg personal chats events:*)`, `Bash(tg personal chats members list:*)`, `Bash(tg personal chats moderate:*)`.
 
-> Run `tg review --chat "Hiking" --unanswered 4h --json`, `tg chats events "Hiking" --since-time 7d
-> --json` and `tg chats moderate "Hiking" --dry-run --json`. Briefly: which questions wait for an
+> Run `tg personal review --chat "Hiking" --unanswered 4h --json`, `tg personal chats events "Hiking" --since-time 7d
+> --json` and `tg personal chats moderate "Hiking" --dry-run --json`. Briefly: which questions wait for an
 > answer, from whom and since when; who joined or was added this week, and by whom; what the check
 > found against the group's rules and what it suggests. Do not answer or remove anyone — list the
 > commands that would do it if I agree.
 
 With `--dry-run`, `chats moderate` only plans. Without it, it acts as far as the group's rules allow,
-so leave `Bash(tg chats moderate:*)` out of the list if the agent must never act. Every scenario for a
+so leave `Bash(tg personal chats moderate:*)` out of the list if the agent must never act. Every scenario for a
 group: [groups you run](groups.md).
 
 ## Similar collections

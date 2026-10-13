@@ -9,7 +9,7 @@ A few words this page uses:
 - The **exit code** is the number a command returns when it ends: `0` means the command completed; for batch reads check completeness, any other
   number names the kind of failure. Scripts and AI agents read it; the table below maps each one to
   its section.
-- **`tg doctor`** checks the installation without connecting to Telegram. Run it first.
+- **`tg personal doctor`** checks the installation without connecting to Telegram. Run it first.
 - **`--trace`** shows each request to Telegram as it happens, without message text
   ([diagnostics](diagnostics.md)).
 
@@ -40,7 +40,7 @@ exit code says the same as the `code`. Every code is also in the
 ## First: `tg doctor`
 
 ```sh
-tg doctor
+tg personal doctor
 ```
 
 It connects to nothing and shows what every command depends on: the version and the runtime, the
@@ -50,13 +50,13 @@ broken** — that is when you run it. A profile with no session is a line in the
 the exit code stays `0`. It never prints the session or the app hash, only whether they exist.
 
 ```sh
-tg doctor --online
+tg personal doctor --online
 ```
 
 `--online` also connects once and reads the account. It sends nothing and marks nothing read.
 Without it, the login shows as `not checked`: only `--online` tells you that Telegram still accepts
 the session. `--online` also reports a wrong clock on this computer, and whether Telegram froze or
-closed the account ([what `tg doctor` shows](diagnostics.md#check-the-installation-tg-doctor)).
+closed the account ([what `tg personal doctor` shows](diagnostics.md#check-the-installation-tg-doctor)).
 
 ## Installation
 
@@ -86,13 +86,28 @@ npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
 
 ## Login and profiles
 
+### "name a profile: `tg <profile> …` — profiles here: …"
+
+Exit code `2`. The command uses an account, and nothing named the profile: no first word, no
+`TG_PROFILE`, no `defaultProfile` in the config file. `tg` never picks one, even when only one exists.
+The message lists the profiles on this computer; put one in front of the command:
+
+```sh
+tg personal chats list         # the profile named in the message
+export TG_PROFILE=personal     # or for the whole shell session
+```
+
+To use one profile always, set `"defaultProfile": "personal"` at the top of the config file
+([configuration](configuration.md)). On a computer with no profile yet, the message says to run
+`tg personal setup`; any name works in place of `personal`.
+
 ### "no session for profile "default" — run `tg setup`"
 
 Exit code `4`. This profile has never logged in on this machine, or it logged out. Check which
 profile you meant: the first word of the command, or `TG_PROFILE` ([profiles](sessions.md#profiles)).
 
 ```sh
-tg setup                    # guided first run
+tg personal setup           # guided first run
 tg work chats list          # or name the profile you logged in to
 ```
 
@@ -100,9 +115,9 @@ If you are sure you logged in, check whether `TG_CONFIG_DIR`, `TG_STATE_DIR` or 
 now but was not then, or the other way round — in another terminal, say. They move the login.
 `tg config show` says when one is set; `env | grep TG_` shows them all.
 
-For a first run without app keys, the error names `tg setup` (or `tg work setup` for a work
+For a first run without app keys, the error names `tg personal setup` (or `tg work setup` for a work
 profile). Read `tg setup --help` for login choices. Agents can read `tg skill show` before login.
-An interrupted or expired session still needs `tg session start`, then another setup check.
+An interrupted or expired session still needs `tg personal session start`, then another setup check.
 
 ### "no Telegram app credentials found … although it has logged in on this machine"
 
@@ -113,7 +128,7 @@ ssh, in a service, and in MCP clients that start `tg` with a trimmed environment
 `XDG_RUNTIME_DIR` (usually `/run/user/` followed by the number `id -u` prints):
 
 ```sh
-XDG_RUNTIME_DIR=/run/user/$(id -u) tg chats list
+XDG_RUNTIME_DIR=/run/user/$(id -u) tg personal chats list
 ```
 
 For cron, see [running on a schedule](recipes.md#running-on-a-schedule). The keyring may also be locked until
@@ -122,7 +137,7 @@ you log in to the computer.
 ### "not logged in, or the session was ended — run `tg session start`"
 
 Exit code `4`. Telegram no longer accepts the session: it was ended from another device (Settings →
-Devices in the app), or by `tg session end`. Log in again with `tg session start`.
+Devices in the app), or by `tg personal session end`. Log in again with `tg personal session start`.
 
 ### "`tg session start` asks questions — run it in a terminal"
 
@@ -131,9 +146,9 @@ Exit code `2`. The login needs a person to scan a code or type one. Run it in a 
 
 ### "my.telegram.org says the app was created, but its page shows none"
 
-Exit code `13`, during `tg session start --app auto`. The site has no API, so `tg` follows its web
+Exit code `13`, during `tg personal session start --app auto`. The site has no API, so `tg` follows its web
 form, and the form changed or answered unexpectedly. The other errors from the site are exit code
-`11`, with what the site said. Use the default way instead: `tg session start` opens the site in your
+`11`, with what the site said. Use the default way instead: `tg personal session start` opens the site in your
 browser, and you paste the app id and hash ([the app from my.telegram.org](sessions.md#the-app-from-mytelegramorg)).
 
 ### The answer comes from the wrong profile
@@ -199,7 +214,7 @@ the wrong chat cannot be taken back.
 
 ### "no chat matches …"
 
-Exit code `6`. No chat title contains what you typed. Try `tg chats list --search <part of it>`, the
+Exit code `6`. No chat title contains what you typed. Try `tg personal chats list --search <part of it>`, the
 chat's id, its `@username`, or `me` for Saved Messages. A one-to-one chat is titled with the other
 person's name as Telegram shows it to you.
 
@@ -216,13 +231,13 @@ Telegram lets you find has this number" when the person hides their number or ha
 
 Exit code `8`. Telegram's own rate limit (FLOOD_WAIT). Wait that long; the JSON carries
 `retryAfterMs`. It happens most after many requests in a row, such as `chats list --all` right after
-other commands, or a long `store fetch`. For `store fetch` and `messages download --all`, a longer
+other commands, or a long `messages sync`. For `messages sync` and `messages download --all`, a longer
 `--pause` helps.
 
 A command waits out a request of up to 10 seconds, twice at most, and says so on stderr: "Telegram
 asks to wait 3 s before … — waiting, then going on". `serve` and `watch` wait up to 2 minutes. A longer
 wait ends a standalone request with this error; batch history returns a partial result with an actionable `issue`. `tg` also remembers the wait: until it ends, the same command fails at once without asking Telegram again, and
-`tg doctor` and `tg server status` list it under `flood`.
+`tg personal doctor` and `tg personal server status` list it under `flood`.
 
 How the pace, the waits and parallel commands fit together: [limits and waits](limits.md).
 
@@ -231,9 +246,9 @@ How the pace, the waits and parallel commands fit together: [limits and waits](l
 Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.
 It can still read. Message @SpamBot in a Telegram app: it says until when. Sending again makes it
 worse, so `tg` holds every send for an hour and says so;
-each new refusal starts the hour again. `tg doctor` shows the hold under `flood.sendBlock`. Once
-@SpamBot says the limit is gone, `tg flood clear` lifts it, together with any wait `tg` remembers.
-A frozen account's refusal holds sends the same way, until Telegram's date; `tg doctor --online`
+each new refusal starts the hour again. `tg personal doctor` shows the hold under `flood.sendBlock`. Once
+@SpamBot says the limit is gone, `tg personal flood clear` lifts it, together with any wait `tg` remembers.
+A frozen account's refusal holds sends the same way, until Telegram's date; `tg personal doctor --online`
 sets and lifts that one.
 
 ### "profile … has sent N messages in the hour …"
@@ -245,7 +260,7 @@ the next send is possible. Raise the limit only if you meant to send that many:
 ### "chat … is not on the recipient list of profile …"
 
 Exit code `7`. The recipient list is on, and this chat is not on it. Add it yourself if you want to
-allow it: `tg recipients add <chat>`. An agent should stop here and ask you.
+allow it: `tg personal recipients add <chat>`. An agent should stop here and ask you.
 
 ### "profile … does not let … write" or "profile … denies …"
 
@@ -267,9 +282,9 @@ When Telegram says how long to wait, `tg` remembers that time for the operation 
 before it ends fails at once with exit code `8`, without another request. A refusal because the account
 is frozen or limited as spam can also hold sending.
 
-`tg flood clear` forgets these waits and holds on this computer. It changes nothing at Telegram, so run
+`tg personal flood clear` forgets these waits and holds on this computer. It changes nothing at Telegram, so run
 it only after the restriction has ended. It has no MCP tool: an agent must not clear a hold just to try
-again. Only `tg doctor --online` checks the login, the account's standing and the clock; `tg doctor`
+again. Only `tg personal doctor --online` checks the login, the account's standing and the clock; `tg personal doctor`
 without it does not prove that the login works.
 
 ## Telegram and the network
@@ -282,7 +297,7 @@ carries it as `providerError`; the message never repeats what you typed. Some ha
 sentence:
 
 - **"Telegram transcribes only for Premium accounts…"** — exit code `5`. Use a model on this machine:
-  `tg models audio download parakeet-v3`, then `tg messages transcribe <chat> <id> --local`.
+  `tg personal models audio download parakeet-v3`, then `tg personal messages transcribe <chat> <id> --local`.
 - **"that message is not a voice or video note"** — exit code `2`: the id points at another message.
 - **"Telegram could not transcribe this voice message"** — exit code `11`; try `--local`.
 
@@ -309,7 +324,7 @@ not leave. `tg` stops at the first failed connection instead of waiting for the 
   with `tg config set proxy -`.
 - **refused the tunnel (HTTP 403 or 502)** — the proxy will not, or cannot, reach Telegram.
 
-`tg doctor` names the proxy in use, where it came from (`TG_PROXY` or the settings) and whether the
+`tg personal doctor` names the proxy in use, where it came from (`TG_PROXY` or the settings) and whether the
 Bot API goes through it. To try without it, `tg config unset proxy`. An MTProxy with a wrong secret
 usually looks like a hang rather than a refusal: bound it with `--timeout 30s`.
 
@@ -339,20 +354,20 @@ success nor a failure. **Do not send it again as it is.** Repeat with the `--sen
 Telegram drops the second copy:
 
 ```sh
-tg messages send <chat> "<the same text>" --send-id <id from the error>
+tg personal messages send <chat> "<the same text>" --send-id <id from the error>
 ```
 
-After `--at-time`, look in `tg messages scheduled <chat>` instead: a scheduled send is never repeated.
+After `--at-time`, look in `tg personal messages scheduled <chat>` instead: a scheduled send is never repeated.
 
 Pin, unpin, react, mark read, delete, vote, poll close, folder and contact changes end the same way when
 Telegram does not answer. The message says whether repeating is safe. For a folder creation it is not: look in
-`tg chats folders list` first, or you may get a second folder.
+`tg personal chats folders list` first, or you may get a second folder.
 
 ### Ctrl-C
 
 Exit code `130`. The command stopped where it was and closed its connection. If you pressed it during
-a send, the message may have gone: look at the chat (`tg messages list <chat> --limit 3`) before you
-send it again. A background `store fetch` keeps running: stop it with `tg store jobs cancel <job>`.
+a send, the message may have gone: look at the chat (`tg personal messages list <chat> --limit 3`) before you
+send it again. A background `messages sync` keeps running: stop it with `tg personal store jobs cancel <job>`.
 
 An answer other than `y` to a question before a change ends the same way: nothing was done.
 
@@ -367,18 +382,18 @@ read. Run `tg upgrade`. Nothing in the store is lost ([the store and other versi
 
 Exit code `6`. `--offline`, `store status` and `store export` answer only from the
 local store, and this profile has not read anything into it yet. Run one command online first, for
-example `tg chats list`.
+example `tg personal chats list`.
 
 ### `search messages` finds nothing
 
 Archive search (`--backend archive`, `--offline` or `--discover`) reads only what this machine has kept.
 Without those options, ordinary word search can also ask Telegram. An empty answer means "not kept", not
-"never said". Read the chat (`tg messages list <chat>`), or fetch its history with `tg store fetch`,
-then search again ([searching the store](archive.md#search)). `tg store check` says which chats are behind.
+"never said". Read the chat (`tg personal messages list <chat>`), or fetch its history with `tg personal messages sync`,
+then search again ([searching the store](archive.md#search)). `tg personal store check` says which chats are behind.
 
 ### A chat reads as fetched in full, but older messages are missing
 
-Run `tg store fetch <chat>` again. It reads below the oldest message the store holds, whether or not
+Run `tg personal messages sync <chat>` again. It reads below the oldest message the store holds, whether or not
 the chat was counted as complete, and goes on to the chat's first message; give `--limit` more room
 for a long chat. Keep `--page-size` at 100 or less: Telegram returns up to 100 messages a request.
 
@@ -386,34 +401,34 @@ for a long chat. Keep `--page-size` at 100 or less: Telegram returns up to 100 m
 
 ### "tg serve is already running for profile …"
 
-Exit code `2`. One `serve` per profile. `tg server status` says which process and since when;
-`tg server stop` stops one started by `server start` or the unit.
+Exit code `2`. One `serve` per profile. `tg personal server status` says which process and since when;
+`tg personal server stop` stops one started by `server start` or the unit.
 
 ### `serve` stopped by itself
 
-`tg server logs` says why. If Telegram ended the login while `serve` ran, it exits with code `4`
-within about 15 minutes and does not restart: run `tg session start`, then `tg server start`. If
+`tg personal server logs` says why. If Telegram ended the login while `serve` ran, it exits with code `4`
+within about 15 minutes and does not restart: run `tg personal session start`, then `tg personal server start`. If
 Telegram's updates stopped arriving for another reason, it exits with code `12`, and systemd starts
 it again.
 
 ### The background server does not start
 
-`tg server status --json` includes `stopped` and `unit.exitCode` when the last normal exit was one
-the unit does not restart on. For exit 4, renew the session with `tg session start`, then `tg server start`.
-`tg server logs` says why. Under a service, the usual reason is the keyring: a service starts before
+`tg personal server status --json` includes `stopped` and `unit.exitCode` when the last normal exit was one
+the unit does not restart on. For exit 4, renew the session with `tg personal session start`, then `tg personal server start`.
+`tg personal server logs` says why. Under a service, the usual reason is the keyring: a service starts before
 the keyring is open, or without `XDG_RUNTIME_DIR`. After moving Node or `tg`, run
-`tg server install` again: the unit runs the paths that installed it ([running as a service](archive.md#as-a-service)).
+`tg personal server install` again: the unit runs the paths that installed it ([running as a service](archive.md#as-a-service)).
 
 ## Report a problem
 
 ```sh
-tg doctor report           # what a report holds, and what it never holds; writes nothing
-tg doctor report create    # write it to a file, and say where to send it
-tg doctor report create --run <id>    # about another run; ids from tg runs list
+tg personal doctor report  # what a report holds, and what it never holds; writes nothing
+tg personal doctor report create  # write it to a file, and say where to send it
+tg personal doctor report create --run <id>  # about another run; ids from tg personal runs list
 ```
 
 `create` writes `tg-report-<time>.json` to the current folder (or `--output`), readable only by you.
-It holds the version, the runtime and the system, what `tg doctor` answers, the newest failed run —
+It holds the version, the runtime and the system, what `tg personal doctor` answers, the newest failed run —
 each request's operation, duration and error code — and the last 20 send attempts, outcome and length
 only. Every chat, message and account id is replaced by a label that means nothing outside the file.
 It holds no message text, chat titles, names, phone numbers, session or app credentials. A failed run
@@ -436,6 +451,6 @@ reduce or split the input instead.
 
 A failed independent file or history page returns partial results with exit code `0`,
 `complete: false` and `batch` or `issue`. Completed downloads and earlier history pages remain
-saved. If a provider wait is too long to finish, single-chat `store fetch` includes `issue.retryAfterMs`
+saved. If a provider wait is too long to finish, single-chat `messages sync` includes `issue.retryAfterMs`
 and a `resume` boundary; multi-chat fetch exposes per-chat issues and downloads use checkpoints; do not repeat requests before the wait ends. Partial background jobs have
-state `partial` and can be retried with `tg store jobs retry`. Check completeness as well as the exit code.
+state `partial` and can be retried with `tg personal store jobs retry`. Check completeness as well as the exit code.

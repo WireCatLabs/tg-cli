@@ -19,20 +19,20 @@ Some words on this page:
 
 | Task | Command |
 | --- | --- |
-| See who a person is and where you talk to them | `tg contacts profile` |
-| Read what they said, in every chat or in the chats you name | `tg contacts context` |
-| Check whether the account looks like a bot, a fake or a spammer | `tg contacts check` |
-| Check the most suspicious members of a group | `tg chats members audit --deep` |
-| Record that a Telegram account and a MAX account are the same person | `tg contacts link` |
-| Keep your own name and notes for a person | `tg contacts alias`, `tg contacts notes` |
+| See who a person is and where you talk to them | `tg personal contacts profile` |
+| Read what they said, in every chat or in the chats you name | `tg personal contacts context` |
+| Check whether the account looks like a bot, a fake or a spammer | `tg personal contacts check` |
+| Check the most suspicious members of a group | `tg personal chats members audit --deep` |
+| Record that a Telegram account and a MAX account are the same person | `tg personal contacts link` |
+| Keep your own name and notes for a person | `tg personal contacts alias`, `tg personal contacts notes` |
 
 Every option of these commands is in the [command reference for contacts](commands.md#tg-contacts).
 
 ## Who they are: `contacts profile`
 
 ```sh
-tg contacts profile @example_user
-tg contacts profile @example_user --json
+tg personal contacts profile @example_user
+tg personal contacts profile @example_user --json
 ```
 
 It answers everything Telegram says about the person, and how many of their messages your local
@@ -89,7 +89,7 @@ store holds in each chat you share:
 and `firstAt` may be later than their real first message. Fetch the chat to fill it:
 
 ```sh
-tg store fetch "Book club"
+tg personal messages sync "Book club"
 ```
 
 The profile costs no extra requests: it uses the same three calls as `contacts show`. The person
@@ -102,14 +102,14 @@ their recent messages in your direct chat and in groups, and where others mentio
 email identities also contribute sent and received mail. It never connects.
 
 ```sh
-tg contacts context @example_user
+tg personal contacts context @example_user
 ```
 
 With `--chat`, it gives their newest messages in each chat you name, oldest first, 20 per chat:
 
 ```sh
-tg contacts context @example_user --chat "Book club" --chat "Team" --limit 10
-tg contacts context @example_user --chat "Book club" --refresh
+tg personal contacts context @example_user --chat "Book club" --chat "Team" --limit 10
+tg personal contacts context @example_user --chat "Book club" --refresh
 ```
 
 ```json
@@ -141,8 +141,8 @@ tg contacts context @example_user --chat "Book club" --refresh
 ## Bot, fake or spammer: `contacts check`
 
 ```sh
-tg contacts check @example_user
-tg contacts check @example_user --no-registries
+tg personal contacts check @example_user
+tg personal contacts check @example_user --no-registries
 ```
 
 ```json
@@ -195,8 +195,8 @@ request header, never in the address, and never prints it.
 ## The members of a group: `chats members audit --deep`
 
 ```sh
-tg chats members audit "Book club"
-tg chats members audit "Book club" --deep 10
+tg personal chats members audit "Book club"
+tg personal chats members audit "Book club" --deep 10
 ```
 
 `chats members audit` scores every member from the member list and the store, without one request per
@@ -210,8 +210,8 @@ Telegram and MAX share one local store on this computer. When you know that a Te
 MAX account are the same person, record it:
 
 ```sh
-tg contacts link @example_user max:"Example User"
-tg contacts unlink @example_user
+tg personal contacts link @example_user max:"Example User"
+tg personal contacts unlink @example_user
 ```
 
 After that, `contacts context` without `--chat` gathers both accounts: the chats you share and the
@@ -222,14 +222,14 @@ record: the same name in both messengers is never taken as the same person.
 ## Your own names and notes: `contacts alias`, `contacts notes`
 
 ```sh
-tg contacts alias set "Bob Synthetic" Bobby            # your own name for a person, on this computer only
-tg contacts alias rm "Bob Synthetic"
-tg contacts notes add "Bob Synthetic" --file note.txt  # or the text from stdin
-tg contacts notes list "Bob Synthetic"
-tg contacts notes edit "Bob Synthetic" <id> --revision 1 --file note.txt
-tg contacts notes remove "Bob Synthetic" <id>
-tg contacts show "Bob Synthetic" --with-notes
-tg contacts list --search-notes flat                   # people whose notes contain this text
+tg personal contacts alias set "Bob Synthetic" Bobby   # your own name for a person, on this computer only
+tg personal contacts alias rm "Bob Synthetic"
+tg personal contacts notes add "Bob Synthetic" --file note.txt  # or the text from stdin
+tg personal contacts notes list "Bob Synthetic"
+tg personal contacts notes edit "Bob Synthetic" <id> --revision 1 --file note.txt
+tg personal contacts notes remove "Bob Synthetic" <id>
+tg personal contacts show "Bob Synthetic" --with-notes
+tg personal contacts list --search-notes flat          # people whose notes contain this text
 ```
 
 Aliases and notes stay in the local store and never reach Telegram. An alias applies only in the

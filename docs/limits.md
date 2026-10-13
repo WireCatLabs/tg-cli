@@ -18,14 +18,14 @@ Words this page uses:
 
 ## The pace: one allowance per profile
 
-Every request `tg` makes for a profile — from a command, `tg mcp`, `tg serve` or a background job —
+Every request `tg` makes for a profile — from a command, `tg personal mcp`, `tg personal serve` or a background job —
 takes a turn in one pace for that profile:
 
 - a burst of **20 requests** goes at once, so ordinary commands never wait;
 - after the burst, **one request a second** (60 a minute), until the allowance refills while idle.
 
 **Two commands at once share the same pace.** The turns are kept in a file under the state folder
-(`pace/<profile>.json`), so two terminals, several `store fetch --background` jobs and `serve` line up
+(`pace/<profile>.json`), so two terminals, several `messages sync --background` jobs and `serve` line up
 behind each other instead of each going at full speed. Running five fetches in parallel is no faster
 than running them one after another, and it is no riskier either. Different profiles — different
 Telegram accounts — have their own pace each.
@@ -43,7 +43,7 @@ Change the pace in the config file, or for one shell with an environment variabl
 ```
 
 ```sh
-TG_REQUESTS_PER_MINUTE=30 tg store fetch "Book club"
+TG_REQUESTS_PER_MINUTE=30 tg personal messages sync "Book club"
 ```
 
 `0` turns the pace off. Do that only for a profile you can afford to have limited.
@@ -56,14 +56,14 @@ TG_REQUESTS_PER_MINUTE=30 tg store fetch "Book club"
 | up to 2 min, in `serve` and `watch` | waits, at most three times |
 | longer | stops with exit code `8` (`rate_limited`) and `retryAfterMs` in the JSON |
 
-`store fetch` and `messages download --all` wait out a wait of up to 5 minutes between pages and go on;
-a longer one stops the run, and the next run resumes from what was already saved. `store fetch --all`
+`messages sync` and `messages download --all` wait out a wait of up to 5 minutes between pages and go on;
+a longer one stops the run, and the next run resumes from what was already saved. `messages sync --all`
 also waits through short Telegram waits while listing chats.
 
 **A wait holds the whole profile.** Until it ends, every process's next request waits past it, and one
 that would have to wait more than 5 minutes fails at once with exit code `8` without asking Telegram.
-`tg doctor` and `tg server status` list what is held under `flood`. Once the wait is over, nothing needs
-to be done; `tg flood clear` lifts it early if you know Telegram no longer limits the account.
+`tg personal doctor` and `tg personal server status` list what is held under `flood`. Once the wait is over, nothing needs
+to be done; `tg personal flood clear` lifts it early if you know Telegram no longer limits the account.
 
 ## Writes
 
@@ -76,19 +76,19 @@ to be done; `tg flood clear` lifts it early if you know Telegram no longer limit
 
 ## Bulk reads
 
-- `store fetch`: pages of up to 100 messages, `--pause` between pages (1 s by default), 1000 messages a
+- `messages sync`: pages of up to 100 messages, `--pause` between pages (1 s by default), 1000 messages a
   run unless `--limit` says otherwise. `--estimate` counts the requests first and sends none.
 - `messages download --all`: one request per page and per file; files are paced too.
-- `store fetch --all` lists the chats a page of 100 at a time, one turn of the pace each.
+- `messages sync --all` lists the chats a page of 100 at a time, one turn of the pace each.
 - `chats list --all` reads every chat in one turn: one request per 100 chats, back to back.
 - `chats members list --all`: pages of 200 members, 1 s apart, up to Telegram's cap of 10,000.
-- Gap repair reads page by page with a 1 s pause, as `store fetch` does.
+- Gap repair reads page by page with a 1 s pause, as `messages sync` does.
 
 ## Background jobs
 
-`store fetch --background` and `store gaps repair --background` start a job that outlives the command:
-one job per chat at a time, each in its own process, all on the profile's one pace. `tg store jobs
-list` shows them, `tg store jobs cancel <job>` stops one after its current page. See
+`messages sync --background` and `store gaps repair --background` start a job that outlives the command:
+one job per chat at a time, each in its own process, all on the profile's one pace. `tg personal store jobs
+list` shows them, `tg personal store jobs cancel <job>` stops one after its current page. See
 [downloading in the background](archive.md#in-the-background).
 
 ## Bots

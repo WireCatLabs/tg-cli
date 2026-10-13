@@ -59,11 +59,11 @@ export const TELEGRAM_BOT: BotMessenger = {
     const { profile } = settings
     const readCredentials = (profile: string) =>
       apiCredentials({ profile, env, ...(environment.keyring ? { keyring: environment.keyring } : {}) }).read()
-    const credentials = readCredentials(profile) ?? readCredentials("default")
+    const credentials = readCredentials(profile)
     if (!credentials)
       throw new CliError(
         "authentication_error",
-        "bot store fetch needs Telegram app credentials — run `tg session start` first, or set TG_API_ID and TG_API_HASH",
+        `bot store fetch needs Telegram app credentials — run \`tg ${profile} session start\` first, or set TG_API_ID and TG_API_HASH`,
       )
     const botId = token.split(":", 1)[0] ?? ""
     if (!/^\d+$/.test(botId)) throw new CliError("authentication_error", "the bot token has no valid bot id")
@@ -80,7 +80,7 @@ export const TELEGRAM_BOT: BotMessenger = {
         const copy = botCopy("telegram-bot")
         const known = await copy.read((store) => store.messages(copy.accountOf(botId), chat, { limit: 1 }))
         if (known.items[0]) return known.items[0].id
-        const personalPath = sessionFile("default", env)
+        const personalPath = sessionFile(profile, env)
         if (!existsSync(personalPath) && !environment.adapter) return undefined
         let personal: Adapter | TelegramAdapter | undefined
         try {

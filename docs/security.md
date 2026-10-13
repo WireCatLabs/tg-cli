@@ -67,10 +67,10 @@ encrypted. Besides those, `tg` writes:
 | `inbox --new`'s point | `inbox/<profile>.json` | where the last check stopped | `0600` |
 | background fetch jobs | the state directory | the chat, the progress, the outcome | `0600` |
 | `serve`'s log and lock | `serve/<profile>.log`, or the systemd journal | what `serve` did | `0600` |
-| a systemd unit or launchd agent — only `tg server install` | your user's unit folder | the command line that starts `serve` | `0644` |
-| a backup — only `tg store backup` | the file you name | a copy of the whole store | `0600` |
+| a systemd unit or launchd agent — only `tg personal server install` | your user's unit folder | the command line that starts `serve` | `0644` |
+| a backup — only `tg personal store backup` | the file you name | a copy of the whole store | `0600` |
 
-The exact paths on this machine: `tg doctor`. The folders on each system:
+The exact paths on this machine: `tg personal doctor`. The folders on each system:
 [where files go](installation.md#where-files-go).
 
 If the computer is lost, end the session from another device: in the Telegram app, Settings →
@@ -86,8 +86,8 @@ each check works, its exit code, and what it cannot hold: the
 ```sh
 tg config set permissions.messages readonly  # no change to messages from this profile
 tg config set permissions.messages.send ask  # a question before each send
-tg recipients add "Book club"                # the first add turns the list on
-tg sends list                                # every attempt: sent, refused, failed, or not known
+tg personal recipients add "Book club"       # the first add turns the list on
+tg personal sends list                       # every attempt: sent, refused, failed, or not known
 ```
 
 In Telegram, these count toward the hourly limit: a message, a forward, an edit, a pin that
@@ -111,10 +111,10 @@ downloaded file's name also loses any leading dot.
   use the HTTPS Bot API; `bot store fetch` uses a separate MTProto bot session for history.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
   `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration](configuration.md)).
-- **my.telegram.org**, only during `tg setup` or `tg session start`: opened in your browser, or, with `--app auto`,
+- **my.telegram.org**, only during `tg personal setup` or `tg personal session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
-- **Hugging Face and GitHub**, only when you run `tg models audio download` or `tg models text download`. A voice message never goes
+- **Hugging Face and GitHub**, only when you run `tg personal models audio download` or `tg personal models text download`. A voice message never goes
   there: a local model runs on this machine.
 - **Configured embedding endpoints** receive conversation text from `conversations embed` after consent,
   and query text from remote `search conversations`, including MCP searches. Local embeddings send no text.
@@ -132,7 +132,7 @@ default, so an agent sends at the pace of a person.
 
 ## Logging in
 
-`tg setup` and `tg session start` draw the QR code in the terminal. It stays in the scrollback, and Telegram renews
+`tg personal setup` and `tg personal session start` draw the QR code in the terminal. It stays in the scrollback, and Telegram renews
 it while you wait, so an old one is useless. `--qr-file` writes it as a PNG readable only by you, and
 removes the file when the login ends, whether it worked or not.
 
@@ -152,9 +152,9 @@ PATH, credentials or account state. Installation never logs in or reads chats.
 
 ## If the session leaked
 
-1. In the Telegram app: Settings → Devices, end the session `tg` created. Or run `tg session end` on
+1. In the Telegram app: Settings → Devices, end the session `tg` created. Or run `tg personal session end` on
    this machine, which ends it on Telegram's side and deletes the file.
-2. Log in again: `tg session start`.
+2. Log in again: `tg personal session start`.
 
 ## Next
 

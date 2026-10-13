@@ -4,8 +4,10 @@ A personal Telegram account from the command line, for agents and scripts
 
 The first word is the profile whenever it is not a command — `tg personal chats
 list`.
-`TG_PROFILE` says the same thing for a whole shell session; without either it is
-`default`.
+`TG_PROFILE` says the same thing for a whole shell session, and `defaultProfile`
+in the config file for good.
+No profile is assumed: without one, a command that uses an account stops and
+lists the profiles here.
 
 Options:
   -V, --version               output the version number
@@ -75,7 +77,7 @@ Commands:
                               stored messages by replies, mentions and who wrote
                               next
   attachments                 the files of stored messages: their text in the
-                              local store, for content: in a search
+                              local store, where search finds it
   tags                        your own labels on chats, people and messages,
                               kept in the local store and never sent; tag: in a
                               search finds them
@@ -118,13 +120,14 @@ Commands:
   help [command]              display help for command
 
 Getting started after installation:
-  tg setup                    Guided first run; allow about 5 minutes
-  tg setup --agent codex      Log in and install your agent's skill
-  tg setup --help             Login choices, examples and Windows instructions
+  tg personal setup               Guided first run as profile personal; about 5 minutes
+  tg personal setup --agent codex Log in and install your agent's skill
+  tg setup --help                 Login choices, examples and Windows instructions
+Every account command names its profile; any name works in place of personal.
 
 For agents:
-  tg skill show               Read the bundled instructions before using Telegram
-  tg commands --json          Discover commands, arguments and flags
+  tg skill show                   Read the bundled instructions before using Telegram
+  tg commands --json              Discover commands, arguments and flags
 
 Setup checks five chats. Choose a chat before downloading its history.
 

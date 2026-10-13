@@ -48,7 +48,7 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 | S3 | a scheduled send fires under a new id | `messages send me --at 1m`, `messages scheduled me`, `messages list me` | deleted after it fires |
 | S4 | download and transcribe | `messages download`, `messages transcribe` on a voice note the scenario sends | the note and the files deleted |
 | S5 | `watch` and `serve` end, and see a write | `watch --events` and `serve` in the background, a send to `me`, stop by PID | the message deleted |
-| S6 | the store from live reads | `store fetch me --max 50`, `store fetch me --background` (the ⛔ row), `contacts sync`, `store status`, `store info`, `store check`, `--offline` reads | the worktree's own store only |
+| S6 | the store from live reads | `messages sync me --max 50`, `messages sync me --background` (the ⛔ row), `contacts sync`, `store status`, `store info`, `store check`, `--offline` reads | the worktree's own store only |
 
 ### G — the test group
 

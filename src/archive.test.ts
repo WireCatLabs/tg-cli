@@ -74,7 +74,7 @@ const tryJson = (text: string): unknown => {
 
 const backfilled = async () => {
   const store = join(mkdtempSync(join(tmpdir(), "tg-archive-")), "messages.db")
-  await tg(["archive", "store", "fetch", CHAT, "--limit", "100", "--pause", "1ms"], store)
+  await tg(["archive", "messages", "sync", CHAT, "--limit", "100", "--pause", "1ms"], store)
   return store
 }
 
@@ -350,7 +350,7 @@ describe("the archive, from the store", () => {
 
   it("**estimates what a full fetch would still cost** without asking Telegram", async () => {
     const store = await backfilled()
-    const { code, answer } = await tg(["archive", "store", "fetch", CHAT, "--estimate", "--json", "--offline"], store)
+    const { code, answer } = await tg(["archive", "messages", "sync", CHAT, "--estimate", "--json", "--offline"], store)
 
     expect(code).toBe(0)
     expect(answer).toMatchObject({ chat: CHAT, held: 3, ranges: [{ from: 101, to: 103 }], missing: 100 })

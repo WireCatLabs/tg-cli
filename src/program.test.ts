@@ -69,11 +69,11 @@ describe("first-run discovery", () => {
     },
     {
       argv: ["session", "start", "--help"],
-      phrases: ["First time?", "tg setup", "tg session start phone", "tg skill show"],
+      phrases: ["First time?", "tg personal setup", "tg personal session start phone", "tg skill show"],
     },
     {
       argv: ["skill", "--help"],
-      phrases: ["no session is needed", "tg setup --agent codex", "tg skill install --for all"],
+      phrases: ["no session is needed", "tg personal setup --agent codex", "tg skill install --for all"],
     },
   ])("shows useful help before login: $argv", async ({ argv, phrases }) => {
     const adapter = vi.fn(() => scripted())
