@@ -176,7 +176,7 @@ const MEMBERS_MAX = 10_000
 const MEMBER_PAGE_PAUSE_MS = 1000
 /** Pages of 100 that `chats events` reads at most; the rest is `more`. */
 const EVENT_PAGES = 10
-/** messages.getMessages and messages.deleteMessages take at most 100 ids a call. */
+/** The Bot API's deleteMessages cap; assumed for MTProto's getMessages and deleteMessages, not checked against Telegram. */
 const BY_ID_BATCH = 100
 
 /**
