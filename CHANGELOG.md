@@ -5,6 +5,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- Shared send preparation keeps files backed by disk and Telegram uploads accept their native Blob source.
+  Large files no longer require a full upfront byte copy; existing in-memory inputs remain supported.
+- Configurable upload budgets and concurrency reuse the shared resource settings. The machine-output default
+  is 64 MiB; explicitly set `--max-output-bytes 4194304` to retain the former 4 MiB limit.
+
 ### Fixed
 
 - **`tg default mcp config` and `mcp install` name the profile.** The entry left out a profile named `default`, so

@@ -1,3 +1,6 @@
+import { mkdtempSync, writeFileSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
 import { MtTimeoutError, tl } from "@mtcute/node"
 import { describe, expect, it, vi } from "vitest"
 import { toUploadParams } from "./map.js"
@@ -51,4 +54,21 @@ describe("uploading an attachment", () => {
     expect(toUploadParams({ kind: "file", name: "trip.mp4", bytes, asFile: true })).not.toHaveProperty("fileMime")
     expect(toUploadParams({ kind: "file", name: "plan.pdf", bytes })).not.toHaveProperty("fileMime")
   })
+})
+
+it("hands a file-backed Blob to mtcute while preserving the outgoing filename", async () => {
+  const path = join(mkdtempSync(join(tmpdir(), "tg-upload-")), "original.bin")
+  writeFileSync(path, bytes)
+  const uploadFile = vi.fn(async (params: { file: Blob; fileName: string }) => {
+    expect(params.file).toBeInstanceOf(Blob)
+    expect(new Uint8Array(await params.file.arrayBuffer())).toEqual(bytes)
+    expect(params.fileName).toBe("renamed.bin")
+    return uploaded
+  })
+  await uploadAttachment({ uploadFile } as never, {
+    kind: "file",
+    name: "renamed.bin",
+    source: { kind: "file", path, size: bytes.byteLength },
+  })
+  expect(uploadFile).toHaveBeenCalledOnce()
 })

@@ -46,7 +46,7 @@ import type {
   Topic,
 } from "@wirecat/cli-messaging"
 import type { NewPoll } from "@wirecat/cli-messaging/cli"
-import type { Upload } from "@wirecat/cli-messaging/sends"
+import { type UploadInput, uploadSource } from "@wirecat/cli-messaging/sends"
 import { rulesOf } from "./folder-rules.js"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */
@@ -415,14 +415,15 @@ export const toFormatted = (text: string, markup: readonly (Markup | TextSpan)[]
 const VIDEO: Record<string, string> = { ".mp4": "video/mp4", ".m4v": "video/mp4", ".mov": "video/quicktime" }
 
 /** A video plays in the chat unless `asFile`; a `document` is always a file to download (`forceFile`). */
-const videoMime = ({ kind, name, asFile }: Upload): string | undefined =>
+const videoMime = ({ kind, name, asFile }: UploadInput): string | undefined =>
   kind === "file" && !asFile ? VIDEO[extname(name).toLowerCase()] : undefined
 
 /** What `uploadFile` needs to store the file as `toInputMedia` will send it. */
-export const toUploadParams = (upload: Upload) => {
+export const toUploadParams = (upload: UploadInput) => {
   const mime = upload.kind === "voice" ? "audio/ogg" : videoMime(upload)
+  const source = uploadSource(upload)
   return {
-    file: upload.bytes,
+    file: source.kind === "file" ? source.path : source.bytes,
     fileName: upload.name,
     ...(mime ? { fileMime: mime } : {}),
     ...(upload.kind === "photo" ? { requireFileSize: true, requireExtension: true } : {}),
@@ -430,16 +431,20 @@ export const toUploadParams = (upload: Upload) => {
 }
 
 /** Checked before the upload, so a refused spoiler never spends one. */
-export const checkSpoiler = (upload: Upload) => {
+export const checkSpoiler = (upload: UploadInput) => {
   if (upload.kind !== "photo" && !videoMime(upload))
     throw new CliError("validation_error", "--spoiler hides a photo or a video only")
 }
 
 /** `file` is the bytes, or the same file already uploaded — then nothing is uploaded again. */
 export const toInputMedia = (
-  upload: Upload,
+  upload: UploadInput,
   caption: string | TextWithEntities,
-  file: Uint8Array | UploadedFile = upload.bytes,
+  file: Uint8Array | UploadedFile | string = "bytes" in upload
+    ? upload.bytes
+    : upload.source.kind === "bytes"
+      ? upload.source.bytes
+      : `file:${upload.source.path}`,
   { spoiler = false }: { spoiler?: boolean } = {},
 ): InputMediaLike => {
   const { kind, name } = upload
