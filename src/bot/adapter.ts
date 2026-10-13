@@ -27,6 +27,9 @@ const halfDone = (done: string, error: unknown): never => {
   throw new CliError(error.code, `${done}, but ${error.message}`, error.details)
 }
 
+/** [deleteMessages](https://core.telegram.org/bots/api#deletemessages) takes 1–100 ids. */
+const DELETE_BATCH = 100
+
 /** [sendChatAction](https://core.telegram.org/bots/api#sendchataction)'s words. */
 const ACTIONS: Record<BotAction, string> = {
   typing: "typing",
@@ -109,11 +112,18 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
       ),
 
     delete: async (chat, messageIds) => {
-      await transport.call(
-        "deleteMessages",
-        { chat_id: chatIdOf(chat), message_ids: messageIds.map(Number) },
-        { reads: false },
-      )
+      for (let at = 0; at < messageIds.length; at += DELETE_BATCH) {
+        try {
+          await transport.call(
+            "deleteMessages",
+            { chat_id: chatIdOf(chat), message_ids: messageIds.slice(at, at + DELETE_BATCH).map(Number) },
+            { reads: false },
+          )
+        } catch (error) {
+          if (at === 0) throw error
+          halfDone(`deleted the first ${at} of ${messageIds.length} messages`, error)
+        }
+      }
     },
 
     pin: async (chat, messageId, { notify }) => {
