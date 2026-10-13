@@ -378,13 +378,13 @@ describe("sending", () => {
     const unknown = () =>
       scripted({
         send: async () => {
-          throw new CliError("outcome_unknown", "no answer", { sendId: "-9001" })
+          throw new CliError("outcome_unknown", "no answer", { send_id: "-9001" })
         },
       })
     const { code, stderr } = await tg(["messages", "send", "me", "hi"], { adapter: unknown })
 
     expect(code).toBe(14)
-    expect(JSON.parse(stderr[0] ?? "").error.details.sendId).toBe("-9001")
+    expect(JSON.parse(stderr[0] ?? "").error.details.send_id).toBe("-9001")
   })
 
   it("hands --silent, --no-preview and --md to the adapter, the marks taken out of the text", async () => {

@@ -191,7 +191,7 @@ const refusalOf = (method: string, answer: Answer, status: number): CliError => 
   if (retryAfter !== undefined) {
     return new CliError("rate_limited", `Telegram asks to wait ${retryAfter} s before ${method}: ${said}`, {
       ...details,
-      retryAfterMs: retryAfter * 1000,
+      retry_after_ms: retryAfter * 1000,
       retryable: true,
     })
   }

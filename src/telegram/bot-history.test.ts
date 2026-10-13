@@ -181,7 +181,7 @@ describe("bot MTProto history", () => {
     }
     await expect(reader.historyBefore(CHAT, { limit: 100 })).rejects.toMatchObject({
       code: "rate_limited",
-      details: { retryAfterMs: 1000 },
+      details: { retry_after_ms: 1000 },
     })
     expect((await reader.historyBefore(CHAT, { limit: 100 })).items[0]?.id).toBe("150")
     await reader.close()

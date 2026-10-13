@@ -1448,7 +1448,7 @@ describe("forum setup", () => {
     client.topicAnswer = new MtTimeoutError(1000)
     await expect(adapter.createTopic("-100500", "synthetic", { sendId: "42" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { sendId: "42", retryable: false },
+      details: { send_id: "42", retryable: false },
     })
     client.topicAnswer = { _: "updates", updates: [], chats: [], users: [] }
     await expect(adapter.createTopic("-100500", "synthetic", { sendId: "43" })).rejects.toMatchObject({
@@ -1767,7 +1767,7 @@ describe("sending", () => {
 
     await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { sendId: "42", cause: "timeout" },
+      details: { send_id: "42", cause: "timeout" },
     })
   })
 
@@ -1866,7 +1866,7 @@ describe("forwarding", () => {
     await expect(adapter.forward("-100500", "5", "1", { sendId: "77" })).rejects.toMatchObject({
       code: "outcome_unknown",
       message: expect.stringContaining("--send-id 77"),
-      details: { sendId: "77" },
+      details: { send_id: "77" },
     })
   })
 })
