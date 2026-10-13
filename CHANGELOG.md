@@ -7,7 +7,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **Built on cli-messaging 0.258.0 and cli-base 0.24.0.** `store fetch` is now `messages sync` (same arguments,
+- **Built on cli-messaging 0.259.0 and cli-base 0.24.0.** `store fetch` is now `messages sync` (same arguments,
   options and JSON). `store fetch` still runs as a hidden, deprecated name; the docs and the skill use
   `messages sync`. `bot store fetch` keeps its name.
 - **`--debug`:** on a failure, the whole record — cause and stack — follows the error: after the `✗` line in a
