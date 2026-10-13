@@ -5,6 +5,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+- **Built on `@wirecat/cli-messaging` 0.261.0 and `@wirecat/cli-base` 0.26.0.** Machine output keys are
+  snake_case: `error.details` says `operation_id`, `send_id`, `retry_after_ms`; `commands --json` says
+  `global_options`, `inherited_options`, `exit_codes`, `takes_value` and `contract: 1`. A query tree in the MCP `ast`
+  argument has `lower_inclusive`, `upper_inclusive` and `must_not`.
+
 ### Fixed
 
 - **`tg default mcp config` and `mcp install` name the profile.** The entry left out a profile named `default`, so
