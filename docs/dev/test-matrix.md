@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2367 ✅ · 87 ⛔ · 7 ❌** — 476 commands, 1985 options.
+**2374 ✅ · 87 ⛔ · 0 ❌** — 476 commands, 1985 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -46,8 +46,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats show` |  | ✅ |  |
 | `chats send-as` |  | ✅ |  |
 | `chats documents list` |  | ✅ |  |
-| `chats documents list` | `--limit` | ❌ |  |
-| `chats documents list` | `--page` | ❌ |  |
+| `chats documents list` | `--limit` | ✅ |  |
+| `chats documents list` | `--page` | ✅ |  |
 | `chats members list` |  | ✅ |  |
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
@@ -675,10 +675,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks close` | `--reason` | ✅ |  |
 | `search all` |  | ✅ |  |
 | `search all` | `--only` | ✅ |  |
-| `search all` | `--source` | ❌ |  |
+| `search all` | `--source` | ✅ |  |
 | `search all` | `--max-meetings` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through |
 | `search all` | `--limit` | ✅ |  |
-| `search all` | `--offset` | ❌ |  |
+| `search all` | `--offset` | ✅ |  |
 | `search all` | `--exact` | ✅ |  |
 | `search all` | `--timezone` | ✅ |  |
 | `search all` | `--backend` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts covers archive (never connects), server and both for search all |
@@ -699,7 +699,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--source` | ✅ |  |
 | `search messages` | `--type` | ✅ |  |
 | `search messages` | `--limit` | ✅ |  |
-| `search messages` | `--offset` | ❌ |  |
+| `search messages` | `--offset` | ✅ |  |
 | `search messages` | `--newest` | ✅ |  |
 | `search messages` | `--exact` | ✅ |  |
 | `search messages` | `--context` | ✅ |  |
@@ -710,9 +710,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--saved` | ✅ |  |
 | `search mail` |  | ✅ |  |
 | `search mail` | `--chat` | ✅ |  |
-| `search mail` | `--source` | ❌ |  |
+| `search mail` | `--source` | ✅ |  |
 | `search mail` | `--limit` | ✅ |  |
-| `search mail` | `--offset` | ❌ |  |
+| `search mail` | `--offset` | ✅ |  |
 | `search mail` | `--newest` | ✅ |  |
 | `search mail` | `--exact` | ✅ |  |
 | `search mail` | `--context` | ✅ |  |
