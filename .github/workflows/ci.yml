@@ -35,6 +35,7 @@ jobs:
         pnpm check:agent-docs
         pnpm docs:check
         pnpm parity:check
+        pnpm lint:commands
 
   version:
     if: github.event_name == 'pull_request'
