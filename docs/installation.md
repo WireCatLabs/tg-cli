@@ -137,8 +137,8 @@ other tools:
 | settings | `~/.config/tg-cli/` | `~/Library/Preferences/tg-cli/` | `%APPDATA%\tg-cli\Config\` |
 | state | `~/.local/share/tg-cli/` | `~/Library/Application Support/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Data\` |
 | cache | `~/.cache/tg-cli/` | `~/Library/Caches/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Cache\` |
-| the local store | `~/.local/share/cli-messaging/wirecat.db` | under `~/Library/Application Support/cli-messaging/` | under `%LOCALAPPDATA%\cli-messaging\Data\` |
-| speech models | `~/.cache/cli-common/models/audio/` | under `~/Library/Caches/cli-common/` | under `%LOCALAPPDATA%\cli-common\Cache\` |
+| the local store | `~/.local/share/WireCat/wirecat.db` | `~/.local/share/WireCat/wirecat.db` | `%LOCALAPPDATA%\WireCat\Data\wirecat.db` |
+| speech models | `~/.local/share/WireCat/models/audio/` | `~/.local/share/WireCat/models/audio/` | `%LOCALAPPDATA%\WireCat\Data\models\audio\` |
 
 - **settings** hold `config.json`, and `credentials.json` only on a machine with no keyring.
 - **state** holds the login (`sessions/<profile>.session`), recorded runs (`runs/`), the journal of
@@ -152,7 +152,12 @@ other tools:
 `tg personal doctor` prints the exact paths on this machine.
 
 Each directory can be moved with a variable: `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR`,
-`MESSAGING_STORE` (the store file itself) and `CLI_COMMON_CACHE_DIR` (the models).
+`MESSAGING_STORE` (the store file itself) and `WIRECAT_STATE_DIR` (the WireCat folder: the store and the models).
+
+The first start after an upgrade from an older `tg` moves the store and the models once into the WireCat
+folder, from `~/.local/share/cli-messaging/` and `~/.cache/cli-common/models/`. If both places hold a different
+store, `tg` stops and names both files; keep one and run again
+([two different copies of the store](troubleshooting.md#two-different-copies-of-the-store---nothing-was-moved-or-changed)).
 
 > ⚠ **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also move the keyring entry.** A login made
 > with one of them set is invisible without it, and the other way round: the command answers "no
@@ -218,7 +223,7 @@ rm -rf ~/.config/tg-cli ~/.local/share/tg-cli ~/.cache/tg-cli
 `tg personal session end` does not remove the app id and hash from the keyring. They sit under the service
 `tg-cli`; remove that entry with your system's keyring tool if you want them gone.
 
-The local store is shared with other tools. Delete `~/.local/share/cli-messaging/` only if nothing
+The local store is shared with other tools. Delete `~/.local/share/WireCat/` only if nothing
 else uses it: it holds the messages every one of them has read.
 
 ## Next

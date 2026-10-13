@@ -26,10 +26,11 @@ const runsOf = (profile: string) => listRuns(runsDirFor(TG)).filter((one) => one
 
 const keptFor = (profile: string): string => {
   const dir = runsDirFor(TG)
+  const runIds = runsOf(profile).map((one) => one.runId)
   return readdirSync(dir, { recursive: true, withFileTypes: true })
     .filter((entry) => entry.isFile())
     .map((entry) => readFileSync(join(entry.parentPath, entry.name), "utf8"))
-    .filter((text) => text.includes(`"profile":"${profile}"`) || text.includes(`"profile": "${profile}"`))
+    .filter((text) => runIds.some((runId) => text.includes(runId)))
     .join("\n")
 }
 
@@ -92,6 +93,7 @@ describe("run records", () => {
       profile: "search-fixture",
       command: "messages download",
       cliVersion: TG.version,
+      service: TG.command,
     })
     recorded.logger.info({
       event: "response",
@@ -129,5 +131,19 @@ describe("run records", () => {
     ])
     expect(stderr).toEqual([])
     expect(listRuns(dir)).toHaveLength(before)
+  })
+
+  it("**--debug adds the failure's record** as a second line after the error object", async () => {
+    const { code, stdout, stderr } = await tg(["runs", "show", "no-such-run", "--json", "--debug"])
+
+    expect(code).not.toBe(0)
+    expect(stdout).toEqual([])
+    const [object, record] = stderr
+      .join("\n")
+      .trim()
+      .split("\n")
+      .map((line) => JSON.parse(line))
+    expect(object.error).toMatchObject({ code: "not_found" })
+    expect(record).toMatchObject({ severity: "error", command: "runs show", resource: { service: "tg" } })
   })
 })

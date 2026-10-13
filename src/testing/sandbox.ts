@@ -18,9 +18,9 @@ process.env.TG_STATE_DIR = join(sandbox, "state")
 process.env.TG_REQUESTS_PER_MINUTE = "0"
 process.env.TG_CACHE_DIR = join(sandbox, "cache")
 process.env.MESSAGING_STORE = join(sandbox, "messages.db")
-// Speech models shared by every CLI, outside tg's own folders. A max-cli test that wrote a sized
-// stand-in for a model there overwrote the owner's downloaded one on 2026-10-01.
-process.env.CLI_COMMON_CACHE_DIR = join(sandbox, "common-cache")
+// The WireCat folder every CLI shares: speech models, and the store when MESSAGING_STORE is unset. A max-cli
+// test that wrote a sized stand-in for a model there overwrote the owner's downloaded one on 2026-10-01.
+process.env.WIRECAT_STATE_DIR = join(sandbox, "wirecat")
 process.env.TMPDIR = sandbox
 // `tg service install` writes a systemd unit under it; the owner's own units are not the suite's.
 process.env.XDG_CONFIG_HOME = join(sandbox, "xdg")

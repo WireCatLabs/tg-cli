@@ -72,7 +72,7 @@ tg personal search messages 'lease' --chat "Book club"  # Telegram messages only
 ```
 
 ```sh
-tg personal search mail 'invoice'                 # only the mail memo mail import brought in
+tg personal search mail 'invoice'                 # only the mail memo sync --mail brought in
 ```
 
 ```sh
@@ -94,7 +94,7 @@ written in memo or imported from a folder (`internal|file`). Mail supports `chat
 and `from:` for its sender. When a field does not apply — `kind:`/`topic:` for mail, or `chat:`/`from:`
 for notes — `search all` skips that resource and explains why.
 
-Mail and notes reach the store through memo: `memo mail import` and `memo import`. Without them,
+Mail and notes reach the store through memo: `memo sync --mail` and `memo import`. Without them,
 `search all` searches messages only.
 
 The rest of this page is about searching messages, `tg personal search messages`. It reads the local store;

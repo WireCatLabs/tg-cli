@@ -43,7 +43,7 @@ describe("config set proxy", () => {
       stdin: piped("socks5://u:synthetic-secret@proxy.example:1080"),
     })
     expect(result.code).toBe(2)
-    expect(json(result.stderr).error.reason).toBe("input_limit")
+    expect(json(result.stderr).error.reason).toBe("input.too-large")
     expect(proxySecrets({ keyring }).read("bounded-proxy")).toBeUndefined()
     expect(result.stderr.join(" ")).not.toContain("synthetic-secret")
   })

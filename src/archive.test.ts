@@ -137,7 +137,7 @@ describe("the archive, from the store", () => {
         JSON.stringify({ data: input.map((_, index) => ({ index, embedding: [1, ...new Array(dims - 1).fill(0)] })) }),
       )
     })
-    const env = { TG_OPENAI_API_KEY: "sk-test", CLI_COMMON_CACHE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
+    const env = { TG_OPENAI_API_KEY: "sk-test", WIRECAT_STATE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
     const server = ["--base-url", "http://127.0.0.1:11434/v1", "--model", "m", "--dims", "8"]
     try {
       const embedded = await tg(
@@ -310,7 +310,7 @@ describe("the archive, from the store", () => {
       store,
     )
 
-    const models = { CLI_COMMON_CACHE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
+    const models = { WIRECAT_STATE_DIR: mkdtempSync(join(tmpdir(), "models-")) }
     const embedded = await tg(
       ["archive", "conversations", "embed", "--max-chats", "1", "--max-chunks", "10", "--json"],
       store,

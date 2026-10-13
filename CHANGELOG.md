@@ -7,9 +7,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **Built on cli-messaging 0.256.0, where `store fetch` is now `messages sync`** (same arguments, options and JSON).
-  `store fetch` still runs as a hidden, deprecated name; the docs and the skill use `messages sync`.
-  `bot store fetch` keeps its name.
+- **Built on cli-messaging 0.258.0 and cli-base 0.24.0.** `store fetch` is now `messages sync` (same arguments,
+  options and JSON). `store fetch` still runs as a hidden, deprecated name; the docs and the skill use
+  `messages sync`. `bot store fetch` keeps its name.
+- **`--debug`:** on a failure, the whole record — cause and stack — follows the error: after the `✗` line in a
+  terminal, as a second JSON line otherwise.
+- **`runs list` and `runs search` read a per-day index**, so they answer in milliseconds on thousands of runs.
 
 ### Fixed
 
@@ -19,6 +22,20 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **The local store and the speech models move once into the WireCat folder**, `~/.local/share/WireCat/`
+  (Windows: `%LOCALAPPDATA%\WireCat\Data\`), on the first start, from `~/.local/share/cli-messaging/` and
+  `~/.cache/cli-common/models/`. The move never overwrites: if both places hold a different store, `tg` stops
+  with exit code `3` and names both files. `WIRECAT_STATE_DIR` replaces `CLI_COMMON_CACHE_DIR` and moves the whole
+  folder. Upgrade `max` and `memo` together with `tg`: an older one would create a new store in the old place.
+  [Where tg keeps its files](docs/installation.md).
+- **One error object:** `{"error":{"code","reason","message","details"}}`. What used to sit at the top of
+  `error` — `candidates`, `sendId`, `operationId`, `permission`, `retryAfterMs` — is now in `error.details`.
+  `reason` is a dotted id (`output_limit` → `output.too-large`, `input_limit` → `input.too-large`);
+  `retryable` appears only where the failure sets it, and `actions` only on the failed items of a partial
+  result. Exit code `1` is `internal_error` (was `generic_failure`), and its message no longer carries the
+  fault's own text; `--debug` shows it.
+- **`runs show` lists only what went wrong** (failed responses, warnings, the crash) and adds `eventCount`;
+  `-v` shows every event, as before.
 - **`tg` never picks a profile for you.** A command that uses an account and names no profile (no first
   word, no `TG_PROFILE`, no `defaultProfile` in the config file) stops with exit code `2` instead of using
   `default`, also when `default` is the only profile. **This breaks every existing one-profile setup**:
