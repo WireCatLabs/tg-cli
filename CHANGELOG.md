@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`tg <profile> bot messages delete` takes more than 100 messages.** It sent every id in one call, and Telegram
+  takes at most 100, so a longer list failed. It now sends them 100 at a time; if a later call fails, the error says
+  how many were already deleted.
+
 ## 0.53.0 — 14.10.2026
 
 ### Changed — may break scripts

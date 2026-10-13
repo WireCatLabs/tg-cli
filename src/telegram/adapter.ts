@@ -176,6 +176,8 @@ const MEMBERS_MAX = 10_000
 const MEMBER_PAGE_PAUSE_MS = 1000
 /** Pages of 100 that `chats events` reads at most; the rest is `more`. */
 const EVENT_PAGES = 10
+/** messages.getMessages and messages.deleteMessages take at most 100 ids a call. */
+const BY_ID_BATCH = 100
 
 /**
  * One Telegram account over one connection, speaking only the domain model above this line. Every
@@ -1051,7 +1053,9 @@ export class TelegramAdapter {
         }
         return peer
       }
-      const found = await this.#client.getMessages(peer, ids)
+      const found: unknown[] = []
+      for (let at = 0; at < ids.length; at += BY_ID_BATCH)
+        for (const one of await this.#client.getMessages(peer, ids.slice(at, at + BY_ID_BATCH))) found.push(one)
       const missing = ids.filter((_, index) => found[index] == null)
       if (missing.length > 0) {
         throw new CliError(
@@ -1062,7 +1066,8 @@ export class TelegramAdapter {
       return peer
     })
     return this.#write("the messages may have been deleted — repeating it is safe", async () => {
-      await this.#client.deleteMessagesById(peer, ids, { revoke: forEveryone })
+      for (let at = 0; at < ids.length; at += BY_ID_BATCH)
+        await this.#client.deleteMessagesById(peer, ids.slice(at, at + BY_ID_BATCH), { revoke: forEveryone })
     })
   }
 

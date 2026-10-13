@@ -279,6 +279,13 @@ describe("tg bot messages edit, delete, pin", () => {
       ["unpinChatMessage", { chat_id: String(GROUP.id), message_id: 502 }],
     ])
   })
+
+  it("deletes more than 100 messages in calls of 100, the most Telegram takes", async () => {
+    const ids = Array.from({ length: 250 }, (_, at) => String(1000 + at))
+    await tg(["sales", "bot", "messages", "delete", "Team", ...ids, "--allow-dangerous"])
+
+    expect(requests.map(({ params }) => (params.message_ids as number[]).length)).toEqual([100, 100, 50])
+  })
 })
 
 describe("tg bot chats", () => {
