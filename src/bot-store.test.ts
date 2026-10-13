@@ -150,7 +150,6 @@ describe("tg bot store fetch", () => {
       error: {
         code: "validation_error",
         message: expect.stringContaining("--from <message link>"),
-        actions: expect.any(Array),
       },
     })
     expect(close).toHaveBeenCalledOnce()
@@ -167,7 +166,7 @@ describe("tg bot store fetch", () => {
     expect(other.code).toBe(2)
     expect(other.out).toBe("")
     expect(JSON.parse(other.err)).toMatchObject({
-      error: { code: "validation_error", actions: expect.any(Array) },
+      error: { code: "validation_error" },
     })
     expect(personalClose).toHaveBeenCalledOnce()
   })

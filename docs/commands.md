@@ -31,6 +31,7 @@ without one.
 | `--jsonl` | machine-readable output: one JSON object per line, for streaming and jq. |
 | `--quiet` | diagnostics off; a failure is still said. |
 | `--trace` | the connection's own log lines on stderr — never message content. |
+| `--debug` | on a failure, its whole record — cause and stack — in place of the short line. |
 | `--timeout <duration>` | give up on the whole command after this — 30s, 2m, 500ms. |
 | `--offline` | answer from what was recorded and never connect; fails if nothing was. |
 | `--no-input` | never prompt or open interactive login; piped input remains available. |
@@ -3380,7 +3381,7 @@ tg search messages [query] [options]
 
 ### `tg search mail`
 
-search the mail imported into the local store — memo mail <account> import brings it in
+search the mail imported into the local store — memo sync --mail brings it in
 
 ```sh
 tg search mail [query] [options]
@@ -3859,7 +3860,7 @@ tg runs list [options]
 
 ### `tg runs show`
 
-one run: what it was, and one line per operation
+one run: what it was, how it ended and what went wrong; -v for every event
 
 ```sh
 tg runs show <run-id>

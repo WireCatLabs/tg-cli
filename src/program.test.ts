@@ -239,7 +239,7 @@ describe("a chat named ambiguously", () => {
 
     expect(code).toBe(2)
     expect(stdout).toEqual([])
-    expect(JSON.parse(stderr[0] ?? "").error.candidates).toHaveLength(2)
+    expect(JSON.parse(stderr[0] ?? "").error.details.candidates).toHaveLength(2)
   })
 })
 
@@ -384,7 +384,7 @@ describe("sending", () => {
     const { code, stderr } = await tg(["messages", "send", "me", "hi"], { adapter: unknown })
 
     expect(code).toBe(14)
-    expect(JSON.parse(stderr[0] ?? "").error.sendId).toBe("-9001")
+    expect(JSON.parse(stderr[0] ?? "").error.details.sendId).toBe("-9001")
   })
 
   it("hands --silent, --no-preview and --md to the adapter, the marks taken out of the text", async () => {

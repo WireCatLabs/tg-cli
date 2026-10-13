@@ -316,7 +316,7 @@ uses its own proxy settings.
 | `TG_PROXY` | the proxy URL, password or secret included; wins over the `proxy` setting ([above](#through-a-proxy)) |
 | `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR` | move the three directories — and the keyring entry with them |
 | `MESSAGING_STORE` | the path of the local store file |
-| `CLI_COMMON_CACHE_DIR` | where speech models are kept |
+| `WIRECAT_STATE_DIR` | the WireCat folder every CLI shares: the local store and the speech models |
 | `TG_NO_UPDATE_CHECK` | `1` turns off the daily "a newer version exists" line |
 | `NO_COLOR` | no colour in the table view |
 | `XDG_RUNTIME_DIR` | on Linux, how the keyring is reached; cron and ssh often leave it out |

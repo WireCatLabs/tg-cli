@@ -33,5 +33,5 @@ jobs:
       # Commands that need no login and reach no network.
       - run: node dist/bin/tg.js --version
       - run: node dist/bin/tg.js doctor --json
-      - run: node dist/bin/tg.js mcp config --json
+      - run: node dist/bin/tg.js default mcp config --json
       - run: node dist/bin/tg.js commands --json

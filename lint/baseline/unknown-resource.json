@@ -1,7 +1,6 @@
 [
   "account sessions",
   "attachments text",
-  "bot api",
   "bot auth",
   "bot callbacks",
   "bot chats rules",
@@ -24,6 +23,5 @@
   "replies consents",
   "schedule",
   "stats messages counters",
-  "store gaps",
-  "store jobs"
+  "store gaps"
 ]

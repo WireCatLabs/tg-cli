@@ -85,7 +85,7 @@ is not encrypted ([what reaches the disk](security.md#what-reaches-the-disk)).
 [max-cli](https://github.com/WireCatLabs/max-cli):
 
 ```text
-~/.local/share/cli-messaging/wirecat.db       # Linux; MESSAGING_STORE moves it
+~/.local/share/WireCat/wirecat.db             # Linux and macOS; MESSAGING_STORE moves it
 ```
 
 `tg personal session end` logs out and leaves the store as it is.

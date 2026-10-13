@@ -21,7 +21,7 @@ exit code says the same as the `code`. Every code is also in the
 
 | Code | Name | What it usually means | Where |
 |---|---|---|---|
-| `1` | `generic_failure` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
+| `1` | `internal_error` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-setup) |
@@ -378,6 +378,13 @@ An answer other than `y` to a question before a change ends the same way: nothin
 Exit code `3`. Another CLI, or a newer `tg`, upgraded the local store in a way this version cannot
 read. Run `tg upgrade`. Nothing in the store is lost ([the store and other versions](archive.md#the-store-and-other-versions)).
 
+### "two different copies of the store: … — nothing was moved or changed"
+
+Exit code `3`, on the first start after an upgrade. The store moves once into the WireCat folder, and both the old
+folder and the WireCat folder hold a `wirecat.db` with different contents — usually because an older `tg`, `max`
+or `memo` created a new store in the old place after the move. Nothing was changed. Keep the store you want, move
+the other one away, and run the command again. Upgrade every CLI that shares the store together.
+
 ### "nothing recorded for profile … yet — run the command once without --offline"
 
 Exit code `6`. `--offline`, `store status` and `store export` answer only from the
@@ -439,13 +446,13 @@ Send it as a new issue at
 and what happened, and attach the file. Issues are public, the file too: read it before you attach
 it.
 
-⚠ Never attach the state folder, the session file or `~/.local/share/cli-messaging/` — they hold your
+⚠ Never attach the state folder, the session file or `~/.local/share/WireCat/` — they hold your
 login and your messages.
 
 ## Partial results and recovery actions
 
-CLI and MCP errors include `actions`: what to check, which setting to change, how long to wait
-or which item to skip. `retryable` never authorizes automatic write replay: for `outcome_unknown`,
+Each failed item of a partial result includes `actions`: what to check, which setting to change, how long
+to wait or which item to skip. `retryable` never authorizes automatic write replay: for `outcome_unknown`,
 verify whether the action happened first. API limits cannot be increased through local settings;
 reduce or split the input instead.
 

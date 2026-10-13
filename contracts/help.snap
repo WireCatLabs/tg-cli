@@ -22,6 +22,8 @@ Options:
   --quiet                     diagnostics off; a failure is still said
   --trace                     the connection's own log lines on stderr — never
                               message content
+  --debug                     on a failure, its whole record — cause and stack —
+                              in place of the short line
   --timeout <duration>        give up on the whole command after this — 30s, 2m,
                               500ms
   --offline                   answer from what was recorded and never connect;
