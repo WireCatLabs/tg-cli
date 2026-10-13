@@ -14,8 +14,8 @@ const answers = vi.hoisted(() => ({ queue: [] as string[], prompts: [] as string
 const opened = vi.hoisted(() => ({ urls: [] as string[] }))
 const registered = vi.hoisted(() => ({ calls: 0 }))
 
-vi.mock("@wirecat/cli-messaging", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@wirecat/cli-messaging")>()),
+vi.mock("@wirecat/cli-core", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@wirecat/cli-core")>()),
   readSecret: async (prompt: string) => {
     answers.prompts.push(prompt)
     return answers.queue.shift() ?? ""

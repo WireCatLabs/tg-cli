@@ -1,6 +1,6 @@
 import { thtml, type tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import { type FormattedText, type TextSpan, validateFormattedText } from "@wirecat/cli-messaging"
+import { type FormattedText, type TextSpan, validateFormattedText } from "@wirecat/cli-core"
 
 const PLAIN: Partial<Record<tl.TypeMessageEntity["_"], TextSpan["type"]>> = {
   messageEntityBold: "bold",

@@ -1,6 +1,6 @@
 import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@wirecat/cli-base"
-import type { EventSink } from "@wirecat/cli-messaging/cli"
-import { apiJson, apiPlainJson, parseApiJson } from "@wirecat/cli-messaging/cli"
+import type { EventSink } from "@wirecat/cli-core/cli"
+import { apiJson, apiPlainJson, parseApiJson } from "@wirecat/cli-core/cli"
 
 const API = "https://api.telegram.org"
 const DEFAULT_TIMEOUT_MS = 30_000

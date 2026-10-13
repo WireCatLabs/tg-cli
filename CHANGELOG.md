@@ -7,8 +7,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **Built on `@wirecat/cli-messaging` 0.261.0 and `@wirecat/cli-base` 0.26.0.** Machine output keys are
-  snake_case: `error.details` says `operation_id`, `send_id`, `retry_after_ms`; `commands --json` says
+- **Built on `@wirecat/cli-core` 0.262.0 and `@wirecat/cli-base` 0.26.0.** `@wirecat/cli-core` is the new name
+  of `@wirecat/cli-messaging`, 0.262.0 the same code as its 0.261.0; the parity command is `cli-core-parity`.
+  Machine output keys are snake_case: `error.details` says `operation_id`, `send_id`, `retry_after_ms`; `commands --json` says
   `global_options`, `inherited_options`, `exit_codes`, `takes_value` and `contract: 1`. A query tree in the MCP `ast`
   argument has `lower_inclusive`, `upper_inclusive` and `must_not`.
 

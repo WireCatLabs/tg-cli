@@ -5,8 +5,8 @@ description: Test a tg-cli change against the real Telegram before it ships — 
 
 # Test a change live
 
-The rules are shared with max-cli: cli-messaging's
-[RELEASING.md, "Live checks"](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/RELEASING.md#live-checks).
+The rules are shared with max-cli: cli-core's
+[RELEASING.md, "Live checks"](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/RELEASING.md#live-checks).
 Read them first. **This is the owner's real Telegram account**: a mistake sends a message to a
 person ([CLAUDE.md](../../../../CLAUDE.md), rule 1).
 

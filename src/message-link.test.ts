@@ -1,6 +1,6 @@
 import { CliError } from "@wirecat/cli-base"
-import { rememberAccount } from "@wirecat/cli-messaging/cli"
-import { openStore } from "@wirecat/cli-messaging/store"
+import { rememberAccount } from "@wirecat/cli-core/cli"
+import { openStore } from "@wirecat/cli-core/store"
 import { describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"

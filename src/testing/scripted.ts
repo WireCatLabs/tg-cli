@@ -1,5 +1,5 @@
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import type { Chat, Message } from "@wirecat/cli-messaging"
+import type { Chat, Message } from "@wirecat/cli-core"
 import type { Adapter, Environment } from "../commands/context.js"
 import { run } from "../program.js"
 import { formatHtml } from "../telegram/format-html.js"

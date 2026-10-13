@@ -1,6 +1,6 @@
 # The handoff standard
 
-How a piece of work is handed from one agent to the next in tg-cli and cli-messaging. Modelled on
+How a piece of work is handed from one agent to the next in tg-cli and cli-core. Modelled on
 chitchat's `chitdocs/HANDOFF.md` and the owner's global rule; this file is its home here.
 
 A handoff **collects context, it does not describe the task** — the task is already in the plan.

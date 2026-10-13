@@ -1,5 +1,5 @@
 import { PeersIndex, parsePeer, type TelegramClient, type tl } from "@mtcute/node"
-import type { Page, PollVote } from "@wirecat/cli-messaging"
+import type { Page, PollVote } from "@wirecat/cli-core"
 import { answerId, toMember } from "./map.js"
 
 type Client = Pick<TelegramClient, "call" | "resolvePeer">

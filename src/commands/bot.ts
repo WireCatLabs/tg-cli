@@ -1,12 +1,6 @@
 import { existsSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import {
-  type BotMessenger,
-  BotTokenStore,
-  botCopy,
-  environmentOf,
-  type RunBotCommand,
-} from "@wirecat/cli-messaging/cli"
+import { type BotMessenger, BotTokenStore, botCopy, environmentOf, type RunBotCommand } from "@wirecat/cli-core/cli"
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"

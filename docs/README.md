@@ -47,5 +47,5 @@ committed page differs from what the program says. The same list, as JSON, is `t
 - [dev/CONVENTIONS.md](dev/CONVENTIONS.md) — how code and documents are written here
 - [dev/TESTING.md](dev/TESTING.md) — how to check a change, and what each check is for
 - [dev/BACKLOG.md](dev/BACKLOG.md) — open work; the shared package
-  [cli-messaging](https://github.com/WireCatLabs/cli-messaging) holds everything that is not specific to
+  [cli-core](https://github.com/WireCatLabs/cli-core) holds everything that is not specific to
   Telegram

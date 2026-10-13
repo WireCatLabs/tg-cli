@@ -4,8 +4,8 @@ import { join } from "node:path"
 import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@wirecat/cli-base"
-import { pickChat } from "@wirecat/cli-messaging"
-import type { SendOptions } from "@wirecat/cli-messaging/cli"
+import { pickChat } from "@wirecat/cli-core"
+import type { SendOptions } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
 import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
@@ -227,7 +227,7 @@ describe("machine output", () => {
 })
 
 describe("a chat named ambiguously", () => {
-  it("**lists the candidates with exit 2**, although the error comes from cli-messaging's copy of cli-base", async () => {
+  it("**lists the candidates with exit 2**, although the error comes from cli-core's copy of cli-base", async () => {
     const twoMatches = () =>
       scripted({
         history: async (reference) => {

@@ -108,7 +108,7 @@ const STANDINGS: Record<string, Standing> = {
   ],
   FROZEN_METHOD_INVALID: frozen,
   FROZEN_PARTICIPANT_MISSING: frozen,
-  // Not a wait: retrying is what made it. `limited` makes cli-messaging hold every write for a while.
+  // Not a wait: retrying is what made it. `limited` makes cli-core hold every write for a while.
   PEER_FLOOD: () => [
     "permission_error",
     "Telegram limited this account's messages as spam (PEER_FLOOD) — it can still read; " +

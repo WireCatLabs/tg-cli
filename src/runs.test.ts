@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { listRuns, runsDirFor, startRun } from "@wirecat/cli-messaging/cli"
+import { listRuns, runsDirFor, startRun } from "@wirecat/cli-core/cli"
 import { describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import type { Adapter } from "./commands/context.js"

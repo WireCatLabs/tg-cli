@@ -41,7 +41,7 @@ The probe in §5 can confirm the rule on the test account, but it cannot clear i
 | `tg serve` | its own main connection | on, `catchUp: true` | until stopped |
 | `tg watch` | its own main connection | on, `catchUp: false` | until stopped |
 | one-shot command | its own main connection | off (`invokeWithoutUpdates`) | one command |
-| `tg mcp` | its own main connection, kept between calls | off | up to 2 min idle, 5 min in all (cli-messaging `src/mcp/session.ts`) |
+| `tg mcp` | its own main connection, kept between calls | off | up to 2 min idle, 5 min in all (cli-core `src/mcp/session.ts`) |
 
 - Every `TelegramClient` picks a fresh random session id (`network/mtproto-session.js:23`). Turning
   updates off only wraps each call in `invokeWithoutUpdates` (`network/session-connection.js:1018`).
@@ -51,7 +51,7 @@ The probe in §5 can confirm the rule on the test account, but it cannot clear i
 - **So any two of them at once are two main sessions on one key.** That covers `serve` next to a
   command, `mcp` or `watch`, but also, with no `serve`, a command while `mcp` holds its connection,
   or two commands an agent runs in parallel. With MCP the overlap lasts minutes. The only guard is the lock against a second `serve`
-  (cli-messaging `src/cli/messenger/serve-command.ts:24-31`). That lock is read, then written, not
+  (cli-core `src/cli/messenger/serve-command.ts:24-31`). That lock is read, then written, not
   taken atomically, so two `serve`s started in the same instant can both pass.
 
 ## 3. What each process writes to the session file
@@ -59,7 +59,7 @@ The probe in §5 can confirm the rule on the test account, but it cannot clear i
 The file is mtcute's SQLite storage over our driver (`src/telegram/storage.ts`).
 
 - **SQLite itself is sound.** `openCache` sets WAL and `busy_timeout = 5000`
-  (cli-messaging `src/store/open.ts:17`, `src/store/driver.ts:41-42`). mtcute flushes its pending
+  (cli-core `src/store/open.ts:17`, `src/store/driver.ts:41-42`). mtcute flushes its pending
   writes in one `BEGIN IMMEDIATE` transaction (`src/telegram/storage.ts:39-41`). Two writers wait for
   each other; they do not corrupt the file. Do not "fix" this.
 - **Every write replaces whole rows** (`insert or replace` in `storage/sqlite/repository/*.js`).
@@ -73,7 +73,7 @@ The file is mtcute's SQLite storage over our driver (`src/telegram/storage.ts`).
   reads the stored state only when it starts (`manager.js:352`). So `watch` can move or roll back
   the point a restarted `serve` catches up from (reproduced: `src/telegram/storage.test.ts`, "lets
   the last process to flush set the updates state"). No message is lost: `watch` saves what it sees
-  to the store (cli-messaging `src/cli/messenger/stored.ts:141`). Re-reading only repeats work.
+  to the store (cli-core `src/cli/messenger/stored.ts:141`). Re-reading only repeats work.
 - **Peers, the current user, DC options and salts** are written by every process, with fresh data.
   Last writer wins, which is harmless.
 - **A dropped key is dropped for everyone.** When the server stops knowing the key (after
@@ -82,7 +82,7 @@ The file is mtcute's SQLite storage over our driver (`src/telegram/storage.ts`).
   `storage/sqlite/repository/auth-keys.js:36`; reproduced in `storage.test.ts`). One revoked process
   therefore logs out every process on the profile.
 
-The message store (cli-messaging) is a separate SQLite file with the same pragmas. Every process
+The message store (cli-core) is a separate SQLite file with the same pragmas. Every process
 writes to it by inserting or updating rows, so the store is not at risk.
 
 ## 4. The fix
@@ -93,7 +93,7 @@ writes to it by inserting or updating rows, so the store is not at risk.
 | (b) a file lock, error or wait | correct only if commands cannot run while `serve` runs: `serve` holds the connection forever, so a waiting command waits forever |
 | (c) commands and MCP go through a running `serve` | the only option that meets §1 and keeps commands working beside `serve` |
 
-**Plan for (c)**: messenger-neutral, in cli-messaging. max-cli already works this way (its
+**Plan for (c)**: messenger-neutral, in cli-core. max-cli already works this way (its
 `src/server/`, a per-profile Unix socket).
 
 1. `serve` listens on `<state>/serve/<profile>.sock` (mode 0600; a named pipe on Windows) once
@@ -110,8 +110,8 @@ writes to it by inserting or updating rows, so the store is not at risk.
    listener. `session start` and `session end` stop `serve` first.
 5. A version mismatch with the lock's `version` refuses to forward, and says to restart `serve`.
 
-The size, judged from max-cli's `src/server/`: one to two days, mostly in cli-messaging, and a
-cli-messaging release before tg can use it.
+The size, judged from max-cli's `src/server/`: one to two days, mostly in cli-core, and a
+cli-core release before tg can use it.
 
 ## 5. The live check
 

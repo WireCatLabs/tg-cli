@@ -14,8 +14,8 @@ const input = vi.hoisted(() => ({ answers: [] as string[], prompts: [] as string
 const registration = vi.hoisted(() => ({ calls: 0, error: undefined as Error | undefined }))
 const browser = vi.hoisted(() => ({ urls: [] as string[] }))
 
-vi.mock("@wirecat/cli-messaging", async (original) => ({
-  ...(await original<typeof import("@wirecat/cli-messaging")>()),
+vi.mock("@wirecat/cli-core", async (original) => ({
+  ...(await original<typeof import("@wirecat/cli-core")>()),
   readSecret: async (prompt: string, options: { signal?: AbortSignal }) => {
     input.prompts.push(prompt)
     if (input.cancel) throw new CliError("cancelled", "cancelled")

@@ -1,15 +1,15 @@
 # Architecture
 
-This page is the map of `tg`'s own code and its seams; the cli-messaging version tg builds on is the
+This page is the map of `tg`'s own code and its seams; the cli-core version tg builds on is the
 pin in `package.json`. What the project is lives in [HANDOFF.md](../../HANDOFF.md), open work in
 [BACKLOG.md](BACKLOG.md);
-the shared design lives in cli-messaging and in
+the shared design lives in cli-core and in
 [max-cli's ARCHITECTURE.md](https://github.com/WireCatLabs/max-cli/blob/main/docs/dev/ARCHITECTURE.md),
-which most of cli-messaging was copied from.
+which most of cli-core was copied from.
 
 ### CLI design references
 
-Telegram and MAX use one [CLI standard and adoption profile](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/STANDARD.md#external-references-and-our-adoption-profile).
+Telegram and MAX use one [CLI standard and adoption profile](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/STANDARD.md#external-references-and-our-adoption-profile).
 It draws on [POSIX utility conventions](https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap12.html),
 [GNU command-line conventions](https://www.gnu.org/prep/standards/html_node/Command_002dLine-Interfaces)
 and [Command Line Interface Guidelines](https://clig.dev/) for utility syntax, help, composition
@@ -19,31 +19,31 @@ references do not certify the CLI or prescribe its command tree.
 The shared standard also assesses the [MCP tools specification](https://modelcontextprotocol.io/specification/2025-11-25/server/tools),
 the [Agent Skills format](https://agentskills.io/specification) and additional agent-tool guidance.
 The shell/renderer own output, services own operations and guards enforce permissions across
-CLI and MCP. The public [compliance audit](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/CLI-COMPLIANCE.md)
+CLI and MCP. The public [compliance audit](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/CLI-COMPLIANCE.md)
 separates source evidence, isolated observations, intentional differences and follow-up work.
 Shared runtime fixes become available only after this CLI adopts their published version.
 
 ### Agent evaluation evidence
 
-the [public admin/statistics evaluation](https://github.com/WireCatLabs/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) separates independent
+the [public admin/statistics evaluation](https://github.com/WireCatLabs/cli-core/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md) separates independent
 model contexts, synthetic CLI/MCP traces, deterministic fixture checks and live-provider claims.
 Its six contexts and 38 assessed outcomes are a bounded observation, not broad agent conformance;
 original model identity was not captured and MCP used a shell proxy. Read the report's subject
 versions and first-failure record before comparing results with another release.
-[Reproduction tooling](https://github.com/WireCatLabs/cli-messaging/tree/main/scripts/evals) belongs to cli-messaging; the
+[Reproduction tooling](https://github.com/WireCatLabs/cli-core/tree/main/scripts/evals) belongs to cli-core; the
 [user CLI contract](../cli-contract.md) explains what that evidence means for a statistics answer.
 
 
 ## 1. Most of `tg` is not in this repository
 
-Every command except `session`, `setup` and `update` comes from `@wirecat/cli-messaging/cli`: the command
+Every command except `session`, `setup` and `update` comes from `@wirecat/cli-core/cli`: the command
 tree, `run()`, the output contract, the store and `--offline`, run records, the send guard, `mcp`.
 `tg` hands it one description of Telegram and one adapter.
 
 | Layer | Where | Knows |
 |---|---|---|
 | Entry | `src/bin/tg.ts` | argv → `run()` → exit code |
-| Program | `src/program.ts` | which commands exist; wraps cli-messaging's `run()` for the daily update line |
+| Program | `src/program.ts` | which commands exist; wraps cli-core's `run()` for the daily update line |
 | Telegram description | `src/commands/context.ts`, `TELEGRAM` | credentials, the session file, how to connect, `doctor`'s checks, `me` → Saved Messages |
 | tg's own commands | `src/commands/session.ts`, `setup.ts`, `update.ts` | login and logout; guided first run; self-update |
 | Adapter | `src/telegram/adapter.ts` | the only door to Telegram — speaks the domain model outward |
@@ -57,7 +57,7 @@ not import the mapping or the error translation (`biome.json`, `noRestrictedImpo
 ## 2. The seams a test uses
 
 `run(argv, environment)` takes everything that reaches outside the process from `environment`
-(`Environment` in `src/commands/context.ts`, extending cli-messaging's `BaseEnvironment`):
+(`Environment` in `src/commands/context.ts`, extending cli-core's `BaseEnvironment`):
 
 - `adapter` — a scripted Telegram in place of `TelegramAdapter.open`. Every command test uses it.
 - `keyring` — `memoryKeyring()` from cli-base, so no test reaches the OS keychain.
@@ -79,7 +79,7 @@ A one-shot command opens with updates off and closes in a `finally`; an open soc
 and a piped command that prints and never returns is a defect. Only `watch` and `serve` open with
 `listen`; only `serve` catches up on what arrived while nothing listened.
 
-Stored message/author rankings and bounded evidence live in cli-messaging services/store.
+Stored message/author rankings and bounded evidence live in cli-core services/store.
 The Telegram mapper retains versioned `providerMetadata.graph` linkage from mtcute 0.32.3:
 explicit reply targets, linked discussion groups and proven automatic channel copies.
 An ambiguous forum-topic link remains unknown. No extra message-store column is needed.
