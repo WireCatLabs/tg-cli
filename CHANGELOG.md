@@ -8,13 +8,18 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 ### Changed — may break scripts
 
 - **Built on `@wirecat/cli-core` 0.262.0 and `@wirecat/cli-base` 0.26.0.** `@wirecat/cli-core` is the new name of
-  `@wirecat/cli-messaging`, 0.262.0 the same code as its 0.261.0; the parity command is `cli-core-parity`. Machine
-  output keys are snake_case: `error.details` says `operation_id`, `send_id`, `retry_after_ms`; `commands --json` says
+  `@wirecat/cli-messaging`; its 0.262.0 follows 0.261.0. The parity command is `cli-core-parity`. Machine output keys
+  are snake_case: `error.details` says `operation_id`, `send_id`, `retry_after_ms`; `commands --json` says
   `global_options`, `inherited_options`, `exit_codes`, `takes_value` and `contract: 1`. A query tree in the MCP `ast`
   argument has `lower_inclusive`, `upper_inclusive` and `must_not`.
+- **HTML files are read as their main text** (cli-core 0.262.0): menus, footers and banners are dropped, headings,
+  lists, tables and links kept. HTML attachment text already stored is read again on the next `attachments extract`,
+  and it changes. `title:`, `site:`, `lang:`, `author:` and `keyword:` search notes and files.
 
 ### Fixed
 
+- **`tg config set defaultProfile <name>` and `config unset defaultProfile` work without naming a profile.** They
+  asked for one first and failed when several existed (cli-core 0.262.0).
 - **`tg default mcp config` and `mcp install` name the profile.** The entry left out a profile named `default`, so
   its MCP server stopped on its first call, since tg no longer assumes a profile (cli-messaging 0.260.0).
 
