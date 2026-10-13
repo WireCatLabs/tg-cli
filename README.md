@@ -192,7 +192,7 @@ Telegram by default; `--offline` answers from the store without connecting.
 ```sh
 tg personal search messages "contract" --chat "Project Alpha"
 tg personal search messages "contract" --backend archive  # local only
-tg personal store fetch "Project Alpha" --last 5000 --background
+tg personal messages sync "Project Alpha" --last 5000 --background
 tg personal store export "Project Alpha" --format markdown --output alpha.md
 tg personal messages evidence "Project Alpha" --json  # bounded evidence for a chat brief
 tg personal server install                         # keep the store current as a systemd or launchd service

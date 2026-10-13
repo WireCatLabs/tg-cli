@@ -86,7 +86,7 @@ tg personal messages list me  # Saved Messages, the latest 20
 ```
 
 Allow about five minutes for setup. History downloads are separate: choose a chat and an amount
-before `tg personal store fetch <chat> --last 100`. An agent can read `tg skill show` without logging in;
+before `tg personal messages sync <chat> --last 100`. An agent can read `tg skill show` without logging in;
 `tg personal setup --agent codex` selects the skill for one agent explicitly. `tg setup --help` explains the
 flags. Nothing more is needed to read.
 
@@ -1219,11 +1219,11 @@ tg personal chats list --offline                  # only from the store, never c
 ```
 
 ```sh
-tg personal store fetch "Project Alpha" --estimate  # how much a fetch would take
+tg personal messages sync "Project Alpha" --estimate  # how much a fetch would take
 ```
 
 ```sh
-tg personal store fetch "Project Alpha" --background  # a chat's history, as a job
+tg personal messages sync "Project Alpha" --background  # a chat's history, as a job
 ```
 
 ```sh

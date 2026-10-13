@@ -93,7 +93,7 @@ An agent without a terminal can use `tg personal setup --qr-file login.png --age
 stored app keys and no required 2FA input. Show the temporary image to the owner. Setup removes
 it when login ends. Existing sessions are checked without a new login. Missing keyring access
 requires fixing the environment, not another login. Pick a chat and an amount of history with
-the owner before `tg personal store fetch <chat> --last 100`; setup starts no background service.
+the owner before `tg personal messages sync <chat> --last 100`; setup starts no background service.
 
 ## Output
 
@@ -149,7 +149,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    the first result and its score do not establish an answer. Explicit syntax remains strict.
    **Without `--discover`, `tg personal search messages` also asks Telegram's search** (`--backend both`; `archive`
    for the archive only). Good search needs downloaded chats: if a search finds nothing and `coverage.next` is
-   set, run it (`tg personal store fetch --all --background`) or ask the owner before saying the message does not exist.
+   set, run it (`tg personal messages sync --all --background`) or ask the owner before saying the message does not exist.
    Words and quoted phrases include word forms;
    use `exact:` or `--exact` for exact forms. Explicit `text:` still matches forms. The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
@@ -164,8 +164,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 
 6. **`tg personal store export` exports only what was kept**, and never asks Telegram. `tg personal store status` says
    how much of each chat is kept.
-7. **`tg personal store fetch` makes many requests from the owner's account.** Only when the owner asked.
-   `tg personal store fetch <chat> --estimate` only estimates what it would cost and asks Telegram nothing —
+7. **`tg personal messages sync` makes many requests from the owner's account.** Only when the owner asked.
+   `tg personal messages sync <chat> --estimate` only estimates what it would cost and asks Telegram nothing —
    show the owner that first. A long one goes `--background`; `tg personal store jobs show` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `search messages`. The message asked for carries `"anchor": true`.
@@ -216,7 +216,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     memo's searches answer the same way.
 21. **Before reporting a bug, compare `tg -V` with `npm view @wirecat/tg-cli version`** (memo:
     `memo --version`, `@wirecat/cli-memo`). An older install may lack the fix. In a zsh loop over command
-    paths, `$c` is not split into words: `tg personal $c --help` passes `search messages` as one argument; write
+    paths, `$c` is not split into words: `tg $c --help` passes `search messages` as one argument; write
     `${=c}`.
 
 ## The usual path
@@ -228,7 +228,7 @@ Choose a path from the user's task rather than reading recent messages by defaul
   Follow promising hits with `messages context` or `messages show` and cite their locators.
   Check related chats for a later correction. Empty hits, an empty chat and `hasMore: false`
   never establish complete Telegram history. If missing history matters, explain the gap.
-  Fetch only an authorized chat and bounded period/amount; inspect `store fetch --estimate`
+  Fetch only an authorized chat and bounded period/amount; inspect `messages sync --estimate`
   before a download. Offline cannot fetch missing history.
 - **Prepare for a meeting:** find project groups and the participants' personal chats. A DM's
   title need not contain the project name. Compare dated group messages with relevant DMs;

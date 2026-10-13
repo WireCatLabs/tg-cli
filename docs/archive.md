@@ -23,8 +23,8 @@ Terms used on this page:
 | Task | Command |
 |---|---|
 | See how much of each chat is saved | `tg personal store status` |
-| Download a chat's history, or every chat's | `tg personal store fetch <chat>`, `tg personal store fetch --all` |
-| Run a long download in the background | `tg personal store fetch <chat> --background`, `tg personal store jobs list` |
+| Download a chat's history, or every chat's | `tg personal messages sync <chat>`, `tg personal messages sync --all` |
+| Run a long download in the background | `tg personal messages sync <chat> --background`, `tg personal store jobs list` |
 | Keep the store current all the time | `tg personal server start`, `tg personal server install` |
 | Read chats without connecting | `tg --offline messages list <chat>` |
 | Export a chat to JSON lines or Markdown | `tg personal store export <chat> --output <file>` |
@@ -48,7 +48,7 @@ tg personal store status "Book club" --json
 **Download the selected period:**
 
 ```sh
-tg personal store fetch "Book club" --since-time 30d --json
+tg personal messages sync "Book club" --since-time 30d --json
 ```
 
 **Check again:**
@@ -75,7 +75,7 @@ finished command does not by itself prove complete history. These counts are fic
   `inbox` read, and the messages you sent.
 - **What `serve` hears**: new messages, edits, deletions and reactions, while it runs
   ([below](#keeping-it-current-serve)). `watch` keeps what it prints, too.
-- **What you fetch on purpose**: a chat's history with `tg personal store fetch`, your contact list with
+- **What you fetch on purpose**: a chat's history with `tg personal messages sync`, your contact list with
   `tg personal contacts sync`.
 
 It keeps the full text of every message it has seen. The file is readable by your user only, and it
@@ -101,43 +101,43 @@ tg personal store status "Book club"  # one chat
 ```
 
 A stretch "held completely" is a run of messages with no gap. Messages read here and there leave
-gaps; `store fetch` closes them.
+gaps; `messages sync` closes them.
 
 ## Fetch a chat's history
 
 ```sh
-tg personal store fetch "Book club" --estimate  # what a full fetch would still cost; asks Telegram nothing
+tg personal messages sync "Book club" --estimate  # what a full fetch would still cost; asks Telegram nothing
 ```
 
 ```sh
-tg personal store fetch "Book club"           # fetch it, newest to oldest
+tg personal messages sync "Book club"           # fetch it, newest to oldest
 ```
 
 ```sh
-tg personal store fetch "Book club"           # run again to continue where it stopped
+tg personal messages sync "Book club"           # run again to continue where it stopped
 ```
 
 ```sh
-tg personal store fetch "Book club" --since-time 30d  # only back to 30 days ago
+tg personal messages sync "Book club" --since-time 30d  # only back to 30 days ago
 ```
 
 ```sh
-tg personal store fetch "Book club" --last 5000  # only until the newest 5000 are held
+tg personal messages sync "Book club" --last 5000  # only until the newest 5000 are held
 ```
 
 ```sh
-tg personal store fetch "Book club" --limit 5000  # up to 5000 messages in this run
+tg personal messages sync "Book club" --limit 5000  # up to 5000 messages in this run
 ```
 
 ```sh
-tg personal store fetch --all                 # every chat, most recently active first: the last 90 days
+tg personal messages sync --all                 # every chat, most recently active first: the last 90 days
 ```
 
 ```sh
-tg personal store fetch --all --since-time 365d  # every chat, back to a year ago
+tg personal messages sync --all --since-time 365d  # every chat, back to a year ago
 ```
 
-`store fetch` reads a chat's history page by page, newest first, and saves it. **It is resumable**:
+`messages sync` reads a chat's history page by page, newest first, and saves it. **It is resumable**:
 after every page it records what it now holds, so a stop loses nothing. Ctrl-C, `--timeout`, the
 `--limit` cap, `--since-time`, `--last` and a long wait from Telegram all stop it, and the next run
 skips what is already held. `--since-time` and `--last` say how far back to go, so give one of them, not
@@ -160,7 +160,7 @@ A long fetch can run as a job that outlives the command. It has no default 30-se
 an explicit `--timeout` still limits it:
 
 ```sh
-tg personal store fetch "Book club" --background  # prints the job id
+tg personal messages sync "Book club" --background  # prints the job id
 ```
 
 ```sh
@@ -464,7 +464,7 @@ the message store was written by a newer version (schema N, needs at least M; th
 **The shared local store uses `wirecat.db`.** The old `messages.db` is not migrated: opening the default store deletes it and its `-wal` and `-shm` files.
 If you need old notes, aliases, tags, tasks or transcriptions, close programs using that file and copy it and any companion files to another folder **before first running the new version**.
 An explicit `MESSAGING_STORE` disables this cleanup; a file held by another process stays until a later store open.
-`tg personal store fetch --all` can fetch messages from Telegram again; data that existed only locally cannot be fetched from the server. Login stays separate.
+`tg personal messages sync --all` can fetch messages from Telegram again; data that existed only locally cannot be fetched from the server. Login stays separate.
 Update `tg` and `max` together so they use the same store.
 
 For a `wirecat.db` schema update, run `tg upgrade` after preserving any needed old file.

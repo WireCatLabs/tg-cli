@@ -5,6 +5,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **Built on cli-messaging 0.256.0, where `store fetch` is now `messages sync`** (same arguments, options and JSON).
+  `store fetch` still runs as a hidden, deprecated name; the docs and the skill use `messages sync`.
+  `bot store fetch` keeps its name.
+
 ### Fixed
 
 - **The skill warns about three mistakes an agent made while testing.** It compared a plain word in one tool with

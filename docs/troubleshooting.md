@@ -231,7 +231,7 @@ Telegram lets you find has this number" when the person hides their number or ha
 
 Exit code `8`. Telegram's own rate limit (FLOOD_WAIT). Wait that long; the JSON carries
 `retryAfterMs`. It happens most after many requests in a row, such as `chats list --all` right after
-other commands, or a long `store fetch`. For `store fetch` and `messages download --all`, a longer
+other commands, or a long `messages sync`. For `messages sync` and `messages download --all`, a longer
 `--pause` helps.
 
 A command waits out a request of up to 10 seconds, twice at most, and says so on stderr: "Telegram
@@ -367,7 +367,7 @@ Telegram does not answer. The message says whether repeating is safe. For a fold
 
 Exit code `130`. The command stopped where it was and closed its connection. If you pressed it during
 a send, the message may have gone: look at the chat (`tg personal messages list <chat> --limit 3`) before you
-send it again. A background `store fetch` keeps running: stop it with `tg personal store jobs cancel <job>`.
+send it again. A background `messages sync` keeps running: stop it with `tg personal store jobs cancel <job>`.
 
 An answer other than `y` to a question before a change ends the same way: nothing was done.
 
@@ -388,12 +388,12 @@ example `tg personal chats list`.
 
 Archive search (`--backend archive`, `--offline` or `--discover`) reads only what this machine has kept.
 Without those options, ordinary word search can also ask Telegram. An empty answer means "not kept", not
-"never said". Read the chat (`tg personal messages list <chat>`), or fetch its history with `tg personal store fetch`,
+"never said". Read the chat (`tg personal messages list <chat>`), or fetch its history with `tg personal messages sync`,
 then search again ([searching the store](archive.md#search)). `tg personal store check` says which chats are behind.
 
 ### A chat reads as fetched in full, but older messages are missing
 
-Run `tg personal store fetch <chat>` again. It reads below the oldest message the store holds, whether or not
+Run `tg personal messages sync <chat>` again. It reads below the oldest message the store holds, whether or not
 the chat was counted as complete, and goes on to the chat's first message; give `--limit` more room
 for a long chat. Keep `--page-size` at 100 or less: Telegram returns up to 100 messages a request.
 
@@ -451,6 +451,6 @@ reduce or split the input instead.
 
 A failed independent file or history page returns partial results with exit code `0`,
 `complete: false` and `batch` or `issue`. Completed downloads and earlier history pages remain
-saved. If a provider wait is too long to finish, single-chat `store fetch` includes `issue.retryAfterMs`
+saved. If a provider wait is too long to finish, single-chat `messages sync` includes `issue.retryAfterMs`
 and a `resume` boundary; multi-chat fetch exposes per-chat issues and downloads use checkpoints; do not repeat requests before the wait ends. Partial background jobs have
 state `partial` and can be retried with `tg personal store jobs retry`. Check completeness as well as the exit code.

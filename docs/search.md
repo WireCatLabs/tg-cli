@@ -134,7 +134,7 @@ fetched it, but everything else reads only the store: counting with `stats`, top
 `filename:`, regex, presets, tags, and the ranking of word forms. Start by downloading every chat:
 
 ```sh
-tg personal store fetch --all --background  # the last 90 days of every chat, as a background job
+tg personal messages sync --all --background  # the last 90 days of every chat, as a background job
 ```
 
 ```sh
@@ -142,7 +142,7 @@ tg personal store jobs show           # how far it got
 ```
 
 Each run fetches at most 1,000 messages per chat by default; repeat it to continue busy chats.
-Add `--since-time 365d` to go further back, or fetch one chat with `tg personal store fetch "Book club"`
+Add `--since-time 365d` to go further back, or fetch one chat with `tg personal messages sync "Book club"`
 ([download a chat's history](archive.md#fetch-a-chats-history)). After that, `tg personal serve` keeps the
 store current.
 
@@ -151,7 +151,7 @@ found, one line says how many messages and chats were searched, how many chats w
 are behind, and the command that fixes it:
 
 ```text
-searched 12,430 messages in 37 chats — 5 never fetched; `tg personal store fetch --all --background` fetches them
+searched 12,430 messages in 37 chats — 5 never fetched; `tg personal messages sync --all --background` fetches them
 ```
 
 With `--json`, `coverage` carries the same: `messages`, `chats`, up to ten `attention` chats and `next`.
@@ -571,7 +571,7 @@ was searched; `--jsonl` streams the messages only, one per line. The fields of t
 ## When nothing is found
 
 An empty answer means "not in the store you searched", not "never sent". Check what is stored with
-`tg personal store status` and fetch more with `tg personal store fetch`. With `--json` the answer says which chats were
+`tg personal store status` and fetch more with `tg personal messages sync`. With `--json` the answer says which chats were
 searched and how complete they are, even when nothing matched. If tg asks for `tg personal store migrate`, the
 word index is still being built; searches without words (`has:file`, `date:today`) already work.
 
@@ -586,7 +586,7 @@ it. Pages where several messages share one timestamp stay pending. `--background
 write permission and permission to read messages. Over MCP the same commands are found through
 `tg_tools_search` and run through `tg_read` or `tg_write`; jobs belong to one profile.
 
-**Prepare topic search while you fetch.** `tg personal store fetch <chat> --catch-up` builds that chat's
+**Prepare topic search while you fetch.** `tg personal messages sync <chat> --catch-up` builds that chat's
 conversations and computes its local vectors right after fetching, for
 [topic search](topic-search.md). It is off by default; the profile setting `searchCatchUp: true` turns it
 on, and `--no-catch-up` turns it off for one run. Bounds are

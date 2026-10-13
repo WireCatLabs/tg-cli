@@ -2223,7 +2223,7 @@ export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
  * how many times. One-shot: 10 s, mtcute's own default, which covers the routine short waits; past it a
  * person or a script is better told the wait than held, and twice at most keeps a command under ~20 s
  * of announced waiting. Listening (`watch`, `serve`): nobody is waiting on a request, and giving up
- * costs a restart and a new connection — 120 s, tlgr's threshold. `store fetch` keeps the one-shot
+ * costs a restart and a new connection — 120 s, tlgr's threshold. `messages sync` keeps the one-shot
  * value: cli-messaging's `patiently` sits out up to 5 min above it, and says so.
  */
 export const FLOOD_SLEEP = {

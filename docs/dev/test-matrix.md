@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2366 ✅ · 89 ⛔ · 0 ❌** — 475 commands, 1980 options.
+**2367 ✅ · 87 ⛔ · 7 ❌** — 476 commands, 1985 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -45,6 +45,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `chats send-as` |  | ✅ |  |
+| `chats documents list` |  | ✅ |  |
+| `chats documents list` | `--limit` | ❌ |  |
+| `chats documents list` | `--page` | ❌ |  |
 | `chats members list` |  | ✅ |  |
 | `chats members list` | `--limit` | ✅ |  |
 | `chats members list` | `--page` | ✅ |  |
@@ -247,6 +250,20 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages comments` | `--limit` | ✅ |  |
 | `messages comments` | `--before-id` | ✅ |  |
 | `messages links` |  | ✅ |  |
+| `messages sync` |  | ✅ |  |
+| `messages sync` | `--all` | ⛔ | cli-messaging src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-messaging 0.174.0) |
+| `messages sync` | `--limit` | ✅ |  |
+| `messages sync` | `--page-size` | ✅ |  |
+| `messages sync` | `--pause` | ✅ |  |
+| `messages sync` | `--since-time` | ✅ |  |
+| `messages sync` | `--last` | ✅ |  |
+| `messages sync` | `--catch-up` | ✅ |  |
+| `messages sync` | `--no-catch-up` | ✅ |  |
+| `messages sync` | `--catch-up-chunks` | ✅ |  |
+| `messages sync` | `--catch-up-messages` | ✅ |  |
+| `messages sync` | `--catch-up-time` | ✅ |  |
+| `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
+| `messages sync` | `--estimate` | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |
@@ -338,20 +355,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule remove` |  | ✅ |  |
 | `schedule exec` |  | ✅ |  |
 | `store status` |  | ✅ |  |
-| `store fetch` |  | ✅ |  |
-| `store fetch` | `--all` | ⛔ | cli-messaging src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-messaging 0.174.0) |
-| `store fetch` | `--limit` | ✅ |  |
-| `store fetch` | `--page-size` | ✅ |  |
-| `store fetch` | `--pause` | ✅ |  |
-| `store fetch` | `--since-time` | ✅ |  |
-| `store fetch` | `--last` | ✅ |  |
-| `store fetch` | `--catch-up` | ✅ |  |
-| `store fetch` | `--no-catch-up` | ✅ |  |
-| `store fetch` | `--catch-up-chunks` | ✅ |  |
-| `store fetch` | `--catch-up-messages` | ✅ |  |
-| `store fetch` | `--catch-up-time` | ✅ |  |
-| `store fetch` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
-| `store fetch` | `--estimate` | ✅ |  |
 | `store gaps plan` |  | ✅ |  |
 | `store gaps repair` |  | ✅ |  |
 | `store gaps repair` | `--limit` | ✅ |  |
@@ -672,9 +675,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks close` | `--reason` | ✅ |  |
 | `search all` |  | ✅ |  |
 | `search all` | `--only` | ✅ |  |
-| `search all` | `--meetings` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts searches a stored meeting account through search all |
+| `search all` | `--source` | ❌ |  |
 | `search all` | `--max-meetings` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through |
 | `search all` | `--limit` | ✅ |  |
+| `search all` | `--offset` | ❌ |  |
 | `search all` | `--exact` | ✅ |  |
 | `search all` | `--timezone` | ✅ |  |
 | `search all` | `--backend` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts covers archive (never connects), server and both for search all |
@@ -695,6 +699,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--source` | ✅ |  |
 | `search messages` | `--type` | ✅ |  |
 | `search messages` | `--limit` | ✅ |  |
+| `search messages` | `--offset` | ❌ |  |
 | `search messages` | `--newest` | ✅ |  |
 | `search messages` | `--exact` | ✅ |  |
 | `search messages` | `--context` | ✅ |  |
@@ -705,15 +710,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--saved` | ✅ |  |
 | `search mail` |  | ✅ |  |
 | `search mail` | `--chat` | ✅ |  |
-| `search mail` | `--account` | ⛔ | cli-messaging src/cli/messenger/messenger.test.ts narrows mail to one held address and refuses an unknown one |
+| `search mail` | `--source` | ❌ |  |
 | `search mail` | `--limit` | ✅ |  |
+| `search mail` | `--offset` | ❌ |  |
 | `search mail` | `--newest` | ✅ |  |
 | `search mail` | `--exact` | ✅ |  |
 | `search mail` | `--context` | ✅ |  |
 | `search mail` | `--timezone` | ✅ |  |
 | `search notes` |  | ✅ |  |
 | `search notes` | `--type` | ✅ |  |
-| `search notes` | `--folder` | ✅ |  |
+| `search notes` | `--source` | ✅ |  |
 | `search notes` | `--tag` | ✅ |  |
 | `search notes` | `--filter` | ✅ |  |
 | `search notes` | `--limit` | ✅ |  |

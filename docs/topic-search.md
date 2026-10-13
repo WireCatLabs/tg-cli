@@ -7,7 +7,7 @@ languages: an English question finds a discussion in Spanish or Russian.
 
 After reading this page you can prepare a chat for topic search, ask questions in your own words, read
 the results, and decide when ordinary word search is the better tool. Topic search uses only the messages
-tg has already saved on this computer, so download the history first: `tg personal store fetch <chat>`
+tg has already saved on this computer, so download the history first: `tg personal messages sync <chat>`
 ([download a chat's history](archive.md#fetch-a-chats-history)).
 
 Terms used on this page:
@@ -65,7 +65,7 @@ Prepare one chat once, then ask as many questions as you like.
 **What happens, step by step:**
 
 ```sh
-tg personal store fetch "Book club"              # 1. download the history, if it is not saved yet
+tg personal messages sync "Book club"              # 1. download the history, if it is not saved yet
 tg personal conversations build --chat "Book club"  # 2. separate the chat into conversations
 tg personal models text download e5-small        # 3. once: download the model, 135 MB, shared with max
 tg personal conversations embed --chat "Book club"  # 4. compute a vector for each piece
@@ -245,7 +245,7 @@ older rules; build them again.
 
 When a message is deleted, its text leaves the vectors too.
 
-`tg personal store fetch <chat> --catch-up` can also build and embed a chat right after it downloads it
+`tg personal messages sync <chat> --catch-up` can also build and embed a chat right after it downloads it
 ([download a chat's history](archive.md#fetch-a-chats-history)).
 
 ## Let your AI agent link messages

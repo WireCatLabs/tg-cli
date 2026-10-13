@@ -956,7 +956,7 @@ describe("listening", () => {
   })
 })
 
-describe("store fetch", () => {
+describe("messages sync", () => {
   it("walks back a page at a time until --limit, pausing --pause between pages", async () => {
     const asked: unknown[] = []
     const pages = scripted({
@@ -967,12 +967,12 @@ describe("store fetch", () => {
       },
     })
     const { code, stdout } = await tg(
-      ["store", "fetch", "Valencia", "--page-size", "2", "--limit", "4", "--pause", "1ms", "--json"],
+      ["messages", "sync", "Valencia", "--page-size", "2", "--limit", "4", "--pause", "1ms", "--json"],
       {
         adapter: () => pages,
       },
     )
-    const deep = await tg(["store", "fetch", "Valencia", "--last", "3", "--pause", "1ms", "--json"], {
+    const deep = await tg(["messages", "sync", "Valencia", "--last", "3", "--pause", "1ms", "--json"], {
       adapter: () => pages,
     })
 
@@ -987,7 +987,7 @@ describe("store fetch", () => {
       history: async () => ({ items: [message("9"), message("10")], hasMore: true }),
     })
     const { stdout } = await tg(
-      ["store", "fetch", "Valencia", "--since-time", "2026-09-27", "--pause", "1ms", "--json"],
+      ["messages", "sync", "Valencia", "--since-time", "2026-09-27", "--pause", "1ms", "--json"],
       {
         adapter: () => pages,
       },

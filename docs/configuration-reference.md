@@ -105,7 +105,7 @@ that uses an account stops with exit code `2` and lists the profiles on this com
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
 | `senderColors` | `false` | a colour per sender in the table view of messages | none |
 | `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
-| `searchCatchUp` | `false` | `store fetch` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
+| `searchCatchUp` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
@@ -173,7 +173,7 @@ It works both ways: a profile's `messages: allow` also hides `messages.delete: d
 and deleting asks again, as it does by default. The older `readOnly` and `allow` count in the section
 they are written in.
 
-`inbox`, `review`, `watch`, `serve` and `store fetch`, `export` and `search` show messages, so they
+`inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
 count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
 `mcp` and the store's own upkeep are never limited.
 

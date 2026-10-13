@@ -166,7 +166,7 @@ even when nothing matched. `--jsonl` streams the items only.
 
 - `query`: the language version, the time zone and the order used.
 - `coverage`: which accounts and chats were searched. `lastSyncedAt` is the oldest time a chat in scope
-  was fetched by `store fetch`, `null` if any chat never was. `inventoryComplete` means every account in
+  was fetched by `messages sync`, `null` if any chat never was. `inventoryComplete` means every account in
   scope has once listed all its chats; it does not promise a complete history.
 - `completeness`: per chat, whether its stored history reaches the start and has gaps.
 - `wordsReady`: whether the word index is complete. When it is `false`, a query with words fails with

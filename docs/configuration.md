@@ -111,7 +111,7 @@ What each part does:
   messages is refused. At most 10 sends an hour. Telegram is reached through a SOCKS5 proxy. Voice
   messages are turned into text on this computer.
 - `personal.defaults`: applies only to commands for personal accounts, never to `tg … bot`.
-  Here, `store fetch` also prepares fetched chats for search.
+  Here, `messages sync` also prepares fetched chats for search.
 - `bot.defaults`: applies only to bot commands (`tg shop bot …`). Bots may read and send, and
   nothing else.
 - `bot.profiles.shop`: the bot `shop` may send 200 messages an hour and may not read what other

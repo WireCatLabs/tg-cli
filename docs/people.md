@@ -89,7 +89,7 @@ store holds in each chat you share:
 and `firstAt` may be later than their real first message. Fetch the chat to fill it:
 
 ```sh
-tg personal store fetch "Book club"
+tg personal messages sync "Book club"
 ```
 
 The profile costs no extra requests: it uses the same three calls as `contacts show`. The person

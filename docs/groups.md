@@ -474,7 +474,7 @@ member's id is sent to those lists. The full check lands in `check` on each of t
 
 ### A weekly report for your group
 
-“Hiking Club” below is a fictional example group. Download its messages with `store fetch` first if
+“Hiking Club” below is a fictional example group. Download its messages with `messages sync` first if
 they are not already stored, then record the current roster and prepare the report:
 
 ```sh

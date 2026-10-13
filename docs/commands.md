@@ -234,6 +234,27 @@ tg chats send-as <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
+### `tg chats documents`
+
+the Google Docs and Drive documents linked in a chat's stored messages
+
+#### `tg chats documents list`
+
+every document link in the chat, newest first, and whether the store has it
+
+```sh
+tg chats documents list <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+
 ### `tg chats members`
 
 who is in a group
@@ -1517,6 +1538,34 @@ tg messages links <chat> <message>
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the message id. |
 
+### `tg messages sync`
+
+bring a chat's history in the local store up to date, newest first; run it again to continue; --all syncs every chat
+
+```sh
+tg messages sync [chat] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--all` | every chat, most recently active first — what search needs; the last 90d unless --since-time or --last. |
+| `--limit <n>` | at most this many messages in this run, per chat with --all; 1000 if not given. |
+| `--page-size <n>` | how many messages one request asks for; 100 if not given. |
+| `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
+| `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
+| `--last <n>` | stop once the newest n messages are held. |
+| `--catch-up` | prepare local search after this run; overrides searchCatchUp. |
+| `--no-catch-up` | skip local preparation after this run. |
+| `--catch-up-chunks <n>` | at most this many local vector chunks. |
+| `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
+| `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
+| `--background` | run as a job that outlives this command; `store jobs show` follows it. |
+| `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
+
 ## `tg reactions`
 
 react to messages
@@ -2093,34 +2142,6 @@ tg store status [chat]
 |---|---|---|
 | `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
-### `tg store fetch`
-
-fetch a chat's history into the local store, newest first; run it again to continue; --all fetches every chat
-
-```sh
-tg store fetch [chat] [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `chat` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--all` | every chat, most recently active first — what search needs; the last 90d unless --since-time or --last. |
-| `--limit <n>` | at most this many messages in this run, per chat with --all; 1000 if not given. |
-| `--page-size <n>` | how many messages one request asks for; 100 if not given. |
-| `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
-| `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
-| `--last <n>` | stop once the newest n messages are held. |
-| `--catch-up` | prepare local search after fetch; overrides searchCatchUp. |
-| `--no-catch-up` | skip local preparation after this fetch. |
-| `--catch-up-chunks <n>` | at most this many local vector chunks. |
-| `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
-| `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
-| `--background` | run as a job that outlives this command; `store jobs show` follows it. |
-| `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
-
 ### `tg store gaps`
 
 inspect recorded interior coverage gaps and explicitly fetch them
@@ -2166,11 +2187,11 @@ tg store gaps repair <chat> [options]
 
 ### `tg store jobs`
 
-background fetch jobs
+background sync jobs
 
 #### `tg store jobs list`
 
-background fetch jobs, newest first
+background sync jobs, newest first
 
 ```sh
 tg store jobs list [options]
@@ -2190,11 +2211,11 @@ tg store jobs show [job]
 
 | Argument | | What it is |
 |---|---|---|
-| `job` | optional | the job id `store fetch --background` printed. |
+| `job` | optional | the job id `messages sync --background` printed. |
 
 #### `tg store jobs cancel`
 
-stop a running background job after its current page; a later fetch resumes where it stopped
+stop a running background job after its current page; a later sync resumes where it stopped
 
 ```sh
 tg store jobs cancel <job>
@@ -2206,7 +2227,7 @@ tg store jobs cancel <job>
 
 #### `tg store jobs retry`
 
-start a partial, failed or died job again, as a new job; the fetch resumes where the store stopped
+start a partial, failed or died job again, as a new job; the sync resumes where the store stopped
 
 ```sh
 tg store jobs retry [job] [options]
@@ -2232,7 +2253,7 @@ tg store jobs clear
 
 ### `tg store export`
 
-a chat's stored messages as JSON lines, oldest first; never asks the messenger
+a chat's stored messages, oldest first: --jsonl one message per line, --json one { items, page, limit, hasMore } object; never asks the messenger
 
 ```sh
 tg store export [chats] [options]
@@ -2244,7 +2265,7 @@ tg store export [chats] [options]
 
 | Option | What it does |
 |---|---|
-| `--format <format>` | jsonl (the default): one message per line; markdown: a transcript with a heading per day, replies and forwards quoted. |
+| `--format <format>` | jsonl: one message per line, the default with --output; markdown: a transcript with a heading per day, replies and forwards quoted. |
 | `--since-time <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
 | `--output <file>` | write JSON lines, or the transcript, to this new file, readable only by you. |
 | `--to <dir>` | write into this folder, a file per chat and a manifest; run again on it for only what changed since. |
@@ -2608,11 +2629,11 @@ tg conversations embed clear [options]
 
 ## `tg attachments`
 
-the files of stored messages: their text in the local store, for content: in a search
+the files of stored messages: their text in the local store, where search finds it
 
 ### `tg attachments extract`
 
-read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB — into the local store, for content: in a search
+read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB — into the local store, where search finds them
 
 ```sh
 tg attachments extract [options]
@@ -2672,7 +2693,7 @@ the text of one file, as an agent read it
 
 #### `tg attachments text set`
 
-keep the text an agent read from a file — a scan, a photo — so content: finds it; nothing is sent
+keep the text an agent read from a file — a scan, a photo — so search finds it; nothing is sent
 
 ```sh
 tg attachments text set <chat> [message] [options]
@@ -2824,7 +2845,7 @@ tg stats messages show [query] [options]
 | `--max-messages <n>` | fetch at most this many messages total (default: 500). |
 | `--by <chat\|sender\|day\|hour>` | what to count by (default: chat). |
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
+| `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query. |
 | `--limit <n>` | how many rows. |
 | `--timezone <zone>` | the IANA timezone for calendar days and hours. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
@@ -2849,7 +2870,7 @@ tg stats messages counters show [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | held accounts of this messenger; refresh uses the active account. |
+| `--source <accounts>` | held accounts of this messenger; refresh uses the active account. |
 | `--exact` | bare words match exact forms. |
 | `--timezone <zone>` | IANA timezone for query dates. |
 | `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
@@ -2874,7 +2895,7 @@ tg stats messages counters refresh [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | held accounts of this messenger; refresh uses the active account. |
+| `--source <accounts>` | held accounts of this messenger; refresh uses the active account. |
 | `--exact` | bare words match exact forms. |
 | `--timezone <zone>` | IANA timezone for query dates. |
 | `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
@@ -2899,7 +2920,7 @@ tg stats messages unanswered [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--exact` | bare words match exact forms rather than stems. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
@@ -2922,7 +2943,7 @@ tg stats messages discussion [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--exact` | bare words match exact forms rather than stems. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
@@ -2953,7 +2974,7 @@ tg stats messages top [query] [options]
 | `--weights <json>` | the complete component weights; replaces preset weights. |
 | `--message-kind <kind>` | select proven all, posts or comments before ranking. One of: `all`, `posts`, `comments`. |
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--timezone <zone>` | the IANA timezone for dates and active days. |
 | `--exact` | bare words match exact forms rather than stems. |
 | `--limit <n>` | ranked rows, 1–100. |
@@ -2997,7 +3018,7 @@ tg stats contacts responses [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--exact` | bare words match exact forms rather than stems. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
@@ -3027,7 +3048,7 @@ tg stats contacts top [query] [options]
 | `--weights <json>` | the complete component weights; replaces preset weights. |
 | `--message-kind <kind>` | select proven all, posts or comments before ranking. One of: `all`, `posts`, `comments`. |
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every held account of this messenger; personal, bots or all. |
+| `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--timezone <zone>` | the IANA timezone for dates and active days. |
 | `--exact` | bare words match exact forms rather than stems. |
 | `--limit <n>` | ranked rows, 1–100. |
@@ -3296,7 +3317,7 @@ find things by text: one resource when you know it (mail, messages, notes), or s
 
 ### `tg search all`
 
-search messenger messages, mail and notes in the local store, and the messenger's server for messages (--backend; mail and notes are local only), and with --meetings a meeting account's transcripts — best match first; not tasks, people, memories or projects. Use it when you do not know where something was written; search mail, messages or notes reads one kind with all its fields
+search messenger messages, mail and notes in the local store, and the messenger's server for messages (--backend; mail and notes are local only), and a meeting account's transcripts when --source names one — best match first; not tasks, people, memories or projects. Use it when you do not know where something was written; search mail, messages or notes reads one kind with all its fields
 
 ```sh
 tg search all <query> [options]
@@ -3308,10 +3329,11 @@ tg search all <query> [options]
 
 | Option | What it does |
 |---|---|
-| `--only <resources>` | only these resources, separated by commas: messages, mail, notes; meetings with --meetings. |
-| `--meetings [provider:account]` | also search one meeting account; with no value, the one stored account that holds meetings (put it after the query). |
-| `--max-meetings <n\|all>` | how many meetings --meetings looks through, newest first; all looks through every one (default 100). |
+| `--only <resources>` | only these resources, separated by commas: messages, mail, notes; meetings when --source names a meeting account. |
+| `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
+| `--max-meetings <n\|all>` | how many of the meeting account's meetings to look through, newest first; all looks through every one (default 100). |
 | `--limit <n>` | how many. |
+| `--offset <n>` | skip this many, for the next page. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
@@ -3343,9 +3365,10 @@ tg search messages [query] [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
+| `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
 | `--type <text\|voice\|file>` | only messages of this type: text alone, a voice message, or a file. |
 | `--limit <n>` | how many. |
+| `--offset <n>` | skip this many, for the next page. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3370,8 +3393,9 @@ tg search mail [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this mail thread, by id or subject. |
-| `--account <address>` | only this mail account, by its address; every mail account when unset. |
+| `--source <accounts>` | only these mail accounts, separated by commas: email:<address> as a hit shows it, email, mail or group:<name>; every mail account when unset. |
 | `--limit <n>` | how many. |
+| `--offset <n>` | skip this many, for the next page. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3392,7 +3416,7 @@ tg search notes <query> [options]
 | Option | What it does |
 |---|---|
 | `--type <internal\|file>` | only notes written in memo, or only notes from a folder. |
-| `--folder <id>` | only this notes folder, by its id; repeat it for more. |
+| `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
 | `--tag <tag>` | only notes with this tag. |
 | `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
 | `--limit <n>` | how many. |
@@ -3426,7 +3450,7 @@ tg search conversations <query> [options]
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
 | `--filter <query>` | strict Lucene filter: any message in a conversation must match; does not change the meaning query. |
-| `--source <source>` | accounts to search: personal, bots, all, a provider, or a list like group:work,telegram:Alice,email:me@example.com; defaults to the active account. |
+| `--source <accounts>` | accounts to search: personal, bots, all, a provider, or a list like group:work,telegram:Alice,email:me@example.com; defaults to the active account. |
 | `--timezone <zone>` | IANA timezone for filter dates; system timezone by default. |
 | `--limit <n>` | how many. |
 | `--refresh` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
@@ -3470,7 +3494,7 @@ tg searches create <name> [query] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--source <messenger>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
+| `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
 | `--limit <n>` | how many. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |

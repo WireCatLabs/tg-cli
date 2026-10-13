@@ -213,7 +213,7 @@ Writes to Telegram: **no**. Allow: `Bash(tg personal search messages:*)`, `Bash(
 
 By default, search looks both in the copy on this computer and on Telegram's server. The local copy
 holds only what `tg` has saved. To search a chat's whole history locally, fetch it first. That is a
-request from your account, so do it yourself: `tg personal store fetch <chat>`. See
+request from your account, so do it yourself: `tg personal messages sync <chat>`. See
 [fetching a chat's history](archive.md#fetch-a-chats-history).
 
 ## Draft a reply

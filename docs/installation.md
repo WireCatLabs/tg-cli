@@ -67,7 +67,7 @@ tg setup --help     # examples, login choices and Windows instructions
 `none`. Without `--agent`, the command asks at a terminal; `--json` and runs without a terminal
 choose `none`. Allow about five minutes for app registration, login, a check of the first five
 chats and the skill. Downloading chat history is separate and can take longer: choose a chat and
-the amount before you run the suggested `store fetch` command. Setup starts no background service.
+the amount before you run the suggested `messages sync` command. Setup starts no background service.
 
 `tg personal setup --app browser` opens the manual app registration instructions; `--method phone` logs in
 by phone number instead of QR code. The code from my.telegram.org (for the app) and the code for
@@ -177,7 +177,7 @@ A Tab **never connects to Telegram**. With no local store yet, only commands and
 ## Upgrade
 
 **When updating from the old `messages.db`, preserve any local-only data first.** The current store is `wirecat.db`; opening the default store deletes the old `messages.db` and its `-wal`/`-shm` files.
-Before running the new version, close old programs and copy any needed file and companions to another folder. `tg personal store fetch --all` restores server messages, not old local notes or tags.
+Before running the new version, close old programs and copy any needed file and companions to another folder. `tg personal messages sync --all` restores server messages, not old local notes or tags.
 Login stays ([the store and other versions](archive.md#the-store-and-other-versions)).
 
 ```sh

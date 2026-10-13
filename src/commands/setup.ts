@@ -99,7 +99,7 @@ export const setupCommand = () =>
         "The QR image is removed when login ends. Machine mode skips agent installation\n" +
         "unless --agent is given. Existing sessions are checked without another login.\n" +
         "\nSetup checks five chats. Choose a chat and an amount of history before:\n" +
-        "  tg personal store fetch <chat> --last 100\n" +
+        "  tg personal messages sync <chat> --last 100\n" +
         "\nWindows: use tg.cmd or npm.cmd if PowerShell blocks scripts. Without PATH:\n" +
         "  npm.cmd exec --yes --package=@wirecat/tg-cli -- tg personal setup\n",
     )
@@ -227,7 +227,7 @@ export const setupCommand = () =>
           instructions: `${command}skill show`,
           inbox: `${command}inbox --limit 5`,
           chats: `${command}chats list --limit 5`,
-          history: `${command}store fetch <chat> --last 100`,
+          history: `${command}messages sync <chat> --last 100`,
           historyStatus: `${command}store status`,
           ...(agent === "none" ? { skill: `${command}skill install`, mcp: `${command}mcp config` } : {}),
         }

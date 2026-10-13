@@ -45,7 +45,7 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-messaging 0.174.0)",
   })),
   {
-    command: "store fetch",
+    command: "messages sync",
     option: "--all",
     reason:
       "cli-messaging src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-messaging 0.174.0)",
@@ -301,7 +301,7 @@ export const UNTESTED: Untested[] = [
       "cli-messaging src/cli/messenger/attachments.test.ts covers reading text layers after a download; this consumer mounts the shared command (cli-messaging 0.162.0)",
   },
   ...["--catch-up", "--no-catch-up", "--catch-up-chunks", "--catch-up-messages", "--catch-up-time"].map((option) => ({
-    command: "store fetch",
+    command: "messages sync",
     option,
     reason:
       "cli-messaging src/cli/messenger/backfill.test.ts covers the bounded local catch-up after a fetch; this consumer mounts the shared command (cli-messaging 0.162.0)",
@@ -608,7 +608,7 @@ export const UNTESTED: Untested[] = [
       "starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account",
   })),
   {
-    command: "store fetch",
+    command: "messages sync",
     option: "--background",
     reason:
       "spawns a detached process that outlives the test; cli-messaging's src/cli/messenger/backfill.test.ts " +
