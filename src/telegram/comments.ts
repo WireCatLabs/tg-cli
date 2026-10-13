@@ -1,6 +1,6 @@
 import { getMarkedPeerId, Long, PeersIndex, type TelegramClient, Message as TgMessage, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { Discussion } from "@wirecat/cli-messaging"
+import type { Discussion } from "@wirecat/cli-core"
 
 type Client = Pick<TelegramClient, "call" | "resolvePeer">
 

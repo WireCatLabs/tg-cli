@@ -1,6 +1,6 @@
 import { type TelegramClient, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { JoinRequest, Page } from "@wirecat/cli-messaging"
+import type { JoinRequest, Page } from "@wirecat/cli-core"
 import { toMember } from "./map.js"
 
 type Client = Pick<TelegramClient, "getInviteLinkMembers" | "hideJoinRequest">

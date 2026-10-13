@@ -1,6 +1,6 @@
 ---
 name: add-command
-description: Add a new `tg` command or option to tg-cli end to end — the shared command in cli-messaging or a Telegram-only one here, the adapter method, tests through run(), the MCP tool, the test matrix, docs, the parity manifest and the changelog. Use when asked to add, build or implement a command, subcommand or flag in this repository.
+description: Add a new `tg` command or option to tg-cli end to end — the shared command in cli-core or a Telegram-only one here, the adapter method, tests through run(), the MCP tool, the test matrix, docs, the parity manifest and the changelog. Use when asked to add, build or implement a command, subcommand or flag in this repository.
 ---
 
 # Add a command to tg-cli
@@ -11,16 +11,16 @@ request description.
 
 Before anything: [HANDOFF.md](../../../../HANDOFF.md) §3c and §4 (the path a new method takes, and what
 bites), and [CLAUDE.md](../../../../CLAUDE.md) (the five rules). Names, options and answer shapes follow
-cli-messaging's
-[STANDARD.md](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/STANDARD.md): tg and max
+cli-core's
+[STANDARD.md](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/STANDARD.md): tg and max
 answer the same command the same way.
 
 ## 0. Where it goes
 
 - **Messenger-neutral** (most commands: messages, chats, reactions, polls, the store): the command
-  lives in **cli-messaging**, and tg only implements the adapter method. Max gets it too.
+  lives in **cli-core**, and tg only implements the adapter method. Max gets it too.
 - **Telegram only** (`session`, a Telegram concept nothing else has): `src/commands/` here, and a
-  line in [cli-messaging's `parity.json`](https://github.com/WireCatLabs/cli-messaging/blob/main/parity.json)
+  line in [cli-core's `parity.json`](https://github.com/WireCatLabs/cli-core/blob/main/parity.json)
   saying it is one-sided, and why.
 
 Work in a worktree off `origin/main`, one per repository you touch: `git switch -c feat/<name>
@@ -28,14 +28,14 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 
 ## 1. The path of a new adapter method
 
-1. `MessengerAdapter` in cli-messaging `src/cli/messenger/port.ts`. A new method is optional
+1. `MessengerAdapter` in cli-core `src/cli/messenger/port.ts`. A new method is optional
    (`edit?`), and commands ask for it with `capability()`.
 2. A line in `observed.ts` (which ids the run record names) and `stored.ts` (what is saved), and the
    store if it should work with `--offline`.
-3. The command in cli-messaging `src/cli/messenger/`, in a file of its own. A write is resolve →
+3. The command in cli-core `src/cli/messenger/`, in a file of its own. A write is resolve →
    guard check → write → guard record, as `sendText` does, so read-only profiles, the recipient list
    and the send journal apply.
-4. Release cli-messaging (its `bin/release`), then `pnpm add @wirecat/cli-messaging@<v>` here and
+4. Release cli-core (its `bin/release`), then `pnpm add @wirecat/cli-core@<v>` here and
    add the version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`.
 5. `TelegramAdapter` in `src/telegram/adapter.ts`, at the end of the class as a group, and its mapping
    in `src/telegram/map.ts`: the only file that knows mtcute's shapes. No mtcute type crosses
@@ -45,7 +45,7 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 
 - `annotate(command, { mutates: true })` on anything that writes. Nothing sends, marks read or
   deletes unless the typed command asks for it (rule 1). Anything that cannot be undone gets the
-  level `ask` in cli-messaging's built-in permission defaults, so it asks first; `--allow-dangerous`
+  level `ask` in cli-core's built-in permission defaults, so it asks first; `--allow-dangerous`
   answers yes for a deletion, `--yes` for the rest.
 - In machine mode, stdout carries one JSON value and nothing else (rule 2). A list is
   `{ items, limit, hasMore }`.
@@ -71,7 +71,7 @@ pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm test:matrix && pnpm do
 
 ## 4. Agents
 
-**The MCP tool comes in the same pull request** (cli-messaging `src/mcp/tools/<resource>.ts`). A write
+**The MCP tool comes in the same pull request** (cli-core `src/mcp/tools/<resource>.ts`). A write
 tool carries `permission` and goes through the same guard. If an agent should know the command, add
 a line to [`skills/tg-cli/SKILL.md`](../../../../skills/tg-cli/SKILL.md), which `tg skill show` prints.
 
@@ -81,7 +81,7 @@ a line to [`skills/tg-cli/SKILL.md`](../../../../skills/tg-cli/SKILL.md), which 
 - The user page for the area (`README.md`, `docs/usage.md`, …): English, current facts only.
 - `CHANGELOG.md` under `## Unreleased`: what a user notices, under tg's headings
   ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)).
-- `parity.json` in cli-messaging: the command's row moves to `both`, or says why it is one-sided.
+- `parity.json` in cli-core: the command's row moves to `both`, or says why it is one-sided.
 
 ## 6. Live
 

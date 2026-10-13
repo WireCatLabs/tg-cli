@@ -25,7 +25,7 @@
                 "patterns": [
                   {
                     "group": ["@mtcute/*", "@mtcute/**"],
-                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-messaging"
+                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-core"
                   }
                 ]
               }
@@ -45,7 +45,7 @@
                 "patterns": [
                   {
                     "group": ["@mtcute/*", "@mtcute/**"],
-                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-messaging"
+                    "message": "only src/telegram/ may import mtcute; everything above it speaks the domain model from @wirecat/cli-core"
                   },
                   {
                     "group": ["../telegram/map.js", "../telegram/errors.js", "**/telegram/map*", "**/telegram/errors*"],

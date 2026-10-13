@@ -12,8 +12,8 @@ import {
   checkApiParameter,
   generatedApiCommand,
   prepareRpcApiBody,
-} from "@wirecat/cli-messaging/cli"
-import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@wirecat/cli-messaging/sends"
+} from "@wirecat/cli-core/cli"
+import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@wirecat/cli-core/sends"
 import type { Command } from "commander"
 import { definitions } from "../bot/generated/definitions.js"
 import { operations } from "../bot/generated/manifest.js"

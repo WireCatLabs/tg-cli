@@ -39,7 +39,7 @@ import {
   tasksCommand,
   topicsCommand,
   watchCommand,
-} from "@wirecat/cli-messaging/cli"
+} from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { TELEGRAM_BOT } from "./commands/bot.js"
@@ -165,7 +165,7 @@ export const run = async (argv: string[], environment: Environment = {}): Promis
 /**
  * Under vitest only: which command a test drove and the option names it gave, never a value
  * (`pnpm test:matrix`). The hook sits on each top-level command because the root program is built
- * inside cli-messaging; commander runs an ancestor's preAction hook for every subcommand.
+ * inside cli-core; commander runs an ancestor's preAction hook for every subcommand.
  */
 function loggingArgv(commands: Command[]): Command[] {
   const file = process.env.TG_TEST_ARGV_LOG

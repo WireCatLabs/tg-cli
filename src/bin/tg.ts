@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { catchCrashes } from "@wirecat/cli-base"
-import { migrateFolders } from "@wirecat/cli-messaging/background"
-import { ensureSqlite } from "@wirecat/cli-messaging/sqlite-runtime"
+import { migrateFolders } from "@wirecat/cli-core/background"
+import { ensureSqlite } from "@wirecat/cli-core/sqlite-runtime"
 
 // Before anything resolves a path, and with the identity spelled out: ../app.js would load the program
 // and its SQLite before ensureSqlite.

@@ -11,11 +11,11 @@ for code and documents. This page lists only where `tg` differs or adds.
 - **mtcute stays in `src/telegram/`**, and its objects become domain models in `map.ts` alone
   ([ARCHITECTURE.md](ARCHITECTURE.md#1-most-of-tg-is-not-in-this-repository)).
 - **Command names, options, output shapes and MCP tools** follow the
-  [standard for tg and max](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/STANDARD.md) in
-  cli-messaging — one standard for both CLIs; a new verb or option is added there first. Every command
-  and option is in its [parity manifest](https://github.com/WireCatLabs/cli-messaging/blob/main/parity.json),
+  [standard for tg and max](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/STANDARD.md) in
+  cli-core — one standard for both CLIs; a new verb or option is added there first. Every command
+  and option is in its [parity manifest](https://github.com/WireCatLabs/cli-core/blob/main/parity.json),
   and `pnpm parity:check` fails on one that is not.
-- **Messenger-neutral code goes to cli-messaging**, not here. If a change would help `max` too, it
+- **Messenger-neutral code goes to cli-core**, not here. If a change would help `max` too, it
   belongs there.
 - **Never a message, a token, a phone number or a real chat id** in a log, a fixture, a test or a
   document. Command output is the only place a message may appear.

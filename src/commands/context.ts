@@ -12,7 +12,7 @@ import {
   type MessengerContext,
   messengerContext,
   type ServerSystem,
-} from "@wirecat/cli-messaging/cli"
+} from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"

@@ -1,6 +1,6 @@
 import { getBasicPeerType, getMarkedPeerId, PeersIndex, type TelegramClient, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { SenderIdentity } from "@wirecat/cli-messaging"
+import type { SenderIdentity } from "@wirecat/cli-core"
 
 type Client = Pick<TelegramClient, "getMe" | "getFullChat" | "resolvePeer" | "call">
 

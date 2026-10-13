@@ -2,7 +2,7 @@ import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
 import { CliError, indent, renderPretty } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
 import { installSkill, type SkillTarget } from "@wirecat/cli-base/skill"
-import { readSecret } from "@wirecat/cli-messaging"
+import { readSecret } from "@wirecat/cli-core"
 import {
   asFirstWord,
   type Closeable,
@@ -13,8 +13,8 @@ import {
   rootOf,
   runtime,
   withDeadline,
-} from "@wirecat/cli-messaging/cli"
-import { levelFor } from "@wirecat/cli-messaging/sends"
+} from "@wirecat/cli-core/cli"
+import { levelFor } from "@wirecat/cli-core/sends"
 import { Command, Option } from "commander"
 import { TG } from "../app.js"
 import { pathsFor } from "../paths.js"

@@ -80,7 +80,7 @@ drove it through `run()`), ⛔ (not testable offline — the reason and where it
 It is **measured, not searched for**: under vitest (`TG_TEST_ARGV_LOG`, set by the sandbox) each
 top-level command's `preAction` hook appends the command path and the option names given to
 `coverage/argv.jsonl` — names, never a value (`src/program.ts`, `logParsed`). The hook sits on the
-top-level commands because the root program is built inside cli-messaging. A flag a test only
+top-level commands because the root program is built inside cli-core. A flag a test only
 mentions does not count, and neither does a test that calls a function directly: the matrix is
 about what a person types.
 
@@ -90,7 +90,7 @@ or, when it truly cannot run offline, an entry there naming where it is checked 
 
 ## How agents' statistics answers were evaluated
 
-The [public agent evaluation report](https://github.com/WireCatLabs/cli-messaging/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md)
+The [public agent evaluation report](https://github.com/WireCatLabs/cli-core/blob/73a57e1d229441d27f8325677808c3ae09175803/docs/dev/evaluations/2026-10-08-independent-stats-agent-evaluation.md)
 records synthetic CLI and MCP tasks covering selected responders, response latency, observed
 retention, counter freshness, exact previews, permission refusal and evidence recovery after source
 changes. Six fresh contexts produced 38 assessed outcomes. This small, correlated sample is not a
@@ -98,7 +98,7 @@ reliability percentage or a guarantee about anyone's agent. MCP used a shell pro
 messenger or native network adapter participated. The original runs did not record the exact model
 identity.
 
-To reproduce, use the [fixture and reproduction instructions](https://github.com/WireCatLabs/cli-messaging/tree/main/scripts/evals).
+To reproduce, use the [fixture and reproduction instructions](https://github.com/WireCatLabs/cli-core/tree/main/scripts/evals).
 Record model/SDK versions, clock/seed, prompts and first failures. Model answers can differ on a
 rerun; deterministic fixture checks and independent model evaluations are reported separately. What
 a user should check in an agent's statistics answer stays in

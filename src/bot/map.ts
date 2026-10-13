@@ -8,8 +8,8 @@ import type {
   Message,
   QuotedMessage,
   TextSpan,
-} from "@wirecat/cli-messaging"
-import type { BotChatAdmin, BotEvent } from "@wirecat/cli-messaging/cli"
+} from "@wirecat/cli-core"
+import type { BotChatAdmin, BotEvent } from "@wirecat/cli-core/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
 export interface User {

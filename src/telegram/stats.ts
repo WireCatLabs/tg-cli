@@ -6,7 +6,7 @@ import type {
   OfficialGroupStats,
   OfficialPerson,
   OfficialValue,
-} from "@wirecat/cli-messaging"
+} from "@wirecat/cli-core"
 
 export type GraphOf = (graph: tl.TypeStatsGraph) => Promise<OfficialGraph | OfficialGraphError>
 

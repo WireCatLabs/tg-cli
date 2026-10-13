@@ -1,5 +1,5 @@
 import type { FullUser, User } from "@mtcute/node"
-import type { ProfileFacts, Registered, Seen } from "@wirecat/cli-messaging"
+import type { ProfileFacts, Registered, Seen } from "@wirecat/cli-core"
 
 /**
  * Id → month. A monotone best fit to 212 real sign-up dates (jobians/telegram-id-age, MIT, commit 86605dc,

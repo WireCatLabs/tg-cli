@@ -1,5 +1,5 @@
 import type { tl } from "@mtcute/node"
-import type { FolderKind, FolderSkip } from "@wirecat/cli-messaging"
+import type { FolderKind, FolderSkip } from "@wirecat/cli-core"
 
 type KindFlag = "contacts" | "nonContacts" | "groups" | "broadcasts" | "bots"
 type SkipFlag = "excludeMuted" | "excludeRead" | "excludeArchived"

@@ -1,10 +1,10 @@
 import { chmodSync, closeSync, existsSync, openSync } from "node:fs"
 import { BaseSqliteStorage, BaseSqliteStorageDriver, type ISqliteDatabase, type ISqliteStatement } from "@mtcute/node"
-import { type CacheDatabase, openCache, type SqlValue } from "@wirecat/cli-messaging/store"
+import { type CacheDatabase, openCache, type SqlValue } from "@wirecat/cli-core/store"
 
 /**
  * mtcute's session storage over the SQLite the runtime already has — `node:sqlite` or `bun:sqlite`,
- * through cli-messaging's seam — instead of `better-sqlite3`.
+ * through cli-core's seam — instead of `better-sqlite3`.
  *
  * Measured 2026-09-27: a global `pnpm add -g` installs `better-sqlite3` without running its install
  * script, so it has no native binding and every login fails with "Could not locate the bindings

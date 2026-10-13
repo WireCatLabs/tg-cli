@@ -6,6 +6,6 @@
 
 **Why:** The shared command stays one implementation for tg and max.
 
-**Open:** When is patching shared wording in tg right, rather than changing it upstream in cli-messaging?
+**Open:** When is patching shared wording in tg right, rather than changing it upstream in cli-core?
 
 See: `src/commands/proxy-config.ts:276-325` · `src/program.ts:279-320` · `src/commands/update.ts:234-246`

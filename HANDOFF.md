@@ -8,7 +8,7 @@ Read this once, then only the files your task needs.
 [mtcute](https://mtcute.dev), not the Bot API). It is built for agents and scripts first: one
 operation per call, one JSON value on stdout when piped, a typed error and a fixed exit code on
 failure. Everything that is not specific to Telegram lives in the npm package
-[`@wirecat/cli-messaging`](https://github.com/WireCatLabs/cli-messaging) (checkout: `../cli-messaging`),
+[`@wirecat/cli-core`](https://github.com/WireCatLabs/cli-core) (checkout: `../cli-messaging`),
 which `max` ([max-cli](https://github.com/WireCatLabs/max-cli), a MAX messenger CLI) also uses. Both sit
 on [`@wirecat/cli-base`](https://github.com/WireCatLabs/cli-base).
 
@@ -18,14 +18,14 @@ on [`@wirecat/cli-base`](https://github.com/WireCatLabs/cli-base).
 |---|---|
 | What a user is told — every command | [`README.md`](README.md), then [`docs/index.md`](docs/index.md); every command and option: [`docs/commands.md`](docs/commands.md) (generated) |
 | How tg is built, tested and written | [`docs/dev/ARCHITECTURE.md`](docs/dev/ARCHITECTURE.md), [`docs/dev/TESTING.md`](docs/dev/TESTING.md), [`docs/dev/CONVENTIONS.md`](docs/dev/CONVENTIONS.md) |
-| Open work | [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md); the shared package's: [cli-messaging BACKLOG](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/BACKLOG.md) |
+| Open work | [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md); the shared package's: [cli-core BACKLOG](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/BACKLOG.md) |
 | How agents run here (worktrees, guards, `bin/tg-live`) | [`docs/dev/agents.md`](docs/dev/agents.md) |
 | Live checks before a release | [`docs/dev/live-scenarios.md`](docs/dev/live-scenarios.md) |
 | What the shared package exports | [`../cli-messaging/README.md`](../cli-messaging/README.md) |
 | How max-cli does something | `../max-cli/docs/dev/ARCHITECTURE.md` — **read only** |
 
 Releases run from GitHub through `bin/release` (trusted publishing; the workflow publishes and tags).
-A cli-messaging change reaches tg through a cli-messaging release and a pin bump here.
+A cli-core change reaches tg through a cli-core release and a pin bump here.
 
 ## 3. How to change things
 
@@ -36,11 +36,11 @@ resource's `<resource>-command.ts` → `TelegramAdapter` and its mapping in `map
 (`src/program.test.ts`, `src/runs.test.ts`, `src/send-guard.test.ts`, `src/offline.test.ts`,
 `src/contract.test.ts`).
 
-**A cli-messaging change reaches tg in three steps** (NEED-10 → C: each session releases its own
+**A cli-core change reaches tg in three steps** (NEED-10 → C: each session releases its own
 PRs): merge the feature PR **without** a version bump; right before releasing, `git fetch` and
-`npm view @wirecat/cli-messaging version`, raise the version in a `chore: release` PR, merge, run
-`bin/release` in `../cli-messaging`; then in tg `pnpm add @wirecat/cli-messaging@<v>` and add the
-version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. To try an unreleased cli-messaging in
+`npm view @wirecat/cli-core version`, raise the version in a `chore: release` PR, merge, run
+`bin/release` in `../cli-messaging`; then in tg `pnpm add @wirecat/cli-core@<v>` and add the
+version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`. To try an unreleased cli-core in
 tg first, `pnpm pack` it and `pnpm add` the tarball — never commit that `file:` path.
 
 Read in this order:
@@ -61,7 +61,7 @@ Read in this order:
 
 ## 4. What will bite
 
-1. **A linked `cli-messaging` brings its own copy of cli-base and commander.** An error from one is
+1. **A linked `cli-core` brings its own copy of cli-base and commander.** An error from one is
    not an `instanceof` the other, and TypeScript says `TS2883 … cannot be named`. `run()` recognises
    errors by shape (`isCliFailure`). Use `pnpm pack` + `pnpm add` of the tarball instead of a link.
 2. **mtcute writes to stdout by default** — its log handler and its login prompts. The adapter
@@ -77,7 +77,7 @@ Read in this order:
    the session and the store in `.tg/` of the checkout (the owner has a session here). The `TG_*_DIR`
    variables also change which keyring entry is used.
 7. **`pnpm test` must not reach anything real.** `src/testing/sandbox.ts` moves every directory and
-   clears `TG_PROFILE`, `TG_PROFILE_LOCK`, `TG_TIMEOUT`, `TG_API_ID`, `TG_API_HASH`; cli-messaging has
+   clears `TG_PROFILE`, `TG_PROFILE_LOCK`, `TG_TIMEOUT`, `TG_API_ID`, `TG_API_HASH`; cli-core has
    its own sandbox for `MESSAGING_STORE`. A new variable that can point at something real goes there.
 8. **Biome `noRestrictedImports` in two overrides does not merge** — `biome.json` repeats the mtcute
    pattern inside the `src/commands/**` rule for that reason.
@@ -87,7 +87,7 @@ Read in this order:
 10. **Telegram deduplicates by `random_id`, also across connections** (FIND-6) — that is what makes
     `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
 11. **The store is a system of record, not a cache.** Consult the shared migration manifest and claim the next number before implementation; a derived search
-    index may be dropped and rebuilt, a base table never. Take a migration's number in cli-messaging's `COORDINATION.md` before writing it.
+    index may be dropped and rebuilt, a base table never. Take a migration's number in cli-core's `COORDINATION.md` before writing it.
 12. **An adapter must set `Message.senderIsChat`** for a channel post or a message sent as the group,
     or the store makes a person of a channel.
 13. **`watch` starts from now; `serve` catches up.** Both open their own connection with updates on
@@ -99,17 +99,17 @@ Read in this order:
 16. **zsh copies stdout into a pipe** (`cmd 2>&1 >/dev/null | …`, its `MULTIOS`) — check stream
     separation under `sh -c`. zsh also does not split `$var` into words; write multi-step live checks
     as `sh` scripts.
-17. **Other sessions work in cli-messaging too** (the max-cli bot writes the shared store). Check
+17. **Other sessions work in cli-core too** (the max-cli bot writes the shared store). Check
     `git worktree list`; never touch another session's worktree. Messages to other sessions wait for
     the owner's approval in their window and often expire — do not depend on them.
 18. **npm trusted publishing:** a publish job must run in the GitHub environment `npm`, and the
     package must already exist on npm with the trusted publisher set — otherwise `E404` on the upload
-    (happened for cli-messaging twice, and for tg's first publish). npm shows a new version only
+    (happened for cli-core twice, and for tg's first publish). npm shows a new version only
     after a few minutes; `bin/release` waits and tags.
 19. **A local `tsc --build` can leave `dist` without JavaScript** after `pnpm typecheck` (declarations
     only) and a deleted `dist`, from stale build info. A clean clone builds correctly — which is what
     the release workflow uses. Locally: `rm -f tsconfig.tsbuildinfo dist/tsconfig.tsbuildinfo` first.
-20. **File edits outside this project, cli-messaging and cli-base are refused by a hook**
+20. **File edits outside this project, cli-core and cli-base are refused by a hook**
     (`.claude/hooks/writes-stay-inside.sh`), in every permission mode; `sudo` is denied. Shell
     commands are otherwise free — the sandbox was tried and turned off for the friction it caused
     ([`docs/dev/agents.md`](docs/dev/agents.md)). A refusal naming the hook is the rule working.
@@ -119,13 +119,13 @@ Read in this order:
     test account `tgtest`) and the worktree's own store — no second login per worktree.
 
 22. **Another session may change the shared store.** Fetch before a store change; the next
-    migration number is in cli-messaging's [`COORDINATION.md`](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/COORDINATION.md).
+    migration number is in cli-core's [`COORDINATION.md`](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/COORDINATION.md).
 
 ## 5. Rulings in force
 
 One shared store for all messengers (NEED-1); every user registers their own `api_id` (NEED-3);
 tg is on npm and releases from GitHub (NEED-8, NEED-13, NEED-14); each session releases its own
-cli-messaging PRs (NEED-10 → C); `serve` never starts by itself (NEED-9); the MCP server may send,
+cli-core PRs (NEED-10 → C); `serve` never starts by itself (NEED-9); the MCP server may send,
 as max-cli's (NEED-15 → B); feature parity with max-cli and kfastov/tgcli (NEED-15); Claude may
 commit, push, open and merge PRs without a prompt (NEED-17 → A).
 

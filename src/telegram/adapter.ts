@@ -22,7 +22,7 @@ import {
   User,
 } from "@mtcute/node"
 import { CliError, isCliError } from "@wirecat/cli-base"
-import type { TextSpan } from "@wirecat/cli-messaging"
+import type { TextSpan } from "@wirecat/cli-core"
 import {
   type AccountSession,
   type AdminRight,
@@ -56,7 +56,7 @@ import {
   type SenderIdentity,
   type Topic,
   type TopicChange,
-} from "@wirecat/cli-messaging"
+} from "@wirecat/cli-core"
 import type {
   After,
   Download,
@@ -66,7 +66,7 @@ import type {
   SendOptions,
   ServerQuery,
   Transcript,
-} from "@wirecat/cli-messaging/cli"
+} from "@wirecat/cli-core/cli"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
@@ -198,7 +198,7 @@ export class TelegramAdapter {
   /** Where the last page of `chats` stopped; any other offset, a failure or a minute's gap starts a new walk. */
   #walk: DialogWalk | undefined
 
-  /** Async because the runtime's SQLite module is imported on demand (cli-messaging `openCache`). */
+  /** Async because the runtime's SQLite module is imported on demand (cli-core `openCache`). */
   static async open(options: AdapterOptions): Promise<TelegramAdapter> {
     mkdirSync(dirname(options.sessionPath), { recursive: true, mode: 0o700 })
     const adapter = new TelegramAdapter(options, await openSessionStorage(options.sessionPath))
@@ -2224,7 +2224,7 @@ export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
  * person or a script is better told the wait than held, and twice at most keeps a command under ~20 s
  * of announced waiting. Listening (`watch`, `serve`): nobody is waiting on a request, and giving up
  * costs a restart and a new connection — 120 s, tlgr's threshold. `messages sync` keeps the one-shot
- * value: cli-messaging's `patiently` sits out up to 5 min above it, and says so.
+ * value: cli-core's `patiently` sits out up to 5 min above it, and says so.
  */
 export const FLOOD_SLEEP = {
   oneShot: { maxWait: 10_000, maxRetries: 2 },

@@ -6,6 +6,6 @@
 
 **Why:** A person or an agent can copy the fix and run it as is.
 
-**Open:** Is this tg-only, or should it move to the cli-messaging standard for both CLIs?
+**Open:** Is this tg-only, or should it move to the cli-core standard for both CLIs?
 
 See: `src/commands/context.ts:64-80` · `src/commands/proxy-config.ts:303-311` · `src/commands/setup.ts:127`

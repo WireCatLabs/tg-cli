@@ -1,4 +1,4 @@
-import type { OfficialChatStats } from "@wirecat/cli-messaging"
+import type { OfficialChatStats } from "@wirecat/cli-core"
 import { describe, expect, it, vi } from "vitest"
 import { scripted, tg } from "./testing/scripted.js"
 

@@ -5,8 +5,8 @@ description: Prepare, check and publish a tg-cli release — run release:check, 
 
 # Release tg-cli
 
-The steps tg and max share are in cli-messaging's
-[RELEASING.md](https://github.com/WireCatLabs/cli-messaging/blob/main/docs/dev/RELEASING.md). Read it
+The steps tg and max share are in cli-core's
+[RELEASING.md](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/RELEASING.md). Read it
 first. This skill orders them for tg and adds what is tg's.
 
 **tg releases without asking**: no signed report, no sign-off. You merge and publish yourself once
@@ -22,7 +22,7 @@ main checkout:
 git fetch origin && git worktree add --no-track -b chore/release-<version> .worktrees/release origin/main
 ```
 
-A dependency release (cli-messaging) can add or change commands without any code here. The
+A dependency release (cli-core) can add or change commands without any code here. The
 `docs/commands.md` diff shows it.
 
 ## 1. The automatic checks
@@ -39,7 +39,7 @@ judgement.
 
 Draft `## Unreleased` from the merged pull requests (RELEASING.md, "The changelog") under tg's
 headings, each at most once: `What's new`, `Changed — may break scripts`, `Fixed`, `Security`,
-`Removed` ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)). A new cli-messaging
+`Removed` ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)). A new cli-core
 version gets the entries a tg user notices, said in tg's words. No internal ids, no file paths.
 
 ## 3. The docs against the diff
@@ -59,7 +59,7 @@ code. Each one gets **holds** or **broken**, with `path:line`.
 ## 5. Live
 
 - **The change touches a write** (an adapter write in `src/telegram/adapter.ts`, a write command, a
-  cli-messaging release that changes one): ask the owner for a yes to `pnpm smoke:live`, then run it.
+  cli-core release that changes one): ask the owner for a yes to `pnpm smoke:live`, then run it.
   **The release waits for that answer** — the one thing in a tg release that does; run it
   in the release worktree. Seed the worktree first, never with `session start`:
 

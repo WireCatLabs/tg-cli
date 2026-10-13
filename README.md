@@ -400,7 +400,7 @@ bin/tg session start          # everything under .tg/ in this checkout, never th
 ```
 
 Everything that is not specific to Telegram — the commands, the store, the send guard, the MCP
-server — lives in [cli-messaging](https://github.com/WireCatLabs/cli-messaging), shared with
+server — lives in [cli-core](https://github.com/WireCatLabs/cli-core), shared with
 [max-cli](https://github.com/WireCatLabs/max-cli). Telegram-specific code lives only in `src/telegram/`.
 
 More: [ARCHITECTURE](https://github.com/WireCatLabs/tg-cli/blob/main/docs/dev/ARCHITECTURE.md) ·
