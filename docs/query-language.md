@@ -4,7 +4,7 @@ If you use an AI agent with tg, you do not need to learn this language: describe
 plain words and the agent writes the query. This page is for people who type searches themselves, and
 for anyone who wants every filter: exact operators, every field, presets, date rules and limits.
 
-It is the reference for the queries of `tg search messages`, `tg search mail`, `tg search all`, `tg stats messages show`,
+It is the reference for the queries of `tg personal search messages`, `tg personal search mail`, `tg personal search all`, `tg personal stats messages show`,
 saved searches, and the `--filter` of [topic search](topic-search.md). For everyday examples start with
 [message search](search.md).
 
@@ -95,7 +95,7 @@ corrected: to catch several endings, use a wildcard such as `invo*`.
 Field names are case-sensitive. An unknown field, value or combination is an error, never an empty
 answer and never plain text. A name that the store does not know is not looked up on Telegram.
 
-`kind:bot` selects a chat with a bot; `in:bots` selects the archives of `tg bot` accounts. `topic:`
+`kind:bot` selects a chat with a bot; `in:bots` selects the archives of `tg personal bot` accounts. `topic:`
 needs exactly one chat in `chat:` or `--chat`, since topic numbers repeat across groups. `filename`,
 `mime` and `size` match a message when at least one of its files matches. `/` starts a regular
 expression, so quote a full type: `mime:"application/pdf"`.
@@ -151,7 +151,7 @@ not cut short: narrow the chat, the dates or the pattern.
 ### A JavaScript regular expression: `--regex`
 
 ```sh
-tg search messages --regex 'invoice\s+\d+' --json
+tg personal search messages --regex 'invoice\s+\d+' --json
 ```
 
 `--regex` is a separate mode. The words you give are one JavaScript regular expression, not a query in
@@ -170,7 +170,7 @@ even when nothing matched. `--jsonl` streams the items only.
   scope has once listed all its chats; it does not promise a complete history.
 - `completeness`: per chat, whether its stored history reaches the start and has gaps.
 - `wordsReady`: whether the word index is complete. When it is `false`, a query with words fails with
-  `index_not_ready` and the command that finishes it, `tg store migrate`; a query without words runs.
+  `index_not_ready` and the command that finishes it, `tg personal store migrate`; a query without words runs.
 - `hasMore` is about the page, not about whether Telegram holds more.
 
 An error carries the position of the problem in the query and a hint.
@@ -184,7 +184,7 @@ command options do; `saved` runs a saved search. `thread`, `thread_hops`, `threa
 `thread_bytes`, `thread_within` and `sync_first` match the options `--thread…` and `--sync-first`;
 `sync_first` is offered only with `messages.sync-first: allow`. The answer has the same fields as
 `--json`. `tg_read` (`command: "stats messages show"`) counts the same queries. The query history follows
-the server: `tg mcp --no-record`, or `record` set to `false`, keeps its calls out.
+the server: `tg personal mcp --no-record`, or `record` set to `false`, keeps its calls out.
 
 ## Next
 

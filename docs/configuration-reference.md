@@ -30,7 +30,7 @@ For each setting, the first of these that is set:
 5. the built-in default
 
 ```sh
-tg chats list --limit 5     # 5: the option
+tg personal chats list --limit 5  # 5: the option
 # "limit": 50 in the profile's entry — when there is no option
 # "limit": 30 in "defaults" — when the profile has none either
 # 20 — when nothing is set
@@ -64,7 +64,7 @@ changes which login is found ([where the login parts are kept](sessions.md#where
 
 ⚠ **It is not a health check.** It creates the starter configuration if absent, then reads files. It
 opens no store, asks no keyring and does not connect. Whether the session still works is a question
-for `tg doctor --online` ([troubleshooting with tg doctor](troubleshooting.md#first-tg-doctor)).
+for `tg personal doctor --online` ([troubleshooting with tg doctor](troubleshooting.md#first-tg-doctor)).
 
 ## The file
 
@@ -95,8 +95,8 @@ creates it with `limit`, `keepRunsForDays`, `sendsPerHour`, `updateCheck` and `s
 - `bot.defaults`, `bot.profiles.<name>`: only `tg <name> bot …` commands.
 
 `defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
-names one. The first word (`tg work …`) and `TG_PROFILE` override it. Without it, the profile is
-`default`.
+names one. The first word (`tg work …`) and `TG_PROFILE` override it. Without any of them, a command
+that uses an account stops with exit code `2` and lists the profiles on this computer.
 
 | Setting | Default | What it does | Overridden for one run by |
 |---|---|---|---|
@@ -112,9 +112,9 @@ names one. The first word (`tg work …`) and `TG_PROFILE` override it. Without 
 | `sendsPerHour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
 | `requestsPerMinute` | `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
 | `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
-| `speechModel` | none | which downloaded model `--local` uses (`tg models audio list`) | `--model` |
+| `speechModel` | none | which downloaded model `--local` uses (`tg personal models audio list`) | `--model` |
 | `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
-| `readOtherBots` | `false` | a bot only: whether `tg bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
+| `readOtherBots` | `false` | a bot only: whether `tg personal bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
 | `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
 | `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
 | `embeddingProvider` | `local` | local model or `openai` | `--provider` |
@@ -214,7 +214,7 @@ the requested write. Repeat `--permission key=level` for temporary server permis
 ([browser setup](remote.md)). CLI confirmation at `ask` still applies.
 
 `replies.send` defaults to `deny`; enabling a reply rule alone does not allow sending.
-`tg replies audience` can limit replies to selected people or exclude some.
+`tg personal replies audience` can limit replies to selected people or exclude some.
 
 ### Older settings that still work
 
@@ -271,7 +271,7 @@ same holds for a key in `permissions` that does not start with a resource.
 
 Where Telegram is blocked, `tg` can reach it through a proxy: SOCKS5, an HTTP proxy that allows
 `CONNECT`, or an MTProxy. One `proxy` setting per profile, or for every profile with `--defaults`.
-Set it before `tg setup`: the login goes through it too.
+Set it before `tg personal setup`: the login goes through it too.
 
 ```sh
 tg config set proxy socks5://proxy.example:1080       # no password: on the command line
@@ -295,13 +295,13 @@ URL without echo, or from a pipe, keeps the secret in the OS keyring — one per
 is refused, because `ps` and your shell history would keep it.
 
 `TG_PROXY` takes the whole URL, secret included, and wins over the setting — for CI, or for one try.
-`config show` prints the setting from the file; `tg doctor` prints the proxy actually in use.
+`config show` prints the setting from the file; `tg personal doctor` prints the proxy actually in use.
 `ALL_PROXY` and `HTTPS_PROXY` are not read: they are usually set for other tools, and a proxy is
 something you choose for this account.
 
-The Bot API (`tg bot …`) and the app registration of `session start --app auto` go through the
+The Bot API (`tg personal bot …`) and the app registration of `session start --app auto` go through the
 same SOCKS5 or HTTP proxy. An MTProxy carries only Telegram's own protocol, so with one they connect
-directly; `tg doctor` says which. `--app browser` opens my.telegram.org in your browser, which
+directly; `tg personal doctor` says which. `--app browser` opens my.telegram.org in your browser, which
 uses its own proxy settings.
 
 ## Environment variables
@@ -330,7 +330,7 @@ does not see your usual login, because the keyring entry moves with them:
 ```sh
 export TG_CONFIG_DIR=/tmp/tg-try/config TG_STATE_DIR=/tmp/tg-try/state TG_CACHE_DIR=/tmp/tg-try/cache
 export MESSAGING_STORE=/tmp/tg-try/wirecat.db
-tg setup
+tg personal setup
 ```
 
 Without `MESSAGING_STORE`, what that login reads still goes into your usual local store.

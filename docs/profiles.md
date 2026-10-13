@@ -1,8 +1,9 @@
 # Profiles and bots
 
 A **profile** is a name for one login of `tg` on this computer: a Telegram account or a bot, with its
-own session and its own settings. Without a name, `tg` uses the profile `default`, so with one
-account you never need to think about profiles.
+own session and its own settings. `tg` never picks one for you: a command that uses an account
+names its profile as the first word (`tg personal chats list`), through `TG_PROFILE`, or through
+`defaultProfile` in the config file. With one account, set `defaultProfile` once and forget it.
 
 Read this page when you want a second account, want your AI agent to have fewer rights than you, or
 want to run a bot. At the end you know how to pick a profile for a command, how to give it its own

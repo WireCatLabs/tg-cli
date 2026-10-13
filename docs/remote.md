@@ -8,11 +8,11 @@ to stop it or take its access back.
 
 Terms used on this page:
 
-- **MCP** (Model Context Protocol) is the standard way an AI app calls outside tools. `tg mcp` is
+- **MCP** (Model Context Protocol) is the standard way an AI app calls outside tools. `tg personal mcp` is
   the MCP server that comes with `tg`; the [MCP server guide](mcp.md) covers apps on your own
   computer.
 - **Remote connection** means the app connects from its own servers, over the internet, to the
-  address you give it. `tg mcp --http` serves the same tools over HTTP on `127.0.0.1` for this.
+  address you give it. `tg personal mcp --http` serves the same tools over HTTP on `127.0.0.1` for this.
 - **HTTPS tunnel** is a program that gives a port on your computer a public HTTPS address.
   This page uses [Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel); Cloudflare
   Tunnel also works. You do not need to buy a domain for Funnel.
@@ -22,7 +22,7 @@ Terms used on this page:
   for it, so only a person who sees that terminal can connect an app.
 
 ```text
-ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ tg mcp --http (login) ──▶ Telegram
+ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ tg personal mcp --http (login) ──▶ Telegram
 ```
 
 If your Tailscale connection already works, keep it; you do not need a second tunnel. The local
@@ -42,14 +42,14 @@ stdin/stdout connection keeps working as before.
 ## Before you start
 
 - **Whoever logs in reads your Telegram.** The login needs the access code from your terminal.
-  Never put a tunnel in front of `tg mcp` without `--http`: that mode has no login at all.
+  Never put a tunnel in front of `tg personal mcp` without `--http`: that mode has no login at all.
 - **Profile permissions decide what the app may change.** `deny` and `readonly` block writes;
   `ask` and `allow` let a requested MCP write go through without a form on the server. The app's own
   approval is separate and depends on its settings. Recipient restrictions and hourly limits still
   apply ([what an agent may do](mcp.md#what-an-agent-may-do), [configuration guide](configuration.md)).
 - **The computer that runs `tg` must stay on.** To use it from a phone, or from a laptop with
   nothing installed, run all of this on a small server that is always on, and log in to `tg` there
-  (`tg setup --agent none`). Then you need only a browser.
+  (`tg personal setup --agent none`). Then you need only a browser.
 - **Who can add a remote connector:**
 
 | App | Plans | Documentation |
@@ -116,13 +116,13 @@ First Terminal window:
 TAILSCALE_BE_CLI=1 /Applications/Tailscale.app/Contents/MacOS/Tailscale funnel 8765
 ```
 
-Second Terminal window, as the same user who ran `tg setup --agent none`. This works in both zsh
+Second Terminal window, as the same user who ran `tg personal setup --agent none`. This works in both zsh
 and bash:
 
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
+tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
 ```
 
 ### Linux (Terminal)
@@ -135,12 +135,12 @@ sudo tailscale funnel 8765
 ```
 
 Second terminal window: your normal user, without `sudo`, so `tg` finds the session created by
-`tg setup --agent none`:
+`tg personal setup --agent none`:
 
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
+tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
 ```
 
 ## Run MAX and Telegram together
@@ -164,7 +164,7 @@ same computer.
 Start the server in a second terminal:
 
 ```sh
-tg mcp --http --port 8765 --public-url https://mcp.example.com
+tg personal mcp --http --port 8765 --public-url https://mcp.example.com
 ```
 
 Add `https://mcp.example.com/mcp` to your AI app with OAuth and DCR, as described in
@@ -246,7 +246,7 @@ Taking access back from apps is separate from stopping a process. To log out eve
 profile:
 
 ```sh
-tg mcp --revoke --json
+tg personal mcp --revoke --json
 ```
 
 Those apps must log in again with a new code. This does not end your Telegram session.
@@ -258,14 +258,14 @@ Those apps must log in again with a new code. This does not end your Telegram se
   must show a short JSON. If it does not, Funnel is not running, is not enabled in your Tailscale
   network, or points at another port.
 - **The login page says "Too many wrong codes":** after five wrong codes it is locked until
-  `tg mcp --http` restarts. If you did not type them, someone found your address: restart, and
+  `tg personal mcp --http` restarts. If you did not type them, someone found your address: restart, and
   think about a new device name in Tailscale.
-- **The app connects, but there are no tools:** `tg mcp doctor` checks that the MCP server starts
+- **The app connects, but there are no tools:** `tg personal mcp doctor` checks that the MCP server starts
   and lists its tools. It does not check the Telegram login or the tunnel. A command that goes to
-  Telegram, such as `tg account show`, checks the account connection.
+  Telegram, such as `tg personal account show`, checks the account connection.
 - **Reading works, writing fails:** check the profile's permissions and any `--permission`
   overrides. `deny` and `readonly` block writes whatever the app approves.
-- **You need a record of the calls:** `tg runs list` shows them. Successful calls appear only when
+- **You need a record of the calls:** `tg personal runs list` shows them. Successful calls appear only when
   recording is on; failed calls are kept by default, unless recording was turned off with
   `"record": false` or `--no-record` ([diagnostics guide](diagnostics.md)).
 
@@ -279,7 +279,7 @@ Use `attachments list --needs-text` to find the message locator and the attachme
 ask for the file:
 
 ```sh
-tg attachments show msg:telegram/500/7/204 --attachment 1 --json
+tg personal attachments show msg:telegram/500/7/204 --attachment 1 --json
 ```
 
 The command reads only a saved attachment of the active account. It never downloads, never calls a
@@ -300,7 +300,7 @@ is null. Pass the first SHA256 as `--if-sha256` on the next requests: if the sou
 the request fails and returns no changed bytes. Check the joined file against that hash.
 
 ```sh
-tg attachments show msg:telegram/500/7/204 --offset-bytes 524288 --if-sha256 <sha256> --json
+tg personal attachments show msg:telegram/500/7/204 --offset-bytes 524288 --if-sha256 <sha256> --json
 ```
 
 ### Through MCP
@@ -341,7 +341,7 @@ needs the optional `unpdf` with page rendering and `@napi-rs/canvas`, as describ
 the CLI.
 
 ```sh
-tg attachments show msg:telegram/500/7/204 --attachment 1 --page 1 --json
+tg personal attachments show msg:telegram/500/7/204 --attachment 1 --page 1 --json
 ```
 
 Through MCP, call `tg_read`, command `attachments show`, with `page: 1` and the message locator. By
@@ -378,7 +378,7 @@ export MESSAGING_PDF_PREVIEW_MAX_MIB=16
 ```
 
 PowerShell uses `$env:MESSAGING_ATTACHMENT_MAX_MIB = "250"`; use the same syntax for the other names.
-Values must be positive whole numbers. Run `tg mcp config` in that environment again and replace
+Values must be positive whole numbers. Run `tg personal mcp config` in that environment again and replace
 the client's server entry; it preserves these settings. Restart a running server after changing them.
 Ordinary transfer still uses chunks up to 1 MiB; that is a separate budget.
 

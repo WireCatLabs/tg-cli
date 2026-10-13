@@ -17,14 +17,14 @@ Some words on this page:
 
 | Question | Command |
 | --- | --- |
-| Which messages got the most reactions | `tg stats messages top` |
-| Who answers questions most | `tg stats contacts top` |
-| Which questions wait for an answer | `tg stats messages unanswered` |
-| How quickly one person replies | `tg stats contacts responses` |
-| Whether newcomers got help | `tg stats chats newcomers` |
-| Whether newcomers stay | `tg stats chats retention` |
-| Which posts were viewed but not discussed | `tg stats messages discussion` |
-| How fresh views and reactions are | `tg stats messages counters show` |
+| Which messages got the most reactions | `tg personal stats messages top` |
+| Who answers questions most | `tg personal stats contacts top` |
+| Which questions wait for an answer | `tg personal stats messages unanswered` |
+| How quickly one person replies | `tg personal stats contacts responses` |
+| Whether newcomers got help | `tg personal stats chats newcomers` |
+| Whether newcomers stay | `tg personal stats chats retention` |
+| Which posts were viewed but not discussed | `tg personal stats messages discussion` |
+| How fresh views and reactions are | `tg personal stats messages counters show` |
 
 The requests, names and results below are fictional examples. Replace the chat name with yours. Tables show how an agent can present its answer; commands with `--json` return data for it.
 
@@ -39,7 +39,7 @@ Find the messages with the most recorded reactions.
 **Command:**
 
 ```sh
-tg stats messages top --chat "Hiking" --measure reactions --limit 3 --json
+tg personal stats messages top --chat "Hiking" --measure reactions --limit 3 --json
 ```
 
 **Example agent answer:**
@@ -63,7 +63,7 @@ Compare people by their observed answers to questions.
 **Command:**
 
 ```sh
-tg stats contacts top --chat "Hiking" --measure answers --limit 3 --json
+tg personal stats contacts top --chat "Hiking" --measure answers --limit 3 --json
 ```
 
 **Example agent answer:**
@@ -89,7 +89,7 @@ Find older questions without an observed direct answer.
 **Command:**
 
 ```sh
-tg stats messages unanswered --chat "Hiking" --older-than 24h --json
+tg personal stats messages unanswered --chat "Hiking" --older-than 24h --json
 ```
 
 **Example agent answer:**
@@ -115,7 +115,7 @@ See the number of answers and waiting times for a selected person.
 **Command:**
 
 ```sh
-tg stats contacts responses --chat "Hiking" --answerer "Alex Rivera" --json
+tg personal stats contacts responses --chat "Hiking" --answerer "Alex Rivera" --json
 ```
 
 **Example agent answer:**
@@ -141,7 +141,7 @@ Check whether people who recently joined received answers to their questions.
 **Command:**
 
 ```sh
-tg stats chats newcomers "Hiking" --within 7d --json
+tg personal stats chats newcomers "Hiking" --within 7d --json
 ```
 
 **Example agent answer:**
@@ -168,7 +168,7 @@ Compare observed membership one day, one week and one month after joining.
 **Command:**
 
 ```sh
-tg stats chats retention "Hiking" --checkpoints 1d,7d,30d --within 7d --timezone UTC --json
+tg personal stats chats retention "Hiking" --checkpoints 1d,7d,30d --within 7d --timezone UTC --json
 ```
 
 **Example agent answer:**
@@ -194,7 +194,7 @@ Find viewed posts with little recorded discussion.
 **Command:**
 
 ```sh
-tg stats messages discussion --chat "News" --min-views 100 --max-replies 0 --json
+tg personal stats messages discussion --chat "News" --min-views 100 --max-replies 0 --json
 ```
 
 **Example agent answer:**
@@ -218,7 +218,7 @@ Check when views and reactions were observed separately.
 **Command:**
 
 ```sh
-tg stats messages counters show --chat "Hiking" --counters views,reactions --max-age 24h --limit 20 --json
+tg personal stats messages counters show --chat "Hiking" --counters views,reactions --max-age 24h --limit 20 --json
 ```
 
 **Example agent answer:**
@@ -235,7 +235,7 @@ tg stats messages counters show --chat "Hiking" --counters views,reactions --max
 Before fetching new counters, ask for the exact messages and limits.
 
 ```sh
-tg stats messages counters refresh --chat "Hiking" --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
+tg personal stats messages counters refresh --chat "Hiking" --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
 ```
 
 > **Plan:** at most 20 messages, up to 30 seconds. Views and reactions are supported.

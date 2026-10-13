@@ -9,8 +9,8 @@ A few words this page uses:
 - A **run** is one call of `tg`, from start to exit.
 - A **run record** is a folder that keeps what one run did: its command, its outcome and one line per
   request to Telegram. It never holds message text, names or titles.
-- **`tg doctor`** checks the installation: the version, the login, the settings and the local store.
-- A **problem report** is one JSON file made from `tg doctor` and a failed run. You attach it to an
+- **`tg personal doctor`** checks the installation: the version, the login, the settings and the local store.
+- A **problem report** is one JSON file made from `tg personal doctor` and a failed run. You attach it to an
   issue.
 
 ## What you can do
@@ -19,10 +19,10 @@ A few words this page uses:
 |---|---|---|
 | See each request as it happens | `tg --trace …` | no, prints to stderr only |
 | Keep a record of one run | `tg --record …` | yes, a run record |
-| Find a failed run later | `tg runs list` | a failed run is kept by itself |
+| Find a failed run later | `tg personal runs list` | a failed run is kept by itself |
 | Keep a record of every run | `tg config set record true` | yes, every run |
-| Check the installation | `tg doctor`, `tg doctor --online` | no |
-| Make a problem report | `tg doctor report create` | yes, one file you send |
+| Check the installation | `tg personal doctor`, `tg personal doctor --online` | no |
+| Make a problem report | `tg personal doctor report create` | yes, one file you send |
 
 ## Show it: `--trace`
 
@@ -45,9 +45,9 @@ still gets only data.
 
 ```sh
 tg --record chats list
-tg runs list                 # recorded runs, newest first
-tg runs show <run-id>        # one run: its outcome, and one line per operation
-tg runs path <run-id>        # the folder that holds it
+tg personal runs list        # recorded runs, newest first
+tg personal runs show <run-id>  # one run: its outcome, and one line per operation
+tg personal runs path <run-id>  # the folder that holds it
 ```
 
 A run record is a folder under `runs/<day>/` in the state folder (`~/.local/share/tg-cli/runs/` on
@@ -103,8 +103,8 @@ The same is true for a report made from a run.
 ## Check the installation: `tg doctor`
 
 ```sh
-tg doctor              # connects to nothing
-tg doctor --online     # also connects once and reads the account; sends nothing to Telegram
+tg personal doctor     # connects to nothing
+tg personal doctor --online  # also connects once and reads the account; sends nothing to Telegram
 ```
 
 It shows the version, the runtime, the profile, the config file, whether a session and the app
@@ -128,16 +128,16 @@ the runs kept.
 - **`flood`** lists the waits Telegram asked this profile to keep (`deadlines`) and a hold on its
   sends (`sendBlock`). `doctor` only reads, with one exception: **`doctor --online` writes the frozen
   hold.** When it reads the account as frozen, it holds sends until Telegram's date. When it reads it
-  as active, it lifts that hold. It never lifts a hold for a spam limit — `tg flood clear` does that.
+  as active, it lifts that hold. It never lifts a hold for a spam limit — `tg personal flood clear` does that.
 
 ## A problem report
 
 ```sh
-tg doctor report create                   # about the newest failed run
-tg doctor report create --run <run-id>    # about this one
+tg personal doctor report create          # about the newest failed run
+tg personal doctor report create --run <run-id>  # about this one
 ```
 
-It writes a JSON file — what `tg doctor` shows plus the run — and says where to send it: a new issue
+It writes a JSON file — what `tg personal doctor` shows plus the run — and says where to send it: a new issue
 at [github.com/WireCatLabs/tg-cli/issues](https://github.com/WireCatLabs/tg-cli/issues/new). Read it before
 you send it. It holds no message text, and every id appears as a label, not as Telegram's number.
 [How to report a problem](troubleshooting.md#report-a-problem) lists everything the file holds.
@@ -146,17 +146,17 @@ If no failed run is kept, run the failing command again; its failure is kept by 
 
 ## What to do with runs
 
-The records are JSON, so `jq` answers questions about them. `tg runs list --json` answers
+The records are JSON, so `jq` answers questions about them. `tg personal runs list --json` answers
 `{ items, page, limit, hasMore }`, and `items` are the runs' `run.json`, newest first:
 
 ```sh
-tg runs list --limit 100 --json | jq '[.items[] | select(.status == "failed") | {command, errorCode}]'
-tg runs list --limit 100 --json | jq '[.items[] | .durationMs] | add / length'    # average duration
-tg runs list --limit 100 --json | jq '[.items[] | select(.requests > 10) | {command, requests}]'
+tg personal runs list --limit 100 --json | jq '[.items[] | select(.status == "failed") | {command, errorCode}]'
+tg personal runs list --limit 100 --json | jq '[.items[] | .durationMs] | add / length'  # average duration
+tg personal runs list --limit 100 --json | jq '[.items[] | select(.requests > 10) | {command, requests}]'
 ```
 
-`tg runs show <run-id>` prints the same events as a table, without the fields every line repeats.
-The whole file is in the folder `tg runs path <run-id>` prints.
+`tg personal runs show <run-id>` prints the same events as a table, without the fields every line repeats.
+The whole file is in the folder `tg personal runs path <run-id>` prints.
 
 ## Next
 
@@ -166,8 +166,8 @@ The whole file is in the folder `tg runs path <run-id>` prints.
 ## Search errors and partial runs
 
 ```sh
-tg runs search --error-code rate_limited --json
-tg runs search --status partial --since-time 2026-10-01 --json
+tg personal runs search --error-code rate_limited --json
+tg personal runs search --status partial --since-time 2026-10-01 --json
 ```
 
 `runs search` matches literal diagnostic text in metadata and safe events. Use `--operation`,

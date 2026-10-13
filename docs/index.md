@@ -34,14 +34,14 @@ code for each kind of failure. This is why scripts and agents can rely on it.
 
 ```sh
 npm install -g @wirecat/tg-cli
-tg setup                  # guided app registration, login and agent skill
-tg inbox                  # other people's unread messages, in every chat; nothing is marked read
-tg messages list me       # Saved Messages, the latest 20
+tg personal setup         # guided app registration, login and agent skill
+tg personal inbox         # other people's unread messages, in every chat; nothing is marked read
+tg personal messages list me  # Saved Messages, the latest 20
 ```
 
 Allow about five minutes for setup. Downloading older chat history is a separate step. To choose
 the agent that gets the skill, add `--agent` with `codex`, `cursor`, `claude`, `gemini` or `all`
-(for example `tg setup --agent codex`). `tg setup --help` shows the login choices and the Windows
+(for example `tg personal setup --agent codex`). `tg setup --help` shows the login choices and the Windows
 instructions.
 
 With a bot (`support` here is an example name of a bot profile):
@@ -77,7 +77,7 @@ How `tg` differs from other tools: [compared with other tools](compare.md).
 | [Security](security.md) | What reaches the disk and the network, and what stops a send going to the wrong place? |
 | [Roadmap](roadmap.md) | What is coming next? |
 
-[Search](search.md): `tg search all` covers messages, mail and notes at once; `search messages`
+[Search](search.md): `tg personal search all` covers messages, mail and notes at once; `search messages`
 finds messages by words, people, dates, files and tags; [topic search](topic-search.md) finds
 discussions by what they were about; the [search query language](query-language.md) is the full
 reference.

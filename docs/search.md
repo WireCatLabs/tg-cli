@@ -29,7 +29,7 @@ those messages before answering. This needs downloaded history; it does not down
 For command-line control:
 
 ```sh
-tg search messages 'What time does Helix export run?' --discover --chat 990 --json
+tg personal search messages 'What time does Helix export run?' --discover --chat 990 --json
 ```
 
 This searches the local archive only. Chat, sender and date filters still apply. In MCP, pass
@@ -45,46 +45,46 @@ separate [topic-search option](topic-search.md).
 
 ## What you can do
 
-Every search is under one group of commands, `tg search`. When you don't know where something was
+Every search is under one group of commands, `tg personal search`. When you don't know where something was
 written, start with `search all`.
 
 | Task | Command |
 |---|---|
-| Search messages, mail and notes in one answer | `tg search all '<query>'` |
-| Search Telegram messages only; without `--discover`, also on Telegram's server | `tg search messages '<query>'` |
-| Search only the mail memo imported | `tg search mail '<query>'` |
-| Search notes written in memo or imported from a folder | `tg search notes '<query>'` |
-| Find a discussion by what it was about | `tg search conversations '<question>'` ([topic search](topic-search.md)) |
-| Find a topic in a forum group by its title | `tg search topics <chat> '<words>'` |
-| Count matches by chat, sender, day or hour | `tg stats messages show '<query>'` |
-| Save a search and run it again later | `tg searches create`, `tg search messages --saved <name>` |
+| Search messages, mail and notes in one answer | `tg personal search all '<query>'` |
+| Search Telegram messages only; without `--discover`, also on Telegram's server | `tg personal search messages '<query>'` |
+| Search only the mail memo imported | `tg personal search mail '<query>'` |
+| Search notes written in memo or imported from a folder | `tg personal search notes '<query>'` |
+| Find a discussion by what it was about | `tg personal search conversations '<question>'` ([topic search](topic-search.md)) |
+| Find a topic in a forum group by its title | `tg personal search topics <chat> '<words>'` |
+| Count matches by chat, sender, day or hour | `tg personal stats messages show '<query>'` |
+| Save a search and run it again later | `tg personal searches create`, `tg personal search messages --saved <name>` |
 
 ```sh
-tg search all 'lease agreement'                   # messages, mail and notes, best match first
+tg personal search all 'lease agreement'          # messages, mail and notes, best match first
 ```
 
 ```sh
-tg search all 'lease' --only messages,notes       # without mail
+tg personal search all 'lease' --only messages,notes  # without mail
 ```
 
 ```sh
-tg search messages 'lease' --chat "Book club"     # Telegram messages only, never mail
+tg personal search messages 'lease' --chat "Book club"  # Telegram messages only, never mail
 ```
 
 ```sh
-tg search mail 'invoice'                          # only the mail memo mail import brought in
+tg personal search mail 'invoice'                 # only the mail memo mail import brought in
 ```
 
 ```sh
-tg search notes 'budget' --type internal          # only notes written in memo
+tg personal search notes 'budget' --type internal  # only notes written in memo
 ```
 
 ```sh
-tg search conversations 'moving to the country'   # conversations close in meaning
+tg personal search conversations 'moving to the country'  # conversations close in meaning
 ```
 
 ```sh
-tg search topics "Hiking" "gear"                  # topic titles in one forum group
+tg personal search topics "Hiking" "gear"         # topic titles in one forum group
 ```
 
 `search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). `search messages` never
@@ -97,7 +97,7 @@ for notes — `search all` skips that resource and explains why.
 Mail and notes reach the store through memo: `memo mail import` and `memo import`. Without them,
 `search all` searches messages only.
 
-The rest of this page is about searching messages, `tg search messages`. It reads the local store;
+The rest of this page is about searching messages, `tg personal search messages`. It reads the local store;
 ordinary search also asks Telegram ([below](#asking-telegram-too---backend)); discovery searches only the archive, even with `--backend both`.
 
 ## Try a focused search
@@ -111,7 +111,7 @@ Start with a phrase and one chat. This example searches saved history without as
 **Command:**
 
 ```sh
-tg search messages '"invoice paid"' --chat "Book club" --backend archive --json
+tg personal search messages '"invoice paid"' --chat "Book club" --backend archive --json
 ```
 
 **Example agent answer:**
@@ -134,16 +134,16 @@ fetched it, but everything else reads only the store: counting with `stats`, top
 `filename:`, regex, presets, tags, and the ranking of word forms. Start by downloading every chat:
 
 ```sh
-tg store fetch --all --background     # the last 90 days of every chat, as a background job
+tg personal store fetch --all --background  # the last 90 days of every chat, as a background job
 ```
 
 ```sh
-tg store jobs show                    # how far it got
+tg personal store jobs show           # how far it got
 ```
 
 Each run fetches at most 1,000 messages per chat by default; repeat it to continue busy chats.
-Add `--since-time 365d` to go further back, or fetch one chat with `tg store fetch "Book club"`
-([download a chat's history](archive.md#fetch-a-chats-history)). After that, `tg serve` keeps the
+Add `--since-time 365d` to go further back, or fetch one chat with `tg personal store fetch "Book club"`
+([download a chat's history](archive.md#fetch-a-chats-history)). After that, `tg personal serve` keeps the
 store current.
 
 Every search says what it searched. In the terminal, when the store could hold more or nothing was
@@ -151,7 +151,7 @@ found, one line says how many messages and chats were searched, how many chats w
 are behind, and the command that fixes it:
 
 ```text
-searched 12,430 messages in 37 chats — 5 never fetched; `tg store fetch --all --background` fetches them
+searched 12,430 messages in 37 chats — 5 never fetched; `tg personal store fetch --all --background` fetches them
 ```
 
 With `--json`, `coverage` carries the same: `messages`, `chats`, up to ten `attention` chats and `next`.
@@ -164,23 +164,23 @@ examples; use your own chats and people.
 ## Words and phrases
 
 ```sh
-tg search messages invoice
+tg personal search messages invoice
 ```
 
 ```sh
-tg search messages '"invoice paid"'              # words together
+tg personal search messages '"invoice paid"'     # words together
 ```
 
 ```sh
-tg search messages 'cafe OR library'
+tg personal search messages 'cafe OR library'
 ```
 
 ```sh
-tg search messages '(cafe OR library) NOT loud'
+tg personal search messages '(cafe OR library) NOT loud'
 ```
 
 ```sh
-tg search messages 'invoic*'                     # every word that starts with "invoic"
+tg personal search messages 'invoic*'            # every word that starts with "invoic"
 ```
 
 Words next to each other must all be in the message. Search includes word forms, according to
@@ -191,27 +191,27 @@ word forms. Use `exact:piso` or add `--exact` for words without an explicit fiel
 ## People and chats
 
 ```sh
-tg search messages 'from:"Alice Synthetic" invoice'
+tg personal search messages 'from:"Alice Synthetic" invoice'
 ```
 
 ```sh
-tg search messages 'from:("Alice Synthetic" OR "Bob Synthetic") library'
+tg personal search messages 'from:("Alice Synthetic" OR "Bob Synthetic") library'
 ```
 
 ```sh
-tg search messages 'from:me date:7d'             # what you wrote this week
+tg personal search messages 'from:me date:7d'    # what you wrote this week
 ```
 
 ```sh
-tg search messages 'chat:"Book club" library'
+tg personal search messages 'chat:"Book club" library'
 ```
 
 ```sh
-tg search messages library --chat "Book club"    # the same, as an option
+tg personal search messages library --chat "Book club"  # the same, as an option
 ```
 
 ```sh
-tg search messages 'passport kind:private'       # one-to-one chats only
+tg personal search messages 'passport kind:private'  # one-to-one chats only
 ```
 
 `kind:` takes `private`, `group`, `channel`, `saved` (Saved Messages) and `bot`. `topic:` keeps to one
@@ -221,19 +221,19 @@ store, add `--source all`.
 ## Dates
 
 ```sh
-tg search messages 'date:today'
+tg personal search messages 'date:today'
 ```
 
 ```sh
-tg search messages 'library date:yesterday'
+tg personal search messages 'library date:yesterday'
 ```
 
 ```sh
-tg search messages 'invoice date:7d'             # from 7 days ago until now; also 30m, 2h
+tg personal search messages 'invoice date:7d'    # from 7 days ago until now; also 30m, 2h
 ```
 
 ```sh
-tg search messages 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
+tg personal search messages 'invoice date:[2026-01-01 TO 2026-02-01}' --timezone Europe/Madrid
 ```
 
 `today`, `yesterday` and calendar dates are days in your computer's time zone; `--timezone` picks
@@ -242,35 +242,35 @@ another. In a range, `[` and `]` include that day, `{` and `}` exclude it.
 ## Files and links
 
 ```sh
-tg search messages 'has:file'
+tg personal search messages 'has:file'
 ```
 
 ```sh
-tg search messages 'filename:*.pdf'
+tg personal search messages 'filename:*.pdf'
 ```
 
 ```sh
-tg search messages 'filename:*contract*'         # part of the name
+tg personal search messages 'filename:*contract*'  # part of the name
 ```
 
 ```sh
-tg search messages 'size>10MB'
+tg personal search messages 'size>10MB'
 ```
 
 ```sh
-tg search messages 'mime:image'                  # any picture sent as a file
+tg personal search messages 'mime:image'         # any picture sent as a file
 ```
 
 ```sh
-tg search messages 'mime:"application/pdf"'      # quote a full type
+tg personal search messages 'mime:"application/pdf"'  # quote a full type
 ```
 
 ```sh
-tg search messages 'has:photo chat:"Book club"'
+tg personal search messages 'has:photo chat:"Book club"'
 ```
 
 ```sh
-tg search messages 'has:link AND "github.com"'   # a link to a site
+tg personal search messages 'has:link AND "github.com"'  # a link to a site
 ```
 
 A file is found by its name, size and type even when the message has no text. `filename:` compares the
@@ -286,19 +286,19 @@ text or only in its preview card.
 extracted into the store, by tg or by your agent. More about files: [file attachments](attachments.md).
 
 ```sh
-tg attachments extract --chat "Book club" --download --output-dir ./files
+tg personal attachments extract --chat "Book club" --download --output-dir ./files
 ```
 
 ```sh
-tg search messages 'content:invoice'
+tg personal search messages 'content:invoice'
 ```
 
 ```sh
-tg attachments list --chat "Book club" --needs-text
+tg personal attachments list --chat "Book club" --needs-text
 ```
 
 ```sh
-tg attachments text set "Book club" 204 --text-file ./scan.txt
+tg personal attachments text set "Book club" 204 --text-file ./scan.txt
 ```
 
 `attachments extract` reads plain text, Word files and PDFs with a text layer on this computer.
@@ -339,11 +339,11 @@ tg config set models.ocr.model your-vision-model
 ```
 
 ```sh
-tg models text key set openai
+tg personal models text key set openai
 ```
 
 ```sh
-tg attachments extract --chat "Book club" --ocr --concurrency 4 --limit 100 --json
+tg personal attachments extract --chat "Book club" --ocr --concurrency 4 --limit 100 --json
 ```
 
 `--ocr` sends images to that service; without it no model is called. Concurrency is 1–8, default 4; the
@@ -353,9 +353,9 @@ stay local. A repeat reuses the file hash and the model identity. Text your agen
 indexed text survive a failed or cancelled OCR run. Check the failed count and each file's status; a
 provider rate limit stops later calls in that run. `--offline` cannot be combined with `--ocr`.
 
-**Files you already have.** `tg attachments extract --chat <chat> --from-dir ./files` reads one folder,
+**Files you already have.** `tg personal attachments extract --chat <chat> --from-dir ./files` reads one folder,
 without its subfolders. A file needs a unique original name or a complete set of downloader names. Do
-not combine `--from-dir` with `--download` or `--output-dir`. `tg messages download <chat> <id> --extract`
+not combine `--from-dir` with `--download` or `--output-dir`. `tg personal messages download <chat> <id> --extract`
 extracts only the files this run downloaded; `--all --extract` does the same for the whole batch.
 Extraction notices changed files by their hash and keeps text your agent wrote. Over MCP, a bounded
 extraction returns a continuation `cursor` and metadata, without file text.
@@ -368,11 +368,11 @@ outside protected locations. Local PDF text extraction has no fixed page-count l
 ## Passwords, codes and cards
 
 ```sh
-tg search messages 'preset:secret kind:saved'    # something that looks like a password or token
+tg personal search messages 'preset:secret kind:saved'  # something that looks like a password or token
 ```
 
 ```sh
-tg search messages 'preset:card'
+tg personal search messages 'preset:card'
 ```
 
 A preset finds messages that *look like* a password, a login code, an API key, a card or IBAN number, a
@@ -382,27 +382,27 @@ works or a card is real. The full list is in the [query language](query-language
 ## Tags
 
 ```sh
-tg tags add work --chat "Book club"
+tg personal tags add work --chat "Book club"
 ```
 
 ```sh
-tg tags add work --contact "Bob Synthetic"
+tg personal tags add work --contact "Bob Synthetic"
 ```
 
 ```sh
-tg tags list --tag work --type chat
+tg personal tags list --tag work --type chat
 ```
 
 ```sh
-tg search messages 'tag:work invoice'
+tg personal search messages 'tag:work invoice'
 ```
 
 ```sh
-tg search messages 'invoice NOT tag:work'
+tg personal search messages 'invoice NOT tag:work'
 ```
 
 ```sh
-tg tags remove work --chat "Book club"
+tg personal tags remove work --chat "Book club"
 ```
 
 A tag is your own label on a chat, a person or one message (`--message <id> --chat <chat>`). It is kept
@@ -414,23 +414,23 @@ Groups and channels can be tagged automatically, from their title, username and 
 and no model:
 
 ```sh
-tg metadata refresh --chat "Book club"   # read the chat's description from Telegram; the chat is not changed
+tg personal metadata refresh --chat "Book club"  # read the chat's description from Telegram; the chat is not changed
 ```
 
 ```sh
-tg metadata refresh --only-missing       # every stored group and channel with no description read yet
+tg personal metadata refresh --only-missing  # every stored group and channel with no description read yet
 ```
 
 ```sh
-tg tags auto --dry-run                   # what it would tag, without writing
+tg personal tags auto --dry-run          # what it would tag, without writing
 ```
 
 ```sh
-tg tags auto                             # write the automatic tags
+tg personal tags auto                    # write the automatic tags
 ```
 
 ```sh
-tg tags list --source auto               # only the automatic ones
+tg personal tags list --source auto      # only the automatic ones
 ```
 
 `--refresh-metadata` reads current descriptions from Telegram before classifying; it is refused with
@@ -442,31 +442,31 @@ run already gave makes it yours.
 ## Saved searches and history
 
 ```sh
-tg searches create meetings 'library OR cafe' --chat "Book club"
+tg personal searches create meetings 'library OR cafe' --chat "Book club"
 ```
 
 ```sh
-tg search messages --saved meetings
+tg personal search messages --saved meetings
 ```
 
 ```sh
-tg search messages --saved meetings 'date:today'  # extra words are added with AND
+tg personal search messages --saved meetings 'date:today'  # extra words are added with AND
 ```
 
 ```sh
-tg stats messages show --saved meetings --by day
+tg personal stats messages show --saved meetings --by day
 ```
 
 ```sh
-tg searches list
+tg personal searches list
 ```
 
 ```sh
-tg searches history --limit 10
+tg personal searches history --limit 10
 ```
 
 ```sh
-tg search messages --saved 42                    # a row of the history, by its number
+tg personal search messages --saved 42           # a row of the history, by its number
 ```
 
 `searches create` saves a query with its options and runs nothing; an existing name needs `--replace`.
@@ -475,8 +475,8 @@ Options you type with `--saved` replace the saved ones. The saved text is read a
 
 Every search and count that succeeds is written to the history: the query and its options, never the
 messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run out of it; for MCP,
-`tg mcp --no-record` or `record` set to `false` keeps the server's calls out. `searches clear` empties
-the history and keeps the saved searches. This history is separate from the run records of `tg runs`.
+`tg personal mcp --no-record` or `record` set to `false` keeps the server's calls out. `searches clear` empties
+the history and keeps the saved searches. This history is separate from the run records of `tg personal runs`.
 
 Saved searches and the history live in the store that tg and max share: both see the same ones, and
 `delete` or `clear` in one changes the other. Tags stay with their account.
@@ -484,19 +484,19 @@ Saved searches and the history live in the store that tg and max share: both see
 ## Counting: `stats messages show`
 
 ```sh
-tg stats messages show invoice                        # how many in each chat
+tg personal stats messages show invoice               # how many in each chat
 ```
 
 ```sh
-tg stats messages show 'date:7d' --by sender
+tg personal stats messages show 'date:7d' --by sender
 ```
 
 ```sh
-tg stats messages show 'from:me' --by day --timezone Europe/Madrid
+tg personal stats messages show 'from:me' --by day --timezone Europe/Madrid
 ```
 
 ```sh
-tg stats messages show --by hour                      # every stored message
+tg personal stats messages show --by hour             # every stored message
 ```
 
 `stats messages show` counts the messages `search messages` would find with the same query, each one once.
@@ -511,15 +511,15 @@ Telegram and the store by default in one run (`--backend both`). `--backend serv
 and `--backend archive` searches only the store.
 
 ```sh
-tg search messages 'invoice' --backend both
+tg personal search messages 'invoice' --backend both
 ```
 
 ```sh
-tg search messages 'invoice chat:"Book club" from:Olga' --backend both
+tg personal search messages 'invoice chat:"Book club" from:Olga' --backend both
 ```
 
 ```sh
-tg search messages 'invoice date:2026-09' --backend server --server-time 10s
+tg personal search messages 'invoice date:2026-09' --backend server --server-time 10s
 ```
 
 Telegram decides on its own what matches a word, and does not document it. So tg treats its answer as
@@ -542,7 +542,7 @@ own rules, not your query.
 ## Fetch new messages first: `--sync-first`
 
 ```sh
-tg search messages 'invoice' --chat "Book club" --sync-first
+tg personal search messages 'invoice' --chat "Book club" --sync-first
 ```
 
 `--sync-first` downloads new messages before it searches, and marks nothing read. It takes at most 5
@@ -571,14 +571,14 @@ was searched; `--jsonl` streams the messages only, one per line. The fields of t
 ## When nothing is found
 
 An empty answer means "not in the store you searched", not "never sent". Check what is stored with
-`tg store status` and fetch more with `tg store fetch`. With `--json` the answer says which chats were
-searched and how complete they are, even when nothing matched. If tg asks for `tg store migrate`, the
+`tg personal store status` and fetch more with `tg personal store fetch`. With `--json` the answer says which chats were
+searched and how complete they are, even when nothing matched. If tg asks for `tg personal store migrate`, the
 word index is still being built; searches without words (`has:file`, `date:today`) already work.
 
-**Gaps in a chat's history.** `tg store gaps plan <chat>` looks, on this computer, for gaps between the
+**Gaps in a chat's history.** `tg personal store gaps plan <chat>` looks, on this computer, for gaps between the
 stretches of history the store holds. Missing message ids and quiet periods alone do not prove missing
 history; the edges of the saved history stay `unknown`. Check the plan, then run
-`tg store gaps repair <chat> --fingerprint <hash>` to download the gaps. Defaults are five gaps, 500
+`tg personal store gaps repair <chat> --fingerprint <hash>` to download the gaps. Defaults are five gaps, 500
 messages and 30 seconds; `--max-gaps`, `--limit`, `--repair-time`, `--page-size` and `--pause` set the
 bounds. A repeat repairs the remaining gaps and never deletes a message because Telegram did not return
 it. Pages where several messages share one timestamp stay pending. `--background` runs it as a job that
@@ -586,7 +586,7 @@ it. Pages where several messages share one timestamp stay pending. `--background
 write permission and permission to read messages. Over MCP the same commands are found through
 `tg_tools_search` and run through `tg_read` or `tg_write`; jobs belong to one profile.
 
-**Prepare topic search while you fetch.** `tg store fetch <chat> --catch-up` builds that chat's
+**Prepare topic search while you fetch.** `tg personal store fetch <chat> --catch-up` builds that chat's
 conversations and computes its local vectors right after fetching, for
 [topic search](topic-search.md). It is off by default; the profile setting `searchCatchUp: true` turns it
 on, and `--no-catch-up` turns it off for one run. Bounds are

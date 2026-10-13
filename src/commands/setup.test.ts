@@ -111,6 +111,14 @@ const execute = async (argv: string[], environment: Partial<Environment> = {}, o
 }
 
 describe("setup", () => {
+  it("**needs a profile name on a new computer**, and says which command to run", async () => {
+    const { TG_PROFILE: _, ...unnamed } = env
+    const result = await execute(["setup", "--json"], { env: unnamed, tty: false })
+    expect(result.code).toBe(2)
+    expect(JSON.parse(result.stderr.at(-1) ?? "").error.message).toContain("create one with `tg personal setup`")
+    expect(result.opened).not.toHaveBeenCalled()
+  })
+
   it("gets the app automatically, logs in, checks five chats and installs the selected skill", async () => {
     input.answers = ["synthetic-number", "synthetic-code"]
     const result = await execute(
@@ -176,8 +184,8 @@ describe("setup", () => {
     expect(result.code).toBe(0)
     expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(result.stdout.join()).toContain("installed for gemini")
-    expect(result.stdout.join()).toContain("tg inbox --limit 5")
-    expect(stripVTControlCharacters(result.stdout.join())).toMatch(/For an agent +tg skill show/)
+    expect(result.stdout.join()).toContain("tg default inbox --limit 5")
+    expect(stripVTControlCharacters(result.stdout.join())).toMatch(/For an agent +tg default skill show/)
   })
 
   it("an empty agent choice skips installation", async () => {
@@ -194,7 +202,7 @@ describe("setup", () => {
     expect(result.code).toBe(0)
     expect(input.prompts).toEqual([])
     expect(installSkill).not.toHaveBeenCalled()
-    expect(JSON.parse(result.stdout[0] ?? "").next.mcp).toBe("tg mcp config")
+    expect(JSON.parse(result.stdout[0] ?? "").next.mcp).toBe("tg default mcp config")
   })
 
   it("rejects an unknown interactive choice without installing a skill", async () => {

@@ -14,7 +14,7 @@ A few terms the page uses:
 - **Exit code** is the number a command returns when it ends. `0` means success; any other number
   names the kind of failure.
 - **Machine mode** is output as JSON for a program, instead of text for a person.
-- **One-shot command** does one thing and exits, for example `tg messages list`. A **persistent
+- **One-shot command** does one thing and exits, for example `tg personal messages list`. A **persistent
   command** keeps running until you stop it: `watch`, `serve` and `mcp`.
 - **Write** is any command that changes something in Telegram: it sends, edits, deletes or marks read.
 
@@ -37,10 +37,10 @@ Commands use `tg [profile] resource action`. Reports and counts are under `stats
 and the report:
 
 ```sh
-tg stats messages show --by sender --limit 10 --json
-tg stats chats show <chat> --json
-tg stats tasks show --json
-tg stats charts <chat> --json
+tg personal stats messages show --by sender --limit 10 --json
+tg personal stats chats show <chat> --json
+tg personal stats tasks show --json
+tg personal stats charts <chat> --json
 ```
 
 The older paths `messages stats`, `chats stats` and `tasks stats` no longer exist, and there are no
@@ -90,7 +90,7 @@ is partial. An output limit can be hit after a write was done: do not repeat the
 ## Smaller results, and what a command accepts
 
 ```sh
-tg messages list <chat> --json --fields id,text
+tg personal messages list <chat> --json --fields id,text
 tg commands messages list --json
 tg commands schema messages list --json
 ```

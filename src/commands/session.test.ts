@@ -114,7 +114,7 @@ describe("session start", () => {
         "Logged in as Owner (id 1) — profile default.",
         "Session:  ~/state/sessions/default.session",
         "App keys: from TG_API_ID and TG_API_HASH",
-        "Next:     tg chats list · tg server install to keep the archive current",
+        "Next:     tg default chats list · tg default server install to keep the archive current",
       ].join("\n"),
     )
   })

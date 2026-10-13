@@ -81,7 +81,7 @@ export const updateNotice = (
       format: pretty ? "pretty" : "json",
       stderrIsTTY: environment.stderrIsTTY ?? process.stderr.isTTY === true,
       quiet: argv.includes("--quiet"),
-      enabled: resolveSettings({}, { env }).updateCheck,
+      enabled: resolveSettings({}, { env, needsProfile: false }).updateCheck,
       installer: installer(environment),
       env,
       offVariables: ["TG_NO_UPDATE_CHECK"],

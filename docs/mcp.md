@@ -8,7 +8,7 @@ do, and use ready prompts and chat mentions.
 A few terms first:
 
 - **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is a standard way for an AI app
-  to use outside tools. The app is the **MCP client**; `tg mcp` is the **MCP server**.
+  to use outside tools. The app is the **MCP client**; `tg personal mcp` is the **MCP server**.
 - A **tool** is one action the server offers the agent, such as "read" or "write".
 - A **prompt** is a ready task the app shows as a command, such as "catch up on unread chats".
 - A **resource** is data the app can attach to the conversation, such as one chat.
@@ -16,7 +16,7 @@ A few terms first:
   [profiles](profiles.md).
 
 The server comes with `tg`; there is nothing else to install. By default it talks to the app over
-stdin and stdout. `tg mcp --http --public-url` serves it on a local port behind your HTTPS tunnel
+stdin and stdout. `tg personal mcp --http --public-url` serves it on a local port behind your HTTPS tunnel
 instead.
 
 ## Do you need it
@@ -28,7 +28,7 @@ same things; it learns how from the skill that `tg skill show` prints. MCP is fo
 - apps without a terminal, such as Claude Desktop or Cursor's chat;
 - anyone who wants the app to ask before each send.
 
-For ChatGPT or Claude **in the browser**, use `tg mcp --http` — see
+For ChatGPT or Claude **in the browser**, use `tg personal mcp --http` — see
 [connecting a browser or phone app](remote.md).
 
 ## What the server gives
@@ -46,16 +46,16 @@ The personal tools use the same catalogue as `max`. Telegram also has topics.
 
 ## Connecting
 
-First run `tg setup --agent none` in a local terminal. It logs in to your Telegram account. The MCP
-server never logs in for you. `tg mcp setup` then connects the app, as a separate step. An agent can
+First run `tg personal setup --agent none` in a local terminal. It logs in to your Telegram account. The MCP
+server never logs in for you. `tg personal mcp setup` then connects the app, as a separate step. An agent can
 read `tg skill show` before you log in; it explains both steps.
 
 **Codex or Claude Code on this computer:**
 
 ```sh
-tg mcp doctor                # check that MCP starts and lists tools
-tg mcp setup codex          # add it to Codex
-tg mcp setup claude-code    # or add it to Claude Code
+tg personal mcp doctor       # check that MCP starts and lists tools
+tg personal mcp setup codex  # add it to Codex
+tg personal mcp setup claude-code  # or add it to Claude Code
 ```
 
 Put a profile first, for example `tg work mcp setup codex`. Setup uses the app's own command and
@@ -74,7 +74,7 @@ phone apps need a separate remote connection ([connecting a browser or phone app
 **Claude Code, by hand:**
 
 ```sh
-claude mcp add tg -- tg mcp
+claude mcp add tg -- tg personal mcp
 ```
 
 With a profile — it goes first, as in any command:
@@ -86,7 +86,7 @@ claude mcp add tg-work -- tg work mcp
 **Claude Desktop, Cursor and other apps:** `tg` prints the entry for their settings file:
 
 ```sh
-tg mcp config
+tg personal mcp config
 tg work mcp config                  # another profile
 ```
 
@@ -114,7 +114,7 @@ Windows `tg` is a `tg.cmd` file, which an app without a shell cannot start. The 
 `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR`, `MESSAGING_STORE` and `XDG_RUNTIME_DIR` when they
 are set; never `TG_API_ID`, `TG_API_HASH` or the session.
 
-If Node came from nvm, fnm or Volta, its path belongs to one Node version. Run `tg mcp config` again
+If Node came from nvm, fnm or Volta, its path belongs to one Node version. Run `tg personal mcp config` again
 after you change it. Run from `npx`, the command refuses: npx clears its cache, and the path would
 stop existing.
 
@@ -124,7 +124,7 @@ they are set in the terminal and not for the MCP app, or the other way round, th
 
 ⚠ **On Linux the app credentials are in the keyring, which is reached through `XDG_RUNTIME_DIR`.**
 An app that starts servers with a trimmed environment leaves it out, and every tool then answers
-that the keyring is probably out of reach. The entry from `tg mcp config` includes it.
+that the keyring is probably out of reach. The entry from `tg personal mcp config` includes it.
 
 A bot has its own server, `tg <name> bot mcp`; see [the bot for an agent](bot.md#the-bot-for-an-agent-mcp).
 
@@ -143,7 +143,7 @@ tg agent config set permissions.messages.send allow
 ```
 
 Here `agent` is the name of a profile. Writes keep the recipient limits, the hourly limits and the
-send journal (`tg sends list`). Marking read is a separate write, under `chats.mark-read`. Deleting
+send journal (`tg personal sends list`). Marking read is a separate write, under `chats.mark-read`. Deleting
 through MCP removes messages only for you, at most ten at a time; channels and supergroups that do
 not allow this are refused. `--permission key=level` changes a level for this server process only.
 
@@ -235,5 +235,5 @@ reads a stale snapshot. The next call connects again. Calls run one at a time, e
 sends them together.
 
 Over stdin and stdout, the server exits as soon as the app closes stdin, and closes its connection to
-Telegram. Over HTTP it runs until Ctrl-C. `tg mcp --revoke` ends every login given to a browser app
+Telegram. Over HTTP it runs until Ctrl-C. `tg personal mcp --revoke` ends every login given to a browser app
 and keeps your Telegram session. See [connecting a browser or phone app](remote.md).

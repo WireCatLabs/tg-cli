@@ -11,12 +11,12 @@ A few words used below:
 - A **rule** says which incoming messages to answer and what to do: reply, open a task, or both.
 - A **template** is the reply text. It can include the sender's name and the time.
 - The **audience** is the list of people and chats that may get a reply at all, whatever a rule says.
-- `tg serve` is the background process that receives new messages and applies the rules.
+- `tg personal serve` is the background process that receives new messages and applies the rules.
 
 Who gets a reply, and when anything is sent:
 
 - **Replies go to everyone your rules match, unless you limit the audience.** Answer only selected
-  people with `tg replies audience --reply listed --allow-people …`, or leave some out with
+  people with `tg personal replies audience --reply listed --allow-people …`, or leave some out with
   `--deny-people` and `--deny-chats`.
 - **Nothing is sent until you turn sending on.** `permissions.replies.send` must be `allow`. `ask`
   counts as no, because a background server has nobody to ask. A new rule is also off until you turn
@@ -27,25 +27,25 @@ The full option lists are in [the auto-reply commands](commands.md#tg-replies).
 ## Create and enable a rule
 
 ```sh
-tg replies add away
-tg replies edit away --template 'Thanks, {{ sender.firstName | default: "there" }}! I will answer in the morning.'
-tg replies edit away --outside 09:00-19:00 --days mon-fri --timezone Europe/Madrid
-tg replies edit away --per-chat 1/12h --per-person 1/1d
+tg personal replies add away
+tg personal replies edit away --template 'Thanks, {{ sender.firstName | default: "there" }}! I will answer in the morning.'
+tg personal replies edit away --outside 09:00-19:00 --days mon-fri --timezone Europe/Madrid
+tg personal replies edit away --per-chat 1/12h --per-person 1/1d
 ```
 
 `add` creates a rule that is off, with every setting written out. The rules live in
 `<profile>.replies.json`, in the same folder as the `configFile` that `tg config show --json` names.
 By default the rules answer everyone they match. To answer only selected people, list their Telegram
-ids, comma-separated; `tg contacts show <name> --json` prints a person's id as `id`:
+ids, comma-separated; `tg personal contacts show <name> --json` prints a person's id as `id`:
 
 ```sh
-tg replies audience --reply listed --allow-people 1000001
+tg personal replies audience --reply listed --allow-people 1000001
 ```
 
 To answer everyone except some people or chats, keep `--reply all` and deny them:
 
 ```sh
-tg replies audience --deny-people 1000002 --deny-chats -1002000002
+tg personal replies audience --deny-people 1000002 --deny-chats -1002000002
 ```
 
 After the first command the file holds:
@@ -67,14 +67,14 @@ turned on with an empty template.
 Then look at what it would have answered, turn it on, and start the server:
 
 ```sh
-tg replies test --since-time 7d
-tg replies on away
+tg personal replies test --since-time 7d
+tg personal replies on away
 tg config set permissions.replies.send allow
-tg serve
+tg personal serve
 ```
 
 `replies test` reads only messages already in your local store. It sends nothing, changes nothing
-and never connects. `tg replies off away` turns one rule off.
+and never connects. `tg personal replies off away` turns one rule off.
 
 ## Conditions and audience
 
@@ -95,7 +95,7 @@ The first time you set working hours, give the window, the days and the time zon
 that you can change one. A wrong edit does not overwrite the file, and the other rules, the audience and
 the record of what was answered stay as they were.
 
-`tg replies audience` shows who the whole file may answer. A new file is `--reply all`: it answers
+`tg personal replies audience` shows who the whole file may answer. A new file is `--reply all`: it answers
 anyone a rule matches. `--reply listed` answers only the allowed people and chats. `--allow-people`, `--allow-chats`, `--deny-people` and `--deny-chats`
 replace those lists, and a denial wins over an allowance. A `task` action opens a task on this computer
 and is not limited by the audience.
@@ -122,21 +122,21 @@ an `else`, the message gets no reply and the reason is recorded.
 
 Choose the model with `models.replies.provider` (`openai` or `anthropic`), `models.replies.model` and,
 for your own server, `models.replies.baseUrl`; `models.default` fills what is not set. Keep the key with
-`tg models text key set`.
+`tg personal models text key set`.
 
 Using a model needs its own consent, separate from the right to send:
 
 ```sh
-tg replies consents show
-tg replies consents grant
-tg replies consents revoke
-tg replies consents deny -1002000002
-tg replies consents allow -1002000002
+tg personal replies consents show
+tg personal replies consents grant
+tg personal replies consents revoke
+tg personal replies consents deny -1002000002
+tg personal replies consents allow -1002000002
 ```
 
 `grant` lets incoming message data go to the chosen provider for the whole profile. `deny` keeps one
 chat's messages away from the model; `allow` removes that, without granting consent. A new provider
-or endpoint needs consent again. `tg replies test --ai` sends stored messages to the model so you can
+or endpoint needs consent again. `tg personal replies test --ai` sends stored messages to the model so you can
 see its text; it still sends nothing to Telegram.
 
 ## What a rule never answers
@@ -153,10 +153,10 @@ other stop at the first limit.
 ## Stop and look
 
 ```sh
-tg replies pause
-tg replies resume
-tg replies status
-tg sends list
+tg personal replies pause
+tg personal replies resume
+tg personal replies status
+tg personal sends list
 ```
 
 `pause` stops every rule at once, a running `serve` included, without a restart; `resume` undoes it.

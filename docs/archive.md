@@ -22,14 +22,14 @@ Terms used on this page:
 
 | Task | Command |
 |---|---|
-| See how much of each chat is saved | `tg store status` |
-| Download a chat's history, or every chat's | `tg store fetch <chat>`, `tg store fetch --all` |
-| Run a long download in the background | `tg store fetch <chat> --background`, `tg store jobs list` |
-| Keep the store current all the time | `tg server start`, `tg server install` |
+| See how much of each chat is saved | `tg personal store status` |
+| Download a chat's history, or every chat's | `tg personal store fetch <chat>`, `tg personal store fetch --all` |
+| Run a long download in the background | `tg personal store fetch <chat> --background`, `tg personal store jobs list` |
+| Keep the store current all the time | `tg personal server start`, `tg personal server install` |
 | Read chats without connecting | `tg --offline messages list <chat>` |
-| Export a chat to JSON lines or Markdown | `tg store export <chat> --output <file>` |
-| Prepare messages for an agent's brief | `tg messages evidence <chat>` |
-| Check, back up and restore the store | `tg store check`, `tg store backup`, `tg store restore` |
+| Export a chat to JSON lines or Markdown | `tg personal store export <chat> --output <file>` |
+| Prepare messages for an agent's brief | `tg personal messages evidence <chat>` |
+| Check, back up and restore the store | `tg personal store check`, `tg personal store backup`, `tg personal store restore` |
 
 ## Check and fill one chat
 
@@ -42,19 +42,19 @@ Check what is saved before downloading more. Limit the download to the chat and 
 **Check saved history:**
 
 ```sh
-tg store status "Book club" --json
+tg personal store status "Book club" --json
 ```
 
 **Download the selected period:**
 
 ```sh
-tg store fetch "Book club" --since-time 30d --json
+tg personal store fetch "Book club" --since-time 30d --json
 ```
 
 **Check again:**
 
 ```sh
-tg store status "Book club" --json
+tg personal store status "Book club" --json
 ```
 
 **Example agent answer:**
@@ -75,8 +75,8 @@ finished command does not by itself prove complete history. These counts are fic
   `inbox` read, and the messages you sent.
 - **What `serve` hears**: new messages, edits, deletions and reactions, while it runs
   ([below](#keeping-it-current-serve)). `watch` keeps what it prints, too.
-- **What you fetch on purpose**: a chat's history with `tg store fetch`, your contact list with
-  `tg contacts sync`.
+- **What you fetch on purpose**: a chat's history with `tg personal store fetch`, your contact list with
+  `tg personal contacts sync`.
 
 It keeps the full text of every message it has seen. The file is readable by your user only, and it
 is not encrypted ([what reaches the disk](security.md#what-reaches-the-disk)).
@@ -88,16 +88,16 @@ is not encrypted ([what reaches the disk](security.md#what-reaches-the-disk)).
 ~/.local/share/cli-messaging/wirecat.db       # Linux; MESSAGING_STORE moves it
 ```
 
-`tg session end` logs out and leaves the store as it is.
+`tg personal session end` logs out and leaves the store as it is.
 
 ## How much is kept
 
 ```sh
-tg store status                  # per chat: messages stored, the oldest and newest, the stretches held completely
+tg personal store status         # per chat: messages stored, the oldest and newest, the stretches held completely
 ```
 
 ```sh
-tg store status "Book club"      # one chat
+tg personal store status "Book club"  # one chat
 ```
 
 A stretch "held completely" is a run of messages with no gap. Messages read here and there leave
@@ -106,35 +106,35 @@ gaps; `store fetch` closes them.
 ## Fetch a chat's history
 
 ```sh
-tg store fetch "Book club" --estimate         # what a full fetch would still cost; asks Telegram nothing
+tg personal store fetch "Book club" --estimate  # what a full fetch would still cost; asks Telegram nothing
 ```
 
 ```sh
-tg store fetch "Book club"                    # fetch it, newest to oldest
+tg personal store fetch "Book club"           # fetch it, newest to oldest
 ```
 
 ```sh
-tg store fetch "Book club"                    # run again to continue where it stopped
+tg personal store fetch "Book club"           # run again to continue where it stopped
 ```
 
 ```sh
-tg store fetch "Book club" --since-time 30d   # only back to 30 days ago
+tg personal store fetch "Book club" --since-time 30d  # only back to 30 days ago
 ```
 
 ```sh
-tg store fetch "Book club" --last 5000        # only until the newest 5000 are held
+tg personal store fetch "Book club" --last 5000  # only until the newest 5000 are held
 ```
 
 ```sh
-tg store fetch "Book club" --limit 5000       # up to 5000 messages in this run
+tg personal store fetch "Book club" --limit 5000  # up to 5000 messages in this run
 ```
 
 ```sh
-tg store fetch --all                          # every chat, most recently active first: the last 90 days
+tg personal store fetch --all                 # every chat, most recently active first: the last 90 days
 ```
 
 ```sh
-tg store fetch --all --since-time 365d        # every chat, back to a year ago
+tg personal store fetch --all --since-time 365d  # every chat, back to a year ago
 ```
 
 `store fetch` reads a chat's history page by page, newest first, and saves it. **It is resumable**:
@@ -160,72 +160,72 @@ A long fetch can run as a job that outlives the command. It has no default 30-se
 an explicit `--timeout` still limits it:
 
 ```sh
-tg store fetch "Book club" --background     # prints the job id
+tg personal store fetch "Book club" --background  # prints the job id
 ```
 
 ```sh
-tg store jobs list                          # background jobs, newest first
+tg personal store jobs list                 # background jobs, newest first
 ```
 
 ```sh
-tg store jobs list --state failed           # only failed ones: running, done, failed, cancelled or died
+tg personal store jobs list --state failed  # only failed ones: running, done, failed, cancelled or died
 ```
 
 ```sh
-tg store jobs show                          # the newest job, and what the store now holds of its chat
+tg personal store jobs show                 # the newest job, and what the store now holds of its chat
 ```
 
 ```sh
-tg store jobs show <job>
+tg personal store jobs show <job>
 ```
 
 ```sh
-tg store jobs cancel <job>                  # stops after the current page; a later fetch resumes
+tg personal store jobs cancel <job>         # stops after the current page; a later fetch resumes
 ```
 
 ```sh
-tg store jobs retry <job>                   # a failed or died job again, as a new job with the same options
+tg personal store jobs retry <job>          # a failed or died job again, as a new job with the same options
 ```
 
 ```sh
-tg store jobs retry --failed                # every chat whose newest job failed or died
+tg personal store jobs retry --failed       # every chat whose newest job failed or died
 ```
 
 ```sh
-tg store jobs clear                         # forget finished jobs and their logs; a running job stays
+tg personal store jobs clear                # forget finished jobs and their logs; a running job stays
 ```
 
 ## Search
 
-`tg search messages` finds stored messages by their words, sender, chat, date, files, links and your
+`tg personal search messages` finds stored messages by their words, sender, chat, date, files, links and your
 own tags. Word searches also ask Telegram by default; `--backend archive` reads only saved messages.
 `--sync-first` fetches new messages first. [Message search](search.md) is the guide, with saved
 searches and counts. An empty answer means "not in this store": fetch the chat first.
 
 ## Conversations in a group
 
-A busy group mixes several conversations at once. `tg conversations` separates them from the stored
+A busy group mixes several conversations at once. `tg personal conversations` separates them from the stored
 messages and finds them by what they were about, on this computer: [topic search](topic-search.md).
 
 ## Export
 
 ```sh
-tg store export "Book club" --jsonl > book-club.jsonl       # one message per line, oldest first
+tg personal store export "Book club" --jsonl > book-club.jsonl  # one message per line, oldest first
 ```
 
 ```sh
-tg store export "Book club" --json > book-club.json         # { "items": [...] }
+tg personal store export "Book club" --json > book-club.json  # { "items": [...] }
 ```
 
 ```sh
-tg store export "Book club" --format markdown > book-club.md   # a transcript: a heading per day, replies and forwards quoted
+tg personal store export "Book club" --format markdown > book-club.md  # a transcript: a heading per day, replies and forwards quoted
 ```
 
 ```sh
-tg store export "Book club" --output book-club.jsonl --since-time 7d     # the last week, into a file only you can read
+tg personal store export "Book club" --output book-club.jsonl --since-time 7d  # the last week, into a file only you can read
 ```
 
-Export writes only what the store holds and never asks Telegram. Check `tg store status` first, and
+Export writes only what the store holds and never asks Telegram. Check `tg personal store status` first, and
 fetch the history if you need all of it.
 
 `--output <file>` writes JSON lines, or the transcript with `--format markdown`, into a new file only
@@ -235,15 +235,15 @@ you can read, and prints where it went and how many messages it holds. It never 
 ### Into a folder, and only what changed
 
 ```sh
-tg store export "Book club" "Work" --to ~/tg-export   # a JSON-lines file per chat, and manifest.json
+tg personal store export "Book club" "Work" --to ~/tg-export  # a JSON-lines file per chat, and manifest.json
 ```
 
 ```sh
-tg store export --kind group --to ~/tg-groups          # every stored group
+tg personal store export --kind group --to ~/tg-groups  # every stored group
 ```
 
 ```sh
-tg store export --all --to ~/tg-all                    # every stored chat of this account
+tg personal store export --all --to ~/tg-all           # every stored chat of this account
 ```
 
 Run it again on the same folder and it adds only what changed since the last run: new messages, edits
@@ -254,8 +254,8 @@ account, is refused. A change to reactions alone does not count as a change.
 ### With a password
 
 `--encrypt` on `store export` (with `--output` or `--to`) and on `store backup` compresses the file and
-encrypts it with a password — no other program needed. `tg store decrypt <file> --output <new file>`
-opens one; `tg store restore` asks for the password of an encrypted backup.
+encrypts it with a password — no other program needed. `tg personal store decrypt <file> --output <new file>`
+opens one; `tg personal store restore` asks for the password of an encrypted backup.
 
 - **The password is kept nowhere** — not in the settings, the keyring or any record. Lose it and the
   file cannot be opened.
@@ -263,7 +263,7 @@ opens one; `tg store restore` asks for the password of an encrypted backup.
   never as an argument, which other programs on the machine can see:
 
   ```sh
-  printf '%s' 'password' | tg store backup ~/tg.sealed --encrypt
+  printf '%s' 'password' | tg personal store backup ~/tg.sealed --encrypt
   ```
 
 - An encrypted folder takes one file per run. Its `manifest.json` names no chat, and a run with a
@@ -271,13 +271,13 @@ opens one; `tg store restore` asks for the password of an encrypted backup.
 
 ## Evidence for a chat brief
 
-When you ask your agent for a brief of a chat, `tg messages evidence <chat>` prepares the messages it
+When you ask your agent for a brief of a chat, `tg personal messages evidence <chat>` prepares the messages it
 should read: one packet from this profile’s local store. It never connects or marks read, even without
 `--offline`:
 
 ```sh
-tg messages evidence "Project Alpha" --limit 20 --json
-tg messages evidence "Project Alpha" --before-id <nextBeforeId> --json
+tg personal messages evidence "Project Alpha" --limit 20 --json
+tg personal messages evidence "Project Alpha" --before-id <nextBeforeId> --json
 ```
 
 Items are newest first, with source locators and content fingerprints. `--limit` accepts 1–100
@@ -326,33 +326,33 @@ refused.
 
 ## Keeping it current: `serve`
 
-`tg serve` listens until stopped and saves every new message, edit, deletion and reaction. When it
+`tg personal serve` listens until stopped and saves every new message, edit, deletion and reaction. When it
 starts, it first catches up on what arrived while it was down. One `serve` runs per profile; a
 second one is refused. **Nothing starts it for you.**
 
-`tg watch` is different: it prints new messages from now on, and does not catch up on what it missed
+`tg personal watch` is different: it prints new messages from now on, and does not catch up on what it missed
 ([new messages as they arrive](usage.md#new-messages-as-they-arrive)).
 
 ### In the background
 
 ```sh
-tg server start       # start serve in the background; answers once it listens
+tg personal server start  # start serve in the background; answers once it listens
 ```
 
 ```sh
-tg server status      # whether it runs, since when, who started it
+tg personal server status  # whether it runs, since when, who started it
 ```
 
 ```sh
-tg server logs -n 50  # its latest log lines
+tg personal server logs -n 50  # its latest log lines
 ```
 
 ```sh
-tg server stop
+tg personal server stop
 ```
 
 ```sh
-tg server restart
+tg personal server restart
 ```
 
 ### As a service
@@ -361,15 +361,15 @@ To keep it running across logins, install it as a user service: a systemd user u
 launchd agent on macOS.
 
 ```sh
-tg server install      # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
+tg personal server install  # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
 ```
 
 ```sh
-tg server start        # starts it — through the unit, now that there is one
+tg personal server start  # starts it — through the unit, now that there is one
 ```
 
 ```sh
-tg server status
+tg personal server status
 systemctl --user enable tg-serve-default    # only if it should start at every login
 ```
 
@@ -379,16 +379,16 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   for example after changing Node versions.
 - It gets the profile and the `TG_*_DIR` and `MESSAGING_STORE` variables of the shell that ran
   `server install`, and nothing else.
-- **Check it once after `server start`:** `tg server logs`. A service reads the app from the keyring.
+- **Check it once after `server start`:** `tg personal server logs`. A service reads the app from the keyring.
   A keyring that stays locked until you log in makes it fail; systemd tries again every 30 s, and the
   logs say why.
 - **An already revoked login prevents startup.** `serve` checks it before reporting readiness and exits with
-  code 4; the installed unit then stays down. Log in with `tg session start`, then `tg server start`.
+  code 4; the installed unit then stays down. Log in with `tg personal session start`, then `tg personal server start`.
   A login revoked while the service runs ends it with code 4 too, within about 15 minutes.
   If app credentials are unavailable while a saved session exists, serve exits with code 12 and systemd retries.
   On macOS the agent does not restart after any failure, since launchd cannot exclude one exit code;
-  start it again with `tg server start`. Run `tg server install` again to update an older unit.
-- `tg server uninstall` removes the unit. Stop it first.
+  start it again with `tg personal server start`. Run `tg personal server install` again to update an older unit.
+- `tg personal server uninstall` removes the unit. Stop it first.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 
 Automatic replies from `serve` to test accounts are described in [automatic replies](replies.md).
@@ -396,36 +396,36 @@ Automatic replies from `serve` to test accounts are described in [automatic repl
 ## Its health, a backup, a restore
 
 ```sh
-tg store info                          # where the file is, its size, its schema, how many rows; changes nothing
+tg personal store info                 # where the file is, its size, its schema, how many rows; changes nothing
 ```
 
 ```sh
-tg store check                         # integrity, search indexes, disk, and which chats are behind; changes nothing
+tg personal store check                # integrity, search indexes, disk, and which chats are behind; changes nothing
 ```
 
 ```sh
-tg store backup ~/tg-store.db          # a copy of the store, while it is in use; --encrypt for a password
+tg personal store backup ~/tg-store.db  # a copy of the store, while it is in use; --encrypt for a password
 ```
 
 ```sh
-tg store restore ~/tg-store.db         # put a backup in place of the store
+tg personal store restore ~/tg-store.db  # put a backup in place of the store
 ```
 
 ```sh
-tg store migrate                       # bring the store up to this version's schema
+tg personal store migrate              # bring the store up to this version's schema
 ```
 
 ```sh
-tg store clear --left --allow-dangerous  # delete the chats you have left, with their messages
+tg personal store clear --left --allow-dangerous  # delete the chats you have left, with their messages
 ```
 
 - **`backup` never overwrites a file**: name a new one. It copies while other commands and `serve`
   keep using the store.
 - **`restore` keeps the store it replaces** beside it and says where. It refuses while `serve` runs
-  for any profile — `tg server stop` first — and checks that the backup is a readable, undamaged
+  for any profile — `tg personal server stop` first — and checks that the backup is a readable, undamaged
   store. Afterwards, restart every `serve` and `mcp` of either CLI that was running, so they read the
   restored store.
-- **A chat you have left drops out of `chats list --offline`** the next time `tg chats list` reads
+- **A chat you have left drops out of `chats list --offline`** the next time `tg personal chats list` reads
   your whole chat list; its messages stay in the store. If you rejoin it, it comes back.
   **`store clear --left`** deletes those chats and their messages. Without `--allow-dangerous` it
   only says how many chats and messages it would delete. A chat you left cannot be fetched again.
@@ -434,7 +434,7 @@ tg store clear --left --allow-dangerous  # delete the chats you have left, with 
 
 ## Repair and index maintenance
 
-`tg store migrate` builds unfinished indexes; `tg store reindex` rebuilds them. `store info` and
+`tg personal store migrate` builds unfinished indexes; `tg personal store reindex` rebuilds them. `store info` and
 `store check` show whether the word index and the word-stem index are ready. Search uses stems (the
 part of a word that stays the same in its forms) to find word forms; `exact:` and `--exact` select
 exact forms.
@@ -443,10 +443,10 @@ exact forms.
 shared store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches
 the stems of both), and `none` disables one; run `store reindex` after your own choice. When a tg
 update changes the default, the stems rebuild by themselves: until they are ready a search matches
-exact word forms and says so, `tg serve` finishes them in the background and `store migrate` at once.
+exact word forms and says so, `tg personal serve` finishes them in the background and `store migrate` at once.
 The setting affects both messengers and every profile; a profile-locked process cannot change it.
 
-`tg store repair --dry-run --json` previews a structural repair and rolls it back. `store repair`
+`tg personal store repair --dry-run --json` previews a structural repair and rolls it back. `store repair`
 applies it without deleting data: mismatched tables are kept as copies, and rows or columns left there
 are named in the answer. Inspect the copies before deleting one with `store copies delete <exact name>`;
 `store repair` names them in its answer. Stop processes that use the store before a repair.
@@ -464,7 +464,7 @@ the message store was written by a newer version (schema N, needs at least M; th
 **The shared local store uses `wirecat.db`.** The old `messages.db` is not migrated: opening the default store deletes it and its `-wal` and `-shm` files.
 If you need old notes, aliases, tags, tasks or transcriptions, close programs using that file and copy it and any companion files to another folder **before first running the new version**.
 An explicit `MESSAGING_STORE` disables this cleanup; a file held by another process stays until a later store open.
-`tg store fetch --all` can fetch messages from Telegram again; data that existed only locally cannot be fetched from the server. Login stays separate.
+`tg personal store fetch --all` can fetch messages from Telegram again; data that existed only locally cannot be fetched from the server. Login stays separate.
 Update `tg` and `max` together so they use the same store.
 
 For a `wirecat.db` schema update, run `tg upgrade` after preserving any needed old file.
@@ -474,13 +474,13 @@ For a `wirecat.db` schema update, run `tg upgrade` after preserving any needed o
 [Automatic replies](replies.md) is the guide to reply rules. This section is the detailed reference
 for how `serve` applies them.
 
-`tg replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
+`tg personal replies test [rule] --since-time 7d --json` simulates what stored messages would receive; it never sends.
 Rules live in the profile's replies file. `replies status`, `pause` and `resume` inspect/control them.
 Actual shared `serve` replies require an explicit `replies.send:allow` permission, and go to everyone a
 rule matches unless the audience limits them. Sending is denied by default. Edits, messages
 from before startup and already answered messages are ignored. `ask` cannot send from an unattended service.
 
-Create a disabled rule with `tg replies add away`, edit it with `replies edit away --template`, then
+Create a disabled rule with `tg personal replies add away`, edit it with `replies edit away --template`, then
 use `replies on away` or `off away`. Enabled reply rules need a nonempty template. Editing changes
 only named fields; lists are comma-separated replacements, an empty string clears one. Options
 include `--do reply,task`, `--kinds`, `--chats`, `--not-chats`, `--words`, `--question` /
@@ -489,7 +489,7 @@ include `--do reply,task`, `--kinds`, `--chats`, `--not-chats`, `--words`, `--qu
 fields `--outside`, `--days`, `--timezone` (`--no-hours` clears them). First setting hours requires
 all three fields. Invalid edits preserve the file, other rules, the audience and reply history.
 
-`tg replies audience` shows the profile's audience; `--reply all|listed`, `--allow-people`,
+`tg personal replies audience` shows the profile's audience; `--reply all|listed`, `--allow-people`,
 `--allow-chats`, `--deny-people` and `--deny-chats` replace its named fields. Deny wins; listed with
 an empty allow list answers nobody; a new file answers everyone a rule matches. A rule's
 local task can open even where an answer is forbidden.
@@ -515,13 +515,13 @@ fallback and `provider off` disables a purpose. Existing analysis settings remai
 `config set` / `unset` accept dotted fields; `config show` reports each source. Keys stay in
 `models text key set`; custom endpoints use their host/port key, never a public provider's key.
 
-`tg replies consents show|grant|revoke` controls model consent separately from sending permission.
+`tg personal replies consents show|grant|revoke` controls model consent separately from sending permission.
 Grant explicitly permits incoming data to go to the configured provider across this profile,
 except native chat ids opted out with `replies consents deny`; `allow` removes an opt-out without
 granting consent. Opt-outs survive grant/revoke. A different endpoint needs another grant.
 Consent, configuration, pause, rule and audience changes during a model call are checked before sending.
 
-`tg replies test` shows instructions/fallback without model calls. `tg replies test --ai` explicitly
+`tg personal replies test` shows instructions/fallback without model calls. `tg personal replies test --ai` explicitly
 sends stored message data to the consented model, still sends no messenger reply and changes no
 reply history; it cannot be combined with `--offline`.
 

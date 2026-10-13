@@ -119,10 +119,10 @@ describe("tg bot store fetch", () => {
     expect(opened).toHaveLength(2)
   })
 
-  it("uses the existing default app credentials and personal newest, closing that session", async () => {
+  it("uses the same profile's app credentials and personal newest, never another profile's, closing that session", async () => {
     delete env.TG_API_ID
     delete env.TG_API_HASH
-    apiCredentials({ profile: "default", env, keyring }).write({ id: 1, hash: "synthetic" })
+    apiCredentials({ profile: "sales", env, keyring }).write({ id: 1, hash: "synthetic" })
     const personalClose = vi.fn(async () => {})
     const personalHistory = vi.fn(async () => ({
       items: [MESSAGES.at(-1) ?? message("250", { chatId: CHAT })],
@@ -137,7 +137,7 @@ describe("tg bot store fetch", () => {
     expect(personalHistory).toHaveBeenCalledWith(CHAT, { limit: 1 })
     expect(adapter).toHaveBeenCalledWith({
       credentials: { id: 1, hash: "synthetic" },
-      sessionPath: sessionFile("default", env),
+      sessionPath: sessionFile("sales", env),
     })
     expect(personalClose).toHaveBeenCalledOnce()
   })

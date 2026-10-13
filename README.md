@@ -33,7 +33,7 @@ An example conversation (invented people, illustrative output):
 
 ```text
 You:    Use tg CLI. What did I promise anyone in the last three days?
-Agent:  (runs tg review --since-time 3d: 12 chats)
+Agent:  (runs tg personal review --since-time 3d: 12 chats)
         I owe
         · Alice Example — the invoice by Friday. "Alice Example", 24.09
         Waiting on others
@@ -47,11 +47,11 @@ You:    Yes.
 
 ```sh
 npm install -g @wirecat/tg-cli    # or: pnpm add -g @wirecat/tg-cli, bun add -g @wirecat/tg-cli
-tg setup --agent claude           # also codex, cursor, gemini, all or none
-tg inbox                          # other people's unread messages, in every chat; nothing is marked read
+tg personal setup --agent claude  # also codex, cursor, gemini, all or none
+tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
 
-Allow about five minutes. `tg setup` registers your own Telegram app at
+Allow about five minutes. `tg personal setup` registers your own Telegram app at
 [my.telegram.org](https://my.telegram.org/apps), logs in by QR code, checks your first chats and installs
 the agent skill. Downloading older history is a separate step.
 
@@ -65,29 +65,29 @@ More: [installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/
 **Catch up.** *"Use tg CLI. What came in since this morning, and who is waiting for my answer?"*
 
 ```sh
-tg inbox
-tg review --since-time 1d
+tg personal inbox
+tg personal review --since-time 1d
 ```
 
 **Find anything.** *"Use tg CLI. When did we agree on the venue with Alice?"* — an answer with the date
 and the message itself.
 
 ```sh
-tg search all "venue"                         # messages, mail and notes kept on this computer
+tg personal search all "venue"                # messages, mail and notes kept on this computer
 ```
 
-**Keep your promises.** *"Use tg CLI. What did I promise, and what am I still waiting on?"* `tg review`
+**Keep your promises.** *"Use tg CLI. What did I promise, and what am I still waiting on?"* `tg personal review`
 hands over everything said since the last review in one call, your own messages too.
 
 ```sh
-tg review --new                               # what changed since the last review --new
+tg personal review --new                      # what changed since the last review --new
 ```
 
 **Run your groups.** *"Use tg CLI. Which questions in Hiking has nobody answered?"*
 
 ```sh
-tg review --chat "Hiking" --unanswered
-tg chats events "Hiking" --since-time 7d      # who joined, left, was added or removed
+tg personal review --chat "Hiking" --unanswered
+tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed
 ```
 
 More: [recipes, with a schedule and limits for each](https://github.com/WireCatLabs/tg-cli/blob/main/docs/recipes.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/recipes)
@@ -98,14 +98,14 @@ Your agent. Your Telegram. Your rules.
 
 - **Agents with a terminal** (for example Claude Code, Codex, Gemini CLI) run `tg` commands
   themselves. The bundled [skill](https://github.com/WireCatLabs/tg-cli/blob/main/skills/tg-cli/SKILL.md)
-  tells them how: `tg setup --agent …` or `tg skill install` puts it in place, and `tg skill show`
+  tells them how: `tg personal setup --agent …` or `tg skill install` puts it in place, and `tg skill show`
   prints it before login.
 - **Apps without a terminal** (for example Claude Desktop, Cursor and other MCP clients) connect to
-  `tg mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply` and `/find`.
+  `tg personal mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply` and `/find`.
 
 ```sh
-tg mcp setup claude-code    # or: tg mcp setup codex
-tg mcp config               # the entry for Claude Desktop, Cursor and others
+tg personal mcp setup claude-code  # or: tg personal mcp setup codex
+tg personal mcp config      # the entry for Claude Desktop, Cursor and others
 ```
 
 More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/mcp)
@@ -132,19 +132,19 @@ MTProto, Telegram's own API for client apps, with an app you register yourself. 
 their history, groups, channels and contacts.
 
 ```sh
-tg chats list --limit 5
-tg messages list "Book club" --limit 20
-tg messages send "Book club" "Call at 3?" --reply-to <id>
-tg reactions add "Book club" <id> 👍
-tg messages send me "Call mum" --at-time 2h       # a reminder in Saved Messages in two hours
-tg messages send "Book club" "The minutes" --file minutes.pdf
-tg messages download "Book club" <id> --output-dir ~/Downloads
-tg messages transcribe "Book club" <id>           # a voice message as text
+tg personal chats list --limit 5
+tg personal messages list "Book club" --limit 20
+tg personal messages send "Book club" "Call at 3?" --reply-to <id>
+tg personal reactions add "Book club" <id> 👍
+tg personal messages send me "Call mum" --at-time 2h  # a reminder in Saved Messages in two hours
+tg personal messages send "Book club" "The minutes" --file minutes.pdf
+tg personal messages download "Book club" <id> --output-dir ~/Downloads
+tg personal messages transcribe "Book club" <id>  # a voice message as text
 ```
 
 - **Read.** Chats, history, one message with its neighbours, other people's unread messages in every
-  chat (`tg inbox`), everything since the last review (`tg review`), new messages as they arrive
-  (`tg watch`), a message's files, voice messages as text.
+  chat (`tg personal inbox`), everything since the last review (`tg personal review`), new messages as they arrive
+  (`tg personal watch`), a message's files, voice messages as text.
 - **Write.** Markdown, replies, files, photos, videos and voice messages, silent and scheduled messages
   (they go out even with this computer off), edits, forwards, pins, reactions, polls, deletion — for
   you or for everyone.
@@ -159,24 +159,28 @@ More: [using tg](https://github.com/WireCatLabs/tg-cli/blob/main/docs/usage.md) 
 
 ## Log in and profiles
 
-Every user registers their own Telegram app; `tg setup` or `tg session start` does it for you. The
+Every user registers their own Telegram app; `tg personal setup` or `tg personal session start` does it for you. The
 app keys go to the system keyring, and the session is a file only your user can read.
 
 ```sh
-tg session start                        # a QR code: Settings → Devices → Link Desktop Device
-tg session start phone                  # or a phone number, the code and your 2FA password
-tg session start --qr-file login.png    # the QR code as a picture, for an agent to show you
-tg account show                         # who you are logged in as
+tg personal session start               # a QR code: Settings → Devices → Link Desktop Device
+tg personal session start phone         # or a phone number, the code and your 2FA password
+tg personal session start --qr-file login.png  # the QR code as a picture, for an agent to show you
+tg personal account show                # who you are logged in as
 tg account list                         # every profile here, and who each is logged in as
 ```
 
 Several accounts are several profiles, and the profile is **the first word**, not an option:
 
 ```sh
-tg chats list              # profile "default"
+tg personal chats list     # profile "personal"
 tg work chats list         # profile "work"
 export TG_PROFILE=work     # or for the whole shell session
 ```
+
+`tg` never picks a profile for you, not even the only one: a command that uses an account and has no
+profile named stops and lists the profiles on this computer. Name one, set `TG_PROFILE`, or set
+`defaultProfile` in the config file.
 
 More: [login and sessions](https://github.com/WireCatLabs/tg-cli/blob/main/docs/sessions.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/sessions) · [profiles](https://github.com/WireCatLabs/tg-cli/blob/main/docs/profiles.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/profiles)
 
@@ -186,13 +190,13 @@ Everything `tg` reads is kept in a local store on your computer. Search runs ove
 Telegram by default; `--offline` answers from the store without connecting.
 
 ```sh
-tg search messages "contract" --chat "Project Alpha"
-tg search messages "contract" --backend archive   # local only
-tg store fetch "Project Alpha" --last 5000 --background
-tg store export "Project Alpha" --format markdown --output alpha.md
-tg messages evidence "Project Alpha" --json        # bounded evidence for a chat brief
-tg server install                                  # keep the store current as a systemd or launchd service
-tg store backup ~/tg-backup.db                     # a copy, safe while the store is in use
+tg personal search messages "contract" --chat "Project Alpha"
+tg personal search messages "contract" --backend archive  # local only
+tg personal store fetch "Project Alpha" --last 5000 --background
+tg personal store export "Project Alpha" --format markdown --output alpha.md
+tg personal messages evidence "Project Alpha" --json  # bounded evidence for a chat brief
+tg personal server install                         # keep the store current as a systemd or launchd service
+tg personal store backup ~/tg-backup.db            # a copy, safe while the store is in use
 ```
 
 Search by words, people, dates, files, links and tags; save searches; find discussions by topic.
@@ -202,13 +206,13 @@ More: [search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/search.md) �
 ## Groups you run
 
 ```sh
-tg review --chat "Hiking" --unanswered            # questions nobody answered in 24 hours
-tg chats events "Hiking" --since-time 7d          # who joined, left, was added or removed, and by whom
-tg chats members list "Hiking" --all              # everyone, with their role and when they were last seen
-tg topics list "Hiking"                           # a forum group's topics, newest activity first
-tg chats inspect https://t.me/+AbCdEf             # where an invite link leads, without joining
-tg chats create "Hiking 2027" @alice_example      # a new group, with the people you name
-tg stats chats show "Hiking"                      # group activity
+tg personal review --chat "Hiking" --unanswered   # questions nobody answered in 24 hours
+tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed, and by whom
+tg personal chats members list "Hiking" --all     # everyone, with their role and when they were last seen
+tg personal topics list "Hiking"                  # a forum group's topics, newest activity first
+tg personal chats inspect https://t.me/+AbCdEf    # where an invite link leads, without joining
+tg personal chats create "Hiking 2027" @alice_example  # a new group, with the people you name
+tg personal stats chats show "Hiking"             # group activity
 ```
 
 Renaming a group, adding and removing members and admins, join requests, invite links, forum topics
@@ -218,7 +222,7 @@ More: [groups you run](https://github.com/WireCatLabs/tg-cli/blob/main/docs/grou
 
 ## A bot
 
-`tg bot` works with a bot through Telegram's official [Bot API](https://core.telegram.org/bots/api) and
+`tg personal bot` works with a bot through Telegram's official [Bot API](https://core.telegram.org/bots/api) and
 its token from [@BotFather](https://t.me/BotFather). You can keep several bots; each has a name you
 choose, and that name is the first word of the command.
 
@@ -228,7 +232,7 @@ tg sales bot auth show                   # which bot it is
 tg sales bot recipients add user:<id>    # the bot may write only here
 tg sales bot messages send "Team" "Build is ready" --file report.pdf
 tg sales bot api --help                  # every Bot API method, each with its fields
-tg bot list --check                      # every bot on this computer
+tg personal bot list --check             # every bot on this computer
 ```
 
 - **Every Bot API method.** `tg <bot> bot api <method>` takes native field flags or a JSON body.
@@ -257,11 +261,11 @@ tg skill show                     # the complete instructions, without installin
 agent from changing anything; at `ask` the server shows no form, so set up approval in your agent app.
 
 ```sh
-claude mcp add tg -- tg mcp       # Claude Code, by hand
-tg mcp doctor                     # check the local MCP server
+claude mcp add tg -- tg personal mcp  # Claude Code, by hand
+tg personal mcp doctor            # check the local MCP server
 ```
 
-**From the browser.** ChatGPT or Claude in the browser reach `tg mcp --http --public-url <url>` behind
+**From the browser.** ChatGPT or Claude in the browser reach `tg personal mcp --http --public-url <url>` behind
 your tunnel, after a login with a one-time access code from your terminal.
 
 More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/mcp) · [remote access](https://github.com/WireCatLabs/tg-cli/blob/main/docs/remote.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/remote)
@@ -289,8 +293,8 @@ More: [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-co
 tg config set permissions.messages readonly    # no change to messages from this profile
 tg config set permissions.messages.send ask    # a question in the terminal before each send
 tg config set sendsPerHour 10                  # at most 10 sends an hour (30 by default)
-tg recipients add "Book club"                  # the first add turns the recipient list on
-tg sends list                                  # every attempt: sent, refused, failed or not known
+tg personal recipients add "Book club"         # the first add turns the recipient list on
+tg personal sends list                         # every attempt: sent, refused, failed or not known
 tg config show                                 # what is set, and where it came from
 ```
 
@@ -324,10 +328,10 @@ More: [security](https://github.com/WireCatLabs/tg-cli/blob/main/docs/security.m
 ## When something goes wrong
 
 ```sh
-tg doctor                  # where the files are and whether a session is saved, without connecting
-tg doctor --online         # check that the login works
-tg chats list --trace      # each request to Telegram, with no text, names, phone numbers or keys
-tg runs list               # recorded runs
+tg personal doctor         # where the files are and whether a session is saved, without connecting
+tg personal doctor --online  # check that the login works
+tg personal chats list --trace  # each request to Telegram, with no text, names, phone numbers or keys
+tg personal runs list      # recorded runs
 ```
 
 More: [troubleshooting by symptom](https://github.com/WireCatLabs/tg-cli/blob/main/docs/troubleshooting.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/troubleshooting) · [diagnostics](https://github.com/WireCatLabs/tg-cli/blob/main/docs/diagnostics.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/diagnostics)

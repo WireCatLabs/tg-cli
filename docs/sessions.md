@@ -13,25 +13,25 @@ First, the words this page uses:
   that identify the program to Telegram. Each user registers their own app once; `tg` can do it for
   you.
 - **Keyring**: the password store of your operating system. `tg` keeps the app values there.
-- **Profile**: a name for one login on this computer, with its own session, app and settings. Without
-  a name, `tg` uses the profile `default`. You need a second profile only for a second account or for
-  separate limits ([profiles](#profiles)).
+- **Profile**: a name for one login on this computer, with its own session, app and settings. Every
+  command that uses an account names it, so you pick one name at setup (`tg personal setup`) and use
+  it from then on ([profiles](#profiles)).
 
-Do not confuse `tg session` with `tg account sessions`. `tg session` is the login of `tg` itself;
-`tg account sessions` lists every other device and app logged in to your account.
+Do not confuse `tg personal session` with `tg personal account sessions`. `tg personal session` is the login of `tg` itself;
+`tg personal account sessions` lists every other device and app logged in to your account.
 
 ## First run
 
-`tg setup` guides a first run through the app and the session, checks five chats and offers an agent
+`tg personal setup` guides a first run through the app and the session, checks five chats and offers an agent
 skill. Allow about five minutes; history downloads are a separate step. Run it in a terminal. Use
-`tg setup --app browser` for manual app registration or `--method phone` for a phone login.
-`tg session start` remains the command for login alone, including resuming an interrupted login.
+`tg personal setup --app browser` for manual app registration or `--method phone` for a phone login.
+`tg personal session start` remains the command for login alone, including resuming an interrupted login.
 Setup checks an existing session and does not silently log in again if it is rejected.
 
 ## The app from my.telegram.org
 
 Every user registers their own app. Telegram gives one app per phone number, so an app id is never
-shared or built into `tg`. You need it once per profile; `tg session start` asks only when the profile
+shared or built into `tg`. You need it once per profile; `tg personal session start` asks only when the profile
 has none.
 
 Two ways to get it:
@@ -39,7 +39,7 @@ Two ways to get it:
 - **`--app browser`** opens [my.telegram.org/apps](https://my.telegram.org/apps). Log in there,
   create an app if you have none (any title and short name, platform Desktop), and paste
   `App api_id` and `App api_hash` when `tg` asks. The hash is not shown as you type. This is the
-  default for `tg session start`.
+  default for `tg personal session start`.
 - **`--app auto`** fills in the site for you. It asks your phone number and the code my.telegram.org
   sends you as a message in Telegram, then reads your app, or creates one if you have none. The site
   has no API, so `tg` follows its web form; a change on Telegram's side can break this. `--app
@@ -50,9 +50,9 @@ The app is stored only after Telegram has accepted the login.
 ## Logging in
 
 ```sh
-tg session start           # a QR code in the terminal
-tg session start phone     # a phone number, the code Telegram sends, and your 2FA password
-tg session start phone --sms   # the same, asking Telegram for the code by SMS
+tg personal session start  # a QR code in the terminal
+tg personal session start phone  # a phone number, the code Telegram sends, and your 2FA password
+tg personal session start phone --sms  # the same, asking Telegram for the code by SMS
 ```
 
 **QR:** scan the code in the Telegram app: Settings → Devices → Link Desktop Device. The code is
@@ -70,7 +70,7 @@ After either, Telegram lists a new device in the app's list of sessions.
 Logged in as <your name> (@<username>, id <id>) — profile default.
 Session:  ~/.local/share/tg-cli/sessions/default.session
 App keys: in the keyring
-Next:     tg chats list · tg server install to keep the archive current
+Next:     tg personal chats list · tg personal server install to keep the archive current
 ```
 
 ### When an agent runs the login
@@ -79,36 +79,36 @@ Your AI agent can start the login for you, but it has no terminal to draw the QR
 `--qr-file` writes the code as a picture (PNG) instead, and the agent shows it to you to scan:
 
 ```sh
-tg session start --qr-file login.png
+tg personal session start --qr-file login.png
 ```
 
 The file is replaced when Telegram renews the code, and removed when the login ends, whether it
 worked or not. Without a terminal this works only when the profile already has its app and the
-account has no 2FA password: anything else you have to type yourself. `tg setup` takes the same
+account has no 2FA password: anything else you have to type yourself. `tg personal setup` takes the same
 `--qr-file` option.
 
 ## Check and log out
 
 ```sh
-tg account show              # who this profile is logged in as
+tg personal account show     # who this profile is logged in as
 tg account list              # every profile on this computer, and the account each is logged in as
-tg account sessions list     # every device and app logged in to the account; ends nothing
-tg session end               # log out on Telegram's side, and delete the session file here
+tg personal account sessions list  # every device and app logged in to the account; ends nothing
+tg personal session end      # log out on Telegram's side, and delete the session file here
 ```
 
-`tg session end` ends the session **on Telegram's side too**: the device disappears from the list in
+`tg personal session end` ends the session **on Telegram's side too**: the device disappears from the list in
 the app. It does not delete the app id and hash from the keyring, and it leaves the local store as
 it is.
 
 ## How long a session lives
 
-Until it is ended: by `tg session end`, from the list of devices in a Telegram app, or by Telegram
+Until it is ended: by `tg personal session end`, from the list of devices in a Telegram app, or by Telegram
 itself once the session has gone unused for longer than the account's limit for inactive sessions
 (`authorization_ttl_days` in
 [Telegram's API](https://core.telegram.org/method/account.setAuthorizationTTL)), which the apps let
 you set in the list of devices. A profile that runs every day never reaches it. When a session has
 ended, every command answers "not logged in, or the session was ended" with exit code `4`; log in
-again with `tg session start`
+again with `tg personal session start`
 ([what to do when the session was ended](troubleshooting.md#not-logged-in-or-the-session-was-ended--run-tg-session-start)).
 
 ## Profiles
@@ -117,17 +117,20 @@ A profile is a separate login: its own session, app, settings, recipients and ru
 **the first word**, not by an option:
 
 ```sh
-tg chats list              # profile "default"
+tg personal chats list     # profile "personal"
 tg work chats list         # profile "work"
 export TG_PROFILE=work     # the same for the whole shell session
 ```
 
 **The first word is the profile when it is not a command.** A profile therefore cannot be called
-`chats`, `messages` or any other command word; `tg session start` refuses such a name. Names are
+`chats`, `messages` or any other command word; `tg personal session start` refuses such a name. Names are
 letters, digits, dot, dash and underscore, starting with a letter or a digit.
 
-The order, first match wins: the first word, `TG_PROFILE`, `defaultProfile` in the config file, then
-`default`.
+The order, first match wins: the first word, `TG_PROFILE`, `defaultProfile` in the config file. With
+none of them, a command that uses an account stops with exit code `2` and lists the profiles on this
+computer; with none there yet, it says to run `tg personal setup`. `tg` never picks one, not even the
+only one. Commands that use no account run without a profile: `--help`, `--version`, `commands`,
+`skill show`, `account list` and `config show`.
 
 A word that is not a command and has no command after it is an error that says so:
 
