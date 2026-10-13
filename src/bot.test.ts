@@ -129,7 +129,7 @@ describe("Telegram's refusals", () => {
     }
     const limited = await tg(["sales", "bot", "auth", "show", "--json"], telegram({ getMe: flood }))
 
-    expect(JSON.parse(limited.err).error).toMatchObject({ code: "rate_limited", details: { retryAfterMs: 5000 } })
+    expect(JSON.parse(limited.err).error).toMatchObject({ code: "rate_limited", details: { retry_after_ms: 5000 } })
   })
 })
 

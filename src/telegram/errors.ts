@@ -142,7 +142,7 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
   if (isCliError(error)) return error
   if (RpcError.is(error, "FLOOD_WAIT_%d")) {
     return new CliError("rate_limited", `Telegram asks to wait ${error.seconds} s before the next request`, {
-      retryAfterMs: error.seconds * 1000,
+      retry_after_ms: error.seconds * 1000,
       providerError: "FLOOD_WAIT",
     })
   }

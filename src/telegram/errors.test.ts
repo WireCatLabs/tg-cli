@@ -18,7 +18,7 @@ describe("Telegram's refusals", () => {
   it("makes FLOOD_WAIT a rate limit that says how long to wait", () => {
     expect(toCliError(rpc(420, "FLOOD_WAIT_%d", { seconds: 30 }))).toMatchObject({
       code: "rate_limited",
-      details: { retryAfterMs: 30_000 },
+      details: { retry_after_ms: 30_000 },
     })
   })
 
