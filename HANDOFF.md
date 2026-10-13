@@ -149,6 +149,6 @@ PRs to be merged once green.
 ## 7. What NOT to read or touch
 
 - **`../max-cli`** — read `src/` and `docs/dev/` to copy from; never edit it. Its `docs_ai/` is private.
-- **`../cli-core`** — use, do not change; it has its own release process.
+- **`../cli-base`** — use, do not change; it has its own release process.
 - **mtcute's sources** beyond the `.d.ts` of the method you call.
 - **`.tg/`** in the checkout — the owner's live session and store; never print, copy or commit it.
