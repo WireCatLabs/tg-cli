@@ -1,7 +1,9 @@
 import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
+import { errorObjectOf } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-core"
+import { REMOTE_WRITE } from "@wirecat/cli-core/cli"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   FLOOD_SLEEP,
@@ -1797,6 +1799,50 @@ describe("sending", () => {
     const { adapter, client } = await open()
     expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--operation-id/)
     expect(client.sendText).not.toHaveBeenCalled()
+  })
+  describe("under a rate limit", () => {
+    type Middleware = (context: unknown, next: () => Promise<unknown>) => Promise<unknown>
+    const flood = { _: "mt_rpc_error", errorCode: 420, errorMessage: "FLOOD_WAIT_30" }
+    /** What mtcute's sendText does: each request through the network middlewares, in order. */
+    const requests = (answers: [string, unknown][]) => async () => {
+      const note = (stand.options as { network: { middlewares: Middleware[] } }).network.middlewares.at(-1)
+      for (const [method, answer] of answers) {
+        const result = (await note?.({ request: { _: method } }, async () => answer)) as typeof flood
+        if (result?._ === "mt_rpc_error") throw tl.RpcError.fromTl(result)
+      }
+      return message(99)
+    }
+    const retryOf = async (sent: Promise<unknown>) =>
+      errorObjectOf(await sent.catch((error: unknown) => error), { effects: REMOTE_WRITE }).error.retry
+
+    it("**says a send Telegram refused may be repeated**", async () => {
+      const { adapter, client } = await open()
+      client.sendText.mockImplementationOnce(requests([["messages.sendMessage", flood]]))
+
+      expect(await retryOf(adapter.send("-100500", "hola", { sendId: "42" }))).toEqual({ safe: true, after_ms: 30_000 })
+    })
+
+    it("**keeps a repeat unsafe once Telegram took the message**", async () => {
+      const { adapter, client } = await open()
+      client.sendText.mockImplementationOnce(
+        requests([
+          ["messages.sendMessage", { _: "updateShortSentMessage" }],
+          ["users.getUsers", flood],
+        ]),
+      )
+
+      expect(await retryOf(adapter.send("-100500", "hola", { sendId: "42" }))).toEqual({ safe: false })
+    })
+
+    it("says a refused forward and a refused poll may be repeated", async () => {
+      const { adapter, client } = await open()
+      client.forwardAnswer = tl.RpcError.fromTl(flood)
+      client.sendMedia.mockRejectedValueOnce(tl.RpcError.fromTl(flood))
+
+      expect(await retryOf(adapter.forward("-100500", "5", "-100600", { sendId: "42" }))).toMatchObject({ safe: true })
+      const poll = { question: "Friday?", answers: ["yes", "no"], anonymous: false, multiple: false }
+      expect(await retryOf(adapter.createPoll("-100500", poll, { sendId: "43" }))).toMatchObject({ safe: true })
+    })
   })
 })
 
