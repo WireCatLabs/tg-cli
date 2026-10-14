@@ -3507,7 +3507,7 @@ tg tasks plan <task> [options]
 
 ### `tg tasks link`
 
-link a task to what it concerns — messages, chats, people, documents, URLs — to read around later
+link a task to messages, chats, people or URLs — or to another task: task:<id>
 
 **Changes something on this computer only.**
 
@@ -3518,12 +3518,12 @@ tg tasks link <task> [targets] [options]
 | Argument | | What it is |
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
-| `targets` | optional | msg: locators, person:<id>, document:<id>, note:<id>, or a URL. |
+| `targets` | optional | msg: locators, person:<id>, document:<id>, note:<id>, a URL; or task:<id>, which links two project tasks. |
 
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from. |
+| `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by or follow-up-of. |
 
 ### `tg tasks show`
 

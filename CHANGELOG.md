@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.55.0 — 14.10.2026
 
 ### What's new
 
@@ -13,6 +13,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **An unheard voice message is named in `missing`** (cli-core 0.274.0): `review`, `inbox` and `messages list` add
+  `{field: "transcript", step: "messages.transcribe"}` for each voice message with no kept transcript, so an answer
+  whose only content is a voice message no longer reads as complete.
+- **`tasks link <task> task:<id>` records a relation between two tasks** (cli-core 0.274.0), with `--kind
+  blocked-by`, `follow-up-of` or `related-to`.
 - **A next step to a command that only changes this machine is never run unasked** (cli-core 0.273.0):
   `server restart` and `store reindex` steps carry `safe_to_auto_execute: false`.
 - **`mentions rebuild` takes its kind as an argument**: `tg <profile> mentions rebuild person-name`, not `--kind`
