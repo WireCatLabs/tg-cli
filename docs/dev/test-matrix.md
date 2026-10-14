@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2356 ✅ · 89 ⛔ · 0 ❌** — 482 commands, 1963 options.
+**2362 ✅ · 89 ⛔ · 0 ❌** — 484 commands, 1967 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -148,6 +148,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts timeline` | `--since-time` | ✅ |  |
 | `contacts timeline` | `--until-time` | ✅ |  |
 | `contacts timeline` | `--limit` | ✅ |  |
+| `contacts timeline` | `--cursor` | ✅ |  |
 | `contacts check` |  | ✅ |  |
 | `contacts check` | `--no-registries` | ✅ |  |
 | `contacts link` |  | ✅ |  |
@@ -492,6 +493,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mentions list` | `--limit` | ✅ |  |
 | `mentions list` | `--page` | ✅ |  |
 | `mentions show` |  | ✅ |  |
+| `mentions confirm` |  | ✅ |  |
+| `mentions confirm` | `--as-owner` | ✅ |  |
+| `mentions reject` |  | ✅ |  |
+| `mentions reject` | `--as-owner` | ✅ |  |
 | `mentions rebuild` |  | ✅ |  |
 | `images embed` |  | ✅ |  |
 | `images embed` | `--chat` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
@@ -804,6 +809,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `runs list` | `--limit` | ✅ |  |
 | `runs list` | `--page` | ✅ |  |
 | `runs show` |  | ✅ |  |
+| `runs show` | `--problems` | ✅ |  |
 | `runs search` |  | ✅ |  |
 | `runs search` | `--status` | ✅ |  |
 | `runs search` | `--error-code` | ✅ |  |

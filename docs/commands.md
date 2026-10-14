@@ -966,6 +966,7 @@ tg contacts timeline <person> [options]
 | `--since-time <time>` | nothing older than this ISO 8601 time, or 2h / 1d ago. |
 | `--until-time <time>` | through this ISO 8601 time, or 2h / 1d ago. |
 | `--limit <n>` | at most this many; 50 if not given. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it, with the same filters. |
 
 ### `tg contacts check`
 
@@ -2832,7 +2833,7 @@ tg mentions list [query] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | optional | fields below; a bare word is a value, so 89001234567 finds +79001234567. |
+| `query` | optional | fields below; a bare word is a value, so a phone typed with 8 finds it written with +7. |
 
 | Option | What it does |
 |---|---|
@@ -2850,6 +2851,43 @@ tg mentions show <id>
 | Argument | | What it is |
 |---|---|---|
 | `id` | required | the mention's id, from mentions list. |
+
+### `tg mentions confirm`
+
+say what a mention is, everywhere its value is written: a phone's owner, the stored document
+
+**Changes something on this computer only.**
+
+```sh
+tg mentions confirm <id> [person] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the mention's id, from mentions list. |
+| `person` | optional | person:<uid> or organization:<id> that owns the phone or the address; a document needs none. |
+
+| Option | What it does |
+|---|---|
+| `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
+
+### `tg mentions reject`
+
+not a real mention, or not worth keeping: dismiss its value everywhere, and on later syncs
+
+**Changes something on this computer only.**
+
+```sh
+tg mentions reject <id> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the mention's id, from mentions list. |
+
+| Option | What it does |
+|---|---|
+| `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
 ### `tg mentions rebuild`
 
@@ -3956,15 +3994,19 @@ tg runs list [options]
 
 ### `tg runs show`
 
-one run: what it was, how it ended and what went wrong; -v for every event
+one run: what it was, how it ended, and every event it logged
 
 ```sh
-tg runs show <run-id>
+tg runs show <run-id> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `run-id` | required | an id from `tg runs list`. |
+
+| Option | What it does |
+|---|---|
+| `--problems` | only failed responses, warnings and crashes. |
 
 ### `tg runs search`
 
