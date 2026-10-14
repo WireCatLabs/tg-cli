@@ -651,12 +651,6 @@ export const UNTESTED: Untested[] = [
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags list",
-    option: "--source",
-    reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
-  },
-  {
     command: "contacts notes add",
     option: "--file",
     reason:

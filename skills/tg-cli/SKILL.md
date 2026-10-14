@@ -23,8 +23,8 @@ check that field rather than comparing whole outputs. This file holds the traps 
 
 `tg commands schema messages list --json` describes one command's schemas and effects.
 Use `--json --no-input` for headless work; supply credentials explicitly through a pipe.
-`--fields id,text` selects each list item's fields while preserving pagination, coverage and
-operation identifiers. For ids use `--fields id`; `items.id` also works, and `items[].id` is unnecessary.
+`--json=id,text` keeps those fields of each list item, with the page and coverage around them. For ids use
+`--json=id`.
 `--max-output-bytes` and `--max-input-bytes` set byte budgets; one-shot actions default to 30 seconds,
 changed with `--timeout`; background history fetch jobs have no default deadline. Before a sensitive write, global `--dry-run` checks syntax and permissions
 before action; it opens no messenger connection, reserves no write and leaves targets unresolved.
@@ -252,7 +252,7 @@ tg personal review --since-time 1d --json          # every message, the owner's 
                                                    # when complete, the next review starts at until
 tg personal review --unanswered --json             # questions, including retained voice transcripts, nobody answered in 24 h
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
-tg personal tasks list --state open --json         # what waits on the owner; review and serve open and close tasks
+tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
 tg personal chats list --json                      # find a chat, take its id
 tg personal chats list --search vale --kind group --unread --json  # filtered, over every returned chat
@@ -442,7 +442,7 @@ tg personal metadata get --chat CHAT_ID --json
 tg personal metadata refresh --chat CHAT_ID --limit 1 --json
 tg personal tags auto --chat CHAT_ID --dry-run --json
 tg personal tags auto --chat CHAT_ID --refresh-metadata --limit 1 --json
-tg personal tags list --source auto --json
+tg personal tags list sources:auto --json
 tg personal tags remove news --chat CHAT_ID --source auto
 ```
 
@@ -452,6 +452,20 @@ changing the chat. Dry-run uses cached data only and cannot be combined with ref
 bounded at 500 chats. A rule score is not a probability. Automatic claims are separate from manual
 labels; rerunning preserves manual labels. Without `--source`, removing a label removes both claims.
 A later explicit auto run can regenerate it. Linking identities never silently combines private notes.
+
+Phones, e-mail addresses, links and Google documents written in stored messages are kept as mentions, found
+by rules on every store write. `mentions list` takes a query: `kind:phone|email|url|document`,
+`status:found|linked|dismissed`, `domain:` (a link's or address's site; `docs.google.com` means `google.com`)
+and `value:`; a bare word is a value written any way, so `89001234567` finds `+79001234567`. Messages stored
+before the store had mentions need one `mentions rebuild`. Each item has the message's `locator`; mention text
+goes to the owner only, never into logs or files.
+
+```sh
+tg personal mentions list kind:phone --json
+tg personal mentions list domain:google.com kind:url --json
+tg personal mentions show 12 --json
+tg personal mentions rebuild
+```
 
 Rank held data with `tg personal stats messages top` / `tg personal stats contacts top`, using `--measure` or
 `--score helpful|active|engaging`. Read coverage, quality and exclusions; unknown snapshots

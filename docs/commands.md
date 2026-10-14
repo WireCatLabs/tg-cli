@@ -26,8 +26,7 @@ without one.
 |---|---|
 | `-V, --version` | output the version number. |
 | `-v, --verbose` | more detail in what is shown: -v ids, -vv everything we know. Default: `0`. |
-| `--json` | machine-readable output: one JSON value on stdout, nothing else. |
-| `--agent-json` | JSON for AI agents: invisible controls are visible; ordinary --json preserves text. |
+| `--json` | machine-readable output: one JSON value on stdout; --json=id,text keeps only those fields. |
 | `--jsonl` | machine-readable output: one JSON object per line, for streaming and jq. |
 | `--quiet` | diagnostics off; a failure is still said. |
 | `--trace` | the connection's own log lines on stderr — never message content. |
@@ -37,7 +36,6 @@ without one.
 | `--no-input` | never prompt or open interactive login; piped input remains available. |
 | `--max-input-bytes <bytes>` | maximum buffered input bytes (default: 16777216). |
 | `--max-output-bytes <bytes>` | maximum machine output bytes (default: 4194304; 0 disables). |
-| `--fields <paths>` | comma-separated item or object fields: id,text; preserve pagination and operation ids. |
 | `--brief` | found messages and mail as reference, title, time, sender and excerpt only. |
 | `--full` | found messages and mail with their whole text and every provider field. |
 | `--dry-run` | preview parsed arguments and permissions before running the action. |
@@ -1786,6 +1784,30 @@ tg models text key remove <provider>
 |---|---|---|
 | `provider` | required | openai, anthropic, or a server's host. |
 
+### `tg models image`
+
+models that read pictures, for `images embed` and search by what a picture shows
+
+#### `tg models image list`
+
+the picture models, which are downloaded, and which one is the default
+
+```sh
+tg models image list
+```
+
+#### `tg models image download`
+
+download a picture model once, checked against the sha256 this version expects
+
+```sh
+tg models image download <model>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `model` | required | a model id from `models image list`. |
+
 ## `tg inbox`
 
 other people's unread messages in every chat; --new for what arrived since the last check
@@ -2431,13 +2453,16 @@ tg conversations build [options]
 a chat's conversations, the newest first: when, how many messages, how many people
 
 ```sh
-tg conversations list [options]
+tg conversations list <chat> [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--since-time <time>` | only those that started at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
 | `--limit <n>` | how many. |
 
 ### `tg conversations show`
@@ -2777,14 +2802,55 @@ tg tags remove <tag> [options]
 what is tagged: this account's chats and messages, and the people of its messenger
 
 ```sh
-tg tags list [options]
+tg tags list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
+
+## `tg mentions`
+
+phones, e-mail, links and documents found in stored messages
+
+### `tg mentions list`
+
+this account's mentions matching the query, newest first; local store only
+
+```sh
+tg mentions list [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | fields below; a bare word is a value, so 89001234567 finds +79001234567. |
 
 | Option | What it does |
 |---|---|
-| `--tag <tag>` | only this tag. |
-| `--source <manual\|auto>` | only labels with this ownership claim. |
-| `--type <names>` | only what is tagged of this type: chat, contact or message. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+
+### `tg mentions show`
+
+one mention, the text around it, and how many other places hold its value
+
+```sh
+tg mentions show <id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `id` | required | the mention's id, from mentions list. |
+
+### `tg mentions rebuild`
+
+find the mentions of every stored message again; decisions are kept
+
+**Changes something on this computer only.**
+
+```sh
+tg mentions rebuild
+```
 
 ## `tg metadata`
 
@@ -3199,15 +3265,15 @@ what waits on you — unanswered questions, mentions, requests, promises — kep
 tasks, oldest first, with their message or note source
 
 ```sh
-tg tasks list [options]
+tg tasks list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--state <state>` | only tasks in this state: open, done or dismissed. |
-| `--chat <chat>` | only this chat's tasks; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <names>` | only these types, comma-separated: question, request, mention, promise. |
-| `--before-time <time>` | only tasks opened before this ISO 8601 time, or 2h / 1d ago. |
 | `--limit <n>` | how many. |
 
 ### `tg tasks add`
@@ -3946,7 +4012,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -3967,7 +4033,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 
 | Option | What it does |
 |---|---|

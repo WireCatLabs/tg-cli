@@ -52,7 +52,7 @@ describe("run records", () => {
     const { code } = await tg(["failing", "chats", "list"], {
       chats: async () => {
         throw new CliError("provider_error", "Telegram refused: CHAT_ADMIN_REQUIRED", {
-          providerError: "CHAT_ADMIN_REQUIRED",
+          provider_error: "CHAT_ADMIN_REQUIRED",
         })
       },
     })
@@ -99,7 +99,7 @@ describe("run records", () => {
       event: "response",
       operation: "messages.download",
       errorCode: "rate_limited",
-      ids: { message: "50" },
+      ids: { chat: "50" },
     })
     await recorded.finish("partial", {
       partial: { failed: 1, failures: [{ id: "50", stage: "download", errorCode: "rate_limited" }] },

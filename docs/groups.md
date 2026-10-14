@@ -247,11 +247,11 @@ copies it.
 See what waits on you, oldest first, then only questions and mentions in one group:
 
 ```sh
-tg personal tasks list --state open
+tg personal tasks list state:open
 ```
 
 ```sh
-tg personal tasks list --chat "Hiking" --type question,mention
+tg personal tasks list chat:<chat id> "(kind:question OR kind:mention)"
 ```
 
 Add what the rules cannot see, such as a promise you made, or close a task that needs no answer:
