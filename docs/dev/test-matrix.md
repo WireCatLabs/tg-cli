@@ -279,8 +279,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models text download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline |
 | `models text key set` |  | ✅ |  |
 | `models text key remove` |  | ✅ |  |
-| `models image list` |  | ✅ |  |
-| `models image download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
@@ -501,6 +499,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `images embed` |  | ✅ |  |
 | `images embed` | `--chat` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
 | `images embed` | `--limit` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
+| `images models list` |  | ✅ |  |
+| `images models download` |  | ✅ |  |
 | `metadata get` |  | ✅ |  |
 | `metadata get` | `--chat` | ✅ |  |
 | `metadata refresh` |  | ✅ |  |
