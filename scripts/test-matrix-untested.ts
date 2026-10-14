@@ -592,6 +592,16 @@ export const UNTESTED: Untested[] = [
       "drives it with a stand-in spawnJob, and lane L5 owns the live check",
   },
   {
+    command: "images embed",
+    option: "--chat",
+    reason: "downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline",
+  },
+  {
+    command: "images embed",
+    option: "--limit",
+    reason: "downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline",
+  },
+  {
     command: "models text download",
     option: "--accept-terms",
     reason: "phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline",

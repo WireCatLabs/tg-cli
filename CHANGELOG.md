@@ -7,6 +7,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`tg images embed`: find pictures by what they show** (cli-core 0.268.0). Off until
+  `tg <profile> config set picture_search true`; download the model once with
+  `tg <profile> models image download clip-b32` (about 155 MB), then `tg <profile> images embed [--chat] [--limit]`.
+  `search messages` then returns a `pictures` list beside its hits. Picture queries must be English.
+
 - **`tg mentions`: phones, e-mail, links and Google documents found in stored messages** (cli-core 0.264.0, store
   version 7). `mentions list kind:phone`, `mentions list domain:google.com`; a bare word is a value written any way,
   so `89001234567` finds `+79001234567`. `mentions show <id>` gives the text around one. Messages stored before this

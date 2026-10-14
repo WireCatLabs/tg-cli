@@ -360,6 +360,31 @@ Ordinary hidden working folders are allowed. MCP extraction downloads also requi
 outside protected locations. Local PDF text extraction has no fixed page-count limit or separate
 30-second cutoff; command cancellation and file/text budgets still apply.
 
+## Pictures, by what they show
+
+Picture search is off. It looks at pictures on this computer with a small model and never sends them anywhere.
+Turn it on for one profile, download the model once (about 155 MB, shared by all profiles), then read the pictures
+you have stored:
+
+```sh
+tg personal config set picture_search true
+```
+
+```sh
+tg personal models image download clip-b32
+```
+
+```sh
+tg personal images embed --chat "Book club" --limit 100
+```
+
+`images embed` downloads each stored picture through Telegram, one at a time, and marks nothing read. It keeps only
+a vector and the picture's hash. After that, a message search with words also returns a `pictures` list beside the
+usual hits, never mixed into the text ranking. With the setting on but no model, the answer says `picturesSkipped`.
+
+**Write picture queries in English.** The model knows no other language. An agent translates the query first
+("собака на пляже" becomes "dog on a beach"). `tg personal models image list` shows which models are downloaded.
+
 ## Passwords, codes and cards
 
 ```sh
