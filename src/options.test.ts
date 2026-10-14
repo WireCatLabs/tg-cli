@@ -445,7 +445,13 @@ describe("messages", () => {
     expect(timeline.items.map(({ locator }: { locator: string }) => locator)).toEqual([
       "msg:telegram/1/-1001234567890/3",
     ])
-    expect(timeline).toMatchObject({ meta: { truncated: true }, items: [{ role: "sender", scope: "personal" }] })
+    expect(timeline).toMatchObject({ page: { has_more: true }, items: [{ role: "sender", scope: "personal" }] })
+
+    const next = await tg(
+      ["contacts", "timeline", "778", "--scope", "personal", "--cursor", timeline.page.cursor, "--json"],
+      { adapter: () => adapter },
+    )
+    expect(next.code, next.stderr.join("")).toBe(0)
   })
 
   it("download saves the message's file into --output-dir and answers its path", async () => {

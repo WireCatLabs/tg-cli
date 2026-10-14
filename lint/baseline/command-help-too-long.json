@@ -64,6 +64,8 @@
   "inbox",
   "mcp",
   "mcp config",
+  "mentions confirm",
+  "mentions reject",
   "messages comments",
   "messages download",
   "messages links",

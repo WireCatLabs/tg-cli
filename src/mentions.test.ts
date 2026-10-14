@@ -66,4 +66,19 @@ describe("mentions through tg", () => {
     expect(shown.code, shown.err).toBe(0)
     expect(JSON.parse(shown.out)).toMatchObject({ item: { written: "+7 900 000-00-01", before: "звони " } })
   })
+
+  it("asks a phone's owner before confirming it, and rejects a value as the owner", async () => {
+    const list = JSON.parse((await tg(["mentions", "list", "--json"])).out).items
+    const phone = list.find((item: { kind: string }) => item.kind === "phone")
+
+    const confirmed = await tg(["mentions", "confirm", String(phone.id), "--as-owner", "--json"])
+    expect(confirmed.code).not.toBe(0)
+    expect(JSON.parse(confirmed.err)).toMatchObject({
+      error: { message: expect.stringContaining("organization:<id>") },
+    })
+
+    const rejected = await tg(["mentions", "reject", String(phone.id), "--as-owner", "--json"])
+    expect(rejected.code, rejected.err).toBe(0)
+    expect(JSON.parse(rejected.out)).toMatchObject({ kind: "phone", status: "dismissed" })
+  })
 })

@@ -146,4 +146,11 @@ describe("run records", () => {
     expect(object.error).toMatchObject({ code: "not_found" })
     expect(record).toMatchObject({ severity: "error", command: "runs show", resource: { service: "tg" } })
   })
+
+  it("**--problems** is accepted on a run that is not there and still says so", async () => {
+    const { code, stdout } = await tg(["runs", "show", "no-such-run", "--problems", "--json"])
+
+    expect(code).not.toBe(0)
+    expect(stdout).toEqual([])
+  })
 })

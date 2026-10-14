@@ -463,14 +463,22 @@ Phones, e-mail addresses, links and Google documents written in stored messages 
 by rules on every store write. `mentions list` takes a query: `kind:phone|email|url|document`,
 `status:found|linked|dismissed`, `domain:` (a link's or address's site; `docs.google.com` means `google.com`)
 and `value:`; a bare word is a value written any way, so `89001234567` finds `+79001234567`. Messages stored
-before the store had mentions need one `mentions rebuild`. Each item has the message's `locator`; mention text
-goes to the owner only, never into logs or files.
+before the store had mentions need one `mentions rebuild`. Text read from files (`attachments extract`) and voice
+note transcripts yield mentions too (`field` `file_text` or `transcript`); attachments with text from before store
+version 10 need one `mentions rebuild`. Each item has the message's `locator`; mention text goes to the owner only,
+never into logs or files.
+
+`mentions confirm <id> [person:<uid>|organization:<id>]` records who owns a phone or an address (a shop's number
+belongs to the organization, apart from any person); `mentions reject <id>` dismisses a value for good.
+`search messages` finds messages by mention: `phone:`, `email:` (quoted: `email:"ana@example.com"`), `url:`, `domain:`.
 
 ```sh
 tg personal mentions list kind:phone --json
 tg personal mentions list domain:google.com kind:url --json
 tg personal mentions show 12 --json
 tg personal mentions rebuild
+tg personal mentions confirm 12 organization:3
+tg personal search messages 'domain:docs.google.com'
 ```
 
 Rank held data with `tg personal stats messages top` / `tg personal stats contacts top`, using `--measure` or

@@ -17,9 +17,24 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   so `89001234567` finds `+79001234567`. `mentions show <id>` gives the text around one. Messages stored before this
   version need one `tg <profile> mentions rebuild`; new ones are read as they are stored.
 
+- **Mentions in a message's files and voice notes** (cli-core 0.269.0, store version 10). The text `attachments
+  extract` read and a voice note's transcript yield mentions too, with `field` `file_text` or `transcript`.
+  Attachments with text from before version 10 need one `tg <profile> mentions rebuild`, which now also counts
+  `attachments`.
+- **`tg mentions confirm <id> [person:<uid>|organization:<id>]` and `mentions reject <id>`** decide who owns a phone
+  or an address, or dismiss it for good. An organization can own a phone or address apart from any person (store
+  version 11; older builds keep working).
+- **`phone:`, `email:`, `url:` and `domain:` in a message search** find messages by what their text mentions:
+  `phone:"8 900 000-00-01"`, `email:"ana@example.com"`, `domain:docs.google.com`. Mail has no mentions yet.
+- **A failing schedule is said before every other command** with one stderr line, until the next run succeeds;
+  `schedule list` shows the streak.
+
 ### Changed — may break scripts
 
-- **Built on `@wirecat/cli-core` 0.268.0 and `@wirecat/cli-base` 0.27.2.**
+- **`contacts timeline` pages like every other list:** a list cut at `--limit` answers `page.has_more: true`,
+  `page.cursor` and a `page.next` step (`--cursor` continues); `meta.truncated` stays for changes still queued.
+  The stderr "cut at --limit" note is gone.
+- **Built on `@wirecat/cli-core` 0.269.0 and `@wirecat/cli-base` 0.27.2.**
 - **Every answer is an envelope with snake_case keys.** A list is `{items, page: {limit, has_more, cursor?}, next?,
   missing?, meta}`, one thing `{item, next?, missing?, meta}`; `meta.run_id` names the run. This covers every
   command: messages, chats, contacts, writes (`{item: {operation_id, send_id, message}}`), inbox, review, search,
@@ -56,6 +71,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **MCP prompts name only arguments the tools take.** `review` passes its window as `query` (`date>"…"`).
 - **`tg <profile> bot messages delete` takes more than 100 messages.** It sent every id in one call, and Telegram
   takes at most 100, so a longer list failed. It now sends them 100 at a time; if a later call fails, the error says
   how many were already deleted.
