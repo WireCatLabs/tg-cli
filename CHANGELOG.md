@@ -3,6 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **`store export` writes files in the shape it prints** (cli-core 0.276.0): `--output` files and `--to` folders hold
+  the same items as the screen (`chat_id`, `sender_name`, `ref`…). A folder from an earlier version is refused with
+  "export into a new folder".
+
+### What's new
+
+- **Resumable syncs** (cli-core 0.276.0): a sync that is killed keeps what it saved, and the next run continues from
+  there.
+
 ## 0.55.0 — 14.10.2026
 
 ### What's new
