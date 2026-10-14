@@ -390,7 +390,7 @@ tg personal tags add work --contact "Bob Synthetic"
 ```
 
 ```sh
-tg personal tags list --tag work --type chat
+tg personal tags list tag:work type:chat
 ```
 
 ```sh
@@ -430,7 +430,7 @@ tg personal tags auto                    # write the automatic tags
 ```
 
 ```sh
-tg personal tags list --source auto      # only the automatic ones
+tg personal tags list sources:auto      # only the automatic ones
 ```
 
 `--refresh-metadata` reads current descriptions from Telegram before classifying; it is refused with

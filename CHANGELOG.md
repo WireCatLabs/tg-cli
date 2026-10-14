@@ -5,6 +5,26 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **`tg mentions`: phones, e-mail, links and Google documents found in stored messages** (cli-core 0.264.0, store
+  version 7). `mentions list kind:phone`, `mentions list domain:google.com`; a bare word is a value written any way,
+  so `89001234567` finds `+79001234567`. `mentions show <id>` gives the text around one. Messages stored before this
+  version need one `tg <profile> mentions rebuild`; new ones are read as they are stored.
+
+### Changed — may break scripts
+
+- **Built on `@wirecat/cli-core` 0.264.0 and `@wirecat/cli-base` 0.27.1.**
+- **`--json=<fields>` replaces `--fields` and `--agent-json`, which are gone.** `--json=id,text` keeps those fields
+  of each item. CLI JSON keeps message text as written; MCP answers still show invisible characters.
+- **`tags list`, `tasks list` and `conversations list` take a query instead of filter flags.**
+  `tags list tag:work type:chat`, `tags list sources:auto`; `tasks list state:open kind:promise chat:<id>`;
+  `conversations list <chat> started_at>=7d`. `--tag`, `--type`, `--source`, `--state`, `--chat`, `--before-time`
+  and `--since-time` on these lists are gone. Items are the shared entities: a tag names what it is on as `target`,
+  a conversation says `messages_count`, `started_at`, `first_message`.
+- **Run records keep only listed attribute keys.** A message id under `ids.message` is dropped for now, so
+  `runs search <message id>` does not find it (reported to cli-core).
+
 ### Fixed
 
 - **`tg <profile> bot messages delete` takes more than 100 messages.** It sent every id in one call, and Telegram

@@ -29,7 +29,7 @@ a Telegram group. A conversation here is something tg finds by itself, in any ch
 | Task | Command |
 |---|---|
 | Find a discussion by its subject, in one chat or in every prepared chat | `tg personal search conversations "<question>"` |
-| See the conversations of a chat, newest first | `tg personal conversations list --chat <chat>` |
+| See the conversations of a chat, newest first | `tg personal conversations list <chat>` |
 | Read one conversation from start to end | `tg personal conversations show <id>` |
 | Open the whole conversation a message belongs to | `tg personal conversations show <chat> <message>` |
 | Find other conversations about the same thing, in every chat | `tg personal conversations related <chat> <message>` |
@@ -160,7 +160,7 @@ were never built. When something limited the search, stderr names the chats and 
 it, for example `conversations embed --chat <chat>`.
 
 ```sh
-tg personal conversations list --chat "Book club" --since-time 7d
+tg personal conversations list "Book club" started_at>=7d
 tg personal conversations show 91                # one conversation, oldest first
 tg personal conversations show "Book club" 204   # the conversation message 204 is in
 tg personal conversations related "Book club" 204  # other conversations about the same thing, in every chat

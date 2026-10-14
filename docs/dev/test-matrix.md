@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2375 ✅ · 87 ⛔ · 0 ❌** — 476 commands, 1986 options.
+**2371 ✅ · 87 ⛔ · 0 ❌** — 481 commands, 1977 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -292,6 +292,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models text download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline |
 | `models text key set` |  | ✅ |  |
 | `models text key remove` |  | ✅ |  |
+| `models image list` |  | ✅ |  |
+| `models image download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since-time` | ✅ |  |
@@ -411,8 +413,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations build` | `--max-tokens` | ✅ |  |
 | `conversations build` | `--max-chats` | ✅ |  |
 | `conversations list` |  | ✅ |  |
-| `conversations list` | `--chat` | ✅ |  |
-| `conversations list` | `--since-time` | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
 | `conversations related` |  | ✅ |  |
@@ -505,9 +505,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags remove` | `--message` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags remove` | `--source` | ✅ |  |
 | `tags list` |  | ✅ |  |
-| `tags list` | `--tag` | ✅ |  |
-| `tags list` | `--source` | ✅ |  |
-| `tags list` | `--type` | ✅ |  |
+| `mentions list` |  | ✅ |  |
+| `mentions list` | `--limit` | ✅ |  |
+| `mentions list` | `--page` | ✅ |  |
+| `mentions show` |  | ✅ |  |
+| `mentions rebuild` |  | ✅ |  |
 | `metadata get` |  | ✅ |  |
 | `metadata get` | `--chat` | ✅ |  |
 | `metadata refresh` |  | ✅ |  |
@@ -644,10 +646,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats charts` | `--timezone` | ✅ |  |
 | `stats charts` | `--output` | ✅ |  |
 | `tasks list` |  | ✅ |  |
-| `tasks list` | `--state` | ✅ |  |
-| `tasks list` | `--chat` | ✅ |  |
-| `tasks list` | `--type` | ✅ |  |
-| `tasks list` | `--before-time` | ✅ |  |
 | `tasks list` | `--limit` | ✅ |  |
 | `tasks add` |  | ✅ |  |
 | `tasks add` | `--type` | ✅ |  |
@@ -2456,7 +2454,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |
 | *global* | `--json` | ✅ |  |
-| *global* | `--agent-json` | ✅ |  |
 | *global* | `--jsonl` | ✅ |  |
 | *global* | `--quiet` | ✅ |  |
 | *global* | `--trace` | ✅ |  |
@@ -2466,7 +2463,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--no-input` | ✅ |  |
 | *global* | `--max-input-bytes` | ✅ |  |
 | *global* | `--max-output-bytes` | ✅ |  |
-| *global* | `--fields` | ✅ |  |
 | *global* | `--brief` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--full` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--dry-run` | ✅ |  |

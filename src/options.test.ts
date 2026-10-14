@@ -52,8 +52,8 @@ describe("the global options", () => {
     expect(quiet.stderr).toEqual([])
   })
 
-  it("--fields keeps only the named fields, and the input and output bounds hold", async () => {
-    const projected = await tg(["chats", "list", "--fields", "items.id", "--no-input", "--json"])
+  it("--json=<fields> keeps only the named fields, and the input and output bounds hold", async () => {
+    const projected = await tg(["chats", "list", "--json=id", "--no-input"])
     expect(projected.code).toBe(0)
     expect(Object.keys(json(projected.stdout).items[0])).toEqual(["id"])
 

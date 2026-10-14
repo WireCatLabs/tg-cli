@@ -26,7 +26,7 @@ A few terms the page uses:
 | To tell success from failure | Exit codes and one JSON error object on stderr |
 | No questions in the middle of a run | `--no-input`; confirmation flags `--yes` and `--allow-dangerous` |
 | Runs that cannot hang or flood | A time limit and size limits for input and output |
-| Only the fields you need | `--fields` |
+| Only the fields you need | `--json=<fields>` |
 | A command's options without reading the docs | `tg commands` and `tg commands schema` |
 | To see what a command would do | `--dry-run` |
 | To know whether a failed write happened | `outcome_unknown` and `details.operationId` |
@@ -92,12 +92,12 @@ is partial. An output limit can be hit after a write was done: do not repeat the
 ## Smaller results, and what a command accepts
 
 ```sh
-tg personal messages list <chat> --json --fields id,text
+tg personal messages list <chat> --json=id,text
 tg commands messages list --json
 tg commands schema messages list --json
 ```
 
-`--fields` keeps only the listed fields, separated by commas; a dot selects a nested field. The page
+`--json=<fields>` keeps only the listed fields of each item, separated by commas. The page
 information of the chosen format stays. For `page` and `hasMore`, use `--json`: JSONL lists print
 the items without the page wrapper. A field that is missing stays missing; it does not become zero.
 

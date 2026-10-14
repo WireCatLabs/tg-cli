@@ -148,16 +148,12 @@ describe("machine output", () => {
     expect(stderr).toEqual([])
   })
 
-  it("--agent-json exposes controls while --json preserves original message text", async () => {
+  it("--json keeps message text as written, invisible characters included", async () => {
     const text = "synthetic\u202e text"
     const adapter = () => scripted({ history: async () => ({ items: [message("42", { text })], hasMore: false }) })
     const ordinary = await tg(["messages", "list", "Valencia", "--json"], { adapter })
-    const agent = await tg(["messages", "list", "Valencia", "--agent-json"], { adapter })
-    expect([ordinary.code, agent.code]).toEqual([0, 0])
+    expect(ordinary.code).toBe(0)
     expect(JSON.parse(ordinary.stdout[0] ?? "").items[0].text).toBe(text)
-    const visible = JSON.parse(agent.stdout[0] ?? "").items[0].text as string
-    expect(visible).toBe("synthetic\\u202e text")
-    expect(agent.stderr).toEqual([])
   })
 
   it("pages chats through the shared flags, and refuses --all with --page", async () => {
