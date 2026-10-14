@@ -302,16 +302,16 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-topic")).toEqual([])
   })
 
-  it("repeats a forward with the --send-id it is given, and journals that id", async () => {
+  it("repeats a forward with the --operation-id it is given, and journals that id", async () => {
     const { adapter, forwarded } = telegram()
 
     const { code, stdout } = await tg(
-      ["g-fwd-id", "messages", "forward", "Valencia", "5", "--to", "me", "--send-id", "9001", "--json"],
+      ["g-fwd-id", "messages", "forward", "Valencia", "5", "--to", "me", "--operation-id", "9001", "--json"],
       adapter,
     )
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({ send_id: "9001", operation_id: "9001" })
+    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({ operation_id: "9001" })
     expect(forwarded).toEqual(["1 9001"])
     expect(journal("g-fwd-id")).toMatchObject([{ kind: "forward", outcome: "sent", sendId: "9001" }])
   })
@@ -874,7 +874,7 @@ describe("the send guard in front of the other writes", () => {
         "--silent",
         "--close-time",
         "90s",
-        "--send-id",
+        "--operation-id",
         "5",
         "--json",
       ],
@@ -882,7 +882,7 @@ describe("the send guard in front of the other writes", () => {
     )
 
     expect(JSON.parse(shown.stdout[0] ?? "").item.answers[0].id).toBe("MA")
-    expect(JSON.parse(created.stdout[0] ?? "")).toMatchObject({ item: { send_id: "5", message: { id: "80" } } })
+    expect(JSON.parse(created.stdout[0] ?? "")).toMatchObject({ item: { operation_id: "5", message: { id: "80" } } })
     expect(polled).toEqual(["vote MA", "vote none", "close", "create 2 true true true"])
     expect(
       journal("g-poll")

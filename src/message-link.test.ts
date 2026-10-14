@@ -18,9 +18,9 @@ describe("personal message links", () => {
     for (const format of ["--json", "--jsonl"]) {
       const result = await tg(["messages", "link", chat.id, "42", format], { adapter })
       expect(result.code).toBe(0)
-      expect(result.stdout.join("").trim().split("\n")).toHaveLength(1)
-      const answer = JSON.parse(result.stdout.join(""))
-      expect(format === "--json" ? answer.item : answer).toMatchObject({
+      expect(result.stdout).toHaveLength(format === "--json" ? 1 : 2)
+      const answer = JSON.parse(result.stdout[0] ?? "")
+      expect(format === "--json" ? answer.item : answer.data).toMatchObject({
         ref: `msg:telegram/1/${chat.id}/42`,
         url: "https://t.me/test_channel/42",
         access: "public",

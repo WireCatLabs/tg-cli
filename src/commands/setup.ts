@@ -9,6 +9,7 @@ import {
   commandWords,
   environmentOf,
   inputPolicy,
+  REMOTE_WRITE,
   refuseCommandName,
   rootOf,
   runtime,
@@ -79,7 +80,7 @@ const agentFor = async (
 }
 
 export const setupCommand = () =>
-  annotate(new Command("setup"), { mutates: true })
+  annotate(new Command("setup"), { effects: REMOTE_WRITE })
     .description("set up Telegram and connect your agent")
     .configureHelp({ showGlobalOptions: true })
     .addHelpText(

@@ -19,7 +19,7 @@ it("mounts shared migration: previews without writing, applies explicitly, never
   expect(preview.code).toBe(0)
   expect(JSON.parse(preview.stdout[0] ?? "")).toMatchObject({ item: { changed: true, dry_run: true } })
   const previewed = JSON.parse(readFileSync(path, "utf8"))
-  expect(previewed.defaults).toEqual({ read_only: true, limit: 7 })
+  expect(previewed.defaults).toEqual({ readOnly: true, limit: 7 })
   const applied = await tg(["config", "migrate", "--json"], environment)
   expect(applied.code).toBe(0)
   expect(JSON.parse(applied.stdout[0] ?? "")).toMatchObject({ item: { changed: true, dry_run: false } })

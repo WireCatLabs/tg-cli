@@ -1,7 +1,6 @@
 [
   "--by",
   "--check",
-  "--cursor",
   "--due",
   "--file",
   "--from",

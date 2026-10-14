@@ -1448,7 +1448,7 @@ describe("forum setup", () => {
     client.topicAnswer = new MtTimeoutError(1000)
     await expect(adapter.createTopic("-100500", "synthetic", { sendId: "42" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { send_id: "42", retryable: false },
+      details: { operation_id: "42", retryable: false },
     })
     client.topicAnswer = { _: "updates", updates: [], chats: [], users: [] }
     await expect(adapter.createTopic("-100500", "synthetic", { sendId: "43" })).rejects.toMatchObject({
@@ -1608,7 +1608,7 @@ describe("sending", () => {
 
     await expect(adapter.send("-1000000000500", "hola", { sendId: "42", sendAs: "-1002" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      message: expect.stringContaining("--send-id 42 --send-as -1002"),
+      message: expect.stringContaining("--operation-id 42 --send-as -1002"),
     })
   })
 
@@ -1767,7 +1767,7 @@ describe("sending", () => {
 
     await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { send_id: "42", cause: "timeout" },
+      details: { operation_id: "42", cause: "timeout" },
     })
   })
 
@@ -1780,7 +1780,7 @@ describe("sending", () => {
 
   it("refuses a send id that is not a number without sending", async () => {
     const { adapter, client } = await open()
-    expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--send-id/)
+    expect(() => adapter.send("-100500", "hola", { sendId: "abc" })).toThrow(/--operation-id/)
     expect(client.sendText).not.toHaveBeenCalled()
   })
 })
@@ -1865,8 +1865,8 @@ describe("forwarding", () => {
 
     await expect(adapter.forward("-100500", "5", "1", { sendId: "77" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      message: expect.stringContaining("--send-id 77"),
-      details: { send_id: "77" },
+      message: expect.stringContaining("--operation-id 77"),
+      details: { operation_id: "77" },
     })
   })
 })

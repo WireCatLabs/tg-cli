@@ -351,11 +351,11 @@ that line. `watch`, `serve` and `mcp` are meant to run until stopped.
 ### `outcome_unknown` after a send
 
 Exit code `14`. The connection broke after the message left, so it may have gone. It is neither a
-success nor a failure. **Do not send it again as it is.** Repeat with the `--send-id` from the error;
+success nor a failure. **Do not send it again as it is.** Repeat with the `--operation-id` from the error;
 Telegram drops the second copy:
 
 ```sh
-tg personal messages send <chat> "<the same text>" --send-id <id from the error>
+tg personal messages send <chat> "<the same text>" --operation-id <id from the error>
 ```
 
 After `--at-time`, look in `tg personal messages scheduled <chat>` instead: a scheduled send is never repeated.

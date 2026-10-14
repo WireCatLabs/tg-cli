@@ -144,7 +144,7 @@ export interface LoginPrompts {
 
 export interface Sent {
   message: Message
-  /** Telegram's `random_id` for this send, as a string. Repeat it with `--send-id` after an unknown outcome. */
+  /** Telegram's `random_id` for this send, as a string. Repeat it with `--operation-id` after an unknown outcome. */
   sendId: string
 }
 
@@ -1338,14 +1338,14 @@ export class TelegramAdapter {
           throw new CliError(
             "outcome_unknown",
             "Telegram did not return the topic id; check topics list and do not repeat this creation",
-            { send_id: sendId, retryable: false },
+            { operation_id: sendId, retryable: false },
           )
         const [topic] = await this.#client.getForumTopicsById(Number(state.chat.id), topicId)
         if (!topic)
           throw new CliError(
             "outcome_unknown",
             "the topic may exist but could not be read; check topics list and do not repeat this creation",
-            { send_id: sendId, retryable: false },
+            { operation_id: sendId, retryable: false },
           )
         return toTopic(topic)
       } catch (error) {
@@ -1353,12 +1353,12 @@ export class TelegramAdapter {
           throw new CliError(
             "outcome_unknown",
             "topic creation was accepted but its result could not be read; check topics list and do not repeat",
-            { send_id: sendId, retryable: false },
+            { operation_id: sendId, retryable: false },
           )
         throw unknownIfUnanswered(
           error,
           `the topic may have been created; check topics list and do not repeat this creation`,
-          { send_id: sendId, retryable: false },
+          { operation_id: sendId, retryable: false },
         )
       }
     })
@@ -2272,7 +2272,7 @@ const forwardedCopy = (updates: tl.TypeUpdates): TgMessage | undefined => {
 
 const parseSendId = (typed: string): Long => {
   if (!/^-?\d{1,20}$/.test(typed))
-    throw new CliError("validation_error", "--send-id is the number a failed send printed")
+    throw new CliError("validation_error", "--operation-id is the number a failed send printed")
   return Long.fromString(typed)
 }
 
@@ -2286,10 +2286,10 @@ const unknownIfUnanswered = (error: unknown, what: string, details: Record<strin
 }
 
 const repeatWith = (sendId: string, sendAs: string | undefined): string =>
-  sendAs === undefined ? `--send-id ${sendId}` : `--send-id ${sendId} --send-as ${sendAs}`
+  sendAs === undefined ? `--operation-id ${sendId}` : `--operation-id ${sendId} --send-as ${sendAs}`
 
 const retryDetails = (sendId: string, sendAs: string | undefined) => ({
-  send_id: sendId,
+  operation_id: sendId,
   ...(sendAs === undefined ? {} : { sendAs }),
 })
 

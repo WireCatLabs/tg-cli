@@ -128,7 +128,7 @@ describe("shared rankings adoption", () => {
       "--limit",
       "1",
       "--cursor",
-      JSON.parse(first.stdout).page.cursor,
+      JSON.parse(first.stdout).page.next_cursor,
     )
     expect(second.code, second.stderr).toBe(0)
     expect(JSON.parse(second.stdout).items[0].message.ref).toBe("msg:telegram/500/7/2")

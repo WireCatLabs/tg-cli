@@ -33,7 +33,8 @@ describe("the global options", () => {
     const lines = await tg(["inbox", "date>1h", "--jsonl"], { adapter: () => unread })
     const value = await tg(["inbox", "date>1h", "--json"], { adapter: () => unread })
 
-    expect(lines.stdout.map((line) => JSON.parse(line).ref.split("/").at(-1))).toEqual(["1", "2"])
+    expect(lines.stdout.slice(0, -1).map((line) => JSON.parse(line).data.ref.split("/").at(-1))).toEqual(["1", "2"])
+    expect(JSON.parse(lines.stdout.at(-1) ?? "")).toMatchObject({ type: "end", complete: true })
     expect(value.stdout).toHaveLength(1)
   })
 
@@ -445,10 +446,13 @@ describe("messages", () => {
     expect(timeline.items.map(({ locator }: { locator: string }) => locator)).toEqual([
       "msg:telegram/1/-1001234567890/3",
     ])
-    expect(timeline).toMatchObject({ page: { has_more: true }, items: [{ role: "sender", scope: "personal" }] })
+    expect(timeline).toMatchObject({
+      page: { mode: "cursor", has_more: true },
+      items: [{ role: "sender", scope: "personal" }],
+    })
 
     const next = await tg(
-      ["contacts", "timeline", "778", "--scope", "personal", "--cursor", timeline.page.cursor, "--json"],
+      ["contacts", "timeline", "778", "--scope", "personal", "--cursor", timeline.page.next_cursor, "--json"],
       { adapter: () => adapter },
     )
     expect(next.code, next.stderr.join("")).toBe(0)
@@ -597,7 +601,7 @@ describe("messages", () => {
     expect(unknown.stderr.join("")).toContain("whisper")
   })
 
-  it("send --reply-to repeats a send with the --send-id it is given, and answers the message", async () => {
+  it("send --reply-to repeats a send with the --operation-id it is given, and answers the message", async () => {
     let asked: unknown
     const adapter = scripted({
       send: async (chatId, text, options) => {
@@ -606,7 +610,7 @@ describe("messages", () => {
       },
     })
     const { code, stdout } = await tg(
-      ["messages", "send", "Valencia", "hola", "--reply-to", "42", "--send-id", "987654321", "--json"],
+      ["messages", "send", "Valencia", "hola", "--reply-to", "42", "--operation-id", "987654321", "--json"],
       {
         adapter: () => adapter,
       },
@@ -614,7 +618,7 @@ describe("messages", () => {
 
     expect(code).toBe(0)
     expect(asked).toEqual({ chatId: chat.id, text: "hola", sendId: "987654321", replyTo: "42" })
-    expect(json(stdout).item.send_id).toBe("987654321")
+    expect(json(stdout).item.operation_id).toBe("987654321")
   })
 
   it("send carries --silent, --no-preview and --md to the adapter", async () => {

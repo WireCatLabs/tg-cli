@@ -227,7 +227,7 @@ merge the two histories.
 
 In a forum topic, text, photo and file captions and scheduled sends all keep the topic, and an explicit
 reply must belong to that topic. A closed or missing topic is refused before anything is sent. When the
-outcome of a send is unknown, repeat it with the same `--send-id`, chat and topic; for a scheduled send,
+outcome of a send is unknown, repeat it with the same `--operation-id`, chat and topic; for a scheduled send,
 check `tg personal messages scheduled <chat>` instead of repeating it.
 
 An agent connected over the [MCP server](mcp.md) can run the same commands, as far as the

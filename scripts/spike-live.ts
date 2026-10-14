@@ -48,7 +48,7 @@ results.push(summary("chats list", call("chats", "list", "--limit", "5", "--json
 results.push(summary("messages list me", call("messages", "list", "me", "--limit", "5", "--json")))
 
 const sent = call("messages", "send", "me", `tg-cli spike: live check ${new Date().toISOString()}`, "--json")
-const sendId = (sent.value as { item?: { send_id?: unknown } } | undefined)?.item?.send_id
+const sendId = (sent.value as { item?: { operation_id?: unknown } } | undefined)?.item?.operation_id
 results.push({ ...summary("messages send me", sent), sendIdIsString: typeof sendId === "string" })
 
 const session = join(root, ".tg", "state", "sessions", `${process.env.TG_PROFILE ?? "default"}.session`)

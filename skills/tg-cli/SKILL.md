@@ -14,8 +14,8 @@ search --json`** describes one command; **`tg commands messages --json`** descri
 Both include arguments, options, global options and exit codes. Use `tg <command> --help` for a
 shorter explanation. Command words form one path, not a list of groups: inspect different groups
 in separate calls. **`tg commands --json`** returns the entire tree when you need an overview;
-do not read it in full before every task. `mutates: true` identifies writes; `local: true` limits
-those writes to this machine. `commands --json` connects to no account. Its `contract` field is the shared JSON contract
+do not read it in full before every task. `effects.remote: "write"` identifies a write to Telegram;
+`effects.local: "write"` alone, a write to this machine. `commands --json` connects to no account. Its `contract` field is the shared JSON contract
 version; it changes only when response fields change incompatibly, not with a package upgrade, so
 check that field rather than comparing whole outputs. This file holds the traps and boundaries.
 
@@ -137,7 +137,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 4. **Exit `14` means an unknown write outcome, not permission to replay it.** Inspect
    `tg personal sends list --json` by `operationId` and the target chat's history. `operationId` correlates
    the journal; it is not an idempotency key. Retry a message only when the provider's confirmed
-   deduplication contract applies to the same chat, topic, content and `--send-id`.
+   deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
 
 5. **Start a search with `tg personal search all`**: messages, mail and notes on this machine in one answer, each hit
@@ -184,15 +184,15 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     Styles nest; code/pre cannot overlap other formatting, and quotes cannot nest. MAX has different rules.
     Without the flag text is literal. Use http/https/mailto links; no unsafe URL schemes.
 14. **`--at-time 2h` or `--at-time 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
-    It is never repeated: `--send-id` is refused with it, and after exit `14` look in
+    It is never repeated: `--operation-id` is refused with it, and after exit `14` look in
     `tg personal messages scheduled <chat>` — a second send would be a second message. Cancel one in the app.
 15. **`--photo <path>` or `--file <path>` attaches one file, the text as its caption.** A photo is
     recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
     folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
-    the same `--send-id` is safe here too (measured 2026-09-29).
+    the same `--operation-id` is safe here too (measured 2026-09-29).
 **Forum sends:** `messages send --topic`, `messages forward --topic` and `polls create --topic` use a topic id
     from `topics list` (for a forward, a topic of the `--to` chat); `topics show <chat> <id>` reads one topic.
-    Reply targets must belong to that topic. Keep the same chat, topic and `--send-id` on a retry;
+    Reply targets must belong to that topic. Keep the same chat, topic and `--operation-id` on a retry;
     never retry a scheduled send. Missing or closed topics are refused; nothing marks them read.
 **Posting as a channel:** `messages send --send-as <id>` only with an id from `chats send-as <chat>`,
     and only when the owner named that identity; `messages forward` and `polls create` take it too. A retry
