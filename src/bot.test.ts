@@ -170,7 +170,7 @@ describe("tg bot mcp", () => {
       commandAt: commandLookup(group),
       settings: { profile: "sales", permissions, readOtherBots: false },
       env: {},
-      run: await botMcpRun({ keyring }),
+      run: botMcpRun(run, { keyring }),
     })
     return names
   }
