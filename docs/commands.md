@@ -2861,6 +2861,23 @@ find the mentions of every stored message again; decisions are kept
 tg mentions rebuild
 ```
 
+## `tg images`
+
+search pictures by what they show, with a model on this machine
+
+### `tg images embed`
+
+compute a vector for each picture the store knows and has none for — downloading it through the messenger, keeping only the vector; needs `picture_search` on in the profile and `models image download clip-b32`; resumes where it stopped
+
+```sh
+tg images embed [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--limit <n>` | at most this many pictures in one run; 100 if not given. |
+
 ## `tg metadata`
 
 cached group/channel descriptions for local automatic tags

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2355 ✅ · 87 ⛔ · 0 ❌** — 481 commands, 1961 options.
+**2356 ✅ · 89 ⛔ · 0 ❌** — 482 commands, 1963 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -493,6 +493,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mentions list` | `--page` | ✅ |  |
 | `mentions show` |  | ✅ |  |
 | `mentions rebuild` |  | ✅ |  |
+| `images embed` |  | ✅ |  |
+| `images embed` | `--chat` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
+| `images embed` | `--limit` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
 | `metadata get` |  | ✅ |  |
 | `metadata get` | `--chat` | ✅ |  |
 | `metadata refresh` |  | ✅ |  |
