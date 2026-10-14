@@ -1727,7 +1727,7 @@ export class TelegramAdapter {
           throw new CliError(
             "provider_error",
             "Telegram's statistics server did not accept this login (AUTH_KEY_UNREGISTERED); the login itself works — try again later",
-            { providerError: error.text, status: error.code },
+            { provider_error: error.text, status: error.code },
           )
         throw error
       }

@@ -37,7 +37,7 @@ describe("Telegram's refusals", () => {
     expect(toCliError(rpc(406, "AUTH_KEY_DUPLICATED"))).toMatchObject({
       code: "authentication_error",
       message: expect.stringContaining("two connections used it at once"),
-      details: { providerError: "AUTH_KEY_DUPLICATED" },
+      details: { provider_error: "AUTH_KEY_DUPLICATED" },
     })
   })
 
@@ -45,7 +45,7 @@ describe("Telegram's refusals", () => {
     for (const text of ["FROZEN_METHOD_INVALID", "FROZEN_PARTICIPANT_MISSING"]) {
       expect(toCliError(rpc(text === "FROZEN_METHOD_INVALID" ? 420 : 400, text))).toMatchObject({
         code: "permission_error",
-        details: { providerError: text, standing: { state: "frozen" } },
+        details: { provider_error: text, standing: { state: "frozen" } },
         message: expect.stringContaining("doctor --online"),
       })
     }
@@ -55,7 +55,7 @@ describe("Telegram's refusals", () => {
     expect(toCliError(rpc(400, "PEER_FLOOD"))).toMatchObject({
       code: "permission_error",
       details: {
-        providerError: "PEER_FLOOD",
+        provider_error: "PEER_FLOOD",
         standing: { state: "limited", hint: expect.stringContaining("@SpamBot") },
       },
     })
@@ -109,7 +109,7 @@ describe("refusals a person has to act on", () => {
     [400, "POLL_OPTION_DUPLICATE", "validation_error", "same"],
   ])("explains the poll refusal %i %s", (status, text, code, said) => {
     const known = toCliError(new tl.RpcError(status, text))
-    expect(known).toMatchObject({ code, details: { providerError: text } })
+    expect(known).toMatchObject({ code, details: { provider_error: text } })
     expect((known as Error).message).toContain(said)
   })
 })

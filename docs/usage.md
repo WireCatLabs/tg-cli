@@ -198,11 +198,11 @@ tg personal chats list                     # newest first, archived chats includ
 ```
 
 ```sh
-tg personal chats list --unread --kind group  # only groups with unread messages
+tg personal chats list 'unread_count>0 kind:group'  # only groups with unread messages
 ```
 
 ```sh
-tg personal chats list --search book       # titles containing "book"; at least 3 characters
+tg personal chats list 'title:*book*'   # titles containing "book"; at least 3 characters
 ```
 
 ```sh
@@ -223,7 +223,7 @@ tg personal messages list "Book club" --limit 50
 ```
 
 ```sh
-tg personal messages list "Hiking" --topic 12   # one forum topic; topics list shows the ids
+tg personal messages list "Hiking" topic:12   # one forum topic; topics list shows the ids
 ```
 
 ```sh
@@ -247,7 +247,7 @@ refused: Telegram gives its messages no topic id, so read the whole chat instead
 ### Message links
 
 `tg personal messages link <chat> <message>` or `tg personal messages link <msg:locator>` returns
-`{ locator, url, access, reason }`. Channel and supergroup permalinks can be public or restricted;
+`{ item: { ref, url, access, reason } }`. Channel and supergroup permalinks can be public or restricted;
 a link grants no membership. Dialogs, basic groups and Saved Messages return a locator. Offline
 validates the stored target and returns no permalink. A locator for another account is refused.
 This singular command differs from `messages links`, which explains conversation relationships
@@ -404,7 +404,7 @@ tg personal contacts list              # people you have a one-to-one chat with,
 ```
 
 ```sh
-tg personal contacts list --order name --search ann
+tg personal contacts list 'name:*ann*' --order name
 ```
 
 ```sh
@@ -493,27 +493,27 @@ tg personal contacts list --all        # every row, no paging
 ⚠ **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
 that arrives between page one and page two moves someone across the border.
 
-**A chat's messages have no pages: they have `--before-id`, `--after-id` and `--after-time`**, which
-page exactly:
+**A chat's messages have no pages: they take a query on `id` and `date`, and `--cursor` for the next page**, which
+pages exactly:
 
 ```sh
-tg personal messages list "Book club" --before-id 4242  # older than message 4242
+tg personal messages list "Book club" "id<4242"  # older than message 4242
 ```
 
 ```sh
-tg personal messages list "Book club" --after-id 4242  # newer than 4242, oldest first
+tg personal messages list "Book club" "id>4242"  # newer than 4242, oldest first
 ```
 
 ```sh
-tg personal messages list "Book club" --after-time 2h  # what came in during the last two hours
+tg personal messages list "Book club" "date>2h"  # what came in during the last two hours
 ```
 
 ```sh
-tg personal messages list "Book club" --after-time 2026-09-20T09:00
+tg personal messages list "Book club" "date>2026-09-20T09:00"
 ```
 
 ```sh
-tg personal messages list "Book club" --before-time 1d  # what came before this time yesterday
+tg personal messages list "Book club" "date<1d"  # what came before this time yesterday
 ```
 
 In the terminal, the line that names the next page goes to stderr. `--before-id` and `--after-id` take
@@ -524,11 +524,11 @@ the message.
 ### Find a chat, then write to it
 
 ```sh
-tg personal chats list --search book --kind group  # groups with "book" in the title
+tg personal chats list 'title:*book* kind:group'  # groups with "book" in the title
 ```
 
 ```sh
-tg personal contacts list --search ann       # people by name or @username
+tg personal contacts list 'name:*ann*'  # people by name or @username
 ```
 
 ```sh
@@ -685,7 +685,7 @@ tg personal polls show "Book club" 4250    # the poll and its answer ids
 ```
 
 ```sh
-tg personal polls voters "Book club" 4250 --answer <answer id>  # who chose it; not in an anonymous poll
+tg personal polls voters "Book club" 4250 'answers:<answer id>'  # who chose it; not in an anonymous poll
 ```
 
 ```sh
@@ -860,7 +860,7 @@ tg personal messages comments "Rozetked" 27644     # the comments under post 276
 ```
 
 ```sh
-tg personal messages comments "Rozetked" 27644 --before-id 3732413
+tg personal messages comments "Rozetked" 27644 "id<3732413"
 ```
 
 ```sh
@@ -915,7 +915,7 @@ tg personal chats events "Hiking"                  # who joined, left, was added
 ```
 
 ```sh
-tg personal chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
+tg personal chats events "Hiking" 'type:(join OR leave) time>=2026-09-01T00:00'
 ```
 
 ```sh
@@ -1001,7 +1001,7 @@ tg personal chats requests list "Hiking 2027"      # who asked to join, newest f
 ```
 
 ```sh
-tg personal chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
+tg personal chats requests list "Hiking 2027" 'name:*Ana*'  # by name; or link:<link>
 ```
 
 ```sh
@@ -1086,9 +1086,10 @@ tg personal messages list me --jsonl | jq -r .text  # one message per line
 ```
 
 - `--json`: one JSON value. **Every list is one object**, always the same shape:
-  `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`. `--all` and `--offline` answer with
-  the same object.
-- A chat's messages have no page number: `{ "items": [...], "limit": 20, "hasMore": true }`.
+  `{ "items": [...], "page": { "limit": 20, "has_more": true }, "meta": { ... } }`; a list with more rows names
+  the next step in `page.next`. `--all` and `--offline` answer with the same object. One thing, not a list, is
+  `{ "item": {...}, "meta": {...} }`.
+- A chat's messages page with `--cursor`, not a page number; `page.next` carries it.
 - `--jsonl`: one object per line, no wrapper; whether there is more is said on stderr only.
 - An error that ends the command is `{ "error": { "code": "...", "message": "..." } }` on stderr, and stdout is empty, so a
   refusal can never be taken for an empty result.

@@ -33,8 +33,8 @@ describe("the shared release through the Telegram program", () => {
       { env, adapter: connect },
     )
     expect(found.code).toBe(0)
-    expect(decoded(found.stdout)).toMatchObject({ chatId: chat.id, messages: 1, complete: false })
-    expect(decoded(found.stdout)).not.toHaveProperty("members")
+    expect(decoded(found.stdout).item).toMatchObject({ chat_id: chat.id, messages: 1, complete: false })
+    expect(decoded(found.stdout).item).not.toHaveProperty("members")
     expect(connect).not.toHaveBeenCalled()
   })
 

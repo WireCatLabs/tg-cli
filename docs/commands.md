@@ -26,8 +26,7 @@ without one.
 |---|---|
 | `-V, --version` | output the version number. |
 | `-v, --verbose` | more detail in what is shown: -v ids, -vv everything we know. Default: `0`. |
-| `--json` | machine-readable output: one JSON value on stdout, nothing else. |
-| `--agent-json` | JSON for AI agents: invisible controls are visible; ordinary --json preserves text. |
+| `--json` | machine-readable output: one JSON value on stdout; --json=id,text keeps only those fields. |
 | `--jsonl` | machine-readable output: one JSON object per line, for streaming and jq. |
 | `--quiet` | diagnostics off; a failure is still said. |
 | `--trace` | the connection's own log lines on stderr — never message content. |
@@ -37,7 +36,6 @@ without one.
 | `--no-input` | never prompt or open interactive login; piped input remains available. |
 | `--max-input-bytes <bytes>` | maximum buffered input bytes (default: 16777216). |
 | `--max-output-bytes <bytes>` | maximum machine output bytes (default: 4194304; 0 disables). |
-| `--fields <paths>` | comma-separated item or object fields: id,text; preserve pagination and operation ids. |
 | `--brief` | found messages and mail as reference, title, time, sender and excerpt only. |
 | `--full` | found messages and mail with their whole text and every provider field. |
 | `--dry-run` | preview parsed arguments and permissions before running the action. |
@@ -170,34 +168,31 @@ the account's chats
 chats, newest first, archived ones included
 
 ```sh
-tg chats list [options]
+tg chats list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
-| `--search <text>` | only chats whose name contains this; at least 3 characters. |
-| `--kind <kind>` | only chats of this kind: dialog, group, channel, saved. |
-| `--unread` | only chats with unread messages. |
 
 ### `tg chats events`
 
-who joined, left, was added or removed, and by whom — from the chat's service messages
+who joined, left, was added or removed, and by whom — from the chat's service messages; the last 7 days unless the query names time
 
 ```sh
-tg chats events <chat> [options]
+tg chats events <chat> [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--type <names>` | only these, comma-separated: join, leave, add, remove, create, title, pin. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 ### `tg chats inspect`
 
@@ -283,17 +278,17 @@ tg chats members list <chat> [options]
 members that look like bots, each with its reasons, from the member list and local store; --deep checks selected people individually; removes nobody
 
 ```sh
-tg chats members audit <chat> [options]
+tg chats members audit <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
 | `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
-| `--min-score <n>` | only members scoring at least this; 1 lists everyone with a reason (default: 2). |
 | `--deep <n>` | also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second. |
 
 #### `tg chats members history`
@@ -301,16 +296,13 @@ tg chats members audit <chat> [options]
 who joined, who left and whose profile changed, oldest first — what chats members fetch recorded in the local store; never asks the messenger
 
 ```sh
-tg chats members history <chat> [options]
+tg chats members history <chat> [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; everything recorded if not given. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 #### `tg chats members fetch`
 
@@ -536,17 +528,18 @@ tg chats link create <chat> [options]
 your invite links, newest first, with how many joined and how many wait
 
 ```sh
-tg chats link list <chat> [options]
+tg chats link list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--revoked` | the links you stopped, instead. |
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 #### `tg chats link revoke`
 
@@ -608,18 +601,18 @@ requests to join a group that needs an admin's approval
 who asked to join, newest first; only admins see them, and reading tells nobody
 
 ```sh
-tg chats requests list <chat> [options]
+tg chats requests list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | how many. |
-| `--search <text>` | only people whose name or @username has this. |
-| `--link <link>` | only people who asked through this invite link; not with --search. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 #### `tg chats requests accept`
 
@@ -887,11 +880,15 @@ people this account has a one-to-one chat with
 
 ### `tg contacts list`
 
-people you have a one-to-one chat with
+people you have a one-to-one chat with; name: matches the name, your local alias or the @username
 
 ```sh
-tg contacts list [options]
+tg contacts list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
@@ -899,8 +896,6 @@ tg contacts list [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 | `--order <recent\|name>` | newest conversation first, or alphabetical. Default: `recent`. |
-| `--search <text>` | only people whose name, local alias or @username contains this. |
-| `--search-notes <text>` | only people whose private notes contain this text. |
 
 ### `tg contacts show`
 
@@ -1256,21 +1251,18 @@ tg messages evidence <chat> [options]
 a chat's messages, oldest to newest
 
 ```sh
-tg messages list <chat> [options]
+tg messages list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | where to start and which topic: id<42, date>2026-10-01, topic:12. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--before-id <id>` | only messages older than this message id. |
-| `--before-time <time>` | only messages older than this ISO 8601 time, or 2h / 1d ago. |
-| `--after-id <id>` | only messages newer than this message id. |
-| `--after-time <time>` | only messages newer than this ISO 8601 time, or 2h / 1d ago. |
-| `--topic <id>` | only this forum topic; read back from its newest message or --before-id. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
@@ -1513,18 +1505,19 @@ tg messages link <chat> [message]
 the comments under a channel post, oldest to newest; they live in its discussion group
 
 ```sh
-tg messages comments <chat> <post> [options]
+tg messages comments <chat> <post> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | the channel: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `post` | required | the post's message id in the channel. |
+| `query` | optional | where to start: id<42. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--before-id <id>` | only comments older than this comment id. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 
 ### `tg messages links`
 
@@ -1624,18 +1617,19 @@ tg polls show <chat> <message>
 who voted for what, newest first; not in an anonymous poll
 
 ```sh
-tg polls voters <chat> <message> [options]
+tg polls voters <chat> <message> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the id of the message that carries the poll. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--answer <id>` | only those who chose this answer, as `polls show` prints it. |
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 ### `tg polls vote`
 
@@ -1785,6 +1779,30 @@ tg models text key remove <provider>
 | Argument | | What it is |
 |---|---|---|
 | `provider` | required | openai, anthropic, or a server's host. |
+
+### `tg models image`
+
+models that read pictures, for `images embed` and search by what a picture shows
+
+#### `tg models image list`
+
+the picture models, which are downloaded, and which one is the default
+
+```sh
+tg models image list
+```
+
+#### `tg models image download`
+
+download a picture model once, checked against the sha256 this version expects
+
+```sh
+tg models image download <model>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `model` | required | a model id from `models image list`. |
 
 ## `tg inbox`
 
@@ -2431,13 +2449,16 @@ tg conversations build [options]
 a chat's conversations, the newest first: when, how many messages, how many people
 
 ```sh
-tg conversations list [options]
+tg conversations list <chat> [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--since-time <time>` | only those that started at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
 | `--limit <n>` | how many. |
 
 ### `tg conversations show`
@@ -2628,6 +2649,23 @@ tg conversations embed clear [options]
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
+## `tg images`
+
+search pictures by what they show, with a model on this machine
+
+### `tg images embed`
+
+compute a vector for each picture the store knows and has none for — downloading it through the messenger, keeping only the vector; needs `pictureSearch` on in the profile and `models image download clip-b32`; resumes where it stopped
+
+```sh
+tg images embed [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--limit <n>` | at most this many pictures in one run; 100 if not given. |
+
 ## `tg attachments`
 
 the files of stored messages: their text in the local store, where search finds it
@@ -2777,14 +2815,12 @@ tg tags remove <tag> [options]
 what is tagged: this account's chats and messages, and the people of its messenger
 
 ```sh
-tg tags list [options]
+tg tags list [query]
 ```
 
-| Option | What it does |
-|---|---|
-| `--tag <tag>` | only this tag. |
-| `--source <manual\|auto>` | only labels with this ownership claim. |
-| `--type <names>` | only what is tagged of this type: chat, contact or message. |
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 ## `tg metadata`
 
@@ -3199,15 +3235,15 @@ what waits on you — unanswered questions, mentions, requests, promises — kep
 tasks, oldest first, with their message or note source
 
 ```sh
-tg tasks list [options]
+tg tasks list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--state <state>` | only tasks in this state: open, done or dismissed. |
-| `--chat <chat>` | only this chat's tasks; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <names>` | only these types, comma-separated: question, request, mention, promise. |
-| `--before-time <time>` | only tasks opened before this ISO 8601 time, or 2h / 1d ago. |
 | `--limit <n>` | how many. |
 
 ### `tg tasks add`
@@ -3946,7 +3982,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -3967,7 +4003,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 
 | Option | What it does |
 |---|---|

@@ -172,7 +172,7 @@ channel --json` and a request to pick what matters. Without `--kind`, everything
 
 Writes to Telegram: **no**. Allow: `Bash(tg personal messages list:*)`.
 
-> Read the last 7 days of the chat "Book club": `tg personal messages list "Book club" --after-time 7d --limit 200
+> Read the last 7 days of the chat "Book club": `tg personal messages list "Book club" "date>7d" --limit 200
 > --json`. If the answer says `"hasMore": true`, read on. Write a report: what was decided, who took
 > on what and by when, which questions are still open. Give each point its date and author.
 
@@ -200,7 +200,7 @@ requests without a question mark.
 
 Writes to Telegram: **no**. Allow: `Bash(tg personal chats list:*)`, `Bash(tg personal messages list:*)`.
 
-> Run `tg personal chats list --kind dialog --limit 30 --json`. For every chat whose last message is from the
+> Run `tg personal chats list kind:dialog --limit 30 --json`. For every chat whose last message is from the
 > last 7 days, read `tg personal messages list <chat id> --limit 5 --json`. Show the chats where the last
 > message is not mine and asks a question or makes a request: who, about what, and how many days ago.
 
@@ -233,7 +233,7 @@ permissions still limit what it may write. See [the MCP server](mcp.md).
 Writes to Telegram: **only if the group's rules allow it**. Allow: `Bash(tg personal review:*)`,
 `Bash(tg personal chats events:*)`, `Bash(tg personal chats members list:*)`, `Bash(tg personal chats moderate:*)`.
 
-> Run `tg personal review --chat "Hiking" --unanswered 4h --json`, `tg personal chats events "Hiking" --since-time 7d
+> Run `tg personal review --chat "Hiking" --unanswered 4h --json`, `tg personal chats events "Hiking" "time>=7d"
 > --json` and `tg personal chats moderate "Hiking" --dry-run --json`. Briefly: which questions wait for an
 > answer, from whom and since when; who joined or was added this week, and by whom; what the check
 > found against the group's rules and what it suggests. Do not answer or remove anyone — list the

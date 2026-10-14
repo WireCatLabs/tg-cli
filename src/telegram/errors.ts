@@ -143,11 +143,11 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
   if (RpcError.is(error, "FLOOD_WAIT_%d")) {
     return new CliError("rate_limited", `Telegram asks to wait ${error.seconds} s before the next request`, {
       retry_after_ms: error.seconds * 1000,
-      providerError: "FLOOD_WAIT",
+      provider_error: "FLOOD_WAIT",
     })
   }
   if (RpcError.is(error)) {
-    const details = { providerError: error.text, status: error.code }
+    const details = { provider_error: error.text, status: error.code }
     // The signal that reopens owner-process routing (docs/plans/2026-10-04-session-sharing.md, §6).
     if (error.text === "AUTH_KEY_DUPLICATED") {
       return new CliError(

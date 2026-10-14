@@ -85,7 +85,7 @@ Review joining events. A new account is a reason to check, not proof of spam.
 **Command:**
 
 ```sh
-tg personal chats events "Hiking" --type join,add --since-time 7d --json
+tg personal chats events "Hiking" 'type:(join OR add) time>=7d' --json
 ```
 
 **Example agent answer:**
@@ -247,11 +247,11 @@ copies it.
 See what waits on you, oldest first, then only questions and mentions in one group:
 
 ```sh
-tg personal tasks list --state open
+tg personal tasks list state:open
 ```
 
 ```sh
-tg personal tasks list --chat "Hiking" --type question,mention
+tg personal tasks list 'chat:12345 kind:(question OR mention)'
 ```
 
 Add what the rules cannot see, such as a promise you made, or close a task that needs no answer:
@@ -486,7 +486,7 @@ tg personal stats chats show "Hiking Club" --since-time 7d --by day --timezone E
 ```
 
 ```sh
-tg personal chats members history "Hiking Club" --since-time 7d --offline --json
+tg personal chats members history "Hiking Club" "time>=7d" --offline --json
 ```
 
 ```sh

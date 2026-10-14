@@ -43,7 +43,7 @@ describe("contacts check through tg", () => {
     const quiet = await tg(["contacts", "check", "40", "--no-registries", "--json"], { adapter: person })
 
     expect(checked.code).toBe(0)
-    const answer = JSON.parse(checked.stdout[0] ?? "null")
+    const answer = JSON.parse(checked.stdout[0] ?? "null").item
     expect(answer.person.provider).toBe("telegram")
     expect(answer.registries.map(({ name, answer }: { name: string; answer: string }) => [name, answer])).toEqual([
       ["cas", "clean"],
@@ -53,7 +53,7 @@ describe("contacts check through tg", () => {
       expect.arrayContaining(["lols_banned", "photo_recent", "no_bio"]),
     )
     expect(quiet.code).toBe(0)
-    expect(JSON.parse(quiet.stdout[0] ?? "null").registries).toEqual([])
+    expect(JSON.parse(quiet.stdout[0] ?? "null").item.registries).toEqual([])
     expect(asked.sort()).toEqual(["api.cas.chat", "api.lols.bot"])
   })
 

@@ -85,11 +85,11 @@ describe("the archive, from the store", () => {
     const built = await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
     expect(built.answer).toMatchObject({ chat: CHAT, messages: 3, conversations: 1 })
     const listed = await tg(
-      ["archive", "conversations", "list", "--chat", CHAT, "--since-time", "2026-09-01", "--limit", "5", "--json"],
+      ["archive", "conversations", "list", CHAT, "started_at>=2026-09-01", "--limit", "5", "--json"],
       store,
     )
-    const [first] = (listed.answer as { items: { id: string; messageCount: number }[] }).items
-    expect(first).toMatchObject({ messageCount: 3 })
+    const [first] = (listed.answer as { items: { id: string; messages_count: number }[] }).items
+    expect(first).toMatchObject({ messages_count: 3 })
     const shown = await tg(["archive", "conversations", "show", String(first?.id), "--json"], store)
     expect((shown.answer as { messages: { id: string }[] }).messages.map(({ id }) => id)).toEqual(["101", "102", "103"])
     const links = await tg(["archive", "messages", "links", CHAT, "103", "--json"], store)

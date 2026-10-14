@@ -214,7 +214,7 @@ the wrong chat cannot be taken back.
 
 ### "no chat matches …"
 
-Exit code `6`. No chat title contains what you typed. Try `tg personal chats list --search <part of it>`, the
+Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:*<part of it>*'`, the
 chat's id, its `@username`, or `me` for Saved Messages. A one-to-one chat is titled with the other
 person's name as Telegram shows it to you.
 
@@ -293,7 +293,7 @@ without it does not prove that the login works.
 
 Telegram turned the request down and named why. Exit code `5` when Telegram answers that this account
 is not allowed to do it, `11` for the rest. The name after "refused" is Telegram's own, and the JSON
-carries it as `providerError`; the message never repeats what you typed. Some have their own
+carries it as `provider_error`; the message never repeats what you typed. Some have their own
 sentence:
 
 - **"Telegram transcribes only for Premium accounts…"** — exit code `5`. Use a model on this machine:

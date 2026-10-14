@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2375 ✅ · 87 ⛔ · 0 ❌** — 476 commands, 1986 options.
+**2351 ✅ · 91 ⛔ · 0 ❌** — 479 commands, 1963 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -36,12 +36,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats list` | `--limit` | ✅ |  |
 | `chats list` | `--page` | ✅ |  |
 | `chats list` | `--all` | ✅ |  |
-| `chats list` | `--search` | ✅ |  |
-| `chats list` | `--kind` | ✅ |  |
-| `chats list` | `--unread` | ✅ |  |
 | `chats events` |  | ✅ |  |
-| `chats events` | `--since-time` | ✅ |  |
-| `chats events` | `--type` | ✅ |  |
 | `chats inspect` |  | ✅ |  |
 | `chats show` |  | ✅ |  |
 | `chats send-as` |  | ✅ |  |
@@ -54,10 +49,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members list` | `--all` | ✅ |  |
 | `chats members audit` |  | ✅ |  |
 | `chats members audit` | `--budget` | ⛔ | shared member audit; cli-core src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
-| `chats members audit` | `--min-score` | ⛔ | shared member audit; cli-core src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
 | `chats members audit` | `--deep` | ✅ |  |
 | `chats members history` |  | ✅ |  |
-| `chats members history` | `--since-time` | ⛔ | cli-core src/services/members-fetch.test.ts ("chats members history") covers the recorded joins, leaves and changes since a time; shared option parsing |
 | `chats members fetch` |  | ✅ |  |
 | `chats members fetch` | `--track` | ⛔ | cli-core src/cli/messenger/messenger.test.ts ("chats members fetch 7 --track") covers adding a chat to the daily member fetch; this consumer mounts the shared command |
 | `chats members fetch` | `--budget` | ⛔ | cli-core src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing |
@@ -86,8 +79,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats link create` | `--expire-time` | ✅ |  |
 | `chats link create` | `--max-uses` | ✅ |  |
 | `chats link list` |  | ✅ |  |
-| `chats link list` | `--revoked` | ✅ |  |
 | `chats link list` | `--limit` | ✅ |  |
+| `chats link list` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `chats link revoke` |  | ✅ |  |
 | `chats link update` |  | ✅ |  |
 | `chats link update` | `--approval` | ✅ |  |
@@ -97,8 +90,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats link reset` |  | ✅ |  |
 | `chats requests list` |  | ✅ |  |
 | `chats requests list` | `--limit` | ✅ |  |
-| `chats requests list` | `--search` | ✅ |  |
-| `chats requests list` | `--link` | ✅ |  |
+| `chats requests list` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `chats requests accept` |  | ✅ |  |
 | `chats requests accept` | `--all` | ✅ |  |
 | `chats requests accept` | `--link` | ✅ |  |
@@ -142,8 +134,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts list` | `--page` | ✅ |  |
 | `contacts list` | `--all` | ✅ |  |
 | `contacts list` | `--order` | ✅ |  |
-| `contacts list` | `--search` | ✅ |  |
-| `contacts list` | `--search-notes` | ⛔ | cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers |
 | `contacts show` |  | ✅ |  |
 | `contacts show` | `--with-notes` | ✅ |  |
 | `contacts profile` |  | ✅ |  |
@@ -185,11 +175,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages evidence` | `--before-id` | ✅ |  |
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
-| `messages list` | `--before-id` | ✅ |  |
-| `messages list` | `--before-time` | ✅ |  |
-| `messages list` | `--after-id` | ✅ |  |
-| `messages list` | `--after-time` | ✅ |  |
-| `messages list` | `--topic` | ✅ |  |
+| `messages list` | `--cursor` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `messages list` | `--transcribe` | ✅ |  |
 | `messages list` | `--model` | ✅ |  |
 | `messages list` | `--mark-read` | ✅ |  |
@@ -248,7 +234,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages link` |  | ✅ |  |
 | `messages comments` |  | ✅ |  |
 | `messages comments` | `--limit` | ✅ |  |
-| `messages comments` | `--before-id` | ✅ |  |
+| `messages comments` | `--cursor` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `messages links` |  | ✅ |  |
 | `messages sync` |  | ✅ |  |
 | `messages sync` | `--all` | ⛔ | cli-core src/services/archive.test.ts («walks the chats most recently active first…») and src/cli/messenger/backfill.test.ts («--all fetches every chat in a job…») cover the shared command (cli-core 0.174.0) |
@@ -268,8 +254,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |
 | `polls voters` |  | ✅ |  |
-| `polls voters` | `--answer` | ✅ |  |
 | `polls voters` | `--limit` | ✅ |  |
+| `polls voters` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `polls vote` |  | ✅ |  |
 | `polls vote` | `--retract` | ✅ |  |
 | `polls close` |  | ✅ |  |
@@ -292,6 +278,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models text download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline |
 | `models text key set` |  | ✅ |  |
 | `models text key remove` |  | ✅ |  |
+| `models image list` |  | ✅ |  |
+| `models image download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--since-time` | ✅ |  |
@@ -411,8 +399,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations build` | `--max-tokens` | ✅ |  |
 | `conversations build` | `--max-chats` | ✅ |  |
 | `conversations list` |  | ✅ |  |
-| `conversations list` | `--chat` | ✅ |  |
-| `conversations list` | `--since-time` | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
 | `conversations related` |  | ✅ |  |
@@ -466,6 +452,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed clear` | `--provider` | ✅ |  |
 | `conversations embed clear` | `--base-url` | ✅ |  |
 | `conversations embed clear` | `--dims` | ✅ |  |
+| `images embed` |  | ✅ |  |
+| `images embed` | `--chat` | ⛔ | cli-core's picture search tests cover embedding scoped to a chat; embedding downloads images through the messenger, which tg tests never do, and this consumer mounts the shared handler |
+| `images embed` | `--limit` | ⛔ | cli-core's picture search tests cover the per-run limit; embedding downloads images through the messenger, which tg tests never do, and this consumer mounts the shared handler |
 | `attachments extract` |  | ✅ |  |
 | `attachments extract` | `--chat` | ✅ |  |
 | `attachments extract` | `--from-dir` | ✅ |  |
@@ -505,9 +494,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags remove` | `--message` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags remove` | `--source` | ✅ |  |
 | `tags list` |  | ✅ |  |
-| `tags list` | `--tag` | ✅ |  |
-| `tags list` | `--source` | ✅ |  |
-| `tags list` | `--type` | ✅ |  |
 | `metadata get` |  | ✅ |  |
 | `metadata get` | `--chat` | ✅ |  |
 | `metadata refresh` |  | ✅ |  |
@@ -644,10 +630,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats charts` | `--timezone` | ✅ |  |
 | `stats charts` | `--output` | ✅ |  |
 | `tasks list` |  | ✅ |  |
-| `tasks list` | `--state` | ✅ |  |
-| `tasks list` | `--chat` | ✅ |  |
-| `tasks list` | `--type` | ✅ |  |
-| `tasks list` | `--before-time` | ✅ |  |
 | `tasks list` | `--limit` | ✅ |  |
 | `tasks add` |  | ✅ |  |
 | `tasks add` | `--type` | ✅ |  |
@@ -2456,7 +2438,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |
 | *global* | `--json` | ✅ |  |
-| *global* | `--agent-json` | ✅ |  |
 | *global* | `--jsonl` | ✅ |  |
 | *global* | `--quiet` | ✅ |  |
 | *global* | `--trace` | ✅ |  |
@@ -2466,7 +2447,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--no-input` | ✅ |  |
 | *global* | `--max-input-bytes` | ✅ |  |
 | *global* | `--max-output-bytes` | ✅ |  |
-| *global* | `--fields` | ✅ |  |
 | *global* | `--brief` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--full` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--dry-run` | ✅ |  |

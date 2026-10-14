@@ -72,20 +72,13 @@ describe("tasks through tg", () => {
     const listed = await cli([
       "tasks",
       "list",
-      "--state",
-      "open",
-      "--chat",
-      "7",
-      "--type",
-      "promise",
-      "--before-time",
-      "2099-01-01T00:00:00Z",
+      "state:open chat:7 kind:promise created_at<2099-01-01",
       "--limit",
       "5",
       "--json",
     ])
     expect(listed.code, listed.err).toBe(0)
-    expect(JSON.parse(listed.out).items).toMatchObject([{ id, message: { text: "I'll send the invoice tomorrow" } }])
+    expect(JSON.parse(listed.out).items).toMatchObject([{ id, state: "open", kind: "promise" }])
 
     const counted = await cli(["stats", "tasks", "show", "--chat", "7", "--type", "promise", "--json"])
     expect(JSON.parse(counted.out).items).toMatchObject([{ group: "7", open: 1 }])

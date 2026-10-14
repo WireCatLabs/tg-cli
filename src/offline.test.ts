@@ -72,8 +72,14 @@ describe("--offline", () => {
       online: false,
     })
 
-    expect(chatsOffline).toEqual({ ...chats, stderr: [] })
-    expect(messagesOffline).toEqual({ ...messages, stderr: [] })
+    const answer = (run: { stdout: string[] }) => {
+      const { meta: _meta, ...rest } = JSON.parse(run.stdout[0] ?? "")
+      return rest
+    }
+    expect(chatsOffline.stderr).toEqual([])
+    expect(messagesOffline.stderr).toEqual([])
+    expect(answer(chatsOffline)).toEqual(answer(chats))
+    expect(answer(messagesOffline)).toEqual(answer(messages))
     expect(messagesOffline.code).toBe(0)
   })
 
@@ -101,8 +107,8 @@ describe("--offline", () => {
     )
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({
-      chatId: message.chatId,
+    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({
+      chat_id: message.chatId,
       since: "2000-01-01T00:00:00.000Z",
       messages: 1,
       senders: 1,
@@ -122,7 +128,9 @@ describe("--offline", () => {
         online: false,
       })
       expect(code).toBe(0)
-      expect(JSON.parse(stdout[0] ?? "").items).toEqual([saved])
+      expect(JSON.parse(stdout[0] ?? "").items).toMatchObject([
+        { id: saved.id, chat_id: "1", sender_id: saved.senderId, sender_name: saved.senderName, text: saved.text },
+      ])
     } finally {
       telegram.history = async () => ({ items: [message], hasMore: false })
     }
@@ -155,7 +163,15 @@ describe("saving to the store", () => {
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "").items).toEqual([chat])
+    expect(JSON.parse(stdout[0] ?? "").items).toMatchObject([
+      {
+        id: chat.id,
+        title: chat.title,
+        kind: chat.kind,
+        unread_count: chat.unreadCount,
+        participants_count: chat.participantsCount,
+      },
+    ])
     expect(stderr.join("\n")).toContain("not saved to the local store")
   })
 

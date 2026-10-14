@@ -3,6 +3,45 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **Search pictures by what they show, on this machine.** Off by default: `tg <profile> config set pictureSearch true`,
+  then `tg <profile> models image download clip-b32` (CLIP ViT-B/32, about 155 MB) and `tg <profile> images embed
+  [--chat <chat>] [--limit <n>]`. Each stored picture is downloaded through Telegram, one at a time and nothing marked
+  read, turned into 512 numbers and dropped; only the numbers and the picture's hash stay. A message search then
+  returns a `pictures` list beside its hits (`locator`, `score`), never mixed into the text ranking. Picture queries
+  must be English. Reading a picture needs the optional `@napi-rs/canvas`.
+
+### Changed — may break scripts
+
+- **Built on `@wirecat/cli-core` 0.265.0 and `@wirecat/cli-base` 0.27.1.**
+- **`--json=id,text` replaces `--fields` and `--agent-json`, which are gone.** `--json=id,text` keeps those fields
+  of each item and the envelope around them; `--json id,text` works when every name is a field of the answer. A bare
+  `--json` prints every field in a pipe. At a terminal a command that declares its answer asks for fields instead,
+  and an unknown field is an error. MCP answers keep showing invisible characters visibly; CLI JSON keeps text as
+  written.
+- **Lists take a query, not filter flags.** `chats list`, `chats events`, `chats members audit` and `history`,
+  `chats link list`, `chats requests list`, `contacts list`, `messages list`, `messages comments` and `polls voters`
+  join the three below: `tg personal chats list 'kind:group unread_count>0'`, `tg personal messages list "Book club"
+  'id<4242'`, `tg personal chats events "Hiking" 'time>=7d'`. `--search`, `--kind`, `--unread`, `--since-time`, `--type`,
+  `--before-id`, `--after-id`, `--before-time`, `--after-time`, `--topic`, `--search-notes`, `--min-score`,
+  `--revoked`, `--link` and `--answer` are gone from those lists, and more messages are a `page.next` with `--cursor`.
+  `contacts list` no longer searches private notes.
+- **Answers are an envelope with snake_case keys.** A list is `{ items, page: { limit, has_more, next? }, meta }`, one
+  thing is `{ item, meta, next?, missing? }`. Chats, messages and contacts say `chat_id`, `sender_name`,
+  `last_message_at`, and carry a `ref` (`msg:…`, `chat:…`) where messages and `messages link` said `locator`.
+- **`tags list`, `tasks list` and `conversations list` take a query, not filter flags.** `--tag`, `--type`,
+  `--source`, `--state`, `--chat` and `--before-time` are gone: `tg personal tasks list 'state:open kind:question'`,
+  `tg personal tags list 'tag:work type:chat'`. `conversations list` takes the chat as its first argument, and
+  `started_at>=7d` replaces `--since-time`.
+- **Machine output keys are snake_case where they were not.** A refusal from Telegram is `error.details.provider_error`,
+  not `providerError`. A conversation has `messages_count`, `senders_count` and `started_at`; a task has
+  `source_message` where it had `message`, and `origin` where a fact had `source`.
+- **A run's log keeps only allowed keys.** Anything that names message text, a token or a phone number is hidden in
+  `runs show` (cli-base 0.27.0).
+
 ## 0.53.0 — 14.10.2026
 
 ### Changed — may break scripts

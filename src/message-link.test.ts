@@ -19,8 +19,9 @@ describe("personal message links", () => {
       const result = await tg(["messages", "link", chat.id, "42", format], { adapter })
       expect(result.code).toBe(0)
       expect(result.stdout.join("").trim().split("\n")).toHaveLength(1)
-      expect(JSON.parse(result.stdout.join(""))).toEqual({
-        locator: `msg:telegram/1/${chat.id}/42`,
+      const answer = JSON.parse(result.stdout.join(""))
+      expect(format === "--json" ? answer.item : answer).toMatchObject({
+        ref: `msg:telegram/1/${chat.id}/42`,
         url: "https://t.me/test_channel/42",
         access: "public",
         reason: null,
@@ -47,11 +48,8 @@ describe("personal message links", () => {
       })
       const linked = await tg(["--offline", "messages", "link", `msg:telegram/1/${chat.id}/42`, "--json"], { adapter })
       expect(linked.code).toBe(0)
-      expect(JSON.parse(linked.stdout.join(""))).toEqual({
-        locator: `msg:telegram/1/${chat.id}/42`,
-        url: null,
-        access: "unavailable",
-        reason: "offline",
+      expect(JSON.parse(linked.stdout.join(""))).toMatchObject({
+        item: { ref: `msg:telegram/1/${chat.id}/42`, url: null, access: "unavailable", reason: "offline" },
       })
       await store.markDeleted(key, ["42"], { chatId: chat.id })
       const deleted = await tg(["--offline", "messages", "link", chat.id, "42", "--json"], { adapter })

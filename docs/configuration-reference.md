@@ -106,6 +106,7 @@ that uses an account stops with exit code `2` and lists the profiles on this com
 | `senderColors` | `false` | a colour per sender in the table view of messages | none |
 | `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
 | `searchCatchUp` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
+| `pictureSearch` | `false` | search stored pictures by what they show. Needs the picture model (`models image download clip-b32`) and `images embed`; message search then also returns a `pictures` list. Queries for pictures must be English | none |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
 | `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |

@@ -23,8 +23,9 @@ check that field rather than comparing whole outputs. This file holds the traps 
 
 `tg commands schema messages list --json` describes one command's schemas and effects.
 Use `--json --no-input` for headless work; supply credentials explicitly through a pipe.
-`--fields id,text` selects each list item's fields while preserving pagination, coverage and
-operation identifiers. For ids use `--fields id`; `items.id` also works, and `items[].id` is unnecessary.
+`--json=id,text` selects each list item's fields while preserving pagination, coverage and
+operation identifiers. For ids use `--json=id`; `items.id` also works, and `items[].id` is unnecessary.
+MCP answers show invisible characters visibly; CLI JSON keeps text as written.
 `--max-output-bytes` and `--max-input-bytes` set byte budgets; one-shot actions default to 30 seconds,
 changed with `--timeout`; background history fetch jobs have no default deadline. Before a sensitive write, global `--dry-run` checks syntax and permissions
 before action; it opens no messenger connection, reserves no write and leaves targets unresolved.
@@ -46,7 +47,7 @@ shell PATH from the user/machine environment yourself; do not ask the user to ed
 ## Message permalinks
 
 `tg personal messages link <chat> <message>` or `tg personal messages link <msg:locator>` returns
-`{ locator, url, access, reason }` without message content. Channels/supergroups can have
+`{ item: { ref, url, access, reason } }` without message content. Channels/supergroups can have
 public or restricted links; a link grants no membership. Dialogs, basic groups and Saved Messages
 return only a locator. Offline validates the stored target, never connects and returns no URL.
 Locators from another account are refused. This differs from graph `messages links`.
@@ -101,8 +102,8 @@ Partial reads and downloads may exit `0`: inspect `complete`, `batch.failed` and
 
 - **In a pipe or with `--json`, stdout carries data only**: one JSON value. Everything else,
   warnings included, goes to stderr. An error that ends the command goes to stderr too, and stdout is then empty.
-- **Most lists are an object, not an array**: `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`.
-  A chat's messages are `{ "items": [...], "limit": 20, "hasMore": true }`.
+- **Most lists are an object, not an array**: `{ "items": [...], "page": { "limit": 20, "has_more": true }, "meta": {...} }`.
+  A single thing is `{ "item": {...}, "meta": {...} }`. A chat's messages page with `--cursor` from `page.next`.
 - **`--jsonl`**: one object per line, for `jq`. Whether there is more is said on stderr only.
 - **Branch on the exit code, not on the text**: `0` success, `2` bad input, `4` not logged in, `5`
   the profile may not do this (its `permissions`; the error names the key — do not work around it),
@@ -252,11 +253,11 @@ tg personal review --since-time 1d --json          # every message, the owner's 
                                                    # when complete, the next review starts at until
 tg personal review --unanswered --json             # questions, including retained voice transcripts, nobody answered in 24 h
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
-tg personal tasks list --state open --json         # what waits on the owner; review and serve open and close tasks
+tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
 tg personal chats list --json                      # find a chat, take its id
-tg personal chats list --search vale --kind group --unread --json  # filtered, over every returned chat
-tg personal chats events -1001234567890 --since-time 7d --json  # who joined, left, was added or removed
+tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat
+tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed
 tg personal chats members list -1001234567890 --json  # a group's members, paged
 tg personal chats inspect https://t.me/+AbCd --json  # where an invite leads, without joining
 tg personal topics list -1001234567890 --json        # a forum's topics; a message's threadId is one of them
@@ -265,8 +266,8 @@ echo "$PHONE" | tg personal contacts lookup --json   # a number through stdin, n
 tg personal chats show -1001234567890 --json       # one chat and who is in it
 tg personal contacts show @ivan --json             # one person and the chats shared with them
 tg personal messages list -1001234567890 --limit 20 --json  # the latest messages, oldest first
-tg personal messages list -1001234567890 --before-id 4242 --json  # older ones
-tg personal messages list -1001234567890 --after-id 4242 --json  # newer ones, oldest first; --after-time 2h reads from a time
+tg personal messages list -1001234567890 'id<4242' --json  # older ones
+tg personal messages list -1001234567890 'id>4242' --json  # newer ones, oldest first; 'date>2h' reads from a time
 tg personal messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
 tg personal messages download -1001234567890 4242 --output-dir /tmp/tg --json  # the message's file; answers its path
 tg personal messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m  # every file of the chat; run it again to continue
@@ -413,6 +414,14 @@ and explicit gap/message/time/page/pause bounds. `--background` uses ordinary st
 These commands and job metadata are also available through MCP discovery and read/write gateways.
 Unknown edges and message-id holes do not prove missing history.
 
+## Pictures
+
+Picture search is off until `tg <profile> config set pictureSearch true`. Then
+`tg <profile> models image download clip-b32` (once, about 155 MB) and `tg <profile> images embed`
+(`--chat`, `--limit`) read the stored pictures on this machine. After that a message search returns a
+`pictures` list beside its hits; with no model, `picturesSkipped` says so. **Picture queries must be English**:
+translate the owner's words first. Never turn the setting on or run `images embed` without the owner's say.
+
 ## Private people notes and channel tags
 
 Local aliases belong to the selected account, notes show in every profile that sees the person;
@@ -437,12 +446,11 @@ tg personal contacts notes show 101 NOTE_ID --json
 tg personal contacts notes edit 101 NOTE_ID --revision 1 --file /path/to/own-note.md
 tg personal contacts notes remove 101 NOTE_ID
 tg personal contacts show 101 --with-notes --json
-tg personal contacts list --search-notes 'follow up' --json
 tg personal metadata get --chat CHAT_ID --json
 tg personal metadata refresh --chat CHAT_ID --limit 1 --json
 tg personal tags auto --chat CHAT_ID --dry-run --json
 tg personal tags auto --chat CHAT_ID --refresh-metadata --limit 1 --json
-tg personal tags list --source auto --json
+tg personal tags list sources:auto --json
 tg personal tags remove news --chat CHAT_ID --source auto
 ```
 

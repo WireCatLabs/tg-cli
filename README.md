@@ -87,7 +87,7 @@ tg personal review --new                      # what changed since the last revi
 
 ```sh
 tg personal review --chat "Hiking" --unanswered
-tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed
+tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed
 ```
 
 More: [recipes, with a schedule and limits for each](https://github.com/WireCatLabs/tg-cli/blob/main/docs/recipes.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/recipes)
@@ -207,7 +207,7 @@ More: [search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/search.md) �
 
 ```sh
 tg personal review --chat "Hiking" --unanswered   # questions nobody answered in 24 hours
-tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed, and by whom
+tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed, and by whom
 tg personal chats members list "Hiking" --all     # everyone, with their role and when they were last seen
 tg personal topics list "Hiking"                  # a forum group's topics, newest activity first
 tg personal chats inspect https://t.me/+AbCdEf    # where an invite link leads, without joining
@@ -277,7 +277,7 @@ same when another program reads its output. `--jsonl` prints one object per line
 shape:
 
 ```json
-{ "items": [ … ], "page": 1, "limit": 20, "hasMore": true }
+{ "items": [ … ], "page": { "limit": 20, "has_more": true }, "meta": { … } }
 ```
 
 An error goes to stderr as one line, with stdout empty, and the command exits with a fixed code: `4`

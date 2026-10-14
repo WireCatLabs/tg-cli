@@ -144,20 +144,20 @@ describe("machine output", () => {
 
     expect(code).toBe(0)
     expect(stdout).toHaveLength(1)
-    expect(JSON.parse(stdout[0] ?? "")).toEqual({ items: [chat], page: 1, limit: 20, hasMore: false })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({
+      items: [{ id: chat.id, title: chat.title, kind: chat.kind, unread_count: chat.unreadCount }],
+      page: { limit: 20, has_more: false },
+    })
     expect(stderr).toEqual([])
   })
 
-  it("--agent-json exposes controls while --json preserves original message text", async () => {
+  it("--json preserves original message text", async () => {
     const text = "synthetic\u202e text"
     const adapter = () => scripted({ history: async () => ({ items: [message("42", { text })], hasMore: false }) })
     const ordinary = await tg(["messages", "list", "Valencia", "--json"], { adapter })
-    const agent = await tg(["messages", "list", "Valencia", "--agent-json"], { adapter })
-    expect([ordinary.code, agent.code]).toEqual([0, 0])
+    expect(ordinary.code).toBe(0)
     expect(JSON.parse(ordinary.stdout[0] ?? "").items[0].text).toBe(text)
-    const visible = JSON.parse(agent.stdout[0] ?? "").items[0].text as string
-    expect(visible).toBe("synthetic\\u202e text")
-    expect(agent.stderr).toEqual([])
+    expect(ordinary.stderr).toEqual([])
   })
 
   it("pages chats through the shared flags, and refuses --all with --page", async () => {
@@ -174,7 +174,7 @@ describe("machine output", () => {
 
     expect(code).toBe(0)
     expect(asked).toEqual({ limit: 5, offset: 10 })
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ page: 3, limit: 5, hasMore: true })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ page: { limit: 5, has_more: true } })
     expect((await tg(["chats", "list", "--all", "--page", "2"])).code).toBe(2)
   })
 
@@ -194,7 +194,7 @@ describe("machine output", () => {
     const [item] = JSON.parse(stdout[0] ?? "").items
 
     expect(typeof item.id).toBe("string")
-    expect(typeof item.chatId).toBe("string")
+    expect(typeof item.chat_id).toBe("string")
   })
 
   it("prints the phone's last four digits, and the whole number only with --show-phone", async () => {
@@ -312,7 +312,9 @@ describe("forum control options", () => {
     })
     expect(enabled.code).toBe(0)
     expect(created.code).toBe(0)
-    expect(JSON.parse(enabled.stdout[0] ?? "")).toMatchObject({ upgraded: true, chat: { id: "-100700" }, forum: true })
+    expect(JSON.parse(enabled.stdout[0] ?? "")).toMatchObject({
+      item: { upgraded: true, chat: { id: "-100700" }, forum: true },
+    })
     expect(calls).toEqual([
       ["upgrade", chat.id],
       ["enable", "-100700"],
@@ -423,7 +425,7 @@ describe("sending", () => {
 
     expect(sent.code).toBe(0)
     expect(JSON.parse(sent.stdout[0] ?? "").scheduledFor).toMatch(/^\d{4}-/)
-    expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduledFor).toBe("2030-01-01T09:00:00.000Z")
+    expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduled_for).toBe("2030-01-01T09:00:00.000Z")
   })
 
   it("attaches a --photo or a --file, and sends a protected one only with --allow-any-file", async () => {
@@ -636,8 +638,8 @@ describe("what tgcli users look for", () => {
       ],
       { adapter },
     )
-    const named = await tg(["chats", "requests", "list", "Valencia", "--search", "ana", "--json"], { adapter })
-    const linked = await tg(["chats", "requests", "list", "Valencia", "--link", "https://t.me/+x", "--json"], {
+    const named = await tg(["chats", "requests", "list", "Valencia", "name:ana", "--json"], { adapter })
+    const linked = await tg(["chats", "requests", "list", "Valencia", 'link:"https://t.me/+x"', "--json"], {
       adapter,
     })
 
@@ -663,8 +665,8 @@ describe("what tgcli users look for", () => {
     const topicHistory = vi.fn(async () => ({ items: [message("50", { threadId: "12" })], hasMore: false }))
     const adapter = () => scripted({ topicHistory })
 
-    const topic = await tg(["messages", "list", "Valencia", "--topic", "12", "--json"], { adapter })
-    const general = await tg(["messages", "list", "Valencia", "--topic", "1", "--json"], { adapter })
+    const topic = await tg(["messages", "list", "Valencia", "topic:12", "--json"], { adapter })
+    const general = await tg(["messages", "list", "Valencia", "topic:1", "--json"], { adapter })
 
     expect(JSON.parse(topic.stdout[0] ?? "").items.map((one: { id: string }) => one.id)).toEqual(["50"])
     expect(topicHistory).toHaveBeenCalledWith("Valencia", "12", { limit: 20 })

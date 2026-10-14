@@ -16,12 +16,6 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core 0.207.0 src/cli/messenger/attachments.test.ts renders a retained PDF page and refuses non-PDFs; it needs the optional unpdf and @napi-rs/canvas, which tg does not install",
   },
-  ...["--search", "--link"].map((option) => ({
-    command: "chats requests list",
-    option,
-    reason:
-      "cli-core 0.178.0 src/cli/messenger/admin-commands.test.ts covers shared name/link filtering and rejects their combination; src/telegram/adapter.test.ts covers Telegram joinRequests with its link filter",
-  })),
 
   ...[
     ["stats chats newcomers", "--saved"],
@@ -345,12 +339,6 @@ export const UNTESTED: Untested[] = [
       'cli-core src/cli/messenger/messenger.test.ts ("chats members audit 7 --deep 1") and src/services/members-audit.test.ts cover the deep check of the top flagged members; this consumer mounts the shared command',
   },
   {
-    command: "chats members history",
-    option: "--since-time",
-    reason:
-      'cli-core src/services/members-fetch.test.ts ("chats members history") covers the recorded joins, leaves and changes since a time; shared option parsing',
-  },
-  {
     command: "chats members fetch",
     option: "--track",
     reason:
@@ -497,7 +485,7 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation",
   },
-  ...["--budget", "--min-score"].map((option) => ({
+  ...["--budget"].map((option) => ({
     command: "chats members audit",
     ...(option ? { option } : {}),
     reason:
@@ -609,12 +597,6 @@ export const UNTESTED: Untested[] = [
     reason: "phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline",
   },
   {
-    command: "contacts list",
-    option: "--search-notes",
-    reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
-  },
-  {
     command: "contacts show",
     option: "--with-notes",
     reason:
@@ -651,10 +633,16 @@ export const UNTESTED: Untested[] = [
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags list",
-    option: "--source",
+    command: "images embed",
+    option: "--chat",
     reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
+      "cli-core's picture search tests cover embedding scoped to a chat; embedding downloads images through the messenger, which tg tests never do, and this consumer mounts the shared handler",
+  },
+  {
+    command: "images embed",
+    option: "--limit",
+    reason:
+      "cli-core's picture search tests cover the per-run limit; embedding downloads images through the messenger, which tg tests never do, and this consumer mounts the shared handler",
   },
   {
     command: "contacts notes add",
@@ -761,4 +749,34 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0)",
   })),
+  {
+    command: "chats link list",
+    option: "--page",
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  },
+  {
+    command: "chats requests list",
+    option: "--page",
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  },
+  {
+    command: "messages list",
+    option: "--cursor",
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  },
+  {
+    command: "messages comments",
+    option: "--cursor",
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  },
+  {
+    command: "polls voters",
+    option: "--page",
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  },
 ]

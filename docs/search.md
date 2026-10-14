@@ -365,6 +365,34 @@ Ordinary hidden working folders are allowed. MCP extraction downloads also requi
 outside protected locations. Local PDF text extraction has no fixed page-count limit or separate
 30-second cutoff; command cancellation and file/text budgets still apply.
 
+## Pictures, by what they show
+
+Picture search is off. It looks at pictures on this computer with a small model, and it never sends them
+anywhere. Turn it on for one profile, download the model once (about 155 MB), then read the pictures you
+have stored:
+
+```sh
+tg personal config set pictureSearch true
+```
+
+```sh
+tg personal models image download clip-b32
+```
+
+```sh
+tg personal images embed --chat "Book club" --limit 100
+```
+
+`images embed` downloads each stored picture through Telegram, one at a time, and marks nothing read. It keeps
+only a vector of 512 numbers and the picture's hash; the picture is dropped. After that, a message search with
+words also returns a `pictures` list beside the usual hits: the messages whose picture is nearest the query, each
+with a `locator` and a `score`. It is never mixed into the text ranking. With the setting on but no model,
+the answer says `picturesSkipped`.
+
+**Write picture queries in English.** The model knows no other language. An agent translates the query first
+(for example "собака на пляже" becomes "dog on a beach"). `tg personal models image list` shows which models
+are downloaded.
+
 ## Passwords, codes and cards
 
 ```sh
@@ -390,7 +418,7 @@ tg personal tags add work --contact "Bob Synthetic"
 ```
 
 ```sh
-tg personal tags list --tag work --type chat
+tg personal tags list 'tag:work type:chat'
 ```
 
 ```sh
@@ -430,7 +458,7 @@ tg personal tags auto                    # write the automatic tags
 ```
 
 ```sh
-tg personal tags list --source auto      # only the automatic ones
+tg personal tags list sources:auto      # only the automatic ones
 ```
 
 `--refresh-metadata` reads current descriptions from Telegram before classifying; it is refused with

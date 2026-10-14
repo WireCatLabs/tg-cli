@@ -290,7 +290,15 @@ describe("the send guard in front of the other writes", () => {
     const shown = await tg(["g-topic", "topics", "show", "Valencia", "12", "--json"], adapter)
 
     expect(shown.code).toBe(0)
-    expect(JSON.parse(shown.stdout[0] ?? "")).toEqual(topic)
+    expect(JSON.parse(shown.stdout[0] ?? "").item).toEqual({
+      id: topic.id,
+      title: topic.title,
+      closed: topic.closed,
+      pinned: topic.pinned,
+      created_at: topic.createdAt,
+      last_message_at: topic.lastMessageAt,
+      unread_count: topic.unreadCount,
+    })
     expect(journal("g-topic")).toEqual([])
   })
 
@@ -345,11 +353,8 @@ describe("the send guard in front of the other writes", () => {
     const refused = await tg(["g-react", "messages", "send", "Valencia", "hi"], adapter)
 
     expect([added.code, removed.code, refused.code]).toEqual([0, 0, 5])
-    expect(JSON.parse(added.stdout[0] ?? "")).toEqual({
-      operationId: expect.any(String),
-      chatId: chat.id,
-      messageId: "5",
-      reaction: "👍",
+    expect(JSON.parse(added.stdout[0] ?? "")).toMatchObject({
+      item: { operation_id: expect.any(String), chat_id: chat.id, message_id: "5", reaction: "👍" },
     })
     expect(reacted).toEqual(["5 👍", "5 null"])
     expect(sent).toEqual([])
@@ -362,7 +367,9 @@ describe("the send guard in front of the other writes", () => {
     const done = await tg(["g-read", "chats", "mark-read", "Valencia", "--until", "9", "--json"], adapter)
     const refused = await tg(["g-ro-read", "chats", "mark-read", "Valencia"], adapter)
 
-    expect(JSON.parse(done.stdout[0] ?? "")).toEqual({ operationId: expect.any(String), chatId: chat.id, until: "9" })
+    expect(JSON.parse(done.stdout[0] ?? "")).toMatchObject({
+      item: { operation_id: expect.any(String), chat_id: chat.id, until: "9" },
+    })
     expect(refused.code).toBe(5)
     expect(marked).toEqual(["9"])
     expect(journal("g-read")).toMatchObject([{ kind: "read", outcome: "sent", messageId: "9" }])
@@ -454,7 +461,7 @@ describe("the send guard in front of the other writes", () => {
     expect(changed).toEqual([
       [chat.id, { title: "Pisos", description: "rooms", settings: { allCanPin: true, onlyAdminsAdd: false } }],
     ])
-    expect(JSON.parse(shown.stdout[0] ?? "")).toMatchObject({ link: "https://t.me/+old" })
+    expect(JSON.parse(shown.stdout[0] ?? "")).toMatchObject({ item: { link: "https://t.me/+old" } })
     expect(journal("g-group").map((entry) => entry.action)).toEqual(["update", "link.reset"])
   })
 
@@ -475,7 +482,10 @@ describe("the send guard in front of the other writes", () => {
     const declined = await tg(["g-requests", "chats", "requests", "decline", "Valencia", "92", "--json"], adapter)
 
     expect([listed.code, accepted.code, declined.code]).toEqual([0, 0, 0])
-    expect(JSON.parse(listed.stdout[0] ?? "")).toMatchObject({ items: [request], hasMore: false })
+    expect(JSON.parse(listed.stdout[0] ?? "")).toMatchObject({
+      items: [{ person_id: "91", name: "Synthetic", username: null, requested_at: request.requestedAt }],
+      page: { has_more: false },
+    })
     expect(answered).toEqual(["accept 91", "decline 92"])
     expect(journal("g-requests").map((entry) => entry.action)).toEqual(["requests.accept", "requests.decline"])
   })
@@ -568,7 +578,7 @@ describe("the send guard in front of the other writes", () => {
       adapter,
     )
     const listed = await tg(
-      ["g-bulk", "chats", "link", "list", "Valencia", "--revoked", "--limit", "5", "--json"],
+      ["g-bulk", "chats", "link", "list", "Valencia", "revoked:true", "--limit", "5", "--json"],
       adapter,
     )
     const revoked = await tg(
@@ -597,9 +607,9 @@ describe("the send guard in front of the other writes", () => {
       },
     })
 
-    const byName = await tg(["g-narrow", "chats", "requests", "list", "Valencia", "--search", "Ana", "--json"], adapter)
+    const byName = await tg(["g-narrow", "chats", "requests", "list", "Valencia", "name:Ana", "--json"], adapter)
     const byLink = await tg(
-      ["g-narrow", "chats", "requests", "list", "Valencia", "--link", "https://t.me/+extra", "--json"],
+      ["g-narrow", "chats", "requests", "list", "Valencia", 'link:"https://t.me/+extra"', "--json"],
       adapter,
     )
 
@@ -836,7 +846,7 @@ describe("the send guard in front of the other writes", () => {
       },
     })
 
-    const listed = await tg(["g-voters", "polls", "voters", "Valencia", "3", "--answer", "MA", "--limit", "5"], adapter)
+    const listed = await tg(["g-voters", "polls", "voters", "Valencia", "3", "answers:MA", "--limit", "5"], adapter)
 
     expect(listed.code).toBe(0)
     expect(asked).toEqual([{ limit: 5, answerId: "MA" }])
@@ -871,8 +881,8 @@ describe("the send guard in front of the other writes", () => {
       adapter,
     )
 
-    expect(JSON.parse(shown.stdout[0] ?? "").answers[0].id).toBe("MA")
-    expect(JSON.parse(created.stdout[0] ?? "")).toMatchObject({ sendId: "5", message: { id: "80" } })
+    expect(JSON.parse(shown.stdout[0] ?? "").item.answers[0].id).toBe("MA")
+    expect(JSON.parse(created.stdout[0] ?? "")).toMatchObject({ item: { send_id: "5", message: { id: "80" } } })
     expect(polled).toEqual(["vote MA", "vote none", "close", "create 2 true true true"])
     expect(
       journal("g-poll")
