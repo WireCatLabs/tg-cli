@@ -1,6 +1,13 @@
 import { existsSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import { type BotMessenger, BotTokenStore, botCopy, environmentOf, type RunBotCommand } from "@wirecat/cli-core/cli"
+import {
+  type BotMcp,
+  type BotMessenger,
+  BotTokenStore,
+  botCopy,
+  environmentOf,
+  type RunBotCommand,
+} from "@wirecat/cli-core/cli"
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
@@ -13,12 +20,16 @@ import { apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
 import { type Adapter, type Environment, proxyOption, SKILL } from "./context.js"
 
+type Run = (argv: string[], environment?: Environment) => Promise<number>
+
 /** tg's `run` as the shared bot MCP server calls it; a test adds its keyring and Bot API stand-in as `extra`. */
-export const botMcpRun = async (extra: Environment = {}): Promise<RunBotCommand> => {
-  // Loaded when the server starts: the program imports this file.
-  const { run } = await import("../program.js")
-  return (argv, environment) => run(argv, { ...extra, ...environment })
-}
+export const botMcpRun =
+  (run: Run, extra: Environment = {}): RunBotCommand =>
+  (argv, environment) =>
+    run(argv, { ...extra, ...environment })
+
+/** `bot mcp`. The program hands in its own `run`: importing it here would close a loop through the program. */
+export const botMcp = (run: Run): BotMcp => ({ program: async () => botMcpRun(run), skill: SKILL })
 
 /** What the shared `bot` commands need from tg: a Telegram Bot API client, and the keyring a test hands in. */
 export const TELEGRAM_BOT: BotMessenger = {
@@ -96,5 +107,4 @@ export const TELEGRAM_BOT: BotMessenger = {
     const { keyring, env } = environmentOf<Environment>(command)
     return new BotTokenStore({ app: TG, profile, ...(env ? { env } : {}), ...(keyring ? { keyring } : {}) })
   },
-  mcp: { program: () => botMcpRun(), skill: SKILL },
 }

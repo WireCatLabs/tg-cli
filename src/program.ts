@@ -44,7 +44,7 @@ import {
 } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
-import { TELEGRAM_BOT } from "./commands/bot.js"
+import { botMcp, TELEGRAM_BOT } from "./commands/bot.js"
 import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { withProxySecrets } from "./commands/proxy-config.js"
@@ -142,7 +142,7 @@ const definition: ProgramDefinition = {
       completeCommand(TELEGRAM, CONFIG),
       upgradeCommand(),
       mcpCommand(TELEGRAM),
-      botCommand(TELEGRAM_BOT).addCommand(telegramBotApiCommand()),
+      botCommand({ ...TELEGRAM_BOT, mcp: botMcp(run) }).addCommand(telegramBotApiCommand()),
       skillCommand(TG, SKILL),
     ]),
 }

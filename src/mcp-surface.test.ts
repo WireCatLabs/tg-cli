@@ -3,7 +3,7 @@ import { BOT_TOOLS, botToolName, commandLookup, createBotServer } from "@wirecat
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
 import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
-import { createProgram } from "./program.js"
+import { createProgram, run } from "./program.js"
 
 describe("tg's MCP surface", () => {
   it("**offers only cli-core's tools**, so the router's envelope check covers every one; `bot api` is not a tool", async () => {
@@ -14,7 +14,7 @@ describe("tg's MCP surface", () => {
       commandAt: commandLookup(group),
       settings: { profile: "sales", permissions: {}, readOtherBots: false },
       env: {},
-      run: await botMcpRun({ keyring: memoryKeyring() }),
+      run: botMcpRun(run, { keyring: memoryKeyring() }),
       ...(TELEGRAM_BOT.mcp?.tools ? { tools: TELEGRAM_BOT.mcp.tools } : {}),
     })
     const shared = new Set(BOT_TOOLS.map((tool) => botToolName("tg", tool.words)))
