@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **tg no longer searches mail** (cli-core 0.285.0, cli-core#1121): `tg search mail` and the MCP `search_mail` are
+  gone, and `search all` reads messages and notes but never mail; `--only mail` is refused. `tg search mail …`
+  answers ``mail is memo's: install @wirecat/cli-memo, then `memo search mail …` ``. `search notes`, tasks, notes
+  and tags stay.
+
 ## 0.57.0 — 15.10.2026
 
 ### Changed — may break scripts

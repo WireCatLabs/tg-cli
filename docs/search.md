@@ -49,9 +49,9 @@ written, start with `search all`.
 
 | Task | Command |
 |---|---|
-| Search messages, mail and notes in one answer | `tg personal search all '<query>'` |
+| Search messages and notes in one answer | `tg personal search all '<query>'` |
 | Search Telegram messages only; without `--discover`, also on Telegram's server | `tg personal search messages '<query>'` |
-| Search only the mail memo imported | `tg personal search mail '<query>'` |
+| Search mail | memo's: install @wirecat/cli-memo, then `memo search mail '<query>'` |
 | Search notes written in memo or imported from a folder | `tg personal search notes '<query>'` |
 | Find a discussion by what it was about | `tg personal search conversations '<question>'` ([topic search](topic-search.md)) |
 | Find a topic in a forum group by its title | `tg personal search topics <chat> '<words>'` |
@@ -59,19 +59,15 @@ written, start with `search all`.
 | Save a search and run it again later | `tg personal searches create`, `tg personal search messages --saved <name>` |
 
 ```sh
-tg personal search all 'lease agreement'          # messages, mail and notes, best match first
+tg personal search all 'lease agreement'          # messages and notes, best match first
 ```
 
 ```sh
-tg personal search all 'lease' --only messages,notes  # without mail
+tg personal search all 'lease' --only notes       # notes only
 ```
 
 ```sh
 tg personal search messages 'lease chat:"Book club"'  # Telegram messages only, never mail
-```
-
-```sh
-tg personal search mail 'invoice'                 # only the mail memo sync --mail brought in
 ```
 
 ```sh
@@ -86,12 +82,11 @@ tg personal search conversations 'moving to the country'  # conversations close 
 tg personal search topics "Hiking" "gear"         # topic titles in one forum group
 ```
 
-`search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). `search messages` never
-returns mail, and `search mail` never returns Telegram messages; only `search all` covers both. `--type`
-narrows `search messages` to text, voice or files (`text|voice|file`) and `search notes` to notes
-written in memo or imported from a folder (`internal|file`). Mail supports `chat:` for an email thread
-and `from:` for its sender. When a field does not apply — `kind:`/`topic:` for mail, or `chat:`/`from:`
-for notes — `search all` skips that resource and explains why.
+`search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). tg never searches mail:
+`tg personal search mail` answers "mail is memo's: install @wirecat/cli-memo, then `memo search mail …`", and
+`search all --only mail` is refused the same way. `--type` narrows `search messages` to text, voice or files
+(`text|voice|file`) and `search notes` to notes written in memo or imported from a folder (`internal|file`).
+When a field does not apply — `chat:`/`from:` for notes — `search all` skips that resource and explains why.
 
 Mail and notes reach the store through memo: `memo sync --mail` and `memo import`. Without them,
 `search all` searches messages only.

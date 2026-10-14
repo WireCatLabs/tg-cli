@@ -534,7 +534,7 @@ tg personal contacts list 'name:*ann*'  # people by name or @username
 ```
 
 ```sh
-tg personal search all "contract"            # messages, mail and notes this machine has kept
+tg personal search all "contract"            # messages and notes this machine has kept
 ```
 
 ```sh
