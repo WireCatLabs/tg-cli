@@ -380,10 +380,10 @@ tg personal images embed --chat "Book club" --limit 100
 
 `images embed` downloads each stored picture through Telegram, one at a time, and marks nothing read. It keeps only
 a vector and the picture's hash. After that, a message search with words also returns a `pictures` list beside the
-usual hits, never mixed into the text ranking. With the setting on but no model, the answer says `picturesSkipped`.
+usual hits, never mixed into the text ranking. With the setting on but no model, a note on stderr says the pictures were not searched and why.
 
 **Write picture queries in English.** The model knows no other language. An agent translates the query first
-("собака на пляже" becomes "dog on a beach"). `tg personal models image list` shows which models are downloaded.
+("собака на пляже" becomes "dog on a beach"). `tg personal images models list` shows which models are downloaded.
 
 ## Passwords, codes and cards
 
