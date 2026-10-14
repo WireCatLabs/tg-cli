@@ -214,7 +214,8 @@ describe("machine output", () => {
       adapter: () => scripted({ history: async () => ({ items: two, hasMore: false }) }),
     })
 
-    expect(stdout.map((line) => JSON.parse(line).id)).toEqual(["42", "2"])
+    expect(stdout.slice(0, -1).map((line) => JSON.parse(line).data.id)).toEqual(["42", "2"])
+    expect(JSON.parse(stdout.at(-1) ?? "")).toMatchObject({ type: "end", complete: true })
   })
 
   it("says a failure on stderr as JSON, with the exit code for its kind", async () => {
@@ -269,7 +270,7 @@ describe("a person at a terminal", () => {
 })
 
 describe("forum control options", () => {
-  it("passes explicit --upgrade and a fixed topic --send-id through the CLI", async () => {
+  it("passes explicit --upgrade and a fixed topic --operation-id through the CLI", async () => {
     let ready = false
     const calls: unknown[] = []
     const state = (id = chat.id, needsUpgrade = true, forum = false) => ({
@@ -307,7 +308,7 @@ describe("forum control options", () => {
         },
       })
     const enabled = await tg(["topics", "enable", "Valencia", "--upgrade", "--yes", "--json"], { adapter })
-    const created = await tg(["topics", "create", "-100700", "synthetic topic", "--send-id", "42", "--json"], {
+    const created = await tg(["topics", "create", "-100700", "synthetic topic", "--operation-id", "42", "--json"], {
       adapter,
     })
     expect(enabled.code).toBe(0)
@@ -343,14 +344,14 @@ describe("topic options", () => {
       })
     expect(
       (
-        await tg(["messages", "send", "Valencia", "hi", "--topic", "12", "--reply-to", "14", "--send-id", "42"], {
+        await tg(["messages", "send", "Valencia", "hi", "--topic", "12", "--reply-to", "14", "--operation-id", "42"], {
           adapter,
         })
       ).code,
     ).toBe(0)
     expect(
       (
-        await tg(["polls", "create", "Valencia", "Friday?", "yes", "no", "--topic", "12", "--send-id", "43"], {
+        await tg(["polls", "create", "Valencia", "Friday?", "yes", "no", "--topic", "12", "--operation-id", "43"], {
           adapter,
         })
       ).code,
@@ -368,25 +369,25 @@ describe("topic options", () => {
 
 describe("sending", () => {
   it("reads the text from stdin when none is given", async () => {
-    const { code, stdout } = await tg(["messages", "send", "me", "--send-id", "-9001"], {
+    const { code, stdout } = await tg(["messages", "send", "me", "--operation-id", "-9001"], {
       stdin: Readable.from(["from a pipe"]),
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({ send_id: "-9001", message: { text: "from a pipe" } })
+    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({ operation_id: "-9001", message: { text: "from a pipe" } })
   })
 
   it("hands back the send id when the outcome is unknown, so a repeat cannot make a second copy", async () => {
     const unknown = () =>
       scripted({
         send: async () => {
-          throw new CliError("outcome_unknown", "no answer", { send_id: "-9001" })
+          throw new CliError("outcome_unknown", "no answer", { operation_id: "-9001" })
         },
       })
-    const { code, stderr } = await tg(["messages", "send", "me", "hi"], { adapter: unknown })
+    const { code, stderr } = await tg(["messages", "send", "me", "hi", "--operation-id", "-9001"], { adapter: unknown })
 
     expect(code).toBe(14)
-    expect(JSON.parse(stderr[0] ?? "").error.details.send_id).toBe("-9001")
+    expect(JSON.parse(stderr[0] ?? "").error.details.operation_id).toBe("-9001")
   })
 
   it("hands --silent, --no-preview and --md to the adapter, the marks taken out of the text", async () => {

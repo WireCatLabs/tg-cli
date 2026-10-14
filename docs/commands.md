@@ -51,6 +51,8 @@ log this profile in to Telegram, or out
 
 log in by QR code (default) or by phone number, code and 2FA password
 
+**Changes something in Telegram.**
+
 ```sh
 tg session start [method] [options]
 ```
@@ -142,8 +144,12 @@ where else this account is logged in — not `tg session`, which is this tool's 
 every device and app logged in to this account; nothing is ended
 
 ```sh
-tg account sessions list
+tg account sessions list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 #### `tg account sessions end`
 
@@ -260,12 +266,13 @@ who is in a group
 everyone in a group, a page at a time, with their role and when they were last seen
 
 ```sh
-tg chats members list <chat> [options]
+tg chats members list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 | Option | What it does |
 |---|---|
@@ -307,6 +314,8 @@ tg chats members history <chat> [query]
 #### `tg chats members fetch`
 
 read a group's whole member list into the local store's member history: who joined, who left, daily counts and profile changes; someone is recorded as gone only when every member was read
+
+**Changes something on this computer only.**
 
 ```sh
 tg chats members fetch <chat> [options]
@@ -398,6 +407,8 @@ tg chats tracking show <chat>
 
 fetch this chat's member list daily while serve runs, from its next run
 
+**Changes something on this computer only.**
+
 ```sh
 tg chats tracking add <chat>
 ```
@@ -409,6 +420,8 @@ tg chats tracking add <chat>
 #### `tg chats tracking remove`
 
 stop fetching it daily; the history already kept stays
+
+**Changes something on this computer only.**
 
 ```sh
 tg chats tracking remove <chat>
@@ -701,8 +714,12 @@ your chat folders
 your chat folders, in the order the app shows them
 
 ```sh
-tg chats folders list
+tg chats folders list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 #### `tg chats folders show`
 
@@ -988,6 +1005,8 @@ tg contacts check <person> [options]
 
 record that two people in the store are one person — the same name is never enough
 
+**Changes something on this computer only.**
+
 ```sh
 tg contacts link <person> <other>
 ```
@@ -1000,6 +1019,8 @@ tg contacts link <person> <other>
 ### `tg contacts unlink`
 
 undo contacts link for one identity: it is a person of its own again
+
+**Changes something on this computer only.**
 
 ```sh
 tg contacts unlink <person>
@@ -1020,6 +1041,8 @@ tg contacts lookup
 ### `tg contacts sync`
 
 take the whole contact list from the messenger into the local store
+
+**Changes something on this computer only.**
 
 ```sh
 tg contacts sync
@@ -1067,12 +1090,13 @@ your private notes on a stored contact, the same in every account that sees them
 
 
 ```sh
-tg contacts notes list <person>
+tg contacts notes list <person> [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `person` | required |  |
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 #### `tg contacts notes show`
 
@@ -1245,7 +1269,7 @@ tg messages evidence <chat> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many, 1–100. |
-| `--cursor <id>` | go on from where page.next says the last packet stopped. |
+| `--cursor <cursor>` | go on from where page.next says the last packet stopped. |
 
 ### `tg messages list`
 
@@ -1289,7 +1313,7 @@ tg messages send <chat> [text] [options]
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--comment-to <post>` | comment on this post of the channel; it goes to the post's discussion group. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
-| `--send-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
+| `--operation-id <id>` | repeat a send whose outcome was unknown, without risking a second copy. |
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
@@ -1343,6 +1367,8 @@ tg messages context <chat> [message] [options]
 ### `tg messages download`
 
 save a message's photos, files, videos and voice notes to a folder — or a whole chat's with --all
+
+**Changes something on this computer only.**
 
 ```sh
 tg messages download <chat> [message] [options]
@@ -1439,7 +1465,7 @@ tg messages forward <chat> <message> [options]
 | `--to <chat>` | where it goes: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--silent` | deliver it without a notification. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists for the --to chat; required where the chat posts as someone else by default. |
-| `--send-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
+| `--operation-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
 | `--topic <id>` | forward into this forum topic of the --to chat. |
 
 ### `tg messages pin`
@@ -1536,6 +1562,8 @@ tg messages links <chat> <message>
 ### `tg messages sync`
 
 bring a chat's history in the local store up to date, newest first; run it again to continue; --all syncs every chat
+
+**Changes something on this computer only.**
 
 ```sh
 tg messages sync [chat] [options]
@@ -1691,7 +1719,7 @@ tg polls create <chat> <question> <answers> [options]
 | `--revote` | people may change their vote. |
 | `--silent` | send without a notification. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
-| `--send-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
+| `--operation-id <id>` | repeat a create whose outcome was unknown, without risking a second poll. |
 | `--quiz` | a quiz: one answer is right, and a vote is final. |
 | `--correct <n>` | with --quiz: the right answer's position, from 1. |
 | `--solution <text>` | with --quiz: what people see once they answered. |
@@ -1710,12 +1738,18 @@ speech models for transcribing voice messages
 the speech models, most suitable first, which are downloaded, and which one is the default
 
 ```sh
-tg models audio list
+tg models audio list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 #### `tg models audio download`
 
 download a speech model once, checked against the sha256 this version expects
+
+**Changes something on this computer only.**
 
 ```sh
 tg models audio download <model>
@@ -1734,12 +1768,18 @@ embedding models for searching conversations by meaning
 the embedding models, most suitable first, which are downloaded, and which one is the default
 
 ```sh
-tg models text list
+tg models text list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 #### `tg models text download`
 
 download an embedding model once, checked against the sha256 this version expects
+
+**Changes something on this computer only.**
 
 ```sh
 tg models text download <model> [options]
@@ -1761,6 +1801,8 @@ API keys for embedding and analysis providers
 
 store a key, typed at a hidden prompt or piped on stdin — never as an argument
 
+**Changes something on this computer only.**
+
 ```sh
 tg models text key set <provider>
 ```
@@ -1773,6 +1815,8 @@ tg models text key set <provider>
 
 forget a stored key
 
+**Changes something on this computer only.**
+
 ```sh
 tg models text key remove <provider>
 ```
@@ -1780,30 +1824,6 @@ tg models text key remove <provider>
 | Argument | | What it is |
 |---|---|---|
 | `provider` | required | openai, anthropic, or a server's host. |
-
-### `tg models image`
-
-models that read pictures, for `images embed` and search by what a picture shows
-
-#### `tg models image list`
-
-the picture models, which are downloaded, and which one is the default
-
-```sh
-tg models image list
-```
-
-#### `tg models image download`
-
-download a picture model once, checked against the sha256 this version expects
-
-```sh
-tg models image download <model>
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `model` | required | a model id from `models image list`. |
 
 ## `tg inbox`
 
@@ -1921,7 +1941,7 @@ tg topics create <chat> <title> [options]
 
 | Option | What it does |
 |---|---|
-| `--send-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
+| `--operation-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
 
 ### `tg topics edit`
 
@@ -1995,6 +2015,8 @@ tg watch [options]
 
 keep the local store current until stopped — what a systemd or launchd unit runs
 
+**Changes something in Telegram.**
+
 ```sh
 tg serve
 ```
@@ -2007,6 +2029,8 @@ tg serve
 
 start serve in the background — through the unit if one is installed — and answer once it connects
 
+**Changes something on this computer only.**
+
 ```sh
 tg server start
 ```
@@ -2015,6 +2039,8 @@ tg server start
 
 stop this profile's serve — through the unit if it runs under one
 
+**Changes something on this computer only.**
+
 ```sh
 tg server stop
 ```
@@ -2022,6 +2048,8 @@ tg server stop
 ### `tg server restart`
 
 stop it and start it again
+
+**Changes something on this computer only.**
 
 ```sh
 tg server restart
@@ -2051,6 +2079,8 @@ tg server logs [options]
 
 write a systemd user unit or a launchd agent for this profile; starts nothing
 
+**Changes something on this computer only.**
+
 ```sh
 tg server install
 ```
@@ -2058,6 +2088,8 @@ tg server install
 ### `tg server uninstall`
 
 remove this profile's unit; stop it first
+
+**Changes something on this computer only.**
 
 ```sh
 tg server uninstall
@@ -2070,6 +2102,8 @@ run a tg command or an agent later or on a timer (systemd, launchd, Task Schedul
 ### `tg schedule command`
 
 run tg <args…> on a timer — reads save what they read, so this is how a chat's history fills the store
+
+**Changes something on this computer only.**
 
 ```sh
 tg schedule command <name> <args> [options]
@@ -2089,6 +2123,8 @@ tg schedule command <name> <args> [options]
 ### `tg schedule agent`
 
 start an agent (claude or codex) with a prompt on a timer; it runs with TG_READ_ONLY=1, so it reads and drafts and cannot send — its answer is kept and you are notified
+
+**Changes something on this computer only.**
 
 ```sh
 tg schedule agent <name> <harness> <prompt> [options]
@@ -2119,6 +2155,8 @@ tg schedule list
 
 run a schedule now, as its timer would, and wait for it
 
+**Changes something in Telegram.**
+
 ```sh
 tg schedule run <name>
 ```
@@ -2131,6 +2169,8 @@ tg schedule run <name>
 
 stop a schedule and remove its timer; its past output stays
 
+**Changes something on this computer only.**
+
 ```sh
 tg schedule remove <name>
 ```
@@ -2142,6 +2182,8 @@ tg schedule remove <name>
 ### `tg schedule exec`
 
 what a timer runs, given the schedule's file; to run one by hand, use run
+
+**Changes something in Telegram.**
 
 ```sh
 tg schedule exec <file>
@@ -2186,6 +2228,8 @@ tg store gaps plan <chat>
 #### `tg store gaps repair`
 
 fetch bounded interior gaps and recheck coverage; never delete unseen messages
+
+**Changes something on this computer only.**
 
 ```sh
 tg store gaps repair <chat> [options]
@@ -2248,6 +2292,8 @@ tg store jobs show [job]
 
 stop a running background job after its current page; a later sync resumes where it stopped
 
+**Changes something on this computer only.**
+
 ```sh
 tg store jobs cancel <job>
 ```
@@ -2259,6 +2305,8 @@ tg store jobs cancel <job>
 #### `tg store jobs retry`
 
 start a partial, failed or died job again, as a new job; the sync resumes where the store stopped
+
+**Changes something on this computer only.**
 
 ```sh
 tg store jobs retry [job] [options]
@@ -2286,6 +2334,8 @@ tg store jobs clear
 
 a chat's stored messages, oldest first: --jsonl one message per line, --json the list envelope of messages; never asks the messenger
 
+**Changes something on this computer only.**
+
 ```sh
 tg store export [chats] [options]
 ```
@@ -2307,6 +2357,8 @@ tg store export [chats] [options]
 ### `tg store clear`
 
 delete from the store the chats this account has left, with their messages
+
+**Changes something on this computer only.**
 
 ```sh
 tg store clear [options]
@@ -2337,6 +2389,8 @@ tg store check
 
 bring the store up to this build's schema, then normalize, index and stem the messages and notes stored before it
 
+**Changes something on this computer only.**
+
 ```sh
 tg store migrate
 ```
@@ -2345,6 +2399,8 @@ tg store migrate
 
 rebuild the word index, its typo vocabulary, the stems, the files' word index, the notes' indexes and who took part in what, from what is stored; loses nothing
 
+**Changes something on this computer only.**
+
 ```sh
 tg store reindex
 ```
@@ -2352,6 +2408,8 @@ tg store reindex
 ### `tg store backup`
 
 copy the store into a new file, while it is in use; never overwrites a file
+
+**Changes something on this computer only.**
 
 ```sh
 tg store backup <file> [options]
@@ -2369,6 +2427,8 @@ tg store backup <file> [options]
 
 put a backup in place of the store; the store it replaces is kept beside it, never deleted
 
+**Changes something on this computer only.**
+
 ```sh
 tg store restore <file>
 ```
@@ -2380,6 +2440,8 @@ tg store restore <file>
 ### `tg store decrypt`
 
 open a file written with --encrypt into a new file; asks for its password
+
+**Changes something on this computer only.**
 
 ```sh
 tg store decrypt <file> [options]
@@ -2397,6 +2459,8 @@ tg store decrypt <file> [options]
 
 bring every table to this build's shape, deleting nothing: a table of the wrong shape is kept as a copy beside a new one
 
+**Changes something on this computer only.**
+
 ```sh
 tg store repair [options]
 ```
@@ -2408,6 +2472,8 @@ tg store repair [options]
 ### `tg store reset`
 
 back the store up beside itself, then delete it and start an empty one at this build's schema; asks first, or --yes
+
+**Changes something on this computer only.**
 
 ```sh
 tg store reset [options]
@@ -2425,6 +2491,8 @@ the tables `store repair` kept as copies
 
 delete one copy `store repair` kept, named exactly; refuses any other table
 
+**Changes something on this computer only.**
+
 ```sh
 tg store copies delete <name>
 ```
@@ -2440,6 +2508,8 @@ the conversations inside a chat, found in the stored messages by replies, mentio
 ### `tg conversations build`
 
 find a chat's conversations in what the store holds, replacing the last build; without --chat, every chat that changed since its build and every group never built; never asks the messenger
+
+**Changes something on this computer only.**
 
 ```sh
 tg conversations build [options]
@@ -2561,6 +2631,8 @@ your agent's answers: which earlier message each message of a batch answers
 
 store your agent's answer to a batch, read as JSON from stdin: { "model", "answers": [{ "message", "parent", "confidence" }] }; all or nothing
 
+**Changes something on this computer only.**
+
 ```sh
 tg conversations links add [options]
 ```
@@ -2572,6 +2644,8 @@ tg conversations links add [options]
 #### `tg conversations links clear`
 
 drop your agent's answers for a chat, or only one model's; messages are never touched
+
+**Changes something on this computer only.**
 
 ```sh
 tg conversations links clear [options]
@@ -2598,6 +2672,8 @@ tg conversations consents list
 
 
 
+**Changes something on this computer only.**
+
 ```sh
 tg conversations consents revoke [options]
 ```
@@ -2610,6 +2686,8 @@ tg conversations consents revoke [options]
 ### `tg conversations embed`
 
 compute a vector for each chunk of a chat's conversations for search by meaning — on this machine, or with --provider through a service and your key; resumes where it stopped; without --chat, every built chat with chunks left, on this machine only
+
+**Changes something on this computer only.**
 
 ```sh
 tg conversations embed [options]
@@ -2649,6 +2727,8 @@ tg conversations embed status [options]
 
 drop a chat's vectors, or only one model's; messages and conversations are never touched
 
+**Changes something on this computer only.**
+
 ```sh
 tg conversations embed clear [options]
 ```
@@ -2668,6 +2748,8 @@ the files of stored messages: their text in the local store, where search finds 
 ### `tg attachments extract`
 
 read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB — into the local store, where search finds them
+
+**Changes something on this computer only.**
 
 ```sh
 tg attachments extract [options]
@@ -2730,6 +2812,8 @@ the text of one file, as an agent read it
 #### `tg attachments text set`
 
 keep the text an agent read from a file — a scan, a photo — so search finds it; nothing is sent
+
+**Changes something on this computer only.**
 
 ```sh
 tg attachments text set <chat> [message] [options]
@@ -2905,7 +2989,9 @@ search pictures by what they show, with a model on this machine
 
 ### `tg images embed`
 
-compute a vector for each picture the store knows and has none for — downloading it through the messenger, keeping only the vector; needs `picture_search` on in the profile and `models image download clip-b32`; resumes where it stopped
+compute a vector for each picture the store knows and has none for — downloading it through the messenger, keeping only the vector; needs `picture_search` on in the profile and `images models download clip-b32`; resumes where it stopped
+
+**Changes something on this computer only.**
 
 ```sh
 tg images embed [options]
@@ -2915,6 +3001,36 @@ tg images embed [options]
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--limit <n>` | at most this many pictures in one run; 100 if not given. |
+
+### `tg images models`
+
+models that read pictures, for `images embed` and picture search
+
+#### `tg images models list`
+
+the picture models, which are downloaded, and which one is the default
+
+```sh
+tg images models list [query]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
+
+#### `tg images models download`
+
+download a picture model once, checked against the sha256 this version expects
+
+**Changes something on this computer only.**
+
+```sh
+tg images models download <model>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `model` | required | a model id from `images models list`. |
 
 ## `tg metadata`
 
@@ -3304,6 +3420,8 @@ tg stats tasks show [options]
 
 a chart's data from a chat's statistics, and optionally a dark SVG or PNG image
 
+**Changes something on this computer only.**
+
 ```sh
 tg stats charts <chat> [options]
 ```
@@ -3344,6 +3462,8 @@ tg tasks list [query] [options]
 
 add a task for a stored message or note — a promise, a request
 
+**Changes something on this computer only.**
+
 ```sh
 tg tasks add <message> [options]
 ```
@@ -3364,6 +3484,8 @@ tg tasks add <message> [options]
 
 set a task's title, description, due date and next check; nothing reaches the messenger
 
+**Changes something on this computer only.**
+
 ```sh
 tg tasks plan <task> [options]
 ```
@@ -3382,6 +3504,8 @@ tg tasks plan <task> [options]
 ### `tg tasks link`
 
 link a task to what it concerns — messages, chats, people, documents, URLs — to read around later
+
+**Changes something on this computer only.**
 
 ```sh
 tg tasks link <task> [targets] [options]
@@ -3431,6 +3555,8 @@ tg tasks agenda [query] [options]
 ### `tg tasks close`
 
 close a task: done, or dismissed when it needs no answer; a closed task stays closed
+
+**Changes something on this computer only.**
 
 ```sh
 tg tasks close <task> [options]
@@ -3612,6 +3738,8 @@ saved searches and the history of search messages and stats messages show, kept 
 
 save a search under a name without running it; search messages --saved <name> runs it
 
+**Changes something on this computer only.**
+
 ```sh
 tg searches create <name> [query] [options]
 ```
@@ -3653,8 +3781,12 @@ tg searches show <name|id>
 the saved searches, by name
 
 ```sh
-tg searches list
+tg searches list [query]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
 
 ### `tg searches history`
 
@@ -3674,6 +3806,8 @@ tg searches history [options]
 
 delete a saved search, or one run from the history
 
+**Changes something on this computer only.**
+
 ```sh
 tg searches delete <name|id>
 ```
@@ -3686,6 +3820,8 @@ tg searches delete <name|id>
 
 empty the history; saved searches stay
 
+**Changes something on this computer only.**
+
 ```sh
 tg searches clear
 ```
@@ -3697,6 +3833,8 @@ the waits Telegram asked this profile to keep, and a hold on its writes
 ### `tg flood clear`
 
 forget them, lift the hold and the profile's pace, once Telegram no longer limits the account; changes nothing there
+
+**Changes something on this computer only.**
 
 ```sh
 tg flood clear
@@ -3887,6 +4025,8 @@ tg replies test [rule] [options]
 
 stop every reply rule of this profile at once, a running serve too; resume undoes it
 
+**Changes something on this computer only.**
+
 ```sh
 tg replies pause
 ```
@@ -3894,6 +4034,8 @@ tg replies pause
 ### `tg replies resume`
 
 let the reply rules answer again after pause
+
+**Changes something on this computer only.**
 
 ```sh
 tg replies resume
@@ -4133,6 +4275,8 @@ what a problem report holds; writes nothing
 
 write a problem report to a file, and say where to send it
 
+**Changes something on this computer only.**
+
 ```sh
 tg doctor report create [options]
 ```
@@ -4174,6 +4318,8 @@ tg complete [words]
 
 upgrade tg with the package manager that installed it; --check only looks
 
+**Changes something on this computer only.**
+
 ```sh
 tg upgrade [options]
 ```
@@ -4185,6 +4331,8 @@ tg upgrade [options]
 ## `tg mcp`
 
 serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg mcp`
+
+**Changes something in Telegram.**
 
 ```sh
 tg mcp [options]
@@ -4749,6 +4897,8 @@ tg bot sends list
 
 print new messages as they arrive and keep them, until Ctrl-C or --timeout (either ends it normally)
 
+**Changes something in Telegram.**
+
 ```sh
 tg bot watch [options]
 ```
@@ -4901,6 +5051,8 @@ the bot's local copy on this machine
 
 fetch a chat's history into the bot's local copy, newest first; run it again to continue
 
+**Changes something on this computer only.**
+
 ```sh
 tg bot store fetch <chat> [options]
 ```
@@ -4921,6 +5073,8 @@ tg bot store fetch <chat> [options]
 ### `tg bot mcp`
 
 serve this bot to an agent over MCP, on stdin and stdout — `claude mcp add sales-bot -- tg sales bot mcp`
+
+**Changes something in Telegram.**
 
 ```sh
 tg bot mcp [options]
@@ -8579,6 +8733,8 @@ tg skill show [name]
 ### `tg skill install`
 
 write SKILL.md to \~/.claude/skills/tg-cli/ (Claude Code) and \~/.agents/skills/tg-cli/ (Codex, Gemini CLI)
+
+**Changes something on this computer only.**
 
 ```sh
 tg skill install [options]

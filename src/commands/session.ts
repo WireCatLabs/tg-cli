@@ -7,6 +7,7 @@ import {
   asFirstWord,
   commandWords,
   inputPolicy,
+  REMOTE_WRITE,
   refuseCommandName,
   rememberAccount,
   rootOf,
@@ -198,8 +199,7 @@ export const startSession = async (
 export const sessionCommand = () => {
   const session = new Command("session").description("log this profile in to Telegram, or out")
 
-  session
-    .command("start")
+  annotate(session.command("start"), { effects: REMOTE_WRITE })
     .description("log in by QR code (default) or by phone number, code and 2FA password")
     .addArgument(new Argument("[method]", "how to log in").choices(["qr", "phone"]).default("qr"))
     .addOption(
@@ -245,7 +245,7 @@ export const sessionCommand = () => {
       }
     })
 
-  annotate(session.command("end"), { mutates: true })
+  annotate(session.command("end"), { effects: REMOTE_WRITE })
     .description("log this profile out on Telegram's side and forget the session here")
     .action(async function (this: Command) {
       const context = forCommand(this)

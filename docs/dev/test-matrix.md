@@ -185,7 +185,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages send` | `--reply-to` | ✅ |  |
 | `messages send` | `--comment-to` | ✅ |  |
 | `messages send` | `--send-as` | ✅ |  |
-| `messages send` | `--send-id` | ✅ |  |
+| `messages send` | `--operation-id` | ✅ |  |
 | `messages send` | `--silent` | ✅ |  |
 | `messages send` | `--no-preview` | ✅ |  |
 | `messages send` | `--md` | ✅ |  |
@@ -226,7 +226,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages forward` | `--to` | ✅ |  |
 | `messages forward` | `--silent` | ✅ |  |
 | `messages forward` | `--send-as` | ✅ |  |
-| `messages forward` | `--send-id` | ✅ |  |
+| `messages forward` | `--operation-id` | ✅ |  |
 | `messages forward` | `--topic` | ✅ |  |
 | `messages pin` |  | ✅ |  |
 | `messages pin` | `--notify` | ✅ |  |
@@ -267,7 +267,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--revote` | ✅ |  |
 | `polls create` | `--silent` | ✅ |  |
 | `polls create` | `--send-as` | ✅ |  |
-| `polls create` | `--send-id` | ✅ |  |
+| `polls create` | `--operation-id` | ✅ |  |
 | `polls create` | `--quiz` | ✅ |  |
 | `polls create` | `--correct` | ✅ |  |
 | `polls create` | `--solution` | ✅ |  |
@@ -307,7 +307,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics enable` |  | ✅ |  |
 | `topics enable` | `--upgrade` | ✅ |  |
 | `topics create` |  | ✅ |  |
-| `topics create` | `--send-id` | ✅ |  |
+| `topics create` | `--operation-id` | ✅ |  |
 | `topics edit` |  | ✅ |  |
 | `topics edit` | `--title` | ✅ |  |
 | `topics edit` | `--closed` | ✅ |  |

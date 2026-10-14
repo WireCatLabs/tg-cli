@@ -762,14 +762,14 @@ closing a poll, and each deleted message. A reaction, a vote and a quiet pin do 
 ### When the outcome is unknown
 
 Exit code `14` means the connection broke after the message left: **it may have gone**. The error
-carries a `--send-id`. Repeat with it, and Telegram drops the second copy:
+carries a `--operation-id`. Repeat with it, and Telegram drops the second copy:
 
 ```sh
-tg personal messages send "Book club" "See you at 7" --send-id <id from the error>
+tg personal messages send "Book club" "See you at 7" --operation-id <id from the error>
 ```
 
 ```sh
-tg personal messages forward "Book club" 4242 --to me --send-id <id from the error>
+tg personal messages forward "Book club" 4242 --to me --operation-id <id from the error>
 ```
 
 A forward and a poll carry one too. A repeat without it is a second message to a person.
@@ -888,7 +888,7 @@ tg personal messages send "Book club" "Meeting moved to 8" --send-as <id from th
 The list always has you, and `default` marks the group's saved choice; reading it changes nothing.
 An id not in the list is refused. `--send-as` works with files, `tg personal messages forward` and
 `tg personal polls create` too — for a forward, the list is the one of the `--to` chat. To repeat an unknown
-outcome, give the same `--send-as` with the `--send-id`.
+outcome, give the same `--send-as` with the `--operation-id`.
 
 A group can have a channel saved as its default sender — Telegram does this for the discussion group of your
 channel. There a send, forward or poll **without** `--send-as` is refused (exit `2`) instead of going out as the
@@ -1106,13 +1106,13 @@ tg personal messages list me --jsonl | jq -r .text  # one message per line
 - **Ids are strings.** Never turn one into a number.
 - `--quiet` turns notes off; a failure is still said. `-v` and `-vv` add detail to the table view.
 - `--timeout 30s` bounds the whole command (`500ms`, `30s` or `2m`).
-- `tg commands --json` is the whole command tree, with `mutates: true` on every command that changes
-  something in Telegram.
+- `tg commands --json` is the whole command tree, with `effects: { remote, local }` on every command:
+  `remote: "write"` changes something in Telegram.
 
 ```sh
 if ! tg personal messages send "Book club" "See you at 7" --json > /dev/null; then
   case $? in
-    14) echo "it may have gone — repeat only with the same --send-id" ;;
+    14) echo "it may have gone — repeat only with the same --operation-id" ;;
     4)  echo "run tg personal session start" ;;
   esac
 fi

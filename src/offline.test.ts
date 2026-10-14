@@ -52,7 +52,7 @@ describe("--offline", () => {
       online: false,
     })
     expect(older.code).toBe(0)
-    expect(JSON.parse(older.stdout[0] ?? "")).toMatchObject({ items: [], coverage: { has_more: false } })
+    expect(JSON.parse(older.stdout[0] ?? "").data).toMatchObject({ items: [], coverage: { has_more: false } })
     const failed = await tg(["evidence", "messages", "evidence", message.chatId, "--limit", "101", "--json"], {
       store,
       online: false,

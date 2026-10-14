@@ -43,14 +43,15 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 
 ## 2. The command's contract
 
-- `annotate(command, { mutates: true })` on anything that writes. Nothing sends, marks read or
+- `annotate(command, { effects })` on every command, reads too: `REMOTE_WRITE`, `FETCH`, `REMOTE_READ`,
+  `LOCAL_WRITE`, `LOCAL_READ` from `@wirecat/cli-core/cli`; one without counts as a write. Nothing sends, marks read or
   deletes unless the typed command asks for it (rule 1). Anything that cannot be undone gets the
   level `ask` in cli-core's built-in permission defaults, so it asks first; `--allow-dangerous`
   answers yes for a deletion, `--yes` for the rest.
 - In machine mode, stdout carries one JSON value and nothing else (rule 2). A list is
   `{ items, limit, hasMore }`.
 - Errors are a `CliError(<code>, <sentence that says what to do>)`. The code decides the exit code.
-- The connection closes in a `finally` (rule 3). A retried write reuses its `--send-id`, never a new
+- The connection closes in a `finally` (rule 3). A retried write reuses its `--operation-id`, never a new
   one: Telegram deduplicates by `random_id` across connections.
 
 ## 3. Tests
