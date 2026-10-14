@@ -4,6 +4,10 @@
 bite. A lane agent starts with its own handoff instead ([`docs/dev/agents.md`](docs/dev/agents.md)). Open work is
 [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md).
 
+Security audits of this repository follow the shared
+[security method](https://github.com/WireCatLabs/cli-testing/tree/main/docs/security) in cli-testing;
+vulnerabilities are reported as the [security policy](SECURITY.md) says.
+
 1. **This is the owner's real Telegram account.** Nothing sends unless the command typed asked for
    it; live checks send only to Saved Messages, and go through `bin/tg`, never `node dist/bin/tg.js`.
 2. **In machine mode, stdout carries data and nothing else.** Diagnostics go to stderr.
