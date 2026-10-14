@@ -2905,7 +2905,7 @@ tg tags list [query]
 
 ## `tg mentions`
 
-phones, e-mail, links and documents found in stored messages
+phones, e-mail, links, documents and people's names found in stored messages
 
 ### `tg mentions list`
 
@@ -2938,7 +2938,7 @@ tg mentions show <id>
 
 ### `tg mentions confirm`
 
-say what a mention is, everywhere its value is written: a phone's owner, the stored document
+say what a mention is: a phone's owner everywhere it is written, the stored document, who a name means
 
 **Changes something on this computer only.**
 
@@ -2949,7 +2949,7 @@ tg mentions confirm <id> [person] [options]
 | Argument | | What it is |
 |---|---|---|
 | `id` | required | the mention's id, from mentions list. |
-| `person` | optional | person:<uid> or organization:<id> that owns the phone or the address; a document needs none. |
+| `person` | optional | person:<uid> or organization:<id> that owns the phone or the address; person:<uid> a name means; a document needs none. |
 
 | Option | What it does |
 |---|---|
@@ -2957,7 +2957,7 @@ tg mentions confirm <id> [person] [options]
 
 ### `tg mentions reject`
 
-not a real mention, or not worth keeping: dismiss its value everywhere, and on later syncs
+not a real mention: dismiss its value everywhere and on later syncs; a name only where it is
 
 **Changes something on this computer only.**
 
@@ -2980,8 +2980,12 @@ find the mentions of every stored message again; decisions are kept
 **Changes something on this computer only.**
 
 ```sh
-tg mentions rebuild
+tg mentions rebuild [kind]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `kind` | optional | only this kind: person-name after people were added or renamed. One of: `phone`, `email`, `url`, `document`, `person-name`. |
 
 ## `tg images`
 

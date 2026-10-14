@@ -3,6 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **Files go up from disk as they upload** (cli-core 0.272.0). `messages send --file`, `--photo`, `--voice`, the
+  profile photo and `tg bot` no longer read the whole file into memory first, and the refusal for files of 2 GiB or
+  more is gone: Telegram's own limit applies.
+
+### Changed — may break scripts
+
+- **`mentions rebuild` takes its kind as an argument**: `tg <profile> mentions rebuild person-name`, not `--kind`
+  (cli-core 0.272.0).
+
 ## 0.54.0 — 14.10.2026
 
 ### What's new
