@@ -371,7 +371,7 @@ tg personal config set picture_search true
 ```
 
 ```sh
-tg personal models image download clip-b32
+tg personal images models download clip-b32
 ```
 
 ```sh

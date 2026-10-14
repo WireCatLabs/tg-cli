@@ -415,7 +415,7 @@ Unknown edges and message-id holes do not prove missing history.
 ## Pictures
 
 Picture search is off until `tg <profile> config set picture_search true`. Then
-`tg <profile> models image download clip-b32` (once, about 155 MB) and `tg <profile> images embed`
+`tg <profile> images models download clip-b32` (once, about 155 MB) and `tg <profile> images embed`
 (`--chat`, `--limit`) read the stored pictures on this machine. After that a message search returns a
 `pictures` list beside its hits; with no model, `picturesSkipped` says so. **Picture queries must be English**:
 translate the owner's words first. Never turn the setting on or run `images embed` without the owner's say.
