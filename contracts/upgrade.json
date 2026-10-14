@@ -63,7 +63,7 @@
             },
             "profiles": {
               "readonly": {
-                "read_only": true
+                "readOnly": true
               },
               "contract": {}
             }
