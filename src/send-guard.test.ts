@@ -205,7 +205,7 @@ describe("the send guard in front of the other writes", () => {
     const over = await tg(["g-edit", "messages", "edit", "Valencia", "5", "again"], adapter)
 
     expect(done.code).toBe(0)
-    expect(JSON.parse(done.stdout[0] ?? "").message).toMatchObject({ id: "5", text: "the new text" })
+    expect(JSON.parse(done.stdout[0] ?? "").item.message).toMatchObject({ id: "5", text: "the new text" })
     expect(over.code).toBe(8)
     expect(edited).toEqual(["the new text"])
     expect(journal("g-edit").filter((entry) => entry.kind === "edit" && entry.outcome === "sent")).toMatchObject([
@@ -311,7 +311,7 @@ describe("the send guard in front of the other writes", () => {
     )
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ sendId: "9001", operationId: "9001" })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ item: { send_id: "9001", operation_id: "9001" } })
     expect(forwarded).toEqual(["1 9001"])
     expect(journal("g-fwd-id")).toMatchObject([{ kind: "forward", outcome: "sent", sendId: "9001" }])
   })
@@ -335,10 +335,10 @@ describe("the send guard in front of the other writes", () => {
     const off = await tg(["g-pin", "messages", "unpin", "Valencia", "5"], adapter)
 
     expect([quiet.code, loud.code, off.code]).toEqual([0, 8, 0])
-    expect(JSON.parse(quiet.stdout[0] ?? "")).toEqual({
-      operationId: expect.any(String),
-      chatId: chat.id,
-      messageId: "5",
+    expect(JSON.parse(quiet.stdout[0] ?? "").item).toEqual({
+      operation_id: expect.any(String),
+      chat_id: chat.id,
+      message_id: "5",
       pinned: true,
     })
     expect(pinned).toEqual(["5", "5 off"])
@@ -823,15 +823,15 @@ describe("the send guard in front of the other writes", () => {
     )
 
     expect([unasked.code, done.code, over.code]).toEqual([7, 0, 8])
-    const answer = JSON.parse(done.stdout[0] ?? "")
+    const answer = JSON.parse(done.stdout[0] ?? "").item
     expect(answer).toEqual({
-      operationId: expect.any(String),
-      chatId: chat.id,
+      operation_id: expect.any(String),
+      chat_id: chat.id,
       deleted: ["5", "6"],
-      forEveryone: false,
+      for_everyone: false,
     })
     expect(journal("g-del")).toContainEqual(
-      expect.objectContaining({ outcome: "sent", operationId: answer.operationId }),
+      expect.objectContaining({ outcome: "sent", operationId: answer.operation_id }),
     )
     expect(deleted).toEqual(["5,6"])
   })

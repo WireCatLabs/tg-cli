@@ -89,12 +89,12 @@ describe("SDK148 local commands through the consumer", () => {
   it("tags one account's chat and searches it without a network connection", async () => {
     const added = await cli(["tags", "add", "Work", "--chat", "7", "--json"])
     expect(added.code, added.err).toBe(0)
-    expect(JSON.parse(added.out)).toMatchObject({ added: ["work"] })
+    expect(JSON.parse(added.out).item).toMatchObject({ added: ["work"] })
     const listed = await cli(["tags", "list", "tag:work type:chat", "--json"])
     expect(JSON.parse(listed.out).items).toHaveLength(1)
     const found = await cli(["search", "messages", "tag:work", "--json"])
     expect(found.code, found.err).toBe(0)
-    expect(JSON.parse(found.out).items.map((m: { id: string }) => m.id)).toEqual(["101"])
+    expect(JSON.parse(found.out).items.map((m: { ref: string }) => m.ref.split("/").at(-1))).toEqual(["101"])
     const store = await openStore()
     try {
       expect(await store.tags({ provider: account.provider, account: "502" }, {})).toEqual([])

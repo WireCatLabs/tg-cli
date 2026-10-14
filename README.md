@@ -33,7 +33,7 @@ An example conversation (invented people, illustrative output):
 
 ```text
 You:    Use tg CLI. What did I promise anyone in the last three days?
-Agent:  (runs tg personal review --since-time 3d: 12 chats)
+Agent:  (runs tg personal review 'date>3d': 12 chats)
         I owe
         · Alice Example — the invoice by Friday. "Alice Example", 24.09
         Waiting on others
@@ -66,7 +66,7 @@ More: [installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/
 
 ```sh
 tg personal inbox
-tg personal review --since-time 1d
+tg personal review 'date>1d'
 ```
 
 **Find anything.** *"Use tg CLI. When did we agree on the venue with Alice?"* — an answer with the date
@@ -86,7 +86,7 @@ tg personal review --new                      # what changed since the last revi
 **Run your groups.** *"Use tg CLI. Which questions in Hiking has nobody answered?"*
 
 ```sh
-tg personal review --chat "Hiking" --unanswered
+tg personal review 'chat:"Hiking"' --unanswered
 tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed
 ```
 
@@ -190,7 +190,7 @@ Everything `tg` reads is kept in a local store on your computer. Search runs ove
 Telegram by default; `--offline` answers from the store without connecting.
 
 ```sh
-tg personal search messages "contract" --chat "Project Alpha"
+tg personal search messages 'contract chat:"Project Alpha"'
 tg personal search messages "contract" --backend archive  # local only
 tg personal messages sync "Project Alpha" --last 5000 --background
 tg personal store export "Project Alpha" --format markdown --output alpha.md
@@ -206,7 +206,7 @@ More: [search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/search.md) �
 ## Groups you run
 
 ```sh
-tg personal review --chat "Hiking" --unanswered   # questions nobody answered in 24 hours
+tg personal review 'chat:"Hiking"' --unanswered   # questions nobody answered in 24 hours
 tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed, and by whom
 tg personal chats members list "Hiking" --all     # everyone, with their role and when they were last seen
 tg personal topics list "Hiking"                  # a forum group's topics, newest activity first

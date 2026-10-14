@@ -29,10 +29,10 @@ describe("the global options", () => {
         hasMore: false,
       }),
     })
-    const lines = await tg(["inbox", "--since-time", "1h", "--jsonl"], { adapter: () => unread })
-    const value = await tg(["inbox", "--since-time", "1h", "--json"], { adapter: () => unread })
+    const lines = await tg(["inbox", "date>1h", "--jsonl"], { adapter: () => unread })
+    const value = await tg(["inbox", "date>1h", "--json"], { adapter: () => unread })
 
-    expect(lines.stdout.map((line) => JSON.parse(line).id)).toEqual(["1", "2"])
+    expect(lines.stdout.map((line) => JSON.parse(line).ref.split("/").at(-1))).toEqual(["1", "2"])
     expect(value.stdout).toHaveLength(1)
   })
 
@@ -107,6 +107,31 @@ describe("the global options", () => {
     )
     expect(profiles).toContain("kept")
     expect(profiles).not.toContain("unkept")
+  })
+})
+
+describe("chats list", () => {
+  const chats = scripted({
+    chats: async () => ({
+      items: [
+        chat,
+        { ...chat, id: "2", title: "Valeting crew", unreadCount: 0 },
+        dialog("3", "Valeria", chat.lastMessageAt ?? ""),
+      ],
+      hasMore: false,
+    }),
+  })
+
+  it("kind, unread_count and title fields combine over the stored chats", async () => {
+    await tg(["filtered", "chats", "list", "--json"], { adapter: () => chats })
+
+    const { code, stdout, stderr } = await tg(
+      ["filtered", "chats", "list", "kind:group unread_count>0 title:vale", "--offline", "--json"],
+      { adapter: () => chats },
+    )
+
+    expect(code, stderr.join("\n")).toBe(0)
+    expect(json(stdout).items.map((one: { id: string }) => one.id)).toEqual([chat.id])
   })
 })
 
@@ -463,7 +488,7 @@ describe("messages", () => {
     })
 
     expect(code).toBe(0)
-    expect(json(stdout).items).toEqual([{ kind: "voice", path: join(into, "42-1.ogg"), bytes: 4 }])
+    expect(json(stdout).item.files).toEqual([{ kind: "voice", path: join(into, "42-1.ogg"), bytes: 4 }])
     expect(readFileSync(join(into, "42-1.ogg"), "utf8")).toBe("opus")
   })
 
@@ -495,7 +520,7 @@ describe("messages", () => {
     )
 
     expect(code).toBe(0)
-    expect(json(stdout)).toMatchObject({ items: [{ path: join(into, "43-1.jpg") }], saved: 1, complete: true })
+    expect(json(stdout).item).toMatchObject({ files: [{ path: join(into, "43-1.jpg") }], saved: 1, complete: true })
     expect(readdirSync(into, { withFileTypes: true }).filter((one) => one.name.startsWith(".download-"))).toHaveLength(
       1,
     )
@@ -563,7 +588,7 @@ describe("messages", () => {
     })
 
     expect(code).toBe(0)
-    expect(json(stdout)).toEqual({ messageId: "42", text: "hola", pending: false, via: "telegram" })
+    expect(json(stdout).item).toEqual({ message_id: "42", text: "hola", pending: false, via: "telegram" })
   })
 
   it("**models audio list puts Parakeet first**, and transcribe --local or --model names the download instead of connecting", async () => {
@@ -602,7 +627,7 @@ describe("messages", () => {
 
     expect(code).toBe(0)
     expect(asked).toEqual({ chatId: chat.id, text: "hola", sendId: "987654321", replyTo: "42" })
-    expect(json(stdout).sendId).toBe("987654321")
+    expect(json(stdout).item).toMatchObject({ send_id: "987654321", message: { id: "43" } })
   })
 
   it("send carries --silent, --no-preview and --md to the adapter", async () => {
@@ -634,13 +659,11 @@ describe("messages", () => {
         "searching",
         "search",
         "messages",
-        "piso",
+        `piso chat:"${chat.id}"`,
         "--language",
         "lucene",
         "--timezone",
         "Europe/Madrid",
-        "--chat",
-        "Valencia",
         "--limit",
         "1",
         "--json",
@@ -651,7 +674,6 @@ describe("messages", () => {
     expect(code).toBe(0)
     expect(json(stdout).items).toHaveLength(1)
     expect(json(stdout).items[0].excerpt).toContain("piso")
-    expect(json(stdout).query).toMatchObject({ language: "lucene-v1", timezone: "Europe/Madrid" })
     const legacy = await tg(["searching", "search", "messages", "pis", "--language", "legacy", "--json"], {
       adapter: () => reads,
     })
@@ -677,9 +699,10 @@ describe("messages", () => {
 
     const { items } = json(stdout)
     expect(code).toBe(0)
-    expect(items.map((hit: { id: string }) => hit.id)).toEqual(["73", "71"])
-    expect(items[0].context.map((neighbour: { id: string }) => neighbour.id)).toContain("72")
-    expect(items.every((hit: { locator: string }) => hit.locator.startsWith("msg:telegram/"))).toBe(true)
+    const idOf = (one: { ref: string }) => one.ref.split("/").at(-1)
+    expect(items.map(idOf)).toEqual(["73", "71"])
+    expect(items[0].context.map(idOf)).toContain("72")
+    expect(items.every((hit: { ref: string }) => hit.ref.startsWith("msg:telegram/"))).toBe(true)
   })
 })
 
@@ -730,13 +753,12 @@ describe("inbox", () => {
   })
 
   it("--since-time shows what arrived after that time, at most --limit per chat", async () => {
-    const { code, stdout } = await tg(["inbox", "--since-time", "1h", "--limit", "1", "--json"], {
+    const { code, stdout } = await tg(["inbox", "date>1h", "--limit", "1", "--json"], {
       adapter: () => unread,
     })
 
     expect(code).toBe(0)
-    const answer = json(stdout)
-    expect(answer.chats.flatMap((one: { messages: unknown[] }) => one.messages)).toHaveLength(1)
+    expect(json(stdout).items).toHaveLength(1)
   })
 
   it("--kind keeps those kinds, and --mark-read marks the chats shown read, --no-mark-read never", async () => {
@@ -750,17 +772,14 @@ describe("inbox", () => {
     })
     const other = chat.kind === "channel" ? "dialog" : "channel"
 
-    const none = json(
-      (await tg(["inbox", "--since-time", "1h", "--kind", other, "--json"], { adapter: () => marking })).stdout,
-    )
-    await tg(["inbox", "--since-time", "1h", "--no-mark-read", "--json"], { adapter: () => marking })
+    const none = json((await tg(["inbox", "date>1h", "--kind", other, "--json"], { adapter: () => marking })).stdout)
+    await tg(["inbox", "date>1h", "--no-mark-read", "--json"], { adapter: () => marking })
     expect(marks).toEqual([])
-    const marked = json(
-      (await tg(["inbox", "--since-time", "1h", "--mark-read", "--json"], { adapter: () => marking })).stdout,
-    )
+    const marked = await tg(["inbox", "date>1h", "--mark-read", "--json"], { adapter: () => marking })
 
-    expect(none.chats).toEqual([])
-    expect(marked.markedRead).toHaveLength(1)
+    expect(none.items).toEqual([])
+    expect(json(marked.stdout)).not.toHaveProperty("markedRead")
+    expect(marked.stderr.join("\n")).toContain("marked 1 chat(s) read")
     expect(marks).toEqual([chat.id])
   })
 
@@ -781,9 +800,9 @@ describe("inbox", () => {
     const first = json((await tg(["review", "--new", "--mark-read", "--json"], { adapter: () => marking })).stdout)
     const second = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
 
-    expect(none.chats).toEqual([])
-    expect(first.chats).toHaveLength(1)
-    expect(second.chats).toEqual([])
+    expect(none.items).toEqual([])
+    expect(first.items).toHaveLength(1)
+    expect(second.items).toEqual([])
     expect(marks).toEqual([chat.id])
   })
 
@@ -796,12 +815,10 @@ describe("inbox", () => {
       }),
       transcribe: async () => ({ text: "hola", pending: false }),
     })
-    const answer = json(
-      (await tg(["inbox", "--since-time", "1h", "--transcribe", "--json"], { adapter: () => voiced })).stdout,
-    )
+    const answer = json((await tg(["inbox", "date>1h", "--transcribe", "--json"], { adapter: () => voiced })).stdout)
 
-    expect(answer.chats[0].messages[0].transcript).toBe("hola")
-    expect(answer.unheard).toEqual([])
+    expect(answer.items[0].transcript).toBe("hola")
+    expect(answer.missing).toBeUndefined()
   })
 
   it("--model beside --transcribe hears on this machine, never asks Telegram", async () => {
@@ -817,11 +834,11 @@ describe("inbox", () => {
         return { text: "hola", pending: false }
       },
     })
-    const { stdout } = await tg(["inbox", "--since-time", "1h", "--transcribe", "--model", "gigaam-v3", "--json"], {
+    const { stdout } = await tg(["inbox", "date>1h", "--transcribe", "--model", "gigaam-v3", "--json"], {
       adapter: () => voiced,
     })
 
-    expect(json(stdout).unheard).toMatchObject([{ messageId: "78" }])
+    expect(json(stdout).missing).toMatchObject([{ field: "transcript", step: "messages.transcribe" }])
     expect(asked).toBe(0)
   })
 
@@ -830,19 +847,19 @@ describe("inbox", () => {
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest, muted: true }], hasMore: false }),
       history: async () => ({ items: [message("72", { timestamp: latest })], hasMore: false }),
     })
-    const quiet = json((await tg(["inbox", "--since-time", "1h", "--json"], { adapter: () => muted })).stdout)
-    const all = json((await tg(["inbox", "--since-time", "1h", "--all", "--json"], { adapter: () => muted })).stdout)
+    const quiet = json((await tg(["inbox", "date>1h", "--json"], { adapter: () => muted })).stdout)
+    const all = json((await tg(["inbox", "date>1h", "--all", "--json"], { adapter: () => muted })).stdout)
 
-    expect([quiet.chats, quiet.quiet]).toEqual([[], 1])
-    expect(all.chats).toHaveLength(1)
+    expect([quiet.items, quiet.missing]).toMatchObject([[], [{ step: "inbox.all" }]])
+    expect(all.items).toHaveLength(1)
   })
 
   it("--new starts the next check where this one ended", async () => {
     const first = json((await tg(["checking", "inbox", "--new", "--json"], { adapter: () => unread })).stdout)
     const second = json((await tg(["checking", "inbox", "--new", "--json"], { adapter: () => unread })).stdout)
 
-    expect(first.until).toBeDefined()
-    expect(second.since).toBe(first.until)
+    expect(first.items.length).toBeGreaterThan(0)
+    expect(second.items).toEqual([])
   })
 })
 
@@ -859,22 +876,20 @@ describe("review", () => {
   })
 
   it("--since-time and --all read every message of a muted chat since then, both sides", async () => {
-    const quiet = json((await tg(["review", "--since-time", "2d", "--json"], { adapter: () => reviewed })).stdout)
-    const all = json(
-      (await tg(["review", "--since-time", "2d", "--all", "--json"], { adapter: () => reviewed })).stdout,
-    )
+    const quiet = json((await tg(["review", "date>2d", "--json"], { adapter: () => reviewed })).stdout)
+    const all = json((await tg(["review", "date>2d", "--all", "--json"], { adapter: () => reviewed })).stdout)
 
-    expect([quiet.chats, quiet.quiet]).toEqual([[], 1])
-    expect(all.chats[0].messages.map((one: { id: string }) => one.id)).toEqual(["80", "81"])
+    expect([quiet.items, quiet.missing]).toMatchObject([[], [{ step: "review.all" }]])
+    expect(all.items.map((one: { ref: string }) => one.ref.split("/").at(-1))).toEqual(["80", "81"])
   })
 
   it("--chat and --unanswered keep one chat's questions that its admins left open", async () => {
-    const { code, stdout } = await tg(["review", "--chat", "Valencia", "--unanswered", "12h", "--json"], {
+    const { code, stdout } = await tg(["review", "chat:Valencia", "--unanswered", "12h", "--json"], {
       adapter: () => reviewed,
     })
 
     expect(code).toBe(0)
-    expect(json(stdout).chats[0]).toMatchObject({ answeredBy: "owner-and-admins", messages: [{ id: "80" }] })
+    expect(json(stdout).items.map((one: { ref: string }) => one.ref.split("/").at(-1))).toEqual(["80"])
   })
 
   it("--transcribe hears a review's voice messages; with --model only on this machine", async () => {
@@ -892,18 +907,16 @@ describe("review", () => {
     })
     const local = json(
       (
-        await tg(["review", "--since-time", "2d", "--transcribe", "--model", "gigaam-v3", "--json"], {
+        await tg(["review", "date>2d", "--transcribe", "--model", "gigaam-v3", "--json"], {
           adapter: () => voiced,
         })
       ).stdout,
     )
-    expect([local.unheard, asked]).toMatchObject([[{ messageId: "82" }], 0])
+    expect([local.missing, asked]).toMatchObject([[{ field: "transcript" }], 0])
 
-    const heard = json(
-      (await tg(["review", "--since-time", "2d", "--transcribe", "--json"], { adapter: () => voiced })).stdout,
-    )
+    const heard = json((await tg(["review", "date>2d", "--transcribe", "--json"], { adapter: () => voiced })).stdout)
 
-    expect(heard.chats[0].messages[0].transcript).toBe("hola")
+    expect(heard.items[0].transcript).toBe("hola")
     expect(asked).toBe(1)
   })
 })

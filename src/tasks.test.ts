@@ -67,7 +67,7 @@ describe("tasks through tg", () => {
   it("adds, lists, counts and closes a task in the local store without connecting", async () => {
     const added = await cli(["tasks", "add", PROMISE, "--type", "promise", "--json"])
     expect(added.code, added.err).toBe(0)
-    const { id } = JSON.parse(added.out)
+    const { id } = JSON.parse(added.out).item
 
     const listed = await cli([
       "tasks",
@@ -85,7 +85,7 @@ describe("tasks through tg", () => {
 
     const closed = await cli(["tasks", "close", id, "--as", "dismissed", "--reason", "no-reply-needed", "--json"])
     expect(closed.code, closed.err).toBe(0)
-    expect(JSON.parse(closed.out)).toMatchObject({ state: "dismissed", reason: "no-reply-needed" })
+    expect(JSON.parse(closed.out).item).toMatchObject({ state: "dismissed", reason: "no-reply-needed" })
   })
 
   it("refuses task writes on a profile where tasks are read-only", async () => {

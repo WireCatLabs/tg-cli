@@ -149,7 +149,7 @@ starts there. The first run looks back 24 hours.
 
 - `tg personal inbox` — unread, as Telegram counts it: what you have not opened on any device.
 - `tg personal inbox --new` — since the last `--new` run. Only `tg` knows that point; nobody else sees it.
-- `tg personal inbox --since-time 2d` — the last two days; the saved point stays where it was.
+- `tg personal inbox 'date>2d'` — the last two days; the saved point stays where it was.
 
 None of them marks anything read. To do that, add `--mark-read`, or turn on `catchUpMarksRead` in the
 [settings](configuration.md). The other side then sees that you read it.
@@ -194,13 +194,13 @@ keeps its point and comes back. In an MCP client it is the `review` prompt.
 
 ## What you have not answered
 
-The shortest form is `tg personal review --since-time 7d --unanswered --json`: questions nobody answered — to
+The shortest form is `tg personal review 'date>7d' --unanswered --json`: questions nobody answered — to
 you in one-to-one chats, to you or to the admins in groups. The recipe below is wider: it also catches
 requests without a question mark.
 
 Writes to Telegram: **no**. Allow: `Bash(tg personal chats list:*)`, `Bash(tg personal messages list:*)`.
 
-> Run `tg personal chats list kind:dialog --limit 30 --json`. For every chat whose last message is from the
+> Run `tg personal chats list kind:dialog --offline --limit 30 --json`. For every chat whose last message is from the
 > last 7 days, read `tg personal messages list <chat id> --limit 5 --json`. Show the chats where the last
 > message is not mine and asks a question or makes a request: who, about what, and how many days ago.
 
@@ -233,7 +233,7 @@ permissions still limit what it may write. See [the MCP server](mcp.md).
 Writes to Telegram: **only if the group's rules allow it**. Allow: `Bash(tg personal review:*)`,
 `Bash(tg personal chats events:*)`, `Bash(tg personal chats members list:*)`, `Bash(tg personal chats moderate:*)`.
 
-> Run `tg personal review --chat "Hiking" --unanswered 4h --json`, `tg personal chats events "Hiking" "time>=7d"
+> Run `tg personal review 'chat:"Hiking"' --unanswered 4h --json`, `tg personal chats events "Hiking" "time>=7d"
 > --json` and `tg personal chats moderate "Hiking" --dry-run --json`. Briefly: which questions wait for an
 > answer, from whom and since when; who joined or was added this week, and by whom; what the check
 > found against the group's rules and what it suggests. Do not answer or remove anyone — list the

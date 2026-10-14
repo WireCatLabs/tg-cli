@@ -373,7 +373,7 @@ describe("sending", () => {
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ sendId: "-9001", message: { text: "from a pipe" } })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ item: { send_id: "-9001", message: { text: "from a pipe" } } })
   })
 
   it("hands back the send id when the outcome is unknown, so a repeat cannot make a second copy", async () => {
@@ -424,7 +424,7 @@ describe("sending", () => {
     const queued = await tg(["messages", "scheduled", "me", "--json"], { adapter })
 
     expect(sent.code).toBe(0)
-    expect(JSON.parse(sent.stdout[0] ?? "").scheduledFor).toMatch(/^\d{4}-/)
+    expect(JSON.parse(sent.stdout[0] ?? "").item.message.scheduled_for).toMatch(/^\d{4}-/)
     expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduled_for).toBe("2030-01-01T09:00:00.000Z")
   })
 

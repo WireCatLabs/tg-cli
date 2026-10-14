@@ -69,29 +69,23 @@ describe("shared administrator statistics adoption", () => {
       "1",
     )
     expect(waiting.code, waiting.stderr).toBe(0)
-    const row = JSON.parse(waiting.stdout).items[0]
+    const row = JSON.parse(waiting.stdout).item.rows[0]
     expect(row).toMatchObject({ status: "no-observed-answer" })
     const evidence = await invoke(
       "stats",
       "messages",
       "evidence",
-      row.message,
+      row.ref,
       "--selection",
-      JSON.stringify(row.drilldown.arguments.selection),
+      JSON.stringify(row.selection),
       "--component",
       "report",
       "--limit",
       "1",
     )
     expect(evidence.code, evidence.stderr).toBe(0)
-    expect(JSON.parse(evidence.stdout)).toMatchObject({ total: 1, items: [{ message: { id: "1" } }] })
-    const saved = await invoke(
-      "searches",
-      "create",
-      "waiting",
-      "--selection",
-      JSON.stringify(row.drilldown.arguments.selection),
-    )
+    expect(JSON.parse(evidence.stdout).items).toMatchObject([{ message: { ref: "msg:telegram/500/7/1" } }])
+    const saved = await invoke("searches", "create", "waiting", "--selection", JSON.stringify(row.selection))
     expect(saved.code, saved.stderr).toBe(0)
     expect((await invoke("stats", "messages", "unanswered", "--saved", "waiting")).code).toBe(0)
     const responses = await invoke(
@@ -111,8 +105,8 @@ describe("shared administrator statistics adoption", () => {
       "1",
     )
     expect(responses.code, responses.stderr).toBe(0)
-    const person = JSON.parse(responses.stdout).items[0]
-    expect(person).toMatchObject({ id: "12", answered: 1, medianMilliseconds: 2000 })
+    const person = JSON.parse(responses.stdout).item.rows[0]
+    expect(person).toMatchObject({ answered: 1, median_ms: 2000 })
     const responseEvidence = await invoke(
       "stats",
       "contacts",
@@ -121,16 +115,19 @@ describe("shared administrator statistics adoption", () => {
       "--component",
       "report",
       "--selection",
-      JSON.stringify(person.drilldown.arguments.selection),
+      JSON.stringify(person.selection),
     )
     expect(responseEvidence.code, responseEvidence.stderr).toBe(0)
-    expect(JSON.parse(responseEvidence.stdout).items[0]).toMatchObject({ message: { id: "3" }, related: { id: "1" } })
+    expect(JSON.parse(responseEvidence.stdout).items[0]).toMatchObject({
+      message: { ref: "msg:telegram/500/7/3" },
+      related: { ref: "msg:telegram/500/7/1" },
+    })
     const responseSaved = await invoke(
       "searches",
       "create",
       "responses",
       "--selection",
-      JSON.stringify(person.drilldown.arguments.selection),
+      JSON.stringify(person.selection),
     )
     expect(responseSaved.code, responseSaved.stderr).toBe(0)
     expect((await invoke("stats", "contacts", "responses", "--saved", "responses")).code).toBe(0)
@@ -153,7 +150,7 @@ describe("shared administrator statistics adoption", () => {
       "1",
     )
     expect(newcomers.code, newcomers.stderr).toBe(0)
-    expect(JSON.parse(newcomers.stdout)).toMatchObject({ report: "newcomers", total: 0 })
+    expect(JSON.parse(newcomers.stdout).item).toMatchObject({ report: "newcomers", total: 0 })
     const discussion = await invoke(
       "stats",
       "messages",
@@ -173,6 +170,6 @@ describe("shared administrator statistics adoption", () => {
       "1",
     )
     expect(discussion.code, discussion.stderr).toBe(0)
-    expect(JSON.parse(discussion.stdout)).toMatchObject({ report: "discussion", total: 0 })
+    expect(JSON.parse(discussion.stdout).item).toMatchObject({ report: "discussion", total: 0 })
   })
 })

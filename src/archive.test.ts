@@ -364,7 +364,10 @@ describe("the archive, from the store", () => {
     expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
 
     const found = await tg(["archive", "search", "messages", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
-    expect((found.answer as { items: { id: string }[] }).items.map(({ id }) => id)).toEqual(["103", "101"])
+    expect((found.answer as { items: { ref: string }[] }).items.map(({ ref }) => ref.split("/").at(-1))).toEqual([
+      "103",
+      "101",
+    ])
   })
 
   it("exports into a new file only the owner can read, from --since-time on", async () => {

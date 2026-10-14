@@ -29,7 +29,7 @@ those messages before answering. This needs downloaded history; it does not down
 For command-line control:
 
 ```sh
-tg personal search messages 'What time does Helix export run?' --discover --chat 990 --json
+tg personal search messages 'What time does Helix export run? chat:990' --discover --json
 ```
 
 This searches the local archive only. Chat, sender and date filters still apply. In MCP, pass
@@ -68,7 +68,7 @@ tg personal search all 'lease' --only messages,notes  # without mail
 ```
 
 ```sh
-tg personal search messages 'lease' --chat "Book club"  # Telegram messages only, never mail
+tg personal search messages 'lease chat:"Book club"'  # Telegram messages only, never mail
 ```
 
 ```sh
@@ -111,7 +111,7 @@ Start with a phrase and one chat. This example searches saved history without as
 **Command:**
 
 ```sh
-tg personal search messages '"invoice paid"' --chat "Book club" --backend archive --json
+tg personal search messages '"invoice paid" chat:"Book club"' --backend archive --json
 ```
 
 **Example agent answer:**
@@ -207,10 +207,6 @@ tg personal search messages 'chat:"Book club" library'
 ```
 
 ```sh
-tg personal search messages library --chat "Book club"  # the same, as an option
-```
-
-```sh
 tg personal search messages 'passport kind:private'  # one-to-one chats only
 ```
 
@@ -294,7 +290,7 @@ tg personal search messages 'content:invoice'
 ```
 
 ```sh
-tg personal attachments list --chat "Book club" --needs-text
+tg personal attachments list 'chat:"Book club" is:needs_text'
 ```
 
 ```sh
@@ -318,7 +314,7 @@ global npm install: `npm install -g unpdf mammoth`. A missing package is reporte
 the text instead.
 
 **Photos and scans** have no text layer. Your agent normally reads them with its own OCR or vision
-tools and writes the text with `attachments text set`. `attachments list --needs-text` gives it the
+tools and writes the text with `attachments text set`. `attachments list 'is:needs_text'` gives it the
 saved path, the message locator and the attachment number; it shows paths and text status, never the
 text itself. Check the result with a `content:` search. A path on an MCP server does not move the file
 to an agent on another computer: the agent needs access to the file. Such an agent can receive the
@@ -570,7 +566,7 @@ own rules, not your query.
 ## Fetch new messages first: `--sync-first`
 
 ```sh
-tg personal search messages 'invoice' --chat "Book club" --sync-first
+tg personal search messages 'invoice chat:"Book club"' --sync-first
 ```
 
 `--sync-first` downloads new messages before it searches, and marks nothing read. It takes at most 5

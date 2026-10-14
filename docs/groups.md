@@ -24,7 +24,7 @@ this page:
 | --- | --- |
 | Find questions that wait for an answer | `tg personal review --unanswered` |
 | See who joined, left, was added or removed | `tg personal chats events` |
-| Sum up a week: decisions, promises, open questions | `tg personal review --since-time 7d` |
+| Sum up a week: decisions, promises, open questions | `tg personal review 'date>7d'` |
 | Keep a list of what waits on you | `tg personal tasks list` |
 | Remove spam by your own rules | `tg personal chats rules set`, `tg personal chats moderate` |
 | Replace a leaked invite link | `tg personal chats link reset` |
@@ -57,7 +57,7 @@ Start with questions that have been waiting for you or the admins.
 **Command:**
 
 ```sh
-tg personal review --chat "Hiking" --unanswered 4h --json
+tg personal review 'chat:"Hiking"' --unanswered 4h --json
 ```
 
 **Example agent answer:**
@@ -167,7 +167,7 @@ Ask for a short recap of decisions, commitments and open questions.
 **Command:**
 
 ```sh
-tg personal review --chat "Hiking" --since-time 7d --json
+tg personal review 'chat:"Hiking" date>7d' --json
 ```
 
 **Example agent answer:**
@@ -188,7 +188,7 @@ tg personal review --chat "Hiking" --since-time 7d --json
 No agent is needed for a list of open questions: it is an ordinary command.
 
 ```cron
-0 9,21 * * * tg personal review --chat "Hiking" --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
+0 9,21 * * * tg personal review 'chat:"Hiking"' --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
 ```
 
 cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot reach the keyring:
@@ -198,7 +198,7 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 
 | Command | What it does |
 |---|---|
-| `tg personal review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
+| `tg personal review 'chat:<chat>' --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
 | `tg personal chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg personal chats members list <chat>` | everyone in the group, with their role and when they were last seen |
 | `tg personal topics list <chat>`, `tg personal search topics <chat> <text>` | a forum group's topics; search finds them by title |

@@ -485,6 +485,18 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation",
   },
+  ...[
+    ["store jobs list", "--limit"],
+    ["store jobs list", "--page"],
+    ["store jobs list", "--all"],
+    ["searches history", "--page"],
+    ["searches history", "--all"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
+  })),
   ...["--budget"].map((option) => ({
     command: "chats members audit",
     ...(option ? { option } : {}),
@@ -689,7 +701,6 @@ export const UNTESTED: Untested[] = [
     ["tasks plan", "--title"],
     ["tasks plan", "--description"],
     ["tasks agenda", "--unanswered"],
-    ["tasks agenda", "--kind"],
   ].map(([command, option]) => ({
     command: command as string,
     option,

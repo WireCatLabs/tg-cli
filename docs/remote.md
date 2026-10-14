@@ -275,7 +275,7 @@ An agent on your computer can open a saved file by its `localPath`. A remote age
 gets the saved bytes through `attachments show` (MCP: `tg_read`, command `attachments show`).
 
 First download the message's files the usual way ([downloading files](attachments.md#what-you-can-download)).
-Use `attachments list --needs-text` to find the message locator and the attachment position. Then
+Use `attachments list 'is:needs_text'` to find the message locator and the attachment position. Then
 ask for the file:
 
 ```sh

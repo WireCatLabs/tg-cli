@@ -271,7 +271,7 @@ describe("reply editors and model templates", () => {
       image,
     )
     expect(chart.code, chart.diagnostics).toBe(0)
-    expect(JSON.parse(chart.data).chartFile.format).toBe("svg")
+    expect(JSON.parse(chart.data).item.file.format).toBe("svg")
     expect(readFileSync(image, "utf8")).toContain("<svg")
     await invoke("replies", "add", "away")
     await invoke(

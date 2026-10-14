@@ -73,7 +73,7 @@ describe("search <resource> adoption", () => {
     expect(new Set(all.answer.items.map(({ kind }: { kind: string }) => kind))).toEqual(
       new Set(["message", "mail", "note"]),
     )
-    const paged = await invoke(["search", "all", "invoice", "--source", "all", "--offset", "0", "--limit", "20"])
+    const paged = await invoke(["search", "all", "invoice", "--source", "all", "--page", "1", "--limit", "20"])
     expect(paged.code).toBe(0)
     const notes = await invoke(["search", "all", "invoice", "--only", "notes"])
     expect(notes.answer.items.map(({ kind }: { kind: string }) => kind)).toEqual(["note"])
@@ -83,9 +83,7 @@ describe("search <resource> adoption", () => {
     const found = await invoke([
       "search",
       "mail",
-      "invoice",
-      "--chat",
-      "t1",
+      "invoice chat:t1",
       "--limit",
       "5",
       "--newest",
@@ -96,18 +94,14 @@ describe("search <resource> adoption", () => {
       "UTC",
     ])
     expect(found.code).toBe(0)
-    expect(found.answer.items.map(({ locator }: { locator: string }) => locator)).toEqual([
-      "msg:email/owner%40example.test/t1/m1",
-    ])
-    const mailPage = await invoke(["search", "mail", "invoice", "--source", "all", "--offset", "0", "--limit", "5"])
+    expect(found.answer.items.map(({ ref }: { ref: string }) => ref)).toEqual(["msg:email/owner%40example.test/t1/m1"])
+    const mailPage = await invoke(["search", "mail", "invoice", "--source", "all", "--page", "1", "--limit", "5"])
     expect(mailPage.code).toBe(0)
-    const messagesPage = await invoke(["search", "messages", "invoice", "--offset", "0", "--limit", "5"])
+    const messagesPage = await invoke(["search", "messages", "invoice", "--page", "1", "--limit", "5"])
     expect(messagesPage.code).toBe(0)
-    const messages = await invoke(["search", "messages", "invoice", "--source", "all", "--type", "text"])
+    const messages = await invoke(["search", "messages", "invoice NOT has:attachment", "--source", "all"])
     expect(messages.code).toBe(0)
-    expect(messages.answer.items.some(({ locator }: { locator: string }) => locator.startsWith("msg:email/"))).toBe(
-      false,
-    )
+    expect(messages.answer.items.some(({ ref }: { ref: string }) => ref.startsWith("msg:email/"))).toBe(false)
   })
 
   it("chats documents list pages with --limit and --page", async () => {
@@ -127,15 +121,15 @@ describe("search <resource> adoption", () => {
       "paid",
       "--limit",
       "5",
-      "--offset",
-      "0",
+      "--page",
+      "1",
       "--exact",
       "--timezone",
       "UTC",
     ])
     expect(internal.code).toBe(0)
-    expect(internal.answer.hits).toHaveLength(1)
-    const elsewhere = await invoke(["search", "notes", "invoice", "--source", "notes:fld_none", "--tag", "work"])
+    expect(internal.answer.items).toHaveLength(1)
+    const elsewhere = await invoke(["search", "notes", "invoice", "--source", "notes:fld_none", "--filter", "tag:work"])
     expect(elsewhere.code).toBe(2)
     expect(elsewhere.stderr).toContain("no notes account")
   })

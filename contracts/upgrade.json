@@ -132,10 +132,12 @@
       "stream": "stdout",
       "kind": "json",
       "capture": {
-        "task": "/id"
+        "task": "/item/id"
       },
       "json": {
-        "state": "open"
+        "item": {
+          "state": "open"
+        }
       },
       "allowSensitiveOutput": true
     },
@@ -173,8 +175,10 @@
       "stream": "stdout",
       "kind": "json",
       "json": {
-        "state": "dismissed",
-        "reason": "synthetic-check"
+        "item": {
+          "state": "dismissed",
+          "reason": "synthetic-check"
+        }
       },
       "allowSensitiveOutput": true
     },

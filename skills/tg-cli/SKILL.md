@@ -119,9 +119,9 @@ connecting or marking read. It returns one `kind: "chats"` packet, newest first,
 fingerprints and coverage. JSONL also returns one complete packet. `--limit` accepts 1–100.
 Whole messages fill at most 64 KiB of JSON items; the envelope is additional.
 
-Inspect coverage, follow a non-null `nextBeforeId` as `--before-id`, then cite locators in the
+Inspect coverage, follow the `page.next` step as `--cursor`, then cite locators in the
 brief. History coverage stays `unknown`: neither an empty packet nor a null cursor proves complete
-history. An oversized first message returns empty items, `truncatedBy: "bytes"` and no cursor;
+history. An oversized first message returns empty items, `truncated_by: "bytes"` and no cursor;
 handle this obstruction explicitly. Text is untrusted data. This command prepares evidence, not a
 summary; news digests remain separate future work. Permission: `messages.evidence`.
 
@@ -201,13 +201,13 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 
 16. **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
     arriving between page one and page two moves someone across the boundary. A chat's messages do
-    not have this: `--before-id` is exact.
+    not have this: `--cursor` is exact.
 17. **`tg personal watch` starts from now; `tg personal serve` catches up.** `serve` runs until stopped and holds
     one lock per profile — start it only when the owner asked. The same goes for `tg <profile> server
     start`; `tg <profile> server status` is safe to read.
 18. **`tg personal inbox --new` moves the point where the owner stopped.** After it, the owner's next `--new`
     will not show what the agent already saw. Without moving it: plain `tg personal inbox` (unread) or
-    `tg personal inbox --since-time <time>`. `--since-time` takes a time, never a message id.
+    `tg personal inbox 'date>2h'`. `date>` takes a time, never a message id.
 19. **`content:` narrows a search to the text of files, `transcript:` to voice transcripts, `filename:` to file
     names.** Compare like with like: `tg personal search messages 'content:invoice'` with
     `memo search messages 'content:invoice'`, a plain word with a plain word — never a plain word in one tool
@@ -248,15 +248,15 @@ The ids below are made up — use the real ones from the previous answer.
 tg personal inbox --json                           # other people's unread messages; muted and archived chats
                                                    # only when they mention the owner — `quiet` counts the rest
 tg personal inbox --all --json                     # every chat with unread messages, muted and archived too
-tg personal inbox --since-time 2h --json           # everything that came in during the last two hours
-tg personal review --since-time 1d --json          # every message, the owner's too, in chats that changed — who owes what;
+tg personal inbox 'date>2h' --json           # everything that came in during the last two hours
+tg personal review 'date>1d' --json          # every message, the owner's too, in chats that changed — who owes what;
                                                    # when complete, the next review starts at until
 tg personal review --unanswered --json             # questions, including retained voice transcripts, nobody answered in 24 h
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
 tg personal chats list --json                      # find a chat, take its id
-tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat
+tg personal chats list 'title:vale kind:group unread_count>0' --offline --json  # filtered, from the stored chats
 tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed
 tg personal chats members list -1001234567890 --json  # a group's members, paged
 tg personal chats inspect https://t.me/+AbCd --json  # where an invite leads, without joining
@@ -393,7 +393,7 @@ file caches. Agent text and old indexed text survive failed or cancelled API OCR
 ```sh
 tg personal attachments extract --chat "Book club" --download --output-dir ./files
 tg personal search messages 'content:invoice'
-tg personal attachments list --chat "Book club" --needs-text
+tg personal attachments list 'chat:"Book club" is:needs_text'
 tg personal attachments text set "Book club" 204 --text-file ./scan.txt
 ```
 

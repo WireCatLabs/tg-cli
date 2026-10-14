@@ -27,6 +27,7 @@
   "bot webhooks",
   "chats events",
   "chats folders join",
+  "chats list",
   "chats members audit",
   "chats members fetch",
   "chats members history",

@@ -198,12 +198,16 @@ tg personal chats list                     # newest first, archived chats includ
 ```
 
 ```sh
-tg personal chats list 'unread_count>0 kind:group'  # only groups with unread messages
+tg personal chats list 'unread_count>0 kind:group' --offline  # only groups with unread messages
 ```
 
 ```sh
-tg personal chats list 'title:*book*'   # titles containing "book"; at least 3 characters
+tg personal chats list 'title:book' --offline  # titles containing "book"; at least 3 characters
 ```
+
+A chat list filter reads the chats kept on this computer, so it needs `--offline`; a plain `chats list`
+fills the store first. The fields are `kind`, `unread_count`, `title`, `participants_count`,
+`last_message_at` and `id`, in any `AND`, `OR`, `NOT` mix.
 
 ```sh
 tg personal chats show "Book club"         # kind, unread count, last message, who is in it
@@ -260,7 +264,7 @@ tg personal inbox            # other people's unread messages, in every chat
 ```
 
 ```sh
-tg personal inbox --since-time 2h  # everything that came in during the last two hours
+tg personal inbox 'date>2h'  # everything that came in during the last two hours
 ```
 
 ```sh
@@ -277,10 +281,10 @@ stderr how many it left out.
 
 **`inbox --new` moves a saved point.** The next `--new` starts from where this one stopped, so each
 message is shown once. The first `--new` looks back 24 hours. `inbox` without `--new`, and
-`inbox --since-time`, leave the point where it is. Plain `inbox` answers the same until the messages are
+`inbox` with a `date>` query, leave the point where it is. Plain `inbox` answers the same until the messages are
 read in the app, since it marks nothing read.
 
-One run reads at most 20 chats; the rest are named on stderr and in `skipped`, with the command that
+One run reads at most 20 chats; the rest are named on stderr and as `missing` entries, with the command that
 reads one. In a chat with more than `--limit` messages waiting, the newest are shown, and stderr says
 how to read the rest.
 
@@ -291,11 +295,11 @@ tg personal review                         # the last 3 days
 ```
 
 ```sh
-tg personal review --since-time 2026-09-23T09:00  # from where the last review ended
+tg personal review 'date>"2026-09-23T09:00:00Z"'  # from where the last review ended
 ```
 
 ```sh
-tg personal review --chat "Book club" --json
+tg personal review 'chat:"Book club"' --json
 ```
 
 Every message — yours and other people's — in every chat where something happened since `--since-time`.
@@ -314,7 +318,7 @@ tg personal review --unanswered            # questions nobody answered in 24 hou
 ```
 
 ```sh
-tg personal review --chat "Neighbours" --unanswered 4h
+tg personal review 'chat:"Neighbours"' --unanswered 4h
 ```
 
 `--unanswered [hours]` keeps only questions waiting for you or for a group's admins. A question is a
@@ -405,6 +409,10 @@ tg personal contacts list              # people you have a one-to-one chat with,
 
 ```sh
 tg personal contacts list 'name:*ann*' --order name
+```
+
+```sh
+tg personal contacts list 'notes:follow'  # people whose private notes contain this text (after contacts sync)
 ```
 
 ```sh
@@ -524,7 +532,7 @@ the message.
 ### Find a chat, then write to it
 
 ```sh
-tg personal chats list 'title:*book* kind:group'  # groups with "book" in the title
+tg personal chats list 'title:book kind:group' --offline  # groups with "book" in the title
 ```
 
 ```sh
@@ -540,7 +548,7 @@ tg personal search messages "contract"       # the text of every message this ma
 ```
 
 ```sh
-tg personal search messages "contract" --chat "Book club"
+tg personal search messages 'contract chat:"Book club"'
 ```
 
 ```sh
@@ -931,7 +939,7 @@ tg personal topics show "Hiking" 12                # one topic: title, closed or
 ```
 
 ```sh
-tg personal review --chat "Hiking" --unanswered    # questions nobody answered
+tg personal review 'chat:"Hiking"' --unanswered    # questions nobody answered
 ```
 
 All of these only read. `events` reads the chat's service messages: who did what, and to whom. The

@@ -214,7 +214,7 @@ the wrong chat cannot be taken back.
 
 ### "no chat matches …"
 
-Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:*<part of it>*'`, the
+Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:<part of it>' --offline`, the
 chat's id, its `@username`, or `me` for Saved Messages. A one-to-one chat is titled with the other
 person's name as Telegram shows it to you.
 

@@ -22,7 +22,7 @@ Some words on this page:
 | Send a file, a photo, a video or a voice message | `tg personal messages send --file`, `--photo`, `--voice` |
 | Download the files of a message or a chat | `tg personal messages download` |
 | Read text from saved files on this computer | `tg personal attachments extract` |
-| See which files still need text | `tg personal attachments list --needs-text` |
+| See which files still need text | `tg personal attachments list 'is:needs_text'` |
 | Save text that your agent read | `tg personal attachments text set` |
 | Find a message by the text of its file | `tg personal search messages 'content:…'` |
 | Read scans in bulk with an external model | `tg personal attachments extract --ocr` |
@@ -65,7 +65,7 @@ Downloading saves media without reading its text or converting its format.
 
 ```sh
 tg personal messages download "Study group" 204 --output-dir ./files --json
-tg personal attachments list --chat "Study group" --needs-text --json
+tg personal attachments list 'chat:"Study group" is:needs_text' --json
 ```
 
 A download never overwrites an existing file. `localPath` in the answer names a file on the
@@ -160,9 +160,9 @@ like these:
 
 ```sh
 tg personal attachments extract --chat "Study group" --download --output-dir ./files
-tg personal attachments list --chat "Study group" --needs-text
+tg personal attachments list 'chat:"Study group" is:needs_text'
 tg personal attachments text set "Study group" 204 --text-file ./scan.txt
-tg personal search messages 'content:worksheet' --chat "Study group" --backend archive
+tg personal search messages 'content:worksheet chat:"Study group"' --backend archive
 ```
 
 `--attachment` picks one file of a message with several, counting from 1. Receiving the bytes and

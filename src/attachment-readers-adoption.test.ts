@@ -105,9 +105,9 @@ describe("shared local attachment readers", () => {
         ["consumerencodingneedle", "1"],
         ["consumerdocumentneedle", "2"],
       ]) {
-        const found = await invoke("search", "messages", `content:${word}`, "--chat", "7", "--offline")
+        const found = await invoke("search", "messages", `content:${word} chat:7`, "--offline")
         expect(found.code, found.stderr).toBe(0)
-        expect(JSON.parse(found.stdout).items.map((item: { id: string }) => item.id)).toEqual([id])
+        expect(JSON.parse(found.stdout).items.map((item: { ref: string }) => item.ref.split("/").at(-1))).toEqual([id])
       }
       const repeated = await invoke("attachments", "extract", "--chat", "7")
       expect(repeated.code, repeated.stderr).toBe(0)

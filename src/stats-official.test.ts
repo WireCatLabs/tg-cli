@@ -32,7 +32,15 @@ describe("tg stats chats official", () => {
     })
 
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout.join("\n"))).toEqual(stats)
+    expect(JSON.parse(result.stdout.join("\n")).item).toMatchObject({
+      kind: "group",
+      chat_id: stats.chat.id,
+      title: stats.chat.title,
+      since: stats.period.since,
+      until: stats.period.until,
+      totals: stats.totals,
+      graphs: stats.graphs,
+    })
     expect(result.stderr.join("\n")).toContain("languages")
     expect(officialChatStats).toHaveBeenCalledWith("@valencia_expats")
   })

@@ -77,10 +77,12 @@ describe("shared search adoption", () => {
     const result = await invoke(["search", "messages", query, "--discover", "--timezone", "UTC"])
     expect(result.code).toBe(0)
     const body = JSON.parse(result.stdout)
-    expect(body.query.discovery).toMatchObject({ method: "lexical-partial" })
-    expect(body.items.map((m: { id: string }) => m.id)).toContain("9902")
-    expect(body.items.map((m: { id: string }) => m.id)).not.toContain("9903")
-    expect(body.items.find((m: { id: string }) => m.id === "9902").discovery.parent).toBe("msg:telegram/500/990/9901")
+    const idOf = (m: { ref: string }) => m.ref.split("/").at(-1)
+    expect(body.items.map(idOf)).toContain("9902")
+    expect(body.items.map(idOf)).not.toContain("9903")
+    expect(body.items.find((m: { ref: string }) => idOf(m) === "9902").discovery.parent).toBe(
+      "msg:telegram/500/990/9901",
+    )
     const strict = await invoke(["search", "messages", query, "--timezone", "UTC"])
     expect(strict.code).toBe(0)
     expect(JSON.parse(strict.stdout).items).toEqual([])
@@ -101,7 +103,7 @@ describe("shared search adoption", () => {
       "1h",
     ])
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout).query.language).toBe("lucene-v1")
+    expect(JSON.parse(result.stdout).items.length).toBeGreaterThan(0)
     const context = await invoke([
       "messages",
       "context",
@@ -138,7 +140,9 @@ describe("shared search adoption", () => {
   ])("reports incomplete refresh and retains local results in offline mode: %j", async (...argv) => {
     const result = await invoke(argv)
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout).refreshed).toMatchObject({ complete: false })
+    const body = JSON.parse(result.stdout)
+    if (argv[1] === "conversations") expect(body.refreshed).toMatchObject({ complete: false })
+    else expect(body.missing).toMatchObject([{ field: "coverage", step: "messages.sync" }])
   })
   it("filters word-only conversations without loading a model", async () => {
     expect((await invoke(["conversations", "build", "--chat", "7"])).code).toBe(0)
@@ -215,11 +219,11 @@ describe("shared search adoption", () => {
     ])
     expect(result.code).toBe(0)
     const found = await invoke(["search", "messages", "content:agentfiletoken"])
-    expect(JSON.parse(found.stdout).items.map((row: { id: string }) => row.id)).toEqual(["105"])
-    const listed = await invoke(["attachments", "list", "--chat", "7", "--needs-text", "--limit", "1", "--page", "1"])
+    expect(JSON.parse(found.stdout).items.map((row: { ref: string }) => row.ref.split("/").at(-1))).toEqual(["105"])
+    const listed = await invoke(["attachments", "list", "chat:7 is:needs_text", "--limit", "1", "--page", "1"])
     expect(listed.code).toBe(0)
     expect(JSON.parse(listed.stdout).items.every((row: { text: unknown }) => !row.text)).toBe(true)
-    expect((await invoke(["attachments", "list", "--chat", "7", "--all"])).code).toBe(0)
+    expect((await invoke(["attachments", "list", "chat:7", "--all"])).code).toBe(0)
     const extracted = await invoke(["attachments", "extract", "--chat", "7", "--limit", "1"])
     expect(extracted.code).toBe(0)
     expect(JSON.parse(extracted.stdout).extracted).toBe(0)

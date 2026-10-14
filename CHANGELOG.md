@@ -16,7 +16,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **Built on `@wirecat/cli-core` 0.265.0 and `@wirecat/cli-base` 0.27.1.**
+- **Built on `@wirecat/cli-core` 0.267.0 and `@wirecat/cli-base` 0.27.1.**
 - **`--json=id,text` replaces `--fields` and `--agent-json`, which are gone.** `--json=id,text` keeps those fields
   of each item and the envelope around them; `--json id,text` works when every name is a field of the answer. A bare
   `--json` prints every field in a pipe. At a terminal a command that declares its answer asks for fields instead,
@@ -25,13 +25,26 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **Lists take a query, not filter flags.** `chats list`, `chats events`, `chats members audit` and `history`,
   `chats link list`, `chats requests list`, `contacts list`, `messages list`, `messages comments` and `polls voters`
   join the three below: `tg personal chats list 'kind:group unread_count>0'`, `tg personal messages list "Book club"
-  'id<4242'`, `tg personal chats events "Hiking" 'time>=7d'`. `--search`, `--kind`, `--unread`, `--since-time`, `--type`,
-  `--before-id`, `--after-id`, `--before-time`, `--after-time`, `--topic`, `--search-notes`, `--min-score`,
-  `--revoked`, `--link` and `--answer` are gone from those lists, and more messages are a `page.next` with `--cursor`.
-  `contacts list` no longer searches private notes.
+  'id<4242'`, `tg personal chats events "Hiking" 'time>=7d'`. The filters moved into the query: `--search`, `--kind`,
+  `--unread`, `--since-time`, `--type`, `--before-id`, `--after-id`, `--before-time`, `--after-time`, `--topic`,
+  `--search-notes`, `--min-score`, `--revoked`, `--link` and `--answer` are now fields (`title:book`, `kind:group`,
+  `unread_count>0`, `participants_count>=3`, `last_message_at>=7d`, `id<4242`, `notes:follow`), and more messages are a
+  `page.next` with `--cursor`. `chats list` fields answer from the local copy, so give `--offline`
+  (`tg personal chats list 'kind:group unread_count>0' --offline`; a plain `chats list` fills it first). `contacts list
+  'notes:<text>'` finds people by their private notes once `contacts sync` has filled the store.
 - **Answers are an envelope with snake_case keys.** A list is `{ items, page: { limit, has_more, next? }, meta }`, one
   thing is `{ item, meta, next?, missing? }`. Chats, messages and contacts say `chat_id`, `sender_name`,
   `last_message_at`, and carry a `ref` (`msg:…`, `chat:…`) where messages and `messages link` said `locator`.
+- **`inbox` and `review` answer the list envelope, and start from a query.** The messages come oldest first as
+  `items`; `tg personal inbox 'date>2h'`, `tg personal review 'chat:"Hiking" date>7d' --unanswered`. `--since-time` and
+  review's `--chat` are gone. `mode`, `since`, `until`, `checked`, `complete`, `unheard` and `markedRead` leave the
+  answer: what was left out is a `missing` entry, the next review a `next` step, and `--mark-read` says what it marked
+  on stderr.
+- **More answers are in the envelope with snake_case keys.** `messages send|edit|forward|delete|pin|unpin`, `polls
+  create`, `messages evidence|transcribe|download` (`--cursor` replaces `--before-id`), `chats delete|clear|mute`,
+  `searches`, `models`, `schedule`, `tasks`, `tags`, `metadata`, `contacts alias|notes`, `store jobs` (`store jobs list
+  state:failed` replaces `--state`), `stats` reports (rows in `item.rows`, no `drilldown`) and `search all|messages|mail|
+  notes` (`--page` replaces `--offset`; `--chat` is `chat:` in the query, `--type` is `has:attachment`).
 - **`tags list`, `tasks list` and `conversations list` take a query, not filter flags.** `--tag`, `--type`,
   `--source`, `--state`, `--chat` and `--before-time` are gone: `tg personal tasks list 'state:open kind:question'`,
   `tg personal tags list 'tag:work type:chat'`. `conversations list` takes the chat as its first argument, and

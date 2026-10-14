@@ -165,7 +165,7 @@ the account's chats
 
 ### `tg chats list`
 
-chats, newest first, archived ones included
+chats, newest first, archived ones included; the query is answered from the local store, so online, where the messenger filters nothing, it needs --offline
 
 ```sh
 tg chats list [query] [options]
@@ -173,7 +173,7 @@ tg chats list [query] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | optional | field:value terms; this list filters by none yet. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
@@ -880,7 +880,7 @@ people this account has a one-to-one chat with
 
 ### `tg contacts list`
 
-people you have a one-to-one chat with; name: matches the name, your local alias or the @username
+people you have a one-to-one chat with; name: matches the name, your local alias or the @username, notes: your private notes about them
 
 ```sh
 tg contacts list [query] [options]
@@ -1244,7 +1244,7 @@ tg messages evidence <chat> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many, 1–100. |
-| `--before-id <id>` | only messages older than this message id. |
+| `--cursor <id>` | go on from where page.next says the last packet stopped. |
 
 ### `tg messages list`
 
@@ -1809,13 +1809,16 @@ tg models image download <model>
 other people's unread messages in every chat; --new for what arrived since the last check
 
 ```sh
-tg inbox [options]
+tg inbox [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | from when: date>2h, date>2026-10-01; the saved point stays put. |
 
 | Option | What it does |
 |---|---|
 | `--new` | what arrived since the last check, each message once — for scheduled runs. |
-| `--since-time <time>` | what arrived after this ISO 8601 time, or 2h / 1d ago; the saved point stays put. |
 | `--limit <n>` | at most this many per chat, the newest. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
@@ -1829,13 +1832,15 @@ tg inbox [options]
 every message, yours too, in chats that changed since a point — for reviewing who owes what
 
 ```sh
-tg review [options]
+tg review [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | where the last review ended and which chat: date>2h, chat:"Book club"; 3 days ago if no date. |
 
 | Option | What it does |
 |---|---|
-| `--since-time <time>` | where the last review ended — ISO 8601, or 2h / 1d ago; 3 days ago if not given. |
-| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
 | `--unanswered [duration]` | only questions to you or a group's admins that nobody answered, asked at least this long ago — 4h, 1d; 24h if not given. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
@@ -2213,12 +2218,18 @@ background sync jobs
 background sync jobs, newest first
 
 ```sh
-tg store jobs list [options]
+tg store jobs list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--state <state>` | only jobs in this state. One of: `running`, `done`, `partial`, `failed`, `cancelled`, `died`. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
 
 #### `tg store jobs show`
 
@@ -2691,16 +2702,18 @@ tg attachments extract [options]
 
 ### `tg attachments list`
 
-files of stored messages, where each was saved and whether its text is held — never the text
+files of stored messages, newest first: where each was saved and whether its text is held — never the text
 
 ```sh
-tg attachments list [options]
+tg attachments list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | only this chat's files; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--needs-text` | only files saved here whose text nobody has yet: what an agent reads and writes back. |
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
@@ -3320,8 +3333,12 @@ tg tasks show <task>
 what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one
 
 ```sh
-tg tasks agenda [options]
+tg tasks agenda [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
@@ -3329,7 +3346,6 @@ tg tasks agenda [options]
 | `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
 | `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
 | `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
-| `--kind <kinds>` | only these chat kinds, comma-separated (default dialog,group). |
 
 ### `tg tasks close`
 
@@ -3370,7 +3386,7 @@ tg search all <query> [options]
 | `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
 | `--max-meetings <n\|all>` | how many of the meeting account's meetings to look through, newest first; all looks through every one (default 100). |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
@@ -3401,11 +3417,9 @@ tg search messages [query] [options]
 | `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
-| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
-| `--type <text\|voice\|file>` | only messages of this type: text alone, a voice message, or a file. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3429,10 +3443,9 @@ tg search mail [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | only this mail thread, by id or subject. |
 | `--source <accounts>` | only these mail accounts, separated by commas: email:<address> as a hit shows it, email, mail or group:<name>; every mail account when unset. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3454,10 +3467,9 @@ tg search notes <query> [options]
 |---|---|
 | `--type <internal\|file>` | only notes written in memo, or only notes from a folder. |
 | `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
-| `--tag <tag>` | only notes with this tag. |
 | `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--exact` | words as written only; meaning is not searched. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 
@@ -3573,7 +3585,9 @@ tg searches history [options]
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
 
 ### `tg searches delete`
 

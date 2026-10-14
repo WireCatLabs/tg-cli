@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2351 ✅ · 91 ⛔ · 0 ❌** — 479 commands, 1963 options.
+**2341 ✅ · 95 ⛔ · 0 ❌** — 479 commands, 1957 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -172,7 +172,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts import` |  | ✅ |  |
 | `messages evidence` |  | ✅ |  |
 | `messages evidence` | `--limit` | ✅ |  |
-| `messages evidence` | `--before-id` | ✅ |  |
+| `messages evidence` | `--cursor` | ✅ |  |
 | `messages list` |  | ✅ |  |
 | `messages list` | `--limit` | ✅ |  |
 | `messages list` | `--cursor` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
@@ -282,7 +282,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models image download` |  | ✅ |  |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
-| `inbox` | `--since-time` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |
 | `inbox` | `--all` | ✅ |  |
 | `inbox` | `--kind` | ✅ |  |
@@ -291,8 +290,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `inbox` | `--mark-read` | ✅ |  |
 | `inbox` | `--no-mark-read` | ✅ |  |
 | `review` |  | ✅ |  |
-| `review` | `--since-time` | ✅ |  |
-| `review` | `--chat` | ✅ |  |
 | `review` | `--kind` | ✅ |  |
 | `review` | `--unanswered` | ✅ |  |
 | `review` | `--all` | ✅ |  |
@@ -358,7 +355,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store gaps repair` | `--catch-up-time` | ✅ |  |
 | `store gaps repair` | `--background` | ✅ |  |
 | `store jobs list` |  | ✅ |  |
-| `store jobs list` | `--state` | ✅ |  |
+| `store jobs list` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
+| `store jobs list` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
+| `store jobs list` | `--all` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `store jobs show` |  | ✅ |  |
 | `store jobs cancel` |  | ✅ |  |
 | `store jobs retry` |  | ✅ |  |
@@ -465,8 +464,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments extract` | `--ocr` | ✅ |  |
 | `attachments extract` | `--concurrency` | ✅ |  |
 | `attachments list` |  | ✅ |  |
-| `attachments list` | `--chat` | ✅ |  |
-| `attachments list` | `--needs-text` | ✅ |  |
 | `attachments list` | `--limit` | ✅ |  |
 | `attachments list` | `--page` | ✅ |  |
 | `attachments list` | `--all` | ✅ |  |
@@ -651,7 +648,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks agenda` | `--unanswered` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks agenda` | `--waiting` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks agenda` | `--within` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
-| `tasks agenda` | `--kind` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks close` |  | ✅ |  |
 | `tasks close` | `--as` | ✅ |  |
 | `tasks close` | `--reason` | ✅ |  |
@@ -660,7 +656,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search all` | `--source` | ✅ |  |
 | `search all` | `--max-meetings` | ⛔ | cli-core src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through |
 | `search all` | `--limit` | ✅ |  |
-| `search all` | `--offset` | ✅ |  |
+| `search all` | `--page` | ✅ |  |
 | `search all` | `--exact` | ✅ |  |
 | `search all` | `--timezone` | ✅ |  |
 | `search all` | `--backend` | ⛔ | cli-core src/cli/messenger/messenger.test.ts covers archive (never connects), server and both for search all |
@@ -677,11 +673,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--thread-within` | ✅ |  |
 | `search messages` | `--backend` | ✅ |  |
 | `search messages` | `--server-time` | ⛔ | cli-core src/services/server-search.test.ts and src/cli/messenger/messenger.test.ts cover the server step and the flags; this consumer mounts the shared command, and src/telegram/adapter.test.ts covers its searchMessages |
-| `search messages` | `--chat` | ✅ |  |
 | `search messages` | `--source` | ✅ |  |
-| `search messages` | `--type` | ✅ |  |
 | `search messages` | `--limit` | ✅ |  |
-| `search messages` | `--offset` | ✅ |  |
+| `search messages` | `--page` | ✅ |  |
 | `search messages` | `--newest` | ✅ |  |
 | `search messages` | `--exact` | ✅ |  |
 | `search messages` | `--context` | ✅ |  |
@@ -691,10 +685,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--regex` | ✅ |  |
 | `search messages` | `--saved` | ✅ |  |
 | `search mail` |  | ✅ |  |
-| `search mail` | `--chat` | ✅ |  |
 | `search mail` | `--source` | ✅ |  |
 | `search mail` | `--limit` | ✅ |  |
-| `search mail` | `--offset` | ✅ |  |
+| `search mail` | `--page` | ✅ |  |
 | `search mail` | `--newest` | ✅ |  |
 | `search mail` | `--exact` | ✅ |  |
 | `search mail` | `--context` | ✅ |  |
@@ -702,10 +695,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search notes` |  | ✅ |  |
 | `search notes` | `--type` | ✅ |  |
 | `search notes` | `--source` | ✅ |  |
-| `search notes` | `--tag` | ✅ |  |
 | `search notes` | `--filter` | ✅ |  |
 | `search notes` | `--limit` | ✅ |  |
-| `search notes` | `--offset` | ✅ |  |
+| `search notes` | `--page` | ✅ |  |
 | `search notes` | `--exact` | ✅ |  |
 | `search notes` | `--timezone` | ✅ |  |
 | `search conversations` |  | ✅ |  |
@@ -746,6 +738,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches list` |  | ✅ |  |
 | `searches history` |  | ✅ |  |
 | `searches history` | `--limit` | ⛔ | cli-core src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation |
+| `searches history` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
+| `searches history` | `--all` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `searches delete` |  | ✅ |  |
 | `searches clear` |  | ✅ |  |
 | `flood clear` |  | ✅ |  |
