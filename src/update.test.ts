@@ -83,7 +83,7 @@ describe("the daily line about a newer version", () => {
     mkdirSync(env.TG_CONFIG_DIR as string, { recursive: true })
     writeFileSync(
       join(env.TG_CONFIG_DIR as string, "config.json"),
-      JSON.stringify({ defaults: { updateCheck: false } }),
+      JSON.stringify({ defaults: { update_check: false } }),
     )
     expect(await notice()).toBeUndefined()
     expect(asked()).toBe(0)

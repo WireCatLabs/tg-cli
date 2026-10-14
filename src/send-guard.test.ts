@@ -126,7 +126,7 @@ describe("the send guard in front of messages send", () => {
   })
 
   it("refuses from a read-only profile with exit 5, sends nothing, and journals the refusal", async () => {
-    configure({ "g-ro": { readOnly: true } })
+    configure({ "g-ro": { permissions: { messages: "readonly" } } })
     const { adapter, sent } = telegram()
     const { code, error } = await tg(["g-ro", "messages", "send", "Valencia", "hi"], adapter)
 
@@ -174,7 +174,7 @@ describe("the send guard in front of messages send", () => {
   })
 
   it("stops at the hourly limit with exit 8 and says when the next send is possible", async () => {
-    configure({ "g-limit": { sendsPerHour: 1 } })
+    configure({ "g-limit": { sends_per_hour: 1 } })
     const { adapter, sent } = telegram()
 
     expect((await tg(["g-limit", "messages", "send", "Valencia", "one"], adapter)).code).toBe(0)
@@ -197,7 +197,7 @@ describe("the send guard in front of messages send", () => {
 
 describe("the send guard in front of the other writes", () => {
   it("**counts an edit toward the hourly limit**, and journals it as an edit without the text", async () => {
-    configure({ "g-edit": { sendsPerHour: 2 } })
+    configure({ "g-edit": { sends_per_hour: 2 } })
     const { adapter, edited } = telegram()
 
     const done = await tg(["g-edit", "messages", "edit", "Valencia", "5", "the new text", "--json"], adapter)
@@ -214,8 +214,8 @@ describe("the send guard in front of the other writes", () => {
     expect(readFileSync(sendsPathFor(TG, "g-edit"), "utf8")).not.toContain("new text")
   })
 
-  it("refuses an edit the profile's allow list leaves out", async () => {
-    configure({ "g-noedit": { allow: ["send"] } })
+  it("refuses an edit the profile's permissions leave read-only", async () => {
+    configure({ "g-noedit": { permissions: { messages: "readonly", "messages.send": "allow" } } })
     const { adapter, edited } = telegram()
 
     const { code, error } = await tg(["g-noedit", "messages", "edit", "Valencia", "5", "x"], adapter)
@@ -326,7 +326,7 @@ describe("the send guard in front of the other writes", () => {
   })
 
   it("pins quietly past the hourly limit, but not with --notify", async () => {
-    configure({ "g-pin": { sendsPerHour: 1 } })
+    configure({ "g-pin": { sends_per_hour: 1 } })
     const { adapter, pinned } = telegram()
     await tg(["g-pin", "messages", "send", "Valencia", "one"], adapter)
 
@@ -345,7 +345,7 @@ describe("the send guard in front of the other writes", () => {
   })
 
   it("lets a profile that allows only reactions react, and nothing else", async () => {
-    configure({ "g-react": { allow: ["reaction"] } })
+    configure({ "g-react": { permissions: { messages: "readonly", reactions: "allow" } } })
     const { adapter, reacted, sent } = telegram()
 
     const added = await tg(["g-react", "reactions", "add", "Valencia", "5", "👍", "--json"], adapter)
@@ -361,7 +361,7 @@ describe("the send guard in front of the other writes", () => {
   })
 
   it("marks a chat read through the guard, refused on a read-only profile", async () => {
-    configure({ "g-ro-read": { readOnly: true } })
+    configure({ "g-ro-read": { permissions: { chats: "readonly" } } })
     const { adapter, marked } = telegram()
 
     const done = await tg(["g-read", "chats", "mark-read", "Valencia", "--until", "9", "--json"], adapter)
@@ -812,7 +812,7 @@ describe("the send guard in front of the other writes", () => {
   })
 
   it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
-    configure({ "g-del": { sendsPerHour: 2 } })
+    configure({ "g-del": { sends_per_hour: 2 } })
     const { adapter, deleted } = telegram()
 
     const unasked = await tg(["g-del", "messages", "delete", "Valencia", "5"], adapter)
