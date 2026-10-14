@@ -51,7 +51,7 @@ works.
 Telegram gives a bot no list of its chats, so a chat's id comes from something the bot did or saw.
 
 - **A person.** Write to them as `user:<id>`. Sending prints the chat the message went to, as
-  `chatId` in `--json`. A person must have started the bot first: a Telegram bot cannot
+  `item.chat_id` in `--json`. A person must have started the bot first: a Telegram bot cannot
   [start a conversation](https://core.telegram.org/bots#how-are-bots-different-from-users) with someone who never wrote to it.
 - **A group or a channel.** Add the bot there, write something in it, then watch what the bot sees:
 
@@ -80,7 +80,7 @@ tg support bot auth set
 tg personal bot list --check  # every name with a bot token, and which bot each is
 ```
 
-Without a name it is `TG_PROFILE`, else the `defaultProfile` setting; with neither, the command stops and lists the profiles.
+Without a name it is `TG_PROFILE`, else the `default_profile` setting; with neither, the command stops and lists the profiles.
 
 ## The token
 
@@ -192,7 +192,7 @@ and say so. Search needs every word; `"a phrase"`, `-word`, `a OR b` and the fil
 `chat:`, `after:`, `before:` and `has:` work, and a typo is corrected. `contacts show --refresh` is
 refused: import older messages with `bot store fetch` first.
 
-`--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `readOtherBots`
+`--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `read_other_bots`
 allows it.
 
 ### Fetching older messages
@@ -323,7 +323,7 @@ tg sales bot sends list
 ```
 
 The settings for a bot, such as an hourly limit on sends, live in the `bot` section of the
-configuration file: `tg sales config set --bot sendsPerHour 200` (see
+configuration file: `tg sales config set --bot sends_per_hour 200` (see
 [configuration](configuration.md)).
 
 ## The complete Bot API
@@ -367,7 +367,7 @@ A refused or failed command says why in its error message and ends with a code:
 | `5` | the profile's permissions do not let the bot do this | change the permission only if you want to allow it |
 | `6` | the chat was not found — a title the bot has not seen yet, say | use the chat id, or open the chat with `bot chats show` |
 | `7` | the chat is not on the bot's recipient list, or nobody answered a question an `ask` level put | add the chat with `bot recipients add`, or run the command where you can answer |
-| `8` | the bot's `sendsPerHour` is used up | wait, or raise the limit |
+| `8` | the bot's `sends_per_hour` is used up | wait, or raise the limit |
 | `14` | no answer came: whether Telegram did the write is not known | check the chat before you repeat it |
 
 Every code is in the [command reference](commands.md). `--trace` and `--record` work for a bot too:

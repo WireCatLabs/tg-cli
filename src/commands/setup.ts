@@ -19,6 +19,7 @@ import { Command, Option } from "commander"
 import { TG } from "../app.js"
 import { pathsFor } from "../paths.js"
 import { installer } from "../update.js"
+import { printItem } from "./answer.js"
 import { type CommandContext, type Environment, forCommand, SKILL } from "./context.js"
 import { startSession } from "./session.js"
 
@@ -228,7 +229,7 @@ export const setupCommand = () =>
           inbox: `${command}inbox --limit 5`,
           chats: `${command}chats list --limit 5`,
           history: `${command}messages sync <chat> --last 100`,
-          historyStatus: `${command}store status`,
+          history_status: `${command}store status`,
           ...(agent === "none" ? { skill: `${command}skill install`, mcp: `${command}mcp config` } : {}),
         }
         const answer = {
@@ -237,14 +238,14 @@ export const setupCommand = () =>
           paths,
           session: { path: context.sessionPath, reused },
           account: { id: account.id, name: account.name, username: account.username },
-          chats: { checked: chats.items.length, hasMore: chats.hasMore },
+          chats: { checked: chats.items.length, has_more: chats.hasMore },
           agent: { name: agent, written },
           next,
         }
         return answer
       })
       const { agent, next, chats } = answer
-      if (context.format !== "pretty") context.renderer.result(answer)
+      if (context.format !== "pretty") printItem(context, answer)
       else {
         const rows = {
           "Try now": next.inbox,

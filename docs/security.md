@@ -24,7 +24,7 @@ MCP, other people's text on your screen, how to report a vulnerability — is on
   and no code ([below](#where-the-login-lives)).
 - **No command takes a secret as an argument** — not the app hash, the 2FA password, the login code
   or a phone number.
-- **The send guard is the shared one**: `permissions`, the recipient list and `sendsPerHour` are
+- **The send guard is the shared one**: `permissions`, the recipient list and `sends_per_hour` are
   checked by every command and MCP tool ([below](#the-send-guard)).
 - **`tg` talks to Telegram, npm and my.telegram.org** — through your proxy when you set one —
   and to model download hosts or explicitly configured embedding/analysis endpoints ([below](#what-goes-over-the-network)).
@@ -79,7 +79,7 @@ Devices, end the session that `tg` created. That makes the session file useless.
 ## The send guard
 
 Every command and MCP tool that changes something in Telegram goes through the shared guard:
-`permissions`, the recipient list, `sendsPerHour` (30 by default) and a journal without text. How
+`permissions`, the recipient list, `sends_per_hour` (30 by default) and a journal without text. How
 each check works, its exit code, and what it cannot hold: the
 [shared page](https://wirecat.dev/en/docs/security).
 
@@ -110,7 +110,7 @@ downloaded file's name also loses any leading dot.
 - **Telegram**, over MTProto for personal-account commands, including files and photos. Bot commands
   use the HTTPS Bot API; `bot store fetch` uses a separate MTProto bot session for history.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
-  `updateCheck` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration](configuration.md)).
+  `update_check` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration](configuration.md)).
 - **my.telegram.org**, only during `tg personal setup` or `tg personal session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
@@ -163,4 +163,4 @@ PATH, credentials or account state. Installation never logs in or reads chats.
 - [Diagnostics](diagnostics.md): what exactly is recorded, and what never is
 - [Login, sessions and profiles](sessions.md): the app, the keyring, profiles, logging out
 - [MCP](mcp.md): what an agent can do over MCP, and what each level and flag changes
-- [Permissions](permissions.md): how to set `permissions` and `sendsPerHour`
+- [Permissions](permissions.md): how to set `permissions` and `sends_per_hour`

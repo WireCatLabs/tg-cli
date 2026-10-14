@@ -64,6 +64,6 @@ describe("mentions through tg", () => {
 
     const shown = await tg(["mentions", "show", String(phone.id), "--json"])
     expect(shown.code, shown.err).toBe(0)
-    expect(JSON.parse(shown.out)).toMatchObject({ written: "+7 900 000-00-01", before: "звони " })
+    expect(JSON.parse(shown.out)).toMatchObject({ item: { written: "+7 900 000-00-01", before: "звони " } })
   })
 })

@@ -126,7 +126,7 @@ export TG_PROFILE=work     # the same for the whole shell session
 `chats`, `messages` or any other command word; `tg personal session start` refuses such a name. Names are
 letters, digits, dot, dash and underscore, starting with a letter or a digit.
 
-The order, first match wins: the first word, `TG_PROFILE`, `defaultProfile` in the config file. With
+The order, first match wins: the first word, `TG_PROFILE`, `default_profile` in the config file. With
 none of them, a command that uses an account stops with exit code `2` and lists the profiles on this
 computer; with none there yet, it says to run `tg personal setup`. `tg` never picks one, not even the
 only one. Commands that use no account run without a profile: `--help`, `--version`, `commands`,

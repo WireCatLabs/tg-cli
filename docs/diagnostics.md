@@ -84,7 +84,7 @@ that keeps a folder of whom you read and when would be a diary of your life that
 
 ## How long it lives
 
-**30 days**, or `keepRunsForDays` in the settings. Old runs are removed only when a new one is kept:
+**30 days**, or `keep_runs_for_days` in the settings. Old runs are removed only when a new one is kept:
 a tool that writes nothing has no reason to walk the folder. They are removed a whole day at a time,
 by the folder's name, so nothing has to be opened to decide.
 
@@ -147,11 +147,11 @@ If no failed run is kept, run the failing command again; its failure is kept by 
 ## What to do with runs
 
 The records are JSON, so `jq` answers questions about them. `tg personal runs list --json` answers
-`{ items, page, limit, hasMore }`, and `items` are the runs' `run.json`, newest first:
+`{ items, page: { limit, has_more }, meta }`, and `items` are the runs' `run.json`, newest first:
 
 ```sh
-tg personal runs list --limit 100 --json | jq '[.items[] | select(.status == "failed") | {command, errorCode}]'
-tg personal runs list --limit 100 --json | jq '[.items[] | .durationMs] | add / length'  # average duration
+tg personal runs list --limit 100 --json | jq '[.items[] | select(.status == "failed") | {command, error_code}]'
+tg personal runs list --limit 100 --json | jq '[.items[] | .duration_ms] | add / length'  # average duration
 tg personal runs list --limit 100 --json | jq '[.items[] | select(.requests > 10) | {command, requests}]'
 ```
 

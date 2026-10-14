@@ -17,6 +17,7 @@ import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
+import { printItem } from "./answer.js"
 import { type CommandContext, forCommand } from "./context.js"
 
 type Ask = (prompt: string, echo: boolean) => Promise<string>
@@ -232,8 +233,16 @@ export const sessionCommand = () => {
         ...(qrFile === undefined ? {} : { qrFile }),
         ...(sms ? { sms } : {}),
       })
-      if (context.format !== "pretty") context.renderer.result(answer)
-      else context.streams.data(loggedIn(answer, context.env))
+      if (context.format === "pretty") context.streams.data(loggedIn(answer, context.env))
+      else {
+        const { appKeys, alreadyLoggedIn, account, ...rest } = answer
+        printItem(context, {
+          ...rest,
+          account: { id: account.id, name: account.name, username: account.username },
+          app_keys: appKeys,
+          already_logged_in: alreadyLoggedIn,
+        })
+      }
     })
 
   annotate(session.command("end"), { mutates: true })
@@ -241,12 +250,12 @@ export const sessionCommand = () => {
     .action(async function (this: Command) {
       const context = forCommand(this)
       if (!existsSync(context.sessionPath)) {
-        context.renderer.result({ profile: context.profile, ended: false })
+        printItem(context, { profile: context.profile, ended: false })
         return
       }
       await context.withTelegram((telegram) => telegram.logout())
       for (const suffix of ["", "-wal", "-shm"]) rmSync(`${context.sessionPath}${suffix}`, { force: true })
-      context.renderer.result({ profile: context.profile, ended: true })
+      printItem(context, { profile: context.profile, ended: true })
     })
 
   return session

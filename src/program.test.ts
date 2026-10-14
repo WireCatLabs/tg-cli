@@ -144,7 +144,10 @@ describe("machine output", () => {
 
     expect(code).toBe(0)
     expect(stdout).toHaveLength(1)
-    expect(JSON.parse(stdout[0] ?? "")).toEqual({ items: [chat], page: 1, limit: 20, hasMore: false })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({
+      items: [{ id: chat.id, title: chat.title, kind: chat.kind, unread_count: chat.unreadCount }],
+      page: { limit: 20, has_more: false },
+    })
     expect(stderr).toEqual([])
   })
 
@@ -154,6 +157,7 @@ describe("machine output", () => {
     const ordinary = await tg(["messages", "list", "Valencia", "--json"], { adapter })
     expect(ordinary.code).toBe(0)
     expect(JSON.parse(ordinary.stdout[0] ?? "").items[0].text).toBe(text)
+    expect(ordinary.stderr).toEqual([])
   })
 
   it("pages chats through the shared flags, and refuses --all with --page", async () => {
@@ -170,7 +174,7 @@ describe("machine output", () => {
 
     expect(code).toBe(0)
     expect(asked).toEqual({ limit: 5, offset: 10 })
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ page: 3, limit: 5, hasMore: true })
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ page: { limit: 5, has_more: true } })
     expect((await tg(["chats", "list", "--all", "--page", "2"])).code).toBe(2)
   })
 
@@ -190,7 +194,7 @@ describe("machine output", () => {
     const [item] = JSON.parse(stdout[0] ?? "").items
 
     expect(typeof item.id).toBe("string")
-    expect(typeof item.chatId).toBe("string")
+    expect(typeof item.chat_id).toBe("string")
   })
 
   it("prints the phone's last four digits, and the whole number only with --show-phone", async () => {
@@ -200,8 +204,8 @@ describe("machine output", () => {
     const masked = await tg(["account", "show", "--json"], { adapter })
     const whole = await tg(["account", "show", "--show-phone", "--json"], { adapter })
 
-    expect(JSON.parse(masked.stdout[0] ?? "").phone).toBe("***1234")
-    expect(JSON.parse(whole.stdout[0] ?? "").phone).toBe("0000001234")
+    expect(JSON.parse(masked.stdout[0] ?? "").item.phone).toBe("***1234")
+    expect(JSON.parse(whole.stdout[0] ?? "").item.phone).toBe("0000001234")
   })
 
   it("prints one message per line with --jsonl", async () => {
@@ -308,7 +312,9 @@ describe("forum control options", () => {
     })
     expect(enabled.code).toBe(0)
     expect(created.code).toBe(0)
-    expect(JSON.parse(enabled.stdout[0] ?? "")).toMatchObject({ upgraded: true, chat: { id: "-100700" }, forum: true })
+    expect(JSON.parse(enabled.stdout[0] ?? "")).toMatchObject({
+      item: { upgraded: true, chat: { id: "-100700" }, forum: true },
+    })
     expect(calls).toEqual([
       ["upgrade", chat.id],
       ["enable", "-100700"],
@@ -367,7 +373,7 @@ describe("sending", () => {
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ sendId: "-9001", message: { text: "from a pipe" } })
+    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({ send_id: "-9001", message: { text: "from a pipe" } })
   })
 
   it("hands back the send id when the outcome is unknown, so a repeat cannot make a second copy", async () => {
@@ -418,8 +424,10 @@ describe("sending", () => {
     const queued = await tg(["messages", "scheduled", "me", "--json"], { adapter })
 
     expect(sent.code).toBe(0)
-    expect(JSON.parse(sent.stdout[0] ?? "").scheduledFor).toMatch(/^\d{4}-/)
-    expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduledFor).toBe("2030-01-01T09:00:00.000Z")
+    const scheduled = JSON.parse(sent.stdout[0] ?? "")
+    expect(scheduled.item.scheduled_for).toMatch(/^\d{4}-/)
+    expect(scheduled.next).toMatchObject([{ step: "messages.scheduled" }])
+    expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduled_for).toBe("2030-01-01T09:00:00.000Z")
   })
 
   it("attaches a --photo or a --file, and sends a protected one only with --allow-any-file", async () => {
@@ -527,7 +535,9 @@ describe("MCP startup overrides", () => {
     const result = await tg(["mcp", "--permission", "messages.send=allow", "config", "--json"], { adapter })
     expect(result.code).toBe(0)
     const entry = JSON.parse(result.stdout.join(""))
-    expect(entry.mcpServers.tg.args).toEqual(expect.arrayContaining(["--permission", "messages.send=allow"]))
+    expect(entry.item.config.mcpServers.tg.args).toEqual(
+      expect.arrayContaining(["--permission", "messages.send=allow"]),
+    )
     expect(adapter).not.toHaveBeenCalled()
   })
   it("rejects malformed startup permissions before requiring a tunnel or connection", async () => {
@@ -632,8 +642,8 @@ describe("what tgcli users look for", () => {
       ],
       { adapter },
     )
-    const named = await tg(["chats", "requests", "list", "Valencia", "--search", "ana", "--json"], { adapter })
-    const linked = await tg(["chats", "requests", "list", "Valencia", "--link", "https://t.me/+x", "--json"], {
+    const named = await tg(["chats", "requests", "list", "Valencia", "name:ana", "--json"], { adapter })
+    const linked = await tg(["chats", "requests", "list", "Valencia", 'link:"https://t.me/+x"', "--json"], {
       adapter,
     })
 
@@ -659,8 +669,8 @@ describe("what tgcli users look for", () => {
     const topicHistory = vi.fn(async () => ({ items: [message("50", { threadId: "12" })], hasMore: false }))
     const adapter = () => scripted({ topicHistory })
 
-    const topic = await tg(["messages", "list", "Valencia", "--topic", "12", "--json"], { adapter })
-    const general = await tg(["messages", "list", "Valencia", "--topic", "1", "--json"], { adapter })
+    const topic = await tg(["messages", "list", "Valencia", "topic:12", "--json"], { adapter })
+    const general = await tg(["messages", "list", "Valencia", "topic:1", "--json"], { adapter })
 
     expect(JSON.parse(topic.stdout[0] ?? "").items.map((one: { id: string }) => one.id)).toEqual(["50"])
     expect(topicHistory).toHaveBeenCalledWith("Valencia", "12", { limit: 20 })

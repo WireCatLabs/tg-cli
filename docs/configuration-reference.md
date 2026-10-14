@@ -57,7 +57,7 @@ settings as a bot command of that profile gets them. `--json` gives the same as 
 script.
 
 The list ends with `commandTimeoutMs`: the limit on a whole command, from `--timeout` or `TG_TIMEOUT`.
-It is not a setting of the file; `timeoutMs` limits one request.
+It is not a setting of the file; `timeout_ms` limits one request.
 
 When `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set, it says so on stderr, since that also
 changes which login is found ([where the login parts are kept](sessions.md#where-the-parts-are-kept)).
@@ -70,22 +70,22 @@ for `tg personal doctor --online` ([troubleshooting with tg doctor](troubleshoot
 
 `config.json` in the settings directory (`~/.config/tg-cli/config.json` on Linux; other systems are
 listed in [where files go](installation.md#where-files-go)). The first command that reads settings
-creates it with `limit`, `keepRunsForDays`, `sendsPerHour`, `updateCheck` and `skillHint` under
+creates it with `limit`, `keep_runs_for_days`, `sends_per_hour`, `update_check` and `skill_hint` under
 `defaults`; an existing file is never replaced.
 
 ```json
 {
-  "defaultProfile": "default",
+  "default_profile": "default",
   "defaults": {
-    "sendsPerHour": 10,
-    "updateCheck": false
+    "sends_per_hour": 10,
+    "update_check": false
   },
   "profiles": {
     "default": { "limit": 50 },
     "work": { "permissions": { "messages": "readonly", "messages.send": "allow" }, "record": true }
   },
-  "personal": { "defaults": { "catchUpMarksRead": true } },
-  "bot": { "profiles": { "shop": { "sendsPerHour": 200 } } }
+  "personal": { "defaults": { "catch_up_marks_read": true } },
+  "bot": { "profiles": { "shop": { "sends_per_hour": 200 } } }
 }
 ```
 
@@ -94,36 +94,37 @@ creates it with `limit`, `keepRunsForDays`, `sendsPerHour`, `updateCheck` and `s
 - `personal.defaults`, `personal.profiles.<name>`: only personal-account commands.
 - `bot.defaults`, `bot.profiles.<name>`: only `tg <name> bot …` commands.
 
-`defaultProfile` at the top names the profile used when neither the first word nor `TG_PROFILE`
+`default_profile` at the top names the profile used when neither the first word nor `TG_PROFILE`
 names one. The first word (`tg work …`) and `TG_PROFILE` override it. Without any of them, a command
 that uses an account stops with exit code `2` and lists the profiles on this computer.
 
 | Setting | Default | What it does | Overridden for one run by |
 |---|---|---|---|
 | `limit` | `20` | rows per page of a list | `--limit` |
-| `timeoutMs` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a limit on the whole command use `--timeout` | none (`--timeout` is a different thing) |
+| `timeout_ms` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a limit on the whole command use `--timeout` | none (`--timeout` is a different thing) |
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
-| `senderColors` | `false` | a colour per sender in the table view of messages | none |
-| `catchUpMarksRead` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
-| `searchCatchUp` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
+| `sender_colors` | `false` | a colour per sender in the table view of messages | none |
+| `catch_up_marks_read` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
+| `search_catch_up` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
+| `picture_search` | `false` | search stored pictures by what they show. tg has no command yet that reads the pictures, so the setting changes nothing | none |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
-| `keepRunsForDays` | `30` | recorded runs older than this are removed when the next one is kept | none |
+| `keep_runs_for_days` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
-| `sendsPerHour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
-| `requestsPerMinute` | `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
-| `transcribeWith` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
-| `speechModel` | none | which downloaded model `--local` uses (`tg personal models audio list`) | `--model` |
+| `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
+| `requests_per_minute` | `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
+| `transcribe_with` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
+| `speech_model` | none | which downloaded model `--local` uses (`tg personal models audio list`) | `--model` |
 | `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
-| `readOtherBots` | `false` | a bot only: whether `tg personal bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
-| `updateCheck` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
-| `skillHint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
-| `embeddingProvider` | `local` | local model or `openai` | `--provider` |
-| `embeddingModel` | provider default | embedding model | `--model` |
-| `embeddingBaseUrl` | provider default | embedding API endpoint | `--base-url` |
-| `embeddingDims` | model default | integer 1–65,536 | `--dims` |
-| `analysisProvider` | `agent` | `agent`, `openai` or `anthropic` | `build --provider` |
-| `analysisModel` | none; required for `--analyze` | analysis model | `build --model` |
-| `analysisBaseUrl` | provider default | analysis API endpoint | `build --base-url` |
+| `read_other_bots` | `false` | a bot only: whether `tg personal bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
+| `update_check` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
+| `skill_hint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
+| `embedding_provider` | `local` | local model or `openai` | `--provider` |
+| `embedding_model` | provider default | embedding model | `--model` |
+| `embedding_base_url` | provider default | embedding API endpoint | `--base-url` |
+| `embedding_dims` | model default | integer 1–65,536 | `--dims` |
+| `analysis_provider` | `agent` | `agent`, `openai` or `anthropic` | `build --provider` |
+| `analysis_model` | none; required for `--analyze` | analysis model | `build --model` |
+| `analysis_base_url` | provider default | analysis API endpoint | `build --base-url` |
 | `models` | none | external models by purpose ([below](#models-by-purpose)) | `TG_MODELS_*` variables |
 | `searchStemmers.cyrillic`, `searchStemmers.latin` | `russian`, `english,spanish` | the word-stem languages for search in the whole store ([below](#search-languages)) | none |
 
@@ -170,7 +171,7 @@ longest key**. A key a profile sets hides the same key and every key under it in
 ```
 
 It works both ways: a profile's `messages: allow` also hides `messages.delete: deny` from `defaults`,
-and deleting asks again, as it does by default. The older `readOnly` and `allow` count in the section
+and deleting asks again, as it does by default. The older `read_only` and `allow` count in the section
 they are written in.
 
 `inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
@@ -218,30 +219,30 @@ the requested write. Repeat `--permission key=level` for temporary server permis
 
 ### Older settings that still work
 
-`readOnly: true` reads as every resource `readonly`. A list in `allow` (`send`, `forward`,
+`read_only: true` reads as every resource `readonly`. A list in `allow` (`send`, `forward`,
 `reaction`, `edit`, `pin`, `read`, `delete`, `groups`, `contacts`, `profile`, `folders`,
 `sessions`) reads as those actions `allow` and the rest `readonly`; deleting still asks. A key in
 `permissions` of the same section wins over both.
 
 ### Migrating legacy access settings
 
-`tg config migrate --dry-run --json` previews replacement of `readOnly` and `allow` with
+`tg config migrate --dry-run --json` previews replacement of `read_only` and `allow` with
 `permissions`, keeping the levels the file gave for personal and bot profiles. It does not write the
 file or connect to Telegram. `tg config migrate --json` applies that migration; a process locked to
 one profile cannot apply a change affecting all profiles. Other settings are kept. A file that
 already uses only `permissions` needs no migration. Once `permissions` are present, `config set`
-refuses changes to `readOnly` and `allow`; change the matching permission keys.
+refuses changes to `read_only` and `allow`; change the matching permission keys.
 
 ## Change it without opening the file
 
 ```sh
 tg config set limit 50                        # this profile
 tg work config set permissions.contacts readonly   # profile "work"; one key at a time
-tg config set sendsPerHour 10 --defaults      # every profile
+tg config set sends_per_hour 10 --defaults      # every profile
 tg config set limit 30 --personal --defaults  # every personal account
-tg shop config set sendsPerHour 200 --bot     # only the bot "shop"
-tg config set updateCheck false --defaults    # a setting that exists only under defaults
-tg config unset sendsPerHour                  # back to the default
+tg shop config set sends_per_hour 200 --bot     # only the bot "shop"
+tg config set update_check false --defaults    # a setting that exists only under defaults
+tg config unset sends_per_hour                  # back to the default
 ```
 
 `config set` checks the value against the same rules the reader uses, so it never writes a file
@@ -261,7 +262,7 @@ A setting the file does not know stops every command, with exit code `3`:
 
 ```text
 config.json is not a valid config:
-  profiles.default.limt: unknown setting — the known ones are limit, timeoutMs, …
+  profiles.default.limt: unknown setting — the known ones are limit, timeout_ms, …
 ```
 
 A misspelled setting that was silently ignored would run with the default and never say why. The
@@ -311,7 +312,7 @@ uses its own proxy settings.
 | `TG_PROFILE` | the profile, when the first word does not name one |
 | `TG_PROFILE_LOCK` | pins the process to one profile; any other is refused ([profiles](sessions.md#profiles)) |
 | `TG_TIMEOUT` | the same as `--timeout`: `500ms`, `30s` or `2m` for the whole command |
-| `TG_REQUESTS_PER_MINUTE` | the same as `requestsPerMinute`, and wins over it |
+| `TG_REQUESTS_PER_MINUTE` | the same as `requests_per_minute`, and wins over it |
 | `TG_API_ID`, `TG_API_HASH` | the app, instead of the keyring — for CI; both or neither |
 | `TG_PROXY` | the proxy URL, password or secret included; wins over the `proxy` setting ([above](#through-a-proxy)) |
 | `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR` | move the three directories — and the keyring entry with them |
@@ -343,29 +344,29 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 
 | Key | Accepted type/value | Scope |
 |---|---|---|
-| `defaultProfile` | profile-name string | file root |
-| `limit`, `timeoutMs`, `keepRunsForDays`, `sendsPerHour` | integer ≥ 1 | profile |
-| `requestsPerMinute` | integer ≥ 0 | profile |
-| `color`, `senderColors`, `catchUpMarksRead`, `searchCatchUp`, `record`, `readOnly` | boolean | profile |
+| `default_profile` | profile-name string | file root |
+| `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
+| `requests_per_minute` | integer ≥ 0 | profile |
+| `color`, `sender_colors`, `catch_up_marks_read`, `search_catch_up`, `record`, `read_only` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
 | `allow` | array of allowed actions; legacy format | profile |
-| `readOtherBots` | boolean or array of profile names | bot only |
-| `updateCheck`, `skillHint` | boolean | root `defaults` only |
-| `transcribeWith` | `auto`, `messenger`, `local` | profile |
-| `speechModel` | downloaded model id as a string | profile |
+| `read_other_bots` | boolean or array of profile names | bot only |
+| `update_check`, `skill_hint` | boolean | root `defaults` only |
+| `transcribe_with` | `auto`, `messenger`, `local` | profile |
+| `speech_model` | downloaded model id as a string | profile |
 | `proxy` | supported proxy URL as a string | profile |
-| `embeddingProvider` | `local`, `openai` | profile |
-| `embeddingModel`, `analysisModel` | nonempty string, at most 200 characters | profile |
-| `embeddingBaseUrl`, `analysisBaseUrl` | HTTP(S) URL without credentials, query or fragment | profile |
-| `embeddingDims` | integer 1–65,536 | profile |
-| `analysisProvider` | `agent`, `openai`, `anthropic` | profile |
+| `embedding_provider` | `local`, `openai` | profile |
+| `embedding_model`, `analysis_model` | nonempty string, at most 200 characters | profile |
+| `embedding_base_url`, `analysis_base_url` | HTTP(S) URL without credentials, query or fragment | profile |
+| `embedding_dims` | integer 1–65,536 | profile |
+| `analysis_provider` | `agent`, `openai`, `anthropic` | profile |
 | `models` | purpose objects described below | profile |
 | `searchStemmers.cyrillic` | `russian`, `none` | shared store, through `config set` |
 | `searchStemmers.latin` | `english`, `spanish`, both comma-separated, `none` | shared store, through `config set` |
 
 ### Models by purpose
 
-`models.<purpose>` accepts only `provider`, `model` and `baseUrl`. Purpose names start
+`models.<purpose>` accepts only `provider`, `model` and `base_url`. Purpose names start
 with a lowercase letter and contain lowercase letters, digits and hyphens.
 `default` supplies common fields; `analysis` and `replies` override them field by field.
 Other valid purpose names can be saved in advance; this does not enable an absent use case.
@@ -375,7 +376,7 @@ An absent provider or `off` disables external model calls.
 |---|---|---|
 | `models.<purpose>.provider` | `off`, `openai`, `anthropic` | absent; no external call |
 | `models.<purpose>.model` | nonempty string, at most 200 characters | absent; an enabled provider needs an explicit model id |
-| `models.<purpose>.baseUrl` | HTTP(S) URL without credentials, query or fragment | provider endpoint |
+| `models.<purpose>.base_url` | HTTP(S) URL without credentials, query or fragment | provider endpoint |
 
 For each field, precedence is `TG_MODELS_<PURPOSE>_PROVIDER`, `_MODEL` or `_BASE_URL`,
 then the nearest configured purpose field, explicit legacy `analysis*` fields for `analysis`,
@@ -398,5 +399,5 @@ An empty variable does not override a setting. Invalid values return `configurat
 
 ## Next
 
-- [Security](security.md): what `permissions`, the recipient list and `sendsPerHour` protect
-- [Diagnostics](diagnostics.md): what `record` keeps and how long `keepRunsForDays` holds it
+- [Security](security.md): what `permissions`, the recipient list and `sends_per_hour` protect
+- [Diagnostics](diagnostics.md): what `record` keeps and how long `keep_runs_for_days` holds it

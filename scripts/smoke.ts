@@ -60,11 +60,11 @@ check("doctor answers one JSON value with no login", doctor.stdout !== "" && JSO
 // atomic writes work under this runtime.
 const runs = tg("runs", "list", "--json")
 const [kept] =
-  runs.status === 0 ? (JSON.parse(runs.stdout) as { items: { runId: string; errorCode?: string }[] }).items : []
-check("runs list finds the failure that was kept", kept?.errorCode === "validation_error")
+  runs.status === 0 ? (JSON.parse(runs.stdout) as { items: { run_id: string; error_code?: string }[] }).items : []
+check("runs list finds the failure that was kept", kept?.error_code === "validation_error")
 check(
   "runs show answers with that run",
-  JSON.parse(tg("runs", "show", kept?.runId ?? "", "--json").stdout || "{}").runId === kept?.runId,
+  JSON.parse(tg("runs", "show", kept?.run_id ?? "", "--json").stdout || "{}").item?.run_id === kept?.run_id,
 )
 check("doctor exits cleanly with no login", doctor.status === 0)
 

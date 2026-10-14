@@ -33,6 +33,16 @@ const telegram: FetchLike = async (url, init) => {
     }
   } else params = JSON.parse(String(init.body ?? "{}"))
   requests.push({ method, params, ...(file ? { file } : {}) })
+  if (params.chat_id === "-500") {
+    return new Response(
+      JSON.stringify({
+        ok: false,
+        error_code: 400,
+        description: "Bad Request: group chat was upgraded to a supergroup chat",
+        parameters: { migrate_to_chat_id: GROUP.id },
+      }),
+    )
+  }
   if (method === refusing) {
     return new Response(JSON.stringify({ ok: false, error_code: 400, description: "Bad Request: not enough rights" }))
   }
@@ -158,13 +168,22 @@ describe("tg bot messages send", () => {
         },
       },
     ])
-    expect(done.answer.message).toMatchObject({ id: "500", chatId: String(GROUP.id), text: "Done today" })
+    expect(done.answer.item.message).toMatchObject({ id: "500", chat_id: String(GROUP.id), text: "Done today" })
     const kept = await tg(["sales", "bot", "messages", "list", "Team", "--json"])
     expect(kept.answer.items.map((item: { id: string }) => item.id)).toEqual(["500"])
     expect(kept.err).toContain("gives a bot no history")
     await tg(["sales", "bot", "messages", "send", "Team", "and tomorrow"])
     const newest = await tg(["sales", "bot", "messages", "list", "Team", "--limit", "1", "--json"])
     expect(newest.answer.items.map((item: { id: string }) => item.id)).toEqual(["501"])
+  })
+
+  it("**names the supergroup a group became** in the error, so a script can retry there", async () => {
+    const moved = await tg(["sales", "bot", "messages", "send", "-500", "hi", "--json"])
+
+    expect(moved.code).not.toBe(0)
+    const { error } = JSON.parse(moved.err.split("\n").at(-1) ?? "")
+    expect(error.details).toMatchObject({ migrated_chat_id: String(GROUP.id) })
+    expect(error.message).toContain(String(GROUP.id))
   })
 
   it("uses Telegram-native underline and spoiler through common bot send/edit", async () => {
@@ -201,7 +220,7 @@ describe("tg bot messages send", () => {
     ])
   })
 
-  it("**answers with the file by Telegram's id, never its download address**, and the message it replied to", async () => {
+  it("**answers with the file's name and size, never its download address**, and the message it replied to", async () => {
     const dir = mkdtempSync(join(tmpdir(), "tg-bot-reply-"))
     writeFileSync(join(dir, "report.pdf"), "%PDF")
     const done = await tg([
@@ -218,11 +237,11 @@ describe("tg bot messages send", () => {
       "--json",
     ])
 
-    expect(done.answer.message).toMatchObject({
+    expect(done.answer.item.message).toMatchObject({
       text: "Weekly",
-      attachments: [{ kind: "file", providerRef: { fileId: "BQAC" }, name: "report.pdf", size: 4 }],
-      replyToId: "7",
-      replyTo: { id: "7", senderId: "42", senderName: "Ann Lee", text: "the numbers?" },
+      attachments: [{ kind: "file", name: "report.pdf", size: 4 }],
+      reply_to_id: "7",
+      reply_to: { id: "7", sender_id: "42", sender_name: "Ann Lee", text: "the numbers?" },
     })
     expect(JSON.stringify(done.answer)).not.toContain("api.telegram.org")
   })
@@ -411,7 +430,7 @@ describe("tg bot watch", () => {
     ])
     stop = new AbortController()
     const kept = await tg(["sales", "bot", "messages", "show", "Team", "600", "--offline", "--json"])
-    expect(kept.answer).toMatchObject({ text: "hi bot", senderId: "42" })
+    expect(kept.answer.item).toMatchObject({ text: "hi bot", sender_id: "42" })
   })
 
   it("**prints an update once** when Telegram delivers it again", async () => {

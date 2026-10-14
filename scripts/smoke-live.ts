@@ -23,7 +23,10 @@ const stamp = new Date().toISOString()
 // Telegram answers a burst of writes with FLOOD_WAIT; a person's pace costs half a minute.
 const PACE_MS = 2000
 
-type Answer = { message?: { id?: unknown }; id?: unknown; items?: { id?: unknown; text?: unknown }[] }
+type Answer = {
+  item?: { message?: { id?: unknown }; id?: unknown }
+  items?: { id?: unknown; text?: unknown }[]
+}
 
 const tg = (...args: string[]) => {
   const done = spawnSync(join(root, "bin", "tg"), [...args, "--json"], { encoding: "utf8", timeout: 120_000 })
@@ -52,7 +55,7 @@ const step = async <T>(label: string, run: () => T | Promise<T>): Promise<T | un
 }
 
 const keep = (answer: Answer | undefined) => {
-  const id = answer?.message?.id ?? answer?.id
+  const id = answer?.item?.message?.id ?? answer?.item?.id
   if (id === undefined) return undefined
   created.push(String(id))
   return String(id)
@@ -105,7 +108,7 @@ try {
       const deadline = Date.now() + 180_000
       while (Date.now() < deadline) {
         await new Promise((done) => setTimeout(done, 15_000))
-        const fired = tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []
+        const fired = tg("messages", "list", SAVED, `date>${stamp}`, "--limit", "50").items ?? []
         const found = fired.filter((message) => message.text === "tg-cli smoke scheduled")
         if (found.length > 0) {
           for (const message of found) created.push(String(message.id))
@@ -126,7 +129,7 @@ try {
   // A pin leaves a service message behind in a private chat; count what is left, never show it.
   await step("nothing left since the start", () => {
     // Its own messages count too: a deletion refused for the hour leaves them behind.
-    const left = tg("messages", "list", SAVED, "--after-time", stamp, "--limit", "50").items ?? []
+    const left = tg("messages", "list", SAVED, `date>${stamp}`, "--limit", "50").items ?? []
     if (left.length > 0) throw new Error(`${left.length} message(s) since the start — look in Saved Messages`)
   })
 } finally {

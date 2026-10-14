@@ -3,6 +3,8 @@ import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
+import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import * as v from "valibot"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
@@ -89,12 +91,13 @@ describe("session start", () => {
     )
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toEqual({
+    const answer = v.parse(itemEnvelopeSchema(v.unknown()), JSON.parse(stdout[0] ?? ""))
+    expect(answer.item).toEqual({
       profile: "default",
       account: { id: "1", name: "Owner", username: null },
       session: join(process.env.TG_STATE_DIR ?? "", "sessions", "default.session"),
-      appKeys: "environment",
-      alreadyLoggedIn: false,
+      app_keys: "environment",
+      already_logged_in: false,
     })
     expect(seen.prompts?.method).toBe("qr")
     expect(seen.opened).toEqual({ id: 1, hash: "h" })
@@ -130,7 +133,7 @@ describe("session start", () => {
       "Already logged in as Owner (id 1) — profile tgtest; nothing was asked. `tg tgtest session end` first to log in again.",
     )
     expect(json.stderr).toEqual([])
-    expect(JSON.parse(json.stdout[0] ?? "")).toMatchObject({ alreadyLoggedIn: true })
+    expect(JSON.parse(json.stdout[0] ?? "")).toMatchObject({ item: { already_logged_in: true } })
   })
 
   it("logs in by phone number, asking for it on the terminal", async () => {
@@ -275,7 +278,10 @@ describe("session end", () => {
     const { code, stdout } = await tg(["session", "end", "--json"])
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toEqual({ profile: "default", ended: false })
+    expect(v.parse(itemEnvelopeSchema(v.unknown()), JSON.parse(stdout[0] ?? "")).item).toEqual({
+      profile: "default",
+      ended: false,
+    })
   })
 
   it("**logs out on Telegram's side** and removes the session file", async () => {
@@ -291,7 +297,10 @@ describe("session end", () => {
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toEqual({ profile: "ending", ended: true })
+    expect(v.parse(itemEnvelopeSchema(v.unknown()), JSON.parse(stdout[0] ?? "")).item).toEqual({
+      profile: "ending",
+      ended: true,
+    })
     expect(seen.loggedOut).toBe(true)
     expect(existsSync(path) || existsSync(`${path}-wal`)).toBe(false)
   })

@@ -90,7 +90,7 @@ describe("tg bot store fetch", () => {
       "--json",
     ])
     expect(first.code).toBe(0)
-    expect(first.answer).toMatchObject({ fetched: 120, complete: false, chat: CHAT })
+    expect(first.answer.item).toMatchObject({ fetched: 120, complete: false, chat: CHAT })
     expect(opened[0]).toMatchObject({
       from: "https://t.me/c/700/250",
       pauseMs: 1,
@@ -99,10 +99,10 @@ describe("tg bot store fetch", () => {
     expect(opened[0]?.sessionPath).not.toBe(sessionFile("sales", env))
     const second = await tg(["sales", "bot", "store", "fetch", CHAT, "--pause", "1ms", "--json"])
     expect(second.code).toBe(0)
-    expect(second.answer).toMatchObject({ complete: true })
+    expect(second.answer.item).toMatchObject({ complete: true })
     const kept = await tg(["sales", "bot", "messages", "list", CHAT, "--offline", "--limit", "300", "--json"])
     expect(kept.answer.items).toHaveLength(250)
-    expect((await tg(["sales", "bot", "sends", "list", "--json"])).answer).toEqual(before.answer)
+    expect((await tg(["sales", "bot", "sends", "list", "--json"])).answer.items).toEqual(before.answer.items)
     expect(methods).toEqual(["getMe"])
     expect(close).toHaveBeenCalledTimes(2)
     expect(opened).toHaveLength(2)
@@ -110,9 +110,9 @@ describe("tg bot store fetch", () => {
 
   it("stops at --last and --since-time, and refuses them together or --offline", async () => {
     const args = ["sales", "bot", "store", "fetch", CHAT, "--from", "https://t.me/c/700/250", "--pause", "1ms"]
-    expect((await tg([...args, "--last", "30", "--json"])).answer).toMatchObject({ reachedLast: true })
-    expect((await tg([...args, "--since-time", MESSAGES[200]?.timestamp ?? "", "--json"])).answer).toMatchObject({
-      reachedSince: true,
+    expect((await tg([...args, "--last", "30", "--json"])).answer.item).toMatchObject({ reached_last: true })
+    expect((await tg([...args, "--since-time", MESSAGES[200]?.timestamp ?? "", "--json"])).answer.item).toMatchObject({
+      reached_since: true,
     })
     expect((await tg([...args, "--last", "30", "--since-time", "1d", "--json"])).code).toBe(2)
     expect((await tg([...args, "--offline", "--json"])).code).toBe(2)
@@ -133,7 +133,7 @@ describe("tg bot store fetch", () => {
       adapter,
     })
     expect(result.code).toBe(0)
-    expect(result.answer.fetched).toBe(1)
+    expect(result.answer.item.fetched).toBe(1)
     expect(personalHistory).toHaveBeenCalledWith(CHAT, { limit: 1 })
     expect(adapter).toHaveBeenCalledWith({
       credentials: { id: 1, hash: "synthetic" },

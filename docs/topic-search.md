@@ -205,7 +205,7 @@ tg personal search conversations "contract terms" --filter 'has:file' --timezone
 subject:
 
 ```sh
-tg personal search messages '"deposit back"' --chat "Valencia expats"
+tg personal search messages '"deposit back" chat:"Valencia expats"'
 tg personal conversations related "Valencia expats" 5120
 ```
 

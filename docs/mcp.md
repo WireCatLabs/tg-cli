@@ -197,7 +197,7 @@ Chats are resources `tg://chat/<id>` — in Claude Code you can mention them wit
 the chat and its recent messages. The list comes from the local copy of your messages and never
 connects to Telegram; until something was read, it is empty. Only reading one chat connects.
 
-`tg_read` (`command: "messages link"`) returns `{ locator, url, access, reason }` without the message
+`tg_read` (`command: "messages link"`) returns `{ item: { ref, url, access, reason } }` without the message
 text. It checks the account and the audience the same way as `messages link`; a private link does
 not make anyone a member. Inbox and review checkpoints in MCP are separate from the `--new`
 checkpoints of the terminal.

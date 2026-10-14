@@ -89,7 +89,7 @@ npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
 ### "name a profile: `tg <profile> …` — profiles here: …"
 
 Exit code `2`. The command uses an account, and nothing named the profile: no first word, no
-`TG_PROFILE`, no `defaultProfile` in the config file. `tg` never picks one, even when only one exists.
+`TG_PROFILE`, no `default_profile` in the config file. `tg` never picks one, even when only one exists.
 The message lists the profiles on this computer; put one in front of the command:
 
 ```sh
@@ -97,7 +97,7 @@ tg personal chats list         # the profile named in the message
 export TG_PROFILE=personal     # or for the whole shell session
 ```
 
-To use one profile always, set `"defaultProfile": "personal"` at the top of the config file
+To use one profile always, set `"default_profile": "personal"` at the top of the config file
 ([configuration](configuration.md)). On a computer with no profile yet, the message says to run
 `tg personal setup`; any name works in place of `personal`.
 
@@ -184,10 +184,11 @@ costs half a day. Fix it by hand, or remove it with `tg config unset <setting>`
 Exit code `2`. The same for `--page`. Without this check, a value that is not a number would quietly
 cut the list to nothing.
 
-### "--after-time takes an ISO 8601 time or 30m, 2h, 1d ago"
+### "`id<` takes a message id"
 
-Exit code `2`. `--since-time` says the same about itself. They take an ISO 8601 time (`2026-09-20T09:00`) or "this long
-ago" (`30m`, `2h`, `1d`). A message id goes to `--after-id` or `--before-id` instead.
+Exit code `2`. `id<` and `id>` in a `messages list` query take a message id (`'id<4242'`); `messages comments` says
+the same about a comment id. A time goes to `date>` or `date<` instead: an ISO 8601 time (`2026-09-20T09:00`) or
+"this long ago" (`30m`, `2h`, `1d`).
 
 ### "--at-time takes a time like 2026-09-25T09:00 or a delay like 30m, 2h, 1d"
 
@@ -214,7 +215,7 @@ the wrong chat cannot be taken back.
 
 ### "no chat matches …"
 
-Exit code `6`. No chat title contains what you typed. Try `tg personal chats list --search <part of it>`, the
+Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:*<part of it>*'`, the
 chat's id, its `@username`, or `me` for Saved Messages. A one-to-one chat is titled with the other
 person's name as Telegram shows it to you.
 
@@ -253,9 +254,9 @@ sets and lifts that one.
 
 ### "profile … has sent N messages in the hour …"
 
-Exit code `8`. The profile's own hourly limit (`sendsPerHour`, 30 by default). The error says when
+Exit code `8`. The profile's own hourly limit (`sends_per_hour`, 30 by default). The error says when
 the next send is possible. Raise the limit only if you meant to send that many:
-`tg config set sendsPerHour <n>`.
+`tg config set sends_per_hour <n>`.
 
 ### "chat … is not on the recipient list of profile …"
 
@@ -293,7 +294,7 @@ without it does not prove that the login works.
 
 Telegram turned the request down and named why. Exit code `5` when Telegram answers that this account
 is not allowed to do it, `11` for the rest. The name after "refused" is Telegram's own, and the JSON
-carries it as `providerError`; the message never repeats what you typed. Some have their own
+carries it as `provider_error`; the message never repeats what you typed. Some have their own
 sentence:
 
 - **"Telegram transcribes only for Premium accounts…"** — exit code `5`. Use a model on this machine:

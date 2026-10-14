@@ -165,37 +165,34 @@ the account's chats
 
 ### `tg chats list`
 
-chats, newest first, archived ones included
+chats, newest first, archived ones included; the query is answered from the local store, so online, where the messenger filters nothing, it needs --offline
 
 ```sh
-tg chats list [options]
+tg chats list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
-| `--search <text>` | only chats whose name contains this; at least 3 characters. |
-| `--kind <kind>` | only chats of this kind: dialog, group, channel, saved. |
-| `--unread` | only chats with unread messages. |
 
 ### `tg chats events`
 
-who joined, left, was added or removed, and by whom — from the chat's service messages
+who joined, left, was added or removed, and by whom — from the chat's service messages; the last 7 days unless the query names time
 
 ```sh
-tg chats events <chat> [options]
+tg chats events <chat> [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; 7 days ago if not given. |
-| `--type <names>` | only these, comma-separated: join, leave, add, remove, create, title, pin. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 ### `tg chats inspect`
 
@@ -281,17 +278,17 @@ tg chats members list <chat> [options]
 members that look like bots, each with its reasons, from the member list and local store; --deep checks selected people individually; removes nobody
 
 ```sh
-tg chats members audit <chat> [options]
+tg chats members audit <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
 | `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
-| `--min-score <n>` | only members scoring at least this; 1 lists everyone with a reason (default: 2). |
 | `--deep <n>` | also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second. |
 
 #### `tg chats members history`
@@ -299,16 +296,13 @@ tg chats members audit <chat> [options]
 who joined, who left and whose profile changed, oldest first — what chats members fetch recorded in the local store; never asks the messenger
 
 ```sh
-tg chats members history <chat> [options]
+tg chats members history <chat> [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-
-| Option | What it does |
-|---|---|
-| `--since-time <time>` | ISO 8601, or 2h / 1d ago; everything recorded if not given. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 #### `tg chats members fetch`
 
@@ -534,17 +528,18 @@ tg chats link create <chat> [options]
 your invite links, newest first, with how many joined and how many wait
 
 ```sh
-tg chats link list <chat> [options]
+tg chats link list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--revoked` | the links you stopped, instead. |
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 #### `tg chats link revoke`
 
@@ -606,18 +601,18 @@ requests to join a group that needs an admin's approval
 who asked to join, newest first; only admins see them, and reading tells nobody
 
 ```sh
-tg chats requests list <chat> [options]
+tg chats requests list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | how many. |
-| `--search <text>` | only people whose name or @username has this. |
-| `--link <link>` | only people who asked through this invite link; not with --search. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 #### `tg chats requests accept`
 
@@ -885,11 +880,15 @@ people this account has a one-to-one chat with
 
 ### `tg contacts list`
 
-people you have a one-to-one chat with
+people you have a one-to-one chat with; name: matches the name, your local alias or the @username, notes: your private notes about them
 
 ```sh
-tg contacts list [options]
+tg contacts list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
@@ -897,8 +896,6 @@ tg contacts list [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 | `--order <recent\|name>` | newest conversation first, or alphabetical. Default: `recent`. |
-| `--search <text>` | only people whose name, local alias or @username contains this. |
-| `--search-notes <text>` | only people whose private notes contain this text. |
 
 ### `tg contacts show`
 
@@ -1247,28 +1244,25 @@ tg messages evidence <chat> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many, 1–100. |
-| `--before-id <id>` | only messages older than this message id. |
+| `--cursor <id>` | go on from where page.next says the last packet stopped. |
 
 ### `tg messages list`
 
 a chat's messages, oldest to newest
 
 ```sh
-tg messages list <chat> [options]
+tg messages list <chat> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `query` | optional | where to start and which topic: id<42, date>2026-10-01, topic:12. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--before-id <id>` | only messages older than this message id. |
-| `--before-time <time>` | only messages older than this ISO 8601 time, or 2h / 1d ago. |
-| `--after-id <id>` | only messages newer than this message id. |
-| `--after-time <time>` | only messages newer than this ISO 8601 time, or 2h / 1d ago. |
-| `--topic <id>` | only this forum topic; read back from its newest message or --before-id. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
@@ -1511,18 +1505,19 @@ tg messages link <chat> [message]
 the comments under a channel post, oldest to newest; they live in its discussion group
 
 ```sh
-tg messages comments <chat> <post> [options]
+tg messages comments <chat> <post> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | the channel: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `post` | required | the post's message id in the channel. |
+| `query` | optional | where to start: id<42. |
 
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--before-id <id>` | only comments older than this comment id. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 
 ### `tg messages links`
 
@@ -1557,7 +1552,7 @@ tg messages sync [chat] [options]
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
 | `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
 | `--last <n>` | stop once the newest n messages are held. |
-| `--catch-up` | prepare local search after this run; overrides searchCatchUp. |
+| `--catch-up` | prepare local search after this run; overrides search_catch_up. |
 | `--no-catch-up` | skip local preparation after this run. |
 | `--catch-up-chunks <n>` | at most this many local vector chunks. |
 | `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
@@ -1622,18 +1617,19 @@ tg polls show <chat> <message>
 who voted for what, newest first; not in an anonymous poll
 
 ```sh
-tg polls voters <chat> <message> [options]
+tg polls voters <chat> <message> [query] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `message` | required | the id of the message that carries the poll. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--answer <id>` | only those who chose this answer, as `polls show` prints it. |
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 ### `tg polls vote`
 
@@ -1813,33 +1809,38 @@ tg models image download <model>
 other people's unread messages in every chat; --new for what arrived since the last check
 
 ```sh
-tg inbox [options]
+tg inbox [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | from when: date>2h, date>2026-10-01; the saved point stays put. |
 
 | Option | What it does |
 |---|---|
 | `--new` | what arrived since the last check, each message once — for scheduled runs. |
-| `--since-time <time>` | what arrived after this ISO 8601 time, or 2h / 1d ago; the saved point stays put. |
 | `--limit <n>` | at most this many per chat, the newest. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
-| `--no-mark-read` | do not, whatever the catchUpMarksRead setting says. |
+| `--no-mark-read` | do not, whatever the catch_up_marks_read setting says. |
 
 ## `tg review`
 
 every message, yours too, in chats that changed since a point — for reviewing who owes what
 
 ```sh
-tg review [options]
+tg review [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | where the last review ended and which chat: date>2h, chat:"Book club"; 3 days ago if no date. |
 
 | Option | What it does |
 |---|---|
-| `--since-time <time>` | where the last review ended — ISO 8601, or 2h / 1d ago; 3 days ago if not given. |
-| `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
 | `--unanswered [duration]` | only questions to you or a group's admins that nobody answered, asked at least this long ago — 4h, 1d; 24h if not given. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
@@ -1847,7 +1848,7 @@ tg review [options]
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--new` | what changed since the last `review --new`, a point per chat — for scheduled runs. |
 | `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
-| `--no-mark-read` | do not, whatever the catchUpMarksRead setting says. |
+| `--no-mark-read` | do not, whatever the catch_up_marks_read setting says. |
 
 ## `tg topics`
 
@@ -2201,7 +2202,7 @@ tg store gaps repair <chat> [options]
 | `--page-size <n>` | messages per provider page. |
 | `--pause <duration>` | provider pause between pages. Default: `1s`. |
 | `--fingerprint <hash>` | refuse if this previously inspected coverage plan changed. |
-| `--catch-up` | prepare local search after repair; overrides searchCatchUp. |
+| `--catch-up` | prepare local search after repair; overrides search_catch_up. |
 | `--no-catch-up` | skip local search preparation after repair. |
 | `--catch-up-chunks <n>` | maximum local chunks prepared. |
 | `--catch-up-messages <n>` | maximum stored messages read for preparation. |
@@ -2217,12 +2218,18 @@ background sync jobs
 background sync jobs, newest first
 
 ```sh
-tg store jobs list [options]
+tg store jobs list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--state <state>` | only jobs in this state. One of: `running`, `done`, `partial`, `failed`, `cancelled`, `died`. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
 
 #### `tg store jobs show`
 
@@ -2276,7 +2283,7 @@ tg store jobs clear
 
 ### `tg store export`
 
-a chat's stored messages, oldest first: --jsonl one message per line, --json one { items, page, limit, hasMore } object; never asks the messenger
+a chat's stored messages, oldest first: --jsonl one message per line, --json the list envelope of messages; never asks the messenger
 
 ```sh
 tg store export [chats] [options]
@@ -2442,8 +2449,8 @@ tg conversations build [options]
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--analyze` | link batches using the configured analysis provider; requires --chat and remembers consent for this chat/provider. |
 | `--provider <provider>` | analysis: agent, openai or anthropic. |
-| `--model <model>` | analysis model; overrides analysisModel. |
-| `--base-url <url>` | analysis API endpoint; overrides analysisBaseUrl. |
+| `--model <model>` | analysis model; overrides analysis_model. |
+| `--base-url <url>` | analysis API endpoint; overrides analysis_base_url. |
 | `--size <n>` | analysis answer messages per batch, 10–200; default 50. |
 | `--max-tokens <n>` | analysis input/output reservation cap per run; default 100000. |
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
@@ -2678,16 +2685,18 @@ tg attachments extract [options]
 
 ### `tg attachments list`
 
-files of stored messages, where each was saved and whether its text is held — never the text
+files of stored messages, newest first: where each was saved and whether its text is held — never the text
 
 ```sh
-tg attachments list [options]
+tg attachments list [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | only this chat's files; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--needs-text` | only files saved here whose text nobody has yet: what an agent reads and writes back. |
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
@@ -3350,8 +3359,12 @@ tg tasks show <task>
 what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one
 
 ```sh
-tg tasks agenda [options]
+tg tasks agenda [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
@@ -3359,7 +3372,6 @@ tg tasks agenda [options]
 | `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
 | `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
 | `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
-| `--kind <kinds>` | only these chat kinds, comma-separated (default dialog,group). |
 
 ### `tg tasks close`
 
@@ -3400,7 +3412,7 @@ tg search all <query> [options]
 | `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
 | `--max-meetings <n\|all>` | how many of the meeting account's meetings to look through, newest first; all looks through every one (default 100). |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
@@ -3431,11 +3443,9 @@ tg search messages [query] [options]
 | `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
-| `--chat <chat>` | only this chat — the same as chat: in the query; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
-| `--type <text\|voice\|file>` | only messages of this type: text alone, a voice message, or a file. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3459,10 +3469,9 @@ tg search mail [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--chat <chat>` | only this mail thread, by id or subject. |
 | `--source <accounts>` | only these mail accounts, separated by commas: email:<address> as a hit shows it, email, mail or group:<name>; every mail account when unset. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
@@ -3484,10 +3493,9 @@ tg search notes <query> [options]
 |---|---|
 | `--type <internal\|file>` | only notes written in memo, or only notes from a folder. |
 | `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
-| `--tag <tag>` | only notes with this tag. |
 | `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
 | `--limit <n>` | how many. |
-| `--offset <n>` | skip this many, for the next page. |
+| `--page <n>` | which page, starting at 1. |
 | `--exact` | words as written only; meaning is not searched. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 
@@ -3603,7 +3611,9 @@ tg searches history [options]
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | how many. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
 
 ### `tg searches delete`
 
@@ -3907,6 +3917,8 @@ tg sends list [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--all` | every row, no paging. |
 
 ## `tg runs`
 
@@ -3923,6 +3935,7 @@ tg runs list [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many to show. Default: `20`. |
+| `--page <n>` | which page, starting at 1. Default: `1`. |
 
 ### `tg runs show`
 
@@ -4012,7 +4025,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, read_only, allow, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -4033,7 +4046,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeoutMs, color, senderColors, record, keepRunsForDays, readOnly, allow, permissions, sendsPerHour, requestsPerMinute, transcribeWith, speechModel, catchUpMarksRead, searchCatchUp, pictureSearch, embeddingProvider, embeddingModel, embeddingBaseUrl, embeddingDims, analysisProvider, analysisModel, analysisBaseUrl, models, proxy, readOtherBots, updateCheck, skillHint, defaultProfile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, read_only, allow, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
 
 | Option | What it does |
 |---|---|
@@ -4582,8 +4595,8 @@ tg bot messages between <people> [options]
 
 | Option | What it does |
 |---|---|
-| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
-| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--all-bots` | also read every other bot's copy on this machine that read_other_bots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by read_other_bots. |
 | `--limit <n>` | how many of the latest messages from each chat. |
 
 ### `tg bot search`
@@ -4604,9 +4617,10 @@ tg bot search messages [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
-| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--all-bots` | also read every other bot's copy on this machine that read_other_bots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by read_other_bots. |
 | `--limit <n>` | how many. |
+| `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
 | `--from <who>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
 
@@ -4807,8 +4821,8 @@ tg bot contacts show <who> [options]
 
 | Option | What it does |
 |---|---|
-| `--all-bots` | also read every other bot's copy on this machine that readOtherBots allows. |
-| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by readOtherBots. |
+| `--all-bots` | also read every other bot's copy on this machine that read_other_bots allows. |
+| `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by read_other_bots. |
 | `--limit <n>` | how many messages from the private chat. |
 | `--refresh` | read the private chat with them again from the messenger first — one request. |
 

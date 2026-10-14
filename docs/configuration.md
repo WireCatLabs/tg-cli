@@ -23,19 +23,19 @@ way to override it, in the [settings reference](configuration-reference.md#the-f
 | Setting | What it does | Built-in value |
 |---|---|---|
 | `limit` | how many rows a list shows when you do not add `--limit` | `20` |
-| `sendsPerHour` | the most messages this profile may send in one hour; stops a send loop | `30`; a bot has no limit until one is set in the `bot` section |
-| `requestsPerMinute` | how fast `tg` asks Telegram for things after a short burst; `0` turns the pace off ([limits and waits](limits.md)) | `60` |
+| `sends_per_hour` | the most messages this profile may send in one hour; stops a send loop | `30`; a bot has no limit until one is set in the `bot` section |
+| `requests_per_minute` | how fast `tg` asks Telegram for things after a short burst; `0` turns the pace off ([limits and waits](limits.md)) | `60` |
 | `permissions` | what this profile may do: read only, ask first, or go ahead ([permissions](permissions.md)) | everything allowed, except: deleting and a few other changes that cannot be undone ask first; reply rules may not send |
 | `record` | keep a record of every run, to look at later ([diagnostics](diagnostics.md)) | `false` |
-| `keepRunsForDays` | how many days run records are kept | `30` |
+| `keep_runs_for_days` | how many days run records are kept | `30` |
 | `color` | colour in tables | decided by your terminal |
-| `senderColors` | a different colour for each sender in a message list | `false` |
-| `timeoutMs` | how long **one** request to Telegram may wait, in milliseconds. To limit a whole command, use `--timeout` instead | the connection's own wait |
-| `catchUpMarksRead` | `inbox` and `review` mark the chats they show as read. The other person sees it | `false` |
+| `sender_colors` | a different colour for each sender in a message list | `false` |
+| `timeout_ms` | how long **one** request to Telegram may wait, in milliseconds. To limit a whole command, use `--timeout` instead | the connection's own wait |
+| `catch_up_marks_read` | `inbox` and `review` mark the chats they show as read. The other person sees it | `false` |
 | `proxy` | a proxy server to reach Telegram through, where it is blocked ([proxy setup](configuration-reference.md#through-a-proxy)) | none |
-| `transcribeWith` | who turns voice messages into text: `auto`, `messenger` or `local` | `auto` |
-| `updateCheck` | once a day, say when a newer `tg` exists | `true` |
-| `defaultProfile` | which profile a command uses when you do not name one | none: a command that uses an account stops and lists the profiles |
+| `transcribe_with` | who turns voice messages into text: `auto`, `messenger` or `local` | `auto` |
+| `update_check` | once a day, say when a newer `tg` exists | `true` |
+| `default_profile` | which profile a command uses when you do not name one | none: a command that uses an account stops and lists the profiles |
 
 The file never holds a secret. It has no place for your session, the app hash, a phone number or a
 proxy password. The session is a file of its own, and the app hash and a proxy password go to your
@@ -48,7 +48,7 @@ added:
 
 ```json
 {
-  "defaults": { "limit": 20, "keepRunsForDays": 30, "sendsPerHour": 30, "updateCheck": true, "skillHint": true },
+  "defaults": { "limit": 20, "keep_runs_for_days": 30, "sends_per_hour": 30, "update_check": true, "skill_hint": true },
   "profiles": {
     "work": { "limit": 50 }
   }
@@ -66,36 +66,36 @@ for one command. Remove the profile's `limit` and the value from `defaults` appl
 
 ```json
 {
-  "defaultProfile": "personal",
+  "default_profile": "personal",
   "defaults": {
     "limit": 20,
-    "keepRunsForDays": 14,
-    "sendsPerHour": 30,
-    "requestsPerMinute": 60,
-    "updateCheck": true,
-    "skillHint": true
+    "keep_runs_for_days": 14,
+    "sends_per_hour": 30,
+    "requests_per_minute": 60,
+    "update_check": true,
+    "skill_hint": true
   },
   "profiles": {
     "personal": {
       "limit": 50,
       "color": true,
-      "senderColors": true,
+      "sender_colors": true,
       "record": true
     },
     "work": {
       "permissions": { "messages": "readonly", "messages.send": "allow" },
-      "sendsPerHour": 10,
+      "sends_per_hour": 10,
       "proxy": "socks5://proxy.example:1080",
-      "transcribeWith": "local"
+      "transcribe_with": "local"
     }
   },
   "personal": {
-    "defaults": { "catchUpMarksRead": false, "searchCatchUp": true }
+    "defaults": { "catch_up_marks_read": false, "search_catch_up": true }
   },
   "bot": {
     "defaults": { "permissions": { "bot": "readonly", "bot.messages.send": "allow" } },
     "profiles": {
-      "shop": { "sendsPerHour": 200, "readOtherBots": false }
+      "shop": { "sends_per_hour": 200, "read_other_bots": false }
     }
   }
 }
@@ -103,8 +103,8 @@ for one command. Remove the profile's `limit` and the value from `defaults` appl
 
 What each part does:
 
-- `defaultProfile`: `tg chats list` with no profile name uses `personal`.
-- `defaults`: every profile gets these values unless it sets its own. `updateCheck` and `skillHint`
+- `default_profile`: `tg chats list` with no profile name uses `personal`.
+- `defaults`: every profile gets these values unless it sets its own. `update_check` and `skill_hint`
   are allowed only here, because there is one copy of `tg` for all profiles.
 - `profiles.personal`: more rows, colours, and a record of every run, only for `personal`.
 - `profiles.work`: reading messages is allowed, sending is allowed, every other change to
@@ -115,7 +115,7 @@ What each part does:
 - `bot.defaults`: applies only to bot commands (`tg shop bot …`). Bots may read and send, and
   nothing else.
 - `bot.profiles.shop`: the bot `shop` may send 200 messages an hour and may not read what other
-  bots on this computer saved. `readOtherBots` is allowed only in the `bot` section.
+  bots on this computer saved. `read_other_bots` is allowed only in the `bot` section.
 
 </details>
 
@@ -151,7 +151,7 @@ it writes, so it never saves a file that a later command refuses.
 ```sh
 tg config set limit 50                 # the profile you use now
 tg work config set limit 50            # the profile "work"
-tg config set sendsPerHour 10 --defaults   # every profile
+tg config set sends_per_hour 10 --defaults   # every profile
 tg config unset limit                  # back to the default
 tg config show                         # check what is in force, and where each value came from
 ```

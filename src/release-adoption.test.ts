@@ -33,8 +33,12 @@ describe("the shared release through the Telegram program", () => {
       { env, adapter: connect },
     )
     expect(found.code).toBe(0)
-    expect(decoded(found.stdout)).toMatchObject({ chatId: chat.id, messages: 1, complete: false })
-    expect(decoded(found.stdout)).not.toHaveProperty("members")
+    expect(decoded(found.stdout).item).toMatchObject({
+      chat: `chat:telegram/1/${chat.id}`,
+      messages: 1,
+      complete: false,
+    })
+    expect(decoded(found.stdout).item).not.toHaveProperty("members")
     expect(connect).not.toHaveBeenCalled()
   })
 
@@ -60,7 +64,7 @@ describe("the shared release through the Telegram program", () => {
     })
     const found = await tg(["mcp", "--revoke", "--json"], { adapter: connect })
     expect(found.code).toBe(0)
-    expect(decoded(found.stdout)).toMatchObject({ revoked: true })
+    expect(decoded(found.stdout)).toMatchObject({ item: { revoked: true } })
     expect(connect).not.toHaveBeenCalled()
   })
 })
