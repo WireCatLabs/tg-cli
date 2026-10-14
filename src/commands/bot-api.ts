@@ -1,5 +1,4 @@
-import { readFileSync, statSync } from "node:fs"
-import { basename } from "node:path"
+import { statSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
 import type { ManifestOperation } from "@wirecat/cli-base/codegen"
 import {
@@ -13,7 +12,14 @@ import {
   generatedApiCommand,
   prepareRpcApiBody,
 } from "@wirecat/cli-core/cli"
-import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@wirecat/cli-core/sends"
+import {
+  DEFAULT_PERMISSIONS,
+  guardedWrite,
+  levelFor,
+  newOperationId,
+  readUpload,
+  uploadBytes,
+} from "@wirecat/cli-core/sends"
 import type { Command } from "commander"
 import { definitions } from "../bot/generated/definitions.js"
 import { operations } from "../bot/generated/manifest.js"
@@ -31,8 +37,8 @@ const defaults = {
 const keyOf = (operation: ManifestOperation) => `bot.api.${operation.command}`
 const contextOf = (command: Command) => botContext(command.parent ?? command, TELEGRAM_BOT)
 
-export const telegramBotApiCommand = (): Command =>
-  generatedApiCommand({
+export const telegramBotApiCommand = (): Command => {
+  const group = generatedApiCommand({
     operations,
     checkParameter: (name, schema, raw) => checkApiParameter(name, schema, raw, schemas),
     before: (command, operation) => {
@@ -47,6 +53,14 @@ export const telegramBotApiCommand = (): Command =>
       const context = contextOf(command)
       const prepared = prepareRpcApiBody(operation, input, definitions)
       checkApiBody(operation, prepared.text, schemas)
+      // `bot messages send --file`'s refusal, before anything connects; held in memory, so the buffered-upload cap applies.
+      const anyFile = group.opts<{ allowAnyFile?: boolean }>().allowAnyFile === true
+      const files = await Promise.all(
+        prepared.files.map(async ({ field, path }) => {
+          const upload = await readUpload("file", path, { app: TELEGRAM_BOT.app, env: context.env, anyFile })
+          return { field, name: upload.name, bytes: await uploadBytes(upload.source) }
+        }),
+      )
       if (prepared.secrets.length && input.bodySource === "file" && process.platform !== "win32") {
         const path = command.opts<{ bodyFile?: string }>().bodyFile
         if (!path || (statSync(path).mode & 0o077) !== 0)
@@ -88,11 +102,6 @@ export const telegramBotApiCommand = (): Command =>
             target = { tokens, registry, id }
           }
           const call = async () => {
-            const files = prepared.files.map((file) => ({
-              field: file.field,
-              name: basename(file.path),
-              bytes: readFileSync(file.path),
-            }))
             const wait = prepared.value.timeout
             const seconds = wait === undefined ? undefined : Number(String(wait))
             const result = await adapter.api?.(
@@ -137,3 +146,6 @@ export const telegramBotApiCommand = (): Command =>
       })
     },
   })
+  group.option("--allow-any-file", "read @path files even from credential folders or this CLI's own folders")
+  return group
+}

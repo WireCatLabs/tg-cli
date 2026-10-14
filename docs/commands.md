@@ -5119,6 +5119,7 @@ tg bot api [options]
 | Option | What it does |
 |---|---|
 | `--store-token <profile>` | keep a returned authentication token only in this bot profile's OS keyring; never print it. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-updates`
 
