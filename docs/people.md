@@ -229,7 +229,6 @@ tg personal contacts notes list "Bob Synthetic"
 tg personal contacts notes edit "Bob Synthetic" <id> --revision 1 --file note.txt
 tg personal contacts notes remove "Bob Synthetic" <id>
 tg personal contacts show "Bob Synthetic" --with-notes
-tg personal contacts list --search-notes flat          # people whose notes contain this text
 ```
 
 Aliases and notes stay in the local store and never reach Telegram. An alias applies only in the

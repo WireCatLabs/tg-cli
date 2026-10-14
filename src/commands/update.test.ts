@@ -1,6 +1,8 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { captureStreams } from "@wirecat/cli-base"
+import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import * as v from "valibot"
 import { describe, expect, it, onTestFinished } from "vitest"
 import { run } from "../program.js"
 import type { UpdateEnvironment } from "../update.js"
@@ -25,7 +27,8 @@ const update = async (
   const streams = captureStreams()
   const code = await run(["upgrade", ...argv, "--json"], { streams, tty: false, update: environment })
   const [out] = streams.stdout
-  return { code, ran, result: out ? JSON.parse(out) : undefined, stderr: streams.stderr.join("\n") }
+  const result = out ? v.parse(itemEnvelopeSchema(v.looseObject({})), JSON.parse(out)).item : undefined
+  return { code, ran, result, stderr: streams.stderr.join("\n") }
 }
 
 describe("tg upgrade", () => {
@@ -109,7 +112,7 @@ describe("tg upgrade and a running server", () => {
     serving("bad&name")
     const { ran, result } = await update([])
     expect(ran).toHaveLength(2)
-    expect(result.restarted).toEqual(["work"])
+    expect(result?.restarted).toEqual(["work"])
     expect(JSON.stringify(ran)).not.toContain("bad&name")
   })
 })

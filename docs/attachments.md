@@ -22,7 +22,7 @@ Some words on this page:
 | Send a file, a photo, a video or a voice message | `tg personal messages send --file`, `--photo`, `--voice` |
 | Download the files of a message or a chat | `tg personal messages download` |
 | Read text from saved files on this computer | `tg personal attachments extract` |
-| See which files still need text | `tg personal attachments list --needs-text` |
+| See which files still need text | `tg personal attachments list is:needs_text` |
 | Save text that your agent read | `tg personal attachments text set` |
 | Find a message by the text of its file | `tg personal search messages 'content:…'` |
 | Read scans in bulk with an external model | `tg personal attachments extract --ocr` |
@@ -65,10 +65,10 @@ Downloading saves media without reading its text or converting its format.
 
 ```sh
 tg personal messages download "Study group" 204 --output-dir ./files --json
-tg personal attachments list --chat "Study group" --needs-text --json
+tg personal attachments list 'chat:"Study group" is:needs_text' --json
 ```
 
-A download never overwrites an existing file. `localPath` in the answer names a file on the
+A download never overwrites an existing file. `local_path` in the answer names a file on the
 computer that runs `tg`.
 
 <a id="transfer-a-larger-file"></a>
@@ -76,7 +76,7 @@ computer that runs `tg`.
 
 ## Files for a remote agent
 
-An agent on this computer can open `localPath`. An agent on another computer needs the file's
+An agent on this computer can open `local_path`. An agent on another computer needs the file's
 bytes and a tool that can open the format: the path alone does not move the file. Check what your
 AI app can receive and see [remote connection and file access](remote.md). Getting the file,
 reading it and saving its text to the search index are separate steps.
@@ -160,9 +160,9 @@ like these:
 
 ```sh
 tg personal attachments extract --chat "Study group" --download --output-dir ./files
-tg personal attachments list --chat "Study group" --needs-text
+tg personal attachments list 'chat:"Study group" is:needs_text'
 tg personal attachments text set "Study group" 204 --text-file ./scan.txt
-tg personal search messages 'content:worksheet' --chat "Study group" --backend archive
+tg personal search messages 'content:worksheet chat:"Study group"' --backend archive
 ```
 
 `--attachment` picks one file of a message with several, counting from 1. Receiving the bytes and
@@ -172,7 +172,7 @@ agent. Text the agent saved is not overwritten by later automatic extraction.
 
 ### What the agent does
 
-An agent cannot open every file by itself. It needs the file's bytes or access to `localPath`, a
+An agent cannot open every file by itself. It needs the file's bytes or access to `local_path`, a
 program that reads or converts the format, and, for pictures, a model that can see. It picks an
 available way, checks that the result is complete, and saves the text with `text set`.
 

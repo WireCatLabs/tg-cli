@@ -69,9 +69,9 @@ describe("shared rankings adoption", () => {
       "2",
     )
     expect(top.code, top.stderr).toBe(0)
-    expect(JSON.parse(top.stdout)).toMatchObject({
+    expect(JSON.parse(top.stdout).item).toMatchObject({
       total: 3,
-      items: [
+      rows: [
         { id: "3", value: 3 },
         { id: "2", value: 2 },
       ],
@@ -99,9 +99,9 @@ describe("shared rankings adoption", () => {
       "2",
     )
     expect(authors.code, authors.stderr).toBe(0)
-    const row = JSON.parse(authors.stdout).items[0]
+    const row = JSON.parse(authors.stdout).item.rows[0]
     expect(row).toMatchObject({ id: "11", value: 100 })
-    const selection = JSON.stringify(row.drilldown.selection)
+    const selection = JSON.stringify(row.selection)
     const first = await invoke(
       "stats",
       "contacts",
@@ -115,7 +115,7 @@ describe("shared rankings adoption", () => {
       "1",
     )
     expect(first.code, first.stderr).toBe(0)
-    expect(JSON.parse(first.stdout)).toMatchObject({ total: 2, included: 1, hasMore: true })
+    expect(JSON.parse(first.stdout)).toMatchObject({ items: [{}], page: { limit: 1, has_more: true } })
     const second = await invoke(
       "stats",
       "contacts",
@@ -128,18 +128,18 @@ describe("shared rankings adoption", () => {
       "--limit",
       "1",
       "--cursor",
-      JSON.parse(first.stdout).nextCursor,
+      JSON.parse(first.stdout).page.cursor,
     )
     expect(second.code, second.stderr).toBe(0)
-    expect(JSON.parse(second.stdout).items[0].message.id).toBe("2")
-    const messageRow = JSON.parse(top.stdout).items[0]
+    expect(JSON.parse(second.stdout).items[0].message.ref).toBe("msg:telegram/500/7/2")
+    const messageRow = JSON.parse(top.stdout).item.rows[0]
     const snapshot = await invoke(
       "stats",
       "messages",
       "evidence",
-      messageRow.drilldown.evidence.arguments.message,
+      messageRow.ref,
       "--selection",
-      JSON.stringify(messageRow.drilldown.selection),
+      JSON.stringify(messageRow.selection),
       "--component",
       "views",
       "--limit",
@@ -151,9 +151,9 @@ describe("shared rankings adoption", () => {
       "stats",
       "messages",
       "evidence",
-      messageRow.drilldown.evidence.arguments.message,
+      messageRow.ref,
       "--selection",
-      JSON.stringify(messageRow.drilldown.selection),
+      JSON.stringify(messageRow.selection),
       "--component",
       "views",
       "--cursor",
@@ -165,9 +165,9 @@ describe("shared rankings adoption", () => {
     expect(save.code, save.stderr).toBe(0)
     const replay = await invoke("stats", "contacts", "top", "--saved", "ranking-fixture", "--measure", "messages")
     expect(replay.code, replay.stderr).toBe(0)
-    expect(JSON.parse(replay.stdout)).toMatchObject({
-      ranking: { measure: "messages" },
-      items: [
+    expect(JSON.parse(replay.stdout).item).toMatchObject({
+      measure: "messages",
+      rows: [
         { id: "11", value: 2 },
         { id: "12", value: 1 },
       ],
@@ -177,7 +177,7 @@ describe("shared rankings adoption", () => {
       "create",
       "message-ranking",
       "--selection",
-      JSON.stringify(messageRow.drilldown.selection),
+      JSON.stringify(messageRow.selection),
     )
     expect(savedMessage.code, savedMessage.stderr).toBe(0)
     const measured = await invoke(
@@ -192,27 +192,27 @@ describe("shared rankings adoption", () => {
       "engaging",
     )
     expect(measured.code, measured.stderr).toBe(0)
-    expect(JSON.parse(measured.stdout).ranking.measure).toBe("score")
+    expect(JSON.parse(measured.stdout).item.measure).toBe("score")
   })
   it("explains recursive threads, words, active days and answer delays", async () => {
     const threads = await invoke("stats", "messages", "top", "--measure", "thread-size", "--limit", "1")
     expect(threads.code, threads.stderr).toBe(0)
-    const row = JSON.parse(threads.stdout).items[0]
+    const row = JSON.parse(threads.stdout).item.rows[0]
     expect(row).toMatchObject({ id: "1", value: 2 })
     const descendants = await invoke(
       "stats",
       "messages",
       "evidence",
-      row.drilldown.evidence.arguments.message,
+      row.ref,
       "--selection",
-      JSON.stringify(row.drilldown.selection),
+      JSON.stringify(row.selection),
       "--component",
       "thread-size",
     )
     expect(descendants.code, descendants.stderr).toBe(0)
-    expect(JSON.parse(descendants.stdout).items.map((item: { message: { id: string } }) => item.message.id)).toEqual([
-      "2",
-      "3",
+    expect(JSON.parse(descendants.stdout).items.map((item: { message: { ref: string } }) => item.message.ref)).toEqual([
+      "msg:telegram/500/7/2",
+      "msg:telegram/500/7/3",
     ])
     for (const [measure, person, value, total] of [
       ["words", "11", 4, 2],
@@ -222,7 +222,7 @@ describe("shared rankings adoption", () => {
     ] as const) {
       const top = await invoke("stats", "contacts", "top", "--measure", measure, "--limit", "1")
       expect(top.code, top.stderr).toBe(0)
-      const author = JSON.parse(top.stdout).items[0]
+      const author = JSON.parse(top.stdout).item.rows[0]
       expect(author).toMatchObject({ id: person, value })
       const evidence = await invoke(
         "stats",
@@ -230,12 +230,12 @@ describe("shared rankings adoption", () => {
         "evidence",
         person,
         "--selection",
-        JSON.stringify(author.drilldown.selection),
+        JSON.stringify(author.selection),
         "--component",
         measure,
       )
       expect(evidence.code, evidence.stderr).toBe(0)
-      expect(JSON.parse(evidence.stdout)).toMatchObject({ total, componentValue: value })
+      expect(JSON.parse(evidence.stdout).items).toHaveLength(total)
     }
   })
   it("checks guarded sync options before a messenger connection", async () => {

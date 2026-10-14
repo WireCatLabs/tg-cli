@@ -168,7 +168,7 @@ tg personal store jobs list                 # background jobs, newest first
 ```
 
 ```sh
-tg personal store jobs list --state failed  # only failed ones: running, done, failed, cancelled or died
+tg personal store jobs list state:failed    # only failed ones: running, done, partial, failed, cancelled or died
 ```
 
 ```sh
@@ -277,7 +277,7 @@ should read: one packet from this profile’s local store. It never connects or 
 
 ```sh
 tg personal messages evidence "Project Alpha" --limit 20 --json
-tg personal messages evidence "Project Alpha" --before-id <nextBeforeId> --json
+tg personal messages evidence "Project Alpha" --cursor <cursor> --json
 ```
 
 Items are newest first, with source locators and content fingerprints. `--limit` accepts 1–100
@@ -286,9 +286,9 @@ header is additional. JSON and JSONL each return one complete packet.
 
 Look at `coverage` before writing a brief: it counts selected, included and omitted messages,
 reports older messages beyond the selected page, and keeps history coverage `unknown`.
-Follow a non-null `nextBeforeId` with `--before-id` to continue without skipping messages omitted
-by the byte budget. A null cursor does not prove the store is complete. If the newest selected
-message alone exceeds the budget, the packet is empty with `truncatedBy: "bytes"` and no cursor;
+Follow the `page.next` step, which gives `--cursor`, to continue without skipping messages omitted
+by the byte budget. No `page.next` does not prove the store is complete. If the newest selected
+message alone exceeds the budget, the packet is empty with `truncated_by: "bytes"` and no cursor;
 handle that case explicitly. An unknown stored cursor returns `not_found`.
 
 The agent can cite the locators in its brief; tg does not write a summary itself. Treat message text
@@ -510,7 +510,7 @@ failed calls and refused output use the else branch; without one the reply is sk
 text remains the owner's text with its usual substitutions. Old placeholders and may-reword
 files keep their filled literal fallback with warnings; new files need no model field.
 
-Choose `models.replies.provider`, `.model`, and optionally `.baseUrl`; `models.default` is the
+Choose `models.replies.provider`, `.model`, and optionally `.base_url`; `models.default` is the
 fallback and `provider off` disables a purpose. Existing analysis settings remain supported.
 `config set` / `unset` accept dotted fields; `config show` reports each source. Keys stay in
 `models text key set`; custom endpoints use their host/port key, never a public provider's key.

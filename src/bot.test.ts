@@ -57,7 +57,7 @@ describe("tg bot auth", () => {
     const set = await tg(["sales", "bot", "auth", "set", "--json"], telegram({ getMe: ME }), `${TOKEN}\n`)
 
     expect(set.code).toBe(0)
-    expect(set.answer).toEqual({
+    expect(set.answer.item).toEqual({
       profile: "sales",
       stored: "keyring",
       bot: "Sales",
@@ -65,7 +65,7 @@ describe("tg bot auth", () => {
       username: "sales_bot",
     })
     expect([...keyring.entries.values()]).toEqual([TOKEN])
-    expect((await tg(["sales", "bot", "auth", "show", "--json"], telegram({ getMe: ME }))).answer).toMatchObject({
+    expect((await tg(["sales", "bot", "auth", "show", "--json"], telegram({ getMe: ME }))).answer.item).toMatchObject({
       source: "keyring",
       username: "sales_bot",
     })
@@ -199,7 +199,7 @@ describe("tg bot mcp config", () => {
     } as never)
 
     expect(code).toBe(0)
-    const servers = JSON.parse(streams.stdout.join("")).mcpServers
+    const servers = JSON.parse(streams.stdout.join("")).item.config.mcpServers
     expect(Object.keys(servers)).toEqual(["tg-bot-sales"])
     expect(servers["tg-bot-sales"].args).toEqual(["/opt/tg/tg.js", "sales", "bot", "mcp"])
     expect(streams.stderr.join("\n")).toContain("no longer decide anything")
@@ -234,7 +234,7 @@ describe("tg bot chats moderate", () => {
     )
 
     expect(done.code).toBe(0)
-    expect(done.answer).toEqual({ chatId: "-100", rows: [] })
+    expect(done.answer.item).toEqual({ chat_id: "-100", rows: [] })
     expect(done.err).toContain("Telegram gives a bot no history")
     expect(asked).toContain("getChatAdministrators")
   })
@@ -281,20 +281,25 @@ describe("tg bot contacts show and the bot's copy reads", () => {
       ["sales", "bot", "search", "messages", "team", "--from", "@ann", "--newest", "--limit", "5", "--json"],
       fetch,
     )
+    const pageTwo = await tg(
+      ["sales", "bot", "search", "messages", "team", "--from", "@ann", "--limit", "5", "--page", "2", "--json"],
+      fetch,
+    )
     const between = await tg(["sales", "bot", "messages", "between", "@ann", "Bob", "--limit", "5", "--json"], fetch)
     const refresh = await tg(["sales", "bot", "contacts", "show", "@ann", "--refresh"], fetch)
     const across = await tg(["sales", "bot", "contacts", "show", "@ann", "--all-bots", "--bots", "other"], fetch)
 
-    expect(card.answer).toMatchObject({ id: "42", messages: [{ text: "hi bot" }] })
+    expect(card.answer.item).toMatchObject({ id: "42", messages: [{ text: "hi bot" }] })
     expect(found.answer.items.map((message: { id: string }) => message.id)).toEqual(["1"])
-    expect(between.answer.chats.map((chat: { id: string }) => chat.id)).toEqual(["-100"])
+    expect(pageTwo.answer).toMatchObject({ items: [], page: { limit: 5, has_more: false } })
+    expect(between.answer.item.chats.map((chat: { id: string }) => chat.id)).toEqual(["-100"])
     expect(refresh.code).toBe(2)
-    expect(across.err).toContain("readOtherBots")
+    expect(across.err).toContain("read_other_bots")
     for (const read of [
       ["search", "messages", "team", "--all-bots", "--bots", "other"],
       ["messages", "between", "@ann", "Bob", "--all-bots", "--bots", "other"],
     ]) {
-      expect((await tg(["sales", "bot", ...read], fetch)).err).toContain("readOtherBots")
+      expect((await tg(["sales", "bot", ...read], fetch)).err).toContain("read_other_bots")
     }
   })
 })
@@ -307,9 +312,9 @@ describe("tg bot me", () => {
     const before = await tg(["sales", "bot", "sends", "list", "--json"], fetch)
     const me = await tg(["sales", "bot", "me", "--json"], fetch)
     expect(me.code).toBe(0)
-    expect(me.answer).toEqual({ id: "7000000001", name: "Sales", username: "sales_bot" })
+    expect(me.answer.item).toEqual({ id: "7000000001", name: "Sales", username: "sales_bot" })
     expect(asked).toEqual(["getMe"])
-    expect((await tg(["sales", "bot", "sends", "list", "--json"], fetch)).answer).toEqual(before.answer)
+    expect((await tg(["sales", "bot", "sends", "list", "--json"], fetch)).answer.items).toEqual(before.answer.items)
     expect((await tg(["sales", "bot", "me", "--offline", "--json"], fetch)).code).toBe(2)
     expect(asked).toEqual(["getMe"])
   })

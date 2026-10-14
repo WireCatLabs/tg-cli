@@ -150,6 +150,6 @@ only defer the work.
 
 **The signal that reopens (c):** any `AUTH_KEY_DUPLICATED`. Since this change, `tg` maps it to
 `authentication_error` (exit 4, so a `serve` unit stops retrying). The message names overlapping
-connections as the cause, and `providerError: "AUTH_KEY_DUPLICATED"` is kept in the error details,
+connections as the cause, and `provider_error: "AUTH_KEY_DUPLICATED"` is kept in the error details,
 so it shows in run records (`tg runs`). A login that ends for no known reason
 (`AUTH_KEY_UNREGISTERED` while nobody logged out) is the weaker signal to look into too.

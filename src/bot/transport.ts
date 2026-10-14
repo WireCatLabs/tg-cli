@@ -200,7 +200,7 @@ const refusalOf = (method: string, answer: Answer, status: number): CliError => 
     return new CliError(
       "not_found",
       `this group became a supergroup with id ${migrated} — use that id from now on (${said})`,
-      { ...details, migratedTo: String(migrated) },
+      { ...details, migrated_chat_id: String(migrated) },
     )
   }
   // A token Telegram cannot parse answers 404, a revoked one 401; the methods called are this code's own.

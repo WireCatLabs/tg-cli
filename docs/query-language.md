@@ -161,17 +161,17 @@ in an isolated worker with time and size limits. A saved search keeps its `--reg
 
 ## The answer
 
-`--json` returns `{ items, page, limit, hasMore, corrections, completeness, wordsReady, query, coverage }`,
-even when nothing matched. `--jsonl` streams the items only.
+`--json` returns `{ items, page: { limit, has_more }, next?, missing?, meta }`, even when nothing matched.
+`--jsonl` streams the items only.
 
-- `query`: the language version, the time zone and the order used.
-- `coverage`: which accounts and chats were searched. `lastSyncedAt` is the oldest time a chat in scope
-  was fetched by `messages sync`, `null` if any chat never was. `inventoryComplete` means every account in
-  scope has once listed all its chats; it does not promise a complete history.
-- `completeness`: per chat, whether its stored history reaches the start and has gaps.
-- `wordsReady`: whether the word index is complete. When it is `false`, a query with words fails with
-  `index_not_ready` and the command that finishes it, `tg personal store migrate`; a query without words runs.
-- `hasMore` is about the page, not about whether Telegram holds more.
+- `items`: the hits, best first (or newest first with `--newest`), each with its `ref` (`msg:…`), `timestamp`,
+  `sender_name`, `excerpt` and `matched_in`.
+- `meta.accounts`: which accounts were searched.
+- `missing`: what the answer could not see, each with the step that fills it. `coverage` means some chats in scope
+  were never fetched or the fetch before searching stopped early (step `messages.sync`); `text` means the word
+  index is still being built (step `store.migrate`, `tg personal store migrate`).
+- `next`: the steps to run. `page.next` repeats the query for the next page.
+- `page.has_more` is about the page, not about whether Telegram holds more.
 
 An error carries the position of the problem in the query and a hint.
 

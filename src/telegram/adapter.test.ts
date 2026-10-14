@@ -1316,7 +1316,7 @@ describe("forum setup", () => {
     }
     await expect(adapter.upgradeForum("-500")).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { previousChatId: "-500", chatId: "-1000000000700", upgraded: true, stage: "upgrade" },
+      details: { previous_chat_id: "-500", chat_id: "-1000000000700", upgraded: true, stage: "upgrade" },
     })
     expect(client.updateForumSettings).not.toHaveBeenCalled()
   })

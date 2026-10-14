@@ -258,7 +258,7 @@ describe("official statistics", () => {
 
     await expect(adapter.officialChatStats("-1000000000500")).rejects.toMatchObject({
       code: "provider_error",
-      details: { providerError: "AUTH_KEY_UNREGISTERED" },
+      details: { provider_error: "AUTH_KEY_UNREGISTERED" },
     })
   })
 

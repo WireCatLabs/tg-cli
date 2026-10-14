@@ -32,7 +32,20 @@ describe("tg stats chats official", () => {
     })
 
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout.join("\n"))).toEqual(stats)
+    expect(JSON.parse(result.stdout.join("\n")).item).toEqual({
+      chat_id: "-1001234567890",
+      title: "Valencia expats",
+      kind: "group",
+      since: "2026-09-29T00:00:00.000Z",
+      until: "2026-10-06T00:00:00.000Z",
+      totals: stats.totals,
+      top: {
+        posters: [{ person_ref: "contact:telegram/777", name: "Ana", messages: 40, average_chars: 85 }],
+        admins: [],
+        inviters: [],
+      },
+      graphs: stats.graphs,
+    })
     expect(result.stderr.join("\n")).toContain("languages")
     expect(officialChatStats).toHaveBeenCalledWith("@valencia_expats")
   })

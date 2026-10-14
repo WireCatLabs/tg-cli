@@ -24,7 +24,7 @@ this page:
 | --- | --- |
 | Find questions that wait for an answer | `tg personal review --unanswered` |
 | See who joined, left, was added or removed | `tg personal chats events` |
-| Sum up a week: decisions, promises, open questions | `tg personal review --since-time 7d` |
+| Sum up a week: decisions, promises, open questions | `tg personal review 'date>7d'` |
 | Keep a list of what waits on you | `tg personal tasks list` |
 | Remove spam by your own rules | `tg personal chats rules set`, `tg personal chats moderate` |
 | Replace a leaked invite link | `tg personal chats link reset` |
@@ -57,7 +57,7 @@ Start with questions that have been waiting for you or the admins.
 **Command:**
 
 ```sh
-tg personal review --chat "Hiking" --unanswered 4h --json
+tg personal review 'chat:Hiking' --unanswered 4h --json
 ```
 
 **Example agent answer:**
@@ -85,7 +85,7 @@ Review joining events. A new account is a reason to check, not proof of spam.
 **Command:**
 
 ```sh
-tg personal chats events "Hiking" --type join,add --since-time 7d --json
+tg personal chats events "Hiking" 'type:(join OR add) time>=7d' --json
 ```
 
 **Example agent answer:**
@@ -167,7 +167,7 @@ Ask for a short recap of decisions, commitments and open questions.
 **Command:**
 
 ```sh
-tg personal review --chat "Hiking" --since-time 7d --json
+tg personal review 'chat:Hiking date>7d' --json
 ```
 
 **Example agent answer:**
@@ -188,7 +188,7 @@ tg personal review --chat "Hiking" --since-time 7d --json
 No agent is needed for a list of open questions: it is an ordinary command.
 
 ```cron
-0 9,21 * * * tg personal review --chat "Hiking" --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
+0 9,21 * * * tg personal review 'chat:Hiking' --unanswered --json >> ~/hiking-open.jsonl 2>> ~/tg-cron.log
 ```
 
 cron has no terminal and often no `XDG_RUNTIME_DIR`, without which `tg` cannot reach the keyring:
@@ -198,7 +198,7 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 
 | Command | What it does |
 |---|---|
-| `tg personal review --chat <chat> --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
+| `tg personal review 'chat:"<chat>"' --unanswered [duration]` | questions you and the admins have not answered for that long — `4h`, `1d`; 24 hours by default |
 | `tg personal chats events <chat>` | who joined, left, was added or removed, and by whom; 7 days by default |
 | `tg personal chats members list <chat>` | everyone in the group, with their role and when they were last seen |
 | `tg personal topics list <chat>`, `tg personal search topics <chat> <text>` | a forum group's topics; search finds them by title |
@@ -453,7 +453,7 @@ connecting, and skips groups already fetched on the current UTC day. Tracking do
 if it was stopped for several days, the next run records a new snapshot rather than filling missed days.
 
 `tg personal chats members history` shows recorded joins, leaves and profile changes, oldest first;
-`--since-time` limits the period. It never asks Telegram. A join uses Telegram's join time when known,
+a query such as `time>=7d` limits the period. It never asks Telegram. A join uses Telegram's join time when known,
 otherwise the first time the person was seen. A leave is dated at the first complete snapshot without
 them, rather than their exact departure. The first fetch records the initial roster: those people did
 not necessarily join that day. `chats members list --offline` reads the last completely saved roster;
@@ -462,8 +462,8 @@ profiles and events have already been recorded.
 Profiles and history stay in the local store alongside messages.
 
 `tg personal chats members audit` lists members with bot-like signals and reasons; `--budget` caps pages and
-`--min-score` sets the threshold. It removes nobody and excludes admins and the owner. `more` means
-the list is partial, and `unknown` names unavailable signals. It is unavailable with `--offline`;
+a query such as `score>=3` sets the threshold (`score>=2` when not given). It removes nobody and excludes admins
+and the owner. `meta.truncated` means not every member was read. It is unavailable with `--offline`;
 scores need human review. Telegram supplies bot, scam, fake, deleted, photo, join and inviter metadata
 where available. “Never wrote” means no messages were found in the local history, not proof that the
 person never wrote in the group.
@@ -486,7 +486,7 @@ tg personal stats chats show "Hiking Club" --since-time 7d --by day --timezone E
 ```
 
 ```sh
-tg personal chats members history "Hiking Club" --since-time 7d --offline --json
+tg personal chats members history "Hiking Club" "time>=7d" --offline --json
 ```
 
 ```sh
@@ -498,6 +498,6 @@ tg personal chats members audit "Hiking Club" --json
 ```
 
 Ask your agent to report messages, active senders, unanswered questions, membership changes and days
-with member snapshots. Keep `complete`, `more`, `unknown` and gaps between snapshots visible in the
+with member snapshots. Keep `missing` entries, `meta.truncated` and gaps between snapshots visible in the
 report. Keep `tg personal serve` running or repeat member fetches for future reports; the first report cannot
 show departures that happened before the first recorded roster.

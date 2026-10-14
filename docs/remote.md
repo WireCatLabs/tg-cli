@@ -271,11 +271,11 @@ Those apps must log in again with a new code. This does not end your Telegram se
 
 ## Transfer retained files to an agent
 
-An agent on your computer can open a saved file by its `localPath`. A remote agent cannot, so it
+An agent on your computer can open a saved file by its `local_path`. A remote agent cannot, so it
 gets the saved bytes through `attachments show` (MCP: `tg_read`, command `attachments show`).
 
 First download the message's files the usual way ([downloading files](attachments.md#what-you-can-download)).
-Use `attachments list --needs-text` to find the message locator and the attachment position. Then
+Use `attachments list is:needs_text` to find the message locator and the attachment position. Then
 ask for the file:
 
 ```sh
@@ -291,11 +291,11 @@ never instructions.
 ### Transfer a larger file
 
 One answer carries 512 KiB by default; `--chunk-bytes` allows up to 1 MiB. The file default is
-50 MiB, configurable through `MESSAGING_ATTACHMENT_MAX_MIB`. The JSON includes `base64`, `offsetBytes`, `readBytes`, `totalBytes`, `nextOffsetBytes`,
+50 MiB, configurable through `MESSAGING_ATTACHMENT_MAX_MIB`. The JSON `item` includes `base64`, `offset_bytes`, `read_bytes`, `total_bytes`, `next_offset_bytes`,
 `complete` and the SHA256 of the whole file. `complete: true` means this answer holds the entire
 file, not that its text has been recognized.
 
-Decode each base64 part, join the parts in byte-offset order, and follow `nextOffsetBytes` until it
+Decode each base64 part, join the parts in byte-offset order, and follow `next_offset_bytes` until it
 is null. Pass the first SHA256 as `--if-sha256` on the next requests: if the source file changed,
 the request fails and returns no changed bytes. Check the joined file against that hash.
 
@@ -347,11 +347,11 @@ tg personal attachments show msg:telegram/500/7/204 --attachment 1 --page 1 --js
 Through MCP, call `tg_read`, command `attachments show`, with `page: 1` and the message locator. By
 default the page comes back as image content. If the app shows only metadata, ask for
 `format: base64`, then decode and show the PNG with the agent's image tools. Receiving a base64
-string is not looking at the page. Read pages 1 to `pdf.pageCount`. If neither format shows the
+string is not looking at the page. Read pages 1 to `pdf.page_count`. If neither format shows the
 pixels, report the app's limit instead of inventing text.
 
-`pdf.sourceSha256` and `pdf.sourceBytes` describe the original PDF; the top-level `sha256` and
-`totalBytes` describe the page image. `--if-sha256` checks the original PDF. `--page` cannot be
+`pdf.source_sha256` and `pdf.source_bytes` describe the original PDF; the top-level `sha256` and
+`total_bytes` describe the page image. `--if-sha256` checks the original PDF. `--page` cannot be
 combined with `--offset-bytes` or `--chunk-bytes`. By default, PDFs can be up to 50 MiB, with no fixed page-count limit; a PNG
 allows 4000 pixels on each side and 8 MiB per page. All three values are configurable.
 

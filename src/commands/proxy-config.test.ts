@@ -19,16 +19,16 @@ describe("config set proxy", () => {
     })
 
     expect(set.code).toBe(0)
-    expect(json(set.stdout)).toMatchObject({ setting: "proxy", value: "socks5://u@proxy.example:1080" })
+    expect(json(set.stdout)).toMatchObject({ item: { setting: "proxy", value: "socks5://u@proxy.example:1080" } })
     expect([...set.stdout, ...set.stderr].join("\n")).not.toContain("hunter2")
-    expect(readFileSync(json(set.stdout).configFile, "utf8")).not.toContain("hunter2")
+    expect(readFileSync(json(set.stdout).item.config_file, "utf8")).not.toContain("hunter2")
     expect(proxySecrets({ keyring }).read("proxied")).toBe("hunter2")
 
     const doctor = await tg(["proxied", "doctor", "--json"], { keyring })
-    expect(json(doctor.stdout).telegram.proxy).toEqual({
+    expect(json(doctor.stdout).item.telegram.proxy).toEqual({
       url: "socks5://u@proxy.example:1080",
       from: "config file",
-      botApi: "through it",
+      bot_api: "through it",
     })
     expect(doctor.stdout.join("\n")).not.toContain("hunter2")
 
@@ -53,10 +53,10 @@ describe("config set proxy", () => {
     const link = `tg://proxy?server=mt.example&port=443&secret=${MT_SECRET}`
     const set = await tg(["mtproxied", "config", "set", "proxy", "-", "--json"], { keyring, stdin: piped(link) })
 
-    expect(json(set.stdout).value).toBe("tg://proxy?server=mt.example&port=443")
-    expect(readFileSync(json(set.stdout).configFile, "utf8")).not.toContain(MT_SECRET)
+    expect(json(set.stdout).item.value).toBe("tg://proxy?server=mt.example&port=443")
+    expect(readFileSync(json(set.stdout).item.config_file, "utf8")).not.toContain(MT_SECRET)
     const doctor = json((await tg(["mtproxied", "doctor", "--json"], { keyring })).stdout)
-    expect(doctor.telegram.proxy.botApi).toMatch(/^direct/)
+    expect(doctor.item.telegram.proxy.bot_api).toMatch(/^direct/)
 
     await tg(["mtproxied", "config", "unset", "proxy"], { keyring })
   })
@@ -99,7 +99,7 @@ describe("config set proxy", () => {
   it("takes a proxy without a password on the command line", async () => {
     const set = await tg(["plain", "config", "set", "proxy", "http://proxy.example:3128", "--json"])
 
-    expect(json(set.stdout).value).toBe("http://proxy.example:3128")
+    expect(json(set.stdout).item.value).toBe("http://proxy.example:3128")
     await tg(["plain", "config", "unset", "proxy"])
   })
 
@@ -112,7 +112,10 @@ describe("config set proxy", () => {
       env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", TG_PROXY: "http://u:hunter2@env.example:3128" },
     })
 
-    expect(json(doctor.stdout).telegram.proxy).toMatchObject({ url: "http://u@env.example:3128", from: "TG_PROXY" })
+    expect(json(doctor.stdout).item.telegram.proxy).toMatchObject({
+      url: "http://u@env.example:3128",
+      from: "TG_PROXY",
+    })
     expect(doctor.stdout.join("\n")).not.toContain("hunter2")
   })
 

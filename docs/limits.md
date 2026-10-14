@@ -39,7 +39,7 @@ waiting 12 s to keep this profile's pace with Telegram
 Change the pace in the config file, or for one shell with an environment variable:
 
 ```json
-{ "defaults": { "requestsPerMinute": 30 } }
+{ "defaults": { "requests_per_minute": 30 } }
 ```
 
 ```sh
@@ -67,7 +67,7 @@ to be done; `tg personal flood clear` lifts it early if you know Telegram no lon
 
 ## Writes
 
-- **30 sends an hour** per profile by default (`sendsPerHour`), counted across processes; see
+- **30 sends an hour** per profile by default (`sends_per_hour`), counted across processes; see
   [the send guard](security.md#the-send-guard).
 - **Spam limit (PEER_FLOOD)** and a frozen account hold every write; reads still work. See
   [troubleshooting](troubleshooting.md).

@@ -46,21 +46,28 @@ it("authors local contact metadata and classifies cached channels without a mess
     expect(code, streams.stderr.join("")).toBe(0)
     return JSON.parse(streams.stdout.join(""))
   }
-  expect(await call(["contacts", "alias", "set", "101", "Local label"])).toMatchObject({ alias: "Local label" })
+  expect(await call(["contacts", "alias", "set", "101", "Local label"])).toMatchObject({
+    item: { person_id: "101", alias: "Local label" },
+  })
   const file = join(root, "own-note.md")
   writeFileSync(file, "Own synthetic note")
-  const note = await call(["contacts", "notes", "add", "Local label", "--file", file])
+  const { item: note } = await call(["contacts", "notes", "add", "Local label", "--file", file])
   expect(await call(["contacts", "notes", "list", "101"])).toMatchObject({ items: [{ id: note.id }] })
-  expect(await call(["contacts", "notes", "show", "101", note.id])).toMatchObject({ text: "Own synthetic note" })
+  expect(await call(["contacts", "notes", "show", "101", note.id])).toMatchObject({
+    item: { text: "Own synthetic note" },
+  })
   expect(await call(["contacts", "notes", "edit", "101", note.id, "--revision", "1", "--file", file])).toMatchObject({
-    revision: 2,
+    item: { revision: 2 },
   })
   expect(await call(["contacts", "show", "101", "--with-notes"])).toMatchObject({
-    alias: "Local label",
-    notes: [{ text: "Own synthetic note" }],
+    item: { alias: "Local label", notes: [{ text: "Own synthetic note" }] },
   })
-  expect(await call(["metadata", "get", "--chat", "99"])).toMatchObject({ metadata: { title: "AI news" } })
-  expect(await call(["tags", "auto", "--chat", "99", "--limit", "1", "--dry-run"])).toMatchObject({ dryRun: true })
+  expect(await call(["metadata", "get", "--chat", "99"])).toMatchObject({
+    item: { metadata: { title: "AI news" } },
+  })
+  expect(await call(["tags", "auto", "--chat", "99", "--limit", "1", "--dry-run"])).toMatchObject({
+    item: { dry_run: true },
+  })
   await call(["tags", "auto", "--chat", "99", "--limit", "1"])
   expect(await call(["tags", "list"])).toMatchObject({
     items: [

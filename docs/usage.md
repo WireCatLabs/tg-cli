@@ -198,11 +198,11 @@ tg personal chats list                     # newest first, archived chats includ
 ```
 
 ```sh
-tg personal chats list --unread --kind group  # only groups with unread messages
+tg personal chats list 'unread_count>0 kind:group'  # only groups with unread messages
 ```
 
 ```sh
-tg personal chats list --search book       # titles containing "book"; at least 3 characters
+tg personal chats list 'title:*book*'   # titles containing "book"; at least 3 characters
 ```
 
 ```sh
@@ -223,7 +223,7 @@ tg personal messages list "Book club" --limit 50
 ```
 
 ```sh
-tg personal messages list "Hiking" --topic 12   # one forum topic; topics list shows the ids
+tg personal messages list "Hiking" topic:12   # one forum topic; topics list shows the ids
 ```
 
 ```sh
@@ -240,14 +240,14 @@ tg personal messages context "Book club" 4242 --before-n 2 --after-n 10
 
 In `context`, the message you asked for is marked `◀` in the terminal and `"anchor": true` in JSON.
 
-`--topic` reads back from the topic's newest message, or from `--before-id`. The General topic (`1`) is
-refused: Telegram gives its messages no topic id, so read the whole chat instead. With `--offline`,
-`--topic` keeps the stored messages of that topic.
+`topic:<id>` in the query reads back from the topic's newest message, or from `id<…`. The General topic
+(`1`) is refused: Telegram gives its messages no topic id, so read the whole chat instead. With
+`--offline`, `topic:` keeps the stored messages of that topic.
 
 ### Message links
 
 `tg personal messages link <chat> <message>` or `tg personal messages link <msg:locator>` returns
-`{ locator, url, access, reason }`. Channel and supergroup permalinks can be public or restricted;
+`{ item: { ref, url, access, reason } }`. Channel and supergroup permalinks can be public or restricted;
 a link grants no membership. Dialogs, basic groups and Saved Messages return a locator. Offline
 validates the stored target and returns no permalink. A locator for another account is refused.
 This singular command differs from `messages links`, which explains conversation relationships
@@ -260,7 +260,7 @@ tg personal inbox            # other people's unread messages, in every chat
 ```
 
 ```sh
-tg personal inbox --since-time 2h  # everything that came in during the last two hours
+tg personal inbox 'date>2h'  # everything that came in during the last two hours
 ```
 
 ```sh
@@ -277,10 +277,10 @@ stderr how many it left out.
 
 **`inbox --new` moves a saved point.** The next `--new` starts from where this one stopped, so each
 message is shown once. The first `--new` looks back 24 hours. `inbox` without `--new`, and
-`inbox --since-time`, leave the point where it is. Plain `inbox` answers the same until the messages are
+`inbox 'date>…'`, leave the point where it is. Plain `inbox` answers the same until the messages are
 read in the app, since it marks nothing read.
 
-One run reads at most 20 chats; the rest are named on stderr and in `skipped`, with the command that
+One run reads at most 20 chats; the rest are a `missing` entry, with the step that
 reads one. In a chat with more than `--limit` messages waiting, the newest are shown, and stderr says
 how to read the rest.
 
@@ -291,19 +291,19 @@ tg personal review                         # the last 3 days
 ```
 
 ```sh
-tg personal review --since-time 2026-09-23T09:00  # from where the last review ended
+tg personal review 'date>2026-09-23T09:00'  # from where the last review ended
 ```
 
 ```sh
-tg personal review --chat "Book club" --json
+tg personal review 'chat:"Book club"' --json
 ```
 
-Every message — yours and other people's — in every chat where something happened since `--since-time`.
+Every message — yours and other people's — in every chat where something happened since the `date>` in the query.
 It is for working out what you promised, what you are waiting for and what is still unclear; sorting
 it is your job or an agent's. It marks nothing read.
 
-The command ends with a line on stderr: from when to when it read. **Start the next review from
-that `--since-time`**, and nothing falls between two reviews. When the review is incomplete — too many
+The answer's first `next` step, `review.next`, is the next review: it starts where this one ended
+(`date>"<until>"`). **Run the next review from that step**, and nothing falls between two reviews. When the review is incomplete — too many
 chats at once, or a chat cut short to its newest 300 messages — it says so, and it is better not to
 move the boundary. It reads at most 20 chats in one run.
 
@@ -314,7 +314,7 @@ tg personal review --unanswered            # questions nobody answered in 24 hou
 ```
 
 ```sh
-tg personal review --chat "Neighbours" --unanswered 4h
+tg personal review 'chat:Neighbours' --unanswered 4h
 ```
 
 `--unanswered [hours]` keeps only questions waiting for you or for a group's admins. A question is a
@@ -326,7 +326,7 @@ When a group's admins are not known, the command says so, and only your answers 
 Saved voice transcripts count in this filter too. Add `--transcribe` to transcribe voice messages
 that have no saved transcript before the questions are selected. A voice message that could not be
 transcribed keeps the review incomplete: an empty result does not prove there are no unanswered
-questions. Keep the previous boundary until `complete` is true.
+questions. Keep the previous boundary while the answer has a `missing` entry.
 
 ### Voice messages
 
@@ -376,7 +376,7 @@ tg personal models audio download parakeet-v3  # once, checked against the sha25
 | `gigaam-v3-ctc` | Russian — a little faster, rougher with capital letters | 225 MB |
 
 `--model` picks another model for one command, beside `--transcribe` or in `messages transcribe`;
-`transcribeWith` and `speechModel` in the settings choose the defaults ([configuration](configuration.md)).
+`transcribe_with` and `speech_model` in the settings choose the defaults ([configuration](configuration.md)).
 A transcript is kept in the local store and reused by message lists, inboxes and reviews. Calling
 `messages transcribe` again can request a new transcript or run recognition again. `--transcribe` can
 take minutes.
@@ -404,7 +404,7 @@ tg personal contacts list              # people you have a one-to-one chat with,
 ```
 
 ```sh
-tg personal contacts list --order name --search ann
+tg personal contacts list 'name:*ann*' --order name
 ```
 
 ```sh
@@ -432,7 +432,8 @@ tg personal contacts check @example_user  # does the account look like a bot or 
 ```
 
 `contacts list` is the people you have a one-to-one chat with. `contacts sync` brings in the rest of
-your Telegram contact list too. `contacts lookup` never takes the number as an argument: pipe it in,
+your Telegram contact list too. `name:` and `notes:` search the people the local store keeps, so they need a
+`contacts sync` (or messages read before) first; with nothing stored, the query is refused. `contacts lookup` never takes the number as an argument: pipe it in,
 or type it when asked. A person's profile, their recent messages, the bot check and what it sends
 where: [people](people.md).
 
@@ -493,42 +494,43 @@ tg personal contacts list --all        # every row, no paging
 ⚠ **A page number over a live list can repeat or skip a row.** The newest is on top, so a message
 that arrives between page one and page two moves someone across the border.
 
-**A chat's messages have no pages: they have `--before-id`, `--after-id` and `--after-time`**, which
-page exactly:
+**A chat's messages have no pages: they take a query on `id` and `date`, and `--cursor` for the next page**, which
+pages exactly:
 
 ```sh
-tg personal messages list "Book club" --before-id 4242  # older than message 4242
+tg personal messages list "Book club" "id<4242"  # older than message 4242
 ```
 
 ```sh
-tg personal messages list "Book club" --after-id 4242  # newer than 4242, oldest first
+tg personal messages list "Book club" "id>4242"  # newer than 4242, oldest first
 ```
 
 ```sh
-tg personal messages list "Book club" --after-time 2h  # what came in during the last two hours
+tg personal messages list "Book club" "date>2h"  # what came in during the last two hours
 ```
 
 ```sh
-tg personal messages list "Book club" --after-time 2026-09-20T09:00
+tg personal messages list "Book club" "date>2026-09-20T09:00"
 ```
 
 ```sh
-tg personal messages list "Book club" --before-time 1d  # what came before this time yesterday
+tg personal messages list "Book club" "date<1d"  # what came before this time yesterday
 ```
 
-In the terminal, the line that names the next page goes to stderr. `--before-id` and `--after-id` take
-a message id. `--after-time` takes ISO 8601, or "this long ago": `30m`, `2h`, `1d`. In
+In the terminal, the line that names the next page goes to stderr; in JSON it is the `page.next` step,
+which gives `--cursor`. `id<` and `id>` take a message id. `date>` and `date<` take ISO 8601, or "this long
+ago": `30m`, `2h`, `1d`. In
 `messages context`, `--before-n` and `--after-n` are counts of messages: there the point is already
 the message.
 
 ### Find a chat, then write to it
 
 ```sh
-tg personal chats list --search book --kind group  # groups with "book" in the title
+tg personal chats list 'title:*book* kind:group'  # groups with "book" in the title
 ```
 
 ```sh
-tg personal contacts list --search ann       # people by name or @username
+tg personal contacts list 'name:*ann*'  # people by name or @username
 ```
 
 ```sh
@@ -540,7 +542,7 @@ tg personal search messages "contract"       # the text of every message this ma
 ```
 
 ```sh
-tg personal search messages "contract" --chat "Book club"
+tg personal search messages 'contract chat:"Book club"'
 ```
 
 ```sh
@@ -685,7 +687,7 @@ tg personal polls show "Book club" 4250    # the poll and its answer ids
 ```
 
 ```sh
-tg personal polls voters "Book club" 4250 --answer <answer id>  # who chose it; not in an anonymous poll
+tg personal polls voters "Book club" 4250 'answers:<answer id>'  # who chose it; not in an anonymous poll
 ```
 
 ```sh
@@ -860,7 +862,7 @@ tg personal messages comments "Rozetked" 27644     # the comments under post 276
 ```
 
 ```sh
-tg personal messages comments "Rozetked" 27644 --before-id 3732413
+tg personal messages comments "Rozetked" 27644 "id<3732413"
 ```
 
 ```sh
@@ -915,7 +917,7 @@ tg personal chats events "Hiking"                  # who joined, left, was added
 ```
 
 ```sh
-tg personal chats events "Hiking" --type join,leave --since-time 2026-09-01T00:00
+tg personal chats events "Hiking" 'type:(join OR leave) time>=2026-09-01T00:00'
 ```
 
 ```sh
@@ -931,7 +933,7 @@ tg personal topics show "Hiking" 12                # one topic: title, closed or
 ```
 
 ```sh
-tg personal review --chat "Hiking" --unanswered    # questions nobody answered
+tg personal review 'chat:Hiking' --unanswered    # questions nobody answered
 ```
 
 All of these only read. `events` reads the chat's service messages: who did what, and to whom. The
@@ -1001,7 +1003,7 @@ tg personal chats requests list "Hiking 2027"      # who asked to join, newest f
 ```
 
 ```sh
-tg personal chats requests list "Hiking 2027" --search Ana  # by name; or --link <link>, never both
+tg personal chats requests list "Hiking 2027" 'name:*Ana*'  # by name; or link:<link>
 ```
 
 ```sh
@@ -1055,8 +1057,9 @@ refused. `chats update --join-approval on` makes everyone ask first,
 whichever link they use.
 
 In a group whose admins approve who joins, `chats requests list` shows the pending requests, with the
-note a person sent; only admins see them, and reading tells nobody. `--search` finds people by name or
-@username, `--link` keeps those who asked through one invite link; Telegram cannot do both at once.
+note a person sent; only admins see them, and reading tells nobody. A query narrows it:
+`name:` or `username:` finds people, `link:` keeps those who asked through one invite link; Telegram cannot do
+both at once.
 `accept` and `decline` answer one,
 by the id from the list. An accepted request counts toward the hourly limit, a declined one does not;
 the recipient list checks the group only. Someone who is already a member is answered with
@@ -1086,10 +1089,12 @@ tg personal messages list me --jsonl | jq -r .text  # one message per line
 ```
 
 - `--json`: one JSON value. **Every list is one object**, always the same shape:
-  `{ "items": [...], "page": 1, "limit": 20, "hasMore": true }`. `--all` and `--offline` answer with
-  the same object.
-- A chat's messages have no page number: `{ "items": [...], "limit": 20, "hasMore": true }`.
+  `{ "items": [...], "page": { "limit": 20, "has_more": true }, "meta": { ... } }`; a list with more rows names
+  the next step in `page.next`. `--all` and `--offline` answer with the same object. One thing, not a list, is
+  `{ "item": {...}, "meta": {...} }`.
+- A chat's messages page with `--cursor`, not a page number; `page.next` carries it.
 - `--jsonl`: one object per line, no wrapper; whether there is more is said on stderr only.
+  A report (`stats …`) is one object, so `--jsonl` on it is refused; `stats * evidence` lists still stream.
 - An error that ends the command is `{ "error": { "code": "...", "message": "..." } }` on stderr, and stdout is empty, so a
   refusal can never be taken for an empty result.
 - Partial reads and downloads may exit `0`: inspect `complete` and `batch` or `issue`; partial download JSONL adds `batch_summary`.
@@ -1260,7 +1265,7 @@ tg config set permissions.messages.send ask        # a yes or no before each sen
 ```
 
 ```sh
-tg config set sendsPerHour 10
+tg config set sends_per_hour 10
 ```
 
 `permissions` says what a profile may do, per command: `deny`, `readonly`, `ask` or `allow`. By

@@ -4,6 +4,8 @@ import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { installSkill } from "@wirecat/cli-base/skill"
+import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import * as v from "valibot"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
@@ -149,7 +151,11 @@ describe("setup", () => {
     expect((await execute(["setup", "--agent", "claude"])).code).toBe(0)
     const again = await execute(["setup", "--agent", "claude", "--json"])
     expect(again.code).toBe(0)
-    expect(JSON.parse(again.stdout[0] ?? "").session.reused).toBe(true)
+    const answer = v.parse(
+      itemEnvelopeSchema(v.looseObject({ session: v.object({ reused: v.boolean() }) })),
+      JSON.parse(again.stdout[0] ?? ""),
+    )
+    expect(answer.item.session.reused).toBe(true)
     expect(again.login).not.toHaveBeenCalled()
     expect(registration.calls).toBe(0)
     expect(again.closed).toHaveBeenCalledTimes(1)
@@ -202,7 +208,7 @@ describe("setup", () => {
     expect(result.code).toBe(0)
     expect(input.prompts).toEqual([])
     expect(installSkill).not.toHaveBeenCalled()
-    expect(JSON.parse(result.stdout[0] ?? "").next.mcp).toBe("tg default mcp config")
+    expect(JSON.parse(result.stdout[0] ?? "").item.next.mcp).toBe("tg default mcp config")
   })
 
   it("rejects an unknown interactive choice without installing a skill", async () => {
@@ -442,7 +448,7 @@ describe("setup", () => {
       update: { scriptPath: "/home/test/.npm/_npx/key/node_modules/@wirecat/tg-cli/dist/bin/tg.js" },
     })
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout[0] ?? "").next.inbox).toMatch(
+    expect(JSON.parse(result.stdout[0] ?? "").item.next.inbox).toMatch(
       /npm(?:\.cmd)? exec --yes --package=@wirecat\/tg-cli -- tg work inbox --limit 5/,
     )
   })

@@ -39,19 +39,20 @@ describe("--offline", () => {
     })
     expect(result.code).toBe(0)
     expect(result.stderr).toEqual([])
-    expect(JSON.parse(result.stdout[0] ?? "")).toMatchObject({
+    const packet = JSON.parse(result.stdout[0] ?? "")
+    expect(packet.item).toMatchObject({
       kind: "chats",
       source: { provider: "telegram", chat: message.chatId },
-      nextBeforeId: null,
-      coverage: { provided: 1, included: 1, omitted: 0, history: "unknown" },
+      coverage: { provided: 1, included: 1, omitted: 0, has_more: false, history: "unknown" },
       items: [{ text: message.text }],
     })
-    const older = await tg(["evidence", "messages", "evidence", message.chatId, "--before-id", message.id, "--jsonl"], {
+    expect(packet.next).toBeUndefined()
+    const older = await tg(["evidence", "messages", "evidence", message.chatId, "--cursor", message.id, "--jsonl"], {
       store,
       online: false,
     })
     expect(older.code).toBe(0)
-    expect(JSON.parse(older.stdout[0] ?? "")).toMatchObject({ items: [], nextBeforeId: null })
+    expect(JSON.parse(older.stdout[0] ?? "")).toMatchObject({ items: [], coverage: { has_more: false } })
     const failed = await tg(["evidence", "messages", "evidence", message.chatId, "--limit", "101", "--json"], {
       store,
       online: false,
@@ -72,8 +73,14 @@ describe("--offline", () => {
       online: false,
     })
 
-    expect(chatsOffline).toEqual({ ...chats, stderr: [] })
-    expect(messagesOffline).toEqual({ ...messages, stderr: [] })
+    const answer = (run: { stdout: string[] }) => {
+      const { meta: _meta, ...rest } = JSON.parse(run.stdout[0] ?? "")
+      return rest
+    }
+    expect(chatsOffline.stderr).toEqual([])
+    expect(messagesOffline.stderr).toEqual([])
+    expect(answer(chatsOffline)).toEqual(answer(chats))
+    expect(answer(messagesOffline)).toEqual(answer(messages))
     expect(messagesOffline.code).toBe(0)
   })
 
@@ -101,8 +108,8 @@ describe("--offline", () => {
     )
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({
-      chatId: message.chatId,
+    expect(JSON.parse(stdout[0] ?? "").item).toMatchObject({
+      chat: `chat:telegram/1/${message.chatId}`,
       since: "2000-01-01T00:00:00.000Z",
       messages: 1,
       senders: 1,
@@ -122,7 +129,9 @@ describe("--offline", () => {
         online: false,
       })
       expect(code).toBe(0)
-      expect(JSON.parse(stdout[0] ?? "").items).toEqual([saved])
+      expect(JSON.parse(stdout[0] ?? "").items).toMatchObject([
+        { id: saved.id, chat_id: "1", sender_id: saved.senderId, sender_name: saved.senderName, text: saved.text },
+      ])
     } finally {
       telegram.history = async () => ({ items: [message], hasMore: false })
     }
@@ -155,7 +164,15 @@ describe("saving to the store", () => {
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(stdout[0] ?? "").items).toEqual([chat])
+    expect(JSON.parse(stdout[0] ?? "").items).toMatchObject([
+      {
+        id: chat.id,
+        title: chat.title,
+        kind: chat.kind,
+        unread_count: chat.unreadCount,
+        participants_count: chat.participantsCount,
+      },
+    ])
     expect(stderr.join("\n")).toContain("not saved to the local store")
   })
 
@@ -189,7 +206,7 @@ describe("saving to the store", () => {
     const unconfirmed = await tgWith(["gone", "store", "clear", "--left"], left)
     expect(unconfirmed.code).not.toBe(0)
     const cleared = await tgWith(["gone", "store", "clear", "--left", "--allow-dangerous", "--json"], left)
-    expect(JSON.parse(cleared.stdout[0] ?? "")).toEqual({ cleared: true, chats: 1, messages: 1 })
+    expect(JSON.parse(cleared.stdout[0] ?? "").item).toEqual({ cleared: true, chats: 1, messages: 1 })
   })
 })
 
@@ -208,7 +225,7 @@ describe("the tgcli parity follow-ups, offline", () => {
       code: 0,
       answer: { items: [] },
     })
-    expect(await call(["store", "jobs", "list", "--state", "failed", "--json"])).toMatchObject({
+    expect(await call(["store", "jobs", "list", "state:failed", "--json"])).toMatchObject({
       code: 0,
       answer: { items: [] },
     })
@@ -216,6 +233,6 @@ describe("the tgcli parity follow-ups, offline", () => {
     await call(["chats", "list", "--json"])
     const refreshed = await call(["--offline", "metadata", "refresh", "--only-missing", "--json"])
     expect(refreshed.code, refreshed.stderr.join("\n")).toBe(0)
-    expect(refreshed.answer).toMatchObject({ hasMore: false })
+    expect(refreshed.answer.item).toMatchObject({ chats: [{ chat_id: "-1001234567890" }], has_more: false })
   })
 })

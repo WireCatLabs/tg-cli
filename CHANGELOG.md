@@ -14,7 +14,31 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
-- **Built on `@wirecat/cli-core` 0.264.0 and `@wirecat/cli-base` 0.27.1.**
+- **Built on `@wirecat/cli-core` 0.268.0 and `@wirecat/cli-base` 0.27.2.**
+- **Every answer is an envelope with snake_case keys.** A list is `{items, page: {limit, has_more, cursor?}, next?,
+  missing?, meta}`, one thing `{item, next?, missing?, meta}`; `meta.run_id` names the run. This covers every
+  command: messages, chats, contacts, writes (`{item: {operation_id, send_id, message}}`), inbox, review, search,
+  stats, store, account, doctor, config, runs, `upgrade`, `bot *`, and tg's own `session start|end` and `setup`
+  (`app_keys`, `already_logged_in`, `chats.has_more`). What to run next is a `next` step in place of fields such as
+  `nextBeforeId`, `nextOffset`, `nextCursor` and `hasMore`. MCP answers are the same envelopes, and MCP tools refuse
+  arguments they do not take.
+- **Lists take a query, not filter flags.** `chats list kind:group unread_count>0`, `chats events "Hiking" time>=7d`,
+  `messages list "Book club" id<4242`, `contacts list notes:<text>`, `attachments list chat:<id> is:needs_text`,
+  `store jobs list state:failed`, `inbox date>2h`, `review date>3d chat:<id>`, `search messages 'chat:"Book club"
+  lease'`. `--search`, `--kind`, `--unread`, `--type`, `--since-time`, `--before-id`, `--after-id`,
+  `--before-time`, `--after-time`, `--topic`, `--search-notes`, `--min-score`, `--revoked`, `--link`, `--answer`,
+  `--needs-text`, `--state`, review's `--chat` and search's `--chat` are gone from those commands. `messages
+  evidence` and `chats media` continue with `--cursor` from `page.next`. `contacts list name:` needs stored contacts.
+- **`doctor`'s Telegram block is snake_case:** `app_credentials`, `keyring_moved_by_environment`, `proxy.bot_api`.
+- **Error details are snake_case:** `provider_error` (was `providerError`), a group that became a supergroup says
+  `migrated_chat_id` in the Bot API refusal, a forum upgrade that may have happened says `previous_chat_id` and
+  `chat_id`.
+- **Config file settings are snake_case** (`keep_runs_for_days`, `sends_per_hour`, `read_only`, `default_profile`,
+  …). An existing file moves by itself on its first read.
+- **Run logs are snake_case** (`duration_ms`, `error_code`, `error_class`, `provider_error`); runs written before
+  are still read.
+- **Statistics reports refuse `--jsonl`**: a report is one object. `stats chats show` names its chat as a `chat:`
+  reference; `stats tasks show` answers one item with `open` and `rows`.
 - **`--json=<fields>` replaces `--fields` and `--agent-json`, which are gone.** `--json=id,text` keeps those fields
   of each item. CLI JSON keeps message text as written; MCP answers still show invisible characters.
 - **`tags list`, `tasks list` and `conversations list` take a query instead of filter flags.**

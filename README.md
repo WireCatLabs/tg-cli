@@ -33,7 +33,7 @@ An example conversation (invented people, illustrative output):
 
 ```text
 You:    Use tg CLI. What did I promise anyone in the last three days?
-Agent:  (runs tg personal review --since-time 3d: 12 chats)
+Agent:  (runs tg personal review 'date>3d': 12 chats)
         I owe
         · Alice Example — the invoice by Friday. "Alice Example", 24.09
         Waiting on others
@@ -66,7 +66,7 @@ More: [installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/
 
 ```sh
 tg personal inbox
-tg personal review --since-time 1d
+tg personal review 'date>1d'
 ```
 
 **Find anything.** *"Use tg CLI. When did we agree on the venue with Alice?"* — an answer with the date
@@ -86,8 +86,8 @@ tg personal review --new                      # what changed since the last revi
 **Run your groups.** *"Use tg CLI. Which questions in Hiking has nobody answered?"*
 
 ```sh
-tg personal review --chat "Hiking" --unanswered
-tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed
+tg personal review chat:Hiking --unanswered
+tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed
 ```
 
 More: [recipes, with a schedule and limits for each](https://github.com/WireCatLabs/tg-cli/blob/main/docs/recipes.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/recipes)
@@ -180,7 +180,7 @@ export TG_PROFILE=work     # or for the whole shell session
 
 `tg` never picks a profile for you, not even the only one: a command that uses an account and has no
 profile named stops and lists the profiles on this computer. Name one, set `TG_PROFILE`, or set
-`defaultProfile` in the config file.
+`default_profile` in the config file.
 
 More: [login and sessions](https://github.com/WireCatLabs/tg-cli/blob/main/docs/sessions.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/sessions) · [profiles](https://github.com/WireCatLabs/tg-cli/blob/main/docs/profiles.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/profiles)
 
@@ -190,7 +190,7 @@ Everything `tg` reads is kept in a local store on your computer. Search runs ove
 Telegram by default; `--offline` answers from the store without connecting.
 
 ```sh
-tg personal search messages "contract" --chat "Project Alpha"
+tg personal search messages 'contract chat:"Project Alpha"'
 tg personal search messages "contract" --backend archive  # local only
 tg personal messages sync "Project Alpha" --last 5000 --background
 tg personal store export "Project Alpha" --format markdown --output alpha.md
@@ -206,8 +206,8 @@ More: [search](https://github.com/WireCatLabs/tg-cli/blob/main/docs/search.md) �
 ## Groups you run
 
 ```sh
-tg personal review --chat "Hiking" --unanswered   # questions nobody answered in 24 hours
-tg personal chats events "Hiking" --since-time 7d  # who joined, left, was added or removed, and by whom
+tg personal review chat:Hiking --unanswered   # questions nobody answered in 24 hours
+tg personal chats events "Hiking" "time>=7d"  # who joined, left, was added or removed, and by whom
 tg personal chats members list "Hiking" --all     # everyone, with their role and when they were last seen
 tg personal topics list "Hiking"                  # a forum group's topics, newest activity first
 tg personal chats inspect https://t.me/+AbCdEf    # where an invite link leads, without joining
@@ -277,7 +277,7 @@ same when another program reads its output. `--jsonl` prints one object per line
 shape:
 
 ```json
-{ "items": [ … ], "page": 1, "limit": 20, "hasMore": true }
+{ "items": [ … ], "page": { "limit": 20, "has_more": true }, "meta": { … } }
 ```
 
 An error goes to stderr as one line, with stdout empty, and the command exits with a fixed code: `4`
@@ -292,7 +292,7 @@ More: [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-co
 ```sh
 tg config set permissions.messages readonly    # no change to messages from this profile
 tg config set permissions.messages.send ask    # a question in the terminal before each send
-tg config set sendsPerHour 10                  # at most 10 sends an hour (30 by default)
+tg config set sends_per_hour 10                  # at most 10 sends an hour (30 by default)
 tg personal recipients add "Book club"         # the first add turns the recipient list on
 tg personal sends list                         # every attempt: sent, refused, failed or not known
 tg config show                                 # what is set, and where it came from

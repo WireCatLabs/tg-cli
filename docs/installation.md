@@ -205,7 +205,7 @@ The result has `current`, `latest`, `newer`, `installer`, `command`, `updated` a
 after a check, when there is no newer version, or when no server was restarted.
 
 Once a day, at a terminal, `tg` says on stderr that a newer version is on npm. It never says so with
-`--json`, into a pipe, with `--quiet` or in CI. To turn it off: `tg config set updateCheck false
+`--json`, into a pipe, with `--quiet` or in CI. To turn it off: `tg config set update_check false
 --defaults`, or `TG_NO_UPDATE_CHECK=1`.
 
 From source: `git pull && pnpm install && pnpm build`. From npx: `npx @wirecat/tg-cli@latest`.

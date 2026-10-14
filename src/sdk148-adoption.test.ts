@@ -83,18 +83,24 @@ describe("SDK148 local commands through the consumer", () => {
     const reused = await cli(["search", "messages", "--saved", "exact-invoices", "--json"])
     expect(reused.code, reused.err).toBe(0)
     expect(JSON.parse(reused.out).items).toEqual([])
+    const history = JSON.parse((await cli(["searches", "history", "--json"])).out).items
+    const second = JSON.parse((await cli(["searches", "history", "--limit", "1", "--page", "2", "--json"])).out)
+    const every = JSON.parse((await cli(["searches", "history", "--all", "--json"])).out)
+    expect(history.length).toBeGreaterThan(1)
+    expect(second).toMatchObject({ items: [history[1]], page: { limit: 1 } })
+    expect(every.items).toEqual(history)
     expect((await cli(["searches", "delete", "exact-invoices", "--json"])).code).toBe(0)
   })
 
   it("tags one account's chat and searches it without a network connection", async () => {
     const added = await cli(["tags", "add", "Work", "--chat", "7", "--json"])
     expect(added.code, added.err).toBe(0)
-    expect(JSON.parse(added.out)).toMatchObject({ added: ["work"] })
+    expect(JSON.parse(added.out).item).toMatchObject({ added: ["work"] })
     const listed = await cli(["tags", "list", "tag:work", "type:chat", "--json"])
     expect(JSON.parse(listed.out).items).toHaveLength(1)
     const found = await cli(["search", "messages", "tag:work", "--json"])
     expect(found.code, found.err).toBe(0)
-    expect(JSON.parse(found.out).items.map((m: { id: string }) => m.id)).toEqual(["101"])
+    expect(JSON.parse(found.out).items.map((m: { ref: string }) => m.ref)).toEqual(["msg:telegram/501/7/101"])
     const store = await openStore()
     try {
       expect(await store.tags({ provider: account.provider, account: "502" }, {})).toEqual([])
@@ -119,12 +125,12 @@ describe("SDK148 local commands through the consumer", () => {
   it("clears owner-maintenance flood state without opening a connection", async () => {
     const cleared = await cli(["flood", "clear", "--json"])
     expect(cleared.code, cleared.err).toBe(0)
-    expect(JSON.parse(cleared.out)).toMatchObject({ cleared: { deadlines: [], sendBlock: null } })
+    expect(JSON.parse(cleared.out).item).toMatchObject({ cleared: { deadlines: [], send_block: null } })
   })
   it("keeps reply sending denied, with an audience of everyone by default", async () => {
     const status = await cli(["replies", "status", "--json"])
     expect(status.code, status.err).toBe(0)
-    expect(JSON.parse(status.out)).toMatchObject({ send: "deny", audience: { reply: "all", allow: 0 } })
-    expect(JSON.parse(status.out)).not.toHaveProperty("testers")
+    expect(JSON.parse(status.out).item).toMatchObject({ send: "deny", audience: { reply: "all", allow: 0 } })
+    expect(JSON.parse(status.out).item).not.toHaveProperty("testers")
   })
 })

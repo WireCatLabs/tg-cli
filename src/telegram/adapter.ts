@@ -414,7 +414,7 @@ export class TelegramAdapter {
 
   comments(channelId: string, postId: string, { limit, before }: { limit: number; before?: string }) {
     const post = messageNumber(postId, "a post id is a number")
-    const offset = before === undefined ? undefined : messageNumber(before, "--before-id takes a comment id")
+    const offset = before === undefined ? undefined : messageNumber(before, "`id<` takes a comment id")
     return this.#call(async (): Promise<Page<Message>> => {
       const page = await commentsOf(this.#client, Number(channelId), post, {
         limit,
@@ -431,7 +431,7 @@ export class TelegramAdapter {
     { limit, before }: { limit: number; before?: string },
   ): Promise<Page<Message>> {
     const thread = topicNumber(threadId)
-    const offset = before === undefined ? undefined : messageNumber(before, "--before-id takes a message id")
+    const offset = before === undefined ? undefined : messageNumber(before, "`id<` takes a message id")
     return this.#call(async () => {
       const page = await this.#client.searchMessages({
         chatId: await this.#inputOf(reference),
@@ -460,7 +460,7 @@ export class TelegramAdapter {
   historyAfter(reference: string, { limit, after }: { limit: number; after: After }): Promise<Page<Message>> {
     const offset =
       "id" in after
-        ? { id: messageNumber(after.id, "--after-id takes a message id") + 1, date: 0 }
+        ? { id: messageNumber(after.id, "`id>` takes a message id") + 1, date: 0 }
         : { id: 0, date: Math.floor(after.time / 1000) }
     const newer = (message: Message) =>
       "id" in after ? Number(message.id) > Number(after.id) : Date.parse(message.timestamp) > after.time
@@ -1273,8 +1273,8 @@ export class TelegramAdapter {
             "outcome_unknown",
             "the upgrade was accepted but its state could not be read; check the current group before continuing",
             {
-              previousChatId: state.chat.id,
-              ...(migratedChatId === undefined ? {} : { chatId: migratedChatId, upgraded: true }),
+              previous_chat_id: state.chat.id,
+              ...(migratedChatId === undefined ? {} : { chat_id: migratedChatId, upgraded: true }),
               stage: "upgrade",
             },
           )
@@ -1732,7 +1732,7 @@ export class TelegramAdapter {
           throw new CliError(
             "provider_error",
             "Telegram's statistics server did not accept this login (AUTH_KEY_UNREGISTERED); the login itself works — try again later",
-            { providerError: error.text, status: error.code },
+            { provider_error: error.text, status: error.code },
           )
         throw error
       }
@@ -2259,7 +2259,7 @@ const pause = (ms: number, signal: AbortSignal) =>
     else signal.addEventListener("abort", done, { once: true })
   })
 
-const messageNumber = (id: string, rule = "--before-id takes a message id"): number => {
+const messageNumber = (id: string, rule = "`id<` takes a message id"): number => {
   if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
   return Number(id)
 }

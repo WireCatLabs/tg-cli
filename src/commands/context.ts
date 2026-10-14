@@ -143,9 +143,9 @@ export const TELEGRAM: Messenger = {
     return {
       session: { path: sessionPath, exists: existsSync(sessionPath), files: sessionModes(sessionPath) },
       proxy: proxyState(proxy),
-      appCredentials: appCredentialsState(() => credentials.read(), base.env),
+      app_credentials: appCredentialsState(() => credentials.read(), base.env),
       // The one failure with no other symptom: a login made without these variables is invisible with them.
-      keyringMovedByEnvironment: isolated(base.env),
+      keyring_moved_by_environment: isolated(base.env),
     }
   },
   // In Telegram a one-to-one chat's id is the other person's id.
@@ -220,7 +220,7 @@ const proxyState = (resolve: () => ReturnType<typeof resolveProxy>) => {
     return {
       url: proxyLabel(through.proxy),
       from: through.from,
-      botApi:
+      bot_api:
         through.proxy.kind === "mtproxy" ? "direct: an MTProxy carries only Telegram's own protocol" : "through it",
     }
   } catch (error) {

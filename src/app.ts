@@ -12,6 +12,7 @@ export const TG: AppIdentity = {
   version: VERSION,
   issues: "https://github.com/WireCatLabs/tg-cli/issues/new",
   locale: "en-GB",
+  errors: { details: ["migrated_chat_id", "proxy"] },
 }
 
 export const CONFIG: Configuration = settingsFor(TG, { profile: { proxy: v.optional(proxySetting) } })
