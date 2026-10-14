@@ -51,7 +51,7 @@ without one.`,
     exitHeading: "Exit codes",
     exitIntro: "Branch on the code, not on the text: the text can change, the code does not.",
     outro: `\`0\` and only \`0\` means the operation was done. \`14\` (\`outcome_unknown\`) means a message **may**
-have gone: repeat it only with the same \`--send-id\`, which Telegram uses to drop a second copy.`,
+have gone: repeat it only with the same \`--operation-id\`, which Telegram uses to drop a second copy.`,
   },
 })
 
