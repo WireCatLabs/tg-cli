@@ -418,11 +418,10 @@ const VIDEO: Record<string, string> = { ".mp4": "video/mp4", ".m4v": "video/mp4"
 const videoMime = ({ kind, name, asFile }: Upload): string | undefined =>
   kind === "file" && !asFile ? VIDEO[extname(name).toLowerCase()] : undefined
 
-/** What `uploadFile` needs to store the file as `toInputMedia` will send it. */
+/** What `uploadFile` needs, besides the file, to store it as `toInputMedia` will send it. */
 export const toUploadParams = (upload: Upload) => {
   const mime = upload.kind === "voice" ? "audio/ogg" : videoMime(upload)
   return {
-    file: upload.bytes,
     fileName: upload.name,
     ...(mime ? { fileMime: mime } : {}),
     ...(upload.kind === "photo" ? { requireFileSize: true, requireExtension: true } : {}),
@@ -435,11 +434,10 @@ export const checkSpoiler = (upload: Upload) => {
     throw new CliError("validation_error", "--spoiler hides a photo or a video only")
 }
 
-/** `file` is the bytes, or the same file already uploaded — then nothing is uploaded again. */
 export const toInputMedia = (
   upload: Upload,
   caption: string | TextWithEntities,
-  file: Uint8Array | UploadedFile = upload.bytes,
+  file: UploadedFile,
   { spoiler = false }: { spoiler?: boolean } = {},
 ): InputMediaLike => {
   const { kind, name } = upload

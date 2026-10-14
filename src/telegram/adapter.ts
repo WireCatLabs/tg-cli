@@ -67,6 +67,7 @@ import type {
   ServerQuery,
   Transcript,
 } from "@wirecat/cli-core/cli"
+import { uploadBlob } from "@wirecat/cli-core/sends"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
@@ -737,10 +738,12 @@ export class TelegramAdapter {
     return this.#call(async () => {
       const [attachment] = attachments
       if (spoiler && attachment) checkSpoiler(attachment)
-      const uploaded = attachment ? await uploadAttachment(this.#client, attachment) : undefined
+      const media = attachment
+        ? toInputMedia(attachment, body, await uploadAttachment(this.#client, attachment), { spoiler })
+        : undefined
       try {
-        const message = attachment
-          ? await this.#client.sendMedia(Number(chatId), toInputMedia(attachment, body, uploaded, { spoiler }), {
+        const message = media
+          ? await this.#client.sendMedia(Number(chatId), media, {
               ...common,
               ...(captionAbove ? { invert: true } : {}),
             })
@@ -2124,7 +2127,7 @@ export class TelegramAdapter {
           ...(description === undefined ? {} : { bio: description }),
         })
       }
-      if (photo) await this.#client.setMyProfilePhoto({ type: "photo", media: photo.bytes })
+      if (photo) await this.#client.setMyProfilePhoto({ type: "photo", media: await uploadBlob(photo.source) })
       const user = await this.#client.getMe()
       return { ...toAccount(user), phone: user.phoneNumber }
     })

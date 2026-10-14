@@ -1482,7 +1482,9 @@ describe("provider Markdown mapping", () => {
       threadId: "12",
       at: "2027-01-01T12:00:00.000Z",
       formatting: formatted.spans,
-      attachments: [{ kind: "photo", name: "synthetic.png", bytes: new Uint8Array([1]) }],
+      attachments: [
+        { kind: "photo", name: "synthetic.png", source: { kind: "bytes" as const, bytes: new Uint8Array([1]) } },
+      ],
     })
     expect(client.sendMedia.mock.calls[0]?.[1]).toMatchObject({
       caption: { text: formatted.text, entities: expect.any(Array) },
@@ -1530,7 +1532,9 @@ describe("forum addressing", () => {
       sendId: "43",
       threadId: "12",
       at: "2027-01-01T12:00:00.000Z",
-      attachments: [{ kind: "photo", name: "synthetic.png", bytes: new Uint8Array([1]) }],
+      attachments: [
+        { kind: "photo", name: "synthetic.png", source: { kind: "bytes" as const, bytes: new Uint8Array([1]) } },
+      ],
     })
     await adapter.createPoll(
       "-100500",
@@ -1591,7 +1595,7 @@ describe("sending", () => {
     await adapter.send("-1000000000500", "caption", {
       sendId: "1",
       sendAs: "-1002",
-      attachments: [{ kind: "file", name: "synthetic.txt", bytes }],
+      attachments: [{ kind: "file", name: "synthetic.txt", source: { kind: "bytes" as const, bytes } }],
     })
     await adapter.createPoll(
       "-1000000000500",
@@ -1644,7 +1648,9 @@ describe("sending", () => {
     await expect(
       adapter.send("-100500", "", {
         sendId: "1",
-        attachments: [{ kind: "file", name: "plan.pdf", bytes: new Uint8Array([1]) }],
+        attachments: [
+          { kind: "file", name: "plan.pdf", source: { kind: "bytes" as const, bytes: new Uint8Array([1]) } },
+        ],
       }),
     ).rejects.not.toMatchObject({ code: "outcome_unknown" })
     expect(client.sendMedia).not.toHaveBeenCalled()
@@ -1659,18 +1665,18 @@ describe("sending", () => {
       sendId: "1",
       spoiler: true,
       captionAbove: true,
-      attachments: [{ kind: "photo", name: "a.jpg", bytes }],
+      attachments: [{ kind: "photo", name: "a.jpg", source: { kind: "bytes" as const, bytes } }],
     })
     await adapter.send("-100500", "", {
       sendId: "2",
       spoiler: true,
-      attachments: [{ kind: "file", name: "trip.mp4", bytes }],
+      attachments: [{ kind: "file", name: "trip.mp4", source: { kind: "bytes" as const, bytes } }],
     })
     client.uploadFile.mockClear()
     for (const attachment of [
-      { kind: "file" as const, name: "trip.mp4", bytes, asFile: true as const },
-      { kind: "file" as const, name: "notes.txt", bytes },
-      { kind: "voice" as const, name: "note.ogg", bytes },
+      { kind: "file" as const, name: "trip.mp4", source: { kind: "bytes" as const, bytes }, asFile: true as const },
+      { kind: "file" as const, name: "notes.txt", source: { kind: "bytes" as const, bytes } },
+      { kind: "voice" as const, name: "note.ogg", source: { kind: "bytes" as const, bytes } },
     ]) {
       await expect(
         adapter.send("-100500", "", { sendId: "3", spoiler: true, attachments: [attachment] }),
@@ -1693,11 +1699,17 @@ describe("sending", () => {
     const bytes = new Uint8Array([1, 2, 3])
     client.sendMedia.mockClear()
 
-    await adapter.send("-100500", "", { sendId: "1", attachments: [{ kind: "voice", name: "note.ogg", bytes }] })
-    await adapter.send("-100500", "", { sendId: "2", attachments: [{ kind: "file", name: "trip.mp4", bytes }] })
+    await adapter.send("-100500", "", {
+      sendId: "1",
+      attachments: [{ kind: "voice", name: "note.ogg", source: { kind: "bytes" as const, bytes } }],
+    })
+    await adapter.send("-100500", "", {
+      sendId: "2",
+      attachments: [{ kind: "file", name: "trip.mp4", source: { kind: "bytes" as const, bytes } }],
+    })
     await adapter.send("-100500", "", {
       sendId: "3",
-      attachments: [{ kind: "file", name: "trip.mp4", bytes, asFile: true }],
+      attachments: [{ kind: "file", name: "trip.mp4", source: { kind: "bytes" as const, bytes }, asFile: true }],
     })
 
     expect(client.sendMedia.mock.calls.map((call) => call[1])).toMatchObject([
@@ -1714,15 +1726,18 @@ describe("sending", () => {
     const sent = await adapter.send("-100500", "look", {
       sendId: "123456789012345",
       replyTo: "7",
-      attachments: [{ kind: "photo", name: "cat.png", bytes }],
+      attachments: [{ kind: "photo", name: "cat.png", source: { kind: "bytes" as const, bytes } }],
     })
-    await adapter.send("-100500", "", { sendId: "42", attachments: [{ kind: "file", name: "plan.pdf", bytes }] })
+    await adapter.send("-100500", "", {
+      sendId: "42",
+      attachments: [{ kind: "file", name: "plan.pdf", source: { kind: "bytes" as const, bytes } }],
+    })
 
     expect(sent.message.id).toBe("98")
     const [[chat, photo, options], [, file]] = client.sendMedia.mock.calls as unknown[][] as [unknown[], unknown[]]
     expect(chat).toBe(-100500)
     expect(client.uploadFile.mock.calls[0]?.[0]).toMatchObject({
-      file: bytes,
+      file: expect.any(Blob),
       fileName: "cat.png",
       requireFileSize: true,
     })
@@ -1735,8 +1750,8 @@ describe("sending", () => {
       adapter.send("-100500", "", {
         sendId: "42",
         attachments: [
-          { kind: "photo", name: "a.png", bytes },
-          { kind: "photo", name: "b.png", bytes },
+          { kind: "photo", name: "a.png", source: { kind: "bytes" as const, bytes } },
+          { kind: "photo", name: "b.png", source: { kind: "bytes" as const, bytes } },
         ],
       }),
     ).toThrow(/one file or photo/)
@@ -2296,7 +2311,7 @@ describe("the address book and the profile", () => {
     await adapter.updateProfile({
       firstName: "New",
       description: "hi",
-      photo: { kind: "photo", name: "me.jpg", bytes: new Uint8Array([1]) },
+      photo: { kind: "photo", name: "me.jpg", source: { kind: "bytes" as const, bytes: new Uint8Array([1]) } },
     })
     await adapter.endOtherSessions()
 

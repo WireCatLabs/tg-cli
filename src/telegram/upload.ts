@@ -1,6 +1,6 @@
 import type { TelegramClient, UploadedFile } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { Upload } from "@wirecat/cli-core/sends"
+import { type Upload, uploadBlob } from "@wirecat/cli-core/sends"
 import { toCliError } from "./errors.js"
 import { toUploadParams } from "./map.js"
 
@@ -19,7 +19,7 @@ export const uploadAttachment = async (
 ): Promise<UploadedFile> => {
   for (let attempt = 1; ; attempt++) {
     try {
-      return await client.uploadFile(toUploadParams(upload))
+      return await client.uploadFile({ file: await uploadBlob(upload.source), ...toUploadParams(upload) })
     } catch (error) {
       const known = toCliError(error)
       const dropped = known instanceof CliError && ["timeout", "network_error"].includes(known.code)
