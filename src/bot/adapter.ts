@@ -1,5 +1,6 @@
 import { CliError, isCliError } from "@wirecat/cli-base"
 import type { BotAction, BotAdapter, BotChatRef, BotSendOptions } from "@wirecat/cli-core/cli"
+import { uploadBlob } from "@wirecat/cli-core/sends"
 import { formatMarkdown } from "../telegram/format-markdown.js"
 import {
   ADMIN_RIGHT_FIELDS,
@@ -67,7 +68,16 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
     me,
     formatMarkdown: async (text) => formatMarkdown(text),
     close: async () => {},
-    api: (method, input, options) => transport.call(method, {}, { ...options, ...input }),
+    api: (method, { files, ...input }, options) =>
+      transport.call(
+        method,
+        {},
+        {
+          ...options,
+          ...input,
+          files: files.map(({ field, name, bytes }) => ({ field, name, blob: new Blob([bytes]) })),
+        },
+      ),
 
     send: async (chat, text, { replyTo, silent, markup, formatting: spans, html, attachments = [] }) => {
       if (attachments.length > 1) throw new CliError("validation_error", "a Telegram bot sends one file at a time")
@@ -92,7 +102,7 @@ export const telegramBotAdapter = (transport: TelegramBotTransport): BotAdapter 
           : attachment.kind === "voice"
             ? ["sendVoice", "voice"]
             : ["sendDocument", "document"]
-      const file: OutgoingFile = { field, name: attachment.name, bytes: attachment.bytes }
+      const file: OutgoingFile = { field, name: attachment.name, blob: await uploadBlob(attachment.source) }
       const caption = text ? { caption: text, ...formatting(spans ?? markup, html, "caption_entities") } : {}
       return sent(await transport.call(method, { ...common, ...caption }, { reads: false, file }))
     },

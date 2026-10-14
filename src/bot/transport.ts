@@ -167,7 +167,7 @@ export class TelegramBotTransport {
 export interface OutgoingFile {
   field: string
   name: string
-  bytes: Uint8Array
+  blob: Blob
 }
 
 /** A field that is not a string goes as JSON, as Telegram reads `reply_parameters` and `caption_entities` from a form. */
@@ -176,7 +176,7 @@ const multipart = (params: Record<string, unknown>, files: readonly OutgoingFile
   for (const [name, value] of Object.entries(params)) {
     if (value !== undefined) form.append(name, typeof value === "string" ? value : apiJson(value))
   }
-  for (const file of files) form.append(file.field, new Blob([file.bytes]), file.name)
+  for (const file of files) form.append(file.field, file.blob, file.name)
   return form
 }
 
