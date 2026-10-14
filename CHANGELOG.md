@@ -13,6 +13,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`config set` and `config unset` accept camelCase setting names** (cli-core 0.279.0): `tg <profile> config set senderColors false`
+  is saved as `sender_colors`, the same as the snake_case spelling.
 - **Resumable syncs** (cli-core 0.276.0): a sync that is killed keeps what it saved, and the next run continues from
   there.
 
