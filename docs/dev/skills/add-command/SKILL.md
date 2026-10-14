@@ -28,7 +28,7 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 
 ## 1. The path of a new adapter method
 
-1. `MessengerAdapter` in cli-core `src/cli/messenger/port.ts`. A new method is optional
+1. `MessengerAdapter` in cli-core `src/ports/messenger.ts`. A new method is optional
    (`edit?`), and commands ask for it with `capability()`.
 2. A line in `observed.ts` (which ids the run record names) and `stored.ts` (what is saved), and the
    store if it should work with `--offline`.
