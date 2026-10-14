@@ -132,13 +132,13 @@ real profile. `node dist/bin/tg.js` uses the real directories below.
 Three directories follow the conventions of the operating system, and two more are shared with
 other tools:
 
-| What | Linux | macOS | Windows |
-|---|---|---|---|
-| settings | `~/.config/tg-cli/` | `~/Library/Preferences/tg-cli/` | `%APPDATA%\tg-cli\Config\` |
-| state | `~/.local/share/tg-cli/` | `~/Library/Application Support/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Data\` |
-| cache | `~/.cache/tg-cli/` | `~/Library/Caches/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Cache\` |
-| the local store | `~/.local/share/WireCat/wirecat.db` | `~/.local/share/WireCat/wirecat.db` | `%LOCALAPPDATA%\WireCat\Data\wirecat.db` |
-| speech models | `~/.local/share/WireCat/models/audio/` | `~/.local/share/WireCat/models/audio/` | `%LOCALAPPDATA%\WireCat\Data\models\audio\` |
+| What | Linux and macOS | Windows |
+|---|---|---|
+| settings | `~/.config/tg-cli/` | `%APPDATA%\tg-cli\Config\` |
+| state | `~/.local/share/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Data\` |
+| cache | `~/.cache/tg-cli/` | `%LOCALAPPDATA%\tg-cli\Cache\` |
+| the local store | `~/.local/share/WireCat/wirecat.db` | `%LOCALAPPDATA%\WireCat\Data\wirecat.db` |
+| speech models | `~/.local/share/WireCat/models/audio/` | `%LOCALAPPDATA%\WireCat\Data\models\audio\` |
 
 - **settings** hold `config.json`, and `credentials.json` only on a machine with no keyring.
 - **state** holds the login (`sessions/<profile>.session`), recorded runs (`runs/`), the journal of
@@ -153,6 +153,9 @@ other tools:
 
 Each directory can be moved with a variable: `TG_CONFIG_DIR`, `TG_STATE_DIR`, `TG_CACHE_DIR`,
 `MESSAGING_STORE` (the store file itself) and `WIRECAT_STATE_DIR` (the WireCat folder: the store and the models).
+
+On macOS, versions before 0.48.0 kept the first three folders in `~/Library`; the first run of a newer version
+moves them once.
 
 The first start after an upgrade from an older `tg` moves the store and the models once into the WireCat
 folder, from `~/.local/share/cli-messaging/` and `~/.cache/cli-common/models/`. If both places hold a different
