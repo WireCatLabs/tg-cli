@@ -10,7 +10,6 @@ import {
   Long,
   MtcuteError,
   MtPeerNotFoundError,
-  networkMiddlewares,
   type Peer,
   PeersIndex,
   type RawUpdateInfo,
@@ -112,6 +111,7 @@ import { refuseClose, refuseVote } from "./polls.js"
 import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
 import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
+import { middlewaresOf, sending } from "./sending.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
 import { uploadAttachment } from "./upload.js"
@@ -234,7 +234,6 @@ export class TelegramAdapter {
     // mtcute's default handler writes with console.log, which is stdout — where only data may go.
     const write = diagnostic ?? ((line: string) => process.stderr.write(`${line}\n`))
     const say = note ?? write
-    const { maxWait, maxRetries } = listen ? FLOOD_SLEEP.listening : FLOOD_SLEEP.oneShot
     this.#client = new TelegramClient({
       ...(proxied ? { transport: proxied.transport } : {}),
       apiId: credentials.id,
@@ -245,16 +244,7 @@ export class TelegramAdapter {
       disableUpdates: !listen,
       ...(listen ? { updates: { catchUp } } : {}),
       logLevel: verbose ? 3 : 1,
-      network: {
-        middlewares: networkMiddlewares.basic({
-          floodWaiter: {
-            maxWait,
-            maxRetries,
-            onBeforeWait: (context, seconds) =>
-              say(`Telegram asks to wait ${seconds} s before ${context.request._} — waiting, then going on`),
-          },
-        }),
-      },
+      network: { middlewares: middlewaresOf(listen ? FLOOD_SLEEP.listening : FLOOD_SLEEP.oneShot, say) },
     })
     this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
   }
@@ -735,7 +725,7 @@ export class TelegramAdapter {
       ...(at === undefined ? {} : { schedule: new Date(at) }),
       ...(author === undefined ? {} : { sendAs: author }),
     }
-    return this.#call(async () => {
+    return this.#send(async () => {
       const [attachment] = attachments
       if (spoiler && attachment) checkSpoiler(attachment)
       const media = attachment
@@ -954,7 +944,7 @@ export class TelegramAdapter {
     const randomId = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const author = sendAs === undefined ? undefined : sendAsPeer(toChatId, sendAs, this.self())
-    return this.#call(async () => {
+    return this.#send(async () => {
       try {
         const updates = await this.#client.call({
           _: "messages.forwardMessages",
@@ -1130,7 +1120,7 @@ export class TelegramAdapter {
     const randomId = parseSendId(sendId)
     const thread = threadId === undefined ? undefined : topicNumber(threadId)
     const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, this.self())
-    return this.#call(async () => {
+    return this.#send(async () => {
       try {
         const message = await this.#client.sendMedia(Number(chatId), toInputPoll(poll), {
           randomId,
@@ -2180,6 +2170,10 @@ export class TelegramAdapter {
         throw unknownIfUnanswered(error, what)
       }
     })
+  }
+
+  #send<T>(work: () => Promise<T>): Promise<T> {
+    return this.#call(() => sending(work))
   }
 
   async #call<T>(work: () => Promise<T>): Promise<T> {
