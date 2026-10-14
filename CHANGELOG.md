@@ -3,14 +3,6 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-### Fixed
-
-- **A send Telegram refused for flooding says it may be repeated**: when `messages send`, `messages forward` or
-  `polls create` get FLOOD_WAIT before Telegram took the message, the error's `retry.safe` is `true` with
-  `after_ms`. Once Telegram took it — a lookup after the send hit the limit — `retry.safe` stays `false`.
-
 ## 0.56.0 — 14.10.2026
 
 ### Changed — may break scripts
@@ -25,6 +17,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   is saved as `sender_colors`, the same as the snake_case spelling.
 - **Resumable syncs** (cli-core 0.276.0): a sync that is killed keeps what it saved, and the next run continues from
   there.
+
+### Fixed
+
+- **A send Telegram refused for flooding says it may be repeated**: when `messages send`, `messages forward` or
+  `polls create` get FLOOD_WAIT before Telegram took the message, the error's `retry.safe` is `true` with
+  `after_ms`. Once Telegram took it — a lookup after the send hit the limit — `retry.safe` stays `false`.
 
 ## 0.55.0 — 14.10.2026
 
