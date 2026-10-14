@@ -123,8 +123,7 @@ What each part does:
 
 | System | Path |
 |---|---|
-| Linux | `~/.config/tg-cli/config.json` |
-| macOS | `~/Library/Preferences/tg-cli/config.json` |
+| Linux and macOS | `~/.config/tg-cli/config.json` |
 | Windows | `%APPDATA%\tg-cli\Config\config.json` |
 
 `tg config show` prints the path this computer actually uses, and every setting with its value. In
