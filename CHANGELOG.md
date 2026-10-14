@@ -13,6 +13,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break scripts
 
+- **A next step to a command that only changes this machine is never run unasked** (cli-core 0.273.0):
+  `server restart` and `store reindex` steps carry `safe_to_auto_execute: false`.
 - **`mentions rebuild` takes its kind as an argument**: `tg <profile> mentions rebuild person-name`, not `--kind`
   (cli-core 0.272.0).
 
