@@ -92,13 +92,11 @@ describe("the generated Telegram Bot API", () => {
     expect(refused.code).toBe(2)
     expect(refused.err).toContain("--allow-any-file")
     expect(requests).toEqual([])
-    expect((await invoke(["--allow-any-file", "send-document", "--chat-id", "123", "--document", document])).code).toBe(
-      0,
-    )
-    expect((await invoke(["send-document", "--chat-id", "123", "--document", document, "--allow-any-file"])).code).toBe(
-      0,
-    )
-    expect(requests.map((request) => request.method)).toEqual(["sendDocument", "sendDocument"])
+    const sent = await invoke(["send-document", "--chat-id", "123", "--document", document, "--allow-any-file"])
+    expect(sent.code).toBe(0)
+    expect(requests.map((request) => request.method)).toEqual(["sendDocument"])
+    expect((await invoke(["send-message", "--chat-id", "123", "--text", "x", "--allow-any-file"])).code).not.toBe(0)
+    expect(requests).toHaveLength(1)
   })
 
   // Sparse elsewhere; Windows would write the file out.

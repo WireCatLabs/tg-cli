@@ -1,6 +1,6 @@
 import { statSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import type { ManifestOperation } from "@wirecat/cli-base/codegen"
+import type { ManifestOperation, SchemaNode } from "@wirecat/cli-base/codegen"
 import {
   type ApiCommandInput,
   apiPlainJson,
@@ -37,6 +37,32 @@ const defaults = {
 const keyOf = (operation: ManifestOperation) => `bot.api.${operation.command}`
 const contextOf = (command: Command) => botContext(command.parent ?? command, TELEGRAM_BOT)
 
+/** Whether a request can carry an `@path` file: `prepareRpcApiBody` reads one for every string with a format. */
+const takesFiles = (operation: ManifestOperation): boolean => {
+  const seen = new Set<string>()
+  const walk = (node: SchemaNode | undefined): boolean => {
+    if (!node) return false
+    switch (node.type) {
+      case "ref":
+        if (seen.has(node.ref)) return false
+        seen.add(node.ref)
+        return walk(definitions[node.ref])
+      case "string":
+        return node.format !== undefined
+      case "array":
+        return walk(node.items)
+      case "object":
+        return Object.values(node.properties).some(walk) || walk(node.additionalProperties)
+      case "union":
+      case "allOf":
+        return node.of.some(walk)
+      default:
+        return false
+    }
+  }
+  return operation.request?.schema !== undefined && walk(definitions[operation.request.schema])
+}
+
 export const telegramBotApiCommand = (): Command => {
   const group = generatedApiCommand({
     operations,
@@ -54,7 +80,7 @@ export const telegramBotApiCommand = (): Command => {
       const prepared = prepareRpcApiBody(operation, input, definitions)
       checkApiBody(operation, prepared.text, schemas)
       // `bot messages send --file`'s refusal, before anything connects; held in memory, so the buffered-upload cap applies.
-      const anyFile = group.opts<{ allowAnyFile?: boolean }>().allowAnyFile === true
+      const anyFile = command.opts<{ allowAnyFile?: boolean }>().allowAnyFile === true
       const files = await Promise.all(
         prepared.files.map(async ({ field, path }) => {
           const upload = await readUpload("file", path, { app: TELEGRAM_BOT.app, env: context.env, anyFile })
@@ -146,6 +172,9 @@ export const telegramBotApiCommand = (): Command => {
       })
     },
   })
-  group.option("--allow-any-file", "read @path files even from credential folders or this CLI's own folders")
+  for (const operation of operations.filter(takesFiles))
+    group.commands
+      .find((command) => command.name() === operation.command)
+      ?.option("--allow-any-file", "read @path files even from credential folders or this CLI's own folders")
   return group
 }

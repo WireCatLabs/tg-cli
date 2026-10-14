@@ -10,9 +10,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`store export` writes files in the shape it prints** (cli-core 0.276.0): `--output` files and `--to` folders hold
   the same items as the screen (`chat_id`, `sender_name`, `ref`…). A folder from an earlier version is refused with
   "export into a new folder".
-- **`bot api` refuses `@path` files from protected places** (SEC-48): known credential files and folders, `tg`'s own
+- **`bot api` refuses `@path` files from protected places**: known credential files and folders, `tg`'s own
   folders and the local store are refused before connecting, as `bot messages send --file` does; `--allow-any-file`
-  sends one anyway. A file over 256 MiB is refused instead of read into memory.
+  on an operation that takes files sends one anyway. A file over 256 MiB is refused instead of read into memory.
 
 ### What's new
 
