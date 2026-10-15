@@ -208,7 +208,12 @@ export class TelegramAdapter {
     // Loads the logged-in user from the session before anything else. mtcute does it on the first
     // request, but sendText reads that user before making one — measured 2026-09-27: "User info is
     // not cached yet" on the first send to Saved Messages.
-    await adapter.#client.prepare()
+    try {
+      await adapter.#client.prepare()
+    } catch (error) {
+      await adapter.close().catch(() => {})
+      throw error
+    }
     return adapter
   }
 
