@@ -77,7 +77,7 @@ to be done; `tg personal flood clear` lifts it early if you know Telegram no lon
 ## Bulk reads
 
 - `messages sync`: pages of up to 100 messages, `--pause` between pages (1 s by default), 1000 messages a
-  run unless `--limit` says otherwise. `--estimate` counts the requests first and sends none.
+  run unless `--limit` says otherwise. `--dry-run` counts the requests first and sends none.
 - `messages download --all`: one request per page and per file; files are paced too.
 - `messages sync --all` lists the chats a page of 100 at a time, one turn of the pace each.
 - `chats list --all` reads every chat in one turn: one request per 100 chats, back to back.

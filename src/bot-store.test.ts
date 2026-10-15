@@ -79,7 +79,7 @@ describe("tg bot store fetch", () => {
       "store",
       "fetch",
       CHAT,
-      "--from",
+      "--until-id",
       "https://t.me/c/700/250",
       "--limit",
       "120",
@@ -109,7 +109,7 @@ describe("tg bot store fetch", () => {
   })
 
   it("stops at --last and --since-time, and refuses them together or --offline", async () => {
-    const args = ["sales", "bot", "store", "fetch", CHAT, "--from", "https://t.me/c/700/250", "--pause", "1ms"]
+    const args = ["sales", "bot", "store", "fetch", CHAT, "--until-id", "https://t.me/c/700/250", "--pause", "1ms"]
     expect((await tg([...args, "--last", "30", "--json"])).answer.item).toMatchObject({ reached_last: true })
     expect((await tg([...args, "--since-time", MESSAGES[200]?.timestamp ?? "", "--json"])).answer.item).toMatchObject({
       reached_since: true,
@@ -178,7 +178,7 @@ describe("tg bot store fetch", () => {
     expect(opened).toEqual([])
     expect((await tg(["sales", "bot", "store", "fetch", CHAT, "--json"])).code).toBe(4)
     apiCredentials({ profile: "sales", env, keyring }).write({ id: 2, hash: "bot-app" })
-    await tg(["sales", "bot", "store", "fetch", CHAT, "--from", "https://t.me/c/700/250", "--limit", "1", "--json"])
+    await tg(["sales", "bot", "store", "fetch", CHAT, "--until-id", "https://t.me/c/700/250", "--limit", "1", "--json"])
     expect(opened[0]?.credentials).toEqual({ id: 2, hash: "bot-app" })
   })
 

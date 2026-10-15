@@ -164,7 +164,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 6. **`tg personal store export` exports only what was kept**, and never asks Telegram. `tg personal store status` says
    how much of each chat is kept.
 7. **`tg personal messages sync` makes many requests from the owner's account.** Only when the owner asked.
-   `tg personal messages sync <chat> --estimate` only estimates what it would cost and asks Telegram nothing —
+   `tg personal messages sync <chat> --dry-run` only estimates what it would cost and asks Telegram nothing —
    show the owner that first. A long one goes `--background`; `tg personal store jobs show` follows it.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `search messages`. The message asked for carries `"anchor": true`.
@@ -226,7 +226,7 @@ Choose a path from the user's task rather than reading recent messages by defaul
   Follow promising hits with `messages context` or `messages show` and cite their locators.
   Check related chats for a later correction. Empty hits, an empty chat and `page.has_more: false`
   never establish complete Telegram history. If missing history matters, explain the gap.
-  Fetch only an authorized chat and bounded period/amount; inspect `messages sync --estimate`
+  Fetch only an authorized chat and bounded period/amount; inspect `messages sync --dry-run`
   before a download. Offline cannot fetch missing history.
 - **Prepare for a meeting:** find project groups and the participants' personal chats. A DM's
   title need not contain the project name. Compare dated group messages with relevant DMs;
@@ -452,7 +452,7 @@ tg personal contacts show 101 --with-notes --json
 tg personal metadata get --chat CHAT_ID --json
 tg personal metadata refresh --chat CHAT_ID --limit 1 --json
 tg personal tags auto --chat CHAT_ID --dry-run --json
-tg personal tags auto --chat CHAT_ID --refresh-metadata --limit 1 --json
+tg personal tags auto --chat CHAT_ID --sync-first --limit 1 --json
 tg personal tags list sources:auto --json
 tg personal tags remove news --chat CHAT_ID --source auto
 ```
@@ -501,7 +501,7 @@ are not zero. All four reports read stored data; do not infer historical adminis
 
 
 Remote agents can request retained bytes: discover attachments show through tg_tools_search
-and invoke tg_read. Assemble chunks by next_offset_bytes, pass if_sha256 and verify SHA256.
+and invoke tg_read. Assemble chunks by next_offset_bytes, pass expected_fingerprint and verify SHA256.
 If the client cannot open a PDF, request every page using page:1..pdf.page_count; optional
 unpdf/@napi-rs/canvas render locally. The page returns image content; if only metadata is visible,
 request format:base64 and display the PNG with the agent's image tools. Inspect the actual pixels

@@ -240,11 +240,11 @@ describe("the archive, from the store", () => {
     const store = await backfilled()
     const root = mkdtempSync(join(tmpdir(), "tg-folder-"))
 
-    const first = await tg(["archive", "store", "export", CHAT, "--to", join(root, "one"), "--json"], store)
-    const second = await tg(["archive", "store", "export", CHAT, "--to", join(root, "one"), "--json"], store)
-    const all = await tg(["archive", "store", "export", "--all", "--to", join(root, "all"), "--json"], store)
+    const first = await tg(["archive", "store", "export", CHAT, "--output-dir", join(root, "one"), "--json"], store)
+    const second = await tg(["archive", "store", "export", CHAT, "--output-dir", join(root, "one"), "--json"], store)
+    const all = await tg(["archive", "store", "export", "--all", "--output-dir", join(root, "all"), "--json"], store)
     const kind = await tg(
-      ["archive", "store", "export", "--kind", "group,dialog", "--to", join(root, "k"), "--json"],
+      ["archive", "store", "export", "--include", "group,dialog", "--output-dir", join(root, "k"), "--json"],
       store,
     )
     const sealed = await tg(
@@ -314,7 +314,7 @@ describe("the archive, from the store", () => {
         "search",
         "conversations",
         "invoice",
-        "--refresh",
+        "--catch-up",
         "--max-chats",
         "1",
         "--max-chunks",
@@ -344,7 +344,7 @@ describe("the archive, from the store", () => {
 
   it("**estimates what a full fetch would still cost** without asking Telegram", async () => {
     const store = await backfilled()
-    const { code, answer } = await tg(["archive", "messages", "sync", CHAT, "--estimate", "--json", "--offline"], store)
+    const { code, answer } = await tg(["archive", "messages", "sync", CHAT, "--dry-run", "--json", "--offline"], store)
 
     expect(code).toBe(0)
     expect(answer).toMatchObject({ item: { chat: CHAT, held: 3, ranges: [{ from: 101, to: 103 }], missing: 100 } })

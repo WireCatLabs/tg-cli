@@ -87,7 +87,7 @@ const definition: ProgramDefinition = {
       registries.description = "skip public ban lists; still ask Telegram for the profile and photos unless --offline"
     contacts?.commands
       .find((command) => command.name() === "context")
-      ?.description("what the local store holds about a person; --chat --refresh explicitly asks Telegram first")
+      ?.description("what the local store holds about a person; --chat --sync-first explicitly asks Telegram first")
     const audit = program.commands
       .find((command) => command.name() === "chats")
       ?.commands.find((command) => command.name() === "members")

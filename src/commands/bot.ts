@@ -44,7 +44,7 @@ export const TELEGRAM_BOT: BotMessenger = {
     pause: "1s",
     maxPages: 10,
     orderBy: "id",
-    from: "start at this message link, inclusive; otherwise use the newest message already known",
+    from: "start at this message, by its t.me link, inclusive; otherwise the newest message already known",
   },
   connect: async (command, token, { stop, events, history, track } = {}) => {
     const environment = environmentOf<Environment>(command)

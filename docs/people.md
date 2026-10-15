@@ -109,7 +109,7 @@ With `--chat`, it gives their newest messages in each chat you name, oldest firs
 
 ```sh
 tg personal contacts context @example_user --chat "Book club" --chat "Team" --limit 10
-tg personal contacts context @example_user --chat "Book club" --refresh
+tg personal contacts context @example_user --chat "Book club" --sync-first
 ```
 
 ```json
@@ -132,7 +132,7 @@ tg personal contacts context @example_user --chat "Book club" --refresh
 
 - Each message is only its time and text, so an agent can read many of them at once. `-v` adds the
   message id, a link to it, the sender and what it replies to; `-vv` gives the whole message.
-- `--refresh` asks Telegram first: one search per chat for that person's messages. Without it, the
+- `--sync-first` asks Telegram first: one search per chat for that person's messages. Without it, the
   answer comes from the store and never connects.
 - `more: true` means there are older messages than the limit; `complete: false` means the store does
   not hold the chat from its start.

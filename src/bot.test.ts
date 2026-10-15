@@ -225,7 +225,7 @@ describe("tg bot chats moderate", () => {
         "2h",
         "--dry-run",
         "--allow-dangerous",
-        "--no-ban",
+        "--no-block",
         "--max-actions",
         "3",
         "--json",
@@ -256,7 +256,7 @@ describe("tg bot contacts show and the bot's copy reads", () => {
     reactions: null,
   })
 
-  it("**reads what the bot kept**: a person, a word search, what two people wrote; --refresh is refused", async () => {
+  it("**reads what the bot kept**: a person, a word search, what two people wrote; --sync-first is refused", async () => {
     const fetch = telegram({ getMe: ME })
     await tg(["sales", "bot", "auth", "set"], fetch, TOKEN)
     new ChatRegistry(TG, "sales").rememberBot("7000000001")
@@ -286,7 +286,7 @@ describe("tg bot contacts show and the bot's copy reads", () => {
       fetch,
     )
     const between = await tg(["sales", "bot", "messages", "between", "@ann", "Bob", "--limit", "5", "--json"], fetch)
-    const refresh = await tg(["sales", "bot", "contacts", "show", "@ann", "--refresh"], fetch)
+    const refresh = await tg(["sales", "bot", "contacts", "show", "@ann", "--sync-first"], fetch)
     const across = await tg(["sales", "bot", "contacts", "show", "@ann", "--all-bots", "--bots", "other"], fetch)
 
     expect(card.answer.item).toMatchObject({ id: "42", messages: [{ text: "hi bot" }] })

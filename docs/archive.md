@@ -106,7 +106,7 @@ gaps; `messages sync` closes them.
 ## Fetch a chat's history
 
 ```sh
-tg personal messages sync "Book club" --estimate  # what a full fetch would still cost; asks Telegram nothing
+tg personal messages sync "Book club" --dry-run  # what a full fetch would still cost; asks Telegram nothing
 ```
 
 ```sh
@@ -148,7 +148,7 @@ failure can return saved work with an `issue`.
 `--limit` messages (1000 by default); `--page-size` sets how many one request asks for (100 by
 default), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s`,
 `2m`). A short wait asked by Telegram is sat out; one longer than five minutes stops the run, and
-you run it again later. Look at `--estimate` first: it counts from what the store already holds and
+you run it again later. Look at `--dry-run` first: it counts from what the store already holds and
 sends no request.
 
 To find and fill gaps inside a chat's saved history, and to prepare topic search right after a fetch
@@ -235,15 +235,15 @@ you can read, and prints where it went and how many messages it holds. It never 
 ### Into a folder, and only what changed
 
 ```sh
-tg personal store export "Book club" "Work" --to ~/tg-export  # a JSON-lines file per chat, and manifest.json
+tg personal store export "Book club" "Work" --output-dir ~/tg-export  # a JSON-lines file per chat, and manifest.json
 ```
 
 ```sh
-tg personal store export --kind group --to ~/tg-groups  # every stored group
+tg personal store export --include group --output-dir ~/tg-groups  # every stored group
 ```
 
 ```sh
-tg personal store export --all --to ~/tg-all           # every stored chat of this account
+tg personal store export --all --output-dir ~/tg-all   # every stored chat of this account
 ```
 
 Run it again on the same folder and it adds only what changed since the last run: new messages, edits
@@ -253,7 +253,7 @@ account, is refused. A change to reactions alone does not count as a change.
 
 ### With a password
 
-`--encrypt` on `store export` (with `--output` or `--to`) and on `store backup` compresses the file and
+`--encrypt` on `store export` (with `--output` or `--output-dir`) and on `store backup` compresses the file and
 encrypts it with a password — no other program needed. `tg personal store decrypt <file> --output <new file>`
 opens one; `tg personal store restore` asks for the password of an encrypted backup.
 
@@ -483,8 +483,8 @@ from before startup and already answered messages are ignored. `ask` cannot send
 Create a disabled rule with `tg personal replies add away`, edit it with `replies edit away --template`, then
 use `replies on away` or `off away`. Enabled reply rules need a nonempty template. Editing changes
 only named fields; lists are comma-separated replacements, an empty string clears one. Options
-include `--do reply,task`, `--kinds`, `--chats`, `--not-chats`, `--words`, `--question` /
-`--no-question`, `--mentions-me` / `--no-mentions-me`, `--people`, `--not-people`, `--contacts-only` /
+include `--do reply,task`, `--kinds`, `--allow-chats`, `--deny-chats`, `--words`, `--question` /
+`--no-question`, `--mentions-me` / `--no-mentions-me`, `--allow-people`, `--deny-people`, `--contacts-only` /
 `--no-contacts-only`, `--as-reply` / `--no-as-reply`, `--per-chat`, `--per-person`, and the hours
 fields `--outside`, `--days`, `--timezone` (`--no-hours` clears them). First setting hours requires
 all three fields. Invalid edits preserve the file, other rules, the audience and reply history.

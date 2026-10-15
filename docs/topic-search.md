@@ -34,7 +34,7 @@ a Telegram group. A conversation here is something tg finds by itself, in any ch
 | Open the whole conversation a message belongs to | `tg personal conversations show <chat> <message>` |
 | Find other conversations about the same thing, in every chat | `tg personal conversations related <chat> <message>` |
 | Limit results to a person, a period or a word | `tg personal search conversations "<question>" --filter '<query>'` |
-| See what is out of date and catch up | `tg personal conversations status`, `tg personal search conversations "<question>" --refresh` |
+| See what is out of date and catch up | `tg personal conversations status`, `tg personal search conversations "<question>" --catch-up` |
 | Let your own AI agent improve how messages are grouped | `tg skill show link-conversations` |
 
 ## Topic search or word search?
@@ -231,14 +231,14 @@ New messages reach a conversation only after the next build, and a vector only a
 tg personal conversations status                 # what is behind, chat by chat
 tg personal conversations build                  # every chat that changed, and groups never built
 tg personal conversations embed                  # every built chat with pieces left
-tg personal search conversations "renting a flat" --refresh  # catch up first, then search
+tg personal search conversations "renting a flat" --catch-up  # catch up first, then search
 ```
 
 `status` counts, for each built chat, the messages the build has not seen (new, edited, deleted), the
 pieces whose vector is current, stale or missing, and how many groups were never built. Without `--chat`,
-`build`, `embed` and `search --refresh` take at most 20 chats a run (`--max-chats`) and embed at most
+`build`, `embed` and `search conversations --catch-up` take at most 20 chats a run (`--max-chats`) and embed at most
 2,000 pieces a run (`--max-chunks`); run them again to go on. They never download a model.
-`--refresh` cannot be combined with `--filter` or `--source`: build and embed the chats you want first.
+`--catch-up` cannot be combined with `--filter` or `--source`: build and embed the chats you want first.
 
 When the rules change in a new version, `status` and `tg personal store check` name the chats built with the
 older rules; build them again.

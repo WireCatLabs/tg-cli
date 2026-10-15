@@ -48,16 +48,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats members list` | `--page` | ✅ |  |
 | `chats members list` | `--all` | ✅ |  |
 | `chats members audit` |  | ✅ |  |
-| `chats members audit` | `--budget` | ⛔ | shared member audit; cli-core src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
+| `chats members audit` | `--max-pages` | ⛔ | shared member audit; cli-core src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members |
 | `chats members audit` | `--deep` | ✅ |  |
 | `chats members history` |  | ✅ |  |
 | `chats members fetch` |  | ✅ |  |
 | `chats members fetch` | `--track` | ⛔ | cli-core src/cli/messenger/messenger.test.ts ("chats members fetch 7 --track") covers adding a chat to the daily member fetch; this consumer mounts the shared command |
-| `chats members fetch` | `--budget` | ⛔ | cli-core src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing |
+| `chats members fetch` | `--max-pages` | ⛔ | cli-core src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing |
 | `chats members add` |  | ✅ |  |
 | `chats members remove` |  | ✅ |  |
 | `chats mark-read` |  | ✅ |  |
-| `chats mark-read` | `--until` | ✅ |  |
+| `chats mark-read` | `--until-id` | ✅ |  |
 | `chats mark-read` | `--topic` | ✅ |  |
 | `chats tracking list` |  | ✅ |  |
 | `chats tracking show` |  | ✅ |  |
@@ -142,7 +142,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts context` | `--limit` | ✅ |  |
 | `contacts context` | `--since-time` | ⛔ | cli-core src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing |
 | `contacts context` | `--chat` | ✅ |  |
-| `contacts context` | `--refresh` | ✅ |  |
+| `contacts context` | `--sync-first` | ✅ |  |
 | `contacts timeline` |  | ✅ |  |
 | `contacts timeline` | `--scope` | ✅ |  |
 | `contacts timeline` | `--since-time` | ✅ |  |
@@ -250,7 +250,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages sync` | `--catch-up-messages` | ✅ |  |
 | `messages sync` | `--catch-up-time` | ✅ |  |
 | `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-core's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
-| `messages sync` | `--estimate` | ✅ |  |
+| `messages sync` | `--dry-run` | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |
@@ -328,12 +328,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule command` |  | ✅ |  |
 | `schedule command` | `--every` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule command` | `--at` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
-| `schedule command` | `--once` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --once is parsed by the same code (0.250.1) |
+| `schedule command` | `--at-time` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1) |
 | `schedule agent` |  | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--max-cost` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--every` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--at` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
-| `schedule agent` | `--once` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --once is parsed by the same code (0.250.1) |
+| `schedule agent` | `--at-time` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1) |
 | `schedule list` |  | ✅ |  |
 | `schedule run` |  | ✅ |  |
 | `schedule remove` |  | ✅ |  |
@@ -366,8 +366,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store export` | `--format` | ✅ |  |
 | `store export` | `--since-time` | ✅ |  |
 | `store export` | `--output` | ✅ |  |
-| `store export` | `--to` | ✅ |  |
-| `store export` | `--kind` | ✅ |  |
+| `store export` | `--output-dir` | ✅ |  |
+| `store export` | `--include` | ✅ |  |
 | `store export` | `--all` | ✅ |  |
 | `store export` | `--encrypt` | ✅ |  |
 | `store clear` |  | ✅ |  |
@@ -467,14 +467,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments show` | `--page` | ✅ |  |
 | `attachments show` | `--offset-bytes` | ✅ |  |
 | `attachments show` | `--chunk-bytes` | ✅ |  |
-| `attachments show` | `--if-sha256` | ✅ |  |
+| `attachments show` | `--expected-fingerprint` | ✅ |  |
 | `attachments text set` |  | ✅ |  |
 | `attachments text set` | `--attachment` | ✅ |  |
 | `attachments text set` | `--text-file` | ✅ |  |
 | `tags auto` |  | ✅ |  |
 | `tags auto` | `--chat` | ✅ |  |
 | `tags auto` | `--limit` | ✅ |  |
-| `tags auto` | `--refresh-metadata` | ⛔ | cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers |
+| `tags auto` | `--sync-first` | ⛔ | cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers |
 | `tags auto` | `--dry-run` | ✅ |  |
 | `tags add` |  | ✅ |  |
 | `tags add` | `--chat` | ✅ |  |
@@ -653,13 +653,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks add` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks add` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks add` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
-| `tasks add` | `--check` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks add` | `--remind-time` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks plan` |  | ✅ |  |
 | `tasks plan` | `--category` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tasks plan` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks plan` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks plan` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
-| `tasks plan` | `--check` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks plan` | `--remind-time` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks link` |  | ✅ |  |
 | `tasks link` | `--chat` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks link` | `--kind` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
@@ -747,7 +747,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search conversations` | `--source` | ✅ |  |
 | `search conversations` | `--timezone` | ✅ |  |
 | `search conversations` | `--limit` | ✅ |  |
-| `search conversations` | `--refresh` | ✅ |  |
+| `search conversations` | `--catch-up` | ✅ |  |
 | `search topics` |  | ✅ |  |
 | `search topics` | `--limit` | ✅ |  |
 | `search topics` | `--page` | ✅ |  |
@@ -778,15 +778,15 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `replies edit` |  | ✅ |  |
 | `replies edit` | `--do` | ✅ |  |
 | `replies edit` | `--kinds` | ✅ |  |
-| `replies edit` | `--chats` | ✅ |  |
-| `replies edit` | `--not-chats` | ✅ |  |
+| `replies edit` | `--allow-chats` | ✅ |  |
+| `replies edit` | `--deny-chats` | ✅ |  |
 | `replies edit` | `--words` | ✅ |  |
 | `replies edit` | `--question` | ✅ |  |
 | `replies edit` | `--no-question` | ✅ |  |
 | `replies edit` | `--mentions-me` | ✅ |  |
 | `replies edit` | `--no-mentions-me` | ✅ |  |
-| `replies edit` | `--people` | ✅ |  |
-| `replies edit` | `--not-people` | ✅ |  |
+| `replies edit` | `--allow-people` | ✅ |  |
+| `replies edit` | `--deny-people` | ✅ |  |
 | `replies edit` | `--contacts-only` | ✅ |  |
 | `replies edit` | `--no-contacts-only` | ✅ |  |
 | `replies edit` | `--template` | ✅ |  |
@@ -916,7 +916,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot chats moderate` | `--since-time` | ✅ |  |
 | `bot chats moderate` | `--dry-run` | ✅ |  |
 | `bot chats moderate` | `--allow-dangerous` | ✅ |  |
-| `bot chats moderate` | `--no-ban` | ✅ |  |
+| `bot chats moderate` | `--no-block` | ✅ |  |
 | `bot chats moderate` | `--max-actions` | ✅ |  |
 | `bot messages send` |  | ✅ |  |
 | `bot messages send` | `--reply-to` | ✅ |  |
@@ -973,7 +973,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot contacts show` | `--all-bots` | ✅ |  |
 | `bot contacts show` | `--bots` | ✅ |  |
 | `bot contacts show` | `--limit` | ✅ |  |
-| `bot contacts show` | `--refresh` | ✅ |  |
+| `bot contacts show` | `--sync-first` | ✅ |  |
 | `bot me` |  | ✅ |  |
 | `bot store fetch` |  | ✅ |  |
 | `bot store fetch` | `--limit` | ✅ |  |
@@ -981,7 +981,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot store fetch` | `--pause` | ✅ |  |
 | `bot store fetch` | `--since-time` | ✅ |  |
 | `bot store fetch` | `--last` | ✅ |  |
-| `bot store fetch` | `--from` | ✅ |  |
+| `bot store fetch` | `--until-id` | ✅ |  |
 | `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--confirm-send` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
 | `bot mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |

@@ -382,7 +382,7 @@ describe("messages", () => {
     expect(asked).toEqual({ id: "42", before: 2, after: 3 })
   })
 
-  it("contacts context --chat reads one person's newest by sender with --refresh, short unless -v", async () => {
+  it("contacts context --chat reads one person's newest by sender with --sync-first, short unless -v", async () => {
     const said = (id: string) =>
       message(id, { senderId: "778", senderName: "Bea", timestamp: `2026-09-26T10:0${id}:00.000Z` })
     const asked: string[] = []
@@ -396,7 +396,7 @@ describe("messages", () => {
     await tg(["messages", "list", "Valencia"], { adapter: () => adapter })
 
     const short = await tg(
-      ["contacts", "context", "778", "--chat", "Valencia", "--limit", "2", "--refresh", "--json"],
+      ["contacts", "context", "778", "--chat", "Valencia", "--limit", "2", "--sync-first", "--json"],
       {
         adapter: () => adapter,
       },

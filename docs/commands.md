@@ -295,7 +295,7 @@ tg chats members audit <chat> [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
+| `--max-pages <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
 | `--deep <n>` | also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second. |
 
 #### `tg chats members history`
@@ -328,7 +328,7 @@ tg chats members fetch <chat> [options]
 | Option | What it does |
 |---|---|
 | `--track` | also fetch it daily while serve runs; chats tracking lists and edits those chats. |
-| `--budget <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
+| `--max-pages <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
 
 #### `tg chats members add`
 
@@ -376,7 +376,7 @@ tg chats mark-read <chat> [options]
 
 | Option | What it does |
 |---|---|
-| `--until <message>` | only up to this message id; the newest by default. |
+| `--until-id <id>` | only up to this message id; the newest by default. |
 | `--topic <id>` | mark only this forum topic read; unsupported by messengers without topics. |
 
 ### `tg chats tracking`
@@ -948,7 +948,7 @@ tg contacts profile <person> [options]
 
 ### `tg contacts context`
 
-what the local store holds about a person; --chat --refresh explicitly asks Telegram first
+what the local store holds about a person; --chat --sync-first explicitly asks Telegram first
 
 ```sh
 tg contacts context <person> [options]
@@ -963,7 +963,7 @@ tg contacts context <person> [options]
 | `--limit <n>` | at most this many messages in each list; 10 if not given. |
 | `--since-time <time>` | nothing older than this ISO 8601 time, or 2h / 1d ago. |
 | `--chat <chat>` | a chat, by id or name; repeat it for more — then their newest messages in each, 20 unless --limit, short unless -v. |
-| `--refresh` | with --chat, read their newest messages in each from the messenger first. |
+| `--sync-first` | with --chat, read their newest messages in each from the messenger first. |
 
 ### `tg contacts timeline`
 
@@ -1587,7 +1587,7 @@ tg messages sync [chat] [options]
 | `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
 | `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
-| `--estimate` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
+| `--dry-run` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
 
 ## `tg reactions`
 
@@ -2118,7 +2118,7 @@ tg schedule command <name> <args> [options]
 |---|---|
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
 | `--at <HH:MM>` | every day at this local time. |
-| `--once <when>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+| `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
 
 ### `tg schedule agent`
 
@@ -2141,7 +2141,7 @@ tg schedule agent <name> <harness> <prompt> [options]
 | `--max-cost <usd>` | claude only: stop a run that costs more than this, in US dollars. |
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
 | `--at <HH:MM>` | every day at this local time. |
-| `--once <when>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+| `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
 
 ### `tg schedule list`
 
@@ -2342,16 +2342,16 @@ tg store export [chats] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `chats` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; several with --to. |
+| `chats` | optional | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; several with --output-dir. |
 
 | Option | What it does |
 |---|---|
 | `--format <format>` | jsonl: one message per line, the default with --output; markdown: a transcript with a heading per day, replies and forwards quoted. |
 | `--since-time <time>` | only from this ISO 8601 time, or 30m / 2h / 1d ago, on. |
 | `--output <file>` | write JSON lines, or the transcript, to this new file, readable only by you. |
-| `--to <dir>` | write into this folder, a file per chat and a manifest; run again on it for only what changed since. |
-| `--kind <kinds>` | with --to: every stored chat of these kinds, comma-separated: dialog, group, channel, saved. |
-| `--all` | with --to: every stored chat of this account. |
+| `--output-dir <dir>` | write into this folder, a file per chat and a manifest; run again on it for only what changed since. |
+| `--include <kinds>` | with --output-dir: every stored chat of these kinds, comma-separated: dialog, group, channel, saved. |
+| `--all` | with --output-dir: every stored chat of this account. |
 | `--encrypt` | compress and encrypt with a password, typed at a hidden prompt or piped on stdin; it is never kept — lose it and the file cannot be opened. |
 
 ### `tg store clear`
@@ -2802,7 +2802,7 @@ tg attachments show <chat> [message] [options]
 | `--page <n>` | render one PDF page as PNG, from 1; optional unpdf/canvas, no OCR. |
 | `--offset-bytes <n>` | byte offset from 0. |
 | `--chunk-bytes <n>` | bytes to return, 1–1048576 (default524288). |
-| `--if-sha256 <hash>` | require the whole file SHA-256 from the preceding chunk. |
+| `--expected-fingerprint <hash>` | require the whole file SHA-256 from the preceding chunk. |
 
 ### `tg attachments text`
 
@@ -2846,7 +2846,7 @@ tg tags auto [options]
 |---|---|
 | `--chat <chat>` | a stored group/channel; repeat to select several. Default: ``. |
 | `--limit <number>` | process at most 1–500 chats. Default: `50`. |
-| `--refresh-metadata` | read current descriptions from the messenger before classifying. |
+| `--sync-first` | read current descriptions from the messenger before classifying. |
 | `--dry-run` | preview cached classification without changing the store. |
 
 ### `tg tags add`
@@ -3506,7 +3506,7 @@ tg tasks add <message> [options]
 | `--title <text>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
-| `--check <when>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 
 ### `tg tasks plan`
 
@@ -3528,7 +3528,7 @@ tg tasks plan <task> [options]
 | `--title <text>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
-| `--check <when>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 
 ### `tg tasks link`
 
@@ -3670,7 +3670,7 @@ tg tasks agenda [query] [options]
 | `--due <span>` | list tasks due within this: 30m, 2h, 1d (default 1d). |
 | `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
 | `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
-| `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
+| `--within <duration>` | leave out chats silent longer than this: they ended (default 30d). |
 | `--claimed` | also list tasks someone else holds (tasks claim); hidden by default. |
 | `--category <name>` | only tasks of this category, from the list tasks categories prints. |
 | `--tag <name>` | only tasks with this tag (tags add --task). |
@@ -3843,7 +3843,7 @@ tg search conversations <query> [options]
 | `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
-| `--max-chats <n>` | at most this many chats; 5 with --sync-first, 20 with --refresh if not given. |
+| `--max-chats <n>` | at most this many chats; 5 with --sync-first, 20 with --catch-up if not given. |
 | `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
 | `--sync-first` | first fetch new messages within the chat, time and message bounds. |
 | `--sync-time <duration>` | stop fetching after this long (default: 30s). |
@@ -3854,7 +3854,7 @@ tg search conversations <query> [options]
 | `--source <accounts>` | accounts to search: personal, bots, all, a provider, or a list like group:work,telegram:Alice,email:me@example.com; defaults to the active account. |
 | `--timezone <zone>` | IANA timezone for filter dates; system timezone by default. |
 | `--limit <n>` | how many. |
-| `--refresh` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
+| `--catch-up` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
 
 ### `tg search topics`
 
@@ -4047,15 +4047,15 @@ tg replies edit <id> [options]
 |---|---|
 | `--do <actions>` | actions: reply, task, or both, comma-separated. |
 | `--kinds <kinds>` | chat kinds: dialog, group; comma-separated, empty for any. |
-| `--chats <ids>` | only these chat ids, comma-separated; empty for any. |
-| `--not-chats <ids>` | leave these chat ids out, comma-separated; empty clears. |
+| `--allow-chats <ids>` | only these chat ids, comma-separated; empty for any. |
+| `--deny-chats <ids>` | leave these chat ids out, comma-separated; empty clears. |
 | `--words <words>` | match any of these whole words, comma-separated; empty clears. |
 | `--question` | match only questions. |
 | `--no-question` | do not require a question. |
 | `--mentions-me` | require a mention of you or a reply to you. |
 | `--no-mentions-me` | do not require a mention of you or a reply to you. |
-| `--people <ids>` | only these sender ids, comma-separated; empty for any. |
-| `--not-people <ids>` | leave these sender ids out, comma-separated; empty clears. |
+| `--allow-people <ids>` | only these sender ids, comma-separated; empty for any. |
+| `--deny-people <ids>` | leave these sender ids out, comma-separated; empty clears. |
 | `--contacts-only` | match only contacts. |
 | `--no-contacts-only` | do not require a contact. |
 | `--template <text>` | the reply template. |
@@ -4780,7 +4780,7 @@ tg bot chats moderate <chat> [options]
 | `--since-time <time>` | judge what came after this ISO 8601 time, or 2h / 1d ago; the saved point stays. |
 | `--dry-run` | judge and plan; do nothing. |
 | `--allow-dangerous` | yes to every action whose level in the group's rules is ask. |
-| `--no-ban` | remove without banning; by default a removed person cannot come back by the link. |
+| `--no-block` | remove without banning; by default a removed person cannot come back by the link. |
 | `--max-actions <n>` | at most this many actions in one run; 10 if not given. |
 
 ### `tg bot messages`
@@ -5162,7 +5162,7 @@ tg bot contacts show <who> [options]
 | `--all-bots` | also read every other bot's copy on this machine that read_other_bots allows. |
 | `--bots <profiles>` | also read these bots' copies, comma separated — each allowed by read_other_bots. |
 | `--limit <n>` | how many messages from the private chat. |
-| `--refresh` | read the private chat with them again from the messenger first — one request. |
+| `--sync-first` | read the private chat with them again from the messenger first — one request. |
 
 ### `tg bot me`
 
@@ -5197,7 +5197,7 @@ tg bot store fetch <chat> [options]
 | `--pause <duration>` | pause between pages, to stay under the messenger's limits. Default: `1s`. |
 | `--since-time <time>` | stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago. |
 | `--last <n>` | stop once the newest n messages are held. |
-| `--from <link>` | start at this message link, inclusive; otherwise use the newest message already known. |
+| `--until-id <id>` | start at this message, by its t.me link, inclusive; otherwise the newest message already known. |
 
 ### `tg bot mcp`
 

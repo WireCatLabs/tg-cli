@@ -277,7 +277,7 @@ Give a task a title, a due date and a date to look at it again, and link the mes
 belongs to. The next-check date is for you or your agent; tg never reminds anyone:
 
 ```sh
-tg personal tasks plan <task> --title "Send Anna the contract" --due 2d --check 1d
+tg personal tasks plan <task> --title "Send Anna the contract" --due 2d --remind-time 1d
 ```
 
 ```sh
@@ -374,7 +374,7 @@ done. `newAccount` is not offered: Telegram does not say how old an account is.
 ## With a bot
 
 If your bot is an admin of the group, it can run the same check: `tg <bot> bot chats moderate`. A
-person the bot removes cannot come back by the link unless you add `--no-ban`. The bot judges only
+person the bot removes cannot come back by the link unless you add `--no-block`. The bot judges only
 messages it saw or imported on this computer, and it does not judge joins. See
 [moderating a group with a bot](bot.md#moderating-a-group-by-its-rules).
 
@@ -450,7 +450,7 @@ to the session file; it is never printed.
 ### Member snapshots and changes
 
 `tg personal chats members fetch` reads members into the local store, recording profiles, changes, the day's
-member count and whether the read was complete. `--budget` caps pages. Nobody is recorded as having
+member count and whether the read was complete. `--max-pages` caps pages. Nobody is recorded as having
 left after a partial read: that requires reading the whole available list and a known group count
 no greater than the number read. A larger budget cannot bypass Telegram's member-list limits.
 
@@ -470,7 +470,7 @@ partial reads do not replace it. Without a complete snapshot, this list can be e
 profiles and events have already been recorded.
 Profiles and history stay in the local store alongside messages.
 
-`tg personal chats members audit` lists members with bot-like signals and reasons; `--budget` caps pages and
+`tg personal chats members audit` lists members with bot-like signals and reasons; `--max-pages` caps pages and
 a query such as `score>=3` sets the threshold (`score>=2` when not given). It removes nobody and excludes admins
 and the owner. `meta.truncated` means not every member was read. It is unavailable with `--offline`;
 scores need human review. Telegram supplies bot, scam, fake, deleted, photo, join and inviter metadata
