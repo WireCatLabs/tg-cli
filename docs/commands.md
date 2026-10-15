@@ -4470,13 +4470,7 @@ tg mcp [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-mark-read` | no longer used — the profile's permissions decide. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
 | `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; the profile's permissions decide. |
-| `--http-confirmation <mode>` | no longer used — writes show no form; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
 | `--revoke` | forget every login given to a browser app; each must log in again. |
@@ -4492,11 +4486,6 @@ tg mcp config [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-mark-read` | no longer used — the profile's permissions decide. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
 
 ### `tg mcp setup`
 
@@ -4516,11 +4505,6 @@ tg mcp setup <client> [options]
 |---|---|
 | `--allow-writes` | acknowledge that this profile offers writing tools. |
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-mark-read` | no longer used — the profile's permissions decide. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
 
 ### `tg mcp doctor`
 
@@ -4533,11 +4517,6 @@ tg mcp doctor [options]
 | Option | What it does |
 |---|---|
 | `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-mark-read` | no longer used — the profile's permissions decide. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
 
 ## `tg bot`
 
@@ -5203,35 +5182,13 @@ tg bot store fetch <chat> [options]
 
 serve this bot to an agent over MCP, on stdin and stdout — `claude mcp add sales-bot -- tg sales bot mcp`
 
-**Changes something in Telegram.**
-
-```sh
-tg bot mcp [options]
-```
-
-| Option | What it does |
-|---|---|
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
-| `--allow-moderate` | no longer used — the profile's permissions decide. |
-
 #### `tg bot mcp config`
 
 print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes nothing
 
 ```sh
-tg bot mcp config [options]
+tg bot mcp config
 ```
-
-| Option | What it does |
-|---|---|
-| `--confirm-send` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-dangerous` | no longer used — writes show no form; the profile's permissions decide. |
-| `--allow-send` | no longer used — the profile's permissions decide; kept so an old setup still starts. |
-| `--allow-delete` | no longer used — the profile's permissions decide. |
-| `--allow-moderate` | no longer used — the profile's permissions decide. |
 
 ### `tg bot api`
 

@@ -5,6 +5,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+- **`tg mcp` and `tg bot mcp` no longer take the retired access flags** `--allow-send`, `--allow-mark-read`,
+  `--allow-delete`, `--allow-moderate`, `--confirm-send`, `--allow-dangerous` and `--http-confirmation` (cli-core
+  0.292.0). An app entry that still passes one stops starting with "unknown option": remove the flag; the profile's
+  permissions decide, as they already did.
+
 ### Fixed
 
 - **A login that fails while opening no longer leaves the Telegram client open**: when loading the logged-in user

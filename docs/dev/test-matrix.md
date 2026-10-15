@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2358 ✅ · 106 ⛔ · 0 ❌** — 492 commands, 1972 options.
+**2346 ✅ · 87 ⛔ · 0 ❌** — 492 commands, 1941 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -857,38 +857,17 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `upgrade` | `--check` | ✅ |  |
 | `mcp` |  | ✅ |  |
 | `mcp` | `--permission` | ✅ |  |
-| `mcp` | `--confirm-send` | ✅ |  |
-| `mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin, as mcp does; cli-core's src/mcp/mcp.test.ts drives the server with allowDangerous, and mcp config below shows the flag reaching the server's arguments |
-| `mcp` | `--allow-send` | ⛔ | decides nothing since the profile's permissions do, and is accepted with a warning so an old setup starts; mcp config below shows the warning |
-| `mcp` | `--allow-mark-read` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
-| `mcp` | `--allow-delete` | ⛔ | decides nothing, as --allow-send; mcp config below shows the warning |
 | `mcp` | `--http` | ✅ |  |
-| `mcp` | `--http-confirmation` | ✅ |  |
 | `mcp` | `--port` | ✅ |  |
 | `mcp` | `--public-url` | ✅ |  |
 | `mcp` | `--revoke` | ✅ |  |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--permission` | ✅ |  |
-| `mcp config` | `--confirm-send` | ✅ |  |
-| `mcp config` | `--allow-dangerous` | ✅ |  |
-| `mcp config` | `--allow-send` | ✅ |  |
-| `mcp config` | `--allow-mark-read` | ✅ |  |
-| `mcp config` | `--allow-delete` | ✅ |  |
 | `mcp setup` |  | ✅ |  |
 | `mcp setup` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp setup` | `--permission` | ⛔ | cli-core src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration |
-| `mcp setup` | `--confirm-send` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-dangerous` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-send` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-mark-read` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
-| `mcp setup` | `--allow-delete` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp doctor` |  | ✅ |  |
 | `mcp doctor` | `--permission` | ⛔ | cli-core src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration |
-| `mcp doctor` | `--confirm-send` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-dangerous` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-send` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-mark-read` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
-| `mcp doctor` | `--allow-delete` | ⛔ | starts a separate MCP process; cli-base's src/mcp/index.test.ts checks its handshake and tools, and tg doctor was checked without an account |
 | `bot auth set` |  | ✅ |  |
 | `bot auth show` |  | ✅ |  |
 | `bot auth remove` |  | ✅ |  |
@@ -978,18 +957,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot store fetch` | `--since-time` | ✅ |  |
 | `bot store fetch` | `--last` | ✅ |  |
 | `bot store fetch` | `--until-id` | ✅ |  |
-| `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
-| `bot mcp` | `--confirm-send` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
-| `bot mcp` | `--allow-dangerous` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
-| `bot mcp` | `--allow-send` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
-| `bot mcp` | `--allow-delete` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
-| `bot mcp` | `--allow-moderate` | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, src/bot.test.ts the tools tg offers, and bot mcp config there the flags |
+| `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, and src/bot.test.ts the tools tg offers |
 | `bot mcp config` |  | ✅ |  |
-| `bot mcp config` | `--confirm-send` | ✅ |  |
-| `bot mcp config` | `--allow-dangerous` | ✅ |  |
-| `bot mcp config` | `--allow-send` | ✅ |  |
-| `bot mcp config` | `--allow-delete` | ✅ |  |
-| `bot mcp config` | `--allow-moderate` | ✅ |  |
 | `bot api get-updates` |  | ✅ |  |
 | `bot api get-updates` | `--offset` | ✅ |  |
 | `bot api get-updates` | `--limit` | ✅ |  |
