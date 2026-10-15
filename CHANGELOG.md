@@ -14,6 +14,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Release scripts report observed lock holders separately from stale release labels.** Shared
+  diagnostics no longer attribute a live lock to a previous run; wait for the holders to finish, then
+  retry.
+
 - **A login that fails while opening no longer leaves the Telegram client open**: when loading the logged-in user
   fails, the adapter closes the client and the session file before the error reaches the command.
 
