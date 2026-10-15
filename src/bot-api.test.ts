@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from "node:fs"
+import { mkdirSync, mkdtempSync, truncateSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
@@ -81,6 +81,33 @@ describe("the generated Telegram Bot API", () => {
     expect(parts.filter(([, value]) => typeof value !== "string")).toHaveLength(2)
     expect(form.get("media")).toContain('"caption":"@literal"')
     expect(form.get("media")).toContain("attach://_api_file_0")
+  })
+
+  it("**refuses an @path from a known credential place before connecting**, unless --allow-any-file", async () => {
+    const root = mkdtempSync(join(tmpdir(), "api-protected-"))
+    mkdirSync(join(root, ".ssh"))
+    writeFileSync(join(root, ".ssh", "id_ed25519"), "synthetic key")
+    const document = `@${join(root, ".ssh", "id_ed25519")}`
+    const refused = await invoke(["send-document", "--chat-id", "123", "--document", document])
+    expect(refused.code).toBe(2)
+    expect(refused.err).toContain("--allow-any-file")
+    expect(requests).toEqual([])
+    const sent = await invoke(["send-document", "--chat-id", "123", "--document", document, "--allow-any-file"])
+    expect(sent.code).toBe(0)
+    expect(requests.map((request) => request.method)).toEqual(["sendDocument"])
+    expect((await invoke(["send-message", "--chat-id", "123", "--text", "x", "--allow-any-file"])).code).not.toBe(0)
+    expect(requests).toHaveLength(1)
+  })
+
+  // Sparse elsewhere; Windows would write the file out.
+  it.skipIf(process.platform === "win32")("refuses an @path file larger than it holds in memory", async () => {
+    const big = join(mkdtempSync(join(tmpdir(), "api-big-")), "big.bin")
+    writeFileSync(big, "")
+    truncateSync(big, 257 * 1024 * 1024)
+    const result = await invoke(["send-document", "--chat-id", "123", "--document", `@${big}`])
+    expect(result.code).toBe(2)
+    expect(result.err).toContain("MiB")
+    expect(requests).toEqual([])
   })
 
   it("never retries unanswered writes and redacts submitted credentials from provider errors", async () => {

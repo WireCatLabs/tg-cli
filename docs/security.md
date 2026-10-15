@@ -26,8 +26,9 @@ MCP, other people's text on your screen, how to report a vulnerability — is on
   or a phone number.
 - **The send guard is the shared one**: `permissions`, the recipient list and `sends_per_hour` are
   checked by every command and MCP tool ([below](#the-send-guard)).
-- **`tg` talks to Telegram, npm and my.telegram.org** — through your proxy when you set one —
-  and to model download hosts or explicitly configured embedding/analysis endpoints ([below](#what-goes-over-the-network)).
+- **`tg` talks to Telegram, npm and my.telegram.org**, and to model download hosts or explicitly configured
+  embedding/analysis endpoints ([below](#what-goes-over-the-network)). Telegram goes through your proxy when
+  you set one; the npm update check and `tg upgrade` do not.
 - **The local store is not encrypted, and it stays after you log out.** Only whole-disk encryption
   protects it from a stolen disk.
 - **It does not protect against someone with your user account on this machine**, or an agent
@@ -94,8 +95,8 @@ In Telegram, these count toward the hourly limit: a message, a forward, an edit,
 notifies, each deleted message, a new group, and each person added to one. A reaction, a vote, a
 quiet pin and marking a chat read do not. A forward is checked against the chat it goes to.
 
-`TG_PROFILE_LOCK` pins the profile where an agent cannot change its own environment. `--file` and
-`--photo` refuse known credential files and folders, `tg`'s own folders and the local store,
+`TG_PROFILE_LOCK` pins the profile where an agent cannot change its own environment. `--file`,
+`--photo` and `bot api` `@path` fields refuse known credential files and folders, `tg`'s own folders and the local store,
 including symlink targets. Ordinary hidden working folders are allowed; MCP cannot override
 these protected locations.
 

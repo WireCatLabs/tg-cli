@@ -5159,6 +5159,7 @@ tg bot api set-webhook [options]
 | `--drop-pending-updates <value>` | Pass True to drop all pending updates. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-webhook`
 
@@ -5377,6 +5378,7 @@ tg bot api send-photo [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-live-photo`
 
@@ -5411,6 +5413,7 @@ tg bot api send-live-photo [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-audio`
 
@@ -5446,6 +5449,7 @@ tg bot api send-audio [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-document`
 
@@ -5479,6 +5483,7 @@ tg bot api send-document [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-video`
 
@@ -5519,6 +5524,7 @@ tg bot api send-video [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-animation`
 
@@ -5556,6 +5562,7 @@ tg bot api send-animation [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-voice`
 
@@ -5588,6 +5595,7 @@ tg bot api send-voice [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-video-note`
 
@@ -5619,6 +5627,7 @@ tg bot api send-video-note [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-paid-media`
 
@@ -5651,6 +5660,7 @@ tg bot api send-paid-media [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-media-group`
 
@@ -5676,6 +5686,7 @@ tg bot api send-media-group [options]
 | `--reply-parameters <value>` | Description of the message to reply to. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-location`
 
@@ -5824,6 +5835,7 @@ tg bot api send-poll [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-checklist`
 
@@ -6375,6 +6387,7 @@ tg bot api set-chat-photo [options]
 | `--photo <value>` | New chat photo, uploaded using multipart/form-data. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-chat-photo`
 
@@ -6847,6 +6860,7 @@ tg bot api answer-guest-query [options]
 | `--guest-query-id <value>` | Unique identifier for the query to be answered. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-user-chat-boosts`
 
@@ -7097,6 +7111,7 @@ tg bot api set-my-profile-photo [options]
 | `--photo <value>` | The new profile photo to set. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api remove-my-profile-photo`
 
@@ -7391,6 +7406,7 @@ tg bot api set-business-account-profile-photo [options]
 | `--is-public <value>` | Pass True to set the public photo, which will be visible even if the main photo is hidden by the business account's privacy settings. An account can have only one public photo. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api remove-business-account-profile-photo`
 
@@ -7606,6 +7622,7 @@ tg bot api post-story [options]
 | `--protect-content <value>` | Pass True if the content of the story must be protected from forwarding and screenshotting. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api repost-story`
 
@@ -7649,6 +7666,7 @@ tg bot api edit-story [options]
 | `--areas <value>` | A JSON-serialized list of clickable areas to be shown on the story. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-story`
 
@@ -7682,6 +7700,7 @@ tg bot api answer-web-app-query [options]
 | `--web-app-query-id <value>` | Unique identifier for the query to be answered. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api save-prepared-inline-message`
 
@@ -7702,6 +7721,7 @@ tg bot api save-prepared-inline-message [options]
 | `--allow-channel-chats <value>` | Pass True if the message can be sent to channel chats. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api save-prepared-keyboard-button`
 
@@ -7744,6 +7764,7 @@ tg bot api edit-message-text [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-message-caption`
 
@@ -7789,6 +7810,7 @@ tg bot api edit-message-media [options]
 | `--reply-markup <value>` | A JSON-serialized object for a new inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-message-live-location`
 
@@ -7918,6 +7940,7 @@ tg bot api edit-ephemeral-message-text [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-ephemeral-message-media`
 
@@ -7938,6 +7961,7 @@ tg bot api edit-ephemeral-message-media [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-ephemeral-message-caption`
 
@@ -8134,6 +8158,7 @@ tg bot api send-sticker [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-sticker-set`
 
@@ -8180,6 +8205,7 @@ tg bot api upload-sticker-file [options]
 | `--sticker-format <value>` | Format of the sticker, must be one of "static", "animated", "video". |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api create-new-sticker-set`
 
@@ -8201,6 +8227,7 @@ tg bot api create-new-sticker-set [options]
 | `--needs-repainting <value>` | Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for custom emoji sticker sets only. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api add-sticker-to-set`
 
@@ -8219,6 +8246,7 @@ tg bot api add-sticker-to-set [options]
 | `--sticker <value>` | A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set isn't changed. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-sticker-position-in-set`
 
@@ -8271,6 +8299,7 @@ tg bot api replace-sticker-in-set [options]
 | `--sticker <value>` | A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set remains unchanged. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-sticker-emoji-list`
 
@@ -8358,6 +8387,7 @@ tg bot api set-sticker-set-thumbnail [options]
 | `--format <value>` | Format of the thumbnail, must be one of "static" for a .WEBP or .PNG image, "animated" for a .TGS animation, or "video" for a .WEBM video. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-custom-emoji-sticker-set-thumbnail`
 
@@ -8419,6 +8449,7 @@ tg bot api send-rich-message [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-rich-message-draft`
 
@@ -8440,6 +8471,7 @@ tg bot api send-rich-message-draft [options]
 | `--keep-on-stop <value>` | Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new message. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api answer-inline-query`
 
@@ -8460,6 +8492,7 @@ tg bot api answer-inline-query [options]
 | `--button <value>` | A JSON-serialized object describing a button to be shown above inline query results. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-invoice`
 

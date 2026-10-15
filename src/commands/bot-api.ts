@@ -1,7 +1,6 @@
-import { readFileSync, statSync } from "node:fs"
-import { basename } from "node:path"
+import { statSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import type { ManifestOperation } from "@wirecat/cli-base/codegen"
+import type { ManifestOperation, SchemaNode } from "@wirecat/cli-base/codegen"
 import {
   type ApiCommandInput,
   apiPlainJson,
@@ -13,7 +12,14 @@ import {
   generatedApiCommand,
   prepareRpcApiBody,
 } from "@wirecat/cli-core/cli"
-import { DEFAULT_PERMISSIONS, guardedWrite, levelFor, newOperationId } from "@wirecat/cli-core/sends"
+import {
+  DEFAULT_PERMISSIONS,
+  guardedWrite,
+  levelFor,
+  newOperationId,
+  readUpload,
+  uploadBytes,
+} from "@wirecat/cli-core/sends"
 import type { Command } from "commander"
 import { definitions } from "../bot/generated/definitions.js"
 import { operations } from "../bot/generated/manifest.js"
@@ -31,8 +37,34 @@ const defaults = {
 const keyOf = (operation: ManifestOperation) => `bot.api.${operation.command}`
 const contextOf = (command: Command) => botContext(command.parent ?? command, TELEGRAM_BOT)
 
-export const telegramBotApiCommand = (): Command =>
-  generatedApiCommand({
+/** Whether a request can carry an `@path` file: `prepareRpcApiBody` reads one for every string with a format. */
+const takesFiles = (operation: ManifestOperation): boolean => {
+  const seen = new Set<string>()
+  const walk = (node: SchemaNode | undefined): boolean => {
+    if (!node) return false
+    switch (node.type) {
+      case "ref":
+        if (seen.has(node.ref)) return false
+        seen.add(node.ref)
+        return walk(definitions[node.ref])
+      case "string":
+        return node.format !== undefined
+      case "array":
+        return walk(node.items)
+      case "object":
+        return Object.values(node.properties).some(walk) || walk(node.additionalProperties)
+      case "union":
+      case "allOf":
+        return node.of.some(walk)
+      default:
+        return false
+    }
+  }
+  return operation.request?.schema !== undefined && walk(definitions[operation.request.schema])
+}
+
+export const telegramBotApiCommand = (): Command => {
+  const group = generatedApiCommand({
     operations,
     checkParameter: (name, schema, raw) => checkApiParameter(name, schema, raw, schemas),
     before: (command, operation) => {
@@ -47,6 +79,14 @@ export const telegramBotApiCommand = (): Command =>
       const context = contextOf(command)
       const prepared = prepareRpcApiBody(operation, input, definitions)
       checkApiBody(operation, prepared.text, schemas)
+      // `bot messages send --file`'s refusal, before anything connects; held in memory, so the buffered-upload cap applies.
+      const anyFile = command.opts<{ allowAnyFile?: boolean }>().allowAnyFile === true
+      const files = await Promise.all(
+        prepared.files.map(async ({ field, path }) => {
+          const upload = await readUpload("file", path, { app: TELEGRAM_BOT.app, env: context.env, anyFile })
+          return { field, name: upload.name, bytes: await uploadBytes(upload.source) }
+        }),
+      )
       if (prepared.secrets.length && input.bodySource === "file" && process.platform !== "win32") {
         const path = command.opts<{ bodyFile?: string }>().bodyFile
         if (!path || (statSync(path).mode & 0o077) !== 0)
@@ -88,11 +128,6 @@ export const telegramBotApiCommand = (): Command =>
             target = { tokens, registry, id }
           }
           const call = async () => {
-            const files = prepared.files.map((file) => ({
-              field: file.field,
-              name: basename(file.path),
-              bytes: readFileSync(file.path),
-            }))
             const wait = prepared.value.timeout
             const seconds = wait === undefined ? undefined : Number(String(wait))
             const result = await adapter.api?.(
@@ -137,3 +172,9 @@ export const telegramBotApiCommand = (): Command =>
       })
     },
   })
+  for (const operation of operations.filter(takesFiles))
+    group.commands
+      .find((command) => command.name() === operation.command)
+      ?.option("--allow-any-file", "read @path files even from credential folders or this CLI's own folders")
+  return group
+}
