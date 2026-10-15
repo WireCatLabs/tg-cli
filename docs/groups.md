@@ -291,6 +291,22 @@ chats where you wait for theirs. It reads the local store, not the messages' tex
 tg personal tasks agenda
 ```
 
+`tasks agenda` and `tasks duplicates` take query fields:
+
+- `tag:` and `category:` keep the tasks with that tag or category: `tag:urgent`, `category:money`.
+- `claimed:` says whose claim a task is under: `none`, `mine`, `others` or `any`. Without it, the agenda
+  shows tasks nobody claimed and your own; `claimed:any` shows all of them.
+- `decision:` picks the duplicate pairs: `review`, the default, waits for the reviewing agent, and
+  `unsure` waits for you: `decision:unsure`.
+
+```sh
+tg personal tasks agenda category:money tag:urgent claimed:any
+```
+
+```sh
+tg personal tasks duplicates decision:unsure
+```
+
 `tg skill show follow-ups` prints a daily routine for an AI agent that drafts replies from this list
 and sends nothing.
 
