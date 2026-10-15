@@ -266,7 +266,9 @@ tg personal search messages 'has:link AND "github.com"'  # a link to a site
 A file is found by its name, size and type even when the message has no text. `filename:` compares the
 whole name, ignoring case and accents. Sizes use KB, MB and GB of 1,024. `has:` also takes `attachment`,
 `video`, `audio`, `voice`, `sticker`, `contact`, `location` and `poll`. A link counts when it is in the
-text or only in its preview card.
+text or only in its preview card. To find a phone, an e-mail address, a link's site or a confirmed person
+mentioned in the text, use `phone:`, `email:`, `url:`, `domain:` and `mentions:`; see
+[Mentions](query-language.md#mentions).
 
 <a id="files-preparation-and-archive-gaps"></a>
 
