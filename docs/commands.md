@@ -2910,7 +2910,7 @@ phones, e-mail, links, documents and people's names found in stored messages
 
 ### `tg mentions list`
 
-this account's mentions matching the query, newest first; local store only
+this account's mentions matching the query, newest first; --new for those found since the last review
 
 ```sh
 tg mentions list [query] [options]
@@ -2919,6 +2919,24 @@ tg mentions list [query] [options]
 | Argument | | What it is |
 |---|---|---|
 | `query` | optional | fields below; a bare word is a value, so a phone typed with 8 finds it written with +7. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+| `--new` | undecided mentions found since the last --new run that showed them all; the first run shows every one. |
+
+### `tg mentions domains`
+
+the sites this account's links point to, most linked first, with chats and first and last time
+
+```sh
+tg mentions domains [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | narrows the links counted: the fields below; dismissed links are never counted. |
 
 | Option | What it does |
 |---|---|
@@ -2954,6 +2972,7 @@ tg mentions confirm <id> [person] [options]
 
 | Option | What it does |
 |---|---|
+| `--all-in-chat` | a name: also every undecided place of the same name in its chat. |
 | `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
 ### `tg mentions reject`
@@ -2972,6 +2991,7 @@ tg mentions reject <id> [options]
 
 | Option | What it does |
 |---|---|
+| `--all-in-chat` | a name: also every undecided place of the same name in its chat. |
 | `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
 ### `tg mentions rebuild`
@@ -3481,6 +3501,8 @@ tg tasks add <message> [options]
 |---|---|
 | `--type <name>` | the task's type: question, request, mention or promise. |
 | `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …. |
+| `--attach <task>` | when tasks add listed tasks that may be the same job: link the message to this one instead of opening a task. |
+| `--new` | when tasks add listed tasks that may be the same job: open the task anyway. |
 | `--title <text>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
@@ -3540,6 +3562,97 @@ tg tasks show <task>
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
 
+### `tg tasks similar`
+
+tasks that may be the same job as this one, best first, each with a band — likely, maybe, different — and the reasons; merges nothing
+
+```sh
+tg tasks similar <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many, at most 40 (default 10). |
+
+### `tg tasks duplicates`
+
+pairs of tasks a rule opened that may be one job, newest first, with score and reasons: merge, reject or mark each unsure; --unsure lists the ones left for the owner
+
+```sh
+tg tasks duplicates [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--unsure` | only the pairs the reviewing agent marked unsure. |
+| `--limit <n>` | how many. |
+
+#### `tg tasks duplicates reject`
+
+two tasks are not the same job: the pair leaves the list and is never offered again
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks duplicates reject <dup> <task>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `dup` | required | the task listed as the duplicate, by its id or key. |
+| `task` | required | the task it was paired with. |
+
+#### `tg tasks duplicates unsure`
+
+the fields and the text cannot tell: leave the pair to the owner, who lists it with --unsure
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks duplicates unsure <dup> <task>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `dup` | required | the task listed as the duplicate, by its id or key. |
+| `task` | required | the task it was paired with. |
+
+### `tg tasks merge`
+
+one job seen twice: link every message of the duplicate to the task and close the duplicate dismissed, duplicate-of the task; nothing is deleted, and tasks unmerge undoes it
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks merge <dup> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `dup` | required | the duplicate, by its id or key; it must be open. |
+
+| Option | What it does |
+|---|---|
+| `--into <task>` | the task that stays. |
+
+### `tg tasks unmerge`
+
+undo a merge: reopen the task and remove its duplicate-of relation; messages the merge linked stay linked
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks unmerge <dup>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `dup` | required | the merged task, by its id or key. |
+
 ### `tg tasks agenda`
 
 what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one
@@ -3559,6 +3672,8 @@ tg tasks agenda [query] [options]
 | `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
 | `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
 | `--claimed` | also list tasks someone else holds (tasks claim); hidden by default. |
+| `--category <name>` | only tasks of this category, from the list tasks categories prints. |
+| `--tag <name>` | only tasks with this tag (tags add --task). |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
 ### `tg tasks categories`
@@ -3608,7 +3723,7 @@ tg tasks release <task> [options]
 
 ### `tg tasks close`
 
-close a task: done, or dismissed when it needs no answer; a closed task stays closed
+close a task: done, or dismissed when it needs no answer; a closed task stays closed, unless tasks unmerge reopens a merged one
 
 **Changes something on this computer only.**
 
@@ -3678,7 +3793,7 @@ tg search messages [query] [options]
 | `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
-| `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice,email:me@example.com. |
+| `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice. |
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
@@ -4240,7 +4355,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, account_groups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -4261,7 +4376,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|

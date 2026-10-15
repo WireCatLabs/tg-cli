@@ -5,12 +5,38 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### What's new
+
+- **Tasks that may be one job** (cli-core 0.285.0): `tasks similar <task>` scores the tasks that may be the same
+  job; `tasks duplicates [--unsure]` lists the pairs the rules found, `tasks merge <task> --into <other>` joins them
+  and `tasks unmerge` undoes it; `tasks duplicates reject|unsure` decides a pair. `tasks agenda` takes `--category`
+  and `--tag`, and `config set task_categories.<name>` edits the category list for the whole store.
+- **Mentions** (cli-core 0.285.0): `mentions domains` lists the sites links point to; `mentions list --new` shows
+  what was found since the last look; `mentions confirm|reject <id> --all-in-chat` decides a name in the whole chat;
+  a `t.me` link names its chat or person. `config set phone_countries es,ru` reads numbers written without `+`.
+- **Store version 16**: the mention rules also read the text of notes and stored documents, and one `mentions rebuild`
+  reads the ones stored before; `mentions list` still lists mentions in messages only. The upgrade adds triggers
+  only, so an older tg still opens the store.
+
 ### Changed — may break scripts
 
+- **`tasks add` refuses a task that may be the same job** as an open task, or one closed in the last 14 days
+  (cli-core 0.285.0): exit 2, reason `task.duplicate-candidates`, with the candidates in `details.candidates`.
+  Repeat with `--attach <task>` to link the message to that task, or `--new` to open it anyway; the same holds
+  for `tasks add` over MCP.
+- **`phone:` and `value:` also match a stored number that ends with the typed number's national digits** (8 or
+  more; cli-core 0.285.0), so a number saved before `phone_countries` is found either way. A Russian landline
+  written in groups, `(812) 000-00-01`, is now stored as `+78120000001`, not the bare digits.
 - **tg no longer searches mail** (cli-core 0.285.0, cli-core#1121): `tg search mail` and the MCP `search_mail` are
   gone, and `search all` reads messages and notes but never mail; `--only mail` is refused. `tg search mail …`
   answers ``mail is memo's: install @wirecat/cli-memo, then `memo search mail …` ``. `search notes`, tasks, notes
   and tags stay.
+
+### Fixed
+
+- A title with Cyrillic capitals is found by a lowercase query (cli-core 0.285.0).
+- **A hostile HTML attachment no longer stalls the reader** (cli-core 0.285.0): a page of unclosed tags or comments
+  is read in time linear in its size.
 
 ## 0.57.0 — 15.10.2026
 

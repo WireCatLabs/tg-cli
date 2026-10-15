@@ -779,4 +779,54 @@ export const UNTESTED: Untested[] = [
     reason:
       "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
   },
+
+  ...[
+    ["tasks add", "--attach"],
+    ["tasks add", "--new"],
+    ["tasks duplicates"],
+    ["tasks duplicates", "--unsure"],
+    ["tasks merge"],
+    ["tasks merge", "--into"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    ...(option ? { option } : {}),
+    reason:
+      'cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0)',
+  })),
+
+  ...[
+    ["tasks agenda", "--category"],
+    ["tasks agenda", "--tag"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      'cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") filters the agenda by category and tag through the shared handler tg mounts (0.285.0)',
+  })),
+
+  {
+    command: "mentions list",
+    option: "--new",
+    reason:
+      'cli-core src/cli/messenger/mentions.test.ts ("lists only undecided mentions found since the last --new run") drives this through the shared handler tg mounts (0.285.0)',
+  },
+
+  ...[["mentions confirm"], ["mentions reject"]].map(([command]) => ({
+    command: command as string,
+    option: "--all-in-chat",
+    reason:
+      'cli-core src/store/mentions.test.ts ("decides a name in every undecided place of its chat with --all-in-chat") covers the store write the shared command calls; the flag is parsed by the shared handler tg mounts (0.285.0)',
+  })),
+
+  ...[
+    ["mentions domains", "--limit"],
+    ["mentions domains", "--page"],
+    ["tasks similar", "--limit"],
+    ["tasks duplicates", "--limit"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0)",
+  })),
 ]
