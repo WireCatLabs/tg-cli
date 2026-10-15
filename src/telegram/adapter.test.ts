@@ -16,7 +16,11 @@ import {
 
 type Handler = (value: unknown) => void
 
-const stand = vi.hoisted(() => ({ client: undefined as unknown as FakeClient, options: undefined as unknown }))
+const stand = vi.hoisted(() => ({
+  client: undefined as unknown as FakeClient,
+  options: undefined as unknown,
+  prepareFails: false,
+}))
 
 class Signal {
   readonly handlers = new Set<Handler>()
@@ -258,7 +262,10 @@ class FakeClient {
   #record(method: string, args: unknown[]) {
     this.calls.push({ method, args })
   }
-  prepare = async () => this.#record("prepare", [])
+  prepare = async () => {
+    this.#record("prepare", [])
+    if (stand.prepareFails) throw new Error("no connection")
+  }
   start = async (options: unknown) => {
     this.#record("start", [options])
     return user(1, "Owner", { isSelf: true })
@@ -495,6 +502,16 @@ describe("opening", () => {
     expect(client.calls[0]?.method).toBe("prepare")
     expect(stand.options).toMatchObject({ apiId: 1, apiHash: "h", disableUpdates: true })
     expect(adapter.self()).toBe("1")
+  })
+
+  it("closes the client when loading the logged-in user fails", async () => {
+    stand.prepareFails = true
+    try {
+      await expect(open()).rejects.toThrow("no connection")
+    } finally {
+      stand.prepareFails = false
+    }
+    expect(stand.client.calls.map((call) => call.method)).toEqual(["prepare", "destroy"])
   })
 
   it("sends mtcute's own log lines to the diagnostic stream, never stdout", async () => {

@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A login that fails while opening no longer leaves the Telegram client open**: when loading the logged-in user
+  fails, the adapter closes the client and the session file before the error reaches the command.
+
 ## 0.60.0 — 15.10.2026
 
 ### Changed — may break scripts
