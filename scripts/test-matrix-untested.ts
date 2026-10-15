@@ -661,7 +661,7 @@ export const UNTESTED: Untested[] = [
     ["tasks plan", "--remind-time"],
     ["tasks link", "--chat"],
     ["tasks link", "--kind"],
-    ["tasks agenda", "--due"],
+    ["tasks agenda", "--due-within"],
     ["tasks agenda", "--waiting"],
     ["tasks agenda", "--within"],
   ].map(([command, option]) => ({
@@ -674,9 +674,8 @@ export const UNTESTED: Untested[] = [
     ["tags add", "--task"],
     ["tags remove", "--task"],
     ["tasks plan", "--category"],
-    ["tasks agenda", "--claimed"],
     ["tasks agenda", "--holder"],
-    ["tasks claim", "--for"],
+    ["tasks claim", "--lease"],
     ["tasks claim", "--holder"],
     ["tasks release", "--holder"],
   ].map(([command, option]) => ({
@@ -781,27 +780,16 @@ export const UNTESTED: Untested[] = [
   },
 
   ...[
-    ["tasks add", "--attach"],
+    ["tasks add", "--into"],
     ["tasks add", "--new"],
     ["tasks duplicates"],
-    ["tasks duplicates", "--unsure"],
     ["tasks merge"],
     ["tasks merge", "--into"],
   ].map(([command, option]) => ({
     command: command as string,
     ...(option ? { option } : {}),
     reason:
-      'cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0)',
-  })),
-
-  ...[
-    ["tasks agenda", "--category"],
-    ["tasks agenda", "--tag"],
-  ].map(([command, option]) => ({
-    command: command as string,
-    option,
-    reason:
-      'cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") filters the agenda by category and tag through the shared handler tg mounts (0.285.0)',
+      'cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --into, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0)',
   })),
 
   {
@@ -821,7 +809,7 @@ export const UNTESTED: Untested[] = [
   ...[
     ["mentions domains", "--limit"],
     ["mentions domains", "--page"],
-    ["tasks similar", "--limit"],
+    ["tasks related", "--limit"],
     ["tasks duplicates", "--limit"],
   ].map(([command, option]) => ({
     command: command as string,
