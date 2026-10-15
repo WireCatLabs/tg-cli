@@ -83,7 +83,7 @@ describe("the generated Telegram Bot API", () => {
     expect(form.get("media")).toContain("attach://_api_file_0")
   })
 
-  it("**refuses an @path from a known credential place before connecting**, unless --allow-any-file", async () => {
+  it("**refuses an @path from a known credential place before connecting**, unless bot api --allow-any-file", async () => {
     const root = mkdtempSync(join(tmpdir(), "api-protected-"))
     mkdirSync(join(root, ".ssh"))
     writeFileSync(join(root, ".ssh", "id_ed25519"), "synthetic key")
@@ -94,9 +94,9 @@ describe("the generated Telegram Bot API", () => {
     expect(requests).toEqual([])
     const sent = await invoke(["send-document", "--chat-id", "123", "--document", document, "--allow-any-file"])
     expect(sent.code).toBe(0)
-    expect(requests.map((request) => request.method)).toEqual(["sendDocument"])
-    expect((await invoke(["send-message", "--chat-id", "123", "--text", "x", "--allow-any-file"])).code).not.toBe(0)
-    expect(requests).toHaveLength(1)
+    const before = await invoke(["--allow-any-file", "send-document", "--chat-id", "123", "--document", document])
+    expect(before.code).toBe(0)
+    expect(requests.map((request) => request.method)).toEqual(["sendDocument", "sendDocument"])
   })
 
   // Sparse elsewhere; Windows would write the file out.

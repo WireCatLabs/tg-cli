@@ -65,7 +65,7 @@ beforeAll(async () => {
 
 describe("tasks through tg", () => {
   it("adds, lists, counts and closes a task in the local store without connecting", async () => {
-    const added = await cli(["tasks", "add", PROMISE, "--type", "promise", "--json"])
+    const added = await cli(["tasks", "add", PROMISE, "--type", "promise", "--category", "other", "--json"])
     expect(added.code, added.err).toBe(0)
     const { id } = JSON.parse(added.out).item
 
@@ -82,6 +82,9 @@ describe("tasks through tg", () => {
   })
 
   it("refuses task writes on a profile where tasks are read-only", async () => {
-    expect((await cli(["tasks", "add", PROMISE, "--type", "promise", "--json"], "tasks-readonly")).code).toBe(5)
+    expect(
+      (await cli(["tasks", "add", PROMISE, "--type", "promise", "--category", "other", "--json"], "tasks-readonly"))
+        .code,
+    ).toBe(5)
   })
 })

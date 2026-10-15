@@ -3,6 +3,37 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **`bot api --allow-any-file` sits on `bot api` itself**, not on each operation that takes files: put it once,
+  before or after the method name, and every `@path` field of the call may come from a protected place. Without it,
+  `@path` files from credential places, `tg`'s own folders and the local store are still refused before connecting.
+- **`tasks add` needs `--category <name>`** (cli-core 0.282.0): money, documents, meeting, delivery, access,
+  personal or other; `tasks categories` lists them. Tasks get readable keys such as `Q-15`, and `tasks claim` /
+  `tasks release` hold a task for one agent session.
+- **`permissions` is the only access setting** (cli-core 0.282.0): a config file that still holds `read_only` or
+  `allow` is refused as an unknown setting, and `config migrate` is gone. Settings are read only under their
+  snake_case names; `config set` no longer accepts camelCase names.
+- **One search language** (cli-core 0.281.0): `--language` and `--regex` are gone from `search messages` and
+  `searches create`; write a Lucene regex such as `body:/.*invoice.*/` instead. `conversations embed --workers` is
+  gone. A search saved in the old language is refused when replayed: save it again.
+- **No folder move at start**: folders left in `~/Library` by a release before the WireCat folder are no longer
+  moved.
+
+### What's new
+
+- **`messages sync` opens tasks from what it stored** (cli-core 0.282.0): a question nobody answered, a mention of
+  you; closed once you answer.
+- **A title match comes first in `search notes` and `search all`** (cli-core 0.281.0).
+
+### Fixed
+
+- **The update notice names `tg upgrade` and stays quiet only while `upgrade` runs** (cli-base 0.29.0), so
+  `tasks update` no longer silences it.
+- **Nested `--json` field paths work through lists** (cli-base 0.31.1, cli-core 0.283.0).
+
 ## 0.56.0 — 14.10.2026
 
 ### Changed — may break scripts

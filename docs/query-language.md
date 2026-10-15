@@ -148,17 +148,6 @@ On a large store a short prefix such as `a*` can expand to more than 10,000 word
 lengthen it. Long queries, deep nesting, large patterns and slow scans are refused with `query_limit`,
 not cut short: narrow the chat, the dates or the pattern.
 
-### A JavaScript regular expression: `--regex`
-
-```sh
-tg personal search messages --regex 'invoice\s+\d+' --json
-```
-
-`--regex` is a separate mode. The words you give are one JavaScript regular expression, not a query in
-this language. It is case-insensitive, tested against the full text of every stored message, and runs
-in an isolated worker with time and size limits. A saved search keeps its `--regex`; you cannot add
-`--regex` when you run one with `--saved`.
-
 ## The answer
 
 `--json` returns `{ items, page: { limit, has_more }, next?, missing?, meta }`, even when nothing matched.

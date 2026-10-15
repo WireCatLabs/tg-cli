@@ -341,6 +341,8 @@ the global `--timeout` limits the entire command.
 
 Only schema-declared file fields interpret `@path` as a local upload, including nested
 fields in a `media` JSON array. Ordinary text containing `@` stays literal.
+An `@path` in a protected place is refused before connecting; `bot api --allow-any-file` reads it anyway,
+for every file field of the call.
 Secret fields such as `secret_token` and `provider_token` use stdin or a JSON file readable
 only by its owner; they have no separate argument flags.
 

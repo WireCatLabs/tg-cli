@@ -51,7 +51,10 @@
   "store reindex",
   "tags auto",
   "tasks agenda",
+  "tasks categories",
+  "tasks claim",
   "tasks plan",
+  "tasks release",
   "topics enable",
   "topics order"
 ]
