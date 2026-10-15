@@ -79,7 +79,7 @@ describe("mentions through tg", () => {
 
     const rejected = await tg(["mentions", "reject", String(phone.id), "--as-owner", "--json"])
     expect(rejected.code, rejected.err).toBe(0)
-    expect(JSON.parse(rejected.out)).toMatchObject({ kind: "phone", status: "dismissed" })
+    expect(JSON.parse(rejected.out)).toMatchObject({ item: { kind: "phone", status: "dismissed" } })
   })
 
   it("rebuilds one kind of mention from the stored messages", async () => {
