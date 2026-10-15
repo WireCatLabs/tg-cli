@@ -3,6 +3,20 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **Flags take the shared vocabulary's names**, with no alias (next cli-core): `chats members audit|fetch --budget` →
+  `--max-pages`; `messages sync --estimate` → `--dry-run`; `contacts context --refresh`, `bot contacts show
+  --refresh` and `tags auto --refresh-metadata` → `--sync-first`; `search conversations --refresh` → `--catch-up`;
+  `attachments show --if-sha256` → `--expected-fingerprint`; `replies edit --chats|--not-chats|--people|--not-people`
+  → `--allow-chats|--deny-chats|--allow-people|--deny-people`; `schedule agent|command --once` → `--at-time`;
+  `bot chats moderate --no-ban` → `--no-block`; `chats mark-read --until` → `--until-id`; `tasks add|plan --check` →
+  `--remind-time`; `store export --to` → `--output-dir` and `--kind` → `--include`; `bot store fetch --from` →
+  `--until-id`. The MCP tools' inputs follow: `max_pages`, `until_id`, `expected_fingerprint`, `sync_first`,
+  `remind_time`.
+
 ## 0.58.0 — 15.10.2026
 
 ### What's new
