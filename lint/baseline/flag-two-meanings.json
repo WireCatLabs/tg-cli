@@ -1,18 +1,10 @@
 [
   "--by",
-  "--due",
   "--file",
-  "--for",
   "--kind",
   "--limit",
-  "--max-meetings",
   "--model",
   "--provider",
-  "--revision",
-  "--scope",
   "--source",
-  "--task",
-  "--title",
-  "--type",
-  "--unanswered"
+  "--type"
 ]

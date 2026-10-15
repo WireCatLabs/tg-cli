@@ -3,6 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **Task and server commands take the shared vocabulary's names**, with no alias (next cli-core, cli-base 0.33.0):
+  `tasks similar` → `tasks related`; `tasks duplicates unsure` → `tasks duplicates defer` (permission key
+  `tasks.duplicates.defer`; the stored decision is still `unsure`); `tasks add --attach` → `--into`; `tasks claim
+  --for` → `--lease`; `tasks agenda --due` → `--due-within`; `server logs --lines` → `--limit` (`-n` stays). The MCP
+  tools follow: `tasks_related`, `tasks_duplicates_defer`, `into`, `lease`, `due_within`.
+- **`tasks agenda` and `tasks duplicates` filter with query fields, not flags**: `tasks agenda --tag <name>` →
+  `tag:<name>`, `--category <name>` → `category:<name>`, `--claimed` → `claimed:any`; `tasks duplicates --unsure` →
+  `decision:unsure`. Over MCP, `tasks_agenda` and `tasks_duplicates` take `query` instead.
+
 ## 0.59.0 — 15.10.2026
 
 ### Changed — may break scripts

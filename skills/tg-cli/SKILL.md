@@ -253,10 +253,10 @@ tg personal review --unanswered --transcribe --json  # hear new voices before fi
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks categories --json                # choose a category before tasks add/plan
 tg personal tasks add <ref> --type request --category documents --json
-# exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --attach <task> or --new
+# exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --into <id> or --new
 tg personal tasks duplicates --json               # pairs that may be one job; tasks merge <dup> --into <task>
-tg personal tasks claim <task> --for 30m --json       # take before work; tasks release <task> gives it back
-# tasks agenda omits others’ claims unless --claimed; the default claim lasts 30 minutes.
+tg personal tasks claim <task> --lease 30m --json     # take before work; tasks release <task> gives it back
+# tasks agenda omits others’ claims unless claimed:any; the default claim lasts 30 minutes.
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
 tg personal chats list --json                      # find a chat, take its id
 tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat

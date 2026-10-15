@@ -979,7 +979,7 @@ tg contacts timeline <person> [options]
 
 | Option | What it does |
 |---|---|
-| `--scope <personal\|work>` | only what belongs to personal or to work accounts. |
+| `--scope <scope>` | only what belongs to personal or to work accounts: personal or work. |
 | `--since-time <time>` | nothing older than this ISO 8601 time, or 2h / 1d ago. |
 | `--until-time <time>` | through this ISO 8601 time, or 2h / 1d ago. |
 | `--limit <n>` | at most this many; 50 if not given. |
@@ -1147,7 +1147,7 @@ tg contacts notes edit <person> <id> [options]
 | Option | What it does |
 |---|---|
 | `--file <path>` | read note text from a file; omitted or - reads stdin. |
-| `--revision <number>` | the revision you read before editing. |
+| `--revision <n>` | the revision you read before editing. |
 
 #### `tg contacts notes remove`
 
@@ -2073,7 +2073,7 @@ tg server logs [options]
 
 | Option | What it does |
 |---|---|
-| `-n, --lines <n>` | how many lines. Default: `50`. |
+| `-n, --limit <n>` | how many lines. Default: `50`. |
 
 ### `tg server install`
 
@@ -2868,7 +2868,7 @@ tg tags add <tag> [options]
 | `--chat <chat>` | the chat to tag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--contact <person>` | the person to tag: their id, @username or name, as the local store knows them. |
 | `--message <message>` | the message to tag: its id in --chat, or a msg: locator alone. |
-| `--task <task>` | the task to tag: its id or key, as tasks list shows it. |
+| `--task <id>` | the task to tag: its id or key, as tasks list shows it. |
 
 ### `tg tags remove`
 
@@ -2889,7 +2889,7 @@ tg tags remove <tag> [options]
 | `--chat <chat>` | the chat to untag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--contact <person>` | the person to untag: their id, @username or name, as the local store knows them. |
 | `--message <message>` | the message to untag: its id in --chat, or a msg: locator alone. |
-| `--task <task>` | the task to untag: its id or key, as tasks list shows it. |
+| `--task <id>` | the task to untag: its id or key, as tasks list shows it. |
 | `--source <manual\|auto>` | remove only this ownership claim. |
 
 ### `tg tags list`
@@ -3439,7 +3439,7 @@ tg stats tasks show [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--type <name>` | only this type: question, request, mention or promise. |
+| `--type <type>` | only this type: question, request, mention or promise. |
 
 ### `tg stats charts`
 
@@ -3499,13 +3499,13 @@ tg tasks add <message> [options]
 
 | Option | What it does |
 |---|---|
-| `--type <name>` | the task's type: question, request, mention or promise. |
+| `--type <type>` | the task's type: question, request, mention or promise. |
 | `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …. |
-| `--attach <task>` | when tasks add listed tasks that may be the same job: link the message to this one instead of opening a task. |
+| `--into <id>` | when tasks add listed tasks that may be the same job: link the message to this one instead of opening a task. |
 | `--new` | when tasks add listed tasks that may be the same job: open the task anyway. |
-| `--title <text>` | one line: the action and its object — send Alex the API token. |
+| `--title <title>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
-| `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 
 ### `tg tasks plan`
@@ -3525,9 +3525,9 @@ tg tasks plan <task> [options]
 | Option | What it does |
 |---|---|
 | `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …; a change is kept in the task's history. |
-| `--title <text>` | one line: the action and its object — send Alex the API token. |
+| `--title <title>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
-| `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 
 ### `tg tasks link`
@@ -3562,12 +3562,12 @@ tg tasks show <task>
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
 
-### `tg tasks similar`
+### `tg tasks related`
 
 tasks that may be the same job as this one, best first, each with a band — likely, maybe, different — and the reasons; merges nothing
 
 ```sh
-tg tasks similar <task> [options]
+tg tasks related <task> [options]
 ```
 
 | Argument | | What it is |
@@ -3580,15 +3580,18 @@ tg tasks similar <task> [options]
 
 ### `tg tasks duplicates`
 
-pairs of tasks a rule opened that may be one job, newest first, with score and reasons: merge, reject or mark each unsure; --unsure lists the ones left for the owner
+pairs of tasks a rule opened that may be one job, newest first, with score and reasons: merge, reject or defer each; decision:unsure lists the ones deferred to the owner
 
 ```sh
-tg tasks duplicates [options]
+tg tasks duplicates [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
-| `--unsure` | only the pairs the reviewing agent marked unsure. |
 | `--limit <n>` | how many. |
 
 #### `tg tasks duplicates reject`
@@ -3606,14 +3609,14 @@ tg tasks duplicates reject <dup> <task>
 | `dup` | required | the task listed as the duplicate, by its id or key. |
 | `task` | required | the task it was paired with. |
 
-#### `tg tasks duplicates unsure`
+#### `tg tasks duplicates defer`
 
-the fields and the text cannot tell: leave the pair to the owner, who lists it with --unsure
+the fields and the text cannot tell: leave the pair to the owner, who lists it with decision:unsure
 
 **Changes something on this computer only.**
 
 ```sh
-tg tasks duplicates unsure <dup> <task>
+tg tasks duplicates defer <dup> <task>
 ```
 
 | Argument | | What it is |
@@ -3637,7 +3640,7 @@ tg tasks merge <dup> [options]
 
 | Option | What it does |
 |---|---|
-| `--into <task>` | the task that stays. |
+| `--into <id>` | the task that stays, by its id or key. |
 
 ### `tg tasks unmerge`
 
@@ -3667,13 +3670,10 @@ tg tasks agenda [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--due <span>` | list tasks due within this: 30m, 2h, 1d (default 1d). |
-| `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
-| `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
+| `--due-within <duration>` | list tasks due within this: 30m, 2h, 1d (default 1d). |
+| `--unanswered <duration>` | list chats where someone else wrote last this long ago (default 1d). |
+| `--waiting <duration>` | list chats where you wrote last this long ago (default 7d). |
 | `--within <duration>` | leave out chats silent longer than this: they ended (default 30d). |
-| `--claimed` | also list tasks someone else holds (tasks claim); hidden by default. |
-| `--category <name>` | only tasks of this category, from the list tasks categories prints. |
-| `--tag <name>` | only tasks with this tag (tags add --task). |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
 ### `tg tasks categories`
@@ -3700,7 +3700,7 @@ tg tasks claim <task> [options]
 
 | Option | What it does |
 |---|---|
-| `--for <span>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
+| `--lease <duration>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
 ### `tg tasks release`
@@ -3760,7 +3760,7 @@ tg search all <query> [options]
 |---|---|
 | `--only <resources>` | only these resources, separated by commas: messages, notes; meetings when --source names a meeting account. |
 | `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
-| `--max-meetings <n\|all>` | how many of the meeting account's meetings to look through, newest first; all looks through every one (default 100). |
+| `--max-meetings <n>` | how many of the meeting account's meetings to look through, newest first, or all for every one (default 100). |
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
