@@ -153,7 +153,6 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    Words and quoted phrases include word forms;
    use `exact:` or `--exact` for exact forms. Explicit `text:` still matches forms. The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
-   Use --language legacy for old filters/discovery; --regex remains separate bounded JavaScript iu mode.
    Use --json for query version/coverage. Empty hits do not prove a message never existed.
    --timezone selects a calendar zone; kind:bot and in:bots differ. Term/body regex differ.
    Dates: `date:today`, `date:7d`; files: `filename:*.pdf`, `size>10MB`, `mime:image`;
