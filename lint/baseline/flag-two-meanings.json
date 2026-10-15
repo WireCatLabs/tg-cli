@@ -1,10 +1,8 @@
 [
   "--by",
-  "--check",
   "--due",
   "--file",
   "--for",
-  "--from",
   "--kind",
   "--limit",
   "--max-meetings",
@@ -15,8 +13,6 @@
   "--source",
   "--task",
   "--title",
-  "--to",
   "--type",
-  "--unanswered",
-  "--within"
+  "--unanswered"
 ]

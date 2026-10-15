@@ -296,17 +296,17 @@ One answer carries 512 KiB by default; `--chunk-bytes` allows up to 1 MiB. The f
 file, not that its text has been recognized.
 
 Decode each base64 part, join the parts in byte-offset order, and follow `next_offset_bytes` until it
-is null. Pass the first SHA256 as `--if-sha256` on the next requests: if the source file changed,
+is null. Pass the first SHA256 as `--expected-fingerprint` on the next requests: if the source file changed,
 the request fails and returns no changed bytes. Check the joined file against that hash.
 
 ```sh
-tg personal attachments show msg:telegram/500/7/204 --offset-bytes 524288 --if-sha256 <sha256> --json
+tg personal attachments show msg:telegram/500/7/204 --offset-bytes 524288 --expected-fingerprint <sha256> --json
 ```
 
 ### Through MCP
 
 Find `attachments show` with the normal three tools. Its arguments are `message` (a locator, or an
-id with `chat`), `attachment`, `offset_bytes`, `chunk_bytes` and `if_sha256`. A whole PNG, JPEG or
+id with `chat`), `attachment`, `offset_bytes`, `chunk_bytes` and `expected_fingerprint`. A whole PNG, JPEG or
 WebP image, up to 8000 pixels on each side and 20 million pixels in total, arrives as image
 content; other files arrive as embedded binary resources. A partial resource is a set of bytes, not
 a whole PDF or image. The resource URI is a name, not a download address.
@@ -351,7 +351,7 @@ string is not looking at the page. Read pages 1 to `pdf.page_count`. If neither 
 pixels, report the app's limit instead of inventing text.
 
 `pdf.source_sha256` and `pdf.source_bytes` describe the original PDF; the top-level `sha256` and
-`total_bytes` describe the page image. `--if-sha256` checks the original PDF. `--page` cannot be
+`total_bytes` describe the page image. `--expected-fingerprint` checks the original PDF. `--page` cannot be
 combined with `--offset-bytes` or `--chunk-bytes`. By default, PDFs can be up to 50 MiB, with no fixed page-count limit; a PNG
 allows 4000 pixels on each side and 8 MiB per page. All three values are configurable.
 

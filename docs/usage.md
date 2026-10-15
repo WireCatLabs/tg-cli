@@ -787,7 +787,7 @@ tg personal chats mark-read "Book club"      # up to the newest message
 ```
 
 ```sh
-tg personal chats mark-read "Book club" --until 4242  # only up to this one
+tg personal chats mark-read "Book club" --until-id 4242  # only up to this one
 ```
 
 ```sh
@@ -1224,7 +1224,7 @@ tg personal chats list --offline                  # only from the store, never c
 ```
 
 ```sh
-tg personal messages sync "Project Alpha" --estimate  # how much a fetch would take
+tg personal messages sync "Project Alpha" --dry-run  # how much a fetch would take
 ```
 
 ```sh

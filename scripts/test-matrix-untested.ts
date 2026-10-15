@@ -346,7 +346,7 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "chats members fetch",
-    option: "--budget",
+    option: "--max-pages",
     reason:
       "cli-core src/services/members-fetch.test.ts covers the page budget and the pause between pages; shared option parsing",
   },
@@ -473,7 +473,7 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation",
   },
-  ...["--budget"].map((option) => ({
+  ...["--max-pages"].map((option) => ({
     command: "chats members audit",
     ...(option ? { option } : {}),
     reason:
@@ -614,7 +614,7 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "tags auto",
-    option: "--refresh-metadata",
+    option: "--sync-first",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
@@ -656,9 +656,9 @@ export const UNTESTED: Untested[] = [
   ...[
     ["tasks add", "--title"],
     ["tasks add", "--due"],
-    ["tasks add", "--check"],
+    ["tasks add", "--remind-time"],
     ["tasks plan", "--due"],
-    ["tasks plan", "--check"],
+    ["tasks plan", "--remind-time"],
     ["tasks link", "--chat"],
     ["tasks link", "--kind"],
     ["tasks agenda", "--due"],
@@ -710,9 +710,9 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "schedule command",
-    option: "--once",
+    option: "--at-time",
     reason:
-      "cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --once is parsed by the same code (0.250.1)",
+      "cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1)",
   },
   {
     command: "schedule agent",
@@ -739,9 +739,9 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "schedule agent",
-    option: "--once",
+    option: "--at-time",
     reason:
-      "cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --once is parsed by the same code (0.250.1)",
+      "cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1)",
   },
   ...["--brief", "--full"].map((option) => ({
     command: "",

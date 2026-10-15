@@ -449,7 +449,7 @@ tg personal tags auto                    # write the automatic tags
 tg personal tags list sources:auto      # only the automatic ones
 ```
 
-`--refresh-metadata` reads current descriptions from Telegram before classifying; it is refused with
+`--sync-first` reads current descriptions from Telegram before classifying; it is refused with
 `--dry-run`, which uses the cached descriptions. One run handles at most 500 chats, 50 by default (`--limit`).
 
 Automatic tags never touch yours: a rerun removes only stale automatic ones. Adding a tag the automatic

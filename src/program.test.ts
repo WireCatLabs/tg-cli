@@ -136,7 +136,7 @@ describe("machine output", () => {
     const result = await tg(argv, { adapter })
     expect(result.code).toBe(2)
     expect(result.stdout).toEqual([])
-    expect(result.stderr.join()).toContain("--topic needs the id")
+    expect(result.stderr.join()).toContain("the topic id is empty")
     expect(adapter).not.toHaveBeenCalled()
   })
   it("writes one JSON value to stdout and nothing to stderr", async () => {

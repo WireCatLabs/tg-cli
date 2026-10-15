@@ -189,7 +189,7 @@ tg sales bot messages between @ann Bob       # what both wrote, in the chats bot
 **Telegram's Bot API has no history call.** `messages list` and `messages show` answer from what
 the bot has sent, what `bot watch` received, and what `bot store fetch` imported on this computer,
 and say so. Search needs every word; `"a phrase"`, `-word`, `a OR b` and the filters `from:`,
-`chat:`, `after:`, `before:` and `has:` work, and a typo is corrected. `contacts show --refresh` is
+`chat:`, `after:`, `before:` and `has:` work, and a typo is corrected. `contacts show --sync-first` is
 refused: import older messages with `bot store fetch` first.
 
 `--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `read_other_bots`
@@ -206,7 +206,7 @@ The command sends nothing and marks nothing read.
 These examples use a synthetic chat id and message link:
 
 ```sh
-tg sales bot store fetch -1001234567890 --from https://t.me/c/1234567890/512 --limit 20 --json
+tg sales bot store fetch -1001234567890 --until-id https://t.me/c/1234567890/512 --limit 20 --json
 tg sales bot store fetch -1001234567890 --last 200 --pause 1s
 ```
 
@@ -262,7 +262,7 @@ tg sales bot chats moderate -1001234567890                   # act as the rules 
 
 The bot judges only what `tg sales bot watch` kept or `bot store fetch` imported on this
 computer. Joins are not judged. A removed person cannot come
-back by the link unless `--no-ban`. The rules live in the same file as those of your account profile
+back by the link unless `--no-block`. The rules live in the same file as those of your account profile
 of the same name.
 
 <a id="buttons-the-menu-webhooks"></a>
