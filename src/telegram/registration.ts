@@ -118,6 +118,7 @@ const creationHash = (html: string): string => {
 
 /** App short names are letters and digits; a random tail keeps two profiles from colliding. */
 const randomShortName = (): string =>
+  // biome-ignore lint/security/noSecrets: short-name alphabet, not a key
   `tgcli${[...randomBytes(6)].map((byte) => "abcdefghijklmnopqrstuvwxyz0123456789"[byte % 36]).join("")}`
 
 /** The site answers errors as a short plain sentence; keep it one line and short. */
