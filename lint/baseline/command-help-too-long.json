@@ -61,6 +61,8 @@
   "inbox",
   "mcp",
   "mcp config",
+  "mentions domains",
+  "mentions list",
   "messages comments",
   "messages download",
   "messages links",
@@ -119,7 +121,13 @@
   "tasks agenda",
   "tasks categories",
   "tasks close",
+  "tasks duplicates",
+  "tasks duplicates reject",
+  "tasks duplicates unsure",
+  "tasks merge",
   "tasks plan",
+  "tasks similar",
+  "tasks unmerge",
   "topics create",
   "watch"
 ]

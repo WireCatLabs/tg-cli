@@ -260,6 +260,15 @@ Add what the rules cannot see, such as a promise you made, or close a task that 
 tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other
 ```
 
+If the task may be the same job as an open one, or one closed in the last 14 days, `tasks add` refuses
+with exit code 2 and lists the candidates. Repeat with `--attach <task>` to link the message to that task, or
+with `--new` to open it anyway. `tasks duplicates` lists the pairs the rules found, and
+`tasks merge <task> --into <other>` joins them:
+
+```sh
+tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other --attach <task>
+```
+
 ```sh
 tg personal tasks close <task> --as dismissed --reason no-reply-needed
 ```

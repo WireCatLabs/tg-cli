@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2361 ✅ · 95 ⛔ · 0 ❌** — 486 commands, 1970 options.
+**2358 ✅ · 110 ⛔ · 0 ❌** — 492 commands, 1976 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -491,10 +491,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mentions list` |  | ✅ |  |
 | `mentions list` | `--limit` | ✅ |  |
 | `mentions list` | `--page` | ✅ |  |
+| `mentions list` | `--new` | ⛔ | cli-core src/cli/messenger/mentions.test.ts ("lists only undecided mentions found since the last --new run") drives this through the shared handler tg mounts (0.285.0) |
+| `mentions domains` |  | ✅ |  |
+| `mentions domains` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
+| `mentions domains` | `--page` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
 | `mentions show` |  | ✅ |  |
 | `mentions confirm` |  | ✅ |  |
+| `mentions confirm` | `--all-in-chat` | ⛔ | cli-core src/store/mentions.test.ts ("decides a name in every undecided place of its chat with --all-in-chat") covers the store write the shared command calls; the flag is parsed by the shared handler tg mounts (0.285.0) |
 | `mentions confirm` | `--as-owner` | ✅ |  |
 | `mentions reject` |  | ✅ |  |
+| `mentions reject` | `--all-in-chat` | ⛔ | cli-core src/store/mentions.test.ts ("decides a name in every undecided place of its chat with --all-in-chat") covers the store write the shared command calls; the flag is parsed by the shared handler tg mounts (0.285.0) |
 | `mentions reject` | `--as-owner` | ✅ |  |
 | `mentions rebuild` |  | ✅ |  |
 | `images embed` |  | ✅ |  |
@@ -642,6 +648,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks add` |  | ✅ |  |
 | `tasks add` | `--type` | ✅ |  |
 | `tasks add` | `--category` | ✅ |  |
+| `tasks add` | `--attach` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
+| `tasks add` | `--new` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
 | `tasks add` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks add` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks add` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
@@ -656,12 +664,24 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks link` | `--chat` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks link` | `--kind` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks show` |  | ✅ |  |
+| `tasks similar` |  | ✅ |  |
+| `tasks similar` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
+| `tasks duplicates` |  | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
+| `tasks duplicates` | `--unsure` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
+| `tasks duplicates` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
+| `tasks duplicates reject` |  | ✅ |  |
+| `tasks duplicates unsure` |  | ✅ |  |
+| `tasks merge` |  | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
+| `tasks merge` | `--into` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --attach, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
+| `tasks unmerge` |  | ✅ |  |
 | `tasks agenda` |  | ✅ |  |
 | `tasks agenda` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks agenda` | `--unanswered` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks agenda` | `--waiting` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks agenda` | `--within` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks agenda` | `--claimed` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks agenda` | `--category` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") filters the agenda by category and tag through the shared handler tg mounts (0.285.0) |
+| `tasks agenda` | `--tag` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") filters the agenda by category and tag through the shared handler tg mounts (0.285.0) |
 | `tasks agenda` | `--holder` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tasks categories` |  | ✅ |  |
 | `tasks claim` |  | ✅ |  |
@@ -703,14 +723,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--discover` | ✅ |  |
 | `search messages` | `--timezone` | ✅ |  |
 | `search messages` | `--saved` | ✅ |  |
-| `search mail` |  | ✅ |  |
-| `search mail` | `--source` | ✅ |  |
-| `search mail` | `--limit` | ✅ |  |
-| `search mail` | `--page` | ✅ |  |
-| `search mail` | `--newest` | ✅ |  |
-| `search mail` | `--exact` | ✅ |  |
-| `search mail` | `--context` | ✅ |  |
-| `search mail` | `--timezone` | ✅ |  |
 | `search notes` |  | ✅ |  |
 | `search notes` | `--type` | ✅ |  |
 | `search notes` | `--source` | ✅ |  |

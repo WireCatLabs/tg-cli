@@ -4,3 +4,5 @@
 - `/home/leemour/Projects/AI/tg-cli-wt-standards-lint` (worktree, branch `feat/standards-lint`) — phase 0 command lint wiring; remove after its PR merges; 2026-10-13
 /home/leemour/Projects/AI/tg-cli-wt-baseline-biome — worktree for the Biome baseline exclusion, merged — 2026-10-13
 - `/home/leemour/Projects/AI/tg-cli-wt-core-268` (worktree, branch `chore/cli-core-0.268`) — the cli-core 0.268.0 adoption; remove after its PR merges; temp state folders `/var/tmp/tmp.*` from its test runs; 2026-10-14
+- `backup/source-search-own-baf28a5` (local branch) — the earlier tasks-and-notes version of feat/source-search-own, before the owner reversed it; remove after tg-cli#487 merges; 2026-10-14
+- `/var/tmp/claude/claude-1000/-home-leemour-Projects-AI-cli-meetings/f8b11eda-7650-478e-bf40-39c141742b14/scratchpad/tg-cli-main` (detached worktree of origin/main) — baseline for tg-cli#487's checks; remove after #487 merges; 2026-10-15

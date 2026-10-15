@@ -67,36 +67,23 @@ const invoke = async (argv: string[]) => {
 }
 
 describe("search <resource> adoption", () => {
-  it("search all answers messages, mail and notes, and --only narrows it", async () => {
+  it("search all answers messages and notes, never mail, and --only narrows it", async () => {
     const all = await invoke(["search", "all", "invoice", "--limit", "20", "--exact", "--timezone", "UTC"])
     expect(all.code).toBe(0)
-    expect(new Set(all.answer.items.map(({ kind }: { kind: string }) => kind))).toEqual(
-      new Set(["message", "mail", "note"]),
-    )
+    expect(new Set(all.answer.items.map(({ kind }: { kind: string }) => kind))).toEqual(new Set(["message", "note"]))
     const paged = await invoke(["search", "all", "invoice", "--source", "all", "--page", "1", "--limit", "20"])
     expect(paged.code).toBe(0)
     const notes = await invoke(["search", "all", "invoice", "--only", "notes"])
     expect(notes.answer.items.map(({ kind }: { kind: string }) => kind)).toEqual(["note"])
+    const mail = await invoke(["search", "all", "invoice", "--only", "mail"])
+    expect(mail.code).toBe(2)
+    expect(mail.stderr).toContain("memo search mail")
   })
 
-  it("search mail reads the mailbox only, and search messages never returns mail", async () => {
-    const found = await invoke([
-      "search",
-      "mail",
-      "invoice chat:t1",
-      "--limit",
-      "5",
-      "--newest",
-      "--exact",
-      "--context",
-      "0",
-      "--timezone",
-      "UTC",
-    ])
-    expect(found.code).toBe(0)
-    expect(found.answer.items.map(({ ref }: { ref: string }) => ref)).toEqual(["msg:email/owner%40example.test/t1/m1"])
-    const mailPage = await invoke(["search", "mail", "invoice", "--source", "all", "--page", "1", "--limit", "5"])
-    expect(mailPage.code).toBe(0)
+  it("search mail points to memo, and search messages never returns mail", async () => {
+    const mail = await invoke(["search", "mail", "invoice"])
+    expect(mail.code).toBe(2)
+    expect(mail.stderr).toContain("mail is memo's: install @wirecat/cli-memo, then `memo search mail …`")
     const messagesPage = await invoke(["search", "messages", "invoice", "--page", "1", "--limit", "5"])
     expect(messagesPage.code).toBe(0)
     const messages = await invoke(["search", "messages", "invoice has:text", "--source", "all"])

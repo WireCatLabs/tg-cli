@@ -4,7 +4,7 @@ If you use an AI agent with tg, you do not need to learn this language: describe
 plain words and the agent writes the query. This page is for people who type searches themselves, and
 for anyone who wants every filter: exact operators, every field, presets, date rules and limits.
 
-It is the reference for the queries of `tg personal search messages`, `tg personal search mail`, `tg personal search all`, `tg personal stats messages show`,
+It is the reference for the queries of `tg personal search messages`, `tg personal search all`, `tg personal stats messages show`,
 saved searches, and the `--filter` of [topic search](topic-search.md). For everyday examples start with
 [message search](search.md).
 

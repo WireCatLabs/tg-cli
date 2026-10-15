@@ -73,7 +73,7 @@ tg personal review 'date>1d'
 and the message itself.
 
 ```sh
-tg personal search all "venue"                # messages, mail and notes kept on this computer
+tg personal search all "venue"                # messages and notes kept on this computer
 ```
 
 **Keep your promises.** *"Use tg CLI. What did I promise, and what am I still waiting on?"* `tg personal review`

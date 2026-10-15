@@ -20,6 +20,7 @@
   "images embed",
   "mcp doctor",
   "mcp setup",
+  "mentions domains",
   "messages comments",
   "messages links",
   "metadata get",
@@ -36,7 +37,6 @@
   "schedule command",
   "schedule exec",
   "search conversations",
-  "search mail",
   "setup",
   "stats charts",
   "stats chats newcomers",
@@ -53,8 +53,12 @@
   "tasks agenda",
   "tasks categories",
   "tasks claim",
+  "tasks duplicates unsure",
+  "tasks merge",
   "tasks plan",
   "tasks release",
+  "tasks similar",
+  "tasks unmerge",
   "topics enable",
   "topics order"
 ]

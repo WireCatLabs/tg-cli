@@ -24,5 +24,6 @@
   "replies consents",
   "schedule",
   "stats messages counters",
-  "store gaps"
+  "store gaps",
+  "tasks duplicates"
 ]

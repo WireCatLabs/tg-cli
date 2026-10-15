@@ -140,8 +140,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **Start a search with `tg personal search all`**: messages, mail and notes on this machine in one answer, each hit
-   typed (`message`, `mail`, `note`). Narrow with `tg personal search messages`, `search mail`, `search notes`,
+5. **Start a search with `tg personal search all`**: messages and notes on this machine in one answer, each hit
+   typed (`message`, `note`); mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
    For a natural question or uncertain wording, use `tg personal search messages '<question>' --discover`
    or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
@@ -253,6 +253,8 @@ tg personal review --unanswered --transcribe --json  # hear new voices before fi
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks categories --json                # choose a category before tasks add/plan
 tg personal tasks add <ref> --type request --category documents --json
+# exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --attach <task> or --new
+tg personal tasks duplicates --json               # pairs that may be one job; tasks merge <dup> --into <task>
 tg personal tasks claim <task> --for 30m --json       # take before work; tasks release <task> gives it back
 # tasks agenda omits others’ claims unless --claimed; the default claim lasts 30 minutes.
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
@@ -273,7 +275,7 @@ tg personal messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
 tg personal messages download -1001234567890 4242 --output-dir /tmp/tg --json  # the message's file; answers its path
 tg personal messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m  # every file of the chat; run it again to continue
 tg personal messages transcribe -1001234567890 4242 --json  # a voice note as text; can take up to a minute; never download a model yourself
-tg personal search all "invoice march" --json      # messages, mail and notes kept on this machine
+tg personal search all "invoice march" --json      # messages and notes kept on this machine
 tg personal search messages "invoice march" --json  # Telegram messages only, and Telegram's own search
 tg personal conversations build --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
