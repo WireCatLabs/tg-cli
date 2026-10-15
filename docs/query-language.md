@@ -91,6 +91,11 @@ corrected: to catch several endings, use a wildcard such as `invo*`.
 | `mime` | an attached file's type; a value without `/` matches the first part | `mime:image` |
 | `size` | an attached file's size, in bytes or KB/MB/GB of 1,024 | `size>10MB` |
 | `tag` | your own local tag on the message, its chat or its sender | `tag:work` |
+| `phone` | a phone number found in the text, however it is written | `phone:"+34 600 000 000"` |
+| `email` | an e-mail address found in the text | `email:"ana@example.com"` |
+| `url` | a link found in the text, without tracking parameters | `url:"https://example.com/a"` |
+| `domain` | the site of a link or an address found in the text | `domain:example.com` |
+| `mentions` | a person, organization or document that a found mention is linked to | `mentions:"person:12"` |
 
 Field names are case-sensitive. An unknown field, value or combination is an error, never an empty
 answer and never plain text. A name that the store does not know is not looked up on Telegram.
@@ -99,6 +104,23 @@ answer and never plain text. A name that the store does not know is not looked u
 needs exactly one chat in `chat:` or `--chat`, since topic numbers repeat across groups. `filename`,
 `mime` and `size` match a message when at least one of its files matches. `/` starts a regular
 expression, so quote a full type: `mime:"application/pdf"`.
+
+## Mentions
+
+`tg` finds phones, e-mail addresses, links, documents and people's names in stored messages. Use these
+fields to find the messages that hold them. The finds themselves are listed by `tg mentions list`.
+
+```sh
+tg personal search messages 'phone:"+34 600 000 000"'
+tg personal search messages 'email:"ana@example.com" OR domain:example.com'
+tg personal search messages 'mentions:"person:12"'
+```
+
+Quote a value that has `+` or `@`, since both are operators. A phone is found however it is written:
+`+34 600 000 000` and `600000000` are one phone, and a number without `+` is read with the countries of
+the `phone_countries` setting. `domain:` treats `docs.example.com` as `example.com`. `mentions:` takes the
+reference of a person, an organization or a document, and finds the messages whose mentions you linked to
+it with `tg mentions confirm`.
 
 ## Presets
 
