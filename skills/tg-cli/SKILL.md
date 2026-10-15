@@ -251,6 +251,10 @@ tg personal review 'date>1d' --json          # every message, the owner's too, i
 tg personal review --unanswered --json             # questions, including retained voice transcripts, nobody answered in 24 h
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
+tg personal tasks categories --json                # choose a category before tasks add/plan
+tg personal tasks add <ref> --type request --category documents --json
+tg personal tasks claim <task> --for 30m --json       # take before work; tasks release <task> gives it back
+# tasks agenda omits others’ claims unless --claimed; the default claim lasts 30 minutes.
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
 tg personal chats list --json                      # find a chat, take its id
 tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat

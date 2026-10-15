@@ -425,7 +425,8 @@ tg personal search messages 'invoice NOT tag:work'
 tg personal tags remove work --chat "Book club"
 ```
 
-A tag is your own label on a chat, a person or one message (`--message <id> --chat <chat>`). It is kept
+A tag is your own label on a chat, a person, one message (`--message <id> --chat <chat>`)
+or a task (`--task <id-or-key>`). It is kept
 in the local store only and is never sent to Telegram. `tag:work` finds messages tagged `work`,
 messages in a chat tagged `work` and messages from a person tagged `work`. A tag is 1–32 letters a–z,
 digits and hyphens.
