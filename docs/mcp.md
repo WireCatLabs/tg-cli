@@ -147,10 +147,6 @@ send journal (`tg personal sends list`). Marking read is a separate write, under
 through MCP removes messages only for you, at most ten at a time; channels and supergroups that do
 not allow this are refused. `--permission key=level` changes a level for this server process only.
 
-The old flags `--confirm-send`, `--allow-send`, `--allow-mark-read`, `--allow-delete`,
-`--allow-dangerous` and `--http-confirmation` are accepted with a warning and do not change what the
-agent may do. Remove them from saved app entries.
-
 ## Tools
 
 | Tool | What it does |

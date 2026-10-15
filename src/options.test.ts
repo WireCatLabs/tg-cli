@@ -1077,8 +1077,8 @@ describe("doctor --online", () => {
 })
 
 describe("mcp", () => {
-  it("config leaves out --confirm-send and --allow-dangerous, which show no form any more", async () => {
-    const { code, stdout } = await tg(["mcp", "config", "--confirm-send", "--allow-dangerous", "--json"], {
+  it("config prints the server entry by full path", async () => {
+    const { code, stdout } = await tg(["mcp", "config", "--json"], {
       mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
     } as never)
 
@@ -1086,16 +1086,11 @@ describe("mcp", () => {
     expect(JSON.stringify(json(stdout))).toContain('"mcp"]')
   })
 
-  it("config warns that the --allow-* flags decide nothing now, and leaves them out", async () => {
-    const { code, stdout, stderr } = await tg(
-      ["mcp", "config", "--allow-send", "--allow-mark-read", "--allow-delete", "--json"],
-      {
-        mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
-      } as never,
-    )
+  it("refuses the retired access flags", async () => {
+    const { code } = await tg(["mcp", "config", "--allow-send", "--json"], {
+      mcp: { execPath: "/usr/bin/node", scriptPath: "/opt/tg/dist/bin/tg.js" },
+    } as never)
 
-    expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp"]')
-    expect(stderr.join("\n")).toContain("the profile's permissions do")
+    expect(code).toBe(2)
   })
 })
