@@ -546,14 +546,14 @@ tg personal search messages 'contract chat:"Book club"'
 ```
 
 ```sh
-tg personal search messages "invoice.*(march|april)" --regex
+tg personal search messages 'body:/.*invoice.*(march|april).*/'
 ```
 
 Chat and contact searches need **at least three characters**. `search messages` uses the
 [search query language](query-language.md): `invoice` also finds other forms of the word, `invoic*`
 matches beginnings, and `exact:invoice` only that form. It reads what was fetched or kept by `serve`,
-and asks Telegram's own search too (`--backend archive` for the store only). `--regex` treats the words
-as one JavaScript regular expression instead. More: [message search](search.md). Once you have the
+and asks Telegram's own search too (`--backend archive` for the store only). `body:/…/` matches a regular
+expression against the whole message. More: [message search](search.md). Once you have the
 chat, use its id.
 
 ## Sending

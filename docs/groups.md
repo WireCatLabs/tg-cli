@@ -257,7 +257,7 @@ tg personal tasks list chat:<chat id> "(kind:question OR kind:mention)"
 Add what the rules cannot see, such as a promise you made, or close a task that needs no answer:
 
 ```sh
-tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise
+tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other
 ```
 
 ```sh

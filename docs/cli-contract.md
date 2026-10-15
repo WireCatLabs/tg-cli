@@ -44,8 +44,8 @@ tg personal stats charts <chat> --json
 ```
 
 The older paths `messages stats`, `chats stats` and `tasks stats` no longer exist, and there are no
-aliases for them. If your permissions name these paths, review the change with
-`tg config migrate --dry-run`, then run `tg config migrate`. Permission for statistics does not
+aliases for them. If your permissions name these paths, rename them to the `stats` paths with
+`tg config set`. Permission for statistics does not
 override a denied permission for the messages, chats or tasks underneath.
 
 ## Output and errors
@@ -121,8 +121,7 @@ The global `--dry-run` shows the parsed arguments, the permissions and the decla
 stops before the command runs. It shows no message text and no credentials, does not connect to
 Telegram and does not reserve a send. Targets are shown as not yet resolved. It checks the form of
 the request and your permissions; it does not promise that Telegram will accept the write later.
-Commands with their own `--dry-run`, such as `config migrate`, keep their more detailed preview,
-described in their help.
+Commands with their own `--dry-run` keep their more detailed preview, described in their help.
 
 `operation_id` connects a result to its record in the journal of writes. It does not make a repeat safe.
 `outcome_unknown` means a write may have succeeded: check its result before you try again.

@@ -2700,7 +2700,6 @@ tg conversations embed [options]
 | `--provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
-| `--workers <n>` | local: sessions in parallel, each with its own copy of the model (\~0.7 GB each). |
 | `--threads <n>` | local: threads in all (default: min(8, cores)). |
 | `--concurrency <n>` | remote: requests at once (default: 4). |
 | `--max-tokens <n>` | remote: stop before a run that could send more tokens than this. |
@@ -2831,7 +2830,7 @@ tg attachments text set <chat> [message] [options]
 
 ## `tg tags`
 
-your own labels on chats, people and messages, kept in the local store and never sent; tag: in a search finds them
+your own labels on chats, people, messages and tasks, kept in the local store and never sent; tag: in a search finds them
 
 ### `tg tags auto`
 
@@ -2852,7 +2851,7 @@ tg tags auto [options]
 
 ### `tg tags add`
 
-put tags on one chat, person or message
+put tags on one chat, person, message or task
 
 **Changes something on this computer only.**
 
@@ -2869,10 +2868,11 @@ tg tags add <tag> [options]
 | `--chat <chat>` | the chat to tag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--contact <person>` | the person to tag: their id, @username or name, as the local store knows them. |
 | `--message <message>` | the message to tag: its id in --chat, or a msg: locator alone. |
+| `--task <task>` | the task to tag: its id or key, as tasks list shows it. |
 
 ### `tg tags remove`
 
-take tags off one chat, person or message
+take tags off one chat, person, message or task
 
 **Changes something on this computer only.**
 
@@ -2889,11 +2889,12 @@ tg tags remove <tag> [options]
 | `--chat <chat>` | the chat to untag, or the chat of --message; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--contact <person>` | the person to untag: their id, @username or name, as the local store knows them. |
 | `--message <message>` | the message to untag: its id in --chat, or a msg: locator alone. |
+| `--task <task>` | the task to untag: its id or key, as tasks list shows it. |
 | `--source <manual\|auto>` | remove only this ownership claim. |
 
 ### `tg tags list`
 
-what is tagged: this account's chats and messages, and the people of its messenger
+what is tagged: this account's chats, messages and tasks, and the people of its messenger
 
 ```sh
 tg tags list [query]
@@ -3479,6 +3480,7 @@ tg tasks add <message> [options]
 | Option | What it does |
 |---|---|
 | `--type <name>` | the task's type: question, request, mention or promise. |
+| `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …. |
 | `--title <text>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
@@ -3486,7 +3488,7 @@ tg tasks add <message> [options]
 
 ### `tg tasks plan`
 
-set a task's title, description, due date and next check; nothing reaches the messenger
+set a task's title, description, due date, next check and category; nothing reaches the messenger
 
 **Changes something on this computer only.**
 
@@ -3500,6 +3502,7 @@ tg tasks plan <task> [options]
 
 | Option | What it does |
 |---|---|
+| `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …; a change is kept in the task's history. |
 | `--title <text>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <when>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
@@ -3523,7 +3526,7 @@ tg tasks link <task> [targets] [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by or follow-up-of. |
+| `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by, follow-up-of, duplicate-of or discovered-from. |
 
 ### `tg tasks show`
 
@@ -3555,6 +3558,53 @@ tg tasks agenda [query] [options]
 | `--unanswered <span>` | list chats where someone else wrote last this long ago (default 1d). |
 | `--waiting <span>` | list chats where you wrote last this long ago (default 7d). |
 | `--within <span>` | leave out chats silent longer than this: they ended (default 30d). |
+| `--claimed` | also list tasks someone else holds (tasks claim); hidden by default. |
+| `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
+
+### `tg tasks categories`
+
+the categories a task takes, with what each means and the words a rule picks it by
+
+```sh
+tg tasks categories
+```
+
+### `tg tasks claim`
+
+take an open task so no other agent works it at once; the claim lapses by itself
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks claim <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--for <span>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
+| `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
+
+### `tg tasks release`
+
+give back a task you claimed, before the claim lapses; the owner may release any
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks release <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
 ### `tg tasks close`
 
@@ -3613,7 +3663,7 @@ tg search messages [query] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; --language legacy keeps discovery; with --saved, more words AND-ed to it. |
+| `query` | optional | strict Lucene query: words, "phrases", AND/OR/NOT, field groups and date ranges; with --saved, more words AND-ed to it. |
 
 | Option | What it does |
 |---|---|
@@ -3635,9 +3685,7 @@ tg search messages [query] [options]
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
 | `--discover` | find partial lexical matches and eligible replies in the local archive; results are evidence, not confirmed answers. |
-| `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
 ### `tg search mail`
@@ -3761,9 +3809,7 @@ tg searches create <name> [query] [options]
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit. |
-| `--language <lucene\|legacy>` | the query language: strict Lucene or legacy discovery. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--regex` | the words are one regular expression, case-insensitive, tested against every stored text. |
 | `--by <chat\|sender\|day\|hour>` | what stats messages show --saved counts by. |
 | `--selection <json>` | save the resolved parent ranking query and options from a drilldown. |
 | `--replace` | overwrite a saved search of the same name. |
@@ -4192,20 +4238,6 @@ tg runs path <run-id>
 
 the settings in force, and where each one came from
 
-### `tg config migrate`
-
-replace legacy access settings with permissions, preserving this file's effective levels
-
-**Changes something on this computer only.**
-
-```sh
-tg config migrate [options]
-```
-
-| Option | What it does |
-|---|---|
-| `--dry-run` | show the migration without writing the file. |
-
 ### `tg config show`
 
 the profile, the profiles that exist, and each setting with where it came from
@@ -4230,7 +4262,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, read_only, allow, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, account_groups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -4251,7 +4283,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, read_only, allow, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, searchStemmers.cyrillic, searchStemmers.latin, accountGroups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|
@@ -4816,7 +4848,7 @@ find what this bot's local copy holds, by text
 
 #### `tg bot search messages`
 
-search the messages this bot has read, sent or received on this machine — the local copy only, best match first; every word must appear; "a phrase", -word, a OR b, from: chat: after: before: has:; by text, by --from, or both
+search the messages this bot has read, sent or received on this machine — the local copy only, best match first; a Lucene query: every word must appear; "a phrase", -word, a OR b, from: chat: date: has:; by text, by --from, or both
 
 ```sh
 tg bot search messages [query] [options]
@@ -5119,6 +5151,7 @@ tg bot api [options]
 | Option | What it does |
 |---|---|
 | `--store-token <profile>` | keep a returned authentication token only in this bot profile's OS keyring; never print it. |
+| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-updates`
 
@@ -5159,7 +5192,6 @@ tg bot api set-webhook [options]
 | `--drop-pending-updates <value>` | Pass True to drop all pending updates. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-webhook`
 
@@ -5378,7 +5410,6 @@ tg bot api send-photo [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-live-photo`
 
@@ -5413,7 +5444,6 @@ tg bot api send-live-photo [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-audio`
 
@@ -5449,7 +5479,6 @@ tg bot api send-audio [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-document`
 
@@ -5483,7 +5512,6 @@ tg bot api send-document [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-video`
 
@@ -5524,7 +5552,6 @@ tg bot api send-video [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-animation`
 
@@ -5562,7 +5589,6 @@ tg bot api send-animation [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-voice`
 
@@ -5595,7 +5621,6 @@ tg bot api send-voice [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-video-note`
 
@@ -5627,7 +5652,6 @@ tg bot api send-video-note [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-paid-media`
 
@@ -5660,7 +5684,6 @@ tg bot api send-paid-media [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-media-group`
 
@@ -5686,7 +5709,6 @@ tg bot api send-media-group [options]
 | `--reply-parameters <value>` | Description of the message to reply to. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-location`
 
@@ -5835,7 +5857,6 @@ tg bot api send-poll [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-checklist`
 
@@ -6387,7 +6408,6 @@ tg bot api set-chat-photo [options]
 | `--photo <value>` | New chat photo, uploaded using multipart/form-data. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-chat-photo`
 
@@ -6860,7 +6880,6 @@ tg bot api answer-guest-query [options]
 | `--guest-query-id <value>` | Unique identifier for the query to be answered. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-user-chat-boosts`
 
@@ -7111,7 +7130,6 @@ tg bot api set-my-profile-photo [options]
 | `--photo <value>` | The new profile photo to set. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api remove-my-profile-photo`
 
@@ -7406,7 +7424,6 @@ tg bot api set-business-account-profile-photo [options]
 | `--is-public <value>` | Pass True to set the public photo, which will be visible even if the main photo is hidden by the business account's privacy settings. An account can have only one public photo. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api remove-business-account-profile-photo`
 
@@ -7622,7 +7639,6 @@ tg bot api post-story [options]
 | `--protect-content <value>` | Pass True if the content of the story must be protected from forwarding and screenshotting. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api repost-story`
 
@@ -7666,7 +7682,6 @@ tg bot api edit-story [options]
 | `--areas <value>` | A JSON-serialized list of clickable areas to be shown on the story. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api delete-story`
 
@@ -7700,7 +7715,6 @@ tg bot api answer-web-app-query [options]
 | `--web-app-query-id <value>` | Unique identifier for the query to be answered. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api save-prepared-inline-message`
 
@@ -7721,7 +7735,6 @@ tg bot api save-prepared-inline-message [options]
 | `--allow-channel-chats <value>` | Pass True if the message can be sent to channel chats. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api save-prepared-keyboard-button`
 
@@ -7764,7 +7777,6 @@ tg bot api edit-message-text [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-message-caption`
 
@@ -7810,7 +7822,6 @@ tg bot api edit-message-media [options]
 | `--reply-markup <value>` | A JSON-serialized object for a new inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-message-live-location`
 
@@ -7940,7 +7951,6 @@ tg bot api edit-ephemeral-message-text [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-ephemeral-message-media`
 
@@ -7961,7 +7971,6 @@ tg bot api edit-ephemeral-message-media [options]
 | `--reply-markup <value>` | A JSON-serialized object for an inline keyboard. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api edit-ephemeral-message-caption`
 
@@ -8158,7 +8167,6 @@ tg bot api send-sticker [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api get-sticker-set`
 
@@ -8205,7 +8213,6 @@ tg bot api upload-sticker-file [options]
 | `--sticker-format <value>` | Format of the sticker, must be one of "static", "animated", "video". |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api create-new-sticker-set`
 
@@ -8227,7 +8234,6 @@ tg bot api create-new-sticker-set [options]
 | `--needs-repainting <value>` | Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for custom emoji sticker sets only. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api add-sticker-to-set`
 
@@ -8246,7 +8252,6 @@ tg bot api add-sticker-to-set [options]
 | `--sticker <value>` | A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set isn't changed. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-sticker-position-in-set`
 
@@ -8299,7 +8304,6 @@ tg bot api replace-sticker-in-set [options]
 | `--sticker <value>` | A JSON-serialized object with information about the added sticker. If exactly the same sticker had already been added to the set, then the set remains unchanged. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-sticker-emoji-list`
 
@@ -8387,7 +8391,6 @@ tg bot api set-sticker-set-thumbnail [options]
 | `--format <value>` | Format of the thumbnail, must be one of "static" for a .WEBP or .PNG image, "animated" for a .TGS animation, or "video" for a .WEBM video. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api set-custom-emoji-sticker-set-thumbnail`
 
@@ -8449,7 +8452,6 @@ tg bot api send-rich-message [options]
 | `--reply-markup <value>` | Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove a reply keyboard or to force a reply from the user. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-rich-message-draft`
 
@@ -8471,7 +8473,6 @@ tg bot api send-rich-message-draft [options]
 | `--keep-on-stop <value>` | Pass True to keep the draft in the chat when the button is pressed. The draft will still disappear after a short time or if the bot sends a message. To fully preserve the partial draft, the bot should send it as a new message. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api answer-inline-query`
 
@@ -8492,7 +8493,6 @@ tg bot api answer-inline-query [options]
 | `--button <value>` | A JSON-serialized object describing a button to be shown above inline query results. |
 | `--body <json>` | the request body as JSON; - reads it from stdin. |
 | `--body-file <path>` | the request body from a JSON file; - is stdin. |
-| `--allow-any-file` | read @path files even from credential folders or this CLI's own folders. |
 
 #### `tg bot api send-invoice`
 

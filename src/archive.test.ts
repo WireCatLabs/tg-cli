@@ -226,19 +226,7 @@ describe("the archive, from the store", () => {
       expect(cleared.answer).toMatchObject({ item: { chat: CHAT, cleared: 1 } })
 
       const local = await tg(
-        [
-          "archive",
-          "conversations",
-          "embed",
-          "--chat",
-          CHAT,
-          "--model",
-          "e5-small",
-          "--workers",
-          "2",
-          "--threads",
-          "2",
-        ],
+        ["archive", "conversations", "embed", "--chat", CHAT, "--model", "e5-small", "--threads", "2"],
         store,
         env,
       )
@@ -369,7 +357,7 @@ describe("the archive, from the store", () => {
     expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
     expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
 
-    const found = await tg(["archive", "search", "messages", "--regex", "invoice #\\d+ (paid|due)", "--json"], store)
+    const found = await tg(["archive", "search", "messages", "body:/.*invoice.*/", "--json"], store)
     expect((found.answer as { items: { ref: string }[] }).items.map(({ ref }) => ref)).toEqual([
       `msg:telegram/1/${CHAT}/103`,
       `msg:telegram/1/${CHAT}/101`,

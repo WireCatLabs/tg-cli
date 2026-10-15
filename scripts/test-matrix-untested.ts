@@ -451,19 +451,7 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "searches create",
-    option: "--language",
-    reason:
-      "cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record",
-  },
-  {
-    command: "searches create",
     option: "--timezone",
-    reason:
-      "cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record",
-  },
-  {
-    command: "searches create",
-    option: "--regex",
     reason:
       "cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record",
   },
@@ -681,6 +669,21 @@ export const UNTESTED: Untested[] = [
     option,
     reason:
       'cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0)',
+  })),
+  ...[
+    ["tags add", "--task"],
+    ["tags remove", "--task"],
+    ["tasks plan", "--category"],
+    ["tasks agenda", "--claimed"],
+    ["tasks agenda", "--holder"],
+    ["tasks claim", "--for"],
+    ["tasks claim", "--holder"],
+    ["tasks release", "--holder"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      'cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0)',
   })),
   ...[
     ["tasks add", "--description"],

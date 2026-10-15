@@ -171,8 +171,7 @@ longest key**. A key a profile sets hides the same key and every key under it in
 ```
 
 It works both ways: a profile's `messages: allow` also hides `messages.delete: deny` from `defaults`,
-and deleting asks again, as it does by default. The older `read_only` and `allow` count in the section
-they are written in.
+and deleting asks again, as it does by default.
 
 `inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
 count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
@@ -217,21 +216,10 @@ the requested write. Repeat `--permission key=level` for temporary server permis
 `replies.send` defaults to `deny`; enabling a reply rule alone does not allow sending.
 `tg personal replies audience` can limit replies to selected people or exclude some.
 
-### Older settings that still work
+### Older settings
 
-`read_only: true` reads as every resource `readonly`. A list in `allow` (`send`, `forward`,
-`reaction`, `edit`, `pin`, `read`, `delete`, `groups`, `contacts`, `profile`, `folders`,
-`sessions`) reads as those actions `allow` and the rest `readonly`; deleting still asks. A key in
-`permissions` of the same section wins over both.
-
-### Migrating legacy access settings
-
-`tg config migrate --dry-run --json` previews replacement of `read_only` and `allow` with
-`permissions`, keeping the levels the file gave for personal and bot profiles. It does not write the
-file or connect to Telegram. `tg config migrate --json` applies that migration; a process locked to
-one profile cannot apply a change affecting all profiles. Other settings are kept. A file that
-already uses only `permissions` needs no migration. Once `permissions` are present, `config set`
-refuses changes to `read_only` and `allow`; change the matching permission keys.
+`permissions` is the only access setting. A file that still holds `read_only` or `allow` is refused as an
+unknown setting: replace them with `permissions` keys (`read_only: true` is every resource `readonly`).
 
 ## Change it without opening the file
 
@@ -347,9 +335,8 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `default_profile` | profile-name string | file root |
 | `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
 | `requests_per_minute` | integer ≥ 0 | profile |
-| `color`, `sender_colors`, `catch_up_marks_read`, `search_catch_up`, `record`, `read_only` | boolean | profile |
+| `color`, `sender_colors`, `catch_up_marks_read`, `search_catch_up`, `record` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
-| `allow` | array of allowed actions; legacy format | profile |
 | `read_other_bots` | boolean or array of profile names | bot only |
 | `update_check`, `skill_hint` | boolean | root `defaults` only |
 | `transcribe_with` | `auto`, `messenger`, `local` | profile |

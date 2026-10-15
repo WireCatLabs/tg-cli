@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2362 ✅ · 89 ⛔ · 0 ❌** — 484 commands, 1967 options.
+**2361 ✅ · 95 ⛔ · 0 ❌** — 486 commands, 1970 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -432,7 +432,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed` | `--provider` | ✅ |  |
 | `conversations embed` | `--base-url` | ✅ |  |
 | `conversations embed` | `--dims` | ✅ |  |
-| `conversations embed` | `--workers` | ✅ |  |
 | `conversations embed` | `--threads` | ✅ |  |
 | `conversations embed` | `--concurrency` | ✅ |  |
 | `conversations embed` | `--max-tokens` | ✅ |  |
@@ -481,10 +480,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags add` | `--chat` | ✅ |  |
 | `tags add` | `--contact` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags add` | `--message` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags add` | `--task` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tags remove` |  | ✅ |  |
 | `tags remove` | `--chat` | ✅ |  |
 | `tags remove` | `--contact` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags remove` | `--message` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
+| `tags remove` | `--task` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tags remove` | `--source` | ✅ |  |
 | `tags list` |  | ✅ |  |
 | `mentions list` |  | ✅ |  |
@@ -640,11 +641,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks list` | `--limit` | ✅ |  |
 | `tasks add` |  | ✅ |  |
 | `tasks add` | `--type` | ✅ |  |
+| `tasks add` | `--category` | ✅ |  |
 | `tasks add` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks add` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks add` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks add` | `--check` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks plan` |  | ✅ |  |
+| `tasks plan` | `--category` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tasks plan` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks plan` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks plan` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
@@ -658,6 +661,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks agenda` | `--unanswered` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks agenda` | `--waiting` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
 | `tasks agenda` | `--within` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
+| `tasks agenda` | `--claimed` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks agenda` | `--holder` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks categories` |  | ✅ |  |
+| `tasks claim` |  | ✅ |  |
+| `tasks claim` | `--for` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks claim` | `--holder` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks release` |  | ✅ |  |
+| `tasks release` | `--holder` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
 | `tasks close` |  | ✅ |  |
 | `tasks close` | `--as` | ✅ |  |
 | `tasks close` | `--reason` | ✅ |  |
@@ -690,9 +701,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search messages` | `--exact` | ✅ |  |
 | `search messages` | `--context` | ✅ |  |
 | `search messages` | `--discover` | ✅ |  |
-| `search messages` | `--language` | ✅ |  |
 | `search messages` | `--timezone` | ✅ |  |
-| `search messages` | `--regex` | ✅ |  |
 | `search messages` | `--saved` | ✅ |  |
 | `search mail` |  | ✅ |  |
 | `search mail` | `--source` | ✅ |  |
@@ -738,9 +747,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `searches create` | `--newest` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--exact` | ✅ |  |
 | `searches create` | `--context` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
-| `searches create` | `--language` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--timezone` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
-| `searches create` | `--regex` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--by` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
 | `searches create` | `--selection` | ✅ |  |
 | `searches create` | `--replace` | ⛔ | cli-core src/cli/messenger/searches.test.ts and src/services/searches.test.ts cover named queries, parameter validation and replacement; consumer integration tests cover saved execution and no-record |
@@ -819,8 +826,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `runs search` | `--limit` | ✅ |  |
 | `runs search` | `--page` | ✅ |  |
 | `runs path` |  | ✅ |  |
-| `config migrate` |  | ✅ |  |
-| `config migrate` | `--dry-run` | ✅ |  |
 | `config show` |  | ✅ |  |
 | `config show` | `--bot` | ✅ |  |
 | `config set` |  | ✅ |  |

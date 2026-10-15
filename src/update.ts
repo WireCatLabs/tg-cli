@@ -67,9 +67,7 @@ export const updateNotice = (
     )
       return Promise.resolve(undefined)
 
-    if (argv.includes("upgrade")) return Promise.resolve(undefined)
     const pretty = !argv.includes("--json") && !argv.includes("--jsonl") && (tty ?? process.stdout.isTTY === true)
-    // cli-base 0.8 names the command `update` in its line; tg's is `upgrade`.
     return sharedNotice({
       argv,
       packageName: PACKAGE,
@@ -85,7 +83,7 @@ export const updateNotice = (
       installer: installer(environment),
       env,
       offVariables: ["TG_NO_UPDATE_CHECK"],
-    }).then((line) => line?.replace("`tg update`", "`tg upgrade`"))
+    })
   } catch {
     return Promise.resolve(undefined)
   }

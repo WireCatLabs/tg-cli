@@ -1,13 +1,8 @@
 #!/usr/bin/env node
 import { catchCrashes } from "@wirecat/cli-base"
-import { migrateFolders } from "@wirecat/cli-core/background"
 import { ensureSqlite } from "@wirecat/cli-core/sqlite-runtime"
 
-// Before anything resolves a path, and with the identity spelled out: ../app.js would load the program
-// and its SQLite before ensureSqlite.
-// The move stops with an error when two different stores exist; it reaches the person as the error object.
 const stopCatching = catchCrashes({ cli: "tg", interactive: process.stdout.isTTY === true })
-migrateFolders({ command: "tg", appName: "tg-cli", envPrefix: "TG" })
 await ensureSqlite()
 stopCatching()
 // A static import would load the whole program, and its SQLite, before ensureSqlite could swap it.
