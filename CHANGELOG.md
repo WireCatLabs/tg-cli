@@ -7,6 +7,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **tg starts about a fifth faster after its first run.** It keeps Node's compiled code in a cache, in the
+  system's temporary folder (`NODE_COMPILE_CACHE` moves it): `tg --help` went from about 0.60 to 0.49 seconds.
 - **The task category list lives in one file tg, MAX and memo share** (cli-core 0.298.0):
   `~/.config/WireCat/config.json`, section `task_categories`. It holds only your changes to the default list:
   `"garden": "plants | seedling, es:planta"` adds or replaces a category, `"religion": null` drops a default one,
