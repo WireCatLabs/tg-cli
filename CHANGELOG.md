@@ -22,6 +22,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   hint after a failed app step names the command that was run (`tg <profile> setup --app browser`), and too many
   tries at the site's code is `rate_limited`.
 
+- **A login with a 2FA password no longer prints mtcute's "unhandled error: ConnectionClosedError" stack.** When a
+  login succeeds, mtcute replaces its connections on purpose. The old connection then reported itself closed, and with no
+  listener mtcute printed that as a red stack trace, with the account id, right after the hidden password prompt.
+  tg now listens for these background errors: the expected close shows only with `--verbose`, and any other appears
+  as one line in tg's own words.
+
 - **`bin/release` restarts itself once when the release brings a newer `bin/release`**: folding the changelog and
   raising the version both fast-forward `main`, and the shell went on reading the old script from the byte it had
   reached, so the rest of the run was a mix of old and new text. It now starts the new script over with the same
