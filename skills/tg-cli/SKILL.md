@@ -252,6 +252,7 @@ tg personal review --unanswered --json             # questions, including retain
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks categories --json                # choose a category before tasks add/plan
+# the owner edits the list in ~/.config/WireCat/config.json, section task_categories ("name": "meaning | words" or null)
 tg personal tasks add <ref> --type request --category documents --json
 # exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --into <id> or --new
 tg personal tasks duplicates --json               # pairs that may be one job; tasks merge <dup> --into <task>

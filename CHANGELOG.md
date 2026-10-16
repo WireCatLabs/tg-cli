@@ -3,6 +3,26 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **The task category list lives in one file tg, MAX and memo share** (cli-core 0.298.0):
+  `~/.config/WireCat/config.json`, section `task_categories`. It holds only your changes to the default list:
+  `"garden": "plants | seedling, es:planta"` adds or replaces a category, `"religion": null` drops a default one,
+  and categories a later release adds still arrive. `tasks categories` (MCP `tasks_categories`) names the file in
+  `file`, and `config show` marks the categories that come from it. A file that is not valid JSON or names a bad
+  category is refused with its path. A store moved by `MESSAGING_STORE` reads the `config.json` beside it;
+  `WIRECAT_CONFIG_DIR` moves the file.
+
+### Changed — may break scripts
+
+- **`config set task_categories.<name>` and `config unset task_categories.<name>` now write
+  `~/.config/WireCat/config.json` instead of the store**, keeping the file's other sections;
+  `config unset task_categories` drops the section. A list that an older tg saved in the store moves into the file
+  on the next `config set` or `unset` of a category; until then the store's list still applies. Older tg builds do
+  not read the file.
+
 ## 0.62.0 — 16.10.2026
 
 ### What's new
