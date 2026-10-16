@@ -261,7 +261,8 @@ tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --categ
 ```
 
 `tasks categories` lists the categories a task can take. To change the list, edit the `task_categories`
-section of `~/.config/WireCat/config.json`, a file tg, MAX and memo share. It holds only your changes to the
+section of `~/.config/WireCat/config.json`. Every WireCat tool built on cli-core 0.298.0 or newer reads this file
+(tg since 0.63.0), so one edit changes the list in all of them. It holds only your changes to the
 default list: a name with its meaning and trigger words adds or replaces a category, and `null` drops a default
 one:
 
