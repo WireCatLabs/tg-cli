@@ -141,7 +141,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    Never automatically repeat an unknown write based only on its error code.
 
 5. **Start a search with `tg personal search all`**: messages and notes on this machine in one answer, each hit
-   typed (`message`, `note`); mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
+   typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
    For a natural question or uncertain wording, use `tg personal search messages '<question>' --discover`
    or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
