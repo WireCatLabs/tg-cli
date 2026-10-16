@@ -33,5 +33,6 @@
   "stats messages discussion --min-views",
   "stats messages top --message-kind",
   "stats messages unanswered --older-than",
+  "tasks close --certainty",
   "topics enable --upgrade"
 ]

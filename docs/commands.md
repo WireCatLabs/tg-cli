@@ -3723,7 +3723,7 @@ tg tasks release <task> [options]
 
 ### `tg tasks close`
 
-close a task: done, or dismissed when it needs no answer; a closed task stays closed, unless tasks unmerge reopens a merged one
+close a task: done, or dismissed when it needs no answer. An agent (AI_AGENT or CLAUDECODE set) states its --certainty; below config task_agent_close_min, or with task_agent_close off, the task stays open and the close waits on the owner, who confirms it with tasks close or refuses it with tasks reject. A closed task stays closed, unless tasks unmerge reopens a merged one
 
 **Changes something on this computer only.**
 
@@ -3733,12 +3733,32 @@ tg tasks close <task> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `task` | required | the task's id, as tasks list shows it. |
+| `task` | required | the task's id or key, as tasks list shows it. |
 
 | Option | What it does |
 |---|---|
-| `--as <state>` | how it is closed: done, or dismissed — it needs no answer. |
+| `--as <state>` | how it is closed: done, or dismissed — it needs no answer; the owner may leave it out to confirm an agent's close. |
 | `--reason <text>` | why, kept with the task — no-reply-needed, for example. |
+| `--certainty <n>` | an agent's: how sure it is, 0 to 1, that the task needs nothing more. |
+| `--as-owner` | close it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
+
+### `tg tasks reject`
+
+refuse the close an agent suggested: the task stays open and leaves close:suggested; the agent may close it again
+
+**Changes something on this computer only.**
+
+```sh
+tg tasks reject <task> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `task` | required | the task's id or key, as tasks list shows it. |
+
+| Option | What it does |
+|---|---|
+| `--as-owner` | refuse it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
 ## `tg search`
 
@@ -4355,7 +4375,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, account_groups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -4376,7 +4396,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|

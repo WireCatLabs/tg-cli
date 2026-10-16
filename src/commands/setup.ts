@@ -80,7 +80,7 @@ const agentFor = async (
 }
 
 export const setupCommand = () =>
-  annotate(new Command("setup"), { effects: REMOTE_WRITE })
+  annotate(new Command("setup"), { effects: REMOTE_WRITE, lifetime: "interactive" })
     .description("set up Telegram and connect your agent")
     .configureHelp({ showGlobalOptions: true })
     .addHelpText(
