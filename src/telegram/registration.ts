@@ -62,7 +62,11 @@ export const registerApp = async (
 
   const login = await call("/auth/login", { phone, random_hash: randomHash, password: (await prompts.code()).trim() })
   if (login.text.trim() !== "true") {
-    throw new CliError("authentication_error", `my.telegram.org refused the code: ${siteSays(login.text)}`)
+    const said = siteSays(login.text)
+    throw new CliError(
+      /too many/i.test(said) ? "rate_limited" : "authentication_error",
+      `my.telegram.org refused the code: ${said}`,
+    )
   }
 
   const page = await call("/apps")
@@ -96,31 +100,54 @@ const parseRandomHash = (text: string): string => {
   throw new CliError(/too many/i.test(said) ? "rate_limited" : "provider_error", `my.telegram.org: ${said}`)
 }
 
-/** The app's page, or `undefined` when the account has no app yet. */
+/** The app's page, or `undefined` when the account has no app yet. Read from the text, not the markup around it. */
 export const readApp = (html: string): ApiCredentials | undefined => {
-  const id =
-    /<label for="app_id"[^>]*>[\s\S]*?<\/label>\s*<div[^>]*>\s*<span[^>]*><strong>(\d+)<\/strong><\/span>/.exec(html)
-  const hash = /<label for="app_hash"[^>]*>[\s\S]*?<\/label>\s*<div[^>]*>\s*<span[^>]*>([a-fA-F0-9]+)<\/span>/.exec(
-    html,
-  )
-  return id?.[1] && hash?.[1] ? { id: Number(id[1]), hash: hash[1] } : undefined
+  const text = pageText(html)
+  const id = /api_id:?\s*(\d+)/i.exec(text)?.[1]
+  const hash = /api_hash:?\s*([a-f0-9]{32})\b/i.exec(text)?.[1]
+  return id && hash ? { id: Number(id), hash } : undefined
 }
 
+/**
+ * Creating is safe only from the create form: Telegram gives a number one app, and on any other page
+ * a lookup that failed would ask for a second one.
+ */
 const creationHash = (html: string): string => {
+  const title = titleOf(html)
   const hash = /<input type="hidden" name="hash" value="([a-fA-F0-9]+)"\s*\/?>/.exec(html)?.[1]
-  if (hash) return hash
-  const title = /<title>([^<]*)<\/title>/.exec(html)?.[1]
+  if (hash && (title === "Create new application" || /id="app_create_form"/.test(html))) return hash
+  if (title === "App configuration") {
+    throw new CliError(
+      "invalid_response",
+      "found your app on my.telegram.org but could not read its keys — get them with --app browser",
+    )
+  }
   throw new CliError(
     "invalid_response",
-    `my.telegram.org showed a page this does not know (${singleLine(title ?? "no title")}) — create the app by hand with --app browser`,
+    `my.telegram.org showed a page this does not know (${title ?? "no title"}) — create the app by hand with --app browser`,
   )
 }
+
+const titleOf = (html: string): string | undefined => {
+  const title = /<title>([^<]*)<\/title>/i.exec(html)?.[1]
+  return title === undefined ? undefined : singleLine(title.trim())
+}
+
+const pageText = (html: string): string =>
+  html
+    .replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\\x0a|&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
 
 /** App short names are letters and digits; a random tail keeps two profiles from colliding. */
 const randomShortName = (): string =>
   // biome-ignore lint/security/noSecrets: short-name alphabet, not a key
   `tgcli${[...randomBytes(6)].map((byte) => "abcdefghijklmnopqrstuvwxyz0123456789"[byte % 36]).join("")}`
 
-/** The site answers errors as a short plain sentence; keep it one line and short. */
-const siteSays = (text: string): string =>
-  singleLine(text.replace(/<[^>]+>/g, " ").trim()).slice(0, 200) || "(empty answer)"
+/** The site answers errors as a short sentence. A whole page is named by its title: it can be the app's page, hash and all. */
+const siteSays = (text: string): string => {
+  if (/<html|<title/i.test(text)) return `it answered with the page "${titleOf(text) ?? "untitled"}"`
+  return singleLine(pageText(text)).slice(0, 200) || "(empty answer)"
+}

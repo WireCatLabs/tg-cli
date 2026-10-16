@@ -27,6 +27,7 @@ type Ask = (prompt: string, echo: boolean) => Promise<string>
 const appCredentials = async (
   context: CommandContext,
   how: "browser" | "auto",
+  command: string,
   ask: Ask,
   phone: () => Promise<string>,
   signal?: AbortSignal,
@@ -46,8 +47,8 @@ const appCredentials = async (
       )
     } catch (error) {
       context.renderer.note(
-        `The Telegram application step did not finish. Get your app keys in the browser with ` +
-          `\`tg ${asFirstWord(context.profile)}session start --app browser\`, then rerun setup.`,
+        `The Telegram application step did not finish. Rerun as \`${command} --app browser\` ` +
+          "to copy your app keys from the site yourself.",
       )
       throw error
     }
@@ -150,7 +151,9 @@ export const startSession = async (
 
   const stored = context.credentials.read()
   progress?.("app")
-  const typed: ApiCredentials | undefined = stored ? undefined : await appCredentials(context, app, ask, phone, signal)
+  const typed: ApiCredentials | undefined = stored
+    ? undefined
+    : await appCredentials(context, app, command, ask, phone, signal)
 
   progress?.("login")
   const telegram = await context.open(stored ?? typed)
@@ -228,6 +231,7 @@ export const sessionCommand = () => {
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const { app, qrFile, sms } = this.opts<{ app: "browser" | "auto"; qrFile?: string; sms?: boolean }>()
       const answer = await startSession(context, {
+        command: `tg ${asFirstWord(context.profile)}session start`,
         method,
         app,
         ...(qrFile === undefined ? {} : { qrFile }),

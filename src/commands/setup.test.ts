@@ -293,7 +293,7 @@ describe("setup", () => {
     const result = await execute(["work", "setup", "--app", "auto", "--agent", "none"], { keyring })
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
-    expect(result.stderr.join()).toContain("tg work session start --app browser")
+    expect(result.stderr.join()).toContain("tg work setup --app browser")
     expect(registration.calls).toBe(1)
     expect(result.opened).not.toHaveBeenCalled()
     expect(keyring.entries.size).toBe(0)

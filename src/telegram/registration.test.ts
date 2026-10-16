@@ -16,6 +16,17 @@ const APP_PAGE = `<title>App configuration</title>
         </div>
 </div>`
 
+/** The same keys under markup of another shape, with the theme script the real page leaked into an error. */
+const RESTYLED_APP_PAGE = `<!DOCTYPE html><html><head><title>App configuration</title>
+<script>(function(){var t=null;try{t=new URLSearchParams(location.search).get("theme")}catch(e){}})()\\x0a</script></head>
+<body><dl class="app-keys"><dt>App api_id:</dt><dd><code>7654321</code></dd>
+<dt>App api_hash:</dt><dd><code class="mono">fedcba9876543210fedcba9876543210</code></dd></dl>
+<form id="app_edit_form"><input type="hidden" name="hash" value="5eed"/><input name="app_title" value="tg-cli"/></form>
+</body></html>`
+
+const UNREADABLE_APP_PAGE = `<!DOCTYPE html><html><head><title>App configuration</title></head>
+<body><form id="app_edit_form"><input type="hidden" name="hash" value="5eed"/></form></body></html>`
+
 const CREATE_PAGE = `<title>Create new application</title>
 <form id="app_create_form"><input type="hidden" name="hash" value="c0ffee12"/></form>`
 
@@ -113,6 +124,44 @@ describe("registering the owner's app on my.telegram.org", () => {
 
   it("says too many tries is a rate limit", async () => {
     const { fetch } = site({ "/auth/send_password": "Sorry, too many tries. Please try again later." })
+    await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({ code: "rate_limited" })
+  })
+
+  it("reads the keys from markup of another shape", () => {
+    expect(readApp(RESTYLED_APP_PAGE)).toEqual({ id: 7654321, hash: "fedcba9876543210fedcba9876543210" })
+  })
+
+  it("stops, without creating a second app, when the app page shows keys it cannot read", async () => {
+    const { fetch, seen } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": UNREADABLE_APP_PAGE,
+    })
+    await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({
+      code: "invalid_response",
+      message: expect.stringContaining("could not read its keys"),
+    })
+    expect(seen.map(({ path }) => path)).not.toContain("/apps/create")
+  })
+
+  it("names a page the site answers with by its title, never quoting the keys on it", async () => {
+    const { fetch } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": CREATE_PAGE,
+      "/apps/create": RESTYLED_APP_PAGE,
+    })
+    const failure = await registerApp(prompts, { fetch }).catch((error: Error) => error)
+    expect(failure).toMatchObject({ code: "provider_error" })
+    expect((failure as Error).message).toContain('"App configuration"')
+    expect((failure as Error).message).not.toMatch(/fedcba98|7654321|theme|x0a/)
+  })
+
+  it("says too many tries at the login code is a rate limit", async () => {
+    const { fetch } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "Sorry, too many tries. Please try again later.",
+    })
     await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({ code: "rate_limited" })
   })
 
