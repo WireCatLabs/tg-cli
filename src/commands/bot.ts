@@ -83,7 +83,7 @@ export const TELEGRAM_BOT: BotMessenger = {
       ...(track ? { track } : {}),
       newest: async (chat) => {
         const copy = botCopy("telegram-bot")
-        const known = await copy.read((store) => store.messages(copy.accountOf(botId), chat, { limit: 1 }))
+        const known = await copy.read((store) => store.messages.messages(copy.accountOf(botId), chat, { limit: 1 }))
         if (known.items[0]) return known.items[0].id
         const personalPath = sessionFile(profile, env)
         if (!existsSync(personalPath) && !environment.adapter) return undefined

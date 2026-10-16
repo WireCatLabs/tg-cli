@@ -42,30 +42,32 @@ const message = (fields: Partial<Message> = {}): Message => ({
 describe("a deletion Telegram sends without its chat", () => {
   it("lands only where ids count per account, and only when one message matches", async () => {
     const store = await openStore({ path: fresh() })
-    await store.saveChats(ME, [supergroup, dialog, basicGroup])
-    await store.saveMessages(ME, supergroup.id, [message(), message({ id: "43" })], { via: "history" })
+    await store.chats.saveChats(ME, [supergroup, dialog, basicGroup])
+    await store.messages.saveMessages(ME, supergroup.id, [message(), message({ id: "43" })], { via: "history" })
     const inDialog = [message({ chatId: dialog.id }), message({ id: "44", chatId: dialog.id })]
-    await store.saveMessages(ME, dialog.id, inDialog, { via: "history" })
-    await store.saveMessages(ME, basicGroup.id, [message({ id: "44", chatId: basicGroup.id })], { via: "history" })
+    await store.messages.saveMessages(ME, dialog.id, inDialog, { via: "history" })
+    await store.messages.saveMessages(ME, basicGroup.id, [message({ id: "44", chatId: basicGroup.id })], {
+      via: "history",
+    })
 
-    expect(await store.markDeleted(ME, ["42", "43", "44"], { among })).toBe(1)
-    expect(await store.message(ME, "42", { chatId: dialog.id })).toBeUndefined()
-    expect(await store.message(ME, "42", { chatId: supergroup.id })).toBeDefined()
-    expect(await store.message(ME, "43", { chatId: supergroup.id })).toBeDefined()
-    expect(await store.message(ME, "44", { chatId: dialog.id })).toBeDefined()
-    expect(await store.message(ME, "44", { chatId: basicGroup.id })).toBeDefined()
+    expect(await store.messages.markDeleted(ME, ["42", "43", "44"], { among })).toBe(1)
+    expect(await store.messages.message(ME, "42", { chatId: dialog.id })).toBeUndefined()
+    expect(await store.messages.message(ME, "42", { chatId: supergroup.id })).toBeDefined()
+    expect(await store.messages.message(ME, "43", { chatId: supergroup.id })).toBeDefined()
+    expect(await store.messages.message(ME, "44", { chatId: dialog.id })).toBeDefined()
+    expect(await store.messages.message(ME, "44", { chatId: basicGroup.id })).toBeDefined()
     await store.close()
   })
 
   it("leaves out a chat known only by its `-100…` id", async () => {
     const store = await openStore({ path: fresh() })
-    await store.saveChats(ME, [dialog])
-    await store.saveMessages(ME, dialog.id, [message({ chatId: dialog.id })], { via: "history" })
-    await store.saveMessages(ME, "-1009999", [message({ chatId: "-1009999" })], { via: "update" })
+    await store.chats.saveChats(ME, [dialog])
+    await store.messages.saveMessages(ME, dialog.id, [message({ chatId: dialog.id })], { via: "history" })
+    await store.messages.saveMessages(ME, "-1009999", [message({ chatId: "-1009999" })], { via: "update" })
 
-    expect(await store.markDeleted(ME, ["42"], { among })).toBe(1)
-    expect(await store.message(ME, "42", { chatId: dialog.id })).toBeUndefined()
-    expect(await store.message(ME, "42", { chatId: "-1009999" })).toBeDefined()
+    expect(await store.messages.markDeleted(ME, ["42"], { among })).toBe(1)
+    expect(await store.messages.message(ME, "42", { chatId: dialog.id })).toBeUndefined()
+    expect(await store.messages.message(ME, "42", { chatId: "-1009999" })).toBeDefined()
     await store.close()
   })
 
