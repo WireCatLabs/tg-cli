@@ -97,13 +97,11 @@ describe("search <resource> adoption", () => {
     expect(listed.code).toBe(0)
   })
 
-  it("search notes narrows by type, source, tag and filter, and pages with --offset", async () => {
+  it("search notes narrows by source: in the query, --source, tag and filter, and pages with --offset", async () => {
     const internal = await invoke([
       "search",
       "notes",
-      "invoice",
-      "--type",
-      "internal",
+      "invoice source:internal",
       "--filter",
       "paid",
       "--limit",
