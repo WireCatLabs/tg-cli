@@ -257,7 +257,9 @@ tg personal tasks add <ref> --type request --category documents --json
 tg personal tasks duplicates --json               # pairs that may be one job; tasks merge <dup> --into <task>
 tg personal tasks claim <task> --lease 30m --json     # take before work; tasks release <task> gives it back
 # tasks agenda omits others’ claims unless claimed:any; the default claim lasts 30 minutes.
-tg personal tasks close <task> --as dismissed --reason no-reply-needed --json  # only after the owner says so
+tg personal tasks close <task> --as dismissed --reason no-reply-needed --certainty 0.9 --json  # certainty 0..1
+# below task_agent_close_min (0.8 by default) the task stays open with close_suggestion;
+# the owner confirms with tasks close or refuses with tasks reject; tasks list close:suggested finds them
 tg personal chats list --json                      # find a chat, take its id
 tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat
 tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed

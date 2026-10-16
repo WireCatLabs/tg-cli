@@ -260,9 +260,10 @@ Add what the rules cannot see, such as a promise you made, or close a task that 
 tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other
 ```
 
-If the task may be the same job as an open one, or one closed in the last 14 days, `tasks add` refuses
-with exit code 2 and lists the candidates. Repeat with `--into <task>` to link the message to that task, or
-with `--new` to open it anyway. `tasks duplicates` lists the pairs the rules found, and
+If the task may be the same job as an open one, `tasks add` refuses with exit code 2 and lists the
+candidates. Repeat with `--into <task>` to link the message to that task, or with `--new` to open it anyway.
+If it matches only a task closed in the last 14 days, `tasks add` opens it as a follow-up, linked
+`follow-up-of` the closed one. `tasks duplicates` lists the pairs the rules found, and
 `tasks merge <task> --into <other>` joins them:
 
 ```sh
@@ -271,6 +272,19 @@ tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --categ
 
 ```sh
 tg personal tasks close <task> --as dismissed --reason no-reply-needed
+```
+
+An AI agent that closes a task states how sure it is with `--certainty`, from 0 to 1. Below the store's
+threshold (`task_agent_close_min`, 0.8 by default) the task stays open with a close suggestion;
+`config set task_agent_close off` makes every agent close a suggestion. `tasks list close:suggested` finds
+them. Confirm one with `tasks close <task>`, or refuse it with `tasks reject <task>`:
+
+```sh
+tg personal tasks list close:suggested
+```
+
+```sh
+tg personal tasks reject <task>
 ```
 
 Give a task a title, a due date and a date to look at it again, and link the messages and chats it

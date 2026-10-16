@@ -3,6 +3,37 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **An agent's close can wait for you** (cli-core 0.296.0): `tasks close` run by an AI agent (`AI_AGENT` or
+  `CLAUDECODE` set) states its certainty with `--certainty <0..1>`. Below the store's threshold
+  (`config set task_agent_close_min`, 0.8 by default), or with `config set task_agent_close off`, the task stays open
+  with a close suggestion; `tasks list close:suggested` and `tasks agenda` show it. Confirm it with
+  `tasks close <task>` or refuse it with the new `tasks reject <task>`. `--as-owner` closes as you.
+- **A new task about a task closed in the last 14 days opens as its follow-up**, linked `follow-up-of` the closed
+  one, instead of being refused as a duplicate. It is still refused while an open task may be the same job.
+- **`tasks categories` names categories that left the list** while tasks still carry them, with open and total
+  counts (`unlisted`); `tasks agenda` lists the ones open tasks carry (`unlisted_categories`).
+
+### Changed — may break scripts
+
+- **An agent's `tasks close` must pass `--certainty`** (MCP `tasks_close`: the required `certainty`), or it fails
+  with `task.certainty-required`. Below the threshold the answer has `state: open` and `close_suggestion` set
+  instead of a closed task. A script run from an agent's terminal that closes tasks needs `--certainty`, or
+  `--as-owner` when the owner asked for the close.
+- **59 default task categories instead of 7**, such as `bills`, `health`, `travel`, `fitness` and `subscriptions`;
+  `tasks categories` prints each with its meaning and trigger words. The old seven keep their names, so stored
+  tasks stay valid, but a rule now picks the narrower name: a utility bill is `bills`, not `money`. A filter such as
+  `category:personal` therefore catches fewer new tasks. A store that saved its own list keeps it;
+  `config unset task_categories` takes the new default. A list holds up to 80 categories.
+
+### Fixed
+
+- **Spanish task text is read better**: a rule's category matches other forms of a Spanish trigger word
+  (`pagues` hits `pagar`), and the duplicate check reads Spanish due dates such as `mañana` or `el viernes`.
+
 ## 0.61.0 — 16.10.2026
 
 ### Changed — may break scripts
