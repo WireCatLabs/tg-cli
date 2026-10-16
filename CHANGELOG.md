@@ -3,6 +3,18 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **A closed task's card shows the task that follows it up** (cli-core 0.305.0). `tasks show` prints
+  `task:<id> follow-up-of this task`, and `--json` and MCP return `linked_from`. Before, only the new task named the
+  closed one.
+
+### Fixed
+
+- **A broken config file is named in a short error** (cli-core 0.304.0): the first bad key, never its value.
+
 ## 0.64.0 — 16.10.2026
 
 ### What's new
