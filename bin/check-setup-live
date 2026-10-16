@@ -2,7 +2,8 @@
 # Runs `tg personal setup` as a brand-new user would, to check the two setup fixes of 0.64.0 on the real site:
 # the app keys are read from an existing app (no second app is created) and a 2FA login prints no stack trace.
 #
-#   bin/check-setup-live            # the global `tg`, 0.64.0 or later; asks for your phone and the codes
+#   bin/check-setup-live                 # the global `tg`, 0.64.0 or later; asks for your phone and the codes
+#   bin/check-setup-live --app browser   # only the login half: you paste the app keys yourself
 #
 # The global `tg` runs against a throwaway folder, so the real session, app keys and store are never touched.
 # Afterwards it ends the throwaway login, removes the keys it stored and deletes the folder. The terminal record
@@ -30,15 +31,18 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "tg $have, throwaway folder $dir"
-echo "Answer the questions as on a fresh install. Default --app auto: it logs in to my.telegram.org first."
-script -q -e -c "tg personal setup --agent none" "$dir/terminal.log" && ok=yes || ok=no
+echo "Answer the questions as on a fresh install. Without --app browser it logs in to my.telegram.org first."
+script -q -e -c "tg personal setup --agent none $*" "$dir/terminal.log" && ok=yes || ok=no
 
 echo
 echo "── verdict ──"
 check() { if grep -Eq "$2" "$dir/terminal.log"; then echo "✗ $1"; else echo "✓ $1"; fi; }
 [ "$ok" = yes ] && echo "✓ setup finished" || echo "✗ setup did not finish"
-grep -q "found the app already registered" "$dir/terminal.log" && echo "✓ read the existing app's keys" ||
-  echo "✗ did not read the existing app's keys"
+case " $* " in
+  *" --app browser "*) ;;
+  *) grep -q "found the app already registered" "$dir/terminal.log" && echo "✓ read the existing app's keys" ||
+    echo "✗ did not read the existing app's keys" ;;
+esac
 check "no attempt to create a second app" "did not create the app|registered a new app"
 check "no mtcute stack trace after the login" "unhandled error|ConnectionClosedError|    at "
 check "no page HTML or script in any error" '\\x0a|<script|function\(\)'
