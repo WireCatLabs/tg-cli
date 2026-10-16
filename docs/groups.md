@@ -260,6 +260,24 @@ Add what the rules cannot see, such as a promise you made, or close a task that 
 tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other
 ```
 
+`tasks categories` lists the categories a task can take. To change the list, edit the `task_categories`
+section of `~/.config/WireCat/config.json`, a file tg, MAX and memo share. It holds only your changes to the
+default list: a name with its meaning and trigger words adds or replaces a category, and `null` drops a default
+one:
+
+```json
+{
+  "task_categories": {
+    "garden": "plants | seedling, es:planta",
+    "religion": null
+  }
+}
+```
+
+`config set task_categories.garden "plants | seedling"` and `config unset task_categories.garden` write the
+same file and keep its other sections; `config unset task_categories` brings back the default list. A store
+moved by `MESSAGING_STORE` reads the `config.json` beside it.
+
 If the task may be the same job as an open one, `tasks add` refuses with exit code 2 and lists the
 candidates. Repeat with `--into <task>` to link the message to that task, or with `--new` to open it anyway.
 If it matches only a task closed in the last 14 days, `tasks add` opens it as a follow-up, linked
