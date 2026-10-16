@@ -1,0 +1,45 @@
+#!/usr/bin/env sh
+# Runs `tg personal setup` as a brand-new user would, to check the two setup fixes of 0.64.0 on the real site:
+# the app keys are read from an existing app (no second app is created) and a 2FA login prints no stack trace.
+#
+#   bin/check-setup-live            # the global `tg`, 0.64.0 or later; asks for your phone and the codes
+#
+# The global `tg` runs against a throwaway folder, so the real session, app keys and store are never touched.
+# Afterwards it ends the throwaway login, removes the keys it stored and deletes the folder. The terminal record
+# holds your phone number and codes; it lives only in that folder and only the verdict lines are printed.
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+want=0.64.0
+have=$(tg --version)
+[ "$(printf '%s\n%s\n' "$want" "$have" | sort -V | head -n 1)" = "$want" ] ||
+  { echo "the global tg is $have — update it first: pnpm add -g @wirecat/tg-cli@latest" >&2; exit 1; }
+
+dir=$(mktemp -d "${TMPDIR:-/tmp}/tg-setup-check.XXXXXX")
+export TG_CONFIG_DIR="$dir/config" TG_STATE_DIR="$dir/state" TG_CACHE_DIR="$dir/cache"
+export MESSAGING_STORE="$dir/messages.db"
+unset TG_API_ID TG_API_HASH TG_PROFILE
+cleanup() {
+  tg personal session end >/dev/null 2>&1 || echo "could not end the throwaway login — end it in Telegram → Settings → Devices" >&2
+  (cd "$root" && node --input-type=module -e '
+    import { keyringService, systemKeyring } from "@wirecat/cli-base"
+    systemKeyring.delete(keyringService("tg-cli", process.env.TG_CONFIG_DIR, true), "personal:api")
+  ') >/dev/null 2>&1 || true
+  rm -rf "$dir"
+}
+trap cleanup EXIT INT TERM
+
+echo "tg $have, throwaway folder $dir"
+echo "Answer the questions as on a fresh install. Default --app auto: it logs in to my.telegram.org first."
+script -q -e -c "tg personal setup --agent none" "$dir/terminal.log" && ok=yes || ok=no
+
+echo
+echo "── verdict ──"
+check() { if grep -Eq "$2" "$dir/terminal.log"; then echo "✗ $1"; else echo "✓ $1"; fi; }
+[ "$ok" = yes ] && echo "✓ setup finished" || echo "✗ setup did not finish"
+grep -q "found the app already registered" "$dir/terminal.log" && echo "✓ read the existing app's keys" ||
+  echo "✗ did not read the existing app's keys"
+check "no attempt to create a second app" "did not create the app|registered a new app"
+check "no mtcute stack trace after the login" "unhandled error|ConnectionClosedError|    at "
+check "no page HTML or script in any error" '\\x0a|<script|function\(\)'
+grep -E "could not read its keys|showed a page this does not know|refused the code" "$dir/terminal.log" | sed 's/^/  /' || true
