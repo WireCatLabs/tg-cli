@@ -36,12 +36,30 @@ export const unansweredText = ({ what, check, after }: Unanswered, words: (check
 export interface Feature {
   client: TelegramClient
   login: string | undefined
+  /** The logged-in user's id from the session, without a request; `null` before a login. */
+  self: () => string | null
   inputOf: (reference: string) => Promise<InputPeerLike>
   call: <T>(work: () => Promise<T>) => Promise<T>
+  /** A call that carries a `random_id`, so a retry repeats it. */
+  send: <T>(work: () => Promise<T>) => Promise<T>
   /** A write with no id to repeat it by: no answer means it may have happened, and `what` says what to do. */
   write: <T>(what: string | Unanswered, work: () => Promise<T>) => Promise<T>
   unanswered: (error: unknown, what: string | Unanswered, details?: Record<string, unknown>) => unknown
 }
+
+export interface Sent {
+  message: Message
+  /** Telegram's `random_id` for this send, as a string. Repeat it with `--operation-id` after an unknown outcome. */
+  sendId: string
+}
+
+export const repeatWith = (sendId: string, sendAs: string | undefined): string =>
+  sendAs === undefined ? `--operation-id ${sendId}` : `--operation-id ${sendId} --send-as ${sendAs}`
+
+export const retryDetails = (sendId: string, sendAs: string | undefined) => ({
+  operation_id: sendId,
+  ...(sendAs === undefined ? {} : { sendAs }),
+})
 
 /** No answer is not a refusal: the write may have reached Telegram. Anything else is left for `call` to map. */
 export const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
