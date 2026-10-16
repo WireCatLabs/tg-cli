@@ -377,7 +377,7 @@ tg chats mark-read <chat> [options]
 | Option | What it does |
 |---|---|
 | `--until-id <id>` | only up to this message id; the newest by default. |
-| `--topic <id>` | mark only this forum topic read; unsupported by messengers without topics. |
+| `--topic <id>` | mark only this forum topic read. |
 
 ### `tg chats tracking`
 
@@ -1309,7 +1309,7 @@ tg messages send <chat> [text] [options]
 
 | Option | What it does |
 |---|---|
-| `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
+| `--topic <id>` | send to this forum topic. |
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--comment-to <post>` | comment on this post of the channel; it goes to the post's discussion group. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
@@ -1438,7 +1438,7 @@ tg messages delete <chat> <messages> [options]
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `messages` | required | the message ids, at most 10. |
+| `messages` | required | the message ids, by spaces or commas, at most 10. |
 
 | Option | What it does |
 |---|---|
@@ -1713,7 +1713,7 @@ tg polls create <chat> <question> <answers> [options]
 
 | Option | What it does |
 |---|---|
-| `--topic <id>` | send to this forum topic; unsupported by messengers without topics. |
+| `--topic <id>` | send to this forum topic. |
 | `--multiple` | people may pick several answers. |
 | `--anonymous` | nobody sees who voted for what. |
 | `--revote` | people may change their vote. |

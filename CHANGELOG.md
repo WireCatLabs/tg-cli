@@ -7,6 +7,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **`messages delete` takes message ids separated by commas as well as spaces** (cli-core 0.299.0).
 - **tg starts about a fifth faster after its first run.** It keeps Node's compiled code in a cache, in the
   system's temporary folder (`NODE_COMPILE_CACHE` moves it): `tg --help` went from about 0.60 to 0.49 seconds.
 - **The task category list lives in one file tg, MAX and memo share** (cli-core 0.298.0):
