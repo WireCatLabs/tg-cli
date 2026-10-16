@@ -206,3 +206,20 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
   }
   return error
 }
+
+/**
+ * Errors from mtcute's background work, which no command awaits. Without a listener mtcute prints each with
+ * its stack. A login resets the connections on purpose, and the old one reports itself closed (seen 2026-10-16
+ * right after a 2FA password); mtcute reconnects, and a request that really fails still throws to its caller.
+ */
+export const backgroundError =
+  (write: (line: string) => void, verbose: boolean) =>
+  (error: Error): void => {
+    if (/^Connection closed/.test(error.message)) {
+      if (verbose) write(`[client] ${error.message}`)
+      return
+    }
+    const mapped = toCliError(error)
+    const message = mapped instanceof Error ? mapped.message : String(mapped)
+    write(`[client] ${message.split("\n", 1)[0]}`)
+  }

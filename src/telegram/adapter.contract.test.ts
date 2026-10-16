@@ -69,6 +69,7 @@ class Signal {
  */
 class SeededClient {
   readonly log = { mgr: { handler: undefined as unknown } }
+  readonly onError = new Signal()
   readonly onNewMessage = new Signal()
   readonly onEditMessage = new Signal()
   readonly onDeleteMessage = new Signal()

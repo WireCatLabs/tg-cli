@@ -41,6 +41,7 @@ const page = <T>(items: T[], next?: unknown, total = Number.POSITIVE_INFINITY) =
 class FakeClient {
   readonly calls: { method: string; args: unknown[] }[] = []
   readonly log = { mgr: { handler: undefined as unknown } }
+  readonly onError = new Signal()
   readonly storage = { self: { getCached: (_: boolean) => ({ userId: 1 }) as { userId: number } | null } }
   readonly onNewMessage = new Signal()
   readonly onEditMessage = new Signal()
@@ -521,6 +522,11 @@ describe("opening", () => {
     handler(0, 2, "net", "connected to %s", ["dc2"])
 
     expect(lines).toEqual(["[net] connected to dc2"])
+  })
+
+  it("listens for mtcute's background errors, so it never prints them with their stack", async () => {
+    const { client } = await open()
+    expect(client.onError.handlers.size).toBe(1)
   })
 
   it("asks for updates only when listening", async () => {

@@ -84,6 +84,7 @@ const broadcastStats = () => ({
 class StatsClient {
   readonly calls: { method: string; args: unknown[] }[] = []
   readonly log = { mgr: { handler: undefined as unknown } }
+  readonly onError = { add: () => {} }
   readonly storage = { self: { getCached: () => ({ userId: 1 }) } }
   full: Record<string, unknown> = full()
   answers: Record<string, unknown> = {}

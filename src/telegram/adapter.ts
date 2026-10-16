@@ -70,7 +70,7 @@ import { uploadBlob } from "@wirecat/cli-core/sends"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import type { ApiCredentials } from "./credentials.js"
-import { toCliError } from "./errors.js"
+import { backgroundError, toCliError } from "./errors.js"
 import { ruleFlags } from "./folder-rules.js"
 import { formatHtml } from "./format-html.js"
 import { formatMarkdown } from "./format-markdown.js"
@@ -252,6 +252,7 @@ export class TelegramAdapter {
       network: { middlewares: middlewaresOf(listen ? FLOOD_SLEEP.listening : FLOOD_SLEEP.oneShot, say) },
     })
     this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
+    this.#client.onError.add(backgroundError(write, verbose))
   }
 
   async login(prompts: LoginPrompts): Promise<Account> {

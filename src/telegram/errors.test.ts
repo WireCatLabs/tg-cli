@@ -4,12 +4,13 @@ import {
   MtInvalidPeerTypeError,
   MtMessageNotFoundError,
   MtPeerNotFoundError,
+  MtTimeoutError,
   MtTypeAssertionError,
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
 import { describe, expect, it } from "vitest"
-import { toCliError } from "./errors.js"
+import { backgroundError, toCliError } from "./errors.js"
 
 const rpc = (code: number, text: string, fields: Record<string, unknown> = {}) =>
   Object.assign(new tl.RpcError(code, text), fields)
@@ -154,5 +155,22 @@ describe("mtcute's own errors", () => {
       message: "Telegram refused an argument this command passed",
     })
     expect((unknown as Error).message).not.toContain("birthday")
+  })
+})
+
+describe("mtcute's background errors", () => {
+  const seen = (verbose: boolean, error: Error) => {
+    const lines: string[] = []
+    backgroundError((line) => lines.push(line), verbose)(error)
+    return lines
+  }
+
+  it("keeps the connection a login resets out of the terminal, and shows it with --verbose", () => {
+    expect(seen(false, new Error("Connection closed"))).toEqual([])
+    expect(seen(true, new Error("Connection closed"))).toEqual(["[client] Connection closed"])
+  })
+
+  it("reports any other as one line in tg's words, without its stack", () => {
+    expect(seen(false, new MtTimeoutError(1000))).toEqual(["[client] Telegram did not answer in time"])
   })
 })
