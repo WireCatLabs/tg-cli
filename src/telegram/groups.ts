@@ -62,11 +62,11 @@ export const groupCount = async ({ client }: Feature, group: Peer, listTotal: nu
 }
 
 /** `null` when the group hides its member list from us: that is an answer about the group, not a failure. */
-export const membersOf = async ({ client, login }: Feature, peer: InputPeerLike) => {
+export const membersOf = async ({ client, login, checks }: Feature, peer: InputPeerLike) => {
   try {
     return await client.getChatMembers(peer, { limit: 200 })
   } catch (error) {
-    const known = toCliError(error, login)
+    const known = toCliError(error, checks, login)
     if (known instanceof CliError && known.code === "permission_error") return null
     throw known
   }
@@ -182,7 +182,7 @@ export const admins = (feature: Feature, reference: string): Promise<string[] | 
         .filter((member) => member.status === "creator" || member.status === "admin")
         .map((member) => String(member.user.id))
     } catch (error) {
-      const known = toCliError(error, feature.login)
+      const known = toCliError(error, feature.checks, feature.login)
       if (known instanceof CliError && known.code === "permission_error") return null
       throw known
     }
@@ -405,7 +405,7 @@ export const updateInviteLink = (
 export const answerJoinRequest = (feature: Feature, chatId: string, personId: string, accept: boolean) =>
   feature.call(async () => {
     try {
-      return await answerJoinRequestOf(feature.client, Number(chatId), Number(personId), accept)
+      return await answerJoinRequestOf(feature.client, Number(chatId), Number(personId), accept, feature.checks)
     } catch (error) {
       throw feature.unanswered(error, {
         what: `the request of ${personId} may or may not have been answered`,

@@ -2,6 +2,7 @@ import { join } from "node:path"
 import { Long, MtPeerNotFoundError, tl } from "@mtcute/node"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { openBotHistory } from "./bot-history.js"
+import { bareCheck } from "./feature.js"
 
 const CHAT = "-1000000000700"
 const stand = vi.hoisted(() => ({ client: undefined as unknown as FakeClient, options: undefined as unknown }))
@@ -66,6 +67,7 @@ const open = (extra: Partial<Parameters<typeof openBotHistory>[0]> = {}) =>
     token: "900:synthetic",
     pauseMs: 0,
     newest: async () => "250",
+    checks: bareCheck,
     ...extra,
   })
 

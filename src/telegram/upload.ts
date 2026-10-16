@@ -2,6 +2,7 @@ import type { TelegramClient, UploadedFile } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import { type Upload, uploadBlob } from "@wirecat/cli-core/sends"
 import { toCliError } from "./errors.js"
+import { bareCheck } from "./feature.js"
 import { toUploadParams } from "./map.js"
 
 export const UPLOAD_ATTEMPTS = 3
@@ -21,7 +22,7 @@ export const uploadAttachment = async (
     try {
       return await client.uploadFile({ file: await uploadBlob(upload.source), ...toUploadParams(upload) })
     } catch (error) {
-      const known = toCliError(error)
+      const known = toCliError(error, bareCheck)
       const dropped = known instanceof CliError && ["timeout", "network_error"].includes(known.code)
       if (!dropped) throw error
       if (attempt >= UPLOAD_ATTEMPTS) {

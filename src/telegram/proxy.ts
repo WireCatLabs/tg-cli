@@ -10,6 +10,7 @@ import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-base"
 import { fromFile, type Settings } from "@wirecat/cli-core/cli"
 import { APP, isolated, pathsFor } from "../paths.js"
 import { type ProxyServer, parseProxy, proxyError, proxyLabel } from "../proxy.js"
+import type { Words } from "./feature.js"
 
 type TelegramTransport = ReturnType<typeof proxyTransportFromUrl>
 
@@ -50,7 +51,7 @@ export interface ProxyInUse {
  */
 export const resolveProxy = (
   settings: Pick<Settings, "profile" | "configured" | "shared">,
-  { env = process.env, keyring }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore } = {},
+  { env = process.env, keyring, checks }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore; checks: Words },
 ): ProxyInUse | undefined => {
   const given = env[PROXY_ENV]?.trim()
   if (given) return { proxy: parseProxy(given, PROXY_ENV), from: PROXY_ENV }
@@ -62,7 +63,7 @@ export const resolveProxy = (
   if (proxy.kind === "mtproxy" && !secret)
     throw new CliError(
       "configuration_error",
-      `no secret is stored for the MTProxy ${proxyLabel(proxy)} — run \`tg config set proxy -\` again`,
+      `no secret is stored for the MTProxy ${proxyLabel(proxy)} — run ${checks("config.set", "proxy -")} again`,
     )
   return { proxy: secret ? { ...proxy, secret } : proxy, from }
 }

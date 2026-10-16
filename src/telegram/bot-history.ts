@@ -8,6 +8,7 @@ import type { BotAdapter, EventSink } from "@wirecat/cli-core/cli"
 import type { ProxyServer } from "../proxy.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
+import type { Words } from "./feature.js"
 import { toHistoryChannel, toHistoryMessages } from "./map.js"
 import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
@@ -25,6 +26,7 @@ export interface BotHistoryOptions {
   events?: EventSink
   track?: (reader: Pick<BotHistoryReader, "close">) => void
   proxy?: ProxyServer
+  checks: Words
 }
 
 const numberOf = (id: string, maximum = 2_147_483_647): number => {
@@ -45,8 +47,8 @@ const channelNumber = (chat: string): number => {
   return id
 }
 
-const historyError = (error: unknown) => {
-  const mapped = toCliError(error, "`tg bot auth set`")
+const historyError = (error: unknown, words: Words) => {
+  const mapped = toCliError(error, words, words("bot.auth.set"))
   if (isCliError(mapped)) return mapped
   return new CliError(
     error instanceof Error && error.name === "AbortError" ? "cancelled" : "provider_error",
@@ -78,7 +80,7 @@ export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHis
       throw new CliError("authentication_error", "the history session belongs to a different bot")
   } catch (error) {
     await close()
-    throw historyError(error)
+    throw historyError(error, options.checks)
   }
 
   const channelOf = async (chatId: number) => {
@@ -166,7 +168,7 @@ export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHis
         pending = undefined
         return { items: [], hasMore: false }
       } catch (error) {
-        throw historyError(error)
+        throw historyError(error, options.checks)
       }
     },
   }
