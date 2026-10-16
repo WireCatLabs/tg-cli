@@ -7,6 +7,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
+- **Imported Drive documents retain their Google URL and edit time in shared search** (cli-core 0.301.0). `--source drive:<profile>` selects a registered Drive profile; chat document lists can show the imported title after Drive sync links the stored messages.
+
 - **The MCP server loads only when MCP is served** (cli-core 0.300.0), so other commands start with about a tenth
   fewer files to load.
 
