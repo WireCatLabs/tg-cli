@@ -1,7 +1,10 @@
 #!/usr/bin/env node
+import { enableCompileCache } from "node:module"
 import { catchCrashes } from "@wirecat/cli-base"
 import { ensureSqlite } from "@wirecat/cli-core/sqlite-runtime"
 
+// Compiling about 1,700 module files is most of a start; later runs reuse what this one compiled.
+enableCompileCache()
 const stopCatching = catchCrashes({ cli: "tg", interactive: process.stdout.isTTY === true })
 await ensureSqlite()
 stopCatching()
