@@ -7,7 +7,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### What's new
 
-- **An agent's close can wait for you** (cli-core 0.296.0): `tasks close` run by an AI agent (`AI_AGENT` or
+- **An agent's close can wait for you** (cli-core 0.295.0): `tasks close` run by an AI agent (`AI_AGENT` or
   `CLAUDECODE` set) states its certainty with `--certainty <0..1>`. Below the store's threshold
   (`config set task_agent_close_min`, 0.8 by default), or with `config set task_agent_close off`, the task stays open
   with a close suggestion; `tasks list close:suggested` and `tasks agenda` show it. Confirm it with
@@ -23,6 +23,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   with `task.certainty-required`. Below the threshold the answer has `state: open` and `close_suggestion` set
   instead of a closed task. A script run from an agent's terminal that closes tasks needs `--certainty`, or
   `--as-owner` when the owner asked for the close.
+- **`tasks add` may now refuse a task whose message shares words with an open task's message** (exit code 2,
+  `task.duplicate-candidates`): the duplicate check also reads a task's source message and its newest linked
+  messages, so a rule's task with an empty title is compared by its message. Repeat with `--into <task>` or `--new`.
 - **59 default task categories instead of 7**, such as `bills`, `health`, `travel`, `fitness` and `subscriptions`;
   `tasks categories` prints each with its meaning and trigger words. The old seven keep their names, so stored
   tasks stay valid, but a rule now picks the narrower name: a utility bill is `bills`, not `money`. A filter such as
