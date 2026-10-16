@@ -12,6 +12,15 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **The MCP server loads only when MCP is served** (cli-core 0.300.0), so other commands start with about a tenth
   fewer files to load.
 
+### Fixed
+
+- **`bin/release` restarts itself once when the release brings a newer `bin/release`**: folding the changelog and
+  raising the version both fast-forward `main`, and the shell went on reading the old script from the byte it had
+  reached, so the rest of the run was a mix of old and new text. It now starts the new script over with the same
+  arguments; a second change during that run stops it with `run it again`. The restart also works when
+  `bin/release` was started from another folder by a relative path. Only the repository's own release is affected;
+  the published package does not change.
+
 ## 0.63.0 — 16.10.2026
 
 ### What's new
