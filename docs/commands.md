@@ -3833,11 +3833,10 @@ tg search notes <query> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, tag: and date ranges. |
+| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, tag:, source:internal (written in memo) or source:file (from a notes folder) and date ranges. |
 
 | Option | What it does |
 |---|---|
-| `--type <internal\|file>` | only notes written in memo, or only notes from a folder. |
 | `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
 | `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
 | `--limit <n>` | how many. |
