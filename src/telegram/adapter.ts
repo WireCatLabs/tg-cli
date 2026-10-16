@@ -2,25 +2,16 @@ import { chmodSync, existsSync, mkdirSync } from "node:fs"
 import { dirname } from "node:path"
 import { format } from "node:util"
 import {
-  ChatInviteLink,
-  type DeleteMessageUpdate,
   FileLocation,
-  getMarkedPeerId,
   type InputPeerLike,
   Long,
-  MtcuteError,
-  MtPeerNotFoundError,
-  type Peer,
   PeersIndex,
-  type RawUpdateInfo,
-  type SentCode,
   TelegramClient,
   Message as TgMessage,
   type Poll as TgPoll,
   tl,
-  User,
 } from "@mtcute/node"
-import { CliError, isCliError } from "@wirecat/cli-base"
+import { CliError } from "@wirecat/cli-base"
 import type { TextSpan } from "@wirecat/cli-core"
 import {
   type AccountSession,
@@ -69,52 +60,58 @@ import type {
 import { uploadBlob } from "@wirecat/cli-core/sends"
 import type { ProxyServer } from "../proxy.js"
 import { commentsOf, discussionOf } from "./comments.js"
+import * as contacts from "./contacts.js"
 import type { ApiCredentials } from "./credentials.js"
 import { backgroundError, toCliError } from "./errors.js"
-import { ruleFlags } from "./folder-rules.js"
+import {
+  bareCheck,
+  type Check,
+  type Feature,
+  forwardedCopy,
+  messageNumber,
+  parseSendId,
+  remoteHit,
+  remoteMessage,
+  topicNumber,
+  type Unanswered,
+  unansweredText,
+  unknownIfUnanswered,
+} from "./feature.js"
+import * as folders from "./folders.js"
 import { formatHtml } from "./format-html.js"
 import { formatMarkdown } from "./format-markdown.js"
-import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
+import * as groups from "./groups.js"
+import * as login from "./login.js"
 import {
   type Account,
-  ADMIN_RIGHT_FIELDS,
   answerId,
   attachmentsOf,
   checkSpoiler,
-  type EventOf,
-  eventOf,
-  GROUP_SETTINGS,
-  groupMembersCount,
   peerToChat,
   toAccount,
-  toAccountSession,
   toChat,
-  toDeletions,
-  toFolder,
   toFormatted,
-  toGroupCard,
-  toGroupMember,
   toInputMedia,
   toInputPoll,
-  toInviteLink,
-  toInvitePreview,
-  toLinkChat,
   toMember,
   toMessage,
-  toMessageHit,
   toPoll,
-  toReactionChange,
-  toTopic,
 } from "./map.js"
 import { pollVotersOf } from "./poll-voters.js"
 import { refuseClose, refuseVote } from "./polls.js"
-import { toProfileFacts } from "./profile.js"
 import { proxiedTransport } from "./proxy.js"
 import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
 import { middlewaresOf, sending } from "./sending.js"
 import { type GraphOf, toOfficialChannelStats, toOfficialGraph, toOfficialGroupStats } from "./stats.js"
 import { openSessionStorage } from "./storage.js"
+import * as topics from "./topics.js"
 import { uploadAttachment } from "./upload.js"
+import * as watching from "./watch.js"
+
+export type { Check } from "./feature.js"
+export { ADMIN_RIGHTS, GROUP_SETTINGS } from "./groups.js"
+export type { LoginPrompts } from "./login.js"
+export { HEARTBEAT_TICKS, LOOP_CHECK_MS, STATE_WAIT_MS } from "./watch.js"
 
 export interface AdapterOptions {
   credentials: ApiCredentials
@@ -128,19 +125,11 @@ export interface AdapterOptions {
   catchUp?: boolean
   /** How to log in on this profile, for the error a dropped session gives. */
   login?: string
+  /** How a command is named where an unknown outcome sends a person to check. */
+  checks?: (check: Check) => string
   proxy?: ProxyServer
   /** Where a wait mtcute sits out is said — a warning, so `--quiet` drops it. The diagnostic stream if not given. */
   note?: (message: string) => void
-}
-
-export interface LoginPrompts {
-  method: "qr" | "phone"
-  forceSms?: boolean
-  showQr: (url: string, expires: Date) => void
-  phone: () => Promise<string>
-  code: () => Promise<string>
-  password: () => Promise<string>
-  note: (message: string) => void
 }
 
 export interface Sent {
@@ -149,16 +138,7 @@ export interface Sent {
   sendId: string
 }
 
-/** `https://t.me/name`, `t.me/name` or `@name`, as the name alone. */
-const publicName = (link: string): string =>
-  link
-    .replace(/^(https?:\/\/)?(t\.me|telegram\.me)\//, "")
-    .replace(/^@/, "")
-    .replace(/[/?].*$/, "")
-
 const SAVED = new Set(["me", "self", "saved"])
-
-const PHONE_CODE_RETRIES = ["PHONE_CODE_EMPTY", "PHONE_CODE_EXPIRED", "PHONE_CODE_INVALID", "PHONE_CODE_HASH_EMPTY"]
 interface DialogWalk {
   dialogs: ReturnType<TelegramClient["iterDialogs"]>
   seen: Set<string>
@@ -171,12 +151,6 @@ interface DialogWalk {
 /** Pages of one listing come about a second apart; a page asked for later than this reads fresh dialogs. */
 const DIALOG_WALK_KEPT_MS = 60_000
 
-/** Telegram's own cap on a group's member list. */
-const MEMBERS_MAX = 10_000
-/** Up to 50 pages of a big group back to back is the kind of burst Telegram answers with FLOOD_WAIT. */
-const MEMBER_PAGE_PAUSE_MS = 1000
-/** Pages of 100 that `chats events` reads at most; the rest is `more`. */
-const EVENT_PAGES = 10
 /** The Bot API's deleteMessages cap; assumed for MTProto's getMessages and deleteMessages, not checked against Telegram. */
 const BY_ID_BATCH = 100
 
@@ -197,6 +171,7 @@ export class TelegramAdapter {
   readonly #client: TelegramClient
   readonly #sessionPath: string
   readonly #login: string | undefined
+  readonly #feature: Feature
   readonly #proxyFailed: Promise<never> | undefined
   /** Where the last page of `chats` stopped; any other offset, a failure or a minute's gap starts a new walk. */
   #walk: DialogWalk | undefined
@@ -228,6 +203,7 @@ export class TelegramAdapter {
       login,
       proxy,
       note,
+      checks = bareCheck,
     }: AdapterOptions,
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
@@ -253,82 +229,27 @@ export class TelegramAdapter {
     })
     this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
     this.#client.onError.add(backgroundError(write, verbose))
+    const unanswered = (error: unknown, what: string | Unanswered, details?: Record<string, unknown>) =>
+      unknownIfUnanswered(error, typeof what === "string" ? what : unansweredText(what, checks), details)
+    this.#feature = {
+      client: this.#client,
+      login,
+      inputOf: (reference) => this.#inputOf(reference),
+      call: (work) => this.#call(work),
+      write: (what, work) =>
+        this.#call(async () => {
+          try {
+            return await work()
+          } catch (error) {
+            throw unanswered(error, what)
+          }
+        }),
+      unanswered,
+    }
   }
 
-  async login(prompts: LoginPrompts): Promise<Account> {
-    return this.#call(async () => {
-      if (prompts.method === "phone" && prompts.forceSms) return toAccount(await this.#loginAskingForSms(prompts))
-      const user: User = await this.#client.start({
-        ...(prompts.method === "qr" ? { qrCodeHandler: prompts.showQr } : { phone: prompts.phone }),
-        code: prompts.code,
-        password: prompts.password,
-        codeSentCallback: (sent) => prompts.note(`Telegram sent a login code (${sent.type})`),
-        invalidCodeCallback: (what) => prompts.note(`that ${what} was not accepted — try again`),
-      })
-      return toAccount(user)
-    })
-  }
-
-  /**
-   * mtcute's `start({ forceSms })` without its one failure: when Telegram has no SMS to resend
-   * (`SEND_CODE_UNAVAILABLE`) it aborts the login, though the code it first sent to the app still works.
-   */
-  async #loginAskingForSms(prompts: LoginPrompts): Promise<User> {
-    let needsPassword = false
-    try {
-      return await this.#client.getMe()
-    } catch (error) {
-      if (tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) needsPassword = true
-      else if (!tl.RpcError.is(error, "AUTH_KEY_UNREGISTERED")) throw error
-    }
-    if (!needsPassword) {
-      const phone = await prompts.phone()
-      let sent: SentCode | undefined
-      try {
-        const answer = await this.#client.sendCode({ phone })
-        if (answer instanceof User) return answer
-        sent = answer
-      } catch (error) {
-        if (!tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) throw error
-        needsPassword = true
-      }
-      if (sent) {
-        if (sent.type === "app" || sent.type === "email") {
-          try {
-            sent = await this.#client.resendCode({ phone, phoneCodeHash: sent.phoneCodeHash })
-          } catch (error) {
-            if (!tl.RpcError.is(error, "SEND_CODE_UNAVAILABLE")) throw error
-            prompts.note("Telegram offers no SMS for this account")
-          }
-        }
-        if (sent.type === "email_required") throw new MtcuteError("Email login setup is required to sign in")
-        prompts.note(`Telegram sent a login code (${sent.type})`)
-        for (;;) {
-          try {
-            return await this.#client.signIn({
-              phone,
-              phoneCodeHash: sent.phoneCodeHash,
-              phoneCode: await prompts.code(),
-            })
-          } catch (error) {
-            if (tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) {
-              needsPassword = true
-              break
-            }
-            if (!PHONE_CODE_RETRIES.some((text) => tl.RpcError.is(error, text))) throw error
-            prompts.note("that code was not accepted — try again")
-          }
-        }
-      }
-    }
-    for (;;) {
-      try {
-        return await this.#client.checkPassword(await prompts.password())
-      } catch (error) {
-        if (!tl.RpcError.is(error, "PASSWORD_HASH_INVALID")) throw error
-        prompts.note("that password was not accepted — try again")
-      }
-    }
+  login(prompts: login.LoginPrompts): Promise<Account> {
+    return login.login(this.#feature, prompts)
   }
 
   /** The logged-in user's id from the session, without a request; `null` before a login. */
@@ -421,23 +342,12 @@ export class TelegramAdapter {
     })
   }
 
-  /** Telegram reads a thread with messages.search and its top message id (core.telegram.org/api/threads). */
   topicHistory(
     reference: string,
     threadId: string,
-    { limit, before }: { limit: number; before?: string },
+    window: { limit: number; before?: string },
   ): Promise<Page<Message>> {
-    const thread = topicNumber(threadId)
-    const offset = before === undefined ? undefined : messageNumber(before, "`id<` takes a message id")
-    return this.#call(async () => {
-      const page = await this.#client.searchMessages({
-        chatId: await this.#inputOf(reference),
-        threadId: thread,
-        limit,
-        ...(offset === undefined ? {} : { offset }),
-      })
-      return { items: page.map(remoteMessage).reverse(), hasMore: page.next !== undefined }
-    })
+    return topics.topicHistory(this.#feature, reference, threadId, window)
   }
 
   history(reference: string, { limit, before }: { limit: number; before?: string }): Promise<Page<Message>> {
@@ -556,64 +466,25 @@ export class TelegramAdapter {
       const found = dialog ? dialog.peer : await this.#client.getPeer(peer)
       const chat = dialog ? toChat(dialog) : peerToChat(found)
       if (chat.kind !== "group") return { ...chat, members: null }
-      const members = await this.#membersOf(peer)
+      const members = await groups.membersOf(this.#feature, peer)
       return {
         ...chat,
-        participantsCount: await this.#groupCount(found, members?.total ?? null),
+        participantsCount: await groups.groupCount(this.#feature, found, members?.total ?? null),
         members: members?.map((member) => toMember(member.user)) ?? null,
       }
     })
   }
 
-  /** How many profile photos they show and the oldest one's date: the newest first, so the last page holds it. */
   photos(person: string): Promise<{ count: number; oldestAt: string | null }> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(person)
-      const newest = await this.#client.getProfilePhotos(peer, { limit: 1 })
-      if (newest.total <= 1) return { count: newest.total, oldestAt: newest[0]?.date.toISOString() ?? null }
-      const [oldest] = await this.#client.getProfilePhotos(peer, { offset: newest.total - 1, limit: 1 })
-      return { count: newest.total, oldestAt: oldest?.date.toISOString() ?? null }
-    })
+    return contacts.photos(this.#feature, person)
   }
 
-  /** A person, their bio, and the groups this account shares with them — newest conversation first. */
   contact(reference: string): Promise<PersonCard> {
-    return this.#call(async () => {
-      const { user, full, dialog, chats } = await this.#personOf(reference)
-      return {
-        ...toMember(user),
-        description: full.bio || null,
-        lastMessagedAt: dialog ? (toChat(dialog).lastMessageAt ?? null) : null,
-        chats,
-      }
-    })
+    return contacts.contact(this.#feature, reference)
   }
 
-  /** The same three requests as `contact`, with everything Telegram said kept. */
   profile(reference: string): Promise<ProfileFacts> {
-    return this.#call(async () => {
-      const { full, chats } = await this.#personOf(reference)
-      return toProfileFacts(full, chats)
-    })
-  }
-
-  async #personOf(reference: string) {
-    const peer = await this.#inputOf(reference)
-    const user = await this.#client.getPeer(peer)
-    if (user.type !== "user") throw new CliError("validation_error", `"${reference}" is a chat, not a person`)
-    const [full, [dialog], common] = await Promise.all([
-      this.#client.getFullUser(peer),
-      this.#client.getPeerDialogs(peer),
-      this.#client.getCommonChats(peer),
-    ])
-    const dialogs = common.length > 0 ? await this.#client.getPeerDialogs(common.map((chat) => chat.id)) : []
-    // Telegram's common chats are groups only; the one-to-one chat is shared with them too.
-    const chats = [dialog ?? null, ...dialogs]
-      .filter((one) => one !== null)
-      .map(toChat)
-      .map(({ id, title, kind, lastMessageAt }) => ({ id, title, kind, lastMessageAt }))
-      .sort((a, b) => (b.lastMessageAt ?? "").localeCompare(a.lastMessageAt ?? ""))
-    return { user, full, dialog, chats }
+    return contacts.profile(this.#feature, reference)
   }
 
   /**
@@ -758,91 +629,8 @@ export class TelegramAdapter {
     })
   }
 
-  /**
-   * New messages, edits, deletions and reaction changes as they arrive, until `signal` aborts. Only
-   * on an adapter opened with `listen`. `onReady` once the updates loop runs, not before.
-   */
-  async watch(onEvent: (event: MessageEvent) => void, signal: AbortSignal, onReady?: () => void): Promise<void> {
-    const client = this.#client
-    const message = (found: TgMessage) => onEvent({ event: "message", message: remoteHit(found, "remote_update") })
-    const edit = (found: TgMessage) => onEvent({ event: "edit", message: remoteHit(found, "remote_update") })
-    const deletion = (update: DeleteMessageUpdate) => {
-      for (const change of toDeletions(update)) onEvent(change)
-    }
-    const raw = (info: RawUpdateInfo) => {
-      const change = toReactionChange(info)
-      if (change?.event === "reaction")
-        onEvent({
-          ...change,
-          counterObservation: {
-            value: change.reactions.total,
-            observedAt: new Date().toISOString(),
-            source: "remote_update",
-            reactions: change.reactions,
-          },
-        })
-      else if (change) onEvent(change)
-    }
-    client.onNewMessage.add(message)
-    client.onEditMessage.add(edit)
-    client.onDeleteMessage.add(deletion)
-    client.onRawUpdate.add(raw)
-    try {
-      await this.#call(async () => {
-        await client.connect()
-        // With catchUp, mtcute fetches the updates state in the background and, on a revoked login,
-        // quietly stops its loop — serve would sit "connected" forever. Asking first makes it fail here.
-        await client.call({ _: "updates.getState" })
-        await client.startUpdatesLoop()
-      })
-      onReady?.()
-      await this.#untilStopped(signal)
-    } finally {
-      client.onNewMessage.remove(message)
-      client.onEditMessage.remove(edit)
-      client.onDeleteMessage.remove(deletion)
-      client.onRawUpdate.remove(raw)
-    }
-  }
-
-  /**
-   * Until `signal` aborts, or the login or mtcute's updates loop is found gone. mtcute stops the loop
-   * without a word on AUTH_KEY_UNREGISTERED (`highlevel/updates/manager.js`, `_fetchUpdatesState` and
-   * `_fetchDifferenceLater`), usually met by its own 15-minute keep-alive; the heartbeat asks itself
-   * at the same rate, in case that path never runs. A refused login ends the watch with exit 4; a
-   * stopped loop otherwise with exit 12, which a service unit restarts — never a process that looks
-   * connected and receives nothing. A heartbeat that fails for any other reason is let pass.
-   */
-  async #untilStopped(signal: AbortSignal): Promise<void> {
-    const updates = (this.#client._client as unknown as { updates?: { updatesLoopActive: boolean } } | undefined)
-      ?.updates
-    for (let tick = 1; ; tick += 1) {
-      await pause(LOOP_CHECK_MS, signal)
-      if (signal.aborted) return
-      const down = updates?.updatesLoopActive === false
-      if (!down && tick % HEARTBEAT_TICKS !== 0) continue
-      const refusal = await this.#askState()
-      if (signal.aborted) return
-      if (refusal?.code === "authentication_error") throw refusal
-      if (down) throw new CliError("provider_unavailable", LOOP_STOPPED, refusal ? { cause: refusal.code } : {})
-    }
-  }
-
-  /** `updates.getState` under a timer of its own: a request that never answers must not hold the watch. */
-  async #askState(): Promise<CliError | undefined> {
-    let timer: NodeJS.Timeout | undefined
-    const late = new Promise<CliError>((resolve) => {
-      timer = setTimeout(() => resolve(new CliError("timeout", "Telegram did not answer in time")), STATE_WAIT_MS)
-    })
-    const asked = this.#call(() => this.#client.call({ _: "updates.getState" })).then(
-      () => undefined,
-      (error: unknown) => (isCliError(error) ? error : new CliError("provider_error", "Telegram failed")),
-    )
-    try {
-      return await Promise.race([asked, late])
-    } finally {
-      clearTimeout(timer)
-    }
+  watch(onEvent: (event: MessageEvent) => void, signal: AbortSignal, onReady?: () => void): Promise<void> {
+    return watching.watch(this.#feature, onEvent, signal, onReady)
   }
 
   scheduled(reference: string): Promise<Message[]> {
@@ -895,11 +683,8 @@ export class TelegramAdapter {
     })
   }
 
-  /** Forgets the session on Telegram's side too, so the device disappears from the account's list. */
   logout(): Promise<void> {
-    return this.#call(async () => {
-      await this.#client.logOut()
-    })
+    return login.logout(this.#feature)
   }
 
   async close(): Promise<void> {
@@ -1010,24 +795,8 @@ export class TelegramAdapter {
     })
   }
 
-  /** Telegram reads a topic as a discussion thread, up to a message id: without `until`, the topic's newest. */
   markTopicRead(chatId: string, topicId: string, until?: string): Promise<void> {
-    const id = topicNumber(topicId)
-    const maxId = until === undefined ? undefined : messageNumber(until, "--until takes a message id")
-    return this.#write("the topic may have been marked read — repeating it is safe", async () => {
-      let readMaxId = maxId
-      if (readMaxId === undefined) {
-        const [topic] = await this.#client.getForumTopicsById(Number(chatId), id)
-        if (!topic) throw new CliError("not_found", `no topic ${topicId} in that chat`)
-        readMaxId = topic.lastMessage.id
-      }
-      await this.#client.call({
-        _: "messages.readDiscussion",
-        peer: await this.#client.resolvePeer(Number(chatId)),
-        msgId: id,
-        readMaxId,
-      })
-    })
+    return topics.markTopicRead(this.#feature, chatId, topicId, until)
   }
 
   /**
@@ -1109,7 +878,11 @@ export class TelegramAdapter {
       try {
         return toPoll(chatId, messageId, await this.#client.closePoll({ chatId: Number(chatId), message: id }))
       } catch (error) {
-        throw unknownIfUnanswered(error, "the poll may have been closed; check `tg polls show` before repeating")
+        throw this.#feature.unanswered(error, {
+          what: "the poll may have been closed",
+          check: "polls.show",
+          after: "before repeating",
+        })
       }
     })
   }
@@ -1199,479 +972,95 @@ export class TelegramAdapter {
     return typeof peer === "object" && "kind" in peer ? Number(peer.id) : peer
   }
 
-  /** An invite is previewed; one the owner already joined, or a public link, is read as the chat. Nothing joins. */
   inspect(link: string): Promise<LinkTarget> {
-    const typed = link.trim()
-    const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
-    return this.#call(async () => {
-      if (invite) {
-        try {
-          return toInvitePreview(await this.#client.getChatPreview(typed))
-        } catch (error) {
-          if (!(error instanceof MtPeerNotFoundError)) throw error
-        }
-      }
-      return toLinkChat(await this.#client.getFullChat(invite ? typed : publicName(typed)))
-    })
+    return groups.inspect(this.#feature, link)
   }
 
   forumState(chatId: string): Promise<ForumState> {
-    return this.#call(() => this.#forumState(chatId))
-  }
-
-  async #forumState(chatId: string): Promise<ForumState> {
-    let full = await this.#client.getFullChat(Number(chatId))
-    if (full.migratedToId != null) full = await this.#client.getFullChat(full.migratedToId)
-    if (full.chatType !== "group" && full.chatType !== "supergroup") {
-      throw new CliError("validation_error", "forum topics require a group, not a channel or dialog")
-    }
-    return {
-      chat: peerToChat(full),
-      forum: full.isForum,
-      needsUpgrade: full.chatType === "group",
-      owner: full.isCreator,
-      linkedDiscussion: full.linkedChat !== null,
-      canCreate:
-        full.isCreator ||
-        full.adminRights?.manageTopics === true ||
-        full.permissions?.canManageTopics === true ||
-        full.defaultPermissions?.canManageTopics === true,
-    }
+    return topics.forumState(this.#feature, chatId)
   }
 
   upgradeForum(chatId: string): Promise<ForumState> {
-    return this.#call(async () => {
-      const state = await this.#forumState(chatId)
-      if (!state.owner) throw new CliError("permission_error", "only the owner can prepare this group for topics")
-      if (!state.needsUpgrade) return state
-      const peer = await this.#client.resolvePeer(Number(state.chat.id))
-      if (peer._ !== "inputPeerChat") throw new CliError("validation_error", "only a basic group can be upgraded")
-      let accepted = false
-      let migratedChatId: string | undefined
-      try {
-        const updates = await this.#client.call(
-          { _: "messages.migrateChat", chatId: peer.chatId },
-          { maxRetryCount: 0, floodSleepThreshold: 0 },
-        )
-        accepted = true
-        this.#client.handleClientUpdate(updates, true)
-        const made =
-          updates._ === "updates" || updates._ === "updatesCombined"
-            ? updates.chats.find((chat) => chat._ === "channel" && chat.megagroup)
-            : undefined
-        if (made?._ !== "channel")
-          throw new CliError(
-            "outcome_unknown",
-            "the group may have been upgraded; check its current chat id before repeating",
-          )
-        migratedChatId = String(getMarkedPeerId({ _: "peerChannel", channelId: made.id }))
-        return await this.#forumState(migratedChatId)
-      } catch (error) {
-        if (accepted)
-          throw new CliError(
-            "outcome_unknown",
-            "the upgrade was accepted but its state could not be read; check the current group before continuing",
-            {
-              previous_chat_id: state.chat.id,
-              ...(migratedChatId === undefined ? {} : { chat_id: migratedChatId, upgraded: true }),
-              stage: "upgrade",
-            },
-          )
-        throw unknownIfUnanswered(error, "the group may have been upgraded; check its current chat id before repeating")
-      }
-    })
+    return topics.upgradeForum(this.#feature, chatId)
   }
 
   enableForum(chatId: string): Promise<ForumState> {
-    return this.#call(async () => {
-      const state = await this.#forumState(chatId)
-      if (!state.owner) throw new CliError("permission_error", "only the group owner can enable forum topics")
-      if (state.needsUpgrade)
-        throw new CliError("validation_error", "upgrade the basic group explicitly before enabling topics")
-      if (state.linkedDiscussion)
-        throw new CliError("validation_error", "a linked discussion group cannot enable forum topics")
-      if (state.forum) return state
-      try {
-        const full = await this.#client.getFullChat(Number(state.chat.id))
-        await this.#client.updateForumSettings(Number(state.chat.id), {
-          isForum: true,
-          threadsMode: full.raw._ === "channel" && full.raw.forumTabs ? "tabs" : "list",
-        })
-        return await this.#forumState(state.chat.id)
-      } catch (error) {
-        if (tl.RpcError.is(error, "CHAT_NOT_MODIFIED")) return this.#forumState(state.chat.id)
-        throw unknownIfUnanswered(error, "topics may have been enabled; check the forum state before repeating")
-      }
-    })
+    return topics.enableForum(this.#feature, chatId)
   }
 
-  createTopic(chatId: string, title: string, { sendId }: { sendId: string }): Promise<Topic> {
-    const randomId = parseSendId(sendId)
-    return this.#call(async () => {
-      const state = await this.#forumState(chatId)
-      if (!state.forum || state.needsUpgrade)
-        throw new CliError("validation_error", "enable topics before creating a topic")
-      if (!state.canCreate) throw new CliError("permission_error", "creating a topic requires manage-topics permission")
-      let accepted = false
-      try {
-        const updates = await this.#client.call(
-          {
-            _: "messages.createForumTopic",
-            peer: await this.#client.resolvePeer(Number(state.chat.id)),
-            title,
-            randomId,
-          },
-          { maxRetryCount: 0, floodSleepThreshold: 0 },
-        )
-        accepted = true
-        this.#client.handleClientUpdate(updates, true)
-        const message = forwardedCopy(updates)
-        const mapped =
-          updates._ === "updates" || updates._ === "updatesCombined"
-            ? updates.updates.find(
-                (update) => update._ === "updateMessageID" && String(update.randomId) === String(randomId),
-              )
-            : undefined
-        const topicId = mapped && mapped._ === "updateMessageID" ? mapped.id : message?.id
-        if (topicId === undefined)
-          throw new CliError(
-            "outcome_unknown",
-            "Telegram did not return the topic id; check topics list and do not repeat this creation",
-            { operation_id: sendId, retryable: false },
-          )
-        const [topic] = await this.#client.getForumTopicsById(Number(state.chat.id), topicId)
-        if (!topic)
-          throw new CliError(
-            "outcome_unknown",
-            "the topic may exist but could not be read; check topics list and do not repeat this creation",
-            { operation_id: sendId, retryable: false },
-          )
-        return toTopic(topic)
-      } catch (error) {
-        if (accepted)
-          throw new CliError(
-            "outcome_unknown",
-            "topic creation was accepted but its result could not be read; check topics list and do not repeat",
-            { operation_id: sendId, retryable: false },
-          )
-        throw unknownIfUnanswered(
-          error,
-          `the topic may have been created; check topics list and do not repeat this creation`,
-          { operation_id: sendId, retryable: false },
-        )
-      }
-    })
+  createTopic(chatId: string, title: string, options: { sendId: string }): Promise<Topic> {
+    return topics.createTopic(this.#feature, chatId, title, options)
   }
 
-  /**
-   * A repeat answers TOPIC_NOT_MODIFIED: the change is already there, so the topic is read back as for a first.
-   * Pinning is Telegram's own call, made after the edit.
-   */
-  editTopic(chatId: string, topicId: string, { title, closed, pinned, hidden }: TopicChange): Promise<Topic> {
-    const id = topicNumber(topicId)
-    if (hidden !== undefined && id !== 1)
-      throw new CliError("validation_error", "only the General topic (id 1) can be hidden")
-    return this.#call(async () => {
-      const unchanged = (error: unknown) => {
-        if (!tl.RpcError.is(error, "TOPIC_NOT_MODIFIED") && !tl.RpcError.is(error, "PINNED_TOPIC_NOT_MODIFIED"))
-          throw unknownIfUnanswered(error, "the topic may have changed — repeating it is safe")
-      }
-      if (title !== undefined || closed !== undefined) {
-        await this.#client
-          .editForumTopic({
-            chatId: Number(chatId),
-            topicId: id,
-            ...(title === undefined ? {} : { title }),
-            ...(closed === undefined ? {} : { closed }),
-          })
-          .catch(unchanged)
-      }
-      if (pinned !== undefined)
-        await this.#client.toggleForumTopicPinned({ chatId: Number(chatId), topicId: id, pinned }).catch(unchanged)
-      if (hidden !== undefined)
-        await this.#client.toggleGeneralTopicHidden({ chatId: Number(chatId), hidden }).catch(unchanged)
-      const [topic] = await this.#client.getForumTopicsById(Number(chatId), id)
-      if (!topic) throw new CliError("not_found", `no topic ${topicId} in that chat`)
-      // Measured 2026-10-04: a read right after the edit can still show the title and state of edits ago.
-      return {
-        ...toTopic(topic),
-        ...(title === undefined ? {} : { title }),
-        ...(closed === undefined ? {} : { closed }),
-        ...(pinned === undefined ? {} : { pinned }),
-        ...(hidden === undefined ? {} : { hidden }),
-      }
-    })
+  editTopic(chatId: string, topicId: string, change: TopicChange): Promise<Topic> {
+    return topics.editTopic(this.#feature, chatId, topicId, change)
   }
 
-  /** Without `force` Telegram only reorders: a topic that is not pinned stays as it is. */
   orderPinnedTopics(chatId: string, topicIds: string[]): Promise<void> {
-    const order = topicIds.map(topicNumber)
-    return this.#call(async () => {
-      try {
-        await this.#client.reorderPinnedForumTopics({ chatId: Number(chatId), order })
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the pinned topics may have been reordered — repeating it is safe")
-      }
-    })
+    return topics.orderPinnedTopics(this.#feature, chatId, topicIds)
   }
 
-  /** Telegram deletes the topic's history with it; a topic that is gone answers TOPIC_ID_INVALID, `not_found`. */
   deleteTopic(chatId: string, topicId: string): Promise<void> {
-    const topic = topicNumber(topicId)
-    return this.#call(async () => {
-      try {
-        await this.#client.deleteForumTopicHistory(Number(chatId), topic)
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the topic may have been deleted; check `tg topics list` before repeating")
-      }
-    })
+    return topics.deleteTopic(this.#feature, chatId, topicId)
   }
 
-  async validateThread(chatId: string, threadId: string, { replyTo }: { replyTo?: string }): Promise<void> {
-    const topicId = topicNumber(threadId)
-    const replyId = replyTo === undefined ? undefined : messageNumber(replyTo, "--reply-to needs a message id")
-    return this.#call(async () => {
-      const peer = await this.#client.getPeer(Number(chatId))
-      if (peer.type !== "chat" || !peer.isForum) {
-        throw new CliError("validation_error", "--topic requires a Telegram forum group")
-      }
-      const [topic] = await this.#client.getForumTopicsById(Number(chatId), topicId)
-      if (!topic) throw new CliError("not_found", "that forum topic does not exist; check `topics list`")
-      if (topic.isClosed) throw new CliError("permission_error", "that forum topic is closed; choose an open topic")
-      if (replyId !== undefined) {
-        const [reply] = await this.#client.getMessages(Number(chatId), [replyId])
-        if (!reply) throw new CliError("not_found", "the message to reply to no longer exists in this chat")
-        const replyThread = reply.isTopicMessage ? (reply.replyToMessage?.threadId ?? reply.id) : 1
-        if (reply.id !== topicId && replyThread !== topicId) {
-          throw new CliError("validation_error", "--reply-to belongs to a different topic; choose a message in --topic")
-        }
-      }
-    })
+  validateThread(chatId: string, threadId: string, options: { replyTo?: string }): Promise<void> {
+    return topics.validateThread(this.#feature, chatId, threadId, options)
   }
 
   topic(reference: string, topicId: string): Promise<Topic> {
-    const id = topicNumber(topicId)
-    return this.#call(async () => {
-      const input = await this.#inputOf(reference)
-      const peer = await this.#client.getPeer(input)
-      if (peer.type !== "chat" || !peer.isForum) throw new CliError("validation_error", "that chat has no topics")
-      const [topic] = await this.#client.getForumTopicsById(input, id)
-      if (!topic) throw new CliError("not_found", "that forum topic does not exist; check `topics list`")
-      return toTopic(topic)
-    })
+    return topics.topic(this.#feature, reference, topicId)
   }
 
-  /** A forum's topics, newest activity first; Telegram matches `search` against their titles. */
-  topics(
-    reference: string,
-    { search, limit, offset }: { search?: string; limit?: number; offset: number },
-  ): Promise<Page<Topic>> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      const items: Topic[] = []
-      const wanted = limit === undefined ? {} : { limit: offset + limit + 1 }
-      for await (const topic of this.#client.iterForumTopics(peer, {
-        ...wanted,
-        ...(search ? { query: search } : {}),
-      })) {
-        items.push(toTopic(topic))
-      }
-      const end = limit === undefined ? items.length : offset + limit
-      return { items: items.slice(offset, end), hasMore: items.length > end }
-    })
+  topics(reference: string, window: { search?: string; limit?: number; offset: number }): Promise<Page<Topic>> {
+    return topics.topics(this.#feature, reference, window)
   }
 
-  /** Telegram answers only where the person's privacy lets the owner find them by number. */
   lookup(phone: string): Promise<Member> {
-    return this.#call(async () => toMember(await this.#client.getPeer(await this.#client.resolvePhoneNumber(phone))))
+    return contacts.lookup(this.#feature, phone)
   }
 
-  /** The owner's Telegram contacts — the address book, not the chats. */
   addressBook(): Promise<Member[]> {
-    return this.#call(async () => (await this.#client.getContacts()).map(toMember))
+    return contacts.addressBook(this.#feature)
   }
 
-  /** Every device and app logged in; the IP address Telegram also sends is left out. */
   sessions(): Promise<AccountSession[]> {
-    return this.#call(async () => {
-      const { authorizations } = await this.#client.call({ _: "account.getAuthorizations" })
-      return authorizations.map(toAccountSession)
-    })
+    return login.sessions(this.#feature)
   }
 
-  /**
-   * A page of a group's members, 200 a request, a second apart. Telegram gives at most `MEMBERS_MAX` of a big
-   * group, and a group that hides its list answers only its admins or refuses.
-   */
   members(
     reference: string,
-    { limit, offset }: { limit?: number; offset: number },
+    window: { limit?: number; offset: number },
   ): Promise<Page<GroupMember> & { chatId: string; participantsCount: number | null }> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      const group = await this.#client.getPeer(peer)
-      const wanted = Math.min(limit ?? MEMBERS_MAX, MEMBERS_MAX - offset)
-      const found: GroupMember[] = []
-      let total: number | null = null
-      while (found.length < wanted) {
-        if (found.length > 0) await new Promise((resolve) => setTimeout(resolve, MEMBER_PAGE_PAUSE_MS))
-        const size = Math.min(200, wanted - found.length)
-        const page = await this.#client.getChatMembers(peer, { offset: offset + found.length, limit: size })
-        total = page.total
-        found.push(...page.map(toGroupMember))
-        if (page.length < size) break
-      }
-      return {
-        chatId: String(group.id),
-        items: found,
-        hasMore: offset + found.length < Math.min(total ?? 0, MEMBERS_MAX),
-        participantsCount: offset === 0 ? await this.#groupCount(group, total) : null,
-      }
-    })
+    return groups.members(this.#feature, reference, window)
   }
 
-  /**
-   * Service messages back to `since`, newest page first, at most `EVENT_PAGES` of them — a busy
-   * group's week can be thousands. The people a message names only by id are looked up in one call.
-   */
-  chatEvents(reference: string, { since }: { since: number }): Promise<ChatEvents> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      const found: { message: TgMessage; change: EventOf }[] = []
-      let offset: { id: number; date: number } | undefined
-      let more = false
-      for (let read = 1; ; read++) {
-        const page = await this.#client.getHistory(peer, { limit: 100, ...(offset ? { offset } : {}) })
-        for (const message of page) {
-          const change = message.date.getTime() > since ? eventOf(message) : null
-          if (change) found.push({ message, change })
-        }
-        const oldest = page.at(-1)
-        if (!page.next || !oldest || oldest.date.getTime() <= since) break
-        if (read >= EVENT_PAGES) {
-          more = true
-          break
-        }
-        offset = page.next
-      }
-
-      const names = new Map(found.map(({ message }) => [message.sender.id, message.sender.displayName || null]))
-      const unknown = [...new Set(found.flatMap(({ change }) => [change.by, ...change.people]))].filter(
-        (id) => !names.has(id),
-      )
-      if (unknown.length > 0) {
-        for (const user of await this.#client.getUsers(unknown)) if (user) names.set(user.id, user.displayName || null)
-      }
-      const person = (id: number) => ({ id: String(id), name: names.get(id) ?? null })
-
-      return {
-        chatId: String((await this.#client.getPeer(peer)).id),
-        since: new Date(since).toISOString(),
-        more,
-        events: found.reverse().map(({ message, change }) => ({
-          messageId: String(message.id),
-          timestamp: message.date.toISOString(),
-          event: change.event,
-          by: person(change.by),
-          people: change.people.map(person),
-          ...(change.title === undefined ? {} : { title: change.title }),
-        })),
-      }
-    })
+  chatEvents(reference: string, window: { since: number }): Promise<ChatEvents> {
+    return groups.chatEvents(this.#feature, reference, window)
   }
 
-  /**
-   * A group's admins and its creator, for `review --unanswered`; `null` when the group hides them.
-   * A basic group ignores the `admins` filter and answers everyone, hence the status check.
-   */
   admins(reference: string): Promise<string[] | null> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      try {
-        const members = await this.#client.getChatMembers(peer, { type: "admins", limit: 200 })
-        return members
-          .filter((member) => member.status === "creator" || member.status === "admin")
-          .map((member) => String(member.user.id))
-      } catch (error) {
-        const known = toCliError(error, this.#login)
-        if (known instanceof CliError && known.code === "permission_error") return null
-        throw known
-      }
-    })
+    return groups.admins(this.#feature, reference)
   }
 
-  /** `null` when the group hides its member list from us: that is an answer about the group, not a failure. */
-  /** Each reference as a user id, in order; a group or a channel is not a person and is refused. */
   people(references: string[]): Promise<string[]> {
-    return this.#call(async () => {
-      const ids: string[] = []
-      for (const reference of references) {
-        const peer = await this.#client.getPeer(await this.#inputOf(reference))
-        if (peer.type !== "user") throw new CliError("validation_error", `${reference} is a chat, not a person`)
-        ids.push(String(peer.id))
-      }
-      return ids
-    })
+    return groups.people(this.#feature, references)
   }
 
-  /**
-   * Always a supergroup, never a legacy group: a legacy group turns into a supergroup on some changes
-   * and its id changes with it. The people are added after, so a group exists even if some cannot be.
-   */
-  createGroup(title: string, people: string[], { channel }: { channel: boolean }): Promise<GroupCard> {
-    return this.#call(async () => {
-      try {
-        const made = channel
-          ? await this.#client.createChannel({ title })
-          : await this.#client.createSupergroup({ title })
-        const missing = people.length > 0 ? await this.#client.addChatMembers(made.id, people.map(Number), {}) : []
-        const card = toGroupCard(await this.#client.getFullChat(made.id))
-        if (missing.length === 0) return card
-        const notAdded = missing.map((one) => String(one.userId))
-        return { ...card, providerMetadata: { ...card.providerMetadata, notAdded } }
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the group may or may not have been made; check `tg chats list`")
-      }
-    })
+  createGroup(title: string, people: string[], options: { channel: boolean }): Promise<GroupCard> {
+    return groups.createGroup(this.#feature, title, people, options)
   }
 
-  /** An invite link, or a public one; a group that asks its admins first answers `requested`. */
   join(link: string): Promise<GroupCard | { requested: true }> {
-    const typed = link.trim()
-    const invite = /(t\.me|telegram\.me)\/(\+|joinchat\/)|^tg:\/\/join/.test(typed)
-    return this.#call(async () => {
-      let joined: Awaited<ReturnType<TelegramClient["joinChat"]>>
-      try {
-        joined = await this.#client.joinChat(invite ? typed : publicName(typed))
-      } catch (error) {
-        throw unknownIfUnanswered(error, "you may or may not have joined; check `tg chats list`")
-      }
-      if (joined.status === "request_sent") return { requested: true as const }
-      if (joined.status !== "ok") {
-        throw new CliError(
-          "provider_error",
-          "this group asks a bot to check who joins, which only the Telegram app can show",
-        )
-      }
-      return toGroupCard(await this.#client.getFullChat(joined.chat.id))
-    })
+    return groups.join(this.#feature, link)
   }
 
   leave(reference: string): Promise<{ chatId: string }> {
-    return this.#call(async () => {
-      const peer = await this.#inputOf(reference)
-      const chatId = String((await this.#client.getPeer(peer)).id)
-      try {
-        await this.#client.leaveChat(peer)
-      } catch (error) {
-        throw unknownIfUnanswered(error, "you may or may not have left; check `tg chats list`")
-      }
-      return { chatId }
-    })
+    return groups.leave(this.#feature, reference)
   }
 
   group(reference: string): Promise<GroupCard> {
-    return this.#call(async () => toGroupCard(await this.#client.getFullChat(await this.#inputOf(reference))))
+    return groups.group(this.#feature, reference)
   }
 
   /**
@@ -1738,374 +1127,104 @@ export class TelegramAdapter {
     })
   }
 
-  /**
-   * Telegram keeps what members may do as rights taken away, and sets them all at once: the current
-   * ones are read first, and only the switches asked for change.
-   */
-  updateGroup(chatId: string, { title, description, settings = {} }: GroupChange): Promise<GroupCard> {
-    const missing = Object.keys(settings).filter((key) => !(GROUP_SETTINGS as readonly string[]).includes(key))
-    if (missing.length > 0) {
-      throw new CliError("validation_error", `Telegram has no group setting ${missing.join(", ")}`)
-    }
-    const peer = Number(chatId)
-    return this.#call(async () => {
-      try {
-        if (title !== undefined) await this.#client.setChatTitle(peer, title)
-        if (description !== undefined) await this.#client.setChatDescription(peer, description)
-        const { allCanPin, onlyAdminsAdd, joinApproval } = settings
-        if (typeof joinApproval === "boolean") await this.#client.toggleJoinRequests(peer, joinApproval)
-        if (typeof allCanPin === "boolean" || typeof onlyAdminsAdd === "boolean") {
-          const current = (await this.#client.getFullChat(peer)).defaultPermissions?.raw
-          const { _: _kind, untilDate: _until, ...taken } = current ?? { _: "chatBannedRights", untilDate: 0 }
-          await this.#client.setChatDefaultPermissions(peer, {
-            ...taken,
-            ...(typeof allCanPin === "boolean" ? { pinMessages: !allCanPin } : {}),
-            ...(typeof onlyAdminsAdd === "boolean" ? { inviteUsers: onlyAdminsAdd } : {}),
-          })
-        }
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the group may have changed in part; check `tg chats show`")
-      }
-      return toGroupCard(await this.#client.getFullChat(peer))
-    })
+  updateGroup(chatId: string, change: GroupChange): Promise<GroupCard> {
+    return groups.updateGroup(this.#feature, chatId, change)
   }
 
-  /** A new primary link for the owner; the old one stops working. */
   resetInviteLink(chatId: string): Promise<GroupCard> {
-    const peer = Number(chatId)
-    return this.#call(async () => {
-      try {
-        await this.#client.exportInviteLink(peer)
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the link may or may not have been replaced; check `tg chats link show`")
-      }
-      return toGroupCard(await this.#client.getFullChat(peer))
-    })
+    return groups.resetInviteLink(this.#feature, chatId)
   }
 
-  createInviteLink(
-    chatId: string,
-    { approval, expiresAt, maxUses }: { approval: boolean; expiresAt?: string; maxUses?: number },
-  ) {
-    return this.#call(async () => {
-      try {
-        return toInviteLink(
-          await this.#client.createInviteLink(Number(chatId), {
-            withApproval: approval,
-            ...(expiresAt === undefined ? {} : { expires: new Date(expiresAt) }),
-            ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
-          }),
-        )
-      } catch (error) {
-        throw unknownIfUnanswered(error, "a link may or may not have been made; it works only once shared")
-      }
-    })
+  createInviteLink(chatId: string, options: { approval: boolean; expiresAt?: string; maxUses?: number }) {
+    return groups.createInviteLink(this.#feature, chatId, options)
   }
 
-  joinRequests(chatId: string, { limit, link, search }: { limit: number; link?: string; search?: string }) {
-    return this.#call(() =>
-      joinRequestsOf(this.#client, Number(chatId), limit, {
-        ...(link ? { link } : {}),
-        ...(search ? { search } : {}),
-      }),
-    )
+  joinRequests(chatId: string, options: { limit: number; link?: string; search?: string }) {
+    return groups.joinRequests(this.#feature, chatId, options)
   }
 
   answerAllJoinRequests(chatId: string, accept: boolean, link?: string) {
-    return this.#call(async () => {
-      try {
-        await this.#client.hideAllJoinRequests({
-          chatId: Number(chatId),
-          action: accept ? "approve" : "decline",
-          ...(link ? { link } : {}),
-        })
-      } catch (error) {
-        throw unknownIfUnanswered(
-          error,
-          "the requests may or may not have been answered; check `tg chats requests list`",
-        )
-      }
-    })
+    return groups.answerAllJoinRequests(this.#feature, chatId, accept, link)
   }
 
-  /** Telegram shows an admin only their own links; the creator could ask for others', which we do not. */
-  inviteLinks(chatId: string, { limit, revoked }: { limit: number; revoked: boolean }) {
-    return this.#call(async () => {
-      const page = await this.#client.getInviteLinks(Number(chatId), { limit, revoked })
-      return { items: page.map(toInviteLink), hasMore: page.total > page.length }
-    })
+  inviteLinks(chatId: string, options: { limit: number; revoked: boolean }) {
+    return groups.inviteLinks(this.#feature, chatId, options)
   }
 
   revokeInviteLink(chatId: string, link: string) {
-    return this.#call(async () => {
-      try {
-        return toInviteLink(await this.#client.revokeInviteLink(Number(chatId), link))
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the link may or may not have been revoked; check `tg chats link list`")
-      }
-    })
+    return groups.revokeInviteLink(this.#feature, chatId, link)
   }
 
-  updateInviteLink(chatId: string, link: string, { approval, expiresAt, maxUses }: InviteLinkChange) {
-    return this.#call(async () => {
-      const peer = await this.#client.resolvePeer(Number(chatId))
-      try {
-        // Raw, because mtcute's editInviteLink drops an expiry of 0 — Telegram's "never expires".
-        const answer = await this.#client.call({
-          _: "messages.editExportedChatInvite",
-          peer,
-          link,
-          ...(approval === undefined ? {} : { requestNeeded: approval }),
-          ...(expiresAt === undefined ? {} : { expireDate: expiresAt === null ? 0 : Date.parse(expiresAt) / 1000 }),
-          ...(maxUses === undefined ? {} : { usageLimit: maxUses }),
-        })
-        return toInviteLink(new ChatInviteLink(answer.invite, PeersIndex.from(answer)))
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the link may or may not have been changed; check `tg chats link list`")
-      }
-    })
+  updateInviteLink(chatId: string, link: string, change: InviteLinkChange) {
+    return groups.updateInviteLink(this.#feature, chatId, link, change)
   }
 
   answerJoinRequest(chatId: string, personId: string, accept: boolean) {
-    return this.#call(async () => {
-      try {
-        return await answerJoinRequestOf(this.#client, Number(chatId), Number(personId), accept)
-      } catch (error) {
-        throw unknownIfUnanswered(
-          error,
-          `the request of ${personId} may or may not have been answered; check \`tg chats requests list\``,
-        )
-      }
-    })
+    return groups.answerJoinRequest(this.#feature, chatId, personId, accept)
   }
 
-  /** A supergroup shows new members its history by its own setting, never per person: `history` is refused. */
-  addMembers(chatId: string, people: string[], { history }: { history?: boolean }): Promise<{ notAdded: string[] }> {
-    if (history)
-      throw new CliError(
-        "validation_error",
-        "Telegram shows new members the history by the group's setting, not per person",
-      )
-    return this.#call(async () => {
-      try {
-        const missing = await this.#client.addChatMembers(Number(chatId), people.map(Number), {})
-        return { notAdded: missing.map((one) => String(one.userId)) }
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the people may or may not have been added; check `tg chats members list`")
-      }
-    })
+  addMembers(chatId: string, people: string[], options: { history?: boolean }): Promise<{ notAdded: string[] }> {
+    return groups.addMembers(this.#feature, chatId, people, options)
   }
 
-  /** One request per person, in turn: Telegram rate-limits these hard. */
   removeMembers(chatId: string, people: string[]): Promise<void> {
-    return this.#call(async () => {
-      for (const person of people) {
-        try {
-          await this.#client.kickChatMember({ chatId: Number(chatId), userId: Number(person) })
-        } catch (error) {
-          throw unknownIfUnanswered(
-            error,
-            `${person} may or may not have been removed; check \`tg chats members list\``,
-          )
-        }
-      }
-    })
+    return groups.removeMembers(this.#feature, chatId, people)
   }
 
   addAdmin(chatId: string, person: string, rights: AdminRight[]): Promise<void> {
-    const missing = rights.filter((right) => !(right in ADMIN_RIGHT_FIELDS))
-    if (missing.length > 0) throw new CliError("validation_error", `Telegram has no admin right ${missing.join(", ")}`)
-    const fields = Object.fromEntries(
-      rights.map((right) => [ADMIN_RIGHT_FIELDS[right as keyof typeof ADMIN_RIGHT_FIELDS], true]),
-    )
-    return this.#editAdmin(chatId, person, fields)
+    return groups.addAdmin(this.#feature, chatId, person, rights)
   }
 
   removeAdmin(chatId: string, person: string): Promise<void> {
-    return this.#editAdmin(chatId, person, {})
-  }
-
-  #editAdmin(chatId: string, person: string, rights: Omit<tl.RawChatAdminRights, "_">): Promise<void> {
-    return this.#call(async () => {
-      try {
-        await this.#client.editAdminRights({ chatId: Number(chatId), userId: Number(person), rights })
-      } catch (error) {
-        throw unknownIfUnanswered(error, "the rights may or may not have changed; check `tg chats members list`")
-      }
-    })
+    return groups.removeAdmin(this.#feature, chatId, person)
   }
 
   folders(): Promise<Folder[]> {
-    return this.#call(async () => (await this.#filters()).map(toFolder).filter((one): one is Folder => one !== null))
+    return folders.folders(this.#feature)
   }
 
-  createFolder(title: string, chatIds: string[], rules: FolderRules = {}): Promise<Folder> {
-    return this.#write(
-      "the folder may have been made; check `tg chats folders list` before repeating — a repeat makes a second one",
-      async () => {
-        const peers = (ids: string[] = []) => Promise.all(ids.map((id) => this.#client.resolvePeer(Number(id))))
-        const pinned = new Set(rules.pin)
-        const made = await this.#client.createFolder({
-          title: { _: "textWithEntities", text: title, entities: [] },
-          includePeers: await peers(chatIds.filter((id) => !pinned.has(id))),
-          pinnedPeers: await peers(rules.pin),
-          excludePeers: await peers(rules.exclude),
-          ...(rules.emoji === undefined ? {} : { emoticon: rules.emoji }),
-          ...ruleFlags(rules),
-        })
-        return this.#storedFolder(made)
-      },
-    )
+  createFolder(title: string, chatIds: string[], rules?: FolderRules): Promise<Folder> {
+    return folders.createFolder(this.#feature, title, chatIds, rules)
   }
 
-  /** Telegram replaces a folder's chats as a list, so the ones it has are read and only the asked ones change. */
   updateFolder(folderId: string, change: FolderChange): Promise<Folder> {
-    const { title, add = [], remove = [], exclude = [], pin = [], emoji, include, skip } = change
-    return this.#write("the folder may have changed — repeating it is safe", async () => {
-      const current = (await this.#filters()).find(
-        (one) => one._ !== "dialogFilterDefault" && String(one.id) === folderId,
-      )
-      if (!current || current._ === "dialogFilterDefault") throw new CliError("not_found", `no folder ${folderId}`)
-      const rulesAsked = include !== undefined || skip !== undefined || exclude.length > 0
-      if (rulesAsked && current._ === "dialogFilterChatlist")
-        throw new CliError("validation_error", "a folder shared by a link holds only its chats; it takes no rules")
-      // A chat sits on one list at a time: pinning or excluding it takes it off the others.
-      const idOf = (peer: tl.TypeInputPeer) => String(getMarkedPeerId(peer))
-      const off = (peers: tl.TypeInputPeer[], ...ids: string[][]) => {
-        const gone = new Set(ids.flat())
-        return peers.filter((peer) => !gone.has(idOf(peer)))
-      }
-      const resolved = (ids: string[], have: tl.TypeInputPeer[]) => {
-        const held = new Set(have.map(idOf))
-        return Promise.all(ids.filter((id) => !held.has(id)).map((id) => this.#client.resolvePeer(Number(id))))
-      }
-      const include0 = off(current.includePeers, remove, pin, exclude)
-      const pinned0 = off(current.pinnedPeers, remove, exclude)
-      const listsChanged = add.length > 0 || remove.length > 0 || pin.length > 0 || exclude.length > 0
-      const excluded0 = current._ === "dialogFilter" ? off(current.excludePeers, remove, add, pin) : []
-      const changed = await this.#client.editFolder({
-        folder: current._ === "dialogFilter" ? current : current.id,
-        modification: {
-          ...(title === undefined ? {} : { title: { _: "textWithEntities", text: title, entities: [] } }),
-          ...(emoji === undefined ? {} : { emoticon: emoji }),
-          ...ruleFlags({ ...(include === undefined ? {} : { include }), ...(skip === undefined ? {} : { skip }) }),
-          ...(listsChanged
-            ? {
-                includePeers: [...include0, ...(await resolved(add, [...include0, ...pinned0]))],
-                pinnedPeers: [...pinned0, ...(await resolved(pin, pinned0))],
-                ...(current._ === "dialogFilter"
-                  ? { excludePeers: [...excluded0, ...(await resolved(exclude, excluded0))] }
-                  : {}),
-              }
-            : {}),
-        },
-      })
-      return this.#storedFolder(changed)
-    })
+    return folders.updateFolder(this.#feature, folderId, change)
   }
 
   deleteFolder(folderId: string): Promise<void> {
-    return this.#write("the folder may have been deleted — repeating it is safe", async () => {
-      await this.#client.deleteFolder(Number(folderId))
-    })
+    return folders.deleteFolder(this.#feature, folderId)
   }
 
-  /** "All chats" (id 0) keeps its place: only Premium accounts may move it, and tg does not list it. */
   orderFolders(folderIds: string[]): Promise<void> {
-    return this.#write("the folders may be in the new order already — repeating it is safe", async () => {
-      const current = (await this.#filters()).map((one) => (one._ === "dialogFilterDefault" ? 0 : one.id))
-      const order = folderIds.map(Number)
-      const all = current.indexOf(0)
-      if (all >= 0) order.splice(all, 0, 0)
-      await this.#client.setFoldersOrder(order)
-    })
+    return folders.orderFolders(this.#feature, folderIds)
   }
 
   joinFolder(link: string): Promise<Folder> {
-    return this.#write(
-      "the folder may have been joined; check `tg chats folders list` before repeating — a repeat joins nothing new",
-      async () => {
-        try {
-          return toFolder(await this.#client.joinChatlist(link)) as Folder
-        } catch (error) {
-          if (tl.RpcError.is(error, "INVITE_SLUG_EXPIRED") || tl.RpcError.is(error, "INVITE_SLUG_INVALID"))
-            throw new CliError("not_found", "this folder link is invalid or has expired")
-          throw error
-        }
-      },
-    )
+    return folders.joinFolder(this.#feature, link)
   }
 
-  /**
-   * mtcute answers with the folder it sent, but Telegram drops what it does not take — an emoji that is not
-   * one of its folder icons, measured live 2026-10-08 — so the answer is read back.
-   */
-  async #storedFolder(sent: tl.TypeDialogFilter): Promise<Folder> {
-    const stored =
-      sent._ === "dialogFilterDefault"
-        ? undefined
-        : (await this.#filters()).find((one) => one._ !== "dialogFilterDefault" && one.id === sent.id)
-    return toFolder(stored ?? sent) as Folder
-  }
-
-  async #filters(): Promise<tl.TypeDialogFilter[]> {
-    return (await this.#client.getFolders()).filters
-  }
-
-  /** Under the name they show; `renameContact` gives one of the owner's own. */
   addContact(personId: string): Promise<Member> {
-    return this.#write("the contact may have been added — repeating it is safe", async () => {
-      const peer = await this.#client.getPeer(Number(personId))
-      if (peer.type !== "user") throw new CliError("validation_error", `${personId} is a chat, not a person`)
-      return toMember(
-        await this.#client.addContact({
-          userId: peer.id,
-          firstName: peer.firstName,
-          ...(peer.lastName ? { lastName: peer.lastName } : {}),
-        }),
-      )
-    })
+    return contacts.addContact(this.#feature, personId)
   }
 
   removeContact(personId: string): Promise<void> {
-    return this.#write("the contact may have been removed — repeating it is safe", async () => {
-      await this.#client.deleteContacts([Number(personId)])
-    })
+    return contacts.removeContact(this.#feature, personId)
   }
 
   block(personId: string): Promise<void> {
-    return this.#write("the person may have been blocked — repeating it is safe", async () => {
-      await this.#client.blockUser(Number(personId))
-    })
+    return contacts.block(this.#feature, personId)
   }
 
   unblock(personId: string): Promise<void> {
-    return this.#write("the person may have been unblocked — repeating it is safe", async () => {
-      await this.#client.unblockUser(Number(personId))
-    })
+    return contacts.unblock(this.#feature, personId)
   }
 
   renameContact(personId: string, firstName: string, lastName?: string): Promise<Member> {
-    return this.#write("the contact may have been renamed — repeating it is safe", async () =>
-      toMember(
-        await this.#client.addContact({ userId: Number(personId), firstName, ...(lastName ? { lastName } : {}) }),
-      ),
-    )
+    return contacts.renameContact(this.#feature, personId, firstName, lastName)
   }
 
-  /** The name is split at its first space into Telegram's first and last name. */
   importContacts(entries: PhoneBookEntry[]): Promise<Member[]> {
-    return this.#write("the contacts may have been imported — repeating it is safe", async () => {
-      const result = await this.#client.importContacts(
-        entries.map(({ phone, name }) => {
-          const [firstName = name, ...rest] = name.split(" ")
-          return { phone: `+${phone}`, firstName, lastName: rest.join(" ") }
-        }),
-      )
-      const found = new Set(result.imported.map((one) => String(one.userId)))
-      const users = await this.#client.getUsers([...found].map(Number))
-      return users.filter((user): user is User => user !== null).map(toMember)
-    })
+    return contacts.importContacts(this.#feature, entries)
   }
 
   /** Telegram calls the description the bio. A photo goes up as a new profile photo. */
@@ -2129,53 +1248,12 @@ export class TelegramAdapter {
     })
   }
 
-  /** mtcute has no call of its own for it; this is Telegram's `auth.resetAuthorizations`. */
   endOtherSessions(): Promise<AccountSession[]> {
-    return this.#call(async () => {
-      try {
-        await this.#client.call({ _: "auth.resetAuthorizations" })
-      } catch (error) {
-        throw unknownIfUnanswered(
-          error,
-          "the other devices may or may not have been logged out; check `tg account sessions list`",
-        )
-      }
-      const { authorizations } = await this.#client.call({ _: "account.getAuthorizations" })
-      return authorizations.map(toAccountSession)
-    })
+    return login.endOtherSessions(this.#feature)
   }
 
-  /**
-   * A supergroup's own count is its member list's total: its chat object and its full info both said 1 for a
-   * group of 2, seen live. A list hidden from non-admins answers only part of the group, so then the full info's
-   * count stands, which the shorter list never reaches. A basic group's list total is only the page it read.
-   */
-  async #groupCount(group: Peer, listTotal: number | null): Promise<number | null> {
-    if (group.type !== "chat" || group.raw?._ !== "channel") return groupMembersCount(group)
-    const full = await this.#client.getFullChat(group.id)
-    const hidden = full.full._ === "channelFull" && full.full.participantsHidden === true && !full.isAdmin
-    return hidden || listTotal === null ? groupMembersCount(full) : listTotal || null
-  }
-
-  async #membersOf(peer: InputPeerLike) {
-    try {
-      return await this.#client.getChatMembers(peer, { limit: 200 })
-    } catch (error) {
-      const known = toCliError(error, this.#login)
-      if (known instanceof CliError && known.code === "permission_error") return null
-      throw known
-    }
-  }
-
-  /** A write with no id to repeat it by: no answer means it may have happened, and `what` says what to do. */
   #write<T>(what: string, work: () => Promise<T>): Promise<T> {
-    return this.#call(async () => {
-      try {
-        return await work()
-      } catch (error) {
-        throw unknownIfUnanswered(error, what)
-      }
-    })
+    return this.#feature.write(what, work)
   }
 
   #send<T>(work: () => Promise<T>): Promise<T> {
@@ -2190,8 +1268,6 @@ export class TelegramAdapter {
     }
   }
 }
-
-export { GROUP_SETTINGS }
 
 export interface FrozenStanding {
   state: "frozen"
@@ -2223,9 +1299,6 @@ export const frozenOf = (config: Record<string, unknown>): FrozenStanding | unde
   }
 }
 
-/** The rights `tg chats admins add --can` offers: max's, less `read`. */
-export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
-
 /**
  * How long mtcute sits out a FLOOD_WAIT before the wait becomes `rate_limited` with `retryAfterMs`, and
  * how many times. One-shot: 10 s, mtcute's own default, which covers the routine short waits; past it a
@@ -2239,54 +1312,9 @@ export const FLOOD_SLEEP = {
   listening: { maxWait: 120_000, maxRetries: 3 },
 }
 
-/** A look at a local flag, not a request. */
-export const LOOP_CHECK_MS = 30_000
-/** Every 15 minutes, mtcute's own keep-alive rate: ~96 light requests a day. */
-export const HEARTBEAT_TICKS = 30
-export const STATE_WAIT_MS = 30_000
-const LOOP_STOPPED =
-  "Telegram's updates stopped arriving although the connection is open — ending, so a service unit starts it again"
-
 export const TRANSCRIBE_POLL_MS = 2000
 const TRANSCRIBE_WAIT_MS = 60_000
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-const pause = (ms: number, signal: AbortSignal) =>
-  new Promise<void>((resolve) => {
-    const done = () => {
-      clearTimeout(timer)
-      signal.removeEventListener("abort", done)
-      resolve()
-    }
-    const timer = setTimeout(done, ms)
-    if (signal.aborted) done()
-    else signal.addEventListener("abort", done, { once: true })
-  })
-
-const messageNumber = (id: string, rule = "`id<` takes a message id"): number => {
-  if (!/^\d+$/.test(id)) throw new CliError("validation_error", `${rule}, got "${id}"`)
-  return Number(id)
-}
-
-const forwardedCopy = (updates: tl.TypeUpdates): TgMessage | undefined => {
-  if (updates._ !== "updates" && updates._ !== "updatesCombined") return undefined
-  const update = updates.updates.find((one) => one._ === "updateNewMessage" || one._ === "updateNewChannelMessage")
-  return update && "message" in update ? new TgMessage(update.message, PeersIndex.from(updates)) : undefined
-}
-
-const parseSendId = (typed: string): Long => {
-  if (!/^-?\d{1,20}$/.test(typed))
-    throw new CliError("validation_error", "--operation-id is the number a failed send printed")
-  return Long.fromString(typed)
-}
-
-/** No answer is not a refusal: the write may have reached Telegram. Anything else is left for `#call` to map. */
-const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
-  const known = toCliError(error)
-  if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
-    return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
-  }
-  return error
-}
 
 const repeatWith = (sendId: string, sendAs: string | undefined): string =>
   sendAs === undefined ? `--operation-id ${sendId}` : `--operation-id ${sendId} --send-as ${sendAs}`
@@ -2294,19 +1322,4 @@ const repeatWith = (sendId: string, sendAs: string | undefined): string =>
 const retryDetails = (sendId: string, sendAs: string | undefined) => ({
   operation_id: sendId,
   ...(sendAs === undefined ? {} : { sendAs }),
-})
-
-const topicNumber = (id: string): number => {
-  if (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647) {
-    throw new CliError("validation_error", "--topic needs a positive Telegram topic id")
-  }
-  return Number(id)
-}
-
-const remoteMessage = (message: TgMessage): Message =>
-  observedCounters(toMessage(message), new Date().toISOString(), ["views", "reactions", "comments"])
-
-const remoteHit = (message: TgMessage, source: "remote_fetch" | "remote_update"): MessageHit => ({
-  ...toMessageHit(message),
-  ...observedCounters(toMessage(message), new Date().toISOString(), ["views", "reactions", "comments"], source),
 })

@@ -23,6 +23,7 @@ import type { BotHistoryOptions, BotHistoryReader } from "../telegram/bot-histor
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
 import type { UpdateEnvironment } from "../update.js"
+import { checkWords } from "./checks.js"
 
 export interface Environment extends BaseEnvironment {
   keyring?: KeyringStore
@@ -90,6 +91,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
           note: (line) => base.renderer.warn(line),
           verbose: base.settings.trace,
           login,
+          checks: checkWords,
         })
   }
 

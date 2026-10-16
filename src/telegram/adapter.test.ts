@@ -5,7 +5,9 @@ import { errorObjectOf } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-core"
 import { REMOTE_WRITE } from "@wirecat/cli-core/cli"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { checkWords } from "../commands/checks.js"
 import {
+  type Check,
   FLOOD_SLEEP,
   HEARTBEAT_TICKS,
   LOOP_CHECK_MS,
@@ -487,7 +489,9 @@ afterEach(() => {
   process.umask(umask)
 })
 
-const open = async (options: { listen?: boolean; diagnostic?: (line: string) => void } = {}) => {
+const open = async (
+  options: { listen?: boolean; diagnostic?: (line: string) => void; checks?: (check: Check) => string } = {},
+) => {
   const adapter = await TelegramAdapter.open({
     credentials: { id: 1, hash: "h" },
     sessionPath: join(mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? "", "adapter-")), "default.session"),
@@ -1438,6 +1442,16 @@ describe("forum setup", () => {
     await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({ code: "not_found" })
     client.deleteForumTopicHistory.mockRejectedValueOnce(new MtTimeoutError(1000))
     await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({ code: "outcome_unknown" })
+  })
+
+  it("names where to check in the words the command layer gives it", async () => {
+    const { adapter, client } = await open({ checks: checkWords })
+
+    client.deleteForumTopicHistory.mockRejectedValueOnce(new MtTimeoutError(1000))
+    await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({
+      code: "outcome_unknown",
+      message: "no answer from Telegram — the topic may have been deleted; check `tg topics list` before repeating",
+    })
   })
 
   it("creates a topic with the chosen random id and returns its server fields", async () => {
