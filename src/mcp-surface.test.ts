@@ -1,5 +1,6 @@
 import { memoryKeyring } from "@wirecat/cli-base"
-import { BOT_TOOLS, botToolName, commandLookup, createBotServer } from "@wirecat/cli-core/cli"
+import { BOT_TOOLS, commandLookup } from "@wirecat/cli-core/cli"
+import { botToolName, createBotServer } from "@wirecat/cli-core/mcp"
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
 import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
