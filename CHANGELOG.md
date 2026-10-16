@@ -14,6 +14,14 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg setup --app auto` no longer tries to create a second app when the account already has one.** It read the
+  app's keys only from one exact page layout; when my.telegram.org showed the app's page in another shape, it took
+  the account for one with no app and asked the site to create another (Telegram allows one per number). Keys are
+  now read from the page's text, and an app page whose keys cannot be read stops with "use `--app browser`". An
+  error from the site no longer quotes a whole page — which could hold the app's `api_hash` — only its title. The
+  hint after a failed app step names the command that was run (`tg <profile> setup --app browser`), and too many
+  tries at the site's code is `rate_limited`.
+
 - **`bin/release` restarts itself once when the release brings a newer `bin/release`**: folding the changelog and
   raising the version both fast-forward `main`, and the shell went on reading the old script from the byte it had
   reached, so the rest of the run was a mix of old and new text. It now starts the new script over with the same
