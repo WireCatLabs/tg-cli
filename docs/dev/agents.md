@@ -71,7 +71,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | Where | What to do |
 |---|---|
 | `cli-core/src/cli/messenger/messages-command.ts` | L2 and L3 both add to `messages`. Put a new subcommand in a file of its own and add one line to `messagesCommand`; rebase keeps both |
-| `tg-cli/src/telegram/adapter.ts`, `map.ts` | every lane adds methods. Add yours as a group at the end of the class; a rebase conflict here is two groups, keep both |
+| `tg-cli/src/telegram/adapter.ts`, `map.ts` | every lane adds methods. Put the work in the feature's module (`folders.ts`, `topics.ts`, `groups.ts` …) and a one-line method at the end of the class; a rebase conflict here is two groups, keep both |
 | `MessengerAdapter` in `port.ts` | a new method is optional (`edit?`), asked for with `capability()`; the wrappers pass it through (`throughWrapper`) — no edit to `observed.ts`/`stored.ts` unless you want ids in the run or a save |
 | `mcp/tools/<resource>.ts` | one file per resource; a new one is a file and a line in `tools.ts` |
 | `README.md`, `docs/mcp.md`, `skills/tg-cli/SKILL.md` | lists; on a conflict keep both rows |

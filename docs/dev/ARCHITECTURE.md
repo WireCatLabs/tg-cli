@@ -47,6 +47,8 @@ tree, `run()`, the output contract, the store and `--offline`, run records, the 
 | Telegram description | `src/commands/context.ts`, `TELEGRAM` | credentials, the session file, how to connect, `doctor`'s checks, `me` → Saved Messages |
 | tg's own commands | `src/commands/session.ts`, `setup.ts`, `update.ts` | login and logout; guided first run; self-update |
 | Adapter | `src/telegram/adapter.ts` | the only door to Telegram — speaks the domain model outward |
+| Adapter features | `src/telegram/messages.ts`, `chats.ts`, `polls.ts`, `topics.ts`, `groups.ts`, `folders.ts`, `contacts.ts`, `account.ts`, `login.ts`, `stats.ts`, `watch.ts` … | one feature each, over the context in `feature.ts` (client, `inputOf`, `call`, `write`); the adapter's method is one line handing it on |
+| Check words | `src/commands/checks.ts` | the `tg …` command an unknown outcome sends a person to; the adapter names it only by a typed reason (`check: "polls.show"`) |
 | Mapping | `src/telegram/map.ts` | the only file that knows mtcute's object shapes |
 | Errors | `src/telegram/errors.ts` | Telegram's refusals → the closed list of error codes |
 | Session storage | `src/telegram/storage.ts` | mtcute's session over the runtime's own SQLite, not `better-sqlite3` |

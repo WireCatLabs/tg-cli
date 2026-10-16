@@ -37,7 +37,8 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
    and the send journal apply.
 4. Release cli-core (its `bin/release`), then `pnpm add @wirecat/cli-core@<v>` here and
    add the version to `pnpm-workspace.yaml` → `minimumReleaseAgeExclude`.
-5. `TelegramAdapter` in `src/telegram/adapter.ts`, at the end of the class as a group, and its mapping
+5. `TelegramAdapter` in `src/telegram/adapter.ts` — in the feature's own module beside it (`folders.ts`, `topics.ts`,
+   `groups.ts` …) with a one-line method in the class when the feature has one — and its mapping
    in `src/telegram/map.ts`: the only file that knows mtcute's shapes. No mtcute type crosses
    `src/telegram/` (rule 4, a lint rule). Check that no new mtcute path prints to stdout.
 
