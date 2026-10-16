@@ -11,6 +11,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `task:<id> follow-up-of this task`, and `--json` and MCP return `linked_from`. Before, only the new task named the
   closed one.
 
+### Changed — may break scripts
+
+- **The daily "a newer version exists" line also stays quiet for `--json=…`, `--timeout=…` and the other quiet options
+  written with `=`** (cli-core 0.307.0). Before, only the bare option silenced it. tg now takes this notice from
+  cli-core, shared with max and memo.
+
 ### Fixed
 
 - **A broken config file is named in a short error** (cli-core 0.304.0): the first bad key, never its value.

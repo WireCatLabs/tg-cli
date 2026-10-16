@@ -41,8 +41,8 @@ describe("personal message links", () => {
     const store = await openStore()
     const key = { provider: "telegram", account: "1" }
     try {
-      await store.saveChats(key, [chat])
-      await store.saveMessages(key, chat.id, [message("42")], { via: "history" })
+      await store.chats.saveChats(key, [chat])
+      await store.messages.saveMessages(key, chat.id, [message("42")], { via: "history" })
       const adapter = vi.fn(() => {
         throw new Error("offline connected")
       })
@@ -51,7 +51,7 @@ describe("personal message links", () => {
       expect(JSON.parse(linked.stdout.join(""))).toMatchObject({
         item: { ref: `msg:telegram/1/${chat.id}/42`, url: null, access: "unavailable", reason: "offline" },
       })
-      await store.markDeleted(key, ["42"], { chatId: chat.id })
+      await store.messages.markDeleted(key, ["42"], { chatId: chat.id })
       const deleted = await tg(["--offline", "messages", "link", chat.id, "42", "--json"], { adapter })
       expect(deleted.code).not.toBe(0)
       expect(JSON.parse(deleted.stderr.join("")).error.code).toBe("not_found")

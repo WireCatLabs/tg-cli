@@ -39,7 +39,7 @@ const invoke = async (argv: string[]) => {
 
 describe("shared search adoption", () => {
   it("discovers question evidence offline with strict scope and preserves strict defaults", async () => {
-    await db.saveChats(account, [
+    await db.chats.saveChats(account, [
       {
         id: "990",
         title: "Synthetic discovery",
@@ -54,7 +54,7 @@ describe("shared search adoption", () => {
       { id: "9902", text: "Every day at 06:45 UTC.", senderId: "700", replyToId: "9901" },
       { id: "9903", text: "Every day at 02:00 UTC.", senderId: "701", replyToId: "9901" },
     ]
-    await db.saveMessages(
+    await db.messages.saveMessages(
       account,
       "990",
       rows.map((m) => ({
@@ -71,8 +71,8 @@ describe("shared search adoption", () => {
       })),
       { via: "synthetic" },
     )
-    await db.fillSearchIndex({})
-    await db.fillStems({})
+    await db.searchIndex.fillSearchIndex({})
+    await db.searchIndex.fillStems({})
     const query = "What time does Helix export run? chat:990 from:700 date:2026-10-08"
     const result = await invoke(["search", "messages", query, "--discover", "--timezone", "UTC"])
     expect(result.code).toBe(0)
@@ -233,8 +233,8 @@ describe("shared search adoption", () => {
     expect(JSON.parse(extracted.stdout).item.extracted).toBe(0)
   })
   it("plans recorded gaps locally and validates preparation bounds before connecting", async () => {
-    await db.markRange(account, "19", 1, 3)
-    await db.markRange(account, "19", 7, 9)
+    await db.sync.markRange(account, "19", 1, 3)
+    await db.sync.markRange(account, "19", 7, 9)
     const plan = await invoke(["store", "gaps", "plan", "19"])
     expect(plan.code, plan.stderr).toBe(0)
     expect(JSON.parse(plan.stdout).item).toMatchObject({

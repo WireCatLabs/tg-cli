@@ -16,7 +16,7 @@ const db = await openStore({ path: process.env.MESSAGING_STORE })
 beforeAll(async () => {
   rememberAccount(TG, "default", account.account, process.env)
   await seedSearchRecipes(db, account)
-  await db.saveChats(mail, [
+  await db.chats.saveChats(mail, [
     {
       id: "t1",
       title: "Synthetic invoice thread",
@@ -26,7 +26,7 @@ beforeAll(async () => {
       participantsCount: null,
     },
   ])
-  await db.saveMessages(
+  await db.messages.saveMessages(
     mail,
     "t1",
     [
@@ -48,7 +48,7 @@ beforeAll(async () => {
     { via: "himalaya" },
   )
   await db.notes.addNote({ title: "Billing notes", text: "the invoice is paid by the 25th" })
-  await db.fillSearchIndex()
+  await db.searchIndex.fillSearchIndex()
 })
 afterAll(async () => {
   await db.close()
