@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **The MCP server loads only when MCP is served** (cli-core 0.300.0), so other commands start with about a tenth
+  fewer files to load.
+
 ## 0.63.0 — 16.10.2026
 
 ### What's new

@@ -1,6 +1,7 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { botCopy, ChatRegistry, commandLookup, createBotServer } from "@wirecat/cli-core/cli"
+import { botCopy, ChatRegistry, commandLookup } from "@wirecat/cli-core/cli"
+import { createBotServer } from "@wirecat/cli-core/mcp"
 import type { Command } from "commander"
 import { beforeEach, describe, expect, it } from "vitest"
 import { TG } from "./app.js"
