@@ -36,6 +36,14 @@ pnpm add -g @wirecat/tg-cli
 bun add -g @wirecat/tg-cli
 ```
 
+pnpm 11 installs only versions published at least a day ago ([`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage)),
+so `pnpm add -g @wirecat/tg-cli@latest` can install an older `tg` than the newest, even older than the one you have.
+To take a release from today, name it and lift the wait for that one command:
+
+```sh
+pnpm add -g @wirecat/tg-cli@<version> --config.minimum-release-age=0   # the number `tg upgrade --check` names
+```
+
 To try it without installing:
 
 ```sh
@@ -192,6 +200,8 @@ Login stays ([the store and other versions](archive.md#the-store-and-other-versi
 tg upgrade            # with the package manager that installed tg: npm, pnpm or bun
 tg upgrade --check    # only say whether a newer version exists; installs nothing
 ```
+
+With pnpm 11, `tg upgrade` gets only versions at least a day old (see [Install](#install)).
 
 After an update, `tg upgrade` restarts each background `serve` that `tg` started, so the server does
 not keep running the old code. A `serve` you started by hand is not restarted: `tg` names it on
