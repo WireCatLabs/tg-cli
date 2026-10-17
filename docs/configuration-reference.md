@@ -126,7 +126,7 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `analysis_model` | none; required for `--analyze` | analysis model | `build --model` |
 | `analysis_base_url` | provider default | analysis API endpoint | `build --base-url` |
 | `models` | none | external models by purpose ([below](#models-by-purpose)) | `TG_MODELS_*` variables |
-| `searchStemmers.cyrillic`, `searchStemmers.latin` | `russian`, `english,spanish` | the word-stem languages for search in the whole store ([below](#search-languages)) | none |
+| `search_stemmers.cyrillic`, `search_stemmers.latin` | `russian`, `english,spanish` | the word-stem languages for search in the whole store ([below](#search-languages)) | none |
 
 The file is written `0600` when first created and `0644` by `config set`. It holds no secret.
 
@@ -238,7 +238,7 @@ that a later command refuses.
 
 ### Search languages
 
-`searchStemmers.cyrillic` (`russian` or `none`) and `searchStemmers.latin` (`english`, `spanish`,
+`search_stemmers.cyrillic` (`russian` or `none`) and `search_stemmers.latin` (`english`, `spanish`,
 both comma-separated — the default — or `none`) are kept in the shared local store, not in the
 settings file: one value for every profile and for both CLIs. So `--defaults`, `--personal` and
 `--bot` are not accepted with them, and a process under `TG_PROFILE_LOCK` cannot change them. `config unset` restores the built-in value. After a change,
@@ -347,8 +347,8 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `embedding_dims` | integer 1–65,536 | profile |
 | `analysis_provider` | `agent`, `openai`, `anthropic` | profile |
 | `models` | purpose objects described below | profile |
-| `searchStemmers.cyrillic` | `russian`, `none` | shared store, through `config set` |
-| `searchStemmers.latin` | `english`, `spanish`, both comma-separated, `none` | shared store, through `config set` |
+| `search_stemmers.cyrillic` | `russian`, `none` | shared store, through `config set` |
+| `search_stemmers.latin` | `english`, `spanish`, both comma-separated, `none` | shared store, through `config set` |
 
 ### Models by purpose
 
