@@ -4,8 +4,7 @@ A personal Telegram account from the command line, for agents and scripts
 
 The first word is the profile whenever it is not a command — `tg personal chats
 list`.
-`TG_PROFILE` says the same thing for a whole shell session, and
-`default_profile` in the config file for good.
+`TG_PROFILE` says the same thing for a whole shell session.
 No profile is assumed: without one, a command that uses an account stops and
 lists the profiles here.
 
