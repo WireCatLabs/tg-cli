@@ -201,7 +201,9 @@ export const startSession = async (
 }
 
 export const sessionCommand = () => {
-  const session = new Command("session").description("log this profile in to Telegram, or out")
+  const session = annotate(new Command("session"), { mcp: false }).description(
+    "log this profile in to Telegram, or out",
+  )
 
   annotate(session.command("start"), { effects: REMOTE_WRITE, lifetime: "interactive" })
     .description("log in by QR code (default) or by phone number, code and 2FA password")

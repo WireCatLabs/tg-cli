@@ -388,15 +388,18 @@ tg sales bot mcp config          # the entry for Claude Desktop, Cursor and othe
 The agent gets what the bot profile's permissions allow, under `bot.`: the chats the bot has seen,
 messages, admins, the command menu, the journal and the recipient list — and, unless the profile is
 read-only, writing as the bot: send, edit, pin, "typing", answer buttons, delete, remove members.
-`permissions.bot: readonly` blocks writes unless a more specific rule permits one. A deletion at
+`permissions.bot: readonly` blocks writes unless a more specific rule permits one.
 `ask` and `allow` permit a requested MCP write without a server form; `deny` and `readonly`
 block it. Old confirmation flags have no effect. Separate moderation rule consent still
 applies: actions requiring it return a plan for you to approve through the CLI.
 `tg_bot_read` (`command: "status"`) says which profile
 the server speaks for and which writing tools are on.
 
-Each write runs the same command you would type, so the bot's recipient list and journal apply.
-The token, the webhooks, the command menu and the recipient list stay yours to change.
+Each tool is the command you would type, run in the server's process, so the bot's recipient list
+and journal apply. Its arguments are the command's own arguments and options in snake_case:
+`messages send` takes `chat`, `text`, `md` or `html`, `reply_to` and `silent`.
+The token, the webhooks, the command menu and the recipient list stay yours to change, and so do
+sending files, `--allow-dangerous` and moderation's `--max-actions`: the agent's tools leave them out.
 
 Bot `--md` uses the same [Telegram formatting rules](usage.md#sending) as personal sends.
 Text edits and file/photo captions use that formatter too.

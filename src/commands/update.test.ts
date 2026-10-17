@@ -4,6 +4,7 @@ import { captureStreams } from "@wirecat/cli-base"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
 import * as v from "valibot"
 import { describe, expect, it, onTestFinished } from "vitest"
+import { pathsFor } from "../paths.js"
 import { run } from "../program.js"
 import type { UpdateEnvironment } from "../update.js"
 
@@ -86,7 +87,7 @@ describe("tg upgrade", () => {
 
 describe("tg upgrade and a running server", () => {
   const serving = (profile: string) => {
-    const lock = join(process.env.TG_STATE_DIR ?? "", "serve", `${profile}.lock`)
+    const lock = join(pathsFor().state, "serve", `${profile}.lock`)
     mkdirSync(dirname(lock), { recursive: true })
     writeFileSync(lock, JSON.stringify({ pid: process.pid, startedAt: "2026-09-29T10:00:00.000Z" }))
     onTestFinished(() => rmSync(lock, { force: true }))

@@ -3,10 +3,11 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { rememberAccount } from "@wirecat/cli-core/cli"
-import { openStore } from "@wirecat/cli-core/store"
+import { openStore, storePath } from "@wirecat/cli-core/store"
 import { seedSearchRecipes } from "@wirecat/cli-core/testing"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
+import { pathsFor } from "./paths.js"
 import { run } from "./program.js"
 
 const refuse = vi.fn(() => {
@@ -14,7 +15,7 @@ const refuse = vi.fn(() => {
 })
 const keyring = memoryKeyring()
 const account = { provider: "telegram", account: "500" }
-const db = await openStore({ path: process.env.MESSAGING_STORE })
+const db = await openStore({ path: storePath() })
 const textPath = join(tmpdir(), "search-adoption.txt")
 beforeAll(async () => {
   rememberAccount(TG, "default", account.account, process.env)
@@ -268,7 +269,7 @@ describe("shared search adoption", () => {
     expect(repair.stderr).toContain("gap plan changed")
   })
   it("honors protected graph links before fetch, repair or background preparation", async () => {
-    const config = process.env.TG_CONFIG_DIR as string
+    const config = pathsFor().config
     mkdirSync(config, { recursive: true })
     const path = join(config, "config.json")
     const original = existsSync(path) ? readFileSync(path, "utf8") : '{"profiles":{}}'

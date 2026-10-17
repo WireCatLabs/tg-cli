@@ -7,6 +7,7 @@ import { CliError } from "@wirecat/cli-base"
 import { pickChat } from "@wirecat/cli-core"
 import type { SendOptions } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
+import { pathsFor } from "./paths.js"
 import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
 
@@ -499,7 +500,7 @@ describe("sending", () => {
 describe("app credentials out of reach", () => {
   it("says the keyring is probably out of reach when this profile has logged in here, rather than to log in", async () => {
     const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
-    const sessions = join(process.env.TG_STATE_DIR as string, "sessions")
+    const sessions = join(pathsFor().state, "sessions")
     mkdirSync(sessions, { recursive: true })
     writeFileSync(join(sessions, "reach.session"), "")
 
@@ -515,7 +516,7 @@ describe("app credentials out of reach", () => {
 
   it("**serve treats an unreachable keyring as temporary**, so its unit retries; a missing login still exits 4", async () => {
     const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
-    const sessions = join(process.env.TG_STATE_DIR as string, "sessions")
+    const sessions = join(pathsFor().state, "sessions")
     mkdirSync(sessions, { recursive: true })
     writeFileSync(join(sessions, "locked.session"), "")
 

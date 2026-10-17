@@ -1,28 +1,34 @@
+import { toJsonSchema } from "@valibot/to-json-schema"
 import { memoryKeyring } from "@wirecat/cli-base"
-import { BOT_TOOLS, commandLookup } from "@wirecat/cli-core/cli"
-import { botToolName, createBotServer } from "@wirecat/cli-core/mcp"
-import type { Command } from "commander"
+import { describeProgram } from "@wirecat/cli-base/commands"
+import { createBotServer } from "@wirecat/cli-core/mcp"
 import { describe, expect, it } from "vitest"
+import { resolveSettings } from "./app.js"
 import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
 import { createProgram, run } from "./program.js"
 
-describe("tg's MCP surface", () => {
-  it("**offers only cli-core's tools**, so the router's envelope check covers every one; `bot api` is not a tool", async () => {
-    const program = createProgram()
-    const group = program.commands.find((one) => one.name() === "bot") as Command
-    const { offered } = createBotServer({
-      bot: TELEGRAM_BOT,
-      commandAt: commandLookup(group),
-      settings: { profile: "sales", permissions: {}, readOtherBots: false },
-      env: {},
-      run: botMcpRun(run, { keyring: memoryKeyring() }),
-      ...(TELEGRAM_BOT.mcp?.tools ? { tools: TELEGRAM_BOT.mcp.tools } : {}),
-    })
-    const shared = new Set(BOT_TOOLS.map((tool) => botToolName("tg", tool.words)))
+const botServer = (permissions: Record<string, "deny" | "readonly" | "ask" | "allow"> = {}) =>
+  createBotServer({
+    bot: TELEGRAM_BOT,
+    program: { run: botMcpRun(run, { keyring: memoryKeyring() }), commands: describeProgram(createProgram()) },
+    settings: { ...resolveSettings({ profile: "sales" }, { env: {}, kind: "bot" }), permissions, readOtherBots: false },
+    env: {},
+  })
 
-    expect(TELEGRAM_BOT.mcp?.tools).toBeUndefined()
-    expect(offered.length).toBeGreaterThan(0)
-    expect(offered.filter((name) => !shared.has(name))).toEqual([])
-    expect(offered).not.toContain("tg_bot_api")
+describe("tg's bot MCP surface", () => {
+  it("**offers the bot commands by the profile's levels**: every write by default, none when read-only", () => {
+    const all = botServer().offered
+    expect(all).toEqual(expect.arrayContaining(["messages send", "messages delete", "chats list"]))
+    expect(all.some((command) => /^(api|auth|store|webhooks|mcp)\b|comments|people/.test(command))).toBe(false)
+
+    const reads = botServer({ bot: "readonly" })
+    expect(reads.offered).toEqual(expect.arrayContaining(["messages list", "me"]))
+    expect(reads.tools.filter((tool) => tool.writes)).toEqual([])
+  })
+
+  it("**is pinned**: a command or an argument agents gain or lose shows up in the contract", async () => {
+    const catalogue = Object.fromEntries(botServer().tools.map((tool) => [tool.command, toJsonSchema(tool.input)]))
+
+    await expect(`${JSON.stringify(catalogue, null, 2)}\n`).toMatchFileSnapshot("../contracts/bot-catalogue.snap")
   })
 })

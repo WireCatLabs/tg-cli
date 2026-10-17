@@ -8,6 +8,7 @@ import { unitScope } from "@wirecat/cli-core/background"
 import type { ServerSystem } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
+import { pathsFor } from "./paths.js"
 import { run } from "./program.js"
 import { scripted } from "./testing/scripted.js"
 
@@ -385,7 +386,7 @@ describe("doctor report", () => {
     const explained = await tg(["archive", "doctor", "report", "--json"], store)
     expect(explained.answer).toMatchObject({ item: { send_to: "https://github.com/WireCatLabs/tg-cli/issues/new" } })
 
-    const runs = join(process.env.TG_STATE_DIR ?? "", "runs", "2026-09-29", "20260929T100000Z-chats-list-abc123")
+    const runs = join(pathsFor().state, "runs", "2026-09-29", "20260929T100000Z-chats-list-abc123")
     mkdirSync(runs, { recursive: true })
     writeFileSync(
       join(runs, "run.json"),
