@@ -1,6 +1,7 @@
 import { join } from "node:path"
 import { Long, MtPeerNotFoundError, tl } from "@mtcute/node"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { pathsFor } from "../paths.js"
 import { openBotHistory } from "./bot-history.js"
 import { bareCheck } from "./feature.js"
 
@@ -63,7 +64,7 @@ vi.mock("./storage.js", () => ({ openSessionStorage: async () => ({}) }))
 const open = (extra: Partial<Parameters<typeof openBotHistory>[0]> = {}) =>
   openBotHistory({
     credentials: { id: 1, hash: "synthetic" },
-    sessionPath: join(process.env.TG_STATE_DIR ?? "", "bots", "test", "bot.session"),
+    sessionPath: join(pathsFor().state, "bots", "test", "bot.session"),
     token: "900:synthetic",
     pauseMs: 0,
     newest: async () => "250",

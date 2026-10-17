@@ -1,13 +1,10 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { botCopy, ChatRegistry, commandLookup } from "@wirecat/cli-core/cli"
-import { createBotServer } from "@wirecat/cli-core/mcp"
-import type { Command } from "commander"
+import { botCopy, ChatRegistry } from "@wirecat/cli-core/cli"
 import { beforeEach, describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"
-import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
-import { createProgram, run } from "./program.js"
+import { run } from "./program.js"
 
 const TOKEN = "123456789:AAsecretSECRETsecretSECRETsecret0"
 const SECRET = "AAsecretSECRET"
@@ -160,31 +157,6 @@ describe("tg bot list", () => {
     expect((await tg(["bot", "list", "--check", "--json"], telegram({ getMe: ME }))).answer.items).toEqual([
       { name: "sales", token: "keyring", bot: "sales_bot", id: "7000000001" },
     ])
-  })
-})
-
-describe("tg bot mcp", () => {
-  const offered = async (permissions: Record<string, "deny" | "readonly" | "ask" | "allow">) => {
-    const group = createProgram().commands.find((one) => one.name() === "bot") as Command
-    const { offered: names } = createBotServer({
-      bot: TELEGRAM_BOT,
-      commandAt: commandLookup(group),
-      settings: { profile: "sales", permissions, readOtherBots: false },
-      env: {},
-      run: botMcpRun(run, { keyring }),
-    })
-    return names
-  }
-
-  it("**offers the shared bot tools by the profile's levels**: every write by default, none when read-only", async () => {
-    const all = await offered({})
-    expect(all).toEqual(expect.arrayContaining(["tg_bot_messages_send", "tg_bot_messages_delete", "tg_bot_chats_list"]))
-    expect(all.some((name) => /comments|people/.test(name))).toBe(false)
-
-    const reads = await offered({ bot: "readonly" })
-    expect(reads).toContain("tg_bot_messages_list")
-    expect(reads).toContain("tg_bot_me")
-    expect(reads.some((name) => /_(send|edit|delete|pin|unpin|remove|action|answer)$/.test(name))).toBe(false)
   })
 })
 

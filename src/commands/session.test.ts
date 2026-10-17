@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs"
-import { tmpdir } from "node:os"
+import { homedir, tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
@@ -96,7 +96,7 @@ describe("session start", () => {
     expect(answer.item).toEqual({
       profile: "default",
       account: { id: "1", name: "Owner", username: null },
-      session: join(process.env.TG_STATE_DIR ?? "", "sessions", "default.session"),
+      session: sessionFile("default"),
       app_keys: "environment",
       already_logged_in: false,
     })
@@ -109,14 +109,14 @@ describe("session start", () => {
   it("tells a person who is logged in, where the session is, and where the app keys live", async () => {
     const { stdout } = await tg(["session", "start"], {
       tty: true,
-      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", HOME: process.env.TG_TEST_SANDBOX ?? "" },
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
       adapter: () => loginAdapter({}),
     })
 
     expect(stdout.join("\n")).toBe(
       [
         "Logged in as Owner (id 1) — profile default.",
-        "Session:  ~/state/sessions/default.session",
+        `Session:  ${sessionFile("default").replace(homedir(), "~")}`,
         "App keys: from TG_API_ID and TG_API_HASH",
         "Next:     tg default chats list · tg default server install to keep the archive current",
       ].join("\n"),
@@ -125,7 +125,7 @@ describe("session start", () => {
 
   it("**says it was already logged in** when Telegram still accepts the session and nothing was asked", async () => {
     const still = { ...loginAdapter({}), login: async () => ({ id: "1", name: "Owner", username: null }) }
-    const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", HOME: process.env.TG_TEST_SANDBOX ?? "" }
+    const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" }
     const pretty = await tg(["tgtest", "session", "start", "phone"], { tty: true, env, adapter: () => still })
     const qrFile = join(mkdtempSync(join(tmpdir(), "qr-")), "never.png")
     const json = await tg(["session", "start", "--qr-file", qrFile, "--json"], { env, adapter: () => still })

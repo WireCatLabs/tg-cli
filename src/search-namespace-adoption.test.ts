@@ -1,6 +1,6 @@
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { rememberAccount } from "@wirecat/cli-core/cli"
-import { openStore } from "@wirecat/cli-core/store"
+import { openStore, storePath } from "@wirecat/cli-core/store"
 import { seedSearchRecipes } from "@wirecat/cli-core/testing"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
@@ -12,7 +12,7 @@ const refuse = vi.fn(() => {
 const keyring = memoryKeyring()
 const account = { provider: "telegram", account: "500" }
 const mail = { provider: "email", account: "owner@example.test" }
-const db = await openStore({ path: process.env.MESSAGING_STORE })
+const db = await openStore({ path: storePath() })
 beforeAll(async () => {
   rememberAccount(TG, "default", account.account, process.env)
   await seedSearchRecipes(db, account)
