@@ -3,6 +3,38 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg tasks agenda` lists what others owe you** (cli-core 0.328.0): open tasks someone else does, oldest first, with
+  their assignees, in an "assigned" section and in `assigned` in JSON.
+
+### Changed — may break callers
+
+- **A command path given as one argument fails** (cli-core 0.328.0): `tg 'chats list' --help` printed the root help and
+  exited 0; it now fails with the command line to run.
+- **An interactive command without a terminal waits 5 minutes by default, not 30 seconds** (cli-core 0.328.0), so an
+  agent's `tg session start --qr-file` is not cut off before the code is scanned. `--timeout` and `TG_TIMEOUT` still
+  decide when given.
+- **Under `TG_READ_ONLY`, a write that asks first stops with exit 5 before asking, not exit 7** (cli-core 0.329.0):
+  `messages delete`, `topics delete`, `account sessions end`, `chats delete` and `chats clear` said "asks before it
+  acts", as if `--allow-dangerous` would let them through. They now say "this process is read-only", as every other
+  write does. Without the lock they ask as before.
+
+### Fixed
+
+- **`tg chats list --json | head` ends quietly** (cli-core 0.328.0), through a running `serve` too, instead of printing
+  a stack trace when the reader stops.
+
+### Security
+
+- **`tg session end` no longer logs out a running `tg serve`** (cli-core 0.328.0): with `serve` running for the
+  profile, `session end` was handed to `serve` to run. It logged out the connection `serve` was using and deleted the
+  session file `serve` still had open. Now `session start`, `session end` and `setup` never run through `serve`, and
+  `session end` stops with exit 2 and says to run `tg <profile> server stop` first. Under `TG_READ_ONLY` all three still
+  stop with exit 5, now with "it cannot log in or out".
+
 ## 0.71.0 — 17.10.2026
 
 ### Changed — may break callers

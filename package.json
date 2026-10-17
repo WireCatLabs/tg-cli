@@ -65,7 +65,7 @@
   "dependencies": {
     "@mtcute/node": "0.32.4",
     "@wirecat/cli-base": "0.43.0",
-    "@wirecat/cli-core": "0.326.0",
+    "@wirecat/cli-core": "0.330.0",
     "commander": "15.0.0",
     "undici": "7.30.0",
     "valibot": "1.5.0"

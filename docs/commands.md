@@ -3673,7 +3673,7 @@ tg tasks unmerge <dup>
 
 ### `tg tasks agenda`
 
-what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one
+what needs a look today, from the local store and without message text: tasks overdue, due or to check, chats where you owe an answer, chats where you wait for one, open tasks someone else does
 
 ```sh
 tg tasks agenda [query] [options]

@@ -82,10 +82,10 @@ drove it through `run()`), ⛔ (not testable offline — the reason and where it
 ❌ (nothing). `pnpm test:matrix`, full validation and `pnpm release:check` fail on a ❌, on a ⛔ entry that names
 nothing any more, and on a stale page.
 
-It is **measured, not searched for**: under vitest (`TG_TEST_ARGV_LOG`, set by the sandbox) each
-top-level command's `preAction` hook appends the command path and the option names given to
-`coverage/argv.jsonl` — names, never a value (`src/program.ts`, `logParsed`). The hook sits on the
-top-level commands because the root program is built inside cli-core. A flag a test only
+It is **measured, not searched for**: under vitest (`TG_TEST_ARGV_LOG`, set by the sandbox) cli-core's `run()`
+appends each parsed command path and the option names given to `coverage/argv.jsonl` — names, never a value. It reads
+the variable from the environment a test hands `run()`, or from the process's when the test hands none; tg's own `run()`
+adds only `--version`, which ends before any command is parsed. A flag a test only
 mentions does not count, and neither does a test that calls a function directly: the matrix is
 about what a person types.
 

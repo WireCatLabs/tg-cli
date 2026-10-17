@@ -3,10 +3,12 @@ import { resolve } from "node:path"
 import { CliError, indent } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
 import { type Account, qrPng, readSecret, terminalQr } from "@wirecat/cli-core"
+import { servingProfiles } from "@wirecat/cli-core/background"
 import {
   asFirstWord,
   commandWords,
   inputPolicy,
+  logsInOrOut,
   REMOTE_WRITE,
   refuseCommandName,
   rememberAccount,
@@ -20,7 +22,6 @@ import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/crede
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { printItem } from "./answer.js"
 import { type CommandContext, forCommand } from "./context.js"
-import { refuseUnderReadOnly } from "./read-only.js"
 
 type Ask = (prompt: string, echo: boolean) => Promise<string>
 
@@ -205,7 +206,7 @@ export const sessionCommand = () => {
     "log this profile in to Telegram, or out",
   )
 
-  annotate(session.command("start"), { effects: REMOTE_WRITE, lifetime: "interactive" })
+  logsInOrOut(annotate(session.command("start"), { effects: REMOTE_WRITE, lifetime: "interactive" }))
     .description("log in by QR code (default) or by phone number, code and 2FA password")
     .addArgument(new Argument("[method]", "how to log in").choices(["qr", "phone"]).default("qr"))
     .addOption(
@@ -230,7 +231,6 @@ export const sessionCommand = () => {
         "when running without a terminal. The temporary image is removed after login.\n",
     )
     .action(async function (this: Command, method: "qr" | "phone") {
-      refuseUnderReadOnly(this, "log in")
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const { app, qrFile, sms } = this.opts<{ app: "browser" | "auto"; qrFile?: string; sms?: boolean }>()
@@ -253,11 +253,16 @@ export const sessionCommand = () => {
       }
     })
 
-  annotate(session.command("end"), { effects: REMOTE_WRITE })
+  logsInOrOut(annotate(session.command("end"), { effects: REMOTE_WRITE }))
     .description("log this profile out on Telegram's side and forget the session here")
     .action(async function (this: Command) {
-      refuseUnderReadOnly(this, "log out")
       const context = forCommand(this)
+      // Logging out here ends the login serve still holds and deletes the session file under it.
+      if (servingProfiles(TG, context.env).includes(context.profile))
+        throw new CliError(
+          "validation_error",
+          `tg serve is running for ${context.profile} — \`tg ${asFirstWord(context.profile)}server stop\` first`,
+        )
       if (!existsSync(context.sessionPath)) {
         printItem(context, { profile: context.profile, ended: false })
         return

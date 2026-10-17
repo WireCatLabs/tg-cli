@@ -9,6 +9,7 @@ import {
   commandWords,
   environmentOf,
   inputPolicy,
+  logsInOrOut,
   REMOTE_WRITE,
   refuseCommandName,
   rootOf,
@@ -22,7 +23,6 @@ import { pathsFor } from "../paths.js"
 import { installer } from "../update.js"
 import { printItem } from "./answer.js"
 import { type CommandContext, type Environment, forCommand, SKILL } from "./context.js"
-import { refuseUnderReadOnly } from "./read-only.js"
 import { startSession } from "./session.js"
 
 const AGENTS = ["none", "codex", "cursor", "claude", "gemini", "all"] as const
@@ -81,7 +81,7 @@ const agentFor = async (
 }
 
 export const setupCommand = () =>
-  annotate(new Command("setup"), { effects: REMOTE_WRITE, lifetime: "interactive" })
+  logsInOrOut(annotate(new Command("setup"), { effects: REMOTE_WRITE, lifetime: "interactive" }))
     .description("set up Telegram and connect your agent")
     .configureHelp({ showGlobalOptions: true })
     .addHelpText(
@@ -124,7 +124,6 @@ export const setupCommand = () =>
       "write a temporary login QR image for an agent; needs stored app credentials without a terminal",
     )
     .action(async function (this: Command) {
-      refuseUnderReadOnly(this, "log in or install a skill")
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const options = this.opts<Options>()
