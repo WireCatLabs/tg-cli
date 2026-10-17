@@ -1014,7 +1014,7 @@ tg contacts link <person> <other>
 | Argument | | What it is |
 |---|---|---|
 | `person` | required | their id, @username, or part of their name. |
-| `other` | required | the same in another messenger of the store, as <messenger>:<person> — max:Ana. |
+| `other` | required | the same in another messenger of the store, as <messenger>:<person> — max:Ana; me: it is you, as zoom:<id> me. |
 
 ### `tg contacts unlink`
 

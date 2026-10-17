@@ -3,6 +3,26 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **`tg <profile> contacts link <person> me`** (cli-core 0.323.0): say that a contact is you — for an account of
+  yours the store cannot match by itself, such as `zoom:<id>`.
+
+### Fixed
+
+- **Mentions find fewer wrong names** (cli-core 0.323.0). A word of a contact's name counts on its own only as a first
+  name or a surname; a contact named like a company («Smart Agents») is found only by the whole name, and the polite
+  «Ваш», «Вам», «Вас» never count. A saint's name in a place («Saint Michael's Bridge») and a city after «в»/«во»
+  («во Владимире») are not names either.
+- **Your own accounts are you** (cli-core 0.323.0): an account's own identity is linked to you on its next sync, so your
+  name in your messages is no longer someone else's.
+- **An address keeps its city** (cli-core 0.323.0): the same street in two cities is two places; an address written
+  without a city still matches its place on that street.
+
+After updating, read old messages again once: `tg <profile> mentions rebuild person-name place`.
+
 ## 0.69.0 — 17.10.2026
 
 ### Changed — may break scripts
