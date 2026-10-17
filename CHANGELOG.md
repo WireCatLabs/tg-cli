@@ -24,6 +24,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Fewer false duplicate suggestions from reply chains** (cli-core 0.331.0): a reply that asks for something new no
+  longer marks two tasks as maybe the same.
 - **`tg chats list --json | head` ends quietly** (cli-core 0.328.0), through a running `serve` too, instead of printing
   a stack trace when the reader stops.
 
