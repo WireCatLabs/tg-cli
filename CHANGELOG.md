@@ -3,6 +3,12 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Security
+
+- WhatsApp state files cannot be uploaded as attachments (Core 0.314.0), including configured state paths and symbolic links. Ordinary neighbouring files remain allowed.
+
 ## 0.66.0 — 17.10.2026
 
 ### Changed — may break scripts
