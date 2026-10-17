@@ -46,7 +46,7 @@ You:    Yes.
 ## Quick start
 
 ```sh
-npm install -g @wirecat/tg-cli    # or: pnpm add -g @wirecat/tg-cli, bun add -g @wirecat/tg-cli
+npm install -g @wirecat/tg-cli    # or: bun add -g @wirecat/tg-cli; pnpm: see docs/installation.md
 tg personal setup --agent claude  # also codex, cursor, gemini, all or none
 tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
