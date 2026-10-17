@@ -2009,7 +2009,7 @@ tg watch [options]
 
 | Option | What it does |
 |---|---|
-| `--events` | also edits, deletions and reactions; every line then names its event. |
+| `--events` | also edits, deletions, reactions and poll votes; every line then names its event. |
 
 ## `tg serve`
 
@@ -3699,7 +3699,7 @@ tg tasks categories
 
 ### `tg tasks apply`
 
-the task rules over a chat's newest stored messages: a question nobody answered and a mention of you open a task, and your answer closes one — for a chat the first sync left alone (config task_first_pass_per_chat). Lists what would open and changes nothing unless --yes; with --yes the duplicate check runs as on a sync. Reads only the local store
+the task rules over a chat's newest stored messages: in a one-to-one chat a question you did not answer, in a group only a question in reply to you and a mention of you, open a task, and your answer closes one; a channel opens none — for a chat the first sync left alone (config task_first_pass_per_chat). Lists what would open and changes nothing unless --yes; with --yes the duplicate check runs as on a sync. Reads only the local store
 
 **Changes something on this computer only.**
 

@@ -35,7 +35,6 @@ way to override it, in the [settings reference](configuration-reference.md#the-f
 | `proxy` | a proxy server to reach Telegram through, where it is blocked ([proxy setup](configuration-reference.md#through-a-proxy)) | none |
 | `transcribe_with` | who turns voice messages into text: `auto`, `messenger` or `local` | `auto` |
 | `update_check` | once a day, say when a newer `tg` exists | `true` |
-| `default_profile` | which profile a command uses when you do not name one | none: a command that uses an account stops and lists the profiles |
 
 The file never holds a secret. It has no place for your session, the app hash, a phone number or a
 proxy password. The session is a file of its own, and the app hash and a proxy password go to your
@@ -66,7 +65,6 @@ for one command. Remove the profile's `limit` and the value from `defaults` appl
 
 ```json
 {
-  "default_profile": "personal",
   "defaults": {
     "limit": 20,
     "keep_runs_for_days": 14,
@@ -103,7 +101,6 @@ for one command. Remove the profile's `limit` and the value from `defaults` appl
 
 What each part does:
 
-- `default_profile`: `tg chats list` with no profile name uses `personal`.
 - `defaults`: every profile gets these values unless it sets its own. `update_check` and `skill_hint`
   are allowed only here, because there is one copy of `tg` for all profiles.
 - `profiles.personal`: more rows, colours, and a record of every run, only for `personal`.

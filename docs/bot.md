@@ -80,7 +80,7 @@ tg support bot auth set
 tg personal bot list --check  # every name with a bot token, and which bot each is
 ```
 
-Without a name it is `TG_PROFILE`, else the `default_profile` setting; with neither, the command stops and lists the profiles.
+Without a name it is `TG_PROFILE`; without that, the command stops and lists the profiles.
 
 ## The token
 
