@@ -3520,10 +3520,11 @@ tg tasks add <message> [options]
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
 ### `tg tasks plan`
 
-set a task's title, description, due date, next check and category; nothing reaches the messenger
+set a task's title, description, due date, next check, category and assignee; nothing reaches the messenger
 
 **Changes something on this computer only.**
 
@@ -3542,6 +3543,7 @@ tg tasks plan <task> [options]
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
 | `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
 ### `tg tasks link`
 
@@ -3697,14 +3699,14 @@ the categories a task takes, with what each means and the words a rule picks it 
 tg tasks categories
 ```
 
-### `tg tasks apply`
+### `tg tasks scan`
 
 the task rules over a chat's newest stored messages: in a one-to-one chat a question you did not answer, in a group only a question in reply to you and a mention of you, open a task, and your answer closes one; a channel opens none — for a chat the first sync left alone (config task_first_pass_per_chat). Lists what would open and changes nothing unless --yes; with --yes the duplicate check runs as on a sync. Reads only the local store
 
 **Changes something on this computer only.**
 
 ```sh
-tg tasks apply <chat> [options]
+tg tasks scan <chat> [options]
 ```
 
 | Argument | | What it is |

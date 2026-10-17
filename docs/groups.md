@@ -240,19 +240,39 @@ send guard, and each person added counts toward the hourly limit
 
 ## What waits on you
 
-`review` and `serve` keep a list of tasks in the local store. A question nobody answered, and a message
-that mentions you by name, opens a task; your answer closes it. A task points at its message and never
-copies it.
+`review` and `serve` keep a list of tasks in the local store: what you have to do, and what someone owes you.
+A task points at its message and never copies it. Where a rule opens one:
+
+- **A one-to-one chat:** a question you did not answer, and a message that mentions you.
+- **A group:** only a question that replies to your message, and a mention of you. Other people's questions
+  are not your tasks.
+- **A channel or Saved Messages:** nothing.
+
+Your answer closes the task. To record every question in a group, whoever it is for, tag the group:
+
+```sh
+tg personal tags add --chat <group> watch-tasks
+```
 
 The first sync of an account opens no tasks from your history; later syncs open tasks from new messages. To
 turn a chat's history into tasks, list what would open, then open it:
 
 ```sh
-tg personal tasks apply <chat>
-tg personal tasks apply <chat> --last 300 --yes
+tg personal tasks scan <chat>
+tg personal tasks scan <chat> --last 300 --yes
 ```
 
 `config set task_first_pass_per_chat <n>` lets the first sync open up to n tasks per chat.
+
+When someone promises you something, keep it as their task, and list what others owe you:
+
+```sh
+tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --category other --assignee sender
+tg personal tasks list "assignee:any state:open"
+```
+
+`--assignee sender` is whoever sent the message; `--assignee person:<id>` names someone else, and
+`tasks plan <task> --assignee none` clears it. A task with no assignee is fine: better than a missed one.
 
 See what waits on you, oldest first, then only questions and mentions in one group:
 
