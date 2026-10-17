@@ -85,7 +85,7 @@ Read in this order:
    when the change is about sending. Read-only check: `bin/tg account show`, `bin/tg chats list
    --limit 3`, `bin/tg messages list me --limit 2`. Print counts and ids in checks, never message text.
 10. **Telegram deduplicates by `random_id`, also across connections** (FIND-6) — that is what makes
-    `--send-id` after `outcome_unknown` safe. Never generate a new id on a retry.
+    `--operation-id` after `outcome_unknown` safe. Never generate a new id on a retry.
 11. **The store is a system of record, not a cache.** Consult the shared migration manifest and claim the next number before implementation; a derived search
     index may be dropped and rebuilt, a base table never. Take a migration's number in cli-core's `COORDINATION.md` before writing it.
 12. **An adapter must set `Message.senderIsChat`** for a channel post or a message sent as the group,

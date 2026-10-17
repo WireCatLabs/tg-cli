@@ -61,7 +61,7 @@ Drive it **through `run()`** against the scripted adapter: the fakes in `src/pro
 `src/runs.test.ts`, `src/send-guard.test.ts`, `src/offline.test.ts` and `src/contract.test.ts`, and
 the adapter's own case in `src/telegram/adapter.test.ts`, where mtcute is a stand-in.
 
-- Pass **every option** at least once. `pnpm test:matrix` shows ✅/❌ per option, and CI fails on ❌.
+- Pass **every option** at least once. `pnpm test:matrix` shows ✅/❌ per option and fails on ❌, and so does full validation after the merge.
   A command that truly cannot run offline gets its reason in `scripts/test-matrix-untested.ts` and a
   row in [live-scenarios.md](../../live-scenarios.md).
 - Assert behaviour, not only "exit 0": what the adapter received, the output shape, a refusal on a
@@ -79,7 +79,7 @@ a line to [`skills/tg-cli/SKILL.md`](../../../../skills/tg-cli/SKILL.md), which 
 
 ## 5. Docs
 
-- `pnpm generate` rewrites `docs/commands.md`. Never edit it by hand; CI fails on drift.
+- `pnpm generate` rewrites `docs/commands.md`. Never edit it by hand; full validation fails on drift.
 - The user page for the area (`README.md`, `docs/usage.md`, …): English, current facts only.
 - `CHANGELOG.md` under `## Unreleased`: what a user notices, under tg's headings
   ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)).

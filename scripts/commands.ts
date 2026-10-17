@@ -5,7 +5,7 @@
  *   pnpm generate
  *
  * Nobody writes that page by hand: a reference that can be forgotten lies with the confidence of a
- * real one. CI regenerates it and fails when the committed page differs.
+ * real one. Full validation regenerates it on each merge to `main` and fails when the committed page differs.
  *
  * It imports from `dist/` because Node's type stripping will not resolve a `.js` specifier to a
  * `.ts` file, so `pnpm generate` builds first.

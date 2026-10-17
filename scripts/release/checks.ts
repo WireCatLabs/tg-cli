@@ -4,15 +4,43 @@
  * `cli-dev docs-check --rules scripts/release/checks.ts` run them.
  */
 import { join, sep } from "node:path"
-import { type ChangelogRules, type DocsRules, JOURNAL_IDS, markdownFiles } from "@wirecat/cli-base/release"
+import {
+  type ChangelogRules,
+  changelogProblems,
+  type DocsRules,
+  JOURNAL_IDS,
+  markdownFiles,
+} from "@wirecat/cli-base/release"
 
 const IDS = [...JOURNAL_IDS, "OPS", "CLI"]
 
-export const CHANGELOG: ChangelogRules = {
-  headings: ["What's new", "Changed — may break scripts", "Fixed", "Security", "Removed"],
+const CHANGELOG: ChangelogRules = {
+  headings: ["Added", "Changed — may break callers", "Fixed", "Removed", "Security"],
   unreleased: "Unreleased",
   ids: IDS,
 }
+
+// Released sections are frozen, so 0.69.0 and every version below it keep the names they were released with.
+const LAST_OLD_HEADINGS = "0.69.0"
+const OLD_HEADINGS = new Map([
+  ["What's new", "Added"],
+  ["Changed — may break scripts", "Changed — may break callers"],
+])
+
+const withOldHeadingsRenamed = (text: string) => {
+  let old = false
+  return text
+    .split("\n")
+    .map((line) => {
+      if (line.startsWith(`## ${LAST_OLD_HEADINGS} — `)) old = true
+      const renamed = old && line.startsWith("### ") ? OLD_HEADINGS.get(line.slice(4)) : undefined
+      return renamed ? `### ${renamed}` : line
+    })
+    .join("\n")
+}
+
+export const changelogProblemsOf = (text: string, check: { release: boolean; version?: string }) =>
+  changelogProblems(withOldHeadingsRenamed(text), { ...CHANGELOG, ...check })
 
 // The agent skill ships because `tg skill show` reads it from the package.
 export const PACKED = [

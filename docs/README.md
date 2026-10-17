@@ -38,7 +38,7 @@ page goes into it too. This index is for contributors and stays out of the porta
 
 ## The reference is generated
 
-[commands.md](commands.md) is written by `pnpm generate` from the command tree, and CI fails when the
+[commands.md](commands.md) is written by `pnpm generate` from the command tree, and full validation fails when the
 committed page differs from what the program says. The same list, as JSON, is `tg commands --json`.
 
 ## Building it
