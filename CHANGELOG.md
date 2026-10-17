@@ -24,6 +24,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- `mentions` help summaries fit the shared 80-character limit (cli-core 0.311.0).
 - **The duplicate check compares tasks by when their messages were sent** (cli-core 0.310.0), not by when a task
   was written. Tasks written from history in one go no longer all look alike.
 - **Old messages fetched into a quiet chat open no tasks** (cli-core 0.309.0): a sync pass skips a chat with
