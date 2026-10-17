@@ -191,13 +191,17 @@ describe("registering the owner's app on my.telegram.org", () => {
     })
   })
 
-  it("says a login the site did not keep is an authentication error", async () => {
-    const { fetch } = site({
+  it.each([
+    [401, "Unauthorized"],
+    [302, ""],
+  ])("says a login the site did not keep (%i) is an authentication error", async (status, body) => {
+    const { fetch, seen } = site({
       "/auth/send_password": '{"random_hash":"r1"}',
       "/auth/login": "true",
-      "/apps": { status: 401, body: "Unauthorized" },
+      "/apps": { status, body },
     })
     await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({ code: "authentication_error" })
+    expect(seen.map(({ path }) => path)).not.toContain("/apps/create")
   })
 
   it("stops, without creating a second app, when the app page shows keys it cannot read", async () => {
