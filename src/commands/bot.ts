@@ -97,7 +97,12 @@ export const TELEGRAM_BOT: BotMessenger = {
         try {
           personal = environment.adapter
             ? await environment.adapter({ credentials, sessionPath: personalPath })
-            : await TelegramAdapter.open({ credentials, sessionPath: personalPath, ...proxyOption(through) })
+            : await TelegramAdapter.open({
+                credentials,
+                sessionPath: personalPath,
+                checks: checkWords,
+                ...proxyOption(through),
+              })
           track?.(personal)
           return (await personal.history?.(chat, { limit: 1 }))?.items[0]?.id
         } catch {
