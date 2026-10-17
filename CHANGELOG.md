@@ -28,6 +28,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   was written. Tasks written from history in one go no longer all look alike.
 - **Old messages fetched into a quiet chat open no tasks** (cli-core 0.309.0): a sync pass skips a chat with
   nothing sent since the last one.
+- **No `[client] cannot reach Telegram` lines while tg cannot connect.** 0.64.0 began printing each of mtcute's
+  background errors as one line; while the network is down, that is one line per connection attempt. They show only
+  with `--verbose` now. A request that fails still reports its own error.
 
 ## 0.65.0 — 17.10.2026
 

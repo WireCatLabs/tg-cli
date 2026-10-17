@@ -223,17 +223,15 @@ export const toCliError = (error: unknown, words: Words, login = words("session.
 }
 
 /**
- * Errors from mtcute's background work, which no command awaits. Without a listener mtcute prints each with
- * its stack. A login resets the connections on purpose, and the old one reports itself closed (seen 2026-10-16
- * right after a 2FA password); mtcute reconnects, and a request that really fails still throws to its caller.
+ * Errors from mtcute's background work, which no command awaits — written only with --verbose. A login resets the
+ * connections on purpose and the old one reports itself closed (seen 2026-10-16 right after a 2FA password); while
+ * it cannot connect, each attempt reports an error (seen 2026-10-17). mtcute itself stays quiet until connected,
+ * reconnects on its own, and a request that really fails still throws to its caller.
  */
 export const backgroundError =
   (write: (line: string) => void, verbose: boolean, words: Words) =>
   (error: Error): void => {
-    if (/^Connection closed/.test(error.message)) {
-      if (verbose) write(`[client] ${error.message}`)
-      return
-    }
+    if (!verbose) return
     const mapped = toCliError(error, words)
     const message = mapped instanceof Error ? mapped.message : String(mapped)
     write(`[client] ${message.split("\n", 1)[0]}`)

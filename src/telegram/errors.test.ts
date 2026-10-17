@@ -174,12 +174,13 @@ describe("mtcute's background errors", () => {
     return lines
   }
 
-  it("keeps the connection a login resets out of the terminal, and shows it with --verbose", () => {
+  it("keeps them out of the terminal: the reset after a login, and every failed connection attempt", () => {
     expect(seen(false, new Error("Connection closed"))).toEqual([])
-    expect(seen(true, new Error("Connection closed"))).toEqual(["[client] Connection closed"])
+    expect(seen(false, Object.assign(new Error("connect"), { code: "ENETUNREACH" }))).toEqual([])
   })
 
-  it("reports any other as one line in tg's words, without its stack", () => {
-    expect(seen(false, new MtTimeoutError(1000))).toEqual(["[client] Telegram did not answer in time"])
+  it("shows each with --verbose as one line in tg's words, without its stack", () => {
+    expect(seen(true, new Error("Connection closed"))).toEqual(["[client] Connection closed"])
+    expect(seen(true, new MtTimeoutError(1000))).toEqual(["[client] Telegram did not answer in time"])
   })
 })
