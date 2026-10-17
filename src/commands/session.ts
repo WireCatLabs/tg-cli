@@ -20,6 +20,7 @@ import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/crede
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { printItem } from "./answer.js"
 import { type CommandContext, forCommand } from "./context.js"
+import { refuseUnderReadOnly } from "./read-only.js"
 
 type Ask = (prompt: string, echo: boolean) => Promise<string>
 
@@ -227,6 +228,7 @@ export const sessionCommand = () => {
         "when running without a terminal. The temporary image is removed after login.\n",
     )
     .action(async function (this: Command, method: "qr" | "phone") {
+      refuseUnderReadOnly(this, "log in")
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const { app, qrFile, sms } = this.opts<{ app: "browser" | "auto"; qrFile?: string; sms?: boolean }>()
@@ -252,6 +254,7 @@ export const sessionCommand = () => {
   annotate(session.command("end"), { effects: REMOTE_WRITE })
     .description("log this profile out on Telegram's side and forget the session here")
     .action(async function (this: Command) {
+      refuseUnderReadOnly(this, "log out")
       const context = forCommand(this)
       if (!existsSync(context.sessionPath)) {
         printItem(context, { profile: context.profile, ended: false })

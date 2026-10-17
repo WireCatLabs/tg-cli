@@ -23,6 +23,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 After updating, read old messages again once: `tg <profile> mentions rebuild person-name place`.
 
+### Security
+
+- **`TG_READ_ONLY` now stops logging in and out, and changes to the message store**: `session start`, `session end`
+  and `setup` refuse with `permission_error` before they connect, and so do `store reset`, `restore`, `clear`,
+  `migrate`, `repair`, `copies delete` and `decrypt`. `session end` used to log out and delete the session under the
+  lock.
+
 ## 0.69.0 — 17.10.2026
 
 ### Changed — may break scripts
