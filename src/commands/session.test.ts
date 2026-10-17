@@ -106,6 +106,13 @@ describe("session start", () => {
     expect(opened.urls).toEqual([])
   })
 
+  // The app shows a path under home as `~/…` with forward slashes, on Windows too.
+  const shownPath = (file: string) => {
+    const home = homedir().replaceAll("\\", "/")
+    const portable = file.replaceAll("\\", "/")
+    return portable.startsWith(`${home}/`) ? `~${portable.slice(home.length)}` : file
+  }
+
   it("tells a person who is logged in, where the session is, and where the app keys live", async () => {
     const { stdout } = await tg(["session", "start"], {
       tty: true,
@@ -116,7 +123,7 @@ describe("session start", () => {
     expect(stdout.join("\n")).toBe(
       [
         "Logged in as Owner (id 1) — profile default.",
-        `Session:  ${sessionFile("default").replace(homedir(), "~")}`,
+        `Session:  ${shownPath(sessionFile("default"))}`,
         "App keys: from TG_API_ID and TG_API_HASH",
         "Next:     tg default chats list · tg default server install to keep the archive current",
       ].join("\n"),
