@@ -24,7 +24,7 @@ exit code says the same as the `code`. Every code is also in the
 | `1` | `internal_error` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
 | `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
-| `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-default--run-tg-setup) |
+| `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-personal--run-tg-personal-setup-in-a-local-terminal) |
 | `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-), [PEER_FLOOD](#telegram-limited-this-accounts-messages-as-spam-peer_flood) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
 | `7` | `confirmation_required` | the chat is not on the recipient list, or the change asks first and nobody could answer | [recipient list](#chat--is-not-on-the-recipient-list-of-profile-), [asks first](#-asks-before-it-acts) |
@@ -89,7 +89,7 @@ npx keeps what it downloaded. Ask for the newest: `npx @wirecat/tg-cli@latest`.
 ### "name a profile: `tg <profile> …` — profiles here: …"
 
 Exit code `2`. The command uses an account, and nothing named the profile: no first word, no
-`TG_PROFILE`, no `default_profile` in the config file. `tg` never picks one, even when only one exists.
+`TG_PROFILE`. `tg` never picks one, even when only one exists.
 The message lists the profiles on this computer; put one in front of the command:
 
 ```sh
@@ -97,11 +97,11 @@ tg personal chats list         # the profile named in the message
 export TG_PROFILE=personal     # or for the whole shell session
 ```
 
-To use one profile always, set `"default_profile": "personal"` at the top of the config file
-([configuration](configuration.md)). On a computer with no profile yet, the message says to run
-`tg personal setup`; any name works in place of `personal`.
+On a computer with no profile yet, the message says to run `tg personal setup`; any name works in
+place of `personal`. If the message says `default_profile is no longer read`, the config file still
+has that setting from an older `tg`: name the profile, and `tg config unset default_profile` removes it.
 
-### "no session for profile "default" — run `tg setup`"
+### "no session for profile "personal" — run `tg personal setup` in a local terminal"
 
 Exit code `4`. This profile has never logged in on this machine, or it logged out. Check which
 profile you meant: the first word of the command, or `TG_PROFILE` ([profiles](sessions.md#profiles)).

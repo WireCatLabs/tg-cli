@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **No setting picks a profile any more** (cli-core 0.319.0). A command names its profile with the first word or
+  `TG_PROFILE`. A config file that still has `default_profile` stops a command that names no profile, with the profile
+  to type and `tg config unset default_profile`; `tg config set default_profile` is refused. A profile called `default`
+  is an ordinary name: `tg default mcp config` names its server `tg-default`, not `tg`.
+
 ## 0.67.0 — 17.10.2026
 
 ### Security

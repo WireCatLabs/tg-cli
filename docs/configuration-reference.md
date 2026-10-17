@@ -75,7 +75,6 @@ creates it with `limit`, `keep_runs_for_days`, `sends_per_hour`, `update_check` 
 
 ```json
 {
-  "default_profile": "default",
   "defaults": {
     "sends_per_hour": 10,
     "update_check": false
@@ -94,9 +93,10 @@ creates it with `limit`, `keep_runs_for_days`, `sends_per_hour`, `update_check` 
 - `personal.defaults`, `personal.profiles.<name>`: only personal-account commands.
 - `bot.defaults`, `bot.profiles.<name>`: only `tg <name> bot …` commands.
 
-`default_profile` at the top names the profile used when neither the first word nor `TG_PROFILE`
-names one. The first word (`tg work …`) and `TG_PROFILE` override it. Without any of them, a command
-that uses an account stops with exit code `2` and lists the profiles on this computer.
+No setting picks a profile: the first word (`tg work …`) or `TG_PROFILE` names it. Without either, a
+command that uses an account stops with exit code `2` and lists the profiles on this computer. A file
+that still has `default_profile` from an older `tg` stops that command too;
+`tg config unset default_profile` removes it.
 
 | Setting | Default | What it does | Overridden for one run by |
 |---|---|---|---|
@@ -332,7 +332,6 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 
 | Key | Accepted type/value | Scope |
 |---|---|---|
-| `default_profile` | profile-name string | file root |
 | `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
 | `requests_per_minute` | integer ≥ 0 | profile |
 | `color`, `sender_colors`, `catch_up_marks_read`, `search_catch_up`, `record` | boolean | profile |

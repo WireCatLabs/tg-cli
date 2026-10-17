@@ -179,8 +179,8 @@ export TG_PROFILE=work     # or for the whole shell session
 ```
 
 `tg` never picks a profile for you, not even the only one: a command that uses an account and has no
-profile named stops and lists the profiles on this computer. Name one, set `TG_PROFILE`, or set
-`default_profile` in the config file.
+profile named stops and lists the profiles on this computer. Name one, or set `TG_PROFILE` for a
+whole shell session.
 
 More: [login and sessions](https://github.com/WireCatLabs/tg-cli/blob/main/docs/sessions.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/sessions) · [profiles](https://github.com/WireCatLabs/tg-cli/blob/main/docs/profiles.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/profiles)
 
