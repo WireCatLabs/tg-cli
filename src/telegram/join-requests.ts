@@ -1,6 +1,7 @@
 import { type TelegramClient, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import type { JoinRequest, Page } from "@wirecat/cli-core"
+import type { Words } from "./feature.js"
 import { toMember } from "./map.js"
 
 type Client = Pick<TelegramClient, "getInviteLinkMembers" | "hideJoinRequest">
@@ -34,6 +35,7 @@ export const answerJoinRequestOf = async (
   chatId: number,
   personId: number,
   accept: boolean,
+  words: Words,
 ): Promise<{ already: boolean }> => {
   try {
     await client.hideJoinRequest({ chatId, user: personId, action: accept ? "approve" : "decline" })
@@ -43,7 +45,7 @@ export const answerJoinRequestOf = async (
     if (tl.RpcError.is(error, "HIDE_REQUESTER_MISSING"))
       throw new CliError(
         "not_found",
-        "they have no request to answer — it was answered already, or withdrawn; see `tg chats requests list`",
+        `they have no request to answer — it was answered already, or withdrawn; see ${words("chats.requests.list")}`,
       )
     throw error
   }

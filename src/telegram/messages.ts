@@ -266,7 +266,7 @@ export const send = (
   const id = parseSendId(sendId)
   const thread = threadId === undefined ? undefined : topicNumber(threadId)
   const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
-  const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, feature.self())
+  const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, feature.self(), feature.checks)
   if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
   const spans = formatting ?? markup
   const body = spans ? toFormatted(text, spans) : text
@@ -346,7 +346,7 @@ export const forward = (
   const id = messageNumber(messageId, "a message id is a number")
   const randomId = parseSendId(sendId)
   const thread = threadId === undefined ? undefined : topicNumber(threadId)
-  const author = sendAs === undefined ? undefined : sendAsPeer(toChatId, sendAs, feature.self())
+  const author = sendAs === undefined ? undefined : sendAsPeer(toChatId, sendAs, feature.self(), feature.checks)
   return feature.send(async () => {
     try {
       const updates = await feature.client.call({
@@ -468,12 +468,12 @@ export const download = (feature: Feature, reference: string, messageId: string)
     if (!(media instanceof FileLocation)) return { files: [], skipped: [media.type] }
     const [{ kind, name, mime, size }] = attachmentsOf(media) as [Attachment]
     const client = feature.client
-    const login = feature.login
+    const { login, checks } = feature
     async function* bytes() {
       try {
         yield* client.downloadAsIterable(media as FileLocation)
       } catch (error) {
-        throw toCliError(error, login)
+        throw toCliError(error, checks, login)
       }
     }
     return { files: [{ kind, name, mime, size, bytes }], skipped: [] }

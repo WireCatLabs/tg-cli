@@ -12,6 +12,7 @@ import {
   tl,
 } from "@mtcute/node"
 import { CliError, type ErrorCode, isCliError } from "@wirecat/cli-base"
+import type { Words } from "./feature.js"
 
 const { RpcError } = tl
 
@@ -25,8 +26,10 @@ const NOT_FOUND = new Set([
   "MESSAGE_ID_INVALID",
 ])
 
+export const pollClosed = (words: Words): string => `this poll is closed; ${words("polls.show")} has its result`
+
 /** Refusals whose name alone would not tell a person what to do. */
-const EXPLAINED: Record<string, [ErrorCode, string]> = {
+const EXPLAINED: Record<string, [ErrorCode, string | ((words: Words) => string)]> = {
   CHANNEL_PRIVATE: ["permission_error", "you cannot access this channel or supergroup"],
   CHAT_DISCUSSION_UNALLOWED: ["validation_error", "a linked discussion group cannot enable forum topics"],
   CHANNEL_FORUM_MISSING: ["validation_error", "enable forum topics before creating a topic"],
@@ -43,8 +46,9 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   PHONE_NOT_OCCUPIED: ["not_found", "nobody Telegram lets you find has this number"],
   USER_NOT_MUTUAL_CONTACT: [
     "permission_error",
-    "Telegram lets you add someone who left or was removed only if you are each other's contacts — " +
-      "send them the invite link instead (`tg chats link show <chat>`)",
+    (words) =>
+      "Telegram lets you add someone who left or was removed only if you are each other's contacts — " +
+      `send them the invite link instead (${words("chats.link.show", "<chat>")})`,
   ],
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
   CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
@@ -54,10 +58,13 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
     "validation_error",
     "a channel's polls cannot show who voted — create it with --anonymous",
   ],
-  MESSAGE_POLL_CLOSED: ["validation_error", "this poll is closed; `tg polls show` has its result"],
+  MESSAGE_POLL_CLOSED: ["validation_error", pollClosed],
   REVOTE_NOT_ALLOWED: ["validation_error", "this poll takes one vote, and yours is final — it cannot be changed"],
   OPTIONS_TOO_MUCH: ["validation_error", "this poll takes one answer; give one id"],
-  OPTION_INVALID: ["validation_error", "that is not an answer of this poll — `tg polls show` lists them"],
+  OPTION_INVALID: [
+    "validation_error",
+    (words) => `that is not an answer of this poll — ${words("polls.show")} lists them`,
+  ],
   POLL_VOTE_REQUIRED: ["permission_error", "Telegram shows who voted only once you have voted in this poll"],
   BROADCAST_FORBIDDEN: ["permission_error", "a channel does not show who voted in its polls"],
   POLL_ANSWERS_INVALID: ["validation_error", "Telegram refused how many answers this poll has"],
@@ -71,19 +78,24 @@ const EXPLAINED: Record<string, [ErrorCode, string]> = {
   QUIZ_MULTIPLE_INVALID: ["validation_error", "a quiz takes one answer; not with --multiple"],
   CHAT_PUBLIC_REQUIRED: [
     "validation_error",
-    "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
-      "`tg chats link create <chat> --approval`",
+    (words) =>
+      "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
+      words("chats.link.create", "<chat> --approval"),
   ],
   MEGAGROUP_REQUIRED: ["validation_error", "that works only in a supergroup"],
   BROADCAST_REQUIRED: ["validation_error", "that works only in a channel"],
 }
 
-type Standing = (login: string) => [ErrorCode, string, "frozen" | "limited" | "banned" | "deactivated" | "revoked"]
+type Standing = (
+  login: string,
+  words: Words,
+) => [ErrorCode, string, "frozen" | "limited" | "banned" | "deactivated" | "revoked"]
 
 const revoked: Standing = (login) => ["authentication_error", `Telegram ended this login — run ${login}`, "revoked"]
-const frozen: Standing = () => [
+const frozen: Standing = (_login, words) => [
   "permission_error",
-  "Telegram froze this account: it can read but not write — `tg doctor --online` shows until when, and where to appeal",
+  "Telegram froze this account: it can read but not write — " +
+    `${words("doctor", "--online")} shows until when, and where to appeal`,
   "frozen",
 ]
 
@@ -138,7 +150,7 @@ const argumentKind = (message: string) =>
  * Telegram's refusals as the closed list of codes a script branches on. Only the error's name
  * travels into the message — never a parameter the caller passed, which may be somebody's text.
  */
-export const toCliError = (error: unknown, login = "`tg session start`"): unknown => {
+export const toCliError = (error: unknown, words: Words, login = words("session.start")): unknown => {
   if (isCliError(error)) return error
   if (RpcError.is(error, "FLOOD_WAIT_%d")) {
     return new CliError("rate_limited", `Telegram asks to wait ${error.seconds} s before the next request`, {
@@ -159,14 +171,17 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
     }
     const standing = STANDINGS[error.text]
     if (standing) {
-      const [code, message, state] = standing(login)
+      const [code, message, state] = standing(login, words)
       return new CliError(code, message, { ...details, standing: { state, hint: message } })
     }
     if (error.code === RpcError.UNAUTHORIZED) {
       return new CliError("authentication_error", `not logged in, or the session was ended — run ${login}`, details)
     }
     const explained = EXPLAINED[error.text]
-    if (explained) return new CliError(explained[0], explained[1], details)
+    if (explained) {
+      const [code, message] = explained
+      return new CliError(code, typeof message === "string" ? message : message(words), details)
+    }
     if (NOT_FOUND.has(error.text))
       return new CliError("not_found", `Telegram does not know that (${error.text})`, details)
     if (error.code === RpcError.FORBIDDEN)
@@ -213,13 +228,13 @@ export const toCliError = (error: unknown, login = "`tg session start`"): unknow
  * right after a 2FA password); mtcute reconnects, and a request that really fails still throws to its caller.
  */
 export const backgroundError =
-  (write: (line: string) => void, verbose: boolean) =>
+  (write: (line: string) => void, verbose: boolean, words: Words) =>
   (error: Error): void => {
     if (/^Connection closed/.test(error.message)) {
       if (verbose) write(`[client] ${error.message}`)
       return
     }
-    const mapped = toCliError(error)
+    const mapped = toCliError(error, words)
     const message = mapped instanceof Error ? mapped.message : String(mapped)
     write(`[client] ${message.split("\n", 1)[0]}`)
   }

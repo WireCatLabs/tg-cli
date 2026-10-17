@@ -2,6 +2,7 @@ import type { Poll as TgPoll } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import type { Poll } from "@wirecat/cli-core"
 import type { NewPoll } from "@wirecat/cli-core/cli"
+import { pollClosed } from "./errors.js"
 import {
   type Feature,
   messageNumber,
@@ -11,14 +12,15 @@ import {
   type Sent,
   topicNumber,
   unknownIfUnanswered,
+  type Words,
 } from "./feature.js"
 import { answerId, toInputPoll, toMessage, toPoll } from "./map.js"
 import { pollVotersOf } from "./poll-voters.js"
 import { sendAsPeer } from "./send-as.js"
 
 /** What Telegram would refuse anyway, said before anything is sent — the same checks max-cli makes. */
-const refuseVote = (poll: TgPoll, answerIds: readonly string[]): void => {
-  if (poll.isClosed) throw new CliError("validation_error", "this poll is closed; `tg polls show` has its result")
+const refuseVote = (poll: TgPoll, answerIds: readonly string[], words: Words): void => {
+  if (poll.isClosed) throw new CliError("validation_error", pollClosed(words))
   const voted = poll.answers.some((answer) => answer.chosen)
   if (answerIds.length === 0 && !voted) throw new CliError("validation_error", "you have not voted in this poll")
   if (voted && poll.isRevotingDisabled)
@@ -59,7 +61,7 @@ export const vote = (feature: Feature, chatId: string, messageId: string, answer
         `${unknown.join(", ")} ${unknown.length === 1 ? "is" : "are"} not an answer of this poll — its answers are ${[...known.keys()].join(", ")}`,
       )
     }
-    refuseVote(current, answerIds)
+    refuseVote(current, answerIds, feature.checks)
     const options = answerIds.length === 0 ? null : answerIds.map((answer) => known.get(answer) as Uint8Array)
     try {
       return toPoll(chatId, messageId, await feature.client.sendVote({ chatId: Number(chatId), message: id, options }))
@@ -97,7 +99,7 @@ export const createPoll = (
 ): Promise<Sent> => {
   const randomId = parseSendId(sendId)
   const thread = threadId === undefined ? undefined : topicNumber(threadId)
-  const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, feature.self())
+  const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, feature.self(), feature.checks)
   return feature.send(async () => {
     try {
       const message = await feature.client.sendMedia(Number(chatId), toInputPoll(poll), {

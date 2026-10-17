@@ -53,13 +53,13 @@ import type { ApiCredentials } from "./credentials.js"
 import { backgroundError, toCliError } from "./errors.js"
 import {
   bareCheck,
-  type Check,
   type Feature,
   messageNumber,
   type Sent,
   type Unanswered,
   unansweredText,
   unknownIfUnanswered,
+  type Words,
 } from "./feature.js"
 import * as folders from "./folders.js"
 import { formatHtml } from "./format-html.js"
@@ -77,7 +77,7 @@ import { openSessionStorage } from "./storage.js"
 import * as topics from "./topics.js"
 import * as watching from "./watch.js"
 
-export type { Check, Sent } from "./feature.js"
+export type { Check, Sent, Words } from "./feature.js"
 export { ADMIN_RIGHTS, GROUP_SETTINGS } from "./groups.js"
 export type { LoginPrompts } from "./login.js"
 export { TRANSCRIBE_POLL_MS } from "./messages.js"
@@ -96,7 +96,7 @@ export interface AdapterOptions {
   /** How to log in on this profile, for the error a dropped session gives. */
   login?: string
   /** How a command is named where an unknown outcome sends a person to check. */
-  checks?: (check: Check) => string
+  checks?: Words
   proxy?: ProxyServer
   /** Where a wait mtcute sits out is said — a warning, so `--quiet` drops it. The diagnostic stream if not given. */
   note?: (message: string) => void
@@ -118,7 +118,6 @@ export class TelegramAdapter {
 
   readonly #client: TelegramClient
   readonly #sessionPath: string
-  readonly #login: string | undefined
   readonly #feature: Feature
   readonly #proxyFailed: Promise<never> | undefined
   readonly #walking: chats.Walking = {}
@@ -155,7 +154,6 @@ export class TelegramAdapter {
     storage: Awaited<ReturnType<typeof openSessionStorage>>,
   ) {
     this.#sessionPath = sessionPath
-    this.#login = login
     const proxied = proxy ? proxiedTransport(proxy) : undefined
     // watch and serve outlive a proxy that is down for a moment; mtcute's own retries suit them.
     this.#proxyFailed = listen ? undefined : proxied?.failed
@@ -175,12 +173,13 @@ export class TelegramAdapter {
       network: { middlewares: middlewaresOf(listen ? FLOOD_SLEEP.listening : FLOOD_SLEEP.oneShot, say) },
     })
     this.#client.log.mgr.handler = (_color, _level, tag, fmt, args) => write(`[${tag}] ${format(fmt, ...args)}`)
-    this.#client.onError.add(backgroundError(write, verbose))
+    this.#client.onError.add(backgroundError(write, verbose, checks))
     const unanswered = (error: unknown, what: string | Unanswered, details?: Record<string, unknown>) =>
       unknownIfUnanswered(error, typeof what === "string" ? what : unansweredText(what, checks), details)
     this.#feature = {
       client: this.#client,
       login,
+      checks,
       self: () => this.self(),
       inputOf: (reference) => chats.inputOf(this.#client, reference),
       call: (work) => this.#call(work),
@@ -607,7 +606,7 @@ export class TelegramAdapter {
     try {
       return await (this.#proxyFailed ? Promise.race([work(), this.#proxyFailed]) : work())
     } catch (error) {
-      throw toCliError(error, this.#login)
+      throw toCliError(error, this.#feature.checks, this.#feature.login)
     }
   }
 }

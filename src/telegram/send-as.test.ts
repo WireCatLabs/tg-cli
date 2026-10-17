@@ -1,5 +1,6 @@
 import { tl } from "@mtcute/node"
 import { describe, expect, it, vi } from "vitest"
+import { bareCheck } from "./feature.js"
 import { savedSenderOf, sendAsIdentities, sendAsPeer } from "./send-as.js"
 
 const me = { id: 1, displayName: "Owner" }
@@ -82,12 +83,12 @@ describe("sender identities", () => {
 
 describe("the send_as peer", () => {
   it("is passed in a supergroup, left out for the account elsewhere, and refused for another identity there", () => {
-    expect(sendAsPeer("-1000000001007", "-1002", "1")).toBe(-1002)
-    expect(sendAsPeer("-1000000001007", "1", "1")).toBe(1)
-    expect(sendAsPeer("-7", "1", "1")).toBeUndefined()
-    expect(sendAsPeer("42", "1", "1")).toBeUndefined()
-    expect(() => sendAsPeer("-7", "-1002", "1")).toThrow("only a supergroup")
-    expect(() => sendAsPeer("-1000000001007", "@channel", "1")).toThrow("--send-as takes")
+    expect(sendAsPeer("-1000000001007", "-1002", "1", bareCheck)).toBe(-1002)
+    expect(sendAsPeer("-1000000001007", "1", "1", bareCheck)).toBe(1)
+    expect(sendAsPeer("-7", "1", "1", bareCheck)).toBeUndefined()
+    expect(sendAsPeer("42", "1", "1", bareCheck)).toBeUndefined()
+    expect(() => sendAsPeer("-7", "-1002", "1", bareCheck)).toThrow("only a supergroup")
+    expect(() => sendAsPeer("-1000000001007", "@channel", "1", bareCheck)).toThrow("--send-as takes")
   })
 })
 

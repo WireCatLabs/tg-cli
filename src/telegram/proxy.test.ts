@@ -6,6 +6,7 @@ import { memoryKeyring } from "@wirecat/cli-base/testing"
 import { describe, expect, it } from "vitest"
 import { parseProxy } from "../proxy.js"
 import { TelegramAdapter } from "./adapter.js"
+import { bareCheck } from "./feature.js"
 import { proxiedTransport, proxySecrets, resolveProxy } from "./proxy.js"
 
 const MT_SECRET = `ee${"00".repeat(16)}${Buffer.from("example.com").toString("hex")}`
@@ -33,6 +34,7 @@ describe("resolveProxy", () => {
     const resolved = resolveProxy(settings({ proxy: "socks5://profile.example:1080" }), {
       env: { TG_PROXY: "http://env.example:3128" },
       keyring: memoryKeyring(),
+      checks: bareCheck,
     })
 
     expect(resolved).toMatchObject({ from: "TG_PROXY", proxy: { kind: "http", host: "env.example" } })
@@ -46,7 +48,7 @@ describe("resolveProxy", () => {
 
     const resolved = resolveProxy(
       settings({ proxy: "socks5://u@profile.example:1080" }, { proxy: "socks5://defaults.example:1080" }),
-      { env, keyring },
+      { env, keyring, checks: bareCheck },
     )
 
     expect(resolved).toEqual({
@@ -62,8 +64,12 @@ describe("resolveProxy", () => {
     proxySecrets({ env, keyring }).write("home", "secret-b")
     const proxy = { proxy: "socks5://u@shared.example:1080" }
 
-    expect(resolveProxy(settings(proxy, {}, "work"), { env, keyring })?.proxy.secret).toBe("secret-a")
-    expect(resolveProxy(settings(proxy, {}, "home"), { env, keyring })?.proxy.secret).toBe("secret-b")
+    expect(resolveProxy(settings(proxy, {}, "work"), { env, keyring, checks: bareCheck })?.proxy.secret).toBe(
+      "secret-a",
+    )
+    expect(resolveProxy(settings(proxy, {}, "home"), { env, keyring, checks: bareCheck })?.proxy.secret).toBe(
+      "secret-b",
+    )
   })
 
   it("falls back to the defaults' password only for the defaults' proxy", () => {
@@ -72,12 +78,17 @@ describe("resolveProxy", () => {
     proxySecrets({ env, keyring }).write(undefined, "from-defaults")
     const shared = { proxy: "socks5://u@defaults.example:1080" }
 
-    expect(resolveProxy(settings({}, shared, "plain"), { env, keyring })?.proxy.secret).toBe("from-defaults")
+    expect(resolveProxy(settings({}, shared, "plain"), { env, keyring, checks: bareCheck })?.proxy.secret).toBe(
+      "from-defaults",
+    )
     proxySecrets({ env, keyring }).write("own", "s3cret")
-    expect(resolveProxy(settings({}, shared, "own"), { env, keyring })?.proxy.secret).toBe("s3cret")
+    expect(resolveProxy(settings({}, shared, "own"), { env, keyring, checks: bareCheck })?.proxy.secret).toBe("s3cret")
     expect(
-      resolveProxy(settings({ proxy: "socks5://u@profile.example:1080" }, shared, "plain"), { env, keyring })?.proxy
-        .secret,
+      resolveProxy(settings({ proxy: "socks5://u@profile.example:1080" }, shared, "plain"), {
+        env,
+        keyring,
+        checks: bareCheck,
+      })?.proxy.secret,
     ).toBeUndefined()
   })
 
@@ -86,13 +97,18 @@ describe("resolveProxy", () => {
       resolveProxy(settings(), {
         env: { ALL_PROXY: "socks5://a:1", HTTPS_PROXY: "http://b:2" },
         keyring: memoryKeyring(),
+        checks: bareCheck,
       }),
     ).toBeUndefined()
   })
 
   it("refuses an MTProxy whose secret is not in the keyring", () => {
     expect(() =>
-      resolveProxy(settings({ proxy: "tg://proxy?server=mt.example&port=443" }), { env: {}, keyring: memoryKeyring() }),
+      resolveProxy(settings({ proxy: "tg://proxy?server=mt.example&port=443" }), {
+        env: {},
+        keyring: memoryKeyring(),
+        checks: bareCheck,
+      }),
     ).toThrow(/no secret is stored/)
   })
 })

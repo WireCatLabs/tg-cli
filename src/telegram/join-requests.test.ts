@@ -1,5 +1,6 @@
 import { tl } from "@mtcute/node"
 import { describe, expect, it, vi } from "vitest"
+import { bareCheck } from "./feature.js"
 import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
 
 const member = (id: number, bio: string | null) => ({
@@ -50,17 +51,17 @@ describe("join requests", () => {
     [false, "decline"],
   ] as const)("answers accept=%s as %s", async (accept, action) => {
     const c = client(0, [])
-    expect(await answerJoinRequestOf(c.fake, -1007, 42, accept)).toEqual({ already: false })
+    expect(await answerJoinRequestOf(c.fake, -1007, 42, accept, bareCheck)).toEqual({ already: false })
     expect(c.hideJoinRequest).toHaveBeenCalledWith({ chatId: -1007, user: 42, action })
   })
 
   it("reads an existing member as already in, a missing request as not_found, and passes the rest on", async () => {
     const c = client(0, [])
     c.hideJoinRequest.mockRejectedValueOnce(new tl.RpcError(400, "USER_ALREADY_PARTICIPANT"))
-    expect(await answerJoinRequestOf(c.fake, -1007, 42, true)).toEqual({ already: true })
+    expect(await answerJoinRequestOf(c.fake, -1007, 42, true, bareCheck)).toEqual({ already: true })
     c.hideJoinRequest.mockRejectedValueOnce(new tl.RpcError(400, "HIDE_REQUESTER_MISSING"))
-    await expect(answerJoinRequestOf(c.fake, -1007, 42, false)).rejects.toMatchObject({ code: "not_found" })
+    await expect(answerJoinRequestOf(c.fake, -1007, 42, false, bareCheck)).rejects.toMatchObject({ code: "not_found" })
     c.hideJoinRequest.mockRejectedValueOnce(new tl.RpcError(400, "CHAT_ADMIN_REQUIRED"))
-    await expect(answerJoinRequestOf(c.fake, -1007, 42, true)).rejects.toBeInstanceOf(tl.RpcError)
+    await expect(answerJoinRequestOf(c.fake, -1007, 42, true, bareCheck)).rejects.toBeInstanceOf(tl.RpcError)
   })
 })

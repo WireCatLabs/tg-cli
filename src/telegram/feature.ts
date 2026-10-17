@@ -4,20 +4,29 @@ import { type Message, type MessageHit, observedCounters } from "@wirecat/cli-co
 import { toCliError } from "./errors.js"
 import { toMessage, toMessageHit } from "./map.js"
 
-/** The commands an unknown outcome sends a person to; the command layer names them in its own words. */
+/** The commands a message sends a person to; the command layer names them in its own words. */
 export const CHECKS = [
   "account.sessions.list",
+  "bot.auth.set",
   "chats.folders.list",
+  "chats.link.create",
   "chats.link.list",
   "chats.link.show",
   "chats.list",
   "chats.members.list",
   "chats.requests.list",
+  "chats.send-as",
   "chats.show",
+  "config.set",
+  "doctor",
   "polls.show",
+  "session.start",
   "topics.list",
 ] as const
 export type Check = (typeof CHECKS)[number]
+
+/** A command as the person types it, arguments included, in one pair of backticks. */
+export type Words = (check: Check, args?: string) => string
 
 /** What may have happened, where to look, and what to weigh before a repeat. */
 export interface Unanswered {
@@ -27,15 +36,17 @@ export interface Unanswered {
 }
 
 /** Without the command layer's words, a check is named by its command path alone. */
-export const bareCheck = (check: Check): string => `\`${check.replaceAll(".", " ")}\``
+export const bareCheck: Words = (check, args) =>
+  `\`${check.replaceAll(".", " ")}${args === undefined ? "" : ` ${args}`}\``
 
-export const unansweredText = ({ what, check, after }: Unanswered, words: (check: Check) => string): string =>
+export const unansweredText = ({ what, check, after }: Unanswered, words: Words): string =>
   `${what}; check ${words(check)}${after === undefined ? "" : ` ${after}`}`
 
 /** What the features beside the adapter share: one client, one way to name a chat, one way to fail. */
 export interface Feature {
   client: TelegramClient
   login: string | undefined
+  checks: Words
   /** The logged-in user's id from the session, without a request; `null` before a login. */
   self: () => string | null
   inputOf: (reference: string) => Promise<InputPeerLike>
@@ -63,7 +74,7 @@ export const retryDetails = (sendId: string, sendAs: string | undefined) => ({
 
 /** No answer is not a refusal: the write may have reached Telegram. Anything else is left for `call` to map. */
 export const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
-  const known = toCliError(error)
+  const known = toCliError(error, bareCheck)
   if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
     return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
   }

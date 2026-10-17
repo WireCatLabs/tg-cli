@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from "node:async_hooks"
 import { networkMiddlewares, type RpcCallMiddleware } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import { toCliError } from "./errors.js"
+import { bareCheck } from "./feature.js"
 
 const SENDS = new Set(["messages.sendMessage", "messages.sendMedia", "messages.forwardMessages"])
 const send = new AsyncLocalStorage<{ accepted: boolean }>()
@@ -39,7 +40,7 @@ export const sending = async <T>(work: () => Promise<T>): Promise<T> => {
   try {
     return await send.run(current, work)
   } catch (error) {
-    const known = toCliError(error)
+    const known = toCliError(error, bareCheck)
     if (current.accepted || !(known instanceof CliError) || known.code !== "rate_limited") throw error
     throw new CliError(known.code, known.message, { ...known.details, sent: false })
   }

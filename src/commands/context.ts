@@ -61,7 +61,11 @@ const telegramOf = (command: Command, base: BaseContext) => {
     ...(environment.keyring ? { keyring: environment.keyring } : {}),
   })
   const proxy = () =>
-    resolveProxy(base.settings, { env: base.env, ...(environment.keyring ? { keyring: environment.keyring } : {}) })
+    resolveProxy(base.settings, {
+      env: base.env,
+      checks: checkWords,
+      ...(environment.keyring ? { keyring: environment.keyring } : {}),
+    })
   const login = `\`tg ${asFirstWord(profile)}session start\``
   const setup = `\`tg ${asFirstWord(profile)}setup\``
 

@@ -18,6 +18,7 @@ import { TelegramAdapter } from "../telegram/adapter.js"
 import { openBotHistory } from "../telegram/bot-history.js"
 import { apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
+import { checkWords } from "./checks.js"
 import { type Adapter, type Environment, proxyOption, SKILL } from "./context.js"
 
 type Run = (argv: string[], environment?: Environment) => Promise<number>
@@ -50,7 +51,11 @@ export const TELEGRAM_BOT: BotMessenger = {
     const environment = environmentOf<Environment>(command)
     const env = environment.env ?? process.env
     const settings = resolveSettings(command.optsWithGlobals(), { env, kind: "bot" })
-    const through = resolveProxy(settings, { env, ...(environment.keyring ? { keyring: environment.keyring } : {}) })
+    const through = resolveProxy(settings, {
+      env,
+      checks: checkWords,
+      ...(environment.keyring ? { keyring: environment.keyring } : {}),
+    })
     const fetch = environment.botFetch ?? (through ? proxiedFetch(through.proxy) : undefined)
     const adapter = telegramBotAdapter(
       new TelegramBotTransport({
@@ -76,6 +81,7 @@ export const TELEGRAM_BOT: BotMessenger = {
       credentials,
       sessionPath: botSessionFile(profile, botId, env),
       token,
+      checks: checkWords,
       ...history,
       ...proxyOption(through),
       ...(stop ? { stop } : {}),
@@ -91,7 +97,12 @@ export const TELEGRAM_BOT: BotMessenger = {
         try {
           personal = environment.adapter
             ? await environment.adapter({ credentials, sessionPath: personalPath })
-            : await TelegramAdapter.open({ credentials, sessionPath: personalPath, ...proxyOption(through) })
+            : await TelegramAdapter.open({
+                credentials,
+                sessionPath: personalPath,
+                checks: checkWords,
+                ...proxyOption(through),
+              })
           track?.(personal)
           return (await personal.history?.(chat, { limit: 1 }))?.items[0]?.id
         } catch {
