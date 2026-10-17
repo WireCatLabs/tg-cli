@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
-import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
+import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
 import * as v from "valibot"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -14,7 +14,7 @@ import type { Environment } from "./context.js"
 
 const answers = vi.hoisted(() => ({ queue: [] as string[], prompts: [] as string[] }))
 const opened = vi.hoisted(() => ({ urls: [] as string[] }))
-const registered = vi.hoisted(() => ({ calls: 0 }))
+const registered = vi.hoisted(() => ({ calls: 0, error: undefined as Error | undefined }))
 
 vi.mock("@wirecat/cli-core", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@wirecat/cli-core")>()),
@@ -33,6 +33,7 @@ vi.mock("../telegram/registration.js", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../telegram/registration.js")>()),
   registerApp: async ({ phone, code }: { phone: () => Promise<string>; code: () => Promise<string> }) => {
     registered.calls += 1
+    if (registered.error) throw registered.error
     await phone()
     await code()
     return { id: 4242, hash: "registered-hash", created: true }
@@ -207,6 +208,17 @@ describe("session start", () => {
     expect(opened.urls).toEqual([])
     expect(stderr.join("\n")).toContain("registered a new app")
     expect([...keyring.entries.values()].some((value) => value.includes("4242"))).toBe(true)
+  })
+
+  it("names this profile's session start in the fallback after a failed app registration", async () => {
+    registered.error = new CliError("invalid_response", "synthetic unreadable app page")
+    try {
+      const { code, stderr } = await tg(["work", "session", "start", "--app", "auto"], { keyring: memoryKeyring() })
+      expect(code).not.toBe(0)
+      expect(stderr.join("\n")).toContain("`tg work session start --app browser`")
+    } finally {
+      registered.error = undefined
+    }
   })
 
   it("**refuses to run without a terminal**, since it asks questions", async () => {

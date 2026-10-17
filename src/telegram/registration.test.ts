@@ -178,6 +178,20 @@ describe("registering the owner's app on my.telegram.org", () => {
     expect(await registerApp(prompts, { fetch })).toMatchObject({ id: 31415926, created: true })
   })
 
+  it("finds the create form's hash whatever order its attributes come in", async () => {
+    const { fetch, seen } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": CREATE_PAGE.replace(
+        '<input type="hidden" name="hash" value="c0ffee12"/>',
+        '<input value="c0ffee12" name="hash" type="hidden">',
+      ),
+      "/apps/create": { status: 400, body: '{"text":"stop here"}' },
+    })
+    await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({ code: "provider_error" })
+    expect(seen.find(({ path }) => path === "/apps/create")?.form).toMatchObject({ hash: "c0ffee12" })
+  })
+
   it("says what the site refused in a create, in its own words", async () => {
     const { fetch } = site({
       "/auth/send_password": '{"random_hash":"r1"}',
