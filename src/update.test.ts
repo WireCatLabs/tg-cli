@@ -14,6 +14,8 @@ const setup = (latest: string | Error = "99.0.0") => {
     ...process.env,
     TG_NO_UPDATE_CHECK: undefined,
     CI: undefined,
+    NO_UPDATE_NOTIFIER: undefined,
+    npm_config_update_notifier: undefined,
     TG_STATE_DIR: join(home, "state"),
     TG_CONFIG_DIR: join(home, "config"),
   }

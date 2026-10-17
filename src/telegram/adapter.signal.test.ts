@@ -21,30 +21,35 @@ vi.mock("./storage.js", async (actual) => {
 })
 
 // A real SIGTERM to this test worker, caught the way `serve` catches it; an update still being stored, as it
-// was live; then the close every exit path runs. Windows ends a process that signals itself.
+// was live; then the close every exit path runs. Windows ends a process that signals itself. The listeners
+// already there are set aside: the test setup's own one takes a real SIGTERM for the end of the worker and
+// deletes the sandbox the session lives in.
 it.skipIf(process.platform === "win32")(
   "closes a listening session stopped by SIGTERM and keeps what was still arriving after it",
   async () => {
-    const sessionPath = join(mkdtempSync(join(tmpdir(), "tg-stop-")), "test.session")
-    const adapter = await TelegramAdapter.open({
-      credentials: { id: 1, hash: "0".repeat(32) },
-      sessionPath,
-      listen: true,
-    })
+    const setAside = process.listeners("SIGTERM")
+    for (const listener of setAside) process.off("SIGTERM", listener)
     let signalled!: () => void
     const stopped = new Promise<void>((resolve) => {
       signalled = resolve
     })
     const serveListener = () => signalled()
-    process.on("SIGTERM", serveListener)
+    const sessionPath = join(mkdtempSync(join(tmpdir(), "tg-stop-")), "test.session")
 
     try {
+      const adapter = await TelegramAdapter.open({
+        credentials: { id: 1, hash: "0".repeat(32) },
+        sessionPath,
+        listen: true,
+      })
+      process.on("SIGTERM", serveListener)
       process.kill(process.pid, "SIGTERM")
       await stopped
       opened[0]?.kv.set("stop_probe", new Uint8Array([1, 4, 8]))
       await expect(adapter.close()).resolves.toBeUndefined()
     } finally {
       process.off("SIGTERM", serveListener)
+      for (const listener of setAside) process.on("SIGTERM", listener)
     }
 
     const session = new DatabaseSync(sessionPath, { readOnly: true })
