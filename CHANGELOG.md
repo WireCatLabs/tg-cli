@@ -3,6 +3,22 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break scripts
+
+- **An agent can no longer delete for everyone** (cli-core 0.321.0). The MCP `messages delete` takes no
+  `for_everyone`, and passing it is refused as an unknown argument; the owner still has
+  `tg <profile> messages delete --for-everyone`.
+- **`mcp --permission` only tightens** (cli-core 0.321.0). An override that would loosen the profile's level, such as
+  `messages.send=allow` on a read-only profile, is refused at startup with the key it names; to allow more, change the
+  profile's permissions. `--permission messages.send=deny` and other narrowing overrides work as before.
+
+### Fixed
+
+- **An agent's deny on `chats send-as` and `chats members list` now applies** (cli-core 0.321.0). Over MCP these
+  commands read their levels from other keys, so `chats.send-as` and `chats.members.list` did not reach them.
+
 ## 0.68.0 — 17.10.2026
 
 ### Changed — may break scripts

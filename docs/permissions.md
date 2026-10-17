@@ -64,8 +64,9 @@ The commands to manage them are in [the send guard](security.md#the-send-guard).
 
 ## A temporary change for an MCP server
 
-Add `--permission messages.send=allow` to the server startup command to allow sending for that
-process. Saved settings stay the same. Over MCP, `ask` does not require a server form: the app controls
+Add `--permission messages.send=deny` to the server startup command to refuse sending for that
+process. Saved settings stay the same. The flag only tightens: an override that would loosen the
+profile's level is refused at startup. Over MCP, `ask` does not require a server form: the app controls
 its own approvals and may allow a call without asking again. Use `deny` or `readonly` to refuse changes. [Browser setup](remote.md) explains the full connection.
 
 ## Limits and detailed rules

@@ -339,7 +339,7 @@ Use `tg personal stats chats show <chat> --offline --json` for stored group/chan
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg personal mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
 MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit the requested write.
-Repeat `--permission key=level` for temporary permissions. Never change permissions to bypass a refusal.
+Repeat `--permission key=level` to tighten permissions for the server; it never loosens them. Never change permissions to bypass a refusal.
 `tg personal mcp --revoke` forgets browser logins for the profile.
 
 `tg personal chats members audit <chat> --json` reads member pages with reasons; it removes nobody.

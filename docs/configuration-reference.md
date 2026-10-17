@@ -210,8 +210,8 @@ refused with exit code `7`, `confirmation_required`, and the error names the fla
 ### Over MCP
 
 MCP has no server confirmation forms. `deny` and `readonly` block writes; `ask` and `allow` permit
-the requested write. Repeat `--permission key=level` for temporary server permissions
-([browser setup](remote.md)). CLI confirmation at `ask` still applies.
+the requested write. Repeat `--permission key=level` to tighten permissions for one server
+process; it never loosens them ([browser setup](remote.md)). CLI confirmation at `ask` still applies.
 
 `replies.send` defaults to `deny`; enabling a reply rule alone does not allow sending.
 `tg personal replies audience` can limit replies to selected people or exclude some.

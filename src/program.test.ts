@@ -533,11 +533,11 @@ describe("app credentials out of reach", () => {
 describe("MCP startup overrides", () => {
   it("preserves temporary permissions in the generated client configuration without connecting", async () => {
     const adapter = vi.fn(() => scripted())
-    const result = await tg(["mcp", "--permission", "messages.send=allow", "config", "--json"], { adapter })
+    const result = await tg(["mcp", "--permission", "messages.send=deny", "config", "--json"], { adapter })
     expect(result.code).toBe(0)
     const entry = JSON.parse(result.stdout.join(""))
     expect(entry.item.config.mcpServers["tg-default"].args).toEqual(
-      expect.arrayContaining(["--permission", "messages.send=allow"]),
+      expect.arrayContaining(["--permission", "messages.send=deny"]),
     )
     expect(adapter).not.toHaveBeenCalled()
   })
