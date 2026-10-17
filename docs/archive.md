@@ -439,7 +439,7 @@ tg personal store clear --left --allow-dangerous  # delete the chats you have le
 part of a word that stays the same in its forms) to find word forms; `exact:` and `--exact` select
 exact forms.
 
-`tg config set searchStemmers.cyrillic russian` and `searchStemmers.latin english,spanish` set the
+`tg config set search_stemmers.cyrillic russian` and `search_stemmers.latin english,spanish` set the
 shared store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches
 the stems of both), and `none` disables one; run `store reindex` after your own choice. When a tg
 update changes the default, the stems rebuild by themselves: until they are ready a search matches
