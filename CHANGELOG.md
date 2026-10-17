@@ -7,6 +7,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Security
 
+- Internal attachment references stay out of JSON, JSON lines, MCP and live-event output (Core0.315.0); provider media keys and credentials remain inside the client.
+
 - WhatsApp state files cannot be uploaded as attachments (Core 0.314.0), including configured state paths and symbolic links. Ordinary neighbouring files remain allowed.
 
 ## 0.66.0 — 17.10.2026
