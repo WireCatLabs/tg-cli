@@ -70,7 +70,8 @@ export const registerApp = async (
   }
 
   const page = await call("/apps")
-  if (page.status === 401) {
+  // Measured 2026-10-17: logged out, /apps answers 401 to an XHR request and redirects to /auth otherwise.
+  if (page.status === 401 || (page.status >= 300 && page.status < 400)) {
     throw new CliError("authentication_error", "my.telegram.org did not keep the login — try again in a minute")
   }
   const existing = readApp(page.text)
