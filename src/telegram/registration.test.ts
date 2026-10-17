@@ -27,6 +27,27 @@ const RESTYLED_APP_PAGE = `<!DOCTYPE html><html><head><title>App configuration</
 const UNREADABLE_APP_PAGE = `<!DOCTYPE html><html><head><title>App configuration</title></head>
 <body><form id="app_edit_form"><input type="hidden" name="hash" value="5eed"/></form></body></html>`
 
+/** The keys block of the real redesigned page, captured masked on 2026-10-17 (icons dropped, keys made up). */
+const REDESIGNED_APP_PAGE = `<!DOCTYPE html><html><head><title>App configuration</title></head><body>
+<div class="creds">
+        <div class="cred">
+          <div class="k">App api_id</div>
+          <div class="v"><span class="vv">31415926</span>
+            <span class="icon-btns"><button type="button" class="icon-btn" title="Copy" data-copy="31415926"></button></span>
+          </div>
+        </div>
+        <div class="cred">
+          <div class="k">App api_hash <span class="badge grey">secret</span></div>
+          <div class="v masked" id="api_hash_value" data-value="00112233445566778899aabbccddeeff"><span class="vv">••••••••••••••••••••••••••••••••</span>
+            <span class="icon-btns">
+              <button type="button" class="icon-btn" title="Show" data-reveal="#api_hash_value"></button>
+              <button type="button" class="icon-btn" title="Copy" data-copy="00112233445566778899aabbccddeeff"></button>
+            </span>
+          </div>
+        </div>
+</div>
+<form id="app_edit_form"><input name="hash" type="hidden" value="5eed"/></form></body></html>`
+
 const CREATE_PAGE = `<title>Create new application</title>
 <form id="app_create_form"><input type="hidden" name="hash" value="c0ffee12"/></form>`
 
@@ -37,7 +58,9 @@ interface Seen {
   signal: AbortSignal | null | undefined
 }
 
-const site = (answers: Record<string, string | (() => string)>, setCookie?: string) => {
+type Answer = string | { status: number; body: string }
+
+const site = (answers: Record<string, Answer | (() => Answer)>, setCookie?: string) => {
   const seen: Seen[] = []
   const fetch = (async (url: string | URL | Request, init?: RequestInit) => {
     const path = new URL(String(url)).pathname
@@ -49,8 +72,9 @@ const site = (answers: Record<string, string | (() => string)>, setCookie?: stri
       signal: init?.signal,
     })
     const answer = answers[path]
-    const body = typeof answer === "function" ? answer() : (answer ?? "")
-    const response = new Response(body, { status: 200 })
+    const given = typeof answer === "function" ? answer() : (answer ?? "")
+    const { status, body } = typeof given === "string" ? { status: 200, body: given } : given
+    const response = new Response(body, { status })
     if (path === "/auth/login" && setCookie) response.headers.append("Set-Cookie", setCookie)
     return response
   }) as typeof globalThis.fetch
@@ -129,6 +153,51 @@ describe("registering the owner's app on my.telegram.org", () => {
 
   it("reads the keys from markup of another shape", () => {
     expect(readApp(RESTYLED_APP_PAGE)).toEqual({ id: 7654321, hash: "fedcba9876543210fedcba9876543210" })
+  })
+
+  it("reads the hash the redesigned page shows masked", () => {
+    expect(readApp(REDESIGNED_APP_PAGE)).toEqual({ id: 31415926, hash: "00112233445566778899aabbccddeeff" })
+  })
+
+  it("reads the only keys on the app page when its labels are worded otherwise", () => {
+    const worded = REDESIGNED_APP_PAGE.replace("App api_id", "App ID").replace("App api_hash", "API hash")
+    expect(readApp(worded)).toEqual({ id: 31415926, hash: "00112233445566778899aabbccddeeff" })
+  })
+
+  it("takes an OK answer to the create as success, and reads the new app", async () => {
+    let created = false
+    const { fetch } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": () => (created ? REDESIGNED_APP_PAGE : CREATE_PAGE),
+      "/apps/create": () => {
+        created = true
+        return "{}"
+      },
+    })
+    expect(await registerApp(prompts, { fetch })).toMatchObject({ id: 31415926, created: true })
+  })
+
+  it("says what the site refused in a create, in its own words", async () => {
+    const { fetch } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": CREATE_PAGE,
+      "/apps/create": { status: 400, body: '{"text":"Short name is already taken","field":"app_shortname"}' },
+    })
+    await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({
+      code: "provider_error",
+      message: "my.telegram.org did not create the app: Short name is already taken",
+    })
+  })
+
+  it("says a login the site did not keep is an authentication error", async () => {
+    const { fetch } = site({
+      "/auth/send_password": '{"random_hash":"r1"}',
+      "/auth/login": "true",
+      "/apps": { status: 401, body: "Unauthorized" },
+    })
+    await expect(registerApp(prompts, { fetch })).rejects.toMatchObject({ code: "authentication_error" })
   })
 
   it("stops, without creating a second app, when the app page shows keys it cannot read", async () => {

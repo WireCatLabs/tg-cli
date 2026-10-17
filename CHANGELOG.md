@@ -19,6 +19,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg setup --app auto` reads the app keys from the redesigned my.telegram.org.** The site now shows the
+  api_hash as dots and keeps its value in the page's copy and show buttons, so 0.64.0 stopped with "could not read
+  its keys". The keys are read from there now (checked on the real page), a create counts as done when the site
+  answers OK, and the site's own error text is shown instead of its JSON.
+
 - **A broken config file is named in a short error** (cli-core 0.304.0): the first bad key, never its value.
 
 ## 0.64.0 — 16.10.2026

@@ -70,6 +70,9 @@ export const registerApp = async (
   }
 
   const page = await call("/apps")
+  if (page.status === 401) {
+    throw new CliError("authentication_error", "my.telegram.org did not keep the login — try again in a minute")
+  }
   const existing = readApp(page.text)
   if (existing) return { ...existing, created: false }
 
@@ -82,7 +85,8 @@ export const registerApp = async (
     app_platform: "desktop",
     app_desc: "A command line interface for my own account",
   })
-  if (created.text.trim() !== "") {
+  // The redesigned site answers a create with any OK status and errors with JSON; the old one with an empty body.
+  if (created.status >= 300 || isPage(created.text)) {
     throw new CliError("provider_error", `my.telegram.org did not create the app: ${siteSays(created.text)}`)
   }
 
@@ -100,13 +104,27 @@ const parseRandomHash = (text: string): string => {
   throw new CliError(/too many/i.test(said) ? "rate_limited" : "provider_error", `my.telegram.org: ${said}`)
 }
 
-/** The app's page, or `undefined` when the account has no app yet. Read from the text, not the markup around it. */
+/**
+ * The app's page, or `undefined` when the account has no app yet. The keys are read from the page's text, or —
+ * as the 2026 redesign shows the hash masked — from the `data-value` / `data-copy` attribute its show and copy
+ * buttons read (`/js/my-telegram.js`, 2026-10-17). Not the markup around them, which changes.
+ */
 export const readApp = (html: string): ApiCredentials | undefined => {
   const text = pageText(html)
-  const id = /api_id:?\s*(\d+)/i.exec(text)?.[1]
-  const hash = /api_hash:?\s*([a-f0-9]{32})\b/i.exec(text)?.[1]
+  const attributes = [...html.matchAll(/\bdata-(?:value|copy)="([^"]*)"/gi)].map(([, value]) => value ?? "")
+  const near = (label: RegExp, value: RegExp) =>
+    new RegExp(`${label.source}[\\s\\S]{0,1500}?\\bdata-(?:value|copy)="(${value.source})"`, "i").exec(html)?.[1]
+  const only = (value: RegExp) => {
+    const found = new Set(attributes.filter((candidate) => new RegExp(`^${value.source}$`, "i").test(candidate)))
+    return found.size === 1 && isAppPage(html) ? [...found][0] : undefined
+  }
+  const id = /api_id:?\s*(\d+)/i.exec(text)?.[1] ?? near(/api_id/, /\d+/) ?? only(/\d+/)
+  const hash =
+    /api_hash:?\s*([a-f0-9]{32})\b/i.exec(text)?.[1] ?? near(/api_hash/, /[a-f0-9]{32}/) ?? only(/[a-f0-9]{32}/)
   return id && hash ? { id: Number(id), hash } : undefined
 }
+
+const isAppPage = (html: string) => titleOf(html) === "App configuration" || /id="app_edit_form"/.test(html)
 
 /**
  * Creating is safe only from the create form: Telegram gives a number one app, and on any other page
@@ -114,9 +132,13 @@ export const readApp = (html: string): ApiCredentials | undefined => {
  */
 const creationHash = (html: string): string => {
   const title = titleOf(html)
-  const hash = /<input type="hidden" name="hash" value="([a-fA-F0-9]+)"\s*\/?>/.exec(html)?.[1]
+  const hash = [...html.matchAll(/<input\b[^>]*>/gi)]
+    .map(([tag]) => tag)
+    .filter((tag) => /\bname="hash"/i.test(tag))
+    .map((tag) => /\bvalue="([a-fA-F0-9]+)"/i.exec(tag)?.[1])
+    .find(Boolean)
   if (hash && (title === "Create new application" || /id="app_create_form"/.test(html))) return hash
-  if (title === "App configuration") {
+  if (isAppPage(html)) {
     throw new CliError(
       "invalid_response",
       "found your app on my.telegram.org but could not read its keys — get them with --app browser",
@@ -148,6 +170,18 @@ const randomShortName = (): string =>
 
 /** The site answers errors as a short sentence. A whole page is named by its title: it can be the app's page, hash and all. */
 const siteSays = (text: string): string => {
-  if (/<html|<title/i.test(text)) return `it answered with the page "${titleOf(text) ?? "untitled"}"`
-  return singleLine(pageText(text)).slice(0, 200) || "(empty answer)"
+  if (isPage(text)) return `it answered with the page "${titleOf(text) ?? "untitled"}"`
+  return singleLine(pageText(jsonText(text) ?? text)).slice(0, 200) || "(empty answer)"
+}
+
+const isPage = (text: string) => /<html|<title/i.test(text)
+
+/** The redesigned site's errors: `{"text": "…", "field": "app_shortname"}`. */
+const jsonText = (text: string): string | undefined => {
+  try {
+    const said = (JSON.parse(text) as { text?: unknown }).text
+    return typeof said === "string" ? said : undefined
+  } catch {
+    return undefined
+  }
 }
