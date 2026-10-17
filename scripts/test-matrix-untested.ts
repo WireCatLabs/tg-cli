@@ -375,12 +375,6 @@ export const UNTESTED: Untested[] = [
       "cli-core src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters",
   },
   {
-    command: "store repair",
-    option: "--dry-run",
-    reason:
-      "cli-core src/cli/messenger/store-maintenance.test.ts and src/store/repair.test.ts cover preview rollback and retained data",
-  },
-  {
     command: "search all",
     option: "--max-meetings",
     reason: "cli-core src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through",

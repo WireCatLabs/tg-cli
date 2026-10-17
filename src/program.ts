@@ -48,6 +48,7 @@ import { botMcp, TELEGRAM_BOT } from "./commands/bot.js"
 import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { withProxySecrets } from "./commands/proxy-config.js"
+import { lockedStore } from "./commands/read-only.js"
 import { sessionCommand } from "./commands/session.js"
 import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
@@ -120,7 +121,7 @@ const definition: ProgramDefinition = {
       serveCommand(TELEGRAM),
       serverCommand(TELEGRAM, { unit: { noRestartOn: NO_RESTART_ON } }),
       scheduleCommand(TELEGRAM),
-      storeCommand(TELEGRAM),
+      lockedStore(storeCommand(TELEGRAM)),
       conversationsCommand(TELEGRAM),
       attachmentsCommand(TELEGRAM),
       tagsCommand(TELEGRAM),
