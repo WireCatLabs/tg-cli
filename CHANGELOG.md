@@ -500,6 +500,8 @@ After updating, read old messages again once: `tg <profile> mentions rebuild per
 - **The skill warns about three mistakes an agent made while testing.** It compared a plain word in one tool with
   `content:` in another, read `ref` where a search answers `locator` (or `items` where notes answer `hits`), and
   reported a bug fixed in a newer version; a zsh loop over `$c` passed a command path as one argument.
+- **The skill tells an agent to search again in other words before saying something is not there.** A paraphrase
+  shares no words with its answer; an agent can rephrase, where qmd runs a 1.7B model for it.
 
 ### Changed — may break scripts
 
