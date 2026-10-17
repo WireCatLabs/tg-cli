@@ -252,8 +252,11 @@ tg personal review --unanswered --json             # questions, including retain
 tg personal review --unanswered --transcribe --json  # hear new voices before filtering; keep the old boundary if incomplete
 tg personal tasks list state:open --json         # what waits on the owner; review and serve open and close tasks
 tg personal tasks categories --json                # choose a category before tasks add/plan
-tg personal tasks apply <chat> --json              # a chat's history as tasks: lists only; add --yes after the owner agrees
+tg personal tasks scan <chat> --json               # a chat's history as tasks: lists only; add --yes after the owner agrees
 # the first sync opens no task from history (task_first_pass_per_chat, 0) — ask before building a chat's tasks
+# rules: one-to-one chats fully; groups only replies to the owner and mentions (tag watch-tasks for all); channels never
+tg personal tasks add <ref> --type promise --category <name> --assignee sender --json  # someone owes the owner
+tg personal tasks list "assignee:any state:open" --json   # what others owe the owner
 # the owner edits the list in ~/.config/WireCat/config.json, section task_categories ("name": "meaning | words" or null)
 tg personal tasks add <ref> --type request --category documents --json
 # exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --into <id> or --new
