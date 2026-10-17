@@ -14,9 +14,9 @@ tg [profile] [options] <resource> <verb> [arguments]
 ```
 
 **The first word is the profile** when it is not a command: `tg work chats list` lists the chats of
-profile `work`. `TG_PROFILE` does the same for a whole shell session, and `defaultProfile` in the
-config file for good. **No profile is assumed**, not even the only one: without any of them, a command
-that uses an account stops with exit 2 and lists the profiles on this computer. Commands that use no
+profile `work`. `TG_PROFILE` does the same for a whole shell session. **No profile is assumed**, not even
+the only one: without either, a command that uses an account stops with exit 2 and lists the profiles on
+this computer. Commands that use no
 account (`--help`, `--version`, `commands`, `skill show`, `account list`, `config show`) run
 without one.
 
@@ -1288,7 +1288,7 @@ tg messages list <chat> [query] [options]
 |---|---|
 | `--limit <n>` | how many. |
 | `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
-| `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
+| `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
 
@@ -1843,7 +1843,7 @@ tg inbox [query] [options]
 | `--limit <n>` | at most this many per chat, the newest. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
-| `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
+| `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
 | `--no-mark-read` | do not, whatever the catch_up_marks_read setting says. |
@@ -1865,7 +1865,7 @@ tg review [query] [options]
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
 | `--unanswered [duration]` | only questions to you or a group's admins that nobody answered, asked at least this long ago — 4h, 1d; 24h if not given. |
 | `--all` | muted and archived chats too — left out unless they mention you or reply to you. |
-| `--transcribe` | turn voice messages not heard yet into text — by the messenger, or a model on this machine; can take minutes. |
+| `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--new` | what changed since the last `review --new`, a point per chat — for scheduled runs. |
 | `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
@@ -4407,7 +4407,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -4521,7 +4521,7 @@ tg mcp [options]
 
 | Option | What it does |
 |---|---|
-| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
+| `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 | `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
@@ -4537,7 +4537,7 @@ tg mcp config [options]
 
 | Option | What it does |
 |---|---|
-| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
+| `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 
 ### `tg mcp setup`
 
@@ -4556,7 +4556,7 @@ tg mcp setup <client> [options]
 | Option | What it does |
 |---|---|
 | `--allow-writes` | acknowledge that this profile offers writing tools. |
-| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
+| `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 
 ### `tg mcp doctor`
 
@@ -4568,7 +4568,7 @@ tg mcp doctor [options]
 
 | Option | What it does |
 |---|---|
-| `--permission <key=level>` | override a permission for this server only; repeat for more keys. |
+| `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 
 ## `tg bot`
 
