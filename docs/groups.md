@@ -257,9 +257,10 @@ tg personal tags remove --chat <group> watch-tasks
 
 In a tagged group, every question you did not answer opens a task — a message with a question mark,
 or a reply to yours. Only new messages count; for older ones use `tasks scan`. A request or a promise
-without a question mark is not a rule's task: your agent adds it with `tasks add`. Only your answer
-closes the question; when another member answers, the task stays open until you or your agent close
-it. Tag only groups where the answers are yours to give.
+without a question mark is not a rule's task: your agent adds it with `tasks add`. Your answer closes
+the question, and so does a reply to it from any member other than the one who asked. A later message
+that does not reply to the question closes nothing; you or your agent close that task. Tag only groups
+where the answers are yours to give.
 
 The first sync of an account opens no tasks from your history; later syncs open tasks from new messages. To
 turn a chat's history into tasks, list what would open, then open it:
