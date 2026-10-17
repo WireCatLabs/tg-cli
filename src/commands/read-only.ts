@@ -1,13 +1,5 @@
-import { CliError } from "@wirecat/cli-base"
-import { environmentOf, readOnlyLockOf } from "@wirecat/cli-core/cli"
+import { refuseUnderReadOnly } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
-import { TG } from "../app.js"
-
-/** `TG_READ_ONLY` for a write that never reaches cli-core's send guard (WC-PERM-12). */
-export const refuseUnderReadOnly = (command: Command, what: string) => {
-  const lock = readOnlyLockOf(TG, environmentOf(command).env ?? process.env)
-  if (lock) throw new CliError("permission_error", `this process is read-only (${lock}) — it cannot ${what}`)
-}
 
 const STORE_WRITES = [["reset"], ["restore"], ["clear"], ["migrate"], ["decrypt"], ["repair"], ["copies", "delete"]]
 

@@ -4,8 +4,10 @@ import { dirname, join } from "node:path"
 import { Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import { holdLock, listenRelay, lockPath, RELAY_PROTOCOL, relayPath } from "@wirecat/cli-core/background"
 import * as v from "valibot"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { TG } from "../app.js"
 import { sessionFile } from "../paths.js"
 import { run } from "../program.js"
 import type { LoginPrompts } from "../telegram/adapter.js"
@@ -323,4 +325,42 @@ describe("session end", () => {
     expect(seen.loggedOut).toBe(true)
     expect(existsSync(path) || existsSync(`${path}-wal`)).toBe(false)
   })
+
+  // serve offers no relay on Windows.
+  it.skipIf(process.platform === "win32")(
+    "**stays off a running serve's relay** and leaves serve's login and session file alone",
+    async () => {
+      const path = sessionFile("served")
+      mkdirSync(dirname(path), { recursive: true })
+      writeFileSync(path, "")
+      const lock = lockPath(TG, "served", process.env)
+      mkdirSync(dirname(lock), { recursive: true, mode: 0o700 })
+      const relayed: string[][] = []
+      const relay = await listenRelay(relayPath(lock), async ({ argv }) => {
+        relayed.push(argv)
+        return 0
+      })
+      holdLock(lock, {
+        pid: process.pid,
+        startedAt: new Date().toISOString(),
+        relay: { path: relayPath(lock), protocol: RELAY_PROTOCOL },
+      })
+      const seen: { loggedOut?: boolean } = {}
+
+      try {
+        const { code, stderr } = await tg(["served", "session", "end", "--json"], {
+          env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+          adapter: () => loginAdapter(seen),
+        })
+
+        expect(relayed).toEqual([])
+        expect(code).toBe(2)
+        expect(JSON.parse(stderr[0] ?? "").error.message).toContain("server stop")
+        expect(seen.loggedOut).toBeUndefined()
+        expect(existsSync(path)).toBe(true)
+      } finally {
+        await relay.close()
+      }
+    },
+  )
 })
