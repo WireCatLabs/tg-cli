@@ -38,8 +38,8 @@ judgement.
 ## 2. The changelog
 
 Draft `## Unreleased` from the merged pull requests (RELEASING.md, "The changelog") under tg's
-headings, each at most once: `What's new`, `Changed — may break scripts`, `Fixed`, `Security`,
-`Removed` ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)). A new cli-core
+headings, each at most once: `Added`, `Changed — may break callers`, `Fixed`, `Removed`,
+`Security` ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)). A new cli-core
 version gets the entries a tg user notices, said in tg's words. No internal ids, no file paths.
 
 ## 3. The docs against the diff

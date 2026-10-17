@@ -2,7 +2,8 @@
 
 This page is the map of `tg`'s own code and its seams; the cli-core version tg builds on is the
 pin in `package.json`. What the project is lives in [HANDOFF.md](../../HANDOFF.md), open work in
-[BACKLOG.md](BACKLOG.md);
+[BACKLOG.md](BACKLOG.md). The rules every WireCat CLI follows — layers, lifecycle, output, the store — are in
+the [CLI standards handbook](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/README.md);
 the shared design lives in cli-core and in
 [max-cli's ARCHITECTURE.md](https://github.com/WireCatLabs/max-cli/blob/main/docs/dev/ARCHITECTURE.md),
 which most of cli-core was copied from.
@@ -54,7 +55,8 @@ tree, `run()`, the output contract, the store and `--offline`, run records, the 
 | Session storage | `src/telegram/storage.ts` | mtcute's session over the runtime's own SQLite, not `better-sqlite3` |
 
 **A lint rule enforces the direction**: only `src/telegram/` may import `@mtcute/*`, and commands may
-not import the mapping or the error translation (`biome.json`, `noRestrictedImports`).
+not import the mapping or the error translation (`biome.json`, `noRestrictedImports`;
+[WC-ARCH-3](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/architecture.md), [WC-TOOL-15](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/toolchain.md)).
 
 ## 2. The seams a test uses
 
@@ -79,7 +81,8 @@ in `adapter.ts` is in [agents.md](agents.md#where-lanes-collide).
 
 A one-shot command opens with updates off and closes in a `finally`; an open socket keeps Node alive
 and a piped command that prints and never returns is a defect. Only `watch` and `serve` open with
-`listen`; only `serve` catches up on what arrived while nothing listened.
+`listen`; only `serve` catches up on what arrived while nothing listened
+([WC-LIFE-1, WC-LIFE-2](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/lifecycle.md)).
 
 Stored message/author rankings and bounded evidence live in cli-core services/store.
 The Telegram mapper retains versioned `providerMetadata.graph` linkage from mtcute 0.32.3:

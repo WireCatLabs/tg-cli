@@ -1,7 +1,7 @@
 # Testing
 
 ```sh
-pnpm lint && pnpm typecheck && pnpm test:coverage   # what CI runs, with the coverage floor
+pnpm lint && pnpm typecheck && pnpm test:coverage   # the full suite, with the coverage floor
 pnpm test:matrix                                    # every command and option has a test or a reason
 pnpm docs:check                                     # links, anchors, user pages, the changelog's shape
 pnpm test:slow                                      # the 20 slowest tests and the 10 slowest files
@@ -11,7 +11,12 @@ pnpm generate                                       # rewrites docs/commands.md 
 bin/tg session start                                # everything under .tg/ in this checkout, never the real profile
 ```
 
-CI runs all of them ([ci.yml](../../.github/workflows/ci.yml)). Windows and macOS run by hand before
+A pull request runs only the fast checks ([standards.yml](../../.github/workflows/standards.yml)): the managed
+configs, lint, Markdown lint, `pnpm ci:quick` (typecheck, build, command lint) and a secret scan of the new commits.
+Everything above, and the contracts, the parity check and a secret scan of the whole history, runs as full
+validation ([ci.yml](../../.github/workflows/ci.yml)) on each merge to `main`, on the first day of each month and
+before a release — not on the pull request ([WC-CI-3, WC-CI-4, WC-CI-5, WC-CI-7](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/ci.md)). Run what your change
+touches before you push. Windows and macOS run by hand before
 a release: Actions → Windows and macOS → Run workflow ([windows.yml](../../.github/workflows/windows.yml)).
 What only the real Telegram can check, and how, is [live-scenarios.md](live-scenarios.md); the
 `release`, `test-live` and `add-command` skills in [`skills/`](skills/) walk an agent through it.
@@ -54,8 +59,7 @@ scripted adapter answers at once. `pnpm test:slow` shows where time goes.
 ## Coverage has a floor
 
 `vitest.config.ts` holds it: lines 93 %, statements 92 %, functions 90 %, branches 80 % over `src/`,
-and **every file at least 50 % of its lines**. The numbers sit just under what the suite reached on
-2026-09-29 (lines 94.9 %). Raise them when coverage rises; never lower them to let a change through —
+and **every file at least 50 % of its lines**. The numbers sit just under what the suite reaches. Raise them when coverage rises; never lower them to let a change through —
 write the test instead. Only the entry point `src/bin/` is left out, with its reason in the config.
 
 **A new adapter method comes with its test** in `src/telegram/adapter.test.ts`, or `adapter.ts` can
@@ -75,7 +79,8 @@ pnpm test:matrix       # the suite, a fresh build, then docs/dev/test-matrix.md;
 
 [`test-matrix.md`](test-matrix.md) lists every command and option of `tg` and marks each ✅ (a test
 drove it through `run()`), ⛔ (not testable offline — the reason and where it is checked instead) or
-❌ (nothing). CI fails on a ❌, on a ⛔ entry that names nothing any more, and on a stale page.
+❌ (nothing). `pnpm test:matrix`, full validation and `pnpm release:check` fail on a ❌, on a ⛔ entry that names
+nothing any more, and on a stale page.
 
 It is **measured, not searched for**: under vitest (`TG_TEST_ARGV_LOG`, set by the sandbox) each
 top-level command's `preAction` hook appends the command path and the option names given to

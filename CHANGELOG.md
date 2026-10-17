@@ -5,7 +5,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
-### What's new
+### Added
 
 - **`tg <profile> contacts link <person> me`** (cli-core 0.323.0): say that a contact is you — for an account of
   yours the store cannot match by itself, such as `zoom:<id>`.

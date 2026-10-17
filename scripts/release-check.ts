@@ -2,23 +2,15 @@
  * Everything about a release that a program can decide, one line each, and exit 1 if any failed.
  * `bin/release` runs the full check; release CI uses --artifact-only after full validation. The judgement half —
  * changelog wording, docs against the diff, live checks — is the release skill,
- * `.claude/skills/release/SKILL.md`.
+ * `docs/dev/skills/release/SKILL.md`.
  *
  *   pnpm release:check
  */
 import { readFileSync } from "node:fs"
 import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
-import {
-  changelogProblems,
-  command,
-  docsProblems,
-  notOnNpm,
-  packageVersion,
-  packContents,
-  releaseCheck,
-} from "@wirecat/cli-base/release"
-import { CHANGELOG, docsRules, PACKED, PACKED_SAID } from "./release/checks.ts"
+import { command, docsProblems, notOnNpm, packageVersion, packContents, releaseCheck } from "@wirecat/cli-base/release"
+import { changelogProblemsOf, docsRules, PACKED, PACKED_SAID } from "./release/checks.ts"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const version = packageVersion(root)
@@ -29,8 +21,7 @@ const failed = releaseCheck(
     { name: "version in step", run: command(root, "pnpm", "version:check") },
     {
       name: "changelog",
-      run: () =>
-        changelogProblems(readFileSync(join(root, "CHANGELOG.md"), "utf8"), { ...CHANGELOG, version, release: true }),
+      run: () => changelogProblemsOf(readFileSync(join(root, "CHANGELOG.md"), "utf8"), { version, release: true }),
     },
     { name: "docs", run: () => docsProblems(root, docsRules(root)) },
     { name: "lint", run: command(root, "pnpm", "lint") },
