@@ -24,6 +24,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`tg upgrade` through pnpm installs the newest version** (cli-base 0.40.2). pnpm 11 installs only versions a day
+  old, so the upgrade could install an older `tg` than the one you had. It now exempts `@wirecat/*` from that wait;
+  every other package keeps it.
 - `mentions` help summaries fit the shared 80-character limit (cli-core 0.311.0).
 - **The duplicate check compares tasks by when their messages were sent** (cli-core 0.310.0), not by when a task
   was written. Tasks written from history in one go no longer all look alike.
