@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### What's new
+
+- **Mentions find street addresses, and names of people the store does not know yet** (cli-core 0.308.0).
+  `tg <profile> mentions places` lists confirmed addresses across every account. The store moves to version 18,
+  with a `places` table, the first time a command opens it.
+
 ## 0.65.0 — 17.10.2026
 
 ### What's new

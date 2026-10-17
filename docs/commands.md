@@ -2906,7 +2906,7 @@ tg tags list [query]
 
 ## `tg mentions`
 
-phones, e-mail, links, documents and people's names found in stored messages
+phones, e-mail, links, documents, people's names and addresses found in stored messages
 
 ### `tg mentions list`
 
@@ -2943,6 +2943,19 @@ tg mentions domains [query] [options]
 | `--limit <n>` | how many to show. |
 | `--page <n>` | which page, starting at 1. |
 
+### `tg mentions places`
+
+confirmed addresses, in every account, most mentioned first; `mentions confirm <id>` adds one
+
+```sh
+tg mentions places [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
+
 ### `tg mentions show`
 
 one mention, the text around it, and how many other places hold its value
@@ -2957,7 +2970,7 @@ tg mentions show <id>
 
 ### `tg mentions confirm`
 
-say what a mention is: a phone's owner everywhere it is written, the stored document, who a name means
+say what a mention is: a phone's owner everywhere it is written, the stored document, who a name means, an address as a place
 
 **Changes something on this computer only.**
 
@@ -2968,7 +2981,7 @@ tg mentions confirm <id> [person] [options]
 | Argument | | What it is |
 |---|---|---|
 | `id` | required | the mention's id, from mentions list. |
-| `person` | optional | person:<uid> or organization:<id> that owns the phone or the address; person:<uid> a name means; a document needs none. |
+| `person` | optional | person:<uid> or organization:<id> that owns the phone or the e-mail address; person:<uid> a name means; a document or a street address needs none. |
 
 | Option | What it does |
 |---|---|
@@ -3006,7 +3019,7 @@ tg mentions rebuild [kind]
 
 | Argument | | What it is |
 |---|---|---|
-| `kind` | optional | only this kind: person-name after people were added or renamed. One of: `phone`, `email`, `url`, `document`, `person-name`. |
+| `kind` | optional | only this kind: person-name after people were added or renamed. One of: `phone`, `email`, `url`, `document`, `person-name`, `place`. |
 
 ## `tg images`
 
