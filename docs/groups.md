@@ -244,6 +244,16 @@ send guard, and each person added counts toward the hourly limit
 that mentions you by name, opens a task; your answer closes it. A task points at its message and never
 copies it.
 
+The first sync of an account opens no tasks from your history; later syncs open tasks from new messages. To
+turn a chat's history into tasks, list what would open, then open it:
+
+```sh
+tg personal tasks apply <chat>
+tg personal tasks apply <chat> --last 300 --yes
+```
+
+`config set task_first_pass_per_chat <n>` lets the first sync open up to n tasks per chat.
+
 See what waits on you, oldest first, then only questions and mentions in one group:
 
 ```sh
