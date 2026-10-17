@@ -78,8 +78,8 @@ second window when asked. The origin is the address without `/mcp` or any other 
 explicit public port such as `:8443` in it.
 
 The server listens on `127.0.0.1:8765` and prints a one-time access code. It never needs
-administrator rights; only the tunnel may need them. The commands below allow sending for this
-server process only, with `--permission messages.send=allow`; see
+administrator rights; only the tunnel may need them. The profile's permissions decide what the
+agent may do; to narrow them for this server process only, see
 [permissions for this server process](#permissions-for-this-server-process).
 
 ### Windows (PowerShell)
@@ -100,7 +100,7 @@ Second window: normal PowerShell, as the user who logged in to Telegram:
 
 ```powershell
 $mcpPublicUrl = Read-Host 'Paste the HTTPS origin printed by Funnel (no /mcp)'
-tg.cmd mcp --http --port 8765 --public-url $mcpPublicUrl --permission messages.send=allow
+tg.cmd mcp --http --port 8765 --public-url $mcpPublicUrl
 ```
 
 Run both processes in Windows itself. WSL is a separate environment: a Windows tunnel that points
@@ -122,7 +122,7 @@ and bash:
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
+tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl"
 ```
 
 ### Linux (Terminal)
@@ -140,7 +140,7 @@ Second terminal window: your normal user, without `sudo`, so `tg` finds the sess
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl" --permission messages.send=allow
+tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl"
 ```
 
 ## Run MAX and Telegram together
@@ -223,13 +223,13 @@ Write arguments and ordinary CLI machine JSON preserve original strings.
 The server cannot see whether the app asked you before a call. If the app always allows a tool,
 the next call can go through without a new question.
 
-Repeat `--permission key=level` to change permissions only for this server process. Levels are
-`deny`, `readonly`, `ask` and `allow`. For example, add `--permission messages.send=allow` to allow
-sending from a read-only profile. `--permission messages=allow` replaces the saved permissions for
-the whole messages resource; deletion is allowed separately with `--permission messages.delete=allow`.
-The saved configuration, recipient restrictions and hourly limits do not change. To lift a read
-refusal, name its resource or command with level `allow`. Permission keys are listed in the
-[configuration guide](configuration.md).
+Repeat `--permission key=level` to tighten permissions only for this server process. Levels are
+`deny`, `readonly`, `ask` and `allow`. For example, add `--permission messages.send=deny` to refuse
+sending, or `--permission messages=readonly` to let the agent only read messages. An override can
+only tighten: one that would loosen the profile's level, such as `messages.send=allow` on a
+read-only profile, is refused at startup. To allow more, change the profile's permissions. The saved
+configuration, recipient restrictions and hourly limits do not change. Permission keys are listed in
+the [configuration guide](configuration.md).
 
 ## Stop or revoke access
 

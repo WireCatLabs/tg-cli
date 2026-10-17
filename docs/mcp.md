@@ -144,8 +144,9 @@ tg agent config set permissions.messages.send allow
 
 Here `agent` is the name of a profile. Writes keep the recipient limits, the hourly limits and the
 send journal (`tg personal sends list`). Marking read is a separate write, under `chats.mark-read`. Deleting
-through MCP removes messages only for you, at most ten at a time; channels and supergroups that do
-not allow this are refused. `--permission key=level` changes a level for this server process only.
+through MCP removes messages only for you, at most ten at a time; an agent never deletes for
+everyone, and channels and supergroups that do not allow deleting for yourself are refused.
+`--permission key=level` tightens a level for this server process only; it never loosens one.
 
 ## Tools
 
