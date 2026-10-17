@@ -3,6 +3,18 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **In a group tagged `watch-tasks`, any member's reply closes a question** (cli-core 0.325.0): a direct reply from
+  someone other than the asker settles it; a later message that does not reply closes nothing.
+- **`tg <bot> bot mcp` tools are the bot commands themselves** (cli-core 0.325.0): an agent's arguments are the
+  command's own, in snake_case — `messages send` and `messages edit` take `md` or `html` in place of `format`,
+  `messages delete` takes `messages` (a list), `search messages` takes `query`, `chats members remove` takes
+  `person`. New: `chats rules show`, and `offline` on every read. Sending files, `--allow-dangerous` and
+  `chats moderate --max-actions` stay with the owner. The catalogue is pinned in `contracts/bot-catalogue.snap`.
+
 ## 0.70.0 — 17.10.2026
 
 ### Added
