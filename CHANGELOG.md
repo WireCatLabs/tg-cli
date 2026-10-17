@@ -5,11 +5,29 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break scripts
+
+- **The first sync opens no task from history** (cli-core 0.309.0). After an account's first sync, the task rules
+  open at most `task_first_pass_per_chat` tasks per chat, and the default is 0. The sync answer's `tasks` counts
+  what it held back (`held`, `held_chats`), and a note names `tasks apply`. Later syncs still open tasks from new
+  messages. `tg <profile> config set task_first_pass_per_chat 50` brings back the old behaviour.
+
 ### What's new
+
+- **`tg <profile> tasks apply <chat...>`** (cli-core 0.309.0): the task rules over a chat's newest stored messages
+  (`--last`, 50 by default), for a chat whose history you want as tasks. It lists what would open and changes
+  nothing unless `--yes`. Local store only. MCP: `tasks_apply`.
 
 - **Mentions find street addresses, and names of people the store does not know yet** (cli-core 0.308.0).
   `tg <profile> mentions places` lists confirmed addresses across every account. The store moves to version 18,
   with a `places` table, the first time a command opens it.
+
+### Fixed
+
+- **The duplicate check compares tasks by when their messages were sent** (cli-core 0.310.0), not by when a task
+  was written. Tasks written from history in one go no longer all look alike.
+- **Old messages fetched into a quiet chat open no tasks** (cli-core 0.309.0): a sync pass skips a chat with
+  nothing sent since the last one.
 
 ## 0.65.0 — 17.10.2026
 
