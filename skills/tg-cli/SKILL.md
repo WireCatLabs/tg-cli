@@ -38,7 +38,7 @@ profile permissions decide access and `ask` permits the requested MCP write. CLI
 
 ## Installation readiness
 
-Global npm installation installs this skill before login when scripts are allowed. On Windows,
+Global npm installation installs this skill only with `TG_INSTALL_AGENT` set; `tg skill install --for all` does it later. On Windows,
 use the one-call installer from the installation guide: it repairs user and current-shell PATH,
 installs the skill even with disabled lifecycle scripts and verifies bare `tg`. Read `tg skill show`
 and verify your skill is loaded before login. If your process predates installation, refresh your

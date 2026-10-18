@@ -18,7 +18,7 @@ describe("global installation", () => {
   it("repairs Windows PATH and installs the versioned skill before login", () => {
     const install = sandbox()
     const repair = vi.fn()
-    completeGlobalInstall({ ...install, platform: "win32", repair })
+    completeGlobalInstall({ ...install, env: { ...install.env, TG_INSTALL_AGENT: "all" }, platform: "win32", repair })
     expect(repair).toHaveBeenCalledWith(install.env.npm_config_prefix)
     for (const directory of [".claude", ".agents"]) {
       const file = join(install.home, directory, "skills/tg-cli/SKILL.md")
@@ -26,6 +26,14 @@ describe("global installation", () => {
       expect(readFileSync(file, "utf8")).toContain("metadata:")
     }
     expect(install.note.mock.calls.flat().join("\n")).toContain("Agent: read tg skill show")
+  })
+
+  it("installs no skill unless asked, and says how to install it", () => {
+    const install = sandbox()
+    completeGlobalInstall({ ...install, platform: "linux" })
+    expect(existsSync(join(install.home, ".agents"))).toBe(false)
+    expect(existsSync(join(install.home, ".claude"))).toBe(false)
+    expect(install.note.mock.calls.flat().join("\n")).toContain("tg skill install --for all")
   })
 
   it("does not change PATH or agent files for a project dependency or npx", () => {

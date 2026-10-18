@@ -46,10 +46,11 @@ export const completeGlobalInstall = ({
     repair(prefix)
     note("tg: Windows user PATH updated; new terminals can run tg directly.")
   }
-  if (env.TG_INSTALL_AGENT === "none") {
-    note("tg: agent skill skipped by TG_INSTALL_AGENT=none; install with tg skill install --for all.")
+  // npm hides a lifecycle script's output, so writing into the owner's agent folders here must be asked for.
+  const agent = env.TG_INSTALL_AGENT
+  if (agent === undefined || agent === "none") {
+    note("tg: agent skill not installed; tg personal setup offers it, or run tg skill install --for all.")
   } else {
-    const agent = env.TG_INSTALL_AGENT ?? "all"
     if (!["all", "codex", "cursor", "claude", "gemini"].includes(agent))
       throw new Error("TG_INSTALL_AGENT must be all, codex, cursor, claude, gemini or none")
     const targets =
