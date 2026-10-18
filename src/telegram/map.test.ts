@@ -210,6 +210,19 @@ describe("a chat", () => {
     })
   })
 
+  it("sends null for a flag that is off and a username that is gone, so the store clears them", () => {
+    expect(peerToChat(peer({ type: "user", isSelf: false, isBot: false }))).toMatchObject({
+      providerMetadata: { isBot: null, username: null },
+    })
+    expect(peerToChat(peer({ type: "chat", chatType: "supergroup", isForum: false })).providerMetadata).toEqual({
+      isForum: null,
+      chatType: "supergroup",
+      username: null,
+    })
+    const unpinned = { peer: peer({ type: "user" }), isPinned: false, isArchived: false } as never
+    expect(toChat(unpinned).providerMetadata).toMatchObject({ pinned: null })
+  })
+
   it("is a channel or a group by its chat type, with its member count", () => {
     expect(peerToChat(peer({ type: "chat", chatType: "channel", membersCount: 9 }))).toMatchObject({
       kind: "channel",
