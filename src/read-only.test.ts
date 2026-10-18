@@ -146,9 +146,9 @@ describe("TG_READ_ONLY", () => {
     ["chats update", ["chats", "update", "Valencia", "--title", "X"]],
     ["bot messages send", ["bot", "messages", "send", "123", "hi"]],
   ])("already refused %s, and writes nothing", async (_name, argv) => {
-    const { code, error, writes } = await locked(["ro-shared", ...argv])
+    const { code, error, writes, opened } = await locked(["ro-shared", ...argv])
 
-    expect([code, error.code]).toEqual([5, "permission_error"])
+    expect([code, error.code, opened]).toEqual([5, "permission_error", 0])
     expect(writes).toEqual([])
   })
 })
