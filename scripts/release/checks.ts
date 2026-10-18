@@ -42,7 +42,7 @@ const withOldHeadingsRenamed = (text: string) => {
 export const changelogProblemsOf = (text: string, check: { release: boolean; version?: string }) =>
   changelogProblems(withOldHeadingsRenamed(text), { ...CHANGELOG, ...check })
 
-// The agent skill ships because `tg skill show` reads it from the package.
+// The agent skill and the scenarios ship because `tg skill show` and `tg guide` read them from the package.
 export const PACKED = [
   "dist/",
   "install/",
@@ -51,11 +51,12 @@ export const PACKED = [
   "LICENSE",
   "THIRD_PARTY_NOTICES",
   "skills/tg-cli/SKILL.md",
+  "scenarios/",
   "spec/bot/LICENSE",
   "spec/bot/README.md",
 ]
 export const PACKED_SAID =
-  "dist/, the Windows installer, package.json, README.md, LICENSE, THIRD_PARTY_NOTICES, the agent skill and Bot API source licence/provenance notes"
+  "dist/, the Windows installer, package.json, README.md, LICENSE, THIRD_PARTY_NOTICES, the agent skill, the guide's scenarios and Bot API source licence/provenance notes"
 
 const GENERATED = new Set(["docs/commands.md"])
 

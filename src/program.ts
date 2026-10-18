@@ -1,4 +1,5 @@
 import { appendFileSync } from "node:fs"
+import { fileURLToPath } from "node:url"
 import { exitCodeFor, processStreams } from "@wirecat/cli-base"
 import {
   accountCommand,
@@ -13,8 +14,10 @@ import {
   createProgram as create,
   doctorCommand,
   floodCommand,
+  guideCommand,
   imagesCommand,
   inboxCommand,
+  inSection,
   mcpCommand,
   mentionsCommand,
   messagesCommand,
@@ -60,19 +63,22 @@ export const NO_RESTART_ON = [exitCodeFor("authentication_error")]
 const definition: ProgramDefinition = {
   app: TG,
   configuration: CONFIG,
+  firstScreen: {
+    pitch:
+      "your Telegram account for agents and scripts. What it reads stays on your computer; " +
+      "search, review and tasks work offline.",
+    can: [
+      { command: "review 'date>1d'", does: "what changed in every chat since yesterday" },
+      { command: "tasks agenda", does: "tasks due, replies you owe, replies you wait for" },
+      { command: "inbox --transcribe", does: "unread in every chat, voice as text; marks nothing read by default" },
+      { command: "search all invoice", does: "messages and notes, from the local store and Telegram's server" },
+      { command: "attachments extract", does: "text of PDFs and documents, ready for search" },
+      { command: "schedule agent …", does: "an agent on a timer; it runs read-only and can never send" },
+      { command: "mcp --permission …", does: "your account in any agent, with messages.send=deny" },
+      { command: "TG_READ_ONLY=1 tg …", does: "a run that can read and sync but never send, edit or delete" },
+    ],
+  },
   configure: (program) => {
-    program.addHelpText(
-      "after",
-      "\nGetting started after installation:\n" +
-        "  tg personal setup               Guided first run as profile personal; about 5 minutes\n" +
-        "  tg personal setup --agent codex Log in and install your agent's skill\n" +
-        "  tg setup --help                 Login choices, examples and Windows instructions\n" +
-        "Every account command names its profile; any name works in place of personal.\n" +
-        "\nFor agents:\n" +
-        "  tg skill show                   Read the bundled instructions before using Telegram\n" +
-        "  tg commands --json              Discover commands, arguments and flags\n" +
-        "\nSetup checks five chats. Choose a chat before downloading its history.\n",
-    )
     program.commands
       .find((command) => command.name() === "skill")
       ?.addHelpText(
@@ -104,8 +110,8 @@ const definition: ProgramDefinition = {
         "which are sent their ids — one person a second"
   },
   commands: () => [
-    sessionCommand(),
-    setupCommand(),
+    inSection(sessionCommand(), "setup"),
+    inSection(setupCommand(), "setup"),
     accountCommand(TELEGRAM),
     chatsCommand(TELEGRAM),
     contactsCommand(TELEGRAM),
@@ -144,6 +150,10 @@ const definition: ProgramDefinition = {
     mcpCommand(TELEGRAM),
     botCommand({ ...TELEGRAM_BOT, mcp: botMcp(run) }).addCommand(telegramBotApiCommand()),
     skillCommand(TG, SKILL),
+    guideCommand(TG, {
+      directory: fileURLToPath(new URL("../scenarios", import.meta.url)),
+      worksWith: [{ tool: "memo", name: "person-brief", title: "one person across every tool" }],
+    }),
   ],
 }
 

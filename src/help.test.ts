@@ -1,4 +1,5 @@
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
+import { checkGuide } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
 import { createProgram, run } from "./program.js"
@@ -30,13 +31,13 @@ const atTerminal = async (argv: string[]) => {
 }
 
 describe("a command group given no subcommand, at a terminal", () => {
-  const all = [{ path: [], subcommands: createProgram().commands.map((one) => one.name()) }, ...groups(createProgram())]
+  const all = groups(createProgram())
 
   it("covers every group", () => {
     expect(all.length).toBeGreaterThan(20)
   })
 
-  it.each(all.map((group) => [group.path.join(" ") || "tg", group] as const))(
+  it.each(all.map((group) => [group.path.join(" "), group] as const))(
     "`%s` shows its own help, naming each subcommand",
     async (_name, { path, subcommands }) => {
       const { code, stdout, help } = await atTerminal(path)
@@ -44,8 +45,72 @@ describe("a command group given no subcommand, at a terminal", () => {
       expect(code).toBe(2)
       expect(stdout).toEqual([])
       expect(help).not.toContain("(outputHelp)")
-      expect(help).toContain(`Usage: tg ${path.join(" ")}`.trimEnd())
+      expect(help).toMatch(new RegExp(`Usage: tg (<profile> )?${path.join(" ")} `))
       for (const subcommand of subcommands) expect(help).toMatch(new RegExp(`^\\s+${subcommand}\\b`, "m"))
     },
   )
+})
+
+const leaves = (command: Command, path: string[] = []): string[][] =>
+  command.commands.flatMap((child) => {
+    const here = [...path, child.name()]
+    return child.commands.length === 0 ? [here] : leaves(child, here)
+  })
+
+describe("--help on a command", () => {
+  it("prints its help and exits 0 for every command", async () => {
+    const failed: string[] = []
+    for (const path of leaves(createProgram()).filter(([top]) => top !== "help")) {
+      const streams = captureStreams()
+      const code = await run([...path, "--help"], { streams, tty: false, keyring: memoryKeyring() })
+      if (code !== 0) failed.push(`${path.join(" ")}: ${code} ${streams.stderr.join(" ")}`)
+    }
+    expect(failed).toEqual([])
+  }, 60_000)
+})
+
+describe("the root help", () => {
+  it("a bare `tg` shows the first screen: what tg can do and where to go next", async () => {
+    const { code, stdout, help } = await atTerminal([])
+
+    expect(code).toBe(2)
+    expect(stdout).toEqual([])
+    expect(help).toContain("What you can do:")
+    expect(help).toContain("tasks agenda")
+    expect(help).toContain("tg guide")
+    expect(help).not.toContain("Getting started")
+  })
+
+  it("`help options` lists the options every command takes", async () => {
+    const { code, stdout } = await atTerminal(["help", "options"])
+    const text = stdout.join("\n")
+
+    expect(code).toBe(0)
+    expect(text).toContain("--offline")
+    expect(text).toContain("--dry-run")
+  })
+
+  it("`--help-all` names every top-level command", async () => {
+    const { code, stdout } = await atTerminal(["--help-all"])
+    const text = stdout.join("\n")
+
+    expect(code).toBe(0)
+    for (const command of createProgram().commands.filter((one) => one.name() !== "help"))
+      expect(text).toMatch(new RegExp(`^\\s+${command.name()}\\b`, "m"))
+  })
+})
+
+describe("tg guide", () => {
+  it("every scenario step is a tg command whose options and arguments parse, and the scenarios ship", async () => {
+    expect(await checkGuide(createProgram, { packageRoot: process.cwd() })).toEqual([])
+  })
+
+  it("lists the scenarios and memo's person-brief", async () => {
+    const { code, stdout } = await atTerminal(["guide"])
+    const text = stdout.join("\n")
+
+    expect(code).toBe(0)
+    expect(text).toContain("catch-up")
+    expect(text).toContain("memo guide person-brief")
+  })
 })

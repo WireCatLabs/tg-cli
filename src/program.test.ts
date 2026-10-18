@@ -54,7 +54,7 @@ describe("first-run discovery", () => {
   it.each([
     {
       argv: ["--help"],
-      phrases: ["Getting started after installation", "tg setup", "tg skill show", "tg commands --json"],
+      phrases: ["What you can do:", "tg personal setup", "tg skill show", "tg commands", "tg guide"],
     },
     {
       argv: ["setup", "--help"],
@@ -62,7 +62,6 @@ describe("first-run discovery", () => {
         "Examples:",
         "tg work setup --agent claude",
         "about 5 minutes",
-        "Global Options:",
         "--json",
         "npm.cmd exec",
         "no 2FA input",

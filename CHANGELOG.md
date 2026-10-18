@@ -5,17 +5,43 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Added
+
+- **`tg guide` lists scenarios: the commands for a common task, in order, and why each.** Four ship with tg —
+  `catch-up`, `find-what-was-said`, `searchable-files` and `agent-without-send` — and the list points at memo's
+  `person-brief` for one person across every tool. `tg guide <name> --json` gives one as data. CI checks that every
+  step is a tg command whose options and arguments parse.
+- **Every command's `--help` ends with Returns, Next usually and Example** (cli-core 0.345.0), and
+  `docs/commands.md` carries the same lines. The usage line shows `tg <profile> …`.
+
 ### Changed — may break callers
 
 - **`npm install -g` installs the agent skill only when asked.** It wrote the skill into `~/.claude/skills` and
   `~/.agents/skills` by default, and npm hides a lifecycle script's output, so nobody was told. Now
   `TG_INSTALL_AGENT=all` (or an agent's name) installs it at install time; otherwise `tg <profile> setup` offers it,
   or `tg skill install --for all`. The Windows installer passes `all` itself and is unchanged.
+- **`tg --help` and a bare `tg` show a short first screen** (cli-core 0.344.0): what tg is for, eight things it does
+  that a plain client would not, the other WireCat tools, and where to go next. The full commander help with every
+  command and option is at `tg --help-all`; the options alone at `tg help options`. A script that looked for a command
+  or a global option in `tg --help` must read `--help-all`.
+- **`tg commands` without `--json` prints a text list, by section, even when piped**: one line per command — usage,
+  what it does, `(writes)` when it changes something. It printed the whole JSON document. `--json` and `--jsonl`
+  print the same document as before; a script that parsed a bare `tg commands` must pass `--json`.
 - **A chat's `provider_metadata` says `null` for a flag that is off or a username that is gone**: `isBot`,
   `isForum`, `pinned` and `username` were left out instead. cli-core's store will soon keep a key that is left out,
   so an unpinned chat or a dropped username would otherwise stay in the store, and `@old` would still find the chat.
   Every reader in tg and cli-core treats `null` as absent, but JSON output now shows these keys as `null`: a script
   that tests whether the key is present sees it.
+
+### Security
+
+- **Under the read-only lock and on a readonly profile, a write refuses before connecting; refusals appear in
+  `sends list`** (cli-core 0.343.0).
+
+### Fixed
+
+- **`inbox` and `review` declare their output**, so `tg commands schema inbox` gives the message summary's fields and
+  `--json=<fields>` refuses a name they do not have instead of printing empty items (cli-core 0.345.0).
 
 ## 0.73.1 — 18.10.2026
 
