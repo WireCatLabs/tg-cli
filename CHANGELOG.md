@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.73.1 — 18.10.2026
+
+### Fixed
+
+- **tg starts a little faster.** Built on cli-core 0.342.0 and cli-base 0.45.0: a command no longer parses the
+  rule tables that only development checks use, which saved about 7–12 ms per start in the
+  [measurement](https://github.com/WireCatLabs/cli-testing/tree/main/performance/startup/standards-split-before/README.md).
+
 ## 0.73.0 — 18.10.2026
 
 ### Added
