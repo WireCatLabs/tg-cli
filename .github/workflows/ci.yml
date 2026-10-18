@@ -19,26 +19,24 @@ permissions:
 
 jobs:
   ci:
-    uses: WireCatLabs/cli-base/.github/workflows/node-ci.yml@03341651a008f77abb8172f86d6df652321b4ce5 # v0.31.0
+    uses: WireCatLabs/cli-base/.github/workflows/node-ci.yml@f5c9d9a1ec6efd8630566fd53f1b8092d12dd310 # v0.44.5
     with:
       pack: ${{ inputs.pack || false }}
       pack-checks: node --experimental-strip-types scripts/release-check.ts --artifact-only
       bun-run: pnpm build && pnpm smoke:bun
-      # The test matrix is rebuilt from this run's argv log, so the diff also catches a stale
-      # test-matrix.md; the parity lines read the command tree from the dist/ built above.
+      cli: true
+      parity: true
+      bin: tg
+      platforms: ${{ !inputs.skip-platforms }}
+      # Commands that need no login and reach no network.
+      platform-run: |
+        export TG_NO_UPDATE_CHECK=1
+        node dist/bin/tg.js doctor --json
+        node dist/bin/tg.js default mcp config --json
+        node dist/bin/tg.js commands --json
       checks: |
-        pnpm contracts:check
-        pnpm contracts:upgrade
-        pnpm security:no-leak
-        pnpm version:check
-        pnpm bot:generate:check
-        pnpm exec cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check
-        node --experimental-strip-types scripts/commands.ts
-        git diff --exit-code
         pnpm check:agent-docs
-        pnpm docs:check
-        pnpm parity:check
-        pnpm lint:commands
+        git diff --exit-code
 
   version:
     if: github.event_name == 'pull_request'
@@ -87,10 +85,6 @@ jobs:
       # Style findings are annotations until the rules are tuned; the tone rule (an error) fails.
       - run: ./vale --output line README.md docs/*.md | sed 's/^/::warning::/' || true
       - run: ./vale --minAlertLevel error README.md docs/*.md
-
-  windows:
-    if: ${{ !inputs.skip-platforms }}
-    uses: ./.github/workflows/windows.yml
 
   install_windows:
     if: ${{ !inputs.skip-platforms }}
