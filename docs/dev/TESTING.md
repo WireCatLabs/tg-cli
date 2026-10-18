@@ -11,11 +11,12 @@ pnpm generate                                       # rewrites docs/commands.md 
 bin/tg session start                                # everything under .tg/ in this checkout, never the real profile
 ```
 
-A pull request runs only the fast checks ([standards.yml](../../.github/workflows/standards.yml)): the managed
-configs, lint, Markdown lint, `pnpm ci:quick` (typecheck, build, command lint) and a secret scan of the new commits.
-Everything above, and the contracts, the parity check and a secret scan of the whole history, runs as full
-validation ([ci.yml](../../.github/workflows/ci.yml)) on each merge to `main`, on the first day of each month and
-before a release — not on the pull request ([WC-CI-3, WC-CI-4, WC-CI-5, WC-CI-7](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/ci.md)). Run what your change
+A pull request runs the fast checks ([standards.yml](../../.github/workflows/standards.yml)): the managed configs,
+lint, Markdown lint, `pnpm ci:quick` (typecheck, build, command lint) and a secret scan of the new commits. It also
+runs full validation ([pr.yml](../../.github/workflows/pr.yml) calls [ci.yml](../../.github/workflows/ci.yml)):
+everything above, with the coverage floor, the contracts, the parity check and a secret scan of the whole history,
+on Linux. The same runs on each merge to `main`, on the first day of each month and before a release
+([WC-CI-3, WC-CI-4, WC-CI-5, WC-CI-7](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/ci.md)). Run what your change
 touches before you push. Windows and macOS run the unit suite in full validation for a release and each month,
 not on `main`; to run them on a branch: Actions → Full validation → Run workflow.
 What only the real Telegram can check, and how, is [live-scenarios.md](live-scenarios.md); the
@@ -60,7 +61,7 @@ scripted adapter answers at once. `pnpm test:slow` shows where time goes.
 
 `vitest.config.ts` holds it: lines 93 %, statements 92 %, functions 90 %, branches 80 % over `src/`,
 and **every file at least 50 % of its lines**. The numbers sit just under what the suite reaches. Raise them when coverage rises; never lower them to let a change through —
-write the test instead. Only the entry point `src/bin/` is left out, with its reason in the config.
+write the test instead ([WC-TEST-11](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/testing.md)); a pull request that drops below fails. Only the entry point `src/bin/` is left out, with its reason in the config.
 
 **A new adapter method comes with its test** in `src/telegram/adapter.test.ts`, or `adapter.ts` can
 fall under the per-file floor.
@@ -114,8 +115,8 @@ a user should check in an agent's statistics answer stays in
 `pnpm contracts:check` drives the built binary and MCP stdio server with isolated synthetic
 profiles. It checks help, clean JSON discovery, structured error exit codes, and reviewed
 tool schemas. Plans and snapshots live in `contracts/`; changes require explicit review with
-`pnpm exec cli-contract contracts/plan.json --update`. It runs in release, monthly, and manual
-full validation; ordinary PR/local checks retain their existing budget. See the
+`pnpm exec cli-contract contracts/plan.json --update`. It runs in full validation: on every pull request, on each
+merge to `main`, monthly, before a release and by hand. See the
 [shared guide](https://github.com/WireCatLabs/cli-testing/blob/main/docs/ci/CONTRACTS.md).
 
 The development dependency pins `@wirecat/cli-testing` 0.5.2 from npm, with its
@@ -129,5 +130,6 @@ same fresh synthetic state. Baseline packages have a separate frozen lockfile un
 normal developer executable path. Plans assert retained data, migration/import repeatability and
 file preservation. `pnpm security:no-leak` scans the reviewed contract fixtures and testing guide;
 process diagnostics and recorded run logs are checked within the contract runner as well.
-These commands run only in release, monthly and manual full validation. See the
+These commands run in full validation: on every pull request, on each merge to `main`, monthly, before a release
+and by hand. See the
 [upgrade guide](https://github.com/WireCatLabs/cli-testing/blob/main/docs/ci/UPGRADES.md).
