@@ -61,7 +61,7 @@ const GENERATED = new Set(["docs/commands.md"])
 
 export const docsRules = (root: string): DocsRules => ({
   files: [
-    ...["README.md", "CHANGELOG.md", "HANDOFF.md", "AGENTS.md", "CLAUDE.md", "skills/tg-cli/SKILL.md"].map((name) =>
+    ...["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", "skills/tg-cli/SKILL.md"].map((name) =>
       join(root, name),
     ),
     ...markdownFiles(join(root, "docs")),

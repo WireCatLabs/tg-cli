@@ -36,6 +36,11 @@ pnpm add -g @wirecat/tg-cli --config.minimumReleaseAgeExclude='@wirecat/*'
 bun add -g @wirecat/tg-cli
 ```
 
+npm 12 blocks installation scripts by default, so the skill is not installed and, on Windows, PATH is not fixed.
+`tg` still works. Run `tg skill install` after the installation, or pass `--allow-scripts=@wirecat/tg-cli` as above.
+On Windows, if `tg` is not found, open a new terminal; if it is still missing, use the PowerShell installer in
+[Windows: one install command](#windows-one-install-command).
+
 pnpm 11 installs only versions published at least a day ago ([`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage)).
 The `minimumReleaseAgeExclude` setting lifts that wait for `tg`'s own packages only, so a fix reaches you the day it is
 released; every other package keeps the wait. Without it, pnpm can install a `tg` older than the one you have.

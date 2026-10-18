@@ -24,11 +24,6 @@
   <a href="https://github.com/WireCatLabs/tg-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License: Apache 2.0"></a>
 </p>
 
-<!-- HERO DEMO SLOT: replace the example below with a 30–45 s recording (GIF or video) of an agent
-     answering a question with source references. Record on a demo account whose chats hold only
-     invented people (Alice Example, Bob Sample), never a real account: this repository is public.
-     Use an absolute raw.githubusercontent.com URL so npmjs.com renders it too. -->
-
 An example conversation (invented people, illustrative output):
 
 ```text
@@ -50,6 +45,11 @@ npm install -g @wirecat/tg-cli    # or: bun add -g @wirecat/tg-cli; pnpm: see do
 tg personal setup --agent claude  # also codex, cursor, gemini, all or none
 tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
+
+With npm 12, installation scripts are blocked and the agent skill is not installed. Run `tg skill install`
+after the installation, or allow the script: `npm install -g --allow-scripts=@wirecat/tg-cli @wirecat/tg-cli`.
+On Windows, if `tg` is not found, open a new terminal or use the PowerShell installer in
+[the installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md#windows-one-install-command).
 
 Allow about five minutes. `tg personal setup` registers your own Telegram app at
 [my.telegram.org](https://my.telegram.org/apps), logs in by QR code, checks your first chats and installs

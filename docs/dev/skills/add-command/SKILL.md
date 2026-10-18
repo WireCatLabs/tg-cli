@@ -9,7 +9,7 @@ A command is done when the port, the adapter, the command, the guard, the tests,
 matrix, the docs and the changelog all agree. Follow the steps in order and tick them in the pull
 request description.
 
-Before anything: [HANDOFF.md](../../../../HANDOFF.md) §3c and §4 (the path a new method takes, and what
+Before anything: `HANDOFF.md` §3c and §4 (the path a new method takes, and what
 bites), and [CLAUDE.md](../../../../CLAUDE.md) (the five rules). Names, options and answer shapes follow
 cli-core's
 [STANDARD.md](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/STANDARD.md): tg and max

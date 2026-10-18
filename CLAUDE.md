@@ -1,6 +1,6 @@
 # tg-cli — working rules
 
-**Start with [`HANDOFF.md`](HANDOFF.md)** — what this is, what to read for your task, and what will
+**Start with `HANDOFF.md`** — it lives on disk in the checkout, not in git — what this is, what to read for your task, and what will
 bite. A lane agent starts with its own handoff instead ([`docs/dev/agents.md`](docs/dev/agents.md)). Open work is
 [`docs/dev/BACKLOG.md`](docs/dev/BACKLOG.md).
 
