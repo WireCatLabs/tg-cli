@@ -373,7 +373,7 @@ details.
 stale links are marked and not traversed.
 
 In MCP, `tg_read` with `command` `"conversations list"`, `"conversations show"`, `"search conversations"`,
-`"conversations related"` and `"conversations status"` reads what is built; `tg_write` (`command: "conversations refresh"`)
+`"conversations related"` and `"conversations status"` reads what is built; `tg_write` (`command: "conversations rebuild"`)
 catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`), `tg_write` (`command: "conversations links add"`),
 `tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild

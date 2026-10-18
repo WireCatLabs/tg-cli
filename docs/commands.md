@@ -1749,7 +1749,7 @@ tg models audio list [query]
 
 download a speech model once, checked against the sha256 this version expects
 
-**Changes something on this computer only.**
+**Reads from an outside service.**
 
 ```sh
 tg models audio download <model>
@@ -1779,7 +1779,7 @@ tg models text list [query]
 
 download an embedding model once, checked against the sha256 this version expects
 
-**Changes something on this computer only.**
+**Reads from an outside service.**
 
 ```sh
 tg models text download <model> [options]
@@ -2009,7 +2009,7 @@ tg watch [options]
 
 | Option | What it does |
 |---|---|
-| `--events` | also edits, deletions, reactions and poll votes; every line then names its event. |
+| `--events` | also edits, deletions, reactions, poll votes and chat events; every line then names its event. |
 
 ## `tg serve`
 
@@ -2509,7 +2509,7 @@ the conversations inside a chat, found in the stored messages by replies, mentio
 
 find a chat's conversations in what the store holds, replacing the last build; without --chat, every chat that changed since its build and every group never built; never asks the messenger
 
-**Changes something on this computer only.**
+**Sends text to an outside service.**
 
 ```sh
 tg conversations build [options]
@@ -2656,6 +2656,22 @@ tg conversations links clear [options]
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--model <model>` | only the answers this model gave. |
 
+### `tg conversations rebuild`
+
+build, then embed with the model on this machine, the chats that changed since their build and the group chats never built — or only --chat; bounded per run, so run it again for the rest; never asks the messenger, downloads no model and sends no text anywhere
+
+**Changes something on this computer only.**
+
+```sh
+tg conversations rebuild [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
+| `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
+
 ### `tg conversations consents`
 
 remembered analysis permissions for this account's chats and provider endpoints
@@ -2687,7 +2703,7 @@ tg conversations consents revoke [options]
 
 compute a vector for each chunk of a chat's conversations for search by meaning — on this machine, or with --provider through a service and your key; resumes where it stopped; without --chat, every built chat with chunks left, on this machine only
 
-**Changes something on this computer only.**
+**Sends text to an outside service.**
 
 ```sh
 tg conversations embed [options]
@@ -3060,7 +3076,7 @@ tg images models list [query]
 
 download a picture model once, checked against the sha256 this version expects
 
-**Changes something on this computer only.**
+**Reads from an outside service.**
 
 ```sh
 tg images models download <model>
@@ -3076,7 +3092,7 @@ cached group/channel descriptions for local automatic tags
 
 ### `tg metadata get`
 
-
+a stored chat's cached description, as automatic tags read it
 
 ```sh
 tg metadata get [options]
@@ -3088,7 +3104,7 @@ tg metadata get [options]
 
 ### `tg metadata refresh`
 
-
+fetch group and channel descriptions again and cache them
 
 **Changes something on this computer only.**
 
@@ -3881,6 +3897,8 @@ tg search notes <query> [options]
 
 the conversations nearest to a query in meaning and in words, best first, in one chat or every one — meaning after `conversations embed`; runs on this machine
 
+**Reads from an outside service.**
+
 ```sh
 tg search conversations <query> [options]
 ```
@@ -4511,7 +4529,7 @@ tg upgrade [options]
 
 ## `tg mcp`
 
-serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg mcp`
+serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg <profile> mcp`
 
 **Changes something in Telegram.**
 
