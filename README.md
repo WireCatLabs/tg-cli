@@ -108,6 +108,9 @@ tg personal mcp setup claude-code  # or: tg personal mcp setup codex
 tg personal mcp config      # the entry for Claude Desktop, Cursor and others
 ```
 
+The profile can send by default, so `mcp setup` stops first. Check the profile's permissions, then run
+it again with `--allow-writes`.
+
 More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/mcp)
 
 ## Why tg?
@@ -290,12 +293,12 @@ More: [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-co
 ## Settings and permissions
 
 ```sh
-tg config set permissions.messages readonly    # no change to messages from this profile
-tg config set permissions.messages.send ask    # a question in the terminal before each send
-tg config set sends_per_hour 10                  # at most 10 sends an hour (30 by default)
-tg personal recipients add "Book club"         # the first add turns the recipient list on
-tg personal sends list                         # every attempt: sent, refused, failed or not known
-tg config show                                 # what is set, and where it came from
+tg personal config set permissions.messages readonly  # no change to messages from this profile
+tg personal config set permissions.messages.send ask  # a question in the terminal before each send
+tg personal config set sends_per_hour 10              # at most 10 sends an hour (30 by default)
+tg personal recipients add "Book club"                # the first add turns the recipient list on
+tg personal sends list                                # every attempt: sent, refused, failed or not known
+tg personal config show                               # what is set, and where it came from
 ```
 
 More: [permissions](https://github.com/WireCatLabs/tg-cli/blob/main/docs/permissions.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/permissions) · [configuration](https://github.com/WireCatLabs/tg-cli/blob/main/docs/configuration.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/configuration)

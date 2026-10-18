@@ -128,7 +128,7 @@ PowerShell, type `tg.cmd` instead of `tg`. An existing file is never replaced by
 
 ## Three ways to set a value
 
-- **In the file:** the value stays for later commands. `tg config set limit 50` saves it.
+- **In the file:** the value stays for later commands. `tg personal config set limit 50` saves it.
 - **With an environment variable:** the value holds for one terminal or one agent process.
   For example, `TG_PROFILE` chooses a profile and `TG_TIMEOUT` limits how long a command may run.
   Only some settings have a variable.
@@ -146,11 +146,11 @@ You can edit the file in any text editor, or let `tg` do it. `config set` checks
 it writes, so it never saves a file that a later command refuses.
 
 ```sh
-tg config set limit 50                 # the profile you use now
+tg personal config set limit 50        # the profile "personal"
 tg work config set limit 50            # the profile "work"
 tg config set sends_per_hour 10 --defaults   # every profile
-tg config unset limit                  # back to the default
-tg config show                         # check what is in force, and where each value came from
+tg personal config unset limit         # back to the default
+tg personal config show                # check what is in force, and where each value came from
 ```
 
 A misspelled setting in the file is an error, not a silent default: every command stops and names

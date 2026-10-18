@@ -324,11 +324,11 @@ writes the text back with `attachments text set`.
 your model's name.
 
 ```sh
-tg config set models.ocr.provider openai
+tg personal config set models.ocr.provider openai
 ```
 
 ```sh
-tg config set models.ocr.model your-vision-model
+tg personal config set models.ocr.model your-vision-model
 ```
 
 ```sh

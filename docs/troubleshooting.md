@@ -176,7 +176,7 @@ Here `chat` was read as a profile, and `list` is not a command. The command is `
 
 Exit code `3`. `config.json` has a setting `tg` does not know, or a value of the wrong type. The error
 names the setting and the profile it is under. It is refused on purpose: a setting silently ignored
-costs half a day. Fix it by hand, or remove it with `tg config unset <setting>`
+costs half a day. Fix it by hand, or remove it with `tg personal config unset <setting>`
 ([a typo is an error](configuration-reference.md#a-typo-is-an-error-not-a-default)).
 
 ### "--limit takes a whole number from 1 upwards"
@@ -256,7 +256,7 @@ sets and lifts that one.
 
 Exit code `8`. The profile's own hourly limit (`sends_per_hour`, 30 by default). The error says when
 the next send is possible. Raise the limit only if you meant to send that many:
-`tg config set sends_per_hour <n>`.
+`tg personal config set sends_per_hour <n>`.
 
 ### "chat … is not on the recipient list of profile …"
 
@@ -322,11 +322,11 @@ not leave. `tg` stops at the first failed connection instead of waiting for the 
 - **cannot be reached (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`)** — the proxy is down, or its
   host or port is wrong.
 - **refused: … auth …** or **refused the tunnel (HTTP 407)** — wrong user or password. Set it again
-  with `tg config set proxy -`.
+  with `tg personal config set proxy -`.
 - **refused the tunnel (HTTP 403 or 502)** — the proxy will not, or cannot, reach Telegram.
 
 `tg personal doctor` names the proxy in use, where it came from (`TG_PROXY` or the settings) and whether the
-Bot API goes through it. To try without it, `tg config unset proxy`. An MTProxy with a wrong secret
+Bot API goes through it. To try without it, `tg personal config unset proxy`. An MTProxy with a wrong secret
 usually looks like a hang rather than a refusal: bound it with `--timeout 30s`.
 
 ### A command hangs

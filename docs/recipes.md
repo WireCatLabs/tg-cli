@@ -70,10 +70,10 @@ both: it connects to Telegram and saves what it reads to its local copy. So Code
 
 ```sh
 for key in messages reactions polls topics chats contacts account conversations tags searches replies attachments bot; do
-  tg config set permissions.$key readonly
+  tg personal config set permissions.$key readonly
 done
-tg config show                       # check the permissions in force
-tg config set sends_per_hour 5         # or: at most five sends an hour
+tg personal config show                # check the permissions in force
+tg personal config set sends_per_hour 5  # or: at most five sends an hour
 tg personal recipients add "Book club"  # and only to the chats on this list
 ```
 
@@ -83,7 +83,7 @@ vote or change chats. That is why the loop sets each resource. A more precise ke
 read.
 
 `permissions` limits your own commands too, until you change it back:
-`tg config unset permissions.messages`. To limit only the agent, give it a profile of its own. Every
+`tg personal config unset permissions.messages`. To limit only the agent, give it a profile of its own. Every
 attempt to send, refused ones included, is in `tg personal sends list`. See
 [the send guard](security.md#the-send-guard) and
 [what a profile may do](configuration-reference.md#what-a-profile-may-do).
