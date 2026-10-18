@@ -74,6 +74,10 @@ npm install -g @wirecat/tg-cli
 ```
 
 ```sh
+tg skill install --for all  # the agent skill
+```
+
+```sh
 tg personal setup         # guided app registration, login and agent skill
 ```
 
@@ -198,19 +202,19 @@ tg personal chats list                     # newest first, archived chats includ
 ```
 
 ```sh
-tg personal chats list 'unread_count>0 kind:group'  # only groups with unread messages
+tg personal chats list 'unread_count>0 kind:group' --offline  # only groups with unread messages
 ```
 
 ```sh
-tg personal chats list 'title:*book*'   # titles containing "book"; at least 3 characters
+tg personal chats list 'title:*book*' --offline  # titles containing "book"; at least 3 characters
 ```
 
 ```sh
 tg personal chats show "Book club"         # kind, unread count, last message, who is in it
 ```
 
-`--kind` is one of `dialog` (one-to-one), `group`, `channel` or `saved`. The filters look at
-every returned chat. Groups and channels have [their own section](#groups-and-channels).
+A chat query is answered from the local store, so it needs `--offline`: Telegram filters nothing online. `kind:` is one of
+`dialog` (one-to-one), `group`, `channel` or `saved`. Groups and channels have [their own section](#groups-and-channels).
 
 ### Messages
 
@@ -291,7 +295,7 @@ tg personal review                         # the last 3 days
 ```
 
 ```sh
-tg personal review 'date>2026-09-23T09:00'  # from where the last review ended
+tg personal review 'date>"2026-09-23T09:00:00+02:00"'  # from where the last review ended
 ```
 
 ```sh
@@ -510,7 +514,7 @@ tg personal messages list "Book club" "date>2h"  # what came in during the last 
 ```
 
 ```sh
-tg personal messages list "Book club" "date>2026-09-20T09:00"
+tg personal messages list "Book club" 'date>"2026-09-20T09:00:00+02:00"'
 ```
 
 ```sh
@@ -526,7 +530,7 @@ the message.
 ### Find a chat, then write to it
 
 ```sh
-tg personal chats list 'title:*book* kind:group'  # groups with "book" in the title
+tg personal chats list 'title:*book* kind:group' --offline  # groups with "book" in the title
 ```
 
 ```sh
@@ -917,7 +921,7 @@ tg personal chats events "Hiking"                  # who joined, left, was added
 ```
 
 ```sh
-tg personal chats events "Hiking" 'type:(join OR leave) time>=2026-09-01T00:00'
+tg personal chats events "Hiking" 'time>="2026-09-01T00:00:00+02:00"'
 ```
 
 ```sh
@@ -1043,7 +1047,7 @@ tg personal chats admins remove "Hiking 2027" @kate
 ```
 
 A new group is always a supergroup. Someone whose privacy settings stop them being added is named
-in the answer under `providerMetadata.notAdded`; the group is made anyway. `chats join` to a group whose
+in the answer under `provider_metadata.not_added`; the group is made anyway. `chats join` to a group whose
 admins approve who joins answers `requested: true` and exits `0`: the request is sent, and you are in once an
 admin accepts it. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
@@ -1201,11 +1205,11 @@ tg personal server install  # a systemd user unit or a launchd agent; starts not
 ## What a command did
 
 ```sh
-tg --trace chats list          # show each request on stderr, keep nothing
+tg personal --trace chats list          # show each request on stderr, keep nothing
 ```
 
 ```sh
-tg --record chats list         # keep it, show nothing
+tg personal --record chats list         # keep it, show nothing
 ```
 
 ```sh

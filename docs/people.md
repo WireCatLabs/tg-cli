@@ -52,12 +52,12 @@ store holds in each chat you share:
   "mutualContact": true,
   "commonChatsCount": 2,
   "registered": { "at": "2019-04-01T00:00:00.000Z", "source": "estimate", "precision": "month" },
-  "hasPhoto": true,
+  "has_photo": true,
   "chats": [
-    { "id": "1000001", "title": "Example User", "kind": "dialog", "theirMessages": 412,
-      "firstAt": "2023-02-11T09:14:00.000Z", "lastAt": "2026-10-05T18:02:00.000Z", "complete": true },
-    { "id": "-1002000002", "title": "Book club", "kind": "group", "theirMessages": 37,
-      "firstAt": "2025-06-01T10:00:00.000Z", "lastAt": "2026-09-30T20:41:00.000Z", "complete": false }
+    { "id": "1000001", "title": "Example User", "kind": "dialog", "their_messages": 412,
+      "first_at": "2023-02-11T09:14:00.000Z", "last_at": "2026-10-05T18:02:00.000Z", "complete": true },
+    { "id": "-1002000002", "title": "Book club", "kind": "group", "their_messages": 37,
+      "first_at": "2025-06-01T10:00:00.000Z", "last_at": "2026-09-30T20:41:00.000Z", "complete": false }
   ],
   "aliases": [
     { "name": "Example U.", "username": "example_old", "link": "https://t.me/example_old",
@@ -75,7 +75,7 @@ store holds in each chat you share:
   - `telegram` — the month Telegram sends when someone writes to you for the first time;
   - `estimate` — a guess from the account id, using a table that ends at August 2026.
     Newer ids get no estimate at all rather than a date that may be years off.
-- **`hasPhoto`** counts their own photo and their public one, never a photo you set for them.
+- **`has_photo`** counts their own photo and their public one, never a photo you set for them.
 - **`chats`** lists every chat you share, and any other chat where the store holds their messages.
 - **`aliases`** are earlier names and usernames your store saw them with, oldest first, each with a
   `t.me` link for an old username. `source: profile` — their profile changed while the store watched;
@@ -84,9 +84,9 @@ store holds in each chat you share:
 
 ### Counts are what your store holds
 
-`theirMessages`, `firstAt` and `lastAt` come from your local store, never from Telegram. When
+`their_messages`, `first_at` and `last_at` come from your local store, never from Telegram. When
 `complete` is `false`, the store does not hold that chat from its start, so the count is a minimum
-and `firstAt` may be later than their real first message. Fetch the chat to fill it:
+and `first_at` may be later than their real first message. Fetch the chat to fill it:
 
 ```sh
 tg personal messages sync "Book club"
@@ -154,11 +154,11 @@ tg personal contacts check @example_user --no-registries
     { "reason": "link_first", "weight": 2, "source": "store" }
   ],
   "registries": [
-    { "name": "cas", "answer": "clean", "checkedAt": "2026-10-07T08:00:00.000Z" },
-    { "name": "lols", "answer": "clean", "checkedAt": "2026-10-07T08:00:00.000Z" }
+    { "name": "cas", "answer": "clean", "checked_at": "2026-10-07T08:00:00.000Z" },
+    { "name": "lols", "answer": "clean", "checked_at": "2026-10-07T08:00:00.000Z" }
   ],
   "unknown": ["new_account"],
-  "checkedAt": "2026-10-07T08:00:00.000Z"
+  "checked_at": "2026-10-07T08:00:00.000Z"
 }
 ```
 
@@ -172,6 +172,8 @@ people have no photo, no username or no bio, which is why those weigh little.
 | `new_account` | 2 | registered less than 30 days ago, by Telegram's month or the id estimate |
 | `link_first` | 2 | their first stored message is a link |
 | `same_text` | 2 | the same text in several chats |
+| `burst_join` | 1 | joined in a run of 5 or more people, each within 10 minutes of the next |
+| `mass_invited` | 1 | added by a non-admin who added 5 or more of the members |
 | `photo_recent` | 1 | their oldest visible photo is less than 30 days old |
 | `no_photo`, `no_username`, `no_bio` | 1 | the profile is empty there |
 | `odd_name` | 1 | no name, a long run of digits, or a link in the name |

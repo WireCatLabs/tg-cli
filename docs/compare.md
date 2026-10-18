@@ -48,7 +48,7 @@ The tools:
 |---|---|---|---|---|
 | Install | npm, pnpm, Bun | npm, Homebrew | git and uv, Docker, Claude Desktop extension | one binary, Homebrew, Scoop, AUR, Nix, Docker |
 | Written in | TypeScript | JavaScript | Python | Go |
-| Licence | MIT | MIT | Apache-2.0 | AGPL-3.0 |
+| Licence | Apache-2.0 | MIT | Apache-2.0 | AGPL-3.0 |
 
 ## When another tool fits better
 

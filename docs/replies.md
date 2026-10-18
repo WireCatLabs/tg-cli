@@ -34,7 +34,7 @@ tg personal replies edit away --per-chat 1/12h --per-person 1/1d
 ```
 
 `add` creates a rule that is off, with every setting written out. The rules live in
-`<profile>.replies.json`, in the same folder as the `configFile` that `tg config show --json` names.
+`<profile>.replies.json`, in the same folder as the `config_file` that `tg config show --json` names.
 By default the rules answer everyone they match. To answer only selected people, list their Telegram
 ids, comma-separated; `tg personal contacts show <name> --json` prints a person's id as `id`:
 

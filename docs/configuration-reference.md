@@ -45,7 +45,7 @@ Not every setting has all five ways. The [table of settings](#the-file) says whi
 ## What is in force now
 
 ```sh
-tg config show
+tg personal config show
 tg work config show
 tg shop config show --bot
 ```
@@ -56,7 +56,7 @@ the file and whether it exists, and every setting with its value and **where tha
 settings as a bot command of that profile gets them. `--json` gives the same as one object, for a
 script.
 
-The list ends with `commandTimeoutMs`: the limit on a whole command, from `--timeout` or `TG_TIMEOUT`.
+The list ends with `command_timeout_ms`: the limit on a whole command, from `--timeout` or `TG_TIMEOUT`.
 It is not a setting of the file; `timeout_ms` limits one request.
 
 When `TG_CONFIG_DIR`, `TG_STATE_DIR` or `TG_CACHE_DIR` is set, it says so on stderr, since that also
@@ -64,7 +64,7 @@ changes which login is found ([where the login parts are kept](sessions.md#where
 
 ⚠ **It is not a health check.** It creates the starter configuration if absent, then reads files. It
 opens no store, asks no keyring and does not connect. Whether the session still works is a question
-for `tg personal doctor --online` ([troubleshooting with tg doctor](troubleshooting.md#first-tg-doctor)).
+for `tg personal doctor --online` ([troubleshooting with tg doctor](troubleshooting.md#first-tg-personal-doctor)).
 
 ## The file
 
@@ -111,7 +111,7 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `keep_runs_for_days` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
-| `requests_per_minute` | `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
+| `requests_per_minute` | unset, which means `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
 | `transcribe_with` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
 | `speech_model` | none | which downloaded model `--local` uses (`tg personal models audio list`) | `--model` |
 | `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
@@ -127,6 +127,12 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `analysis_base_url` | provider default | analysis API endpoint | `build --base-url` |
 | `models` | none | external models by purpose ([below](#models-by-purpose)) | `TG_MODELS_*` variables |
 | `search_stemmers.cyrillic`, `search_stemmers.latin` | `russian`, `english,spanish` | the word-stem languages for search in the whole store ([below](#search-languages)) | none |
+| `phone_countries` | `ru` | country codes, comma-separated, that read a phone number written without `+` (`es,ru`); the first that fits wins ([search](query-language.md)) | none |
+| `task_categories.<name>` | the built-in list | one category a task can take: a meaning, then trigger words ([tasks](groups.md#what-waits-on-you)) | none |
+| `task_agent_close` | `on` | `off` makes every close by an agent a suggestion | none |
+| `task_agent_close_min` | `0.8` | the least `--certainty` at which an agent's close is accepted | none |
+| `task_first_pass_per_chat` | `0` | how many tasks the first sync may open per chat | none |
+| `account_groups.<name>` | none | a named list of accounts for `--source group:<name>`, for example `tg:work,max:Alice,email:me@x` | none |
 
 The file is written `0600` when first created and `0644` by `config set`. It holds no secret.
 
@@ -347,6 +353,11 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `embedding_dims` | integer 1–65,536 | profile |
 | `analysis_provider` | `agent`, `openai`, `anthropic` | profile |
 | `models` | purpose objects described below | profile |
+| `phone_countries` | country codes, comma-separated | shared store, through `config set` |
+| `task_categories.<name>`, `account_groups.<name>` | a string, as above | shared store, through `config set` |
+| `task_agent_close` | `on`, `off` | shared store, through `config set` |
+| `task_agent_close_min` | number from 0 to 1 | shared store, through `config set` |
+| `task_first_pass_per_chat` | whole number from 0 to 1000 | shared store, through `config set` |
 | `search_stemmers.cyrillic` | `russian`, `none` | shared store, through `config set` |
 | `search_stemmers.latin` | `english`, `spanish`, both comma-separated, `none` | shared store, through `config set` |
 

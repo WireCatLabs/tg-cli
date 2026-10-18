@@ -14,8 +14,10 @@ The words this page uses:
 - **Keyring**: the password store of your operating system. `tg` keeps your Telegram app keys there.
 - **Skill**: a short instruction file that tells your AI agent how to use `tg`.
 
-Installation builds nothing: SQLite comes from the runtime itself, or from tg's own copy when a Linux
-Node's system SQLite is too old, so there is no native module to compile. It starts nothing in the background. A global npm installation can install the bundled
+Installation compiles nothing for `tg` itself: SQLite comes from the runtime, or from tg's own copy when a Linux
+Node's system SQLite is too old. The Telegram library (`@mtcute/node`) depends on `better-sqlite3`, a native
+module with an install script, so npm 12 may list that script as blocked.
+Installation starts nothing in the background. A global npm installation can install the bundled
 skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 
 ## What it needs
@@ -29,15 +31,14 @@ skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 ## Install
 
 ```sh
-npm install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
-# The global install puts the skill in .agents and .claude. Then: tg personal setup
+npm install -g @wirecat/tg-cli
+tg skill install --for all    # the skill, in .agents and .claude. Then: tg personal setup
 
 pnpm add -g @wirecat/tg-cli --config.minimumReleaseAgeExclude='@wirecat/*'
 bun add -g @wirecat/tg-cli
 ```
 
-npm 12 blocks installation scripts by default, so the skill is not installed and, on Windows, PATH is not fixed.
-`tg` still works. Run `tg skill install` after the installation, or pass `--allow-scripts=@wirecat/tg-cli` as above.
+npm 12 prints "install scripts blocked". That is harmless: `tg skill install --for all` does what the script would.
 On Windows, if `tg` is not found, open a new terminal; if it is still missing, use the PowerShell installer in
 [Windows: one install command](#windows-one-install-command).
 
@@ -105,8 +106,8 @@ PowerShell's execution policy is not changed. The installer removes only npm's g
 shim for this package and keeps `tg.cmd`, so bare `tg` works under a restricted policy too. An
 unrelated script with that name is left alone and reported as a conflict.
 
-A global npm installation also repairs the saved Windows PATH and installs the skill, when npm
-allows its installation script:
+A global npm installation also repairs the saved Windows PATH and installs the skill, when you let
+npm run its installation script:
 
 ```powershell
 npm.cmd install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
@@ -229,8 +230,12 @@ tg personal server uninstall         # if you installed the background unit; sto
 tg personal session end              # logs out on Telegram's side and deletes the session file
 tg support bot auth remove           # forgets the token of the bot profile "support"
 npm uninstall -g @wirecat/tg-cli
+rm -rf ~/.claude/skills/tg-cli ~/.agents/skills/tg-cli    # the agent skill
 rm -rf ~/.config/tg-cli ~/.local/share/tg-cli ~/.cache/tg-cli
 ```
+
+`~/.config/WireCat/config.json` holds settings shared by all WireCat tools (for example your own
+`task_categories`). Delete it only if no other tool uses it.
 
 `tg personal session end` does not remove the app id and hash from the keyring. They sit under the service
 `tg-cli`; remove that entry with your system's keyring tool if you want them gone.

@@ -67,8 +67,8 @@ account, `tg` says so and asks for the code from the app.
 After either, Telegram lists a new device in the app's list of sessions.
 
 ```text
-Logged in as <your name> (@<username>, id <id>) — profile default.
-Session:  ~/.local/share/tg-cli/sessions/default.session
+Logged in as <your name> (@<username>, id <id>) — profile personal.
+Session:  ~/.local/share/tg-cli/sessions/personal.session
 App keys: in the keyring
 Next:     tg personal chats list · tg personal server install to keep the archive current
 ```

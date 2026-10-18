@@ -9,8 +9,8 @@ description: >-
 `tg` works with the owner's **real personal account**. A mistake here does not fail a test; it
 writes to a living person. One call, one action: connect, do it, print, exit.
 
-Read this skill, then discover only the commands relevant to the task. **`tg commands messages
-search --json`** describes one command; **`tg commands messages --json`** describes that group.
+Read this skill, then discover only the commands relevant to the task. **`tg commands search
+messages --json`** describes one command; **`tg commands messages --json`** describes that group.
 Both include arguments, options, global options and exit codes. Use `tg <command> --help` for a
 shorter explanation. Command words form one path, not a list of groups: inspect different groups
 in separate calls. **`tg commands --json`** returns the entire tree when you need an overview;
@@ -136,7 +136,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    `candidates: [{ id, title }]`. Take an id from there and repeat with it; never guess. `me` is
    Saved Messages.
 4. **Exit `14` means an unknown write outcome, not permission to replay it.** Inspect
-   `tg personal sends list --json` by `operationId` and the target chat's history. `operationId` correlates
+   `tg personal sends list --json` by `operation_id` and the target chat's history. `operation_id` correlates
    the journal; it is not an idempotency key. Retry a message only when the provider's confirmed
    deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
@@ -268,7 +268,7 @@ tg personal tasks close <task> --as dismissed --reason no-reply-needed --certain
 # below task_agent_close_min (0.8 by default) the task stays open with close_suggestion;
 # the owner confirms with tasks close or refuses with tasks reject; tasks list close:suggested finds them
 tg personal chats list --json                      # find a chat, take its id
-tg personal chats list 'title:*vale* kind:group unread_count>0' --json  # filtered, over every returned chat
+tg personal chats list 'title:*vale* kind:group unread_count>0' --offline --json  # filtered, from the local store
 tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed
 tg personal chats members list -1001234567890 --json  # a group's members, paged
 tg personal chats inspect https://t.me/+AbCd --json  # where an invite leads, without joining
@@ -431,7 +431,7 @@ Unknown edges and message-id holes do not prove missing history.
 Picture search is off until `tg <profile> config set picture_search true`. Then
 `tg <profile> images models download clip-b32` (once, about 155 MB) and `tg <profile> images embed`
 (`--chat`, `--limit`) read the stored pictures on this machine. After that a message search returns a
-`pictures` list beside its hits; with no model, `picturesSkipped` says so. **Picture queries must be English**:
+`pictures` list beside its hits; with no model, `pictures_skipped` says so. **Picture queries must be English**:
 translate the owner's words first. Never turn the setting on or run `images embed` without the owner's say.
 
 ## Private people notes and channel tags

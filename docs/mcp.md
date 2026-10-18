@@ -66,7 +66,7 @@ installation; it does not change permissions. To limit what the agent can do, se
 `permissions` first ([below](#what-an-agent-may-do)).
 
 `mcp doctor` reads no messages and does not log in to Telegram. A good result means the MCP
-handshake and the tool list work. It does not mean the account session is valid. `potentialWrites`
+handshake and the tool list work. It does not mean the account session is valid. `potential_writes`
 counts the tools that are not marked read-only. When the server does not start, the error shows the
 last lines it wrote to stderr, with your home folder, long numbers and tokens hidden. Browser and
 phone apps need a separate remote connection ([connecting a browser or phone app](remote.md)).
@@ -93,10 +93,10 @@ tg work mcp config                  # another profile
 ```json
 {
   "mcpServers": {
-    "tg": {
+    "tg-personal": {
       "type": "stdio",
       "command": "/usr/bin/node",
-      "args": ["/usr/lib/node_modules/@wirecat/tg-cli/dist/bin/tg.js", "mcp"],
+      "args": ["/usr/lib/node_modules/@wirecat/tg-cli/dist/bin/tg.js", "personal", "mcp"],
       "env": { "XDG_RUNTIME_DIR": "/run/user/1000" }
     }
   }
