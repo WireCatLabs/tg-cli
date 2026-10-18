@@ -1,13 +1,11 @@
-import { chmodSync, existsSync, rmSync, writeFileSync } from "node:fs"
-import { resolve } from "node:path"
-import { CliError, indent } from "@wirecat/cli-base"
+import { existsSync, rmSync } from "node:fs"
+import { CliError } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
-import { type Account, qrPng, readSecret, terminalQr } from "@wirecat/cli-core"
+import { type Account, atTerminal, loginQr, qrNeedsTerminal, readSecret } from "@wirecat/cli-core"
 import { servingProfiles } from "@wirecat/cli-core/background"
 import {
   asFirstWord,
   commandWords,
-  inputPolicy,
   logsInOrOut,
   REMOTE_WRITE,
   refuseCommandName,
@@ -132,16 +130,25 @@ export const startSession = async (
   if (sms && method !== "phone") throw new CliError("validation_error", "--sms is for a phone login")
   const input = context.stdin
   // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
-  if ((!input.isTTY || inputPolicy(input).noInput) && qrFile === undefined)
-    throw new CliError("validation_error", `${command} asks questions — run it in a terminal`)
+  if (!atTerminal(input) && qrFile === undefined)
+    throw method === "qr"
+      ? qrNeedsTerminal(command)
+      : new CliError("validation_error", `${command} asks questions — run it in a terminal`)
   const ask: Ask = (prompt, echo) => {
     signal?.throwIfAborted()
-    if (!input.isTTY || inputPolicy(input).noInput) {
+    if (!atTerminal(input)) {
       throw new CliError("validation_error", `\`${command}\` needs a terminal to ask for the ${prompt.trim()}`)
     }
     return readSecret(`${" ".repeat(pad)}${prompt}`, { input, echo, ...(signal === undefined ? {} : { signal }) })
   }
-  const qrPath = qrFile === undefined ? undefined : resolve(qrFile)
+  const qr = loginQr({
+    ...(qrFile === undefined ? {} : { qrFile }),
+    diagnostic: context.streams.diagnostic,
+    note: context.renderer.note,
+    indent: pad,
+  })
+  // A cut command never reaches its own finally in time; the image logs the account in while it is valid.
+  if (qr.path) context.track({ close: async () => qr.close() })
   let typedPhone: string | undefined
   // Telegram accepts a session that is still logged in without a question; then nothing here is asked.
   let asked = false
@@ -169,13 +176,7 @@ export const startSession = async (
         context.renderer.note(
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
         )
-        if (!qrPath) {
-          context.streams.diagnostic(`\n${indent(terminalQr(url).text, pad + 2)}`)
-          return
-        }
-        writeFileSync(qrPath, qrPng(url), { mode: 0o600 })
-        chmodSync(qrPath, 0o600)
-        context.renderer.note(`the QR code is in ${qrPath} — it is replaced when Telegram renews it`)
+        qr.show(url)
       },
       phone,
       code: () => {
@@ -195,8 +196,7 @@ export const startSession = async (
     const appKeys = context.credentials.source() ?? null
     return { profile: context.profile, account, session: context.sessionPath, appKeys, alreadyLoggedIn: !asked }
   } finally {
-    // The image is a login token for as long as it is valid; it does not outlive the login.
-    if (qrPath) rmSync(qrPath, { force: true })
+    qr.close()
     await telegram.close()
   }
 }

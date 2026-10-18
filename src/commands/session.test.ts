@@ -268,6 +268,31 @@ describe("session start", () => {
     expect(existsSync(path)).toBe(false)
   })
 
+  it("**--qr-file is removed when the login is cut off**, as by Ctrl+C", async () => {
+    const path = join(mkdtempSync(join(tmpdir(), "qr-")), "login.png")
+    const stop = new AbortController()
+    let shown = false
+    const { code } = await tg(["session", "start", "--qr-file", path, "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      tty: false,
+      stdin: Object.assign(Readable.from([]), { isTTY: false }),
+      signal: stop.signal,
+      adapter: () => ({
+        ...loginAdapter({}),
+        login: (prompts: LoginPrompts) => {
+          prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
+          shown = existsSync(path)
+          stop.abort()
+          return new Promise<never>(() => {})
+        },
+      }),
+    })
+
+    expect(shown).toBe(true)
+    expect(code).not.toBe(0)
+    expect(existsSync(path)).toBe(false)
+  })
+
   it("--qr-file without a terminal still refuses to ask for what it would have to ask", async () => {
     const { code, stderr } = await tg(["session", "start", "--qr-file", join(tmpdir(), "never.png")], {
       tty: false,

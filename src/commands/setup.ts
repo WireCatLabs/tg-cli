@@ -119,10 +119,7 @@ export const setupCommand = () =>
     .addOption(
       new Option("--method <method>", "how to log in when there is no session").choices(["qr", "phone"]).default("qr"),
     )
-    .option(
-      "--qr-file <png>",
-      "write a temporary login QR image for an agent; needs stored app credentials without a terminal",
-    )
+    .option("--qr-file <png>", "write a temporary QR image for an agent to pass on; works without a terminal")
     .action(async function (this: Command) {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")

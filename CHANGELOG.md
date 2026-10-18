@@ -35,6 +35,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Security
 
+- **The QR login is cli-core's `loginQr`, as in max and wa.** `--qr-file` is written as a temporary file created
+  with mode `0600` and renamed over the path, instead of being written and then chmodded, and it is removed when
+  the login is cut off by Ctrl+C, a cancel or `--timeout`, not only when it ends on its own. A terminal too narrow
+  for the code draws nothing and says to widen it or pass `--qr-file`. Without a terminal, `session start` says
+  "shows a QR code to scan — run it in a terminal, or pass --qr-file <png>".
 - **Under the read-only lock and on a readonly profile, a write refuses before connecting; refusals appear in
   `sends list`** (cli-core 0.343.0).
 

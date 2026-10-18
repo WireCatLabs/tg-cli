@@ -100,7 +100,7 @@ tg setup [options]
 | `--agent <agent>` | install the skill for this agent; asks at a terminal, otherwise none. One of: `none`, `codex`, `cursor`, `claude`, `gemini`, `all`. |
 | `--app <how>` | how to get your Telegram app credentials the first time. One of: `auto`, `browser`. Default: `auto`. |
 | `--method <method>` | how to log in when there is no session. One of: `qr`, `phone`. Default: `qr`. |
-| `--qr-file <png>` | write a temporary login QR image for an agent; needs stored app credentials without a terminal. |
+| `--qr-file <png>` | write a temporary QR image for an agent to pass on; works without a terminal. |
 
 **Returns:** set up Telegram and connect your agent
 
