@@ -85,15 +85,19 @@ const telegram = () => {
 
 const tg = async (argv: string[], adapter: Adapter) => {
   const streams = captureStreams()
+  let opened = 0
   const code = await run(argv, {
     streams,
     tty: false,
     keyring: memoryKeyring(),
     env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-    adapter: () => adapter,
+    adapter: () => {
+      opened += 1
+      return adapter
+    },
   })
   const error = streams.stderr[0] ? JSON.parse(streams.stderr[0]).error : undefined
-  return { code, stdout: streams.stdout, error }
+  return { code, stdout: streams.stdout, error, opened }
 }
 
 const journal = (profile: string) => new SendJournal(sendsPathFor(TG, profile)).entries()
@@ -125,15 +129,17 @@ describe("the send guard in front of messages send", () => {
     expect(readFileSync(sendsPathFor(TG, "g-open"), "utf8")).not.toContain("secret")
   })
 
-  it("refuses from a read-only profile with exit 5, sends nothing, and journals the refusal", async () => {
+  it("refuses from a read-only profile with exit 5 before connecting, and journals the refusal", async () => {
     configure({ "g-ro": { permissions: { messages: "readonly" } } })
     const { adapter, sent } = telegram()
-    const { code, error } = await tg(["g-ro", "messages", "send", "Valencia", "hi"], adapter)
+    const { code, error, opened } = await tg(["g-ro", "messages", "send", "Valencia", "hi"], adapter)
 
-    expect(code).toBe(5)
+    expect([code, opened]).toEqual([5, 0])
     expect(error.message).toContain("does not let messages.send write")
     expect(sent).toEqual([])
-    expect(journal("g-ro")).toMatchObject([{ outcome: "refused", errorCode: "permission_error" }])
+    expect(journal("g-ro")).toMatchObject([
+      { chatId: null, kind: "message", key: "messages.send", outcome: "refused", errorCode: "permission_error" },
+    ])
   })
 
   it("**asks before a send its permission level is ask for**, and goes ahead with --yes", async () => {
