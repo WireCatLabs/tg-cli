@@ -51,6 +51,24 @@ describe("a command group given no subcommand, at a terminal", () => {
   )
 })
 
+const leaves = (command: Command, path: string[] = []): string[][] =>
+  command.commands.flatMap((child) => {
+    const here = [...path, child.name()]
+    return child.commands.length === 0 ? [here] : leaves(child, here)
+  })
+
+describe("--help on a command", () => {
+  it("prints its help and exits 0 for every command", async () => {
+    const failed: string[] = []
+    for (const path of leaves(createProgram()).filter(([top]) => top !== "help")) {
+      const streams = captureStreams()
+      const code = await run([...path, "--help"], { streams, tty: false, keyring: memoryKeyring() })
+      if (code !== 0) failed.push(`${path.join(" ")}: ${code} ${streams.stderr.join(" ")}`)
+    }
+    expect(failed).toEqual([])
+  })
+})
+
 describe("the root help", () => {
   it("a bare `tg` shows the first screen: what tg can do and where to go next", async () => {
     const { code, stdout, help } = await atTerminal([])
