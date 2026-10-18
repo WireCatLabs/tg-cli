@@ -18,6 +18,8 @@ do not read it in full before every task. `effects.remote: "write"` identifies a
 `effects.local: "write"` alone, a write to this machine. `commands --json` connects to no account. Its `contract` field is the shared JSON contract
 version; it changes only when response fields change incompatibly, not with a package upgrade, so
 check that field rather than comparing whole outputs. This file holds the traps and boundaries.
+For a common task, **`tg guide`** lists scenarios — the commands in order and why each — and
+`tg guide <name> --json` gives one as data; `tg commands` without `--json` is the list by section.
 
 ## Machine execution
 

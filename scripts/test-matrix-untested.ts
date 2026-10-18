@@ -787,4 +787,10 @@ export const UNTESTED: Untested[] = [
     reason:
       'cli-core src/cli/messenger/tasks.test.ts ("lists what someone owes the owner with assignee:, after tasks add --assignee sender") drives this through the shared handler tg mounts (0.320.0)',
   })),
+  {
+    command: "",
+    option: "--help-all",
+    reason:
+      "src/help.test.ts runs it; help ends before the hook that records argv. cli-core src/cli/help/first-screen.test.ts covers the full help it prints (0.344.0)",
+  },
 ]

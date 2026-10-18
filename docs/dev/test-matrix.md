@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2356 ✅ · 91 ⛔ · 0 ❌** — 496 commands, 1951 options.
+**2358 ✅ · 92 ⛔ · 0 ❌** — 498 commands, 1952 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -2440,6 +2440,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `skill show` |  | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |
+| `guide` |  | ✅ |  |
+| `help` |  | ✅ |  |
 | *global* | `--version` | ✅ |  |
 | *global* | `--verbose` | ✅ |  |
 | *global* | `--json` | ✅ |  |
@@ -2458,3 +2460,4 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--yes` | ✅ |  |
 | *global* | `--record` | ✅ |  |
 | *global* | `--no-record` | ✅ |  |
+| *global* | `--help-all` | ⛔ | src/help.test.ts runs it; help ends before the hook that records argv. cli-core src/cli/help/first-screen.test.ts covers the full help it prints (0.344.0) |

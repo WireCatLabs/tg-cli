@@ -62,8 +62,9 @@ tg personal doctor  # where its files are, and whether a login exists; connects 
 
 ## First run
 
-`tg --help` shows setup and the agent instructions right after installation. `tg skill show`
-prints the skill and works before login. `tg commands --json` lists the commands and options.
+`tg --help` shows what tg does, the first setup command and where to go next. `tg guide` lists
+scenarios, the commands for common tasks in order. `tg skill show` prints the skill and works before
+login. `tg commands` lists every command by section; `tg commands --json` gives the same with options.
 These work even when the package manager skipped the installation scripts.
 
 Run setup in a local terminal:

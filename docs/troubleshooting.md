@@ -166,7 +166,7 @@ tg chat list
 ```
 
 Here `chat` was read as a profile, and `list` is not a command. The command is `chats`, plural.
-`tg --help` lists them all. A typo in a command after the profile suggests the right one:
+`tg commands` lists them all. A typo in a command after the profile suggests the right one:
 `✗ unknown command 'lst' (Did you mean list?)`. An unknown option is the same error, exit code `2`.
 
 ## Settings and option values
