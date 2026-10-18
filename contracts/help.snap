@@ -115,7 +115,8 @@ Commands:
   upgrade [options]            upgrade tg with the package manager that
                                installed it; --check only looks
   mcp [options]                serve this profile to an agent over MCP, on stdin
-                               and stdout — `claude mcp add tg -- tg mcp`
+                               and stdout — `claude mcp add tg -- tg <profile>
+                               mcp`
   bot                          a Telegram bot, through the official Bot API and
                                a bot token — not your personal account
   skill                        the instructions an agent is given for this tool

@@ -80,6 +80,18 @@ const backfilled = async () => {
 }
 
 describe("the archive, from the store", () => {
+  it("**rebuilds a chat's conversations** from the store, the agents' refresh", async () => {
+    const store = await backfilled()
+
+    const rebuilt = await tg(
+      ["archive", "conversations", "rebuild", "--chat", CHAT, "--max-chats", "1", "--max-chunks", "10", "--json"],
+      store,
+    )
+
+    expect(rebuilt.code).toBe(0)
+    expect(JSON.stringify(rebuilt.answer)).toContain(CHAT)
+  })
+
   it("**builds a chat's conversations** from what was fetched, and says why a message is in one", async () => {
     const store = await backfilled()
 

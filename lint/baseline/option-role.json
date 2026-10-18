@@ -26,7 +26,6 @@
   "runs search --status",
   "session start --app",
   "session start --sms",
-  "setup --agent",
   "setup --app",
   "stats contacts top --message-kind",
   "stats contacts top --min-messages",

@@ -3,6 +3,56 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **Agents get every command the profile's levels allow over `tg mcp`** (cli-core 0.341.0). The server offered
+  hand-written tools; it now builds them from the commands themselves and runs them in this process, 188 commands in
+  all, `messages sync`, `contacts sync`, `mentions confirm`, `conversations embed` and `images embed` among the new
+  ones. What an agent may not do is decided by the profile's levels: set the area to `readonly` or `deny`. The full
+  list is pinned in `contracts/mcp-catalogue.json`.
+- **`tg conversations rebuild`** builds again the conversations of chats that changed and embeds them with the model on
+  this machine; it never asks Telegram, downloads no model and sends no text anywhere. It replaces the agent-only
+  `conversations_refresh` tool.
+
+### Changed — may break callers
+
+- **`tg mcp` tool arguments are the command's options in snake_case**: `chat`, `limit`, `query`, `sync_first` and so
+  on. An agent that remembered the old names asks `tg_tools_search` again.
+- **An agent's `search messages` takes the query as text only**; the structured `ast` input is gone.
+- **An agent cannot mark read or act as the owner**: `--mark-read` on `messages list`, `inbox` and `review` and
+  `--as-owner` are not offered, the `catch_up_marks_read` setting does not apply to its runs, and its `--new`
+  checkpoints are its own.
+- **Under `TG_READ_ONLY`, local writes that delete or overwrite what you saved are refused** (cli-core 0.336.0,
+  0.337.0): `searches create`, `searches delete`, `searches clear`, `contacts alias set|rm`, `contacts notes
+  add|edit|remove`, `contacts link|unlink`, `tags add|auto|remove`, `mentions confirm|reject`, `attachments text set`,
+  `chats tracking add|remove`, `conversations links add|clear`, `conversations consents revoke` and `tasks reject`,
+  and their agent tools, exit 5. What the store rebuilds itself, syncs, `serve` and task bookkeeping still run.
+- **While Telegram holds the account, no write goes out** (cli-core 0.334.0): reactions, marking read, quiet pins,
+  title and profile changes are refused too; reads work. A ban with no end holds writes until `tg flood clear` or
+  `tg doctor --online` finds the account well (`until: null` in JSON).
+- **A send blocked on another process's lock exits 9 (`timeout`), not 1** (cli-core 0.338.0); nothing was sent, so it
+  is safe to retry. `flood clear` too.
+- **`tg upgrade --offline` exits 2** (cli-core 0.338.0) instead of asking npm anyway.
+- **`conversations build`, `conversations embed` and `search conversations` say they can send text out**
+  (cli-core 0.334.0, 0.336.0): with `--analyze`, `--provider` or a remote embedding model. Under `TG_READ_ONLY` they
+  refuse before sending; a local model still works. They never run through `serve`.
+
+### Fixed
+
+- **`tg mcp` answers every call it received before stdin closed** instead of exiting with one still running.
+  `tg bot mcp` does not yet.
+- **An agent is not offered `offline` on a command that refuses it** (cli-core 0.335.0): `topics`, `chats events`,
+  `chats inspect`, `chats members audit`, `chats members fetch` and the `chats folders` commands.
+- **A held lock no longer stalls `tg serve`** (cli-core 0.340.0) for up to 5 seconds.
+- **Two changes to the recipient list at once no longer undo each other** (cli-core 0.338.0).
+- **`tg store gaps repair --background` runs its job** instead of failing at once (cli-core 0.339.0).
+- **Hints from `server` and store maintenance commands name the profile** (cli-core 0.339.0).
+- **`tg upgrade --check` runs under `TG_READ_ONLY`** (cli-core 0.338.0).
+- **Model downloads never go through `tg serve`** (cli-core 0.336.0).
+- **A store that failed to open is closed** (cli-core 0.332.0), so its folder can be deleted on Windows.
+
 ## 0.72.0 — 18.10.2026
 
 ### Added

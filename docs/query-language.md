@@ -189,8 +189,7 @@ An error carries the position of the problem in the query and a hint.
 ## Over MCP
 
 When an agent searches through tg's MCP server, `tg_read` (`command: "search messages"`) takes the
-query as `text`, or as a versioned syntax tree in `ast` (not both), and `timezone` for the calendar
-zone. `chat` takes an id or a stored name; `source`, `newest`, `context` and `limit` work as the
+query as `query`, and `timezone` for the calendar zone. `chat` takes an id or a stored name; `source`, `newest`, `context` and `limit` work as the
 command options do; `saved` runs a saved search. `thread`, `thread_hops`, `thread_messages`,
 `thread_bytes`, `thread_within` and `sync_first` match the options `--thread…` and `--sync-first`;
 `sync_first` is offered only with `messages.sync-first: allow`. The answer has the same fields as
