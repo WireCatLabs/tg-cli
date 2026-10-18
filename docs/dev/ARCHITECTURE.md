@@ -1,7 +1,7 @@
 # Architecture
 
 This page is the map of `tg`'s own code and its seams; the cli-core version tg builds on is the
-pin in `package.json`. What the project is lives in [HANDOFF.md](../../HANDOFF.md), open work in
+pin in `package.json`. What the project is lives in `HANDOFF.md`, open work in
 [BACKLOG.md](BACKLOG.md). The rules every WireCat CLI follows — layers, lifecycle, output, the store — are in
 the [CLI standards handbook](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/README.md);
 the shared design lives in cli-core and in
@@ -74,7 +74,7 @@ mocks the class and keeps mtcute's real helpers).
 
 ## 3. Adding an adapter method
 
-The path is in [HANDOFF.md §3](../../HANDOFF.md#3-how-to-change-things); how lanes avoid colliding
+The path is in `HANDOFF.md`; how lanes avoid colliding
 in `adapter.ts` is in [agents.md](agents.md#where-lanes-collide).
 
 ## 4. One command, one connection, and it closes

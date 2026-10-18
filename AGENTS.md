@@ -1,4 +1,4 @@
-See [`CLAUDE.md`](CLAUDE.md) — the working rules apply to every agent. Start from [`HANDOFF.md`](HANDOFF.md).
+See [`CLAUDE.md`](CLAUDE.md) — the working rules apply to every agent. Start from `HANDOFF.md` (on disk, not in git).
 
 
 ## Documentation authoring

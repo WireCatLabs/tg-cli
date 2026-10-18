@@ -13,7 +13,7 @@ failed.
 
 | Kind | Where | Lifetime |
 |---|---|---|
-| **The project handoff** | [`HANDOFF.md`](../../HANDOFF.md) | one file, overwritten; never a log |
+| **The project handoff** | `HANDOFF.md` | one file, overwritten; never a log |
 | **A task handoff** — a lane, a thread of work | a file beside the plan it serves | deleted when its work is merged; **read instead of** the project handoff |
 
 ## Five blocks, in this order
@@ -52,5 +52,5 @@ A task handoff adds, after block 3:
 
 ## When a lane ends
 
-Its handoff's "what will bite" items that outlive the lane move into [`HANDOFF.md`](../../HANDOFF.md)
+Its handoff's "what will bite" items that outlive the lane move into `HANDOFF.md`
 §4, and the handoff file is deleted.
