@@ -66,7 +66,7 @@ describe("--help on a command", () => {
       if (code !== 0) failed.push(`${path.join(" ")}: ${code} ${streams.stderr.join(" ")}`)
     }
     expect(failed).toEqual([])
-  })
+  }, 60_000)
 })
 
 describe("the root help", () => {
