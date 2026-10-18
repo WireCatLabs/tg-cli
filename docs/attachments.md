@@ -239,10 +239,10 @@ Check a phrase from the file and open the returned message. Then use
 ## Recover a partial file batch
 
 An isolated error keeps completed files and allows independent later files to continue.
-Partial JSON has `complete: false` and `batch`: attempted/succeeded/failed counts, `errorRate`
+Partial JSON has `complete: false` and `batch`: attempted/succeeded/failed counts, `error_rate`
 (a fraction from 0 to 1), and `failures`. Each failure names its ID/locator and stage, with the attachment position when available,
 and an `error` with code, message and `actions`: wait, retry, check, configure or skip.
-A wait action carries `afterMs` when the provider supplies a delay; a configure action names its setting.
+A wait action carries `after_ms` when the provider supplies a delay; a configure action names its setting.
 
 Exit code `0` does not prove every file succeeded: inspect `complete` and `batch.failed`.
 Partial download JSONL appends a `type: "batch_summary"` row. Saved files stay on disk. Repeating

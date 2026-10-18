@@ -21,8 +21,8 @@ exit code says the same as the `code`. Every code is also in the
 
 | Code | Name | What it usually means | Where |
 |---|---|---|---|
-| `1` | `internal_error` | a typo in a command name, or a fault in `tg` itself | [unknown command](#error-unknown-command-), [report it](#report-a-problem) |
-| `2` | `validation_error` | a value or a combination of options `tg` does not accept; a name that fits several chats | [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
+| `1` | `internal_error` | a fault in `tg` itself | [report it](#report-a-problem) |
+| `2` | `validation_error` | a typo in a command or option, a value or a combination of options `tg` does not accept; a name that fits several chats | [unknown command](#unknown-command-), [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
 | `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-personal--run-tg-personal-setup-in-a-local-terminal) |
 | `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-), [PEER_FLOOD](#telegram-limited-this-accounts-messages-as-spam-peer_flood) |
@@ -37,7 +37,7 @@ exit code says the same as the `code`. Every code is also in the
 | `14` | `outcome_unknown` | the connection broke after a write left: it may have happened | [outcome unknown](#outcome_unknown-after-a-send) |
 | `130` | `cancelled` | you pressed Ctrl-C, or answered no to a question | [Ctrl-C](#ctrl-c) |
 
-## First: `tg doctor`
+## First: `tg personal doctor`
 
 ```sh
 tg personal doctor
@@ -56,7 +56,7 @@ tg personal doctor --online
 `--online` also connects once and reads the account. It sends nothing and marks nothing read.
 Without it, the login shows as `not checked`: only `--online` tells you that Telegram still accepts
 the session. `--online` also reports a wrong clock on this computer, and whether Telegram froze or
-closed the account ([what `tg personal doctor` shows](diagnostics.md#check-the-installation-tg-doctor)).
+closed the account ([what `tg personal doctor` shows](diagnostics.md#check-the-installation-tg-personal-doctor)).
 
 ## Installation
 
@@ -76,9 +76,7 @@ The folder npm installs commands into is not on your `PATH`.
   `Get-Command tg -All` in PowerShell) lists every one; call ours by its full path, or put its folder
   first.
 
-Without installing, `npx @wirecat/tg-cli doctor` works too.
-
-<a id="npx-leemourtg-cli-runs-an-old-version" />
+Without installing, `npx @wirecat/tg-cli personal doctor` works too.
 
 ### `npx @wirecat/tg-cli` runs an old version
 
@@ -98,7 +96,7 @@ export TG_PROFILE=personal     # or for the whole shell session
 ```
 
 On a computer with no profile yet, the message says to run `tg personal setup`; any name works in
-place of `personal`. If the message says `default_profile is no longer read`, the config file still
+place of `personal`. If the message says `default_profile is no longer read` (exit code `2`), the config file still
 has that setting from an older `tg`: name the profile, and `tg config unset default_profile` removes it.
 
 ### "no session for profile "personal" — run `tg personal setup` in a local terminal"
@@ -155,20 +153,21 @@ browser, and you paste the app id and hash ([the app from my.telegram.org](sessi
 
 `tg config show` names the profile and where it came from. `TG_PROFILE` in your environment picks
 one; `TG_PROFILE_LOCK` refuses every other. A typo in a command name is read as a profile
-([above](#error-unknown-command-)).
+([below](#unknown-command-)).
 
-### "error: unknown command '…'"
+### "unknown command '…'"
 
-Exit code `1`, and the help on stderr, not JSON. The first word is the profile whenever it is not a
-command, so a typo in a command name becomes a profile name:
+Exit code `2`. In a terminal it is one `✗` line; piped, it is a `validation_error` in JSON on stderr. The first
+word is the profile whenever it is not a command, so a typo in a command name can become a profile name:
 
 ```text
 tg chat list
-error: unknown command 'list'
+✗ unknown command 'list' "chat" is not a command, so it was read as a profile name — which left "list" to be one.
 ```
 
 Here `chat` was read as a profile, and `list` is not a command. The command is `chats`, plural.
-`tg --help` lists them all.
+`tg --help` lists them all. A typo in a command after the profile suggests the right one:
+`✗ unknown command 'lst' (Did you mean list?)`. An unknown option is the same error, exit code `2`.
 
 ## Settings and option values
 
@@ -187,7 +186,7 @@ cut the list to nothing.
 ### "`id<` takes a message id"
 
 Exit code `2`. `id<` and `id>` in a `messages list` query take a message id (`'id<4242'`); `messages comments` says
-the same about a comment id. A time goes to `date>` or `date<` instead: an ISO 8601 time (`2026-09-20T09:00`) or
+the same about a comment id. A time goes to `date>` or `date<` instead: an ISO 8601 time in quotes (`'date>"2026-09-20T09:00:00+02:00"'`) or
 "this long ago" (`30m`, `2h`, `1d`).
 
 ### "--at-time takes a time like 2026-09-25T09:00 or a delay like 30m, 2h, 1d"
@@ -215,7 +214,7 @@ the wrong chat cannot be taken back.
 
 ### "no chat matches …"
 
-Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:*<part of it>*'`, the
+Exit code `6`. No chat title contains what you typed. Try `tg personal chats list 'title:*<part of it>*' --offline`, the
 chat's id, its `@username`, or `me` for Saved Messages. A one-to-one chat is titled with the other
 person's name as Telegram shows it to you.
 
@@ -231,7 +230,7 @@ Telegram lets you find has this number" when the person hides their number or ha
 ### "Telegram asks to wait N s before the next request"
 
 Exit code `8`. Telegram's own rate limit (FLOOD_WAIT). Wait that long; the JSON carries
-`retryAfterMs`. It happens most after many requests in a row, such as `chats list --all` right after
+`retry_after_ms`. It happens most after many requests in a row, such as `chats list --all` right after
 other commands, or a long `messages sync`. For `messages sync` and `messages download --all`, a longer
 `--pause` helps.
 
@@ -247,7 +246,7 @@ How the pace, the waits and parallel commands fit together: [limits and waits](l
 Exit code `5`. Telegram limits an account that wrote to too many people who are not its contacts.
 It can still read. Message @SpamBot in a Telegram app: it says until when. Sending again makes it
 worse, so `tg` holds every send for an hour and says so;
-each new refusal starts the hour again. `tg personal doctor` shows the hold under `flood.sendBlock`. Once
+each new refusal starts the hour again. `tg personal doctor` shows the hold under `flood.send_block`. Once
 @SpamBot says the limit is gone, `tg personal flood clear` lifts it, together with any wait `tg` remembers.
 A frozen account's refusal holds sends the same way, until Telegram's date; `tg personal doctor --online`
 sets and lifts that one.
@@ -311,7 +310,7 @@ was a send, check the chat before you repeat it.
 
 Exit code `10`. The connection could not be made or broke: no network, a firewall, a proxy, or DNS.
 The code in brackets says which (`ECONNREFUSED`, `ENOTFOUND`, `ETIMEDOUT`). Commands that answer from
-the store work without the network: `tg --offline chats list`. Where Telegram is blocked, set a
+the store work without the network: `tg personal --offline chats list`. Where Telegram is blocked, set a
 proxy ([setting a proxy](configuration-reference.md#through-a-proxy)).
 
 ### "the proxy … cannot be reached" or "… refused"
@@ -335,7 +334,7 @@ Every one-shot command closes its connection and exits. When Telegram does not a
 ends with exit code `9` and `timeout`. To bound it yourself, and to see where it stops:
 
 ```sh
-tg --timeout 30s --trace chats list
+tg personal --timeout 30s --trace chats list
 ```
 
 `--timeout` covers the whole command, the login included, and ends it with exit code `9` after closing
@@ -459,6 +458,6 @@ reduce or split the input instead.
 
 A failed independent file or history page returns partial results with exit code `0`,
 `complete: false` and `batch` or `issue`. Completed downloads and earlier history pages remain
-saved. If a provider wait is too long to finish, single-chat `messages sync` includes `issue.retryAfterMs`
+saved. If a provider wait is too long to finish, single-chat `messages sync` includes `issue.retry_after_ms`
 and a `resume` boundary; multi-chat fetch exposes per-chat issues and downloads use checkpoints; do not repeat requests before the wait ends. Partial background jobs have
 state `partial` and can be retried with `tg personal store jobs retry`. Check completeness as well as the exit code.

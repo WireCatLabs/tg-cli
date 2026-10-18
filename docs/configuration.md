@@ -24,7 +24,7 @@ way to override it, in the [settings reference](configuration-reference.md#the-f
 |---|---|---|
 | `limit` | how many rows a list shows when you do not add `--limit` | `20` |
 | `sends_per_hour` | the most messages this profile may send in one hour; stops a send loop | `30`; a bot has no limit until one is set in the `bot` section |
-| `requests_per_minute` | how fast `tg` asks Telegram for things after a short burst; `0` turns the pace off ([limits and waits](limits.md)) | `60` |
+| `requests_per_minute` | how fast `tg` asks Telegram for things after a short burst; `0` turns the pace off ([limits and waits](limits.md)) | unset, which means `60` |
 | `permissions` | what this profile may do: read only, ask first, or go ahead ([permissions](permissions.md)) | everything allowed, except: deleting and a few other changes that cannot be undone ask first; reply rules may not send |
 | `record` | keep a record of every run, to look at later ([diagnostics](diagnostics.md)) | `false` |
 | `keep_runs_for_days` | how many days run records are kept | `30` |

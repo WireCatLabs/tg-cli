@@ -26,7 +26,7 @@ Terms used on this page:
 | Download a chat's history, or every chat's | `tg personal messages sync <chat>`, `tg personal messages sync --all` |
 | Run a long download in the background | `tg personal messages sync <chat> --background`, `tg personal store jobs list` |
 | Keep the store current all the time | `tg personal server start`, `tg personal server install` |
-| Read chats without connecting | `tg --offline messages list <chat>` |
+| Read chats without connecting | `tg personal --offline messages list <chat>` |
 | Export a chat to JSON lines or Markdown | `tg personal store export <chat> --output <file>` |
 | Prepare messages for an agent's brief | `tg personal messages evidence <chat>` |
 | Check, back up and restore the store | `tg personal store check`, `tg personal store backup`, `tg personal store restore` |
@@ -248,7 +248,7 @@ tg personal store export --all --output-dir ~/tg-all   # every stored chat of th
 
 Run it again on the same folder and it adds only what changed since the last run: new messages, edits
 (old messages too) and deletions. A deleted message is written without its text, as
-`{ "id", "chatId", "deleted": true }`. A folder holding other files, or one exported from another
+`{ "id", "chat_id", "deleted": true }`. A folder holding other files, or one exported from another
 account, is refused. A change to reactions alone does not count as a change.
 
 ### With a password
@@ -298,23 +298,23 @@ permission is `messages.evidence`, which inherits `messages`.
 ## Answering without connecting: `--offline`
 
 ```sh
-tg --offline chats list
+tg personal --offline chats list
 ```
 
 ```sh
-tg --offline messages list "Book club" --limit 50
+tg personal --offline messages list "Book club" --limit 50
 ```
 
 ```sh
-tg --offline messages show "Book club" 4242
+tg personal --offline messages show "Book club" 4242
 ```
 
 ```sh
-tg --offline messages context "Book club" 4242
+tg personal --offline messages context "Book club" 4242
 ```
 
 ```sh
-tg --offline contacts list
+tg personal --offline contacts list
 ```
 
 `--offline` answers from the store and never connects: no login needed, no request made. The JSON is
@@ -370,7 +370,7 @@ tg personal server start  # starts it — through the unit, now that there is on
 
 ```sh
 tg personal server status
-systemctl --user enable tg-serve-default    # only if it should start at every login
+systemctl --user enable tg-serve-personal    # only if it should start at every login
 ```
 
 On macOS the agent goes into `~/Library/LaunchAgents/`.

@@ -85,7 +85,7 @@ Review joining events. A new account is a reason to check, not proof of spam.
 **Command:**
 
 ```sh
-tg personal chats events "Hiking" 'type:(join OR add) time>=7d' --json
+tg personal chats events "Hiking" 'time>=7d' --json
 ```
 
 **Example agent answer:**

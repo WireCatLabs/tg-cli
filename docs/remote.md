@@ -87,7 +87,7 @@ agent may do; to narrow them for this server process only, see
 Install the Tailscale Windows app and sign in from its tray menu. Open a new PowerShell window
 after installing Node.js, the CLI and Tailscale, so it sees the updated PATH. Use `.cmd` for npm
 commands to avoid PowerShell execution-policy errors. If setup is not done yet, run
-`tg.cmd setup --agent none` in a normal PowerShell window.
+`tg.cmd personal setup --agent none` in a normal PowerShell window.
 
 First window: run PowerShell as Administrator for Funnel. The call operator `&` handles the space
 in the default installation path; change the path if you installed Tailscale elsewhere.
@@ -100,7 +100,7 @@ Second window: normal PowerShell, as the user who logged in to Telegram:
 
 ```powershell
 $mcpPublicUrl = Read-Host 'Paste the HTTPS origin printed by Funnel (no /mcp)'
-tg.cmd mcp --http --port 8765 --public-url $mcpPublicUrl
+tg.cmd personal mcp --http --port 8765 --public-url $mcpPublicUrl
 ```
 
 Run both processes in Windows itself. WSL is a separate environment: a Windows tunnel that points

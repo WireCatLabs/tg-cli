@@ -17,8 +17,8 @@ A few words this page uses:
 
 | Task | Command | Keeps anything? |
 |---|---|---|
-| See each request as it happens | `tg --trace …` | no, prints to stderr only |
-| Keep a record of one run | `tg --record …` | yes, a run record |
+| See each request as it happens | `tg personal --trace …` | no, prints to stderr only |
+| Keep a record of one run | `tg personal --record …` | yes, a run record |
 | Find a failed run later | `tg personal runs list` | a failed run is kept by itself |
 | Keep a record of every run | `tg personal config set record true` | yes, every run |
 | Check the installation | `tg personal doctor`, `tg personal doctor --online` | no |
@@ -27,7 +27,7 @@ A few words this page uses:
 ## Show it: `--trace`
 
 ```sh
-tg --trace messages list "Book club" --limit 5
+tg personal --trace messages list "Book club" --limit 5
 ```
 
 `--trace` prints each operation on stderr as it happens: `→` what was asked, `←` what came back,
@@ -44,7 +44,7 @@ still gets only data.
 ## Keep it: `--record`
 
 ```sh
-tg --record chats list
+tg personal --record chats list
 tg personal runs list        # recorded runs, newest first
 tg personal runs show <run-id>  # one run: its outcome, and one line per operation
 tg personal runs path <run-id>  # the folder that holds it
@@ -60,7 +60,7 @@ Linux). Its name is the time and the command. It holds two files:
 ## A failed run is always kept
 
 When a command ends in an error, its run is kept even without `--record`. `run.json` then has
-`"keptBecauseFailed": true`. This is true for every command and every error: a bad option, an
+`"kept_because_failed": true`. This is true for every command and every error: a bad option, an
 unknown command, a check before any work, and commands that never connect (`models`, `server`,
 `upgrade`). A failure before the command started, such as a config file that does not load, is kept
 as a run named `tg`. The record holds only the command's words, such as `messages list`, never what
@@ -100,7 +100,7 @@ never carry:
 
 The same is true for a report made from a run.
 
-## Check the installation: `tg doctor`
+## Check the installation: `tg personal doctor`
 
 ```sh
 tg personal doctor     # connects to nothing
@@ -119,14 +119,14 @@ the runs kept.
   journal and the runs folder. Each has the `chmod` command that fixes it. `doctor` never changes a
   file mode itself. Windows is not checked.
 - **`online.clock`** (with `--online`) compares this computer's clock with Telegram's.
-  `skewMs` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
+  `skew_ms` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
   refuses a request stamped more than 30 seconds ahead of its own clock.
 - **`online.standing`** (with `--online`) is `active`, `frozen`, `banned`, `deactivated` or
   `revoked`, or `unknown` when Telegram's answer could not tell. A frozen account can read but not
   write. Where Telegram gives them, it comes with the date the account was frozen, the date Telegram
   will delete it, and the appeal link. Logging in again does not reopen an account Telegram closed.
 - **`flood`** lists the waits Telegram asked this profile to keep (`deadlines`) and a hold on its
-  sends (`sendBlock`). `doctor` only reads, with one exception: **`doctor --online` writes the frozen
+  sends (`send_block`). `doctor` only reads, with one exception: **`doctor --online` writes the frozen
   hold.** When it reads the account as frozen, it holds sends until Telegram's date. When it reads it
   as active, it lifts that hold. It never lifts a hold for a spam limit — `tg personal flood clear` does that.
 
@@ -172,7 +172,7 @@ tg personal runs search --status partial --since-time 2026-10-01 --json
 
 `runs search` matches literal diagnostic text in metadata and safe events. Use `--operation`,
 `--profile`, `--since-time`, `--limit` and `--page` to narrow it. Each page allows up to 100 runs and
-each run returns at most 100 matched events, with `eventsTruncated` for additional events.
+each run returns at most 100 matched events, with `events_truncated` for additional events.
 A failed batch item or history page creates `status: "partial"` with failed IDs, stages and
 codes; message contents and provider error payloads are not copied into that record. Partial
 records are kept by default unless recording was explicitly disabled. Search does not record itself.

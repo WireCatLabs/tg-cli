@@ -42,11 +42,11 @@ Terms on this page:
    The skill goes to the folders of Claude Code (`~/.claude/skills/tg-cli/`) and of Codex and Gemini
    CLI (`~/.agents/skills/tg-cli/`). `tg skill show` prints the same text, if your agent keeps skills
    somewhere else.
-3. Save the requests below in files, for example in `~/tg-recipes/`. The schedule commands read the
-   request from a file.
+3. Save the requests below in files, for example in `~/tg-recipes/`. The scheduled commands below read
+   the request from a file.
 
 An MCP client needs no skill. Connect the MCP server (`tg personal mcp config` prints the entry for its
-settings) and use its ready prompts: `catch-up`, `review`, `reply`, `find`. See
+settings) and use its ready prompts: `catch-up`, `review`, `reply`, `find`, `open-tasks`, `link-conversations`. See
 [the MCP server's prompts](mcp.md#prompts-and-chats-by-).
 
 ## What the agent may do
@@ -92,6 +92,16 @@ attempt to send, refused ones included, is in `tg personal sends list`. See
 the agent opened a chat.
 
 ## Running on a schedule
+
+- **`tg personal schedule`.** Built in: `tg` makes the timer itself (systemd, launchd or Task Scheduler). `schedule
+  agent` starts `claude` or `codex` with a prompt and `TG_READ_ONLY=1`, so the agent reads and drafts but cannot
+  send; `schedule command` runs a `tg` command, for example to keep a chat's history saved. Give `--every 2h`,
+  `--at 08:30` or `--at-time 30m` (one run). Manage them with `schedule list`, `schedule run <name>` and
+  `schedule remove <name>`:
+
+  ```sh
+  tg personal schedule agent morning claude "read tg personal inbox and sum up what needs an answer" --at 08:30 --max-cost 1
+  ```
 
 - **Claude Desktop scheduled tasks.** The task runs on your computer, so it has `tg` and your login. A
   run missed while the computer slept runs once when it wakes. See
@@ -200,7 +210,7 @@ requests without a question mark.
 
 Writes to Telegram: **no**. Allow: `Bash(tg personal chats list:*)`, `Bash(tg personal messages list:*)`.
 
-> Run `tg personal chats list kind:dialog --limit 30 --json`. For every chat whose last message is from the
+> Run `tg personal chats list kind:dialog --limit 30 --offline --json`. For every chat whose last message is from the
 > last 7 days, read `tg personal messages list <chat id> --limit 5 --json`. Show the chats where the last
 > message is not mine and asks a question or makes a request: who, about what, and how many days ago.
 

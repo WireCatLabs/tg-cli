@@ -34,6 +34,7 @@ code for each kind of failure. This is why scripts and agents can rely on it.
 
 ```sh
 npm install -g @wirecat/tg-cli
+tg skill install --for all  # the agent skill
 tg personal setup         # guided app registration, login and agent skill
 tg personal inbox         # other people's unread messages, in every chat; nothing is marked read
 tg personal messages list me  # Saved Messages, the latest 20

@@ -19,13 +19,13 @@ Terms used on this page:
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT, groups,
 fields, ranges, bounded wildcards and regular expressions. "Strict" means that anything it does not
 support is an error, never silently ignored. The
-[full reference](https://github.com/WireCatLabs/cli-core/blob/v0.212.0/docs/search/query-language.md)
-(in Russian) has the generated tables of fields, operators, presets and limits, and executable
+[full reference](https://github.com/WireCatLabs/cli-core/blob/main/docs/search/query-language.md)
+(only in Russian so far) has the generated tables of fields, operators, presets and limits, and executable
 examples; the
-[technical specification](https://github.com/WireCatLabs/cli-core/blob/v0.212.0/docs/search/query-language-spec.md)
+[technical specification](https://github.com/WireCatLabs/cli-core/blob/main/docs/search/query-language-spec.md)
 describes the grammar and the compiler.
 
-For mail, `chat:` and `--chat` select an email thread by id or subject; `from:` selects a
+For mail, `chat:` selects an email thread by id or subject; `from:` selects a
 correspondent. Mail does not have `kind:` or `topic:`.
 
 ## What it can do
@@ -101,7 +101,7 @@ Field names are case-sensitive. An unknown field, value or combination is an err
 answer and never plain text. A name that the store does not know is not looked up on Telegram.
 
 `kind:bot` selects a chat with a bot; `in:bots` selects the archives of `tg personal bot` accounts. `topic:`
-needs exactly one chat in `chat:` or `--chat`, since topic numbers repeat across groups. `filename`,
+needs exactly one chat in `chat:`, since topic numbers repeat across groups. `filename`,
 `mime` and `size` match a message when at least one of its files matches. `/` starts a regular
 expression, so quote a full type: `mime:"application/pdf"`.
 

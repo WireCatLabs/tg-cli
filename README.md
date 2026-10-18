@@ -42,13 +42,13 @@ You:    Yes.
 
 ```sh
 npm install -g @wirecat/tg-cli    # or: bun add -g @wirecat/tg-cli; pnpm: see docs/installation.md
-tg personal setup --agent claude  # also codex, cursor, gemini, all or none
+tg skill install --for all        # the agent skill, for Claude Code, Codex and Gemini CLI
+tg personal setup                 # app registration and login
 tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
 
-With npm 12, installation scripts are blocked and the agent skill is not installed. Run `tg skill install`
-after the installation, or allow the script: `npm install -g --allow-scripts=@wirecat/tg-cli @wirecat/tg-cli`.
-On Windows, if `tg` is not found, open a new terminal or use the PowerShell installer in
+npm 12 prints "install scripts blocked". That is harmless: `tg skill install --for all` does what the script would.
+On Windows, if `tg` is not found, open a new terminal, or use the PowerShell installer in
 [the installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md#windows-one-install-command).
 
 Allow about five minutes. `tg personal setup` registers your own Telegram app at
@@ -101,7 +101,7 @@ Your agent. Your Telegram. Your rules.
   tells them how: `tg personal setup --agent …` or `tg skill install` puts it in place, and `tg skill show`
   prints it before login.
 - **Apps without a terminal** (for example Claude Desktop, Cursor and other MCP clients) connect to
-  `tg personal mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply` and `/find`.
+  `tg personal mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply`, `/find`, `/open-tasks` and `/link-conversations`.
 
 ```sh
 tg personal mcp setup claude-code  # or: tg personal mcp setup codex

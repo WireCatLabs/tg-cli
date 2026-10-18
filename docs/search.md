@@ -206,7 +206,7 @@ tg personal search messages 'passport kind:private'  # one-to-one chats only
 ```
 
 `kind:` takes `private`, `group`, `channel`, `saved` (Saved Messages) and `bot`. `topic:` keeps to one
-forum topic of a group; it needs that group in `chat:` or `--chat`. To search every account in the
+forum topic of a group; it needs that group in `chat:`. To search every account in the
 store, add `--source all`.
 
 ## Dates

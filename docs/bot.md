@@ -59,7 +59,7 @@ Telegram gives a bot no list of its chats, so a chat's id comes from something t
   tg sales bot watch --events --jsonl --timeout 1m
   ```
 
-  Each line carries the chat's id as `chatId`. In a group, a bot that is not an admin sees only
+  Each line carries the chat's id as `chat_id`. In a group, a bot that is not an admin sees only
   commands and replies to it, unless its [privacy mode](https://core.telegram.org/bots/features#privacy-mode)
   is turned off in @BotFather.
 
@@ -119,7 +119,7 @@ tg sales bot messages unpin "Team" 512
 `--silent` sends without a notification. A message is up to 4096 characters
 ([`sendMessage`](https://core.telegram.org/bots/api#sendmessage)). `--md` and `--html` do not go
 together. Deleting asks first; `--allow-dangerous` answers yes. Pinning is quiet unless `--notify`.
-The answer to a send is the message and its `operationId`, its line in the bot's journal. Telegram
+The answer to a send is the message and its `operation_id`, its line in the bot's journal. Telegram
 deletes only messages under 48 hours old.
 
 If the connection breaks while a message is going, `tg` does not send it again: it says it does not
