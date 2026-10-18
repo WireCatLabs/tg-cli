@@ -106,10 +106,11 @@ PowerShell's execution policy is not changed. The installer removes only npm's g
 shim for this package and keeps `tg.cmd`, so bare `tg` works under a restricted policy too. An
 unrelated script with that name is left alone and reported as a conflict.
 
-A global npm installation also repairs the saved Windows PATH and installs the skill, when you let
-npm run its installation script:
+A global npm installation also repairs the saved Windows PATH when you let npm run its installation
+script. It installs the skill only when `TG_INSTALL_AGENT` names an agent:
 
 ```powershell
+$env:TG_INSTALL_AGENT = 'all'
 npm.cmd install -g --allow-scripts=@wirecat/tg-cli --foreground-scripts @wirecat/tg-cli
 ```
 
@@ -118,7 +119,8 @@ this one too. npm cannot change the PATH of the terminal that started it, so ope
 after an npm installation. The PowerShell installer above updates the current terminal as well.
 
 The installation script runs only for a global npm installation, never for a project dependency or
-npx. `TG_INSTALL_AGENT=codex|cursor|claude|gemini|all|none` selects the skill; `none` turns it off.
+npx. `TG_INSTALL_AGENT=codex|cursor|claude|gemini|all` selects the skill; unset or `none`, no skill is
+installed, and `tg personal setup` or `tg skill install --for all` installs it later.
 No separate Windows program is needed.
 
 The first commands to read your chats are in [logging in and the first commands](usage.md#log-in).

@@ -7,6 +7,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break callers
 
+- **`npm install -g` installs the agent skill only when asked.** It wrote the skill into `~/.claude/skills` and
+  `~/.agents/skills` by default, and npm hides a lifecycle script's output, so nobody was told. Now
+  `TG_INSTALL_AGENT=all` (or an agent's name) installs it at install time; otherwise `tg <profile> setup` offers it,
+  or `tg skill install --for all`. The Windows installer passes `all` itself and is unchanged.
 - **A chat's `provider_metadata` says `null` for a flag that is off or a username that is gone**: `isBot`,
   `isForum`, `pinned` and `username` were left out instead. cli-core's store will soon keep a key that is left out,
   so an unpinned chat or a dropped username would otherwise stay in the store, and `@old` would still find the chat.

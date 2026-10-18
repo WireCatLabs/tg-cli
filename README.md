@@ -47,7 +47,7 @@ tg personal setup                 # app registration and login
 tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
 
-npm 12 prints "install scripts blocked". That is harmless: `tg skill install --for all` does what the script would.
+A global install does not install the agent skill: `tg personal setup` offers it, or run `tg skill install --for all`. npm 12 prints "install scripts blocked"; that is harmless.
 On Windows, if `tg` is not found, open a new terminal, or use the PowerShell installer in
 [the installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md#windows-one-install-command).
 
