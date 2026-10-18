@@ -1,6 +1,7 @@
 /**
  * Everything about a release that a program can decide, one line each, and exit 1 if any failed.
- * `bin/release` runs the full check; release CI uses --artifact-only after full validation. The judgement half —
+ * `bin/release` runs the full check; release CI uses --artifact-only after full validation, and full validation
+ * runs --package-only. The judgement half —
  * changelog wording, docs against the diff, live checks — is the release skill,
  * `docs/dev/skills/release/SKILL.md`.
  *
@@ -14,6 +15,12 @@ import { changelogProblemsOf, docsRules, PACKED, PACKED_SAID } from "./release/c
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const version = packageVersion(root)
+
+const only = process.argv.includes("--package-only")
+  ? ["package contents"]
+  : process.argv.includes("--artifact-only")
+    ? ["changelog", "web client version", "package contents"]
+    : undefined
 
 const failed = releaseCheck(
   [
@@ -57,11 +64,7 @@ const failed = releaseCheck(
             run: command(root, "gitleaks", "git", "--no-banner", "--redact", "--exit-code", "1", "."),
           },
         ]),
-  ].filter(
-    (check) =>
-      !process.argv.includes("--artifact-only") ||
-      ["changelog", "web client version", "package contents"].includes(check.name),
-  ),
+  ].filter((check) => !only || only.includes(check.name)),
   { version, log: console.log },
 )
 process.exit(failed === 0 ? 0 : 1)

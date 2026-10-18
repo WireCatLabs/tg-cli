@@ -33,7 +33,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:matrix": "vitest run >/dev/null && tsc --build --force >/dev/null && cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check",
+    "test:matrix": "vitest run >/dev/null && tsc --build --force >/dev/null && pnpm test:matrix:check",
     "test:slow": "vitest run --reporter=json --outputFile=coverage/tests.json >/dev/null; cli-dev slow-tests",
     "smoke:bun": "bun run scripts/smoke.ts",
     "docs:check": "node --experimental-strip-types scripts/docs-check.ts && cspell --no-progress --no-summary README.md 'docs/*.md' && rumdl check --config config/wirecat/rumdl.toml --disable MD028 README.md docs/*.md",
@@ -60,7 +60,10 @@
     "contracts:check": "cli-contract contracts/plan.json",
     "contracts:upgrade": "pnpm --dir contracts/previous install --frozen-lockfile --ignore-scripts && cli-contract contracts/upgrade.json && cli-contract contracts/legacy-store.json",
     "security:no-leak": "cli-testing security no-leak . contracts/no-leak.json",
-    "lint:commands": "cli-dev lint --cli dist/bin/tg.js"
+    "lint:commands": "cli-dev lint --cli dist/bin/tg.js",
+    "test:matrix:check": "cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check",
+    "generate:check": "pnpm bot:generate:check && pnpm build && node --experimental-strip-types scripts/commands.ts && git diff --exit-code -- docs/commands.md",
+    "package:check": "node --experimental-strip-types scripts/release-check.ts --package-only"
   },
   "dependencies": {
     "@mtcute/node": "0.32.4",

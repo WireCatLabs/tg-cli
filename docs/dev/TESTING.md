@@ -16,8 +16,8 @@ configs, lint, Markdown lint, `pnpm ci:quick` (typecheck, build, command lint) a
 Everything above, and the contracts, the parity check and a secret scan of the whole history, runs as full
 validation ([ci.yml](../../.github/workflows/ci.yml)) on each merge to `main`, on the first day of each month and
 before a release — not on the pull request ([WC-CI-3, WC-CI-4, WC-CI-5, WC-CI-7](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/ci.md)). Run what your change
-touches before you push. Windows and macOS run by hand before
-a release: Actions → Windows and macOS → Run workflow ([windows.yml](../../.github/workflows/windows.yml)).
+touches before you push. Windows and macOS run the unit suite in full validation for a release and each month,
+not on `main`; to run them on a branch: Actions → Full validation → Run workflow.
 What only the real Telegram can check, and how, is [live-scenarios.md](live-scenarios.md); the
 `release`, `test-live` and `add-command` skills in [`skills/`](skills/) walk an agent through it.
 The reasons behind each rule below are in
