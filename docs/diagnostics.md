@@ -20,7 +20,7 @@ A few words this page uses:
 | See each request as it happens | `tg --trace …` | no, prints to stderr only |
 | Keep a record of one run | `tg --record …` | yes, a run record |
 | Find a failed run later | `tg personal runs list` | a failed run is kept by itself |
-| Keep a record of every run | `tg config set record true` | yes, every run |
+| Keep a record of every run | `tg personal config set record true` | yes, every run |
 | Check the installation | `tg personal doctor`, `tg personal doctor --online` | no |
 | Make a problem report | `tg personal doctor report create` | yes, one file you send |
 
@@ -75,8 +75,8 @@ own controls: see [saved searches and history](search.md#saved-searches-and-hist
 ## When to record every run
 
 ```sh
-tg config set record true          # this profile
-tg --no-record chats list          # but not this one
+tg personal config set record true          # profile "personal"
+tg personal --no-record chats list          # but not this one
 ```
 
 Then every run is kept. By default a run that worked is not written until you ask. A messenger tool

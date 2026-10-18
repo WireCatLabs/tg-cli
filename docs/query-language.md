@@ -108,7 +108,7 @@ expression, so quote a full type: `mime:"application/pdf"`.
 ## Mentions
 
 `tg` finds phones, e-mail addresses, links, documents and people's names in stored messages. Use these
-fields to find the messages that hold them. The finds themselves are listed by `tg mentions list`.
+fields to find the messages that hold them. The finds themselves are listed by `tg personal mentions list`.
 
 ```sh
 tg personal search messages 'phone:"+34 600 000 000"'

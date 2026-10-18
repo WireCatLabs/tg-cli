@@ -184,9 +184,9 @@ built-in default only tightens: `messages: readonly` still refuses a deletion, a
 keeps the question before a deletion until you set `messages.delete` itself.
 
 ```sh
-tg config set permissions.messages.delete allow     # delete without the question
-tg config set permissions.messages.send ask         # ask before every send
-tg config unset permissions.messages.delete         # back to the default
+tg personal config set permissions.messages.delete allow  # delete without the question
+tg personal config set permissions.messages.send ask      # ask before every send
+tg personal config unset permissions.messages.delete      # back to the default
 ```
 
 To refuse every change in Telegram from a profile — here the profile `agent` — set each resource:
@@ -224,13 +224,13 @@ unknown setting: replace them with `permissions` keys (`read_only: true` is ever
 ## Change it without opening the file
 
 ```sh
-tg config set limit 50                        # this profile
+tg personal config set limit 50               # profile "personal"
 tg work config set permissions.contacts readonly   # profile "work"; one key at a time
 tg config set sends_per_hour 10 --defaults      # every profile
 tg config set limit 30 --personal --defaults  # every personal account
 tg shop config set sends_per_hour 200 --bot     # only the bot "shop"
 tg config set update_check false --defaults    # a setting that exists only under defaults
-tg config unset sends_per_hour                  # back to the default
+tg personal config unset sends_per_hour         # back to the default
 ```
 
 `config set` checks the value against the same rules the reader uses, so it never writes a file
@@ -263,11 +263,11 @@ Where Telegram is blocked, `tg` can reach it through a proxy: SOCKS5, an HTTP pr
 Set it before `tg personal setup`: the login goes through it too.
 
 ```sh
-tg config set proxy socks5://proxy.example:1080       # no password: on the command line
-tg config set proxy http://alice@proxy.example:3128   # a user without a password
-tg config set proxy -                                 # with a password or an MTProxy secret
+tg personal config set proxy socks5://proxy.example:1080      # no password: on the command line
+tg personal config set proxy http://alice@proxy.example:3128  # a user without a password
+tg personal config set proxy -                                # with a password or an MTProxy secret
 proxy URL, hidden as you type: tg://proxy?server=mt.example&port=443&secret=ee…
-tg config unset proxy
+tg personal config unset proxy
 ```
 
 | Form | Kind |
