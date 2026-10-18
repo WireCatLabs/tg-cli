@@ -142,11 +142,12 @@ const kindOf = (peer: Peer): ChatKind => {
 
 /** A chat as a peer alone describes it — no unread count or last message, which only a dialog carries. */
 export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Chat => {
+  // `null` for a flag that is off or a name that is gone: the store keeps a key that is left out.
   const metadata = compact({
-    isBot: peer.type === "user" && peer.isBot ? true : undefined,
-    isForum: peer.type === "chat" && peer.isForum ? true : undefined,
+    isBot: peer.type === "user" ? peer.isBot || null : undefined,
+    isForum: peer.type === "chat" ? peer.isForum || null : undefined,
     chatType: peer.type === "chat" ? peer.chatType : undefined,
-    username: peer.username ?? undefined,
+    username: peer.username ?? null,
     ...extra,
   })
   return {
@@ -162,7 +163,7 @@ export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Cha
 
 /** `isMuted` is `null` when the chat follows the account's default, which the dialog does not carry. */
 export const toChat = (dialog: Dialog): Chat => ({
-  ...peerToChat(dialog.peer, { pinned: dialog.isPinned || undefined }),
+  ...peerToChat(dialog.peer, { pinned: dialog.isPinned || null }),
   unreadCount: dialog.unreadCount,
   lastMessageAt: dialog.lastMessage?.date.toISOString() ?? null,
   ...(dialog.isMuted === null ? {} : { muted: dialog.isMuted }),

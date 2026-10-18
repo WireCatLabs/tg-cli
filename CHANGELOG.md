@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed
+
+- **A chat's `provider_metadata` says `null` for a flag that is off or a username that is gone**: `isBot`,
+  `isForum`, `pinned` and `username` were left out instead. cli-core's store will soon keep a key that is left out,
+  so an unpinned chat or a dropped username would otherwise stay in the store, and `@old` would still find the chat.
+  Every reader treats `null` as absent; JSON output now shows these keys as `null`.
+
 ## 0.73.1 — 18.10.2026
 
 ### Fixed

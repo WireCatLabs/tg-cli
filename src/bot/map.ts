@@ -127,7 +127,7 @@ export const toChat = (chat: TgChat): Chat => ({
   unreadCount: null,
   lastMessageAt: null,
   participantsCount: null,
-  providerMetadata: { type: chat.type, ...(chat.username ? { username: chat.username } : {}) },
+  providerMetadata: { type: chat.type, username: chat.username || null },
 })
 
 /** Markup is in UTF-16 positions, which is what Telegram's [entities](https://core.telegram.org/bots/api#messageentity) count. */
