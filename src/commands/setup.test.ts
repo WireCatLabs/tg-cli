@@ -156,6 +156,7 @@ describe("setup", () => {
       JSON.parse(again.stdout[0] ?? ""),
     )
     expect(answer.item.session.reused).toBe(true)
+    expect(again.stderr.join("\n")).toContain("3/5 — Link this device")
     expect(again.login).not.toHaveBeenCalled()
     expect(registration.calls).toBe(0)
     expect(again.closed).toHaveBeenCalledTimes(1)
