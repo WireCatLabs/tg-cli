@@ -159,7 +159,7 @@ silent. The [guide to rankings](rankings.md) explains these limits.
 [MCP](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) and
 [Agent Skills](https://agentskills.io/specification).
 The [architecture](dev/ARCHITECTURE.md) and the
-[shared CLI standard](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/STANDARD.md)
+[shared CLI standard](https://github.com/WireCatLabs/cli-core/blob/v0.350.0/docs/dev/STANDARD.md)
 describe how they are applied and the exceptions made on purpose. We do not claim full third-party
 certification.
 
