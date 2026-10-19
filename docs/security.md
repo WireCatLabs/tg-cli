@@ -134,8 +134,9 @@ default, so an agent sends at the pace of a person.
 ## Logging in
 
 `tg personal setup` and `tg personal session start` draw the QR code in the terminal. It stays in the scrollback, and Telegram renews
-it while you wait, so an old one is useless. `--qr-file` writes it as a PNG readable only by you, and
-removes the file when the login ends, whether it worked or not.
+it while you wait, so an old one is useless. Without a terminal it is printed as text, for an agent
+to paste into the chat. A login code shown this way logs in only the account that scans it, here, and
+only while it is valid.
 
 `--app auto` fills in my.telegram.org for you, without a browser: it asks your phone number and the
 code the site sends you in Telegram, and nothing else.

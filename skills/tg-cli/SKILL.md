@@ -92,9 +92,13 @@ computer, obtains app keys, logs in and verifies five chats. Do not ask the owne
 codes, app hashes or 2FA passwords into the conversation; the terminal prompts for them.
 If automatic app registration fails, use `tg personal session start --app browser`, then rerun setup.
 
-An agent without a terminal can use `tg personal setup --qr-file login.png --agent codex --json` only with
-stored app keys and no required 2FA input. Show the temporary image to the owner. Setup removes
-it when login ends. Existing sessions are checked without a new login. Missing keyring access
+An agent without a terminal can log in by QR only with stored app keys and no required 2FA input:
+run `tg personal session start qr` (or `tg personal setup --agent codex --json`) in the background,
+because it waits for the scan and the shell tool shows nothing until it exits. Read its output and
+paste the QR text block into the chat as a code block, exactly as printed. When a new block is
+printed, paste it and say the old one expired. With `--json` each code is also a stderr line
+`{"event":"qr","qr":{"text","expires_at","scan"}}`. Login is not an MCP tool: with only MCP, ask
+the owner to run the command. Existing sessions are checked without a new login. Missing keyring access
 requires fixing the environment, not another login. Pick a chat and an amount of history with
 the owner before `tg personal messages sync <chat> --last 100`; setup starts no background service.
 

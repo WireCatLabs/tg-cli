@@ -2,7 +2,7 @@ import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
 import { CliError, indent, renderPretty } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
 import { installSkill, type SkillTarget } from "@wirecat/cli-base/skill"
-import { readSecret } from "@wirecat/cli-core"
+import { atTerminal, readSecret } from "@wirecat/cli-core"
 import {
   asFirstWord,
   type Closeable,
@@ -32,7 +32,6 @@ type Options = {
   agent?: Agent
   app: "auto" | "browser"
   method: "qr" | "phone"
-  qrFile?: string
 }
 
 const STEPS = 5
@@ -96,10 +95,10 @@ export const setupCommand = () =>
         "\nAllow about 5 minutes. App registration and account login are separate steps.\n" +
         "Scan the QR in Telegram: Settings > Devices > Link Desktop Device.\n" +
         "Enter codes, app hashes and passwords only in the terminal.\n" +
-        "\nAgents: read `tg skill show` first. First login needs a local terminal.\n" +
-        "With stored app keys and no 2FA input, an agent can use:\n" +
-        "  tg personal setup --qr-file login.png --agent codex --json\n" +
-        "The QR image is removed when login ends. Machine mode skips agent installation\n" +
+        "\nAgents: read `tg skill show` first. With stored app keys and no 2FA, an agent can run\n" +
+        "  tg personal setup --agent codex --json\n" +
+        "in the background and paste the QR text block it prints into the chat, exactly as printed.\n" +
+        "Otherwise the first login needs a local terminal. Machine mode skips agent installation\n" +
         "unless --agent is given. Existing sessions are checked without another login.\n" +
         "\nSetup checks five chats. Choose a chat and an amount of history before:\n" +
         "  tg personal messages sync <chat> --last 100\n" +
@@ -119,15 +118,12 @@ export const setupCommand = () =>
     .addOption(
       new Option("--method <method>", "how to log in when there is no session").choices(["qr", "phone"]).default("qr"),
     )
-    .option("--qr-file <png>", "write a temporary QR image for an agent to pass on; works without a terminal")
     .action(async function (this: Command) {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
       const options = this.opts<Options>()
       if (context.settings.offline)
         throw new CliError("validation_error", "tg setup verifies Telegram — remove --offline")
-      if (options.qrFile && options.method !== "qr")
-        throw new CliError("validation_error", "--qr-file is for a QR login")
       for (const permission of ["account.show", "chats.list"] as const) {
         if (levelFor(context.settings.permissions, permission).level === "deny")
           throw new CliError(
@@ -137,10 +133,11 @@ export const setupCommand = () =>
           )
       }
       const reused = existsSync(context.sessionPath)
-      if (!reused && !context.stdin.isTTY && !options.qrFile)
+      if (!reused && !atTerminal(context.stdin) && (options.method === "phone" || !context.credentials.read()))
         throw new CliError(
           "validation_error",
-          "tg setup needs a terminal for the first login — run it locally; use --qr-file only with stored app credentials",
+          "tg setup needs a terminal for the first login — run it locally; without one it logs in only by QR, " +
+            "with stored app credentials",
         )
       const prefix = `tg ${asFirstWord(context.profile)}`
       const command =
@@ -197,7 +194,6 @@ export const setupCommand = () =>
               signal: cancellation.signal,
               method: options.method,
               app: options.app,
-              ...(options.qrFile === undefined ? {} : { qrFile: options.qrFile }),
               command: `${prefix}setup`,
               indent: screen.indent,
               progress: (step) =>

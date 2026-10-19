@@ -5,6 +5,18 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break callers
+
+- **Without a terminal, the login QR code is printed as text for an agent to paste into the chat; `--qr-file` is
+  gone.** An agent wrote a PNG and opened it in an image viewer, a window you can lose. Now `tg <profile> session
+  start qr` and `setup` print the code on stderr as plain text (half blocks, no colours, drawn for a dark terminal
+  theme), then tell the agent to paste it as a code block, exactly as printed, and to paste a renewed one and say the
+  old one expired. With `--json` each code is also one stderr line,
+  `{"event":"qr","qr":{"text","expires_at","scan"}}`. In a terminal the code is drawn as before. `--qr-file` is
+  removed from `session start` and `setup`. Without a terminal a login still needs stored app keys and no 2FA, and
+  is refused before it opens a browser; a phone login needs a terminal. Login stays off MCP: run the command
+  ([when an agent runs the login](docs/sessions.md#when-an-agent-runs-the-login)).
+
 ### Fixed
 
 - **`messages forward` answers, and saves, the forwarded copy in the chat it went to.** It took the first new message

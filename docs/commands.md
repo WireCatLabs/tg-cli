@@ -64,7 +64,6 @@ tg session start [method] [options]
 | Option | What it does |
 |---|---|
 | `--app <how>` | the first time only: how to get this profile's app from my.telegram.org. One of: `browser`, `auto`. Default: `browser`. |
-| `--qr-file <png>` | write the QR code to this PNG instead of drawing it, for an agent to pass on. |
 | `--sms` | phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse. |
 
 **Returns:** log in by QR code (default) or by phone number, code and 2FA password
@@ -100,7 +99,6 @@ tg setup [options]
 | `--agent <agent>` | install the skill for this agent; asks at a terminal, otherwise none. One of: `none`, `codex`, `cursor`, `claude`, `gemini`, `all`. |
 | `--app <how>` | how to get your Telegram app credentials the first time. One of: `auto`, `browser`. Default: `auto`. |
 | `--method <method>` | how to log in when there is no session. One of: `qr`, `phone`. Default: `qr`. |
-| `--qr-file <png>` | write a temporary QR image for an agent to pass on; works without a terminal. |
 
 **Returns:** set up Telegram and connect your agent
 
@@ -2952,6 +2950,7 @@ tg store clear [options]
 |---|---|
 | `--left` | the chats this account has left — the only thing this clears. |
 | `--allow-dangerous` | yes, delete — it cannot be undone, and a chat you left cannot be fetched again. |
+| `--dry-run` | list the chats it would delete, and delete nothing. |
 
 **Returns:** delete from the store the chats this account has left, with their messages
 

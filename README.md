@@ -168,7 +168,7 @@ app keys go to the system keyring, and the session is a file only your user can 
 ```sh
 tg personal session start               # a QR code: Settings → Devices → Link Desktop Device
 tg personal session start phone         # or a phone number, the code and your 2FA password
-tg personal session start --qr-file login.png  # the QR code as a picture, for an agent to show you
+tg personal session start qr            # without a terminal (an agent): the QR code as text to paste into the chat
 tg personal account show                # who you are logged in as
 tg account list                         # every profile here, and who each is logged in as
 ```

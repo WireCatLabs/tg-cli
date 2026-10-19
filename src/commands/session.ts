@@ -1,7 +1,7 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
-import { type Account, atTerminal, loginQr, qrNeedsTerminal, readSecret } from "@wirecat/cli-core"
+import { type Account, atTerminal, loginQr, readSecret } from "@wirecat/cli-core"
 import { servingProfiles } from "@wirecat/cli-core/background"
 import {
   asFirstWord,
@@ -113,7 +113,6 @@ const loggedIn = (
 export interface StartSessionOptions {
   method: "qr" | "phone"
   app: "browser" | "auto"
-  qrFile?: string
   sms?: boolean
   command?: string
   progress?: (step: "app" | "login") => void
@@ -124,16 +123,18 @@ export interface StartSessionOptions {
 
 export const startSession = async (
   context: CommandContext,
-  { method, app, qrFile, sms, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
+  { method, app, sms, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
 ) => {
-  if (qrFile !== undefined && method !== "qr") throw new CliError("validation_error", "--qr-file is for a QR login")
   if (sms && method !== "phone") throw new CliError("validation_error", "--sms is for a phone login")
   const input = context.stdin
-  // With the QR in a file, a login with a stored app and no 2FA asks nothing, so an agent can run it.
-  if (!atTerminal(input) && qrFile === undefined)
-    throw method === "qr"
-      ? qrNeedsTerminal(command)
-      : new CliError("validation_error", `${command} asks questions — run it in a terminal`)
+  const terminal = atTerminal(input)
+  const stored = context.credentials.read()
+  // A QR login with stored app keys and no 2FA asks nothing, so an agent can run it and pass the code on as text.
+  if (!terminal && (method === "phone" || !stored))
+    throw new CliError(
+      "validation_error",
+      `${command} asks questions — run it in a terminal${method === "qr" ? "; without one it needs stored app keys" : ""}`,
+    )
   const ask: Ask = (prompt, echo) => {
     signal?.throwIfAborted()
     if (!atTerminal(input)) {
@@ -142,13 +143,12 @@ export const startSession = async (
     return readSecret(`${" ".repeat(pad)}${prompt}`, { input, echo, ...(signal === undefined ? {} : { signal }) })
   }
   const qr = loginQr({
-    ...(qrFile === undefined ? {} : { qrFile }),
     diagnostic: context.streams.diagnostic,
     note: context.renderer.note,
     indent: pad,
+    terminal,
+    json: context.format !== "pretty",
   })
-  // A cut command never reaches its own finally in time; the image logs the account in while it is valid.
-  if (qr.path) context.track({ close: async () => qr.close() })
   let typedPhone: string | undefined
   // Telegram accepts a session that is still logged in without a question; then nothing here is asked.
   let asked = false
@@ -158,7 +158,6 @@ export const startSession = async (
     return typedPhone
   }
 
-  const stored = context.credentials.read()
   progress?.("app")
   const typed: ApiCredentials | undefined = stored
     ? undefined
@@ -176,6 +175,7 @@ export const startSession = async (
         qr.show(
           url,
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
+          expires,
         )
       },
       phone,
@@ -196,7 +196,6 @@ export const startSession = async (
     const appKeys = context.credentials.source() ?? null
     return { profile: context.profile, account, session: context.sessionPath, appKeys, alreadyLoggedIn: !asked }
   } finally {
-    qr.close()
     await telegram.close()
   }
 }
@@ -214,7 +213,6 @@ export const sessionCommand = () => {
         .choices(["browser", "auto"])
         .default("browser"),
     )
-    .option("--qr-file <png>", "write the QR code to this PNG instead of drawing it, for an agent to pass on")
     .option("--sms", "phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse")
     .addHelpText(
       "after",
@@ -227,18 +225,20 @@ export const sessionCommand = () => {
         "  tg work session start            Log in to the work profile\n" +
         "\nScan in Telegram: Settings > Devices > Link Desktop Device.\n" +
         "For an interrupted or expired session, finish this login, then rerun `tg <profile> setup`.\n" +
-        "Agents: read `tg skill show`; --qr-file needs stored app keys and no 2FA input\n" +
-        "when running without a terminal. The temporary image is removed after login.\n",
+        "Agents: read `tg skill show`. Run `tg <profile> session start qr` in the background (it waits for\n" +
+        "the scan, and a shell tool shows nothing until it exits), read its output and paste the QR text block\n" +
+        "into the chat as a code block, exactly as printed. When a new block is printed, paste it and say the old one expired. With\n" +
+        '--json each code is also a stderr line {"event":"qr","qr":{"text","expires_at","scan"}}. Without a\n' +
+        "terminal this needs stored app keys and no 2FA; phone login needs a terminal. Login is not an MCP tool.\n",
     )
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
-      const { app, qrFile, sms } = this.opts<{ app: "browser" | "auto"; qrFile?: string; sms?: boolean }>()
+      const { app, sms } = this.opts<{ app: "browser" | "auto"; sms?: boolean }>()
       const answer = await startSession(context, {
         command: `tg ${asFirstWord(context.profile)}session start`,
         method,
         app,
-        ...(qrFile === undefined ? {} : { qrFile }),
         ...(sms ? { sms } : {}),
       })
       if (context.format === "pretty") context.streams.data(loggedIn(answer, context.env))

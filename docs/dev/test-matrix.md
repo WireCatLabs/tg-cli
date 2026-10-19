@@ -7,20 +7,18 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2358 ✅ · 92 ⛔ · 0 ❌** — 498 commands, 1952 options.
+**2357 ✅ · 92 ⛔ · 0 ❌** — 498 commands, 1951 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
 | `session start` |  | ✅ |  |
 | `session start` | `--app` | ✅ |  |
-| `session start` | `--qr-file` | ✅ |  |
 | `session start` | `--sms` | ✅ |  |
 | `session end` |  | ✅ |  |
 | `setup` |  | ✅ |  |
 | `setup` | `--agent` | ✅ |  |
 | `setup` | `--app` | ✅ |  |
 | `setup` | `--method` | ✅ |  |
-| `setup` | `--qr-file` | ✅ |  |
 | `account list` |  | ✅ |  |
 | `account show` |  | ✅ |  |
 | `account show` | `--show-phone` | ✅ |  |
@@ -373,6 +371,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store clear` |  | ✅ |  |
 | `store clear` | `--left` | ✅ |  |
 | `store clear` | `--allow-dangerous` | ✅ |  |
+| `store clear` | `--dry-run` | ✅ |  |
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |
 | `store migrate` |  | ✅ |  |
