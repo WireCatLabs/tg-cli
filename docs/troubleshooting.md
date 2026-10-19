@@ -137,7 +137,7 @@ you log in to the computer.
 Exit code `4`. Telegram no longer accepts the session: it was ended from another device (Settings →
 Devices in the app), or by `tg personal session end`. Log in again with `tg personal session start`.
 
-### "`tg session start` shows a QR code to scan — run it in a terminal, or pass --qr-file <png>"
+### "`tg session start` shows a QR code to scan — run it in a terminal, or pass `--qr-file <png>`"
 
 Exit code `2`. The login needs a person to scan a code or type one. Run it in a terminal. For an agent,
 `--qr-file login.png` writes the QR code to a file instead ([when an agent runs the login](sessions.md#when-an-agent-runs-the-login)).

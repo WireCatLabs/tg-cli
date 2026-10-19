@@ -19,10 +19,10 @@ Terms used on this page:
 The language is a strict profile of Apache Lucene's query syntax: words, phrases, AND/OR/NOT, groups,
 fields, ranges, bounded wildcards and regular expressions. "Strict" means that anything it does not
 support is an error, never silently ignored. The
-[full reference](https://github.com/WireCatLabs/cli-core/blob/main/docs/search/query-language.md)
+[full reference](https://github.com/WireCatLabs/cli-core/blob/v0.350.0/docs/search/query-language.md)
 (only in Russian so far) has the generated tables of fields, operators, presets and limits, and executable
 examples; the
-[technical specification](https://github.com/WireCatLabs/cli-core/blob/main/docs/search/query-language-spec.md)
+[technical specification](https://github.com/WireCatLabs/cli-core/blob/v0.350.0/docs/search/query-language-spec.md)
 describes the grammar and the compiler.
 
 For mail, `chat:` selects an email thread by id or subject; `from:` selects a
