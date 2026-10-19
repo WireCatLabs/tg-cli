@@ -5,6 +5,7 @@ import { stripVTControlCharacters } from "node:util"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { installSkill } from "@wirecat/cli-base/skill"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import { PASTE_QR, plainQr } from "@wirecat/cli-core"
 import * as v from "valibot"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { sessionFile } from "../paths.js"
@@ -266,17 +267,24 @@ describe("setup", () => {
     },
   )
 
-  it("passes a temporary QR image to an agent without a terminal and removes it", async () => {
+  it("prints the QR code as text for an agent without a terminal, with stored app keys", async () => {
     withKeys()
-    const path = join(env.TG_CACHE_DIR ?? "", "login.png")
-    mkdirSync(dirname(path), { recursive: true })
-    const result = await execute(["setup", "--qr-file", path, "--agent", "none", "--json"], {
+    const result = await execute(["setup", "--agent", "none", "--json"], {
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
     })
     expect(result.code).toBe(0)
-    expect(existsSync(path)).toBe(false)
-    expect(result.stderr.join()).toContain(path)
-    expect(result.stderr.join()).not.toContain("▀")
+    expect(result.stderr.join("\n")).toContain(plainQr("tg://login?token=synthetic"))
+    expect(result.stderr.join("\n")).toContain(PASTE_QR)
+    expect(result.stderr.join("\n")).not.toContain("\x1b")
+  })
+
+  it("refuses a first login without a terminal when the app keys would have to be typed", async () => {
+    const result = await execute(["setup", "--agent", "none", "--json"], {
+      stdin: Object.assign(Readable.from([]), { isTTY: false }),
+    })
+    expect(result.code).toBe(2)
+    expect(JSON.parse(result.stderr.at(-1) ?? "").error.message).toContain("with stored app credentials")
+    expect(result.opened).not.toHaveBeenCalled()
   })
 
   it("phone login and browser app registration remain available", async () => {
@@ -377,14 +385,12 @@ describe("setup", () => {
     expect(installSkill).not.toHaveBeenCalled()
   })
 
-  it("closes a stalled login and removes its QR image on timeout", async () => {
+  it("closes a stalled login on timeout", async () => {
     withKeys()
-    const path = join(env.TG_CACHE_DIR ?? "", "timeout.png")
-    mkdirSync(dirname(path), { recursive: true })
     let rejectRequest: ((error: Error) => void) | undefined
     const close = vi.fn(async () => rejectRequest?.(new Error("synthetic connection closed")))
     const result = await execute(
-      ["setup", "--qr-file", path, "--agent", "codex", "--timeout", "100ms", "--json"],
+      ["setup", "--agent", "codex", "--timeout", "100ms", "--json"],
       {},
       {
         login: (prompts) =>
@@ -397,17 +403,14 @@ describe("setup", () => {
     )
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
-    expect(existsSync(path)).toBe(false)
     expect(close).toHaveBeenCalled()
     expect(installSkill).not.toHaveBeenCalled()
   })
 
-  it("removes the temporary QR image when login is cancelled", async () => {
+  it("closes the connection when login is cancelled", async () => {
     withKeys()
-    const path = join(env.TG_CACHE_DIR ?? "", "cancelled.png")
-    mkdirSync(dirname(path), { recursive: true })
     const result = await execute(
-      ["setup", "--qr-file", path, "--agent", "none", "--json"],
+      ["setup", "--agent", "none", "--json"],
       {},
       {
         login: async (prompts) => {
@@ -417,7 +420,6 @@ describe("setup", () => {
       },
     )
     expect(result.code).not.toBe(0)
-    expect(existsSync(path)).toBe(false)
     expect(result.closed).toHaveBeenCalledTimes(1)
     expect(result.stdout).toEqual([])
     expect(installSkill).not.toHaveBeenCalled()
@@ -436,7 +438,7 @@ describe("setup", () => {
     expect(result.opened).not.toHaveBeenCalled()
   })
 
-  it.each([{ flags: ["--offline"] }, { flags: ["--method", "phone", "--qr-file", "login.png"] }])(
+  it.each([{ flags: ["--offline"] }, { flags: ["--qr-file", "login.png"] }])(
     "refuses incompatible flags: %s",
     async ({ flags }) => {
       const result = await execute(["setup", "--agent", "none", ...flags])

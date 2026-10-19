@@ -77,8 +77,8 @@ Partial reads and downloads can return JSON with exit code `0`: inspect `complet
 `--no-input` forbids interactive input. JSON, JSONL and a run without a terminal also never ask a
 question and never start an interactive login. Input you pipe in on purpose still works: pass
 credentials through a pipe, never as a command argument or a configuration value. `setup` can check
-an existing session. With app credentials already stored, an explicit `--qr-file` writes a temporary
-QR image without asking; any step that needs your input is refused.
+an existing session. With app credentials already stored, a QR login without a terminal prints the
+code as text for an agent to pass on, and asks nothing; any step that needs your input is refused.
 
 A write at the `ask` permission level needs an explicit `--yes`; a deletion needs
 `--allow-dangerous`. These flags only answer the question. All other permission checks still apply.

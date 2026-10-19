@@ -205,8 +205,15 @@ describe("saving to the store", () => {
 
     const unconfirmed = await tgWith(["gone", "store", "clear", "--left"], left)
     expect(unconfirmed.code).not.toBe(0)
+    const dry = await tgWith(["gone", "store", "clear", "--left", "--dry-run", "--json"], left)
+    expect(dry.code).toBe(0)
     const cleared = await tgWith(["gone", "store", "clear", "--left", "--allow-dangerous", "--json"], left)
-    expect(JSON.parse(cleared.stdout[0] ?? "").item).toEqual({ cleared: true, chats: 1, messages: 1 })
+    expect(JSON.parse(cleared.stdout[0] ?? "").item).toEqual({
+      cleared: true,
+      chats: 1,
+      messages: 1,
+      left: [{ id: "-1001234567890", title: "Valencia expats", messages: 1 }],
+    })
   })
 })
 

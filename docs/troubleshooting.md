@@ -137,16 +137,16 @@ you log in to the computer.
 Exit code `4`. Telegram no longer accepts the session: it was ended from another device (Settings →
 Devices in the app), or by `tg personal session end`. Log in again with `tg personal session start`.
 
-### "`tg session start` shows a QR code to scan — run it in a terminal, or pass `--qr-file <png>`"
+### "`tg session start` asks questions — run it in a terminal"
 
-Exit code `2`. The login needs a person to scan a code or type one. Run it in a terminal. For an agent,
-`--qr-file login.png` writes the QR code to a file instead ([when an agent runs the login](sessions.md#when-an-agent-runs-the-login)).
-A phone login without a terminal says "asks questions — run it in a terminal" instead.
+Exit code `2`. A phone login, or a first login that has to register the app, needs a person to type
+the answers. Run it in a terminal. A QR login without a terminal prints the code as text instead
+([when an agent runs the login](sessions.md#when-an-agent-runs-the-login)).
 
 ### "the terminal is 40 columns wide and the QR code needs 49"
 
 The code is not drawn, because a wrapped code cannot be scanned. Widen the terminal: the next code Telegram sends is
-drawn. Or run the login again with `--qr-file login.png` and open the image.
+drawn.
 
 ### "my.telegram.org says the app was created, but its page shows none"
 

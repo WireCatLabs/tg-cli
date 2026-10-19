@@ -93,13 +93,12 @@ describe("TG_READ_ONLY", () => {
   })
 
   it.each([
-    ["session start", ["ro-start", "session", "start", "--qr-file", join(sandbox, "ro.png")]],
-    ["setup", ["ro-setup", "setup", "--qr-file", join(sandbox, "ro.png")]],
+    ["session start", ["ro-start", "session", "start"]],
+    ["setup", ["ro-setup", "setup"]],
   ])("refuses %s before connecting", async (_name, argv) => {
     const { code, error, opened } = await locked(argv)
 
     expect([code, error.code, opened]).toEqual([5, "permission_error", 0])
-    expect(existsSync(join(sandbox, "ro.png"))).toBe(false)
   })
 
   it.each([

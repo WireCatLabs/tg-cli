@@ -1,7 +1,7 @@
 # Optional fields are spread in, never set to undefined
 
 - Pass an optional value as `...(x === undefined ? {} : { x })`; never `{ x: undefined }`.
-- Use `=== undefined` when a falsy value is valid (`signal`, `qrFile`); a truthiness check for objects (`keyring`, `fetch`).
+- Use `=== undefined` when a falsy value is valid (`signal`, `indent`); a truthiness check for objects (`keyring`, `fetch`).
 - A small helper returning the optional object is fine (`proxyOption(through)`).
 - Build the whole object at once with conditional spreads; never add a property after creating it.
 

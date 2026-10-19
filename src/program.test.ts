@@ -64,7 +64,8 @@ describe("first-run discovery", () => {
         "about 5 minutes",
         "--json",
         "npm.cmd exec",
-        "no 2FA input",
+        "no 2FA",
+        "QR text block",
       ],
     },
     {

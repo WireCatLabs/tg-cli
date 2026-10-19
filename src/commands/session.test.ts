@@ -1,9 +1,10 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs"
-import { homedir, tmpdir } from "node:os"
-import { dirname, join } from "node:path"
+import { existsSync, mkdirSync, writeFileSync } from "node:fs"
+import { homedir } from "node:os"
+import { dirname } from "node:path"
 import { Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
+import { PASTE_QR, plainQr } from "@wirecat/cli-core"
 import { holdLock, listenRelay, lockPath, RELAY_PROTOCOL, relayPath } from "@wirecat/cli-core/background"
 import * as v from "valibot"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
@@ -76,22 +77,13 @@ const tg = async (argv: string[], environment: Partial<Environment> = {}) => {
 describe("session start", () => {
   it("**logs in by QR code with the stored app** and answers with the account", async () => {
     const seen: { prompts?: LoginPrompts; opened?: unknown } = {}
-    const { code, stdout, stderr } = await tg(
-      [
-        "session",
-        "start",
-        "--qr-file",
-        join(mkdtempSync(join(tmpdir(), "qr-login-")), "synthetic-login.png"),
-        "--json",
-      ],
-      {
-        env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-        adapter: (options) => {
-          seen.opened = options.credentials
-          return loginAdapter(seen)
-        },
+    const { code, stdout, stderr } = await tg(["session", "start", "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      adapter: (options) => {
+        seen.opened = options.credentials
+        return loginAdapter(seen)
       },
-    )
+    })
 
     expect(code).toBe(0)
     const answer = v.parse(itemEnvelopeSchema(v.unknown()), JSON.parse(stdout[0] ?? ""))
@@ -136,8 +128,7 @@ describe("session start", () => {
     const still = { ...loginAdapter({}), login: async () => ({ id: "1", name: "Owner", username: null }) }
     const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" }
     const pretty = await tg(["tgtest", "session", "start", "phone"], { tty: true, env, adapter: () => still })
-    const qrFile = join(mkdtempSync(join(tmpdir(), "qr-")), "never.png")
-    const json = await tg(["session", "start", "--qr-file", qrFile, "--json"], { env, adapter: () => still })
+    const json = await tg(["session", "start", "--json"], { env, adapter: () => still })
 
     expect(pretty.stdout.join("\n").split("\n")[0]).toBe(
       "Already logged in as Owner (id 1) — profile tgtest; nothing was asked. `tg tgtest session end` first to log in again.",
@@ -239,13 +230,11 @@ describe("session start", () => {
 
     expect(code).toBe(2)
     expect(stdout).toEqual([])
-    expect(JSON.parse(stderr[0] ?? "").error.message).toContain("in a terminal")
+    expect(JSON.parse(stderr[0] ?? "").error.message).toContain("without one it needs stored app keys")
   })
 
-  it("**--qr-file writes the code as a PNG an agent can pass on**, with no terminal, and removes it after", async () => {
-    const path = join(mkdtempSync(join(tmpdir(), "qr-")), "login.png")
-    const during: { bytes?: Buffer; mode?: number } = {}
-    const { code, stderr } = await tg(["session", "start", "--qr-file", path, "--json"], {
+  it("**prints the QR code as text an agent pastes into the chat**, with no terminal, and each code as a JSON line", async () => {
+    const { code, stderr } = await tg(["session", "start", "--json"], {
       env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
       tty: false,
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
@@ -253,19 +242,28 @@ describe("session start", () => {
         ...loginAdapter({}),
         login: async (prompts: LoginPrompts) => {
           prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
-          during.bytes = readFileSync(path)
-          during.mode = statSync(path).mode & 0o777
+          prompts.showQr("tg://login?token=y", new Date("2026-09-29T12:00:30.000Z"))
           return { id: "1", name: "Owner", username: null }
         },
       }),
     })
 
     expect(code).toBe(0)
-    expect(during.bytes?.subarray(0, 8)).toEqual(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
-    if (process.platform !== "win32") expect(during.mode).toBe(0o600)
-    expect(stderr.join("\n")).toContain(path)
-    expect(stderr.join("\n")).not.toContain("▀")
-    expect(existsSync(path)).toBe(false)
+    const shown = stderr.join("\n")
+    expect(shown).toContain(plainQr("tg://login?token=x"))
+    expect(shown).toContain(PASTE_QR)
+    expect(shown).not.toContain("\x1b")
+    const events = stderr.filter((line) => line.startsWith('{"event"')).map((line) => JSON.parse(line))
+    expect(events).toEqual([
+      {
+        event: "qr",
+        qr: { text: plainQr("tg://login?token=x"), expires_at: "2026-09-29T12:00:00.000Z", scan: expect.any(String) },
+      },
+      {
+        event: "qr",
+        qr: { text: plainQr("tg://login?token=y"), expires_at: "2026-09-29T12:00:30.000Z", scan: expect.any(String) },
+      },
+    ])
   })
 
   const drawnAt = async (columns: number) => {
@@ -297,48 +295,24 @@ describe("session start", () => {
     expect(shown).not.toContain("Link Desktop Device")
   })
 
-  it("**--qr-file is removed when the login is cut off**, as by Ctrl+C", async () => {
-    const path = join(mkdtempSync(join(tmpdir(), "qr-")), "login.png")
-    const stop = new AbortController()
-    let shown = false
-    const { code } = await tg(["session", "start", "--qr-file", path, "--json"], {
-      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
-      tty: false,
-      stdin: Object.assign(Readable.from([]), { isTTY: false }),
-      signal: stop.signal,
-      adapter: () => ({
-        ...loginAdapter({}),
-        login: (prompts: LoginPrompts) => {
-          prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
-          shown = existsSync(path)
-          stop.abort()
-          return new Promise<never>(() => {})
-        },
-      }),
-    })
-
-    expect(shown).toBe(true)
-    expect(code).not.toBe(0)
-    expect(existsSync(path)).toBe(false)
-  })
-
-  it("--qr-file without a terminal still refuses to ask for what it would have to ask", async () => {
-    const { code, stderr } = await tg(["session", "start", "--qr-file", join(tmpdir(), "never.png")], {
+  it("a login without a terminal still refuses to ask for what it would have to ask", async () => {
+    const { code, stderr } = await tg(["session", "start"], {
       tty: false,
       stdin: Object.assign(Readable.from([]), { isTTY: false }),
       adapter: () => loginAdapter({}),
     })
 
     expect(code).toBe(2)
-    expect(JSON.parse(stderr.at(-1) ?? "").error.message).toContain("needs a terminal to ask for the App api_id")
-    const phone = await tg(["session", "start", "phone", "--qr-file", "x.png", "--json"], {
+    expect(JSON.parse(stderr.at(-1) ?? "").error.message).toContain("asks questions — run it in a terminal")
+    const phone = await tg(["session", "start", "phone", "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
       adapter: () => loginAdapter({}),
     })
-    expect(JSON.parse(phone.stderr.at(-1) ?? "").error.message).toContain("--qr-file is for a QR login")
+    expect(JSON.parse(phone.stderr.at(-1) ?? "").error.message).toContain("asks questions — run it in a terminal")
   })
 
   it("refuses a profile named like a command", async () => {
-    const { code, stderr } = await tg(["session", "start", "--qr-file", "synthetic.png", "--json"], {
+    const { code, stderr } = await tg(["session", "start", "--json"], {
       env: { ...process.env, TG_PROFILE: "chats", TG_API_ID: "1", TG_API_HASH: "h" },
       adapter: () => loginAdapter({}),
     })

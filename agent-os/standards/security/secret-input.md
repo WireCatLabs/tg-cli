@@ -2,7 +2,7 @@
 
 - A secret (proxy password, MTProxy secret, app hash, 2FA password) is read with `readSecret` from a TTY or `-`; on argv it is refused with `validation_error`.
 - Write it to the keyring only after the remote side accepted it.
-- Temporary credential files (QR PNG) are mode `0600` and removed in `finally`.
+- Temporary credential files are mode `0600` and removed in `finally`.
 - `doctor` reports file modes and prints the `chmod` fix without applying it.
 
 **Why:** argv is visible to other processes and shell history; a keyring entry cannot be read back to check it.

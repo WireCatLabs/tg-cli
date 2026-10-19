@@ -75,17 +75,23 @@ Next:     tg personal chats list · tg personal server install to keep the archi
 
 ### When an agent runs the login
 
-Your AI agent can start the login for you, but it has no terminal to draw the QR code in.
-`--qr-file` writes the code as a picture (PNG) instead, and the agent shows it to you to scan:
+Your AI agent can start the login for you. Without a terminal, `tg` prints the QR code as plain
+text, and the agent pastes it into the chat for you to scan:
 
 ```sh
-tg personal session start --qr-file login.png
+tg personal session start qr
 ```
 
-The file is replaced when Telegram renews the code, and removed when the login ends, whether it
-worked or not. Without a terminal this works only when the profile already has its app and the
-account has no 2FA password: anything else you have to type yourself. `tg personal setup` takes the same
-`--qr-file` option.
+The agent runs it in the background, because the command waits for the scan and a shell tool shows
+nothing until the command ends. It reads the output and pastes the QR block into the chat as a code
+block, exactly as printed. When Telegram renews the code, a new block is printed: the agent pastes
+it and says the old one expired. With `--json`, each code is also one line on stderr,
+`{"event":"qr","qr":{"text":…,"expires_at":…,"scan":…}}`.
+
+The code is drawn for a dark terminal theme. Without a terminal this works only when the profile
+already has its app and the account has no 2FA password: anything else you have to type yourself.
+`tg personal setup` works the same way. Login is not offered as an MCP tool: an agent that has
+only MCP asks you to run the command, or runs it through its shell.
 
 ## Check and log out
 
