@@ -1994,6 +1994,14 @@ describe("forwarding", () => {
     expect(copy).toMatchObject({ id: "60", chatId: "-1000000000500", text: "synthetic copy" })
   })
 
+  it("refuses to answer another chat's message when the target chat's copy is missing", async () => {
+    const { adapter } = await open()
+
+    await expect(adapter.forward("1", "5", "-1000000000501", { sendId: "42" })).rejects.toMatchObject({
+      code: "provider_error",
+    })
+  })
+
   it("forwards as the identity it was given into a supergroup", async () => {
     const { adapter, client } = await open()
 
