@@ -268,6 +268,35 @@ describe("session start", () => {
     expect(existsSync(path)).toBe(false)
   })
 
+  const drawnAt = async (columns: number) => {
+    const before = Object.getOwnPropertyDescriptor(process.stderr, "columns")
+    Object.defineProperty(process.stderr, "columns", { value: columns, configurable: true })
+    try {
+      const { code, stderr } = await tg(["session", "start"], {
+        env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+        adapter: () => loginAdapter({}),
+      })
+      expect(code).toBe(0)
+      return stderr.join("\n")
+    } finally {
+      if (before) Object.defineProperty(process.stderr, "columns", before)
+      else delete (process.stderr as { columns?: number }).columns
+    }
+  }
+
+  it("**says where to scan after the code it draws**", async () => {
+    const shown = await drawnAt(200)
+    expect(shown.indexOf("▀")).toBeGreaterThan(-1)
+    expect(shown.indexOf("Link Desktop Device")).toBeGreaterThan(shown.lastIndexOf("▀"))
+  })
+
+  it("**does not ask to scan a code a narrow terminal could not draw**", async () => {
+    const shown = await drawnAt(20)
+    expect(shown).toContain("20 columns wide")
+    expect(shown).not.toContain("▀")
+    expect(shown).not.toContain("Link Desktop Device")
+  })
+
   it("**--qr-file is removed when the login is cut off**, as by Ctrl+C", async () => {
     const path = join(mkdtempSync(join(tmpdir(), "qr-")), "login.png")
     const stop = new AbortController()

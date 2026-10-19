@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A terminal too narrow for the QR code no longer asks you to scan it** (cli-core 0.350.0). `session start` and
+  `setup` said where to scan in Telegram before the code; when the code did not fit, only the hint to widen the
+  terminal or pass `--qr-file` followed. Now the scan line comes after the drawn code or the `--qr-file` note, and a
+  narrow terminal shows only the hint.
+
 ## 0.75.0 — 19.10.2026
 
 ### Added
