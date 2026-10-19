@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.75.0 — 19.10.2026
 
 ### Fixed
 
@@ -13,21 +13,16 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `setup` said where to scan in Telegram before the code; when the code did not fit, only the hint to widen the
   terminal or pass `--qr-file` followed. Now the scan line comes after the drawn code or the `--qr-file` note, and a
   narrow terminal shows only the hint.
-
-## 0.75.0 — 19.10.2026
+- **`tg <profile> setup --help` shows the Global Options block again.** 0.74.0 dropped it when the usage line gained
+  `<profile>`.
+- **Hints in errors and notes name the profile**: "the store is behind this build — `tg personal store migrate`"
+  instead of `tg store migrate`, which failed with "name a profile" when copied.
 
 ### Added
 
 - **A next step in `--json` output and in an error carries `line`, the whole command to type with the profile**
   (cli-core 0.348.0): `"line": "tg personal mcp config"` beside `"command": "mcp config"`. A copied `command` alone
   failed with "name a profile". `command` is unchanged, and MCP answers leave `line` out.
-
-### Fixed
-
-- **`tg <profile> setup --help` shows the Global Options block again.** 0.74.0 dropped it when the usage line gained
-  `<profile>`.
-- **Hints in errors and notes name the profile**: "the store is behind this build — `tg personal store migrate`"
-  instead of `tg store migrate`, which failed with "name a profile" when copied.
 
 ## 0.74.0 — 19.10.2026
 
