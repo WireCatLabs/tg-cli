@@ -2,7 +2,7 @@
  * Every write once against the real Telegram, in Saved Messages only, before a release is announced.
  * Run by hand, never by CI, and only with the owner's yes each time.
  *
- *   pnpm smoke:live
+ *   TG_PROFILE=<profile> pnpm smoke:live
  *
  * It drives `bin/tg`, the checkout's own build with its own profile in `.tg/` — never the installed
  * `tg`, whose store a branch build could migrate. Each command reuses the saved session; a
@@ -108,7 +108,7 @@ try {
       const deadline = Date.now() + 180_000
       while (Date.now() < deadline) {
         await new Promise((done) => setTimeout(done, 15_000))
-        const fired = tg("messages", "list", SAVED, `date>${stamp}`, "--limit", "50").items ?? []
+        const fired = tg("messages", "list", SAVED, `date>"${stamp}"`, "--limit", "50").items ?? []
         const found = fired.filter((message) => message.text === "tg-cli smoke scheduled")
         if (found.length > 0) {
           for (const message of found) created.push(String(message.id))
@@ -129,7 +129,7 @@ try {
   // A pin leaves a service message behind in a private chat; count what is left, never show it.
   await step("nothing left since the start", () => {
     // Its own messages count too: a deletion refused for the hour leaves them behind.
-    const left = tg("messages", "list", SAVED, `date>${stamp}`, "--limit", "50").items ?? []
+    const left = tg("messages", "list", SAVED, `date>"${stamp}"`, "--limit", "50").items ?? []
     if (left.length > 0) throw new Error(`${left.length} message(s) since the start — look in Saved Messages`)
   })
 } finally {
