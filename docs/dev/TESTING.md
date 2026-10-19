@@ -40,7 +40,7 @@ test replaces mtcute's `TelegramClient` with a stand-in. A test that could open 
 
 ```sh
 node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"   # a worktree, once
-pnpm smoke:live
+TG_PROFILE=<profile> pnpm smoke:live
 ```
 
 `scripts/smoke-live.ts` does every write once against the real Telegram, **in Saved Messages only**:

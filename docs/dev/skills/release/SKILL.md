@@ -65,7 +65,7 @@ code. Each one gets **holds** or **broken**, with `path:line`.
 
   ```sh
   node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"
-  pnpm smoke:live
+  TG_PROFILE=<profile> pnpm smoke:live
   ```
 
   Inside this repository's sandbox a script gets no network for the `bin/tg` it starts: ask the
