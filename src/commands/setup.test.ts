@@ -181,6 +181,8 @@ describe("setup", () => {
     expect(screen).toContain("\n      ✓ local directories ready")
     expect(screen).toMatch(/\n\n {8}\S/)
     expect(screen).not.toMatch(/^· \d\/5/m)
+    expect(screen).toContain("[3/5] Link this device")
+    expect(screen.slice(0, screen.indexOf("▀"))).not.toMatch(/scan/i)
   })
 
   it("asks a person for their agent and prints a readable completion", async () => {
