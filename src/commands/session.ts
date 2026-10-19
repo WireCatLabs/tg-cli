@@ -173,10 +173,10 @@ export const startSession = async (
       ...(sms ? { forceSms: true } : {}),
       showQr: (url, expires) => {
         asked = true
-        context.renderer.note(
+        qr.show(
+          url,
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
         )
-        qr.show(url)
       },
       phone,
       code: () => {
