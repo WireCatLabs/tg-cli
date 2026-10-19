@@ -3,6 +3,21 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **A next step in `--json` output and in an error carries `line`, the whole command to type with the profile**
+  (cli-core 0.348.0): `"line": "tg personal mcp config"` beside `"command": "mcp config"`. A copied `command` alone
+  failed with "name a profile". `command` is unchanged, and MCP answers leave `line` out.
+
+### Fixed
+
+- **`tg <profile> setup --help` shows the Global Options block again.** 0.74.0 dropped it when the usage line gained
+  `<profile>`.
+- **Hints in errors and notes name the profile**: "the store is behind this build — `tg personal store migrate`"
+  instead of `tg store migrate`, which failed with "name a profile" when copied.
+
 ## 0.74.0 — 19.10.2026
 
 ### Added
