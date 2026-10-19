@@ -67,6 +67,16 @@ describe("--help on a command", () => {
     }
     expect(failed).toEqual([])
   }, 60_000)
+
+  it("`setup --help` keeps its Global Options block under the profile usage line", async () => {
+    const streams = captureStreams()
+    const code = await run(["personal", "setup", "--help"], { streams, tty: false, keyring: memoryKeyring() })
+    const text = streams.stdout.join("\n")
+
+    expect(code).toBe(0)
+    expect(text).toContain("Usage: tg <profile> setup")
+    expect(text).toContain("Global Options:")
+  })
 })
 
 describe("the root help", () => {
