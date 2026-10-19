@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`messages forward` answers, and saves, the forwarded copy in the chat it went to.** It took the first new message
+  in Telegram's answer, which can belong to another chat; now it takes the one its send id names, in the target chat.
+  Creating a forum topic reads its first message the same way.
+
 ## 0.75.0 — 19.10.2026
 
 ### Fixed

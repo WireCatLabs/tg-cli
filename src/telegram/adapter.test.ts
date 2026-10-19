@@ -1456,7 +1456,7 @@ describe("forum setup", () => {
 
   it("creates a topic with the chosen random id and returns its server fields", async () => {
     const { adapter, client } = await open()
-    client.fullChat = forumFull(-100500, { isForum: true })
+    client.fullChat = forumFull(-1000000000500, { isForum: true })
     client.topics = [
       {
         id: 12,
@@ -1468,7 +1468,7 @@ describe("forum setup", () => {
         date: new Date("2026-10-03T00:00:00Z"),
       },
     ]
-    const topic = await adapter.createTopic("-100500", "synthetic topic", { sendId: "42" })
+    const topic = await adapter.createTopic("-1000000000500", "synthetic topic", { sendId: "42" })
     expect(topic).toMatchObject({ id: "12", title: "synthetic topic" })
     const request = client.calls.find(
       ({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.createForumTopic",
@@ -1479,7 +1479,7 @@ describe("forum setup", () => {
         ({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.createForumTopic",
       )?.args[1],
     ).toEqual({ maxRetryCount: 0, floodSleepThreshold: 0 })
-    expect(client.getForumTopicsById).toHaveBeenCalledWith(-100500, 12)
+    expect(client.getForumTopicsById).toHaveBeenCalledWith(-1000000000500, 12)
   })
   it("reports unknown creation/migration without inventing a retry identity", async () => {
     const { adapter, client } = await open()
@@ -1928,13 +1928,70 @@ describe("forwarding", () => {
   it("forwards one message by id, quietly when asked, and answers the copy", async () => {
     const { adapter, client } = await open()
 
-    const copy = await adapter.forward("-100500", "5", "-1001", { sendId: "123456789012345", silent: true })
+    const copy = await adapter.forward("-100500", "5", "-1000000000500", { sendId: "123456789012345", silent: true })
 
     expect(copy).toMatchObject({ id: "60", text: "synthetic copy", outgoing: true })
     const request = client.calls.find((call) => call.method === "call")?.args[0] as Record<string, unknown>
     expect(request).toMatchObject({ _: "messages.forwardMessages", id: [5], silent: true })
     expect(String((request.randomId as unknown[])[0])).toBe("123456789012345")
     expect(client.handleClientUpdate).toHaveBeenCalledOnce()
+  })
+
+  it("answers the copy in the target chat when Telegram returns another chat's new message first", async () => {
+    const { adapter, client } = await open()
+    const answer = forwarded(60) as { updates: unknown[]; users: unknown[] }
+    answer.updates.unshift(
+      { _: "updateMessageID", id: 60, randomId: Long.fromString("123456789012345") },
+      {
+        _: "updateNewMessage",
+        message: {
+          _: "message",
+          id: 61,
+          peerId: { _: "peerUser", userId: 2 },
+          fromId: { _: "peerUser", userId: 2 },
+          date: 1790000000,
+          message: "another chat",
+        },
+        pts: 2,
+        ptsCount: 1,
+      },
+    )
+    answer.users.push({ _: "user", id: 2, firstName: "Someone" })
+    client.forwardAnswer = answer
+
+    const copy = await adapter.forward("1", "5", "-1000000000500", { sendId: "123456789012345" })
+
+    expect(copy).toMatchObject({ id: "60", chatId: "-1000000000500", text: "synthetic copy" })
+  })
+
+  it("answers the copy in the target chat when another channel's message has the same id", async () => {
+    const { adapter, client } = await open()
+    const answer = forwarded(60) as { updates: unknown[]; chats: unknown[] }
+    answer.updates.unshift({
+      _: "updateNewChannelMessage",
+      message: {
+        _: "message",
+        id: 60,
+        peerId: { _: "peerChannel", channelId: 501 },
+        date: 1790000000,
+        message: "another channel",
+      },
+      pts: 2,
+      ptsCount: 1,
+    })
+    answer.chats.push({
+      _: "channel",
+      id: 501,
+      title: "Other",
+      accessHash: Long.ZERO,
+      photo: { _: "chatPhotoEmpty" },
+      date: 0,
+    })
+    client.forwardAnswer = answer
+
+    const copy = await adapter.forward("1", "5", "-1000000000500", { sendId: "42" })
+
+    expect(copy).toMatchObject({ id: "60", chatId: "-1000000000500", text: "synthetic copy" })
   })
 
   it("forwards as the identity it was given into a supergroup", async () => {

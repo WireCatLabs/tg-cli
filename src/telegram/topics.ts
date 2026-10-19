@@ -122,7 +122,7 @@ export const createTopic = (feature: Feature, chatId: string, title: string, { s
       )
       accepted = true
       client.handleClientUpdate(updates, true)
-      const message = forwardedCopy(updates)
+      const message = forwardedCopy(updates, randomId, state.chat.id)
       const mapped =
         updates._ === "updates" || updates._ === "updatesCombined"
           ? updates.updates.find(

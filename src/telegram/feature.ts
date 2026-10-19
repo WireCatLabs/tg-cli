@@ -1,4 +1,12 @@
-import { type InputPeerLike, Long, PeersIndex, type TelegramClient, Message as TgMessage, type tl } from "@mtcute/node"
+import {
+  getMarkedPeerId,
+  type InputPeerLike,
+  Long,
+  PeersIndex,
+  type TelegramClient,
+  Message as TgMessage,
+  type tl,
+} from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import { type Message, type MessageHit, observedCounters } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
@@ -106,10 +114,18 @@ export const parseSendId = (typed: string): Long => {
   return Long.fromString(typed)
 }
 
-export const forwardedCopy = (updates: tl.TypeUpdates): TgMessage | undefined => {
+/** The answer can carry other chats' new messages, so the copy is the one `random_id` names, in `chatId`. */
+export const forwardedCopy = (updates: tl.TypeUpdates, randomId: Long, chatId: string): TgMessage | undefined => {
   if (updates._ !== "updates" && updates._ !== "updatesCombined") return undefined
-  const update = updates.updates.find((one) => one._ === "updateNewMessage" || one._ === "updateNewChannelMessage")
-  return update && "message" in update ? new TgMessage(update.message, PeersIndex.from(updates)) : undefined
+  const mapped = updates.updates.find((one) => one._ === "updateMessageID" && one.randomId.eq(randomId))
+  const id = mapped?._ === "updateMessageID" ? mapped.id : undefined
+  for (const one of updates.updates) {
+    if (one._ !== "updateNewMessage" && one._ !== "updateNewChannelMessage") continue
+    if (one.message._ === "messageEmpty" || (id !== undefined && one.message.id !== id)) continue
+    if (getMarkedPeerId(one.message.peerId) === Number(chatId))
+      return new TgMessage(one.message, PeersIndex.from(updates))
+  }
+  return undefined
 }
 
 export const remoteMessage = (message: TgMessage): Message =>
