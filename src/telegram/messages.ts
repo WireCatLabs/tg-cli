@@ -360,7 +360,7 @@ export const forward = (
         ...(author === undefined ? {} : { sendAs: await feature.client.resolvePeer(author) }),
       })
       feature.client.handleClientUpdate(updates, true)
-      const copy = forwardedCopy(updates)
+      const copy = forwardedCopy(updates, randomId, toChatId)
       if (!copy) throw new CliError("provider_error", "Telegram answered the forward without the new message")
       return toMessage(copy)
     } catch (error) {
