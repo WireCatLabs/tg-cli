@@ -189,7 +189,7 @@ export const setupCommand = () =>
         if (reused) {
           screen.step(2, "Telegram app ID and hash")
           screen.detail("✓ stored credentials")
-          screen.step(3, "Log in")
+          screen.step(3, "Link this device")
           screen.detail("✓ existing session, no new login")
         } else {
           await context.run(async () => {
@@ -201,9 +201,7 @@ export const setupCommand = () =>
               command: `${prefix}setup`,
               indent: screen.indent,
               progress: (step) =>
-                step === "app"
-                  ? screen.step(2, "Telegram app ID and hash")
-                  : screen.step(3, "Log in: scan the QR code or enter the login code"),
+                step === "app" ? screen.step(2, "Telegram app ID and hash") : screen.step(3, "Link this device"),
             })
           })
         }

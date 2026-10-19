@@ -156,6 +156,7 @@ describe("setup", () => {
       JSON.parse(again.stdout[0] ?? ""),
     )
     expect(answer.item.session.reused).toBe(true)
+    expect(again.stderr.join("\n")).toContain("3/5 — Link this device")
     expect(again.login).not.toHaveBeenCalled()
     expect(registration.calls).toBe(0)
     expect(again.closed).toHaveBeenCalledTimes(1)
@@ -181,6 +182,8 @@ describe("setup", () => {
     expect(screen).toContain("\n      ✓ local directories ready")
     expect(screen).toMatch(/\n\n {8}\S/)
     expect(screen).not.toMatch(/^· \d\/5/m)
+    expect(screen).toContain("[3/5] Link this device")
+    expect(screen.slice(0, screen.indexOf("▀"))).not.toMatch(/scan/i)
   })
 
   it("asks a person for their agent and prints a readable completion", async () => {
