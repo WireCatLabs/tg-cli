@@ -17,8 +17,18 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   is refused before it opens a browser; a phone login needs a terminal. Login stays off MCP: run the command
   ([when an agent runs the login](docs/sessions.md#when-an-agent-runs-the-login)).
 
+### Added
+
+- **`store clear --left` names the chats it deletes** (cli-core 0.353.0): the refusal without `--allow-dangerous`
+  lists the first 20, `--dry-run` lists them all, and the answer carries a `left` list (`id`, `title`, `messages`).
+
 ### Fixed
 
+- **From cli-core 0.351.0–0.362.0:** `chats leave` and `chats join` update the store, and `chats show` finds a chat
+  you left; a sent message is saved in the chat Telegram answered; a re-keyed chat keeps the stricter privacy of its
+  two halves; a chat hidden from search stays out of every search that does not name it; a failed scheduled run's
+  `last.json` keeps an error code, never a chat title; the first `serve` after an upgrade re-keys chats in short
+  passes instead of locking the store.
 - **`messages forward` answers, and saves, the forwarded copy in the chat it went to.** It took the first new message
   in Telegram's answer, which can belong to another chat; now it takes the one its send id names, in the target chat.
   Creating a forum topic reads its first message the same way.
