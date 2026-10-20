@@ -3,10 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.77.0 — 20.10.2026
+
+### Added
+
+- **The store keeps a chat's history (store version 25, cli-core 0.366.0).** A change to a chat's id, title,
+  membership or search visibility is kept in `chat_revisions` with the old and new value; a read by the id a chat
+  was re-keyed from finds the chat it became. The store moves to version 25 when first opened; nothing is sent.
 
 ### Fixed
 
+- **A chat you left is found by any of its ids** (cli-core 0.368.0) in `store export`, `store status`, `messages
+  thread`, a search's `--chat` and `chat:`, tags, tasks and the other reads of its kept history. `chats track` and
+  `store gaps plan` refuse it: "you left chat <id>".
 - **`tg guide` lists memo's scenario under the same title as memo and the other tools:** "One person across every
   tool", capitalised. On cli-core 0.370.0 the scenario check in the tests also catches shell characters left
   outside quotes in a step.
