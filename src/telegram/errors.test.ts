@@ -9,8 +9,8 @@ import {
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
-import { bareCheck } from "@wirecat/cli-core"
 import { errorObjectOf } from "@wirecat/cli-base"
+import { bareCheck } from "@wirecat/cli-core"
 import { failureContext } from "@wirecat/cli-core/cli"
 import { describe, expect, it } from "vitest"
 import { TG } from "../app.js"
