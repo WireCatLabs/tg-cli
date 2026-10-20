@@ -19,6 +19,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   (was `provider.unavailable`) and `write.unanswered` (was `outcome.unknown`). Codes, exit codes and messages are
   unchanged. Under `--debug`, the record's `cause` now gives the failure behind it, not only its code.
 
+### Fixed
+
+- **Search queries keep an `@` that is followed by a letter inside a term.** E-mail addresses without a dot after the
+  `@` and chat ids no longer need quotes: `email:ana@example.com` works as typed.
+
 ## 0.77.0 — 20.10.2026
 
 ### Added

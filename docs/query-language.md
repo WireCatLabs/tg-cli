@@ -92,7 +92,7 @@ corrected: to catch several endings, use a wildcard such as `invo*`.
 | `size` | an attached file's size, in bytes or KB/MB/GB of 1,024 | `size>10MB` |
 | `tag` | your own local tag on the message, its chat or its sender | `tag:work` |
 | `phone` | a phone number found in the text, however it is written | `phone:"+34 600 000 000"` |
-| `email` | an e-mail address found in the text | `email:"ana@example.com"` |
+| `email` | an e-mail address found in the text | `email:ana@example.com` |
 | `url` | a link found in the text, without tracking parameters | `url:"https://example.com/a"` |
 | `domain` | the site of a link or an address found in the text | `domain:example.com` |
 | `mentions` | a person, organization or document that a found mention is linked to | `mentions:"person:12"` |
@@ -112,7 +112,7 @@ fields to find the messages that hold them. The finds themselves are listed by `
 
 ```sh
 tg personal search messages 'phone:"+34 600 000 000"'
-tg personal search messages 'email:"ana@example.com" OR domain:example.com'
+tg personal search messages 'email:ana@example.com OR domain:example.com'
 tg personal search messages 'mentions:"person:12"'
 ```
 
