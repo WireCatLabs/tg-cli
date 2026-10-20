@@ -12,6 +12,7 @@ import {
   commandWords,
   environmentOf,
   logsInOrOut,
+  printItem,
   REMOTE_WRITE,
   refuseCommandName,
   rootOf,
@@ -25,7 +26,6 @@ import { Command, Option } from "commander"
 import { TG } from "../app.js"
 import { pathsFor } from "../paths.js"
 import { installer } from "../update.js"
-import { printItem } from "./answer.js"
 import { type CommandContext, type Environment, forCommand, SKILL } from "./context.js"
 import { startSession } from "./session.js"
 

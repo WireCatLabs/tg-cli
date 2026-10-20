@@ -7,6 +7,7 @@ import {
   asFirstWord,
   commandWords,
   logsInOrOut,
+  printItem,
   REMOTE_WRITE,
   refuseCommandName,
   rememberAccount,
@@ -18,7 +19,6 @@ import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
-import { printItem } from "./answer.js"
 import { type CommandContext, forCommand } from "./context.js"
 
 type Ask = (prompt: string, echo: boolean) => Promise<string>
