@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A locked or unreachable Linux keyring now warns and falls back to the credentials file** (cli-base 0.47.5). The
+  keyring is read through the Secret Service only; before, a failure could end in silent storage in kernel memory,
+  which is gone after a logout or reboot.
+
 ## 0.78.0 — 21.10.2026
 
 ### Changed — may break callers
