@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed
+
+- **Markdown headings are refused when sending (cli-core parser).** Send text now goes through cli-core's shared
+  Markdown parser, as `max` does. A line that starts with `#` used to go out as typed; it now fails with a
+  validation error, because Telegram has no headings. Write the line in bold instead. Nothing else changes.
+
 ## 0.77.0 — 20.10.2026
 
 ### Added
