@@ -1,6 +1,7 @@
 import type { DeleteMessageUpdate, RawUpdateInfo, Message as TgMessage } from "@mtcute/node"
 import { CliError, isCliError } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-core"
+import { withCause } from "./errors.js"
 import { type Feature, remoteHit } from "./feature.js"
 import { toDeletions, toReactionChange } from "./map.js"
 
@@ -60,7 +61,10 @@ const untilStopped = async (feature: Feature, signal: AbortSignal): Promise<void
     const refusal = await askState(feature)
     if (signal.aborted) return
     if (refusal?.code === "authentication_error") throw refusal
-    if (down) throw new CliError("provider_unavailable", LOOP_STOPPED, refusal ? { cause: refusal.code } : {})
+    if (down) {
+      const stopped = new CliError("provider_unavailable", LOOP_STOPPED, { reason: "updates.stopped" })
+      throw refusal ? withCause(stopped, refusal) : stopped
+    }
   }
 }
 

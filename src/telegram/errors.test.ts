@@ -9,9 +9,13 @@ import {
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
+import { errorObjectOf } from "@wirecat/cli-base"
 import { bareCheck } from "@wirecat/cli-core"
+import { failureContext } from "@wirecat/cli-core/cli"
 import { describe, expect, it } from "vitest"
+import { TG } from "../app.js"
 import { backgroundError, toCliError } from "./errors.js"
+import { unknownIfUnanswered } from "./feature.js"
 
 const rpc = (code: number, text: string, fields: Record<string, unknown> = {}) =>
   Object.assign(new tl.RpcError(code, text), fields)
@@ -182,5 +186,33 @@ describe("mtcute's background errors", () => {
   it("shows each with --verbose as one line in tg's words, without its stack", () => {
     expect(seen(true, new Error("Connection closed"))).toEqual(["[client] Connection closed"])
     expect(seen(true, new MtTimeoutError(1000))).toEqual(["[client] Telegram did not answer in time"])
+  })
+})
+
+describe("registered reasons (WC-OUT-15)", () => {
+  const objectOf = (failure: unknown) => errorObjectOf(failure, failureContext(TG.errors)).error
+
+  it.each([
+    ["AUTH_KEY_DUPLICATED", 406, "login.duplicated"],
+    ["SESSION_REVOKED", 401, "login.revoked"],
+    ["USER_DEACTIVATED", 401, "account.deactivated"],
+    ["USER_DEACTIVATED_BAN", 401, "account.banned"],
+    ["FROZEN_METHOD_INVALID", 420, "account.frozen"],
+    ["PEER_FLOOD", 400, "account.limited"],
+  ])("reports %s as %s", (text, status, reason) => {
+    expect(objectOf(toCliError(rpc(status, text), bareCheck))).toMatchObject({ reason })
+  })
+
+  it("reports a write Telegram never answered as write.unanswered, its cause kept off the details", () => {
+    const failure = unknownIfUnanswered(new MtTimeoutError(1000), "check the chat", { operation_id: "42" })
+
+    expect(failure).toMatchObject({ cause: { code: "timeout" } })
+    const object = objectOf(failure)
+    expect(object).toMatchObject({
+      code: "outcome_unknown",
+      reason: "write.unanswered",
+      details: { operation_id: "42" },
+    })
+    expect(object.details).not.toHaveProperty("cause")
   })
 })

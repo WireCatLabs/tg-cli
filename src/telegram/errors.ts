@@ -168,13 +168,14 @@ export const toCliError = (error: unknown, words: CheckWords<Check>, login = wor
         "authentication_error",
         `Telegram ended this login because two connections used it at once (tg serve, tg mcp, ` +
           `tg watch or a command beside them) — run ${login}`,
-        details,
+        { ...details, reason: "login.duplicated" },
       )
     }
     const standing = STANDINGS[error.text]
     if (standing) {
       const [code, message, state] = standing(login, words)
-      return new CliError(code, message, { ...details, standing: { state, hint: message } })
+      const reason = state === "revoked" ? "login.revoked" : `account.${state}`
+      return new CliError(code, message, { ...details, reason, standing: { state, hint: message } })
     }
     if (error.code === RpcError.UNAUTHORIZED) {
       return new CliError("authentication_error", `not logged in, or the session was ended — run ${login}`, details)
@@ -238,3 +239,6 @@ export const backgroundError =
     const message = mapped instanceof Error ? mapped.message : String(mapped)
     write(`[client] ${message.split("\n", 1)[0]}`)
   }
+
+/** cli-base's `CliError` takes no `cause`; kept on the error itself, only `--debug` shows it (WC-OUT-15). */
+export const withCause = (error: CliError, cause: unknown): CliError => Object.assign(error, { cause })
