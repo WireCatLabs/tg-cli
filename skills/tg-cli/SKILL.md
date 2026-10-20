@@ -490,7 +490,7 @@ never into logs or files.
 
 `mentions confirm <id> [person:<uid>|organization:<id>]` records who owns a phone or an address (a shop's number
 belongs to the organization, apart from any person); `mentions reject <id>` dismisses a value for good.
-`search messages` finds messages by mention: `phone:`, `email:` (quoted: `email:"ana@example.com"`), `url:`, `domain:`.
+`search messages` finds messages by mention: `phone:`, `email:` (`email:ana@example.com`), `url:`, `domain:`.
 
 ```sh
 tg personal mentions list kind:phone --json
