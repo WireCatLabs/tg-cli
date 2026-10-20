@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
-import { Readable } from "node:stream"
+import { Readable, Writable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { installSkill } from "@wirecat/cli-base/skill"
@@ -13,19 +13,14 @@ import { run } from "../program.js"
 import { chat, scripted } from "../testing/scripted.js"
 import type { Adapter, Environment } from "./context.js"
 
-const input = vi.hoisted(() => ({ answers: [] as string[], prompts: [] as string[], cancel: false, wait: false }))
+const input = vi.hoisted(() => ({ answers: [] as string[], prompts: [] as string[] }))
 const registration = vi.hoisted(() => ({ calls: 0, error: undefined as Error | undefined }))
 const browser = vi.hoisted(() => ({ urls: [] as string[] }))
 
 vi.mock("@wirecat/cli-core", async (original) => ({
   ...(await original<typeof import("@wirecat/cli-core")>()),
-  readSecret: async (prompt: string, options: { signal?: AbortSignal }) => {
+  readSecret: async (prompt: string) => {
     input.prompts.push(prompt)
-    if (input.cancel) throw new CliError("cancelled", "cancelled")
-    if (input.wait)
-      return new Promise<string>((_resolve, reject) => {
-        options.signal?.addEventListener("abort", () => reject(new CliError("cancelled", "cancelled")), { once: true })
-      })
     return input.answers.shift() ?? ""
   },
 }))
@@ -65,8 +60,6 @@ beforeEach(() => {
   }
   input.answers = []
   input.prompts = []
-  input.cancel = false
-  input.wait = false
   registration.calls = 0
   registration.error = undefined
   browser.urls = []
@@ -84,6 +77,17 @@ const existingSession = (profile = "default") => {
   withKeys()
   return path
 }
+const prompted = () => {
+  const chunks: string[] = []
+  const stderr = new Writable({
+    write(chunk, _encoding, done) {
+      chunks.push(String(chunk))
+      done()
+    },
+  })
+  return { stderr, text: () => stripVTControlCharacters(chunks.join("")) }
+}
+const typed = (text: string) => Object.assign(Readable.from([text]), { isTTY: true })
 const execute = async (argv: string[], environment: Partial<Environment> = {}, overrides: Partial<Adapter> = {}) => {
   const streams = captureStreams()
   const closed = vi.fn(async () => {})
@@ -189,10 +193,10 @@ describe("setup", () => {
 
   it("asks a person for their agent and prints a readable completion", async () => {
     existingSession()
-    input.answers = [" GEMINI "]
-    const result = await execute(["setup"], { tty: true })
+    const prompt = prompted()
+    const result = await execute(["setup"], { stdin: typed(" GEMINI \n"), tty: true, stderr: prompt.stderr })
     expect(result.code).toBe(0)
-    expect(input.prompts).toEqual([expect.stringContaining("Agent")])
+    expect(prompt.text()).toContain("Agent [codex/cursor/claude/gemini/all/none]")
     expect(result.stdout.join()).toContain("installed for gemini")
     expect(result.stdout.join()).toContain("tg default inbox --limit 5")
     expect(stripVTControlCharacters(result.stdout.join())).toMatch(/For an agent +tg default skill show/)
@@ -200,7 +204,7 @@ describe("setup", () => {
 
   it("an empty agent choice skips installation", async () => {
     existingSession()
-    const result = await execute(["setup"], { tty: true })
+    const result = await execute(["setup"], { stdin: typed("\n"), tty: true })
     expect(result.code).toBe(0)
     expect(stripVTControlCharacters(result.stdout.join())).toMatch(/Agent skill +skipped/)
     expect(installSkill).not.toHaveBeenCalled()
@@ -217,8 +221,7 @@ describe("setup", () => {
 
   it("rejects an unknown interactive choice without installing a skill", async () => {
     existingSession()
-    input.answers = ["unknown"]
-    const result = await execute(["setup"], { tty: true })
+    const result = await execute(["setup"], { stdin: typed("unknown\n"), tty: true })
     expect(result.code).toBe(2)
     expect(result.stdout).toEqual([])
     expect(installSkill).not.toHaveBeenCalled()
@@ -227,7 +230,6 @@ describe("setup", () => {
 
   it("cancels cleanly at the agent choice and preserves the existing session", async () => {
     const path = existingSession()
-    input.cancel = true
     const result = await execute(["setup"], { tty: true })
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
@@ -372,15 +374,15 @@ describe("setup", () => {
 
   it("cancels a pending agent choice on the whole-command deadline without ending stdin", async () => {
     existingSession()
-    input.wait = true
     const stdin = Object.assign(new Readable({ read() {} }), { isTTY: true })
     const ended = vi.fn()
     stdin.on("end", ended)
-    const result = await execute(["setup", "--timeout", "100ms"], { stdin, tty: true })
+    const prompt = prompted()
+    const result = await execute(["setup", "--timeout", "100ms"], { stdin, tty: true, stderr: prompt.stderr })
+    expect(prompt.text()).toContain("Agent [codex/cursor/claude/gemini/all/none]")
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
     expect(result.stderr.join()).toContain("did not finish within 100ms")
-    expect(input.prompts).toEqual([expect.stringContaining("Agent")])
     expect(ended).not.toHaveBeenCalled()
     expect(installSkill).not.toHaveBeenCalled()
   })
