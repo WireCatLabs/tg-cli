@@ -5,7 +5,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
-### Changed
+### Changed — may break callers
 
 - **Markdown headings are refused when sending (cli-core parser).** Send text now goes through cli-core's shared
   Markdown parser, as `max` does. A line that starts with `#` used to go out as typed; it now fails with a
