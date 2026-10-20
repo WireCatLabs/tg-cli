@@ -35,7 +35,7 @@ telegram:
     description: "Every write states whether repeating it is safe"
 testing:
   adapter-fake-client:
-    description: "Adapter tests: hoisted fake client, timings as exported constants"
+    description: "Adapter tests: a fake TelegramClient under the real adapter, timings as exported constants"
   environment-seams:
     description: "Every side effect comes in through Environment and run()"
   leak-assertions:
