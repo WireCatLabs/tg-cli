@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { dirname, join } from "node:path"
-import { Readable } from "node:stream"
+import { Readable, Writable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { installSkill } from "@wirecat/cli-base/skill"
@@ -76,6 +76,16 @@ const existingSession = (profile = "default") => {
   writeFileSync(path, "synthetic session")
   withKeys()
   return path
+}
+const prompted = () => {
+  const chunks: string[] = []
+  const stderr = new Writable({
+    write(chunk, _encoding, done) {
+      chunks.push(String(chunk))
+      done()
+    },
+  })
+  return { stderr, text: () => stripVTControlCharacters(chunks.join("")) }
 }
 const typed = (text: string) => Object.assign(Readable.from([text]), { isTTY: true })
 const execute = async (argv: string[], environment: Partial<Environment> = {}, overrides: Partial<Adapter> = {}) => {
@@ -183,8 +193,10 @@ describe("setup", () => {
 
   it("asks a person for their agent and prints a readable completion", async () => {
     existingSession()
-    const result = await execute(["setup"], { stdin: typed(" GEMINI \n"), tty: true })
+    const prompt = prompted()
+    const result = await execute(["setup"], { stdin: typed(" GEMINI \n"), tty: true, stderr: prompt.stderr })
     expect(result.code).toBe(0)
+    expect(prompt.text()).toContain("Agent [codex/cursor/claude/gemini/all/none]")
     expect(result.stdout.join()).toContain("installed for gemini")
     expect(result.stdout.join()).toContain("tg default inbox --limit 5")
     expect(stripVTControlCharacters(result.stdout.join())).toMatch(/For an agent +tg default skill show/)
@@ -365,7 +377,9 @@ describe("setup", () => {
     const stdin = Object.assign(new Readable({ read() {} }), { isTTY: true })
     const ended = vi.fn()
     stdin.on("end", ended)
-    const result = await execute(["setup", "--timeout", "100ms"], { stdin, tty: true })
+    const prompt = prompted()
+    const result = await execute(["setup", "--timeout", "100ms"], { stdin, tty: true, stderr: prompt.stderr })
+    expect(prompt.text()).toContain("Agent [codex/cursor/claude/gemini/all/none]")
     expect(result.code).not.toBe(0)
     expect(result.stdout).toEqual([])
     expect(result.stderr.join()).toContain("did not finish within 100ms")

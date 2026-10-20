@@ -17,6 +17,7 @@ import {
   rootOf,
   runtime,
   screenFor,
+  secretInputOf,
   withDeadline,
 } from "@wirecat/cli-core/cli"
 import { levelFor } from "@wirecat/cli-core/sends"
@@ -169,6 +170,7 @@ export const setupCommand = () =>
         screen.detail(`✓ verified, ${chatCount(chats.items.length)} read`)
         screen.step(5, "Agent")
         const agent = await agentFor(context, options.agent, screen.indent, {
+          ...secretInputOf(this),
           input: context.stdin,
           signal: cancellation.signal,
         })
