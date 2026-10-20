@@ -1,9 +1,9 @@
 import { join } from "node:path"
 import { Long, MtPeerNotFoundError, tl } from "@mtcute/node"
+import { bareCheck } from "@wirecat/cli-core"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { pathsFor } from "../paths.js"
 import { openBotHistory } from "./bot-history.js"
-import { bareCheck } from "./feature.js"
 
 const CHAT = "-1000000000700"
 const stand = vi.hoisted(() => ({ client: undefined as unknown as FakeClient, options: undefined as unknown }))

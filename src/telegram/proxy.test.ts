@@ -3,10 +3,10 @@ import { createServer } from "node:net"
 import { join } from "node:path"
 import { HttpProxyTcpTransport, MtProxyTcpTransport, SocksProxyTcpTransport } from "@mtcute/node"
 import { memoryKeyring } from "@wirecat/cli-base/testing"
+import { bareCheck } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { parseProxy } from "../proxy.js"
 import { TelegramAdapter } from "./adapter.js"
-import { bareCheck } from "./feature.js"
 import { proxiedTransport, proxySecrets, resolveProxy } from "./proxy.js"
 
 const MT_SECRET = `ee${"00".repeat(16)}${Buffer.from("example.com").toString("hex")}`

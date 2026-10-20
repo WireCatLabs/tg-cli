@@ -9,9 +9,9 @@ import {
   MtUnsupportedError,
   tl,
 } from "@mtcute/node"
+import { bareCheck } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { backgroundError, toCliError } from "./errors.js"
-import { bareCheck } from "./feature.js"
 
 const rpc = (code: number, text: string, fields: Record<string, unknown> = {}) =>
   Object.assign(new tl.RpcError(code, text), fields)

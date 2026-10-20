@@ -8,6 +8,7 @@ import type {
   Chat,
   ChatCard,
   ChatEvents,
+  CheckWords,
   CounterField,
   Discussion,
   Folder,
@@ -34,6 +35,7 @@ import type {
   Topic,
   TopicChange,
 } from "@wirecat/cli-core"
+import { bareCheck } from "@wirecat/cli-core"
 import type {
   After,
   Download,
@@ -52,14 +54,13 @@ import * as contacts from "./contacts.js"
 import type { ApiCredentials } from "./credentials.js"
 import { backgroundError, toCliError } from "./errors.js"
 import {
-  bareCheck,
+  type Check,
   type Feature,
   messageNumber,
   type Sent,
   type Unanswered,
   unansweredText,
   unknownIfUnanswered,
-  type Words,
 } from "./feature.js"
 import * as folders from "./folders.js"
 import { formatHtml } from "./format-html.js"
@@ -77,7 +78,7 @@ import { openSessionStorage } from "./storage.js"
 import * as topics from "./topics.js"
 import * as watching from "./watch.js"
 
-export type { Check, Sent, Words } from "./feature.js"
+export type { Check, Sent } from "./feature.js"
 export { ADMIN_RIGHTS, GROUP_SETTINGS } from "./groups.js"
 export type { LoginPrompts } from "./login.js"
 export { TRANSCRIBE_POLL_MS } from "./messages.js"
@@ -96,7 +97,7 @@ export interface AdapterOptions {
   /** How to log in on this profile, for the error a dropped session gives. */
   login?: string
   /** How a command is named where an unknown outcome sends a person to check. */
-  checks?: Words
+  checks?: CheckWords<Check>
   proxy?: ProxyServer
   /** Where a wait mtcute sits out is said — a warning, so `--quiet` drops it. The diagnostic stream if not given. */
   note?: (message: string) => void

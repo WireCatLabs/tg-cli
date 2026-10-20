@@ -1,7 +1,7 @@
 import { getBasicPeerType, getMarkedPeerId, PeersIndex, type TelegramClient, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { SenderIdentity } from "@wirecat/cli-core"
-import type { Words } from "./feature.js"
+import type { CheckWords, SenderIdentity } from "@wirecat/cli-core"
+import type { Check } from "./feature.js"
 
 type Client = Pick<TelegramClient, "getMe" | "getFullChat" | "resolvePeer" | "call">
 
@@ -58,7 +58,12 @@ export const savedSenderOf = async (
 }
 
 /** Telegram takes `send_as` in channels and supergroups only; elsewhere the account is the one author. */
-export const sendAsPeer = (chatId: string, sendAs: string, self: string | null, words: Words): number | undefined => {
+export const sendAsPeer = (
+  chatId: string,
+  sendAs: string,
+  self: string | null,
+  words: CheckWords<Check>,
+): number | undefined => {
   if (!/^-?\d{1,16}$/.test(sendAs) || !Number.isSafeInteger(Number(sendAs))) {
     throw new CliError("validation_error", `--send-as takes an id from ${words("chats.send-as")}`)
   }

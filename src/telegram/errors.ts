@@ -12,7 +12,8 @@ import {
   tl,
 } from "@mtcute/node"
 import { CliError, type ErrorCode, isCliError } from "@wirecat/cli-base"
-import type { Words } from "./feature.js"
+import type { CheckWords } from "@wirecat/cli-core"
+import type { Check } from "./feature.js"
 
 const { RpcError } = tl
 
@@ -26,10 +27,11 @@ const NOT_FOUND = new Set([
   "MESSAGE_ID_INVALID",
 ])
 
-export const pollClosed = (words: Words): string => `this poll is closed; ${words("polls.show")} has its result`
+export const pollClosed = (words: CheckWords<Check>): string =>
+  `this poll is closed; ${words("polls.show")} has its result`
 
 /** Refusals whose name alone would not tell a person what to do. */
-const EXPLAINED: Record<string, [ErrorCode, string | ((words: Words) => string)]> = {
+const EXPLAINED: Record<string, [ErrorCode, string | ((words: CheckWords<Check>) => string)]> = {
   CHANNEL_PRIVATE: ["permission_error", "you cannot access this channel or supergroup"],
   CHAT_DISCUSSION_UNALLOWED: ["validation_error", "a linked discussion group cannot enable forum topics"],
   CHANNEL_FORUM_MISSING: ["validation_error", "enable forum topics before creating a topic"],
@@ -88,7 +90,7 @@ const EXPLAINED: Record<string, [ErrorCode, string | ((words: Words) => string)]
 
 type Standing = (
   login: string,
-  words: Words,
+  words: CheckWords<Check>,
 ) => [ErrorCode, string, "frozen" | "limited" | "banned" | "deactivated" | "revoked"]
 
 const revoked: Standing = (login) => ["authentication_error", `Telegram ended this login — run ${login}`, "revoked"]
@@ -150,7 +152,7 @@ const argumentKind = (message: string) =>
  * Telegram's refusals as the closed list of codes a script branches on. Only the error's name
  * travels into the message — never a parameter the caller passed, which may be somebody's text.
  */
-export const toCliError = (error: unknown, words: Words, login = words("session.start")): unknown => {
+export const toCliError = (error: unknown, words: CheckWords<Check>, login = words("session.start")): unknown => {
   if (isCliError(error)) return error
   if (RpcError.is(error, "FLOOD_WAIT_%d")) {
     return new CliError("rate_limited", `Telegram asks to wait ${error.seconds} s before the next request`, {
@@ -229,7 +231,7 @@ export const toCliError = (error: unknown, words: Words, login = words("session.
  * reconnects on its own, and a request that really fails still throws to its caller.
  */
 export const backgroundError =
-  (write: (line: string) => void, verbose: boolean, words: Words) =>
+  (write: (line: string) => void, verbose: boolean, words: CheckWords<Check>) =>
   (error: Error): void => {
     if (!verbose) return
     const mapped = toCliError(error, words)

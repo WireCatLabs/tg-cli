@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
+import { checkWords } from "@wirecat/cli-core"
 import {
   type BotMcp,
   type BotMessenger,
@@ -14,11 +15,10 @@ import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { TelegramBotTransport } from "../bot/transport.js"
 import { botSessionFile, sessionFile } from "../paths.js"
-import { TelegramAdapter } from "../telegram/adapter.js"
+import { type Check, TelegramAdapter } from "../telegram/adapter.js"
 import { openBotHistory } from "../telegram/bot-history.js"
 import { apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
-import { checkWords } from "./checks.js"
 import { type Adapter, type Environment, proxyOption, SKILL } from "./context.js"
 
 type Run = (argv: string[], environment?: Environment) => Promise<number>
@@ -51,9 +51,11 @@ export const TELEGRAM_BOT: BotMessenger = {
     const environment = environmentOf<Environment>(command)
     const env = environment.env ?? process.env
     const settings = resolveSettings(command.optsWithGlobals(), { env, kind: "bot" })
+    const { profile } = settings
+    const words = checkWords<Check>("tg", profile)
     const through = resolveProxy(settings, {
       env,
-      checks: checkWords,
+      checks: words,
       ...(environment.keyring ? { keyring: environment.keyring } : {}),
     })
     const fetch = environment.botFetch ?? (through ? proxiedFetch(through.proxy) : undefined)
@@ -66,7 +68,6 @@ export const TELEGRAM_BOT: BotMessenger = {
       }),
     )
     if (!history) return adapter
-    const { profile } = settings
     const readCredentials = (profile: string) =>
       apiCredentials({ profile, env, ...(environment.keyring ? { keyring: environment.keyring } : {}) }).read()
     const credentials = readCredentials(profile)
@@ -81,7 +82,7 @@ export const TELEGRAM_BOT: BotMessenger = {
       credentials,
       sessionPath: botSessionFile(profile, botId, env),
       token,
-      checks: checkWords,
+      checks: words,
       ...history,
       ...proxyOption(through),
       ...(stop ? { stop } : {}),
@@ -100,7 +101,7 @@ export const TELEGRAM_BOT: BotMessenger = {
             : await TelegramAdapter.open({
                 credentials,
                 sessionPath: personalPath,
-                checks: checkWords,
+                checks: words,
                 ...proxyOption(through),
               })
           track?.(personal)

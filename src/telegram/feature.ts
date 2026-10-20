@@ -8,7 +8,7 @@ import {
   type tl,
 } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import { type Message, type MessageHit, observedCounters } from "@wirecat/cli-core"
+import { bareCheck, type CheckWords, type Message, type MessageHit, observedCounters } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
 import { toMessage, toMessageHit } from "./map.js"
 
@@ -33,9 +33,6 @@ export const CHECKS = [
 ] as const
 export type Check = (typeof CHECKS)[number]
 
-/** A command as the person types it, arguments included, in one pair of backticks. */
-export type Words = (check: Check, args?: string) => string
-
 /** What may have happened, where to look, and what to weigh before a repeat. */
 export interface Unanswered {
   what: string
@@ -43,18 +40,14 @@ export interface Unanswered {
   after?: string
 }
 
-/** Without the command layer's words, a check is named by its command path alone. */
-export const bareCheck: Words = (check, args) =>
-  `\`${check.replaceAll(".", " ")}${args === undefined ? "" : ` ${args}`}\``
-
-export const unansweredText = ({ what, check, after }: Unanswered, words: Words): string =>
+export const unansweredText = ({ what, check, after }: Unanswered, words: CheckWords<Check>): string =>
   `${what}; check ${words(check)}${after === undefined ? "" : ` ${after}`}`
 
 /** What the features beside the adapter share: one client, one way to name a chat, one way to fail. */
 export interface Feature {
   client: TelegramClient
   login: string | undefined
-  checks: Words
+  checks: CheckWords<Check>
   /** The logged-in user's id from the session, without a request; `null` before a login. */
   self: () => string | null
   inputOf: (reference: string) => Promise<InputPeerLike>

@@ -1,8 +1,8 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 import { networkMiddlewares, type RpcCallMiddleware } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
+import { bareCheck } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
-import { bareCheck } from "./feature.js"
 
 const SENDS = new Set(["messages.sendMessage", "messages.sendMedia", "messages.forwardMessages"])
 const send = new AsyncLocalStorage<{ accepted: boolean }>()

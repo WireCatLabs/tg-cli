@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs"
 import { dirname } from "node:path"
 import { CliError, type KeyringStore } from "@wirecat/cli-base"
+import { checkWords } from "@wirecat/cli-core"
 import {
   asFirstWord,
   type BaseContext,
@@ -20,12 +21,11 @@ import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"
 import { isolated, sessionFile } from "../paths.js"
 import { proxyLabel } from "../proxy.js"
-import { ADMIN_RIGHTS, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
+import { ADMIN_RIGHTS, type Check, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
 import type { BotHistoryOptions, BotHistoryReader } from "../telegram/bot-history.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
 import type { UpdateEnvironment } from "../update.js"
-import { checkWords } from "./checks.js"
 
 export interface Environment extends BaseEnvironment {
   keyring?: KeyringStore
@@ -66,10 +66,11 @@ const telegramOf = (command: Command, base: BaseContext) => {
     warn: base.renderer.warn,
     ...(environment.keyring ? { keyring: environment.keyring } : {}),
   })
+  const words = checkWords<Check>("tg", profile)
   const proxy = () =>
     resolveProxy(base.settings, {
       env: base.env,
-      checks: checkWords,
+      checks: words,
       ...(environment.keyring ? { keyring: environment.keyring } : {}),
     })
   const login = `\`tg ${asFirstWord(profile)}session start\``
@@ -101,7 +102,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
           note: (line) => base.renderer.warn(line),
           verbose: base.settings.trace,
           login,
-          checks: checkWords,
+          checks: words,
         })
   }
 
