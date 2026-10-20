@@ -212,9 +212,11 @@ describe("setup", () => {
 
   it("never asks about agents in machine mode and defaults to no installation", async () => {
     existingSession()
-    const result = await execute(["setup", "--json"])
+    const prompt = prompted()
+    const result = await execute(["setup", "--json"], { stderr: prompt.stderr })
     expect(result.code).toBe(0)
     expect(input.prompts).toEqual([])
+    expect(prompt.text()).not.toContain("Agent [")
     expect(installSkill).not.toHaveBeenCalled()
     expect(JSON.parse(result.stdout[0] ?? "").item.next.mcp).toBe("tg default mcp config")
   })
@@ -251,9 +253,11 @@ describe("setup", () => {
   it("skips the optional agent question under CI even on a terminal", async () => {
     existingSession()
     env.CI = "true"
-    const result = await execute(["setup"], { tty: true })
+    const prompt = prompted()
+    const result = await execute(["setup"], { tty: true, stderr: prompt.stderr })
     expect(result.code).toBe(0)
     expect(input.prompts).toEqual([])
+    expect(prompt.text()).not.toContain("Agent [")
     expect(installSkill).not.toHaveBeenCalled()
   })
 
