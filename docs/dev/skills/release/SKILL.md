@@ -9,9 +9,9 @@ The steps tg and max share are in cli-core's
 [RELEASING.md](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/RELEASING.md). Read it
 first. This skill orders them for tg and adds what is tg's.
 
-**tg releases without asking**: no signed report, no sign-off. You merge and publish yourself once
-every step below holds. The one exception is the live smoke, which sends real messages and needs the
-owner's yes each time: a release that changes a write waits for that yes and the run.
+**Ask the owner before releasing.** Do steps 0 to 6 up to the merged `chore: release` pull request, then ask the
+owner explicitly whether to release and wait for a yes. Run `bin/release` only after that yes. The live smoke
+sends real messages and needs the owner's yes each time too.
 
 ## 0. What changed
 
