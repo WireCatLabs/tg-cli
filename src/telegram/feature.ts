@@ -9,7 +9,7 @@ import {
 } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
 import { bareCheck, type CheckWords, type Message, type MessageHit, observedCounters } from "@wirecat/cli-core"
-import { toCliError } from "./errors.js"
+import { toCliError, withCause } from "./errors.js"
 import { toMessage, toMessageHit } from "./map.js"
 
 /** The commands a message sends a person to; the command layer names them in its own words. */
@@ -77,7 +77,10 @@ export const retryDetails = (sendId: string, sendAs: string | undefined) => ({
 export const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
   const known = toCliError(error, bareCheck)
   if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
-    return new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, cause: known.code })
+    return withCause(
+      new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, reason: "write.unanswered" }),
+      known,
+    )
   }
   return error
 }

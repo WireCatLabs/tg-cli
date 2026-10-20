@@ -1821,7 +1821,8 @@ describe("sending", () => {
 
     await expect(adapter.send("-100500", "hola", { sendId: "42" })).rejects.toMatchObject({
       code: "outcome_unknown",
-      details: { operation_id: "42", cause: "timeout" },
+      details: { operation_id: "42", reason: "write.unanswered" },
+      cause: { code: "timeout" },
     })
   })
 
@@ -2834,7 +2835,8 @@ describe("a watch whose updates loop stops", () => {
     )
     const ended = expect(watch).rejects.toMatchObject({
       code: "provider_unavailable",
-      details: { cause: "network_error" },
+      details: { reason: "updates.stopped" },
+      cause: { code: "network_error" },
     })
 
     client._client.updates.updatesLoopActive = false
@@ -2844,7 +2846,11 @@ describe("a watch whose updates loop stops", () => {
 
   it("an ask that never answers is a restart too, so the watch cannot hang on it", async () => {
     const { watch, client } = await watching(() => new Promise(() => {}))
-    const ended = expect(watch).rejects.toMatchObject({ code: "provider_unavailable", details: { cause: "timeout" } })
+    const ended = expect(watch).rejects.toMatchObject({
+      code: "provider_unavailable",
+      details: { reason: "updates.stopped" },
+      cause: { code: "timeout" },
+    })
 
     client._client.updates.updatesLoopActive = false
     await vi.advanceTimersByTimeAsync(LOOP_CHECK_MS + STATE_WAIT_MS)

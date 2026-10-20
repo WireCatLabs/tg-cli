@@ -13,6 +13,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **A message that sends you to another command names it with your profile:** after a send or an edit with no answer
   from Telegram, "check `tg personal chats list`" replaces "check `tg chats list`", so it can be pasted as it
   stands. The words now come from cli-core.
+- **Telegram's account and login refusals, a stopped watch and an unanswered write carry their own error
+  `reason`** instead of the generic one for their code: `login.revoked`, `login.duplicated`, `account.deactivated`,
+  `account.banned`, `account.frozen`, `account.limited` (were `auth.failed` or `access.denied`), `updates.stopped`
+  (was `provider.unavailable`) and `write.unanswered` (was `outcome.unknown`). Codes, exit codes and messages are
+  unchanged. Under `--debug`, the record's `cause` now gives the failure behind it, not only its code.
 
 ## 0.77.0 — 20.10.2026
 
