@@ -47,6 +47,9 @@ describe("Telegram Markdown", () => {
       "```js\nx",
       "**`code`**",
       "[a [b](https://example.test)](https://example.test)",
+      "# Title",
+      "text\n## Sub",
+      "```x```",
     ])
       expect(() => formatMarkdown(text)).toThrow()
   })
