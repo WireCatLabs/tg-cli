@@ -18,6 +18,7 @@ import {
   imagesCommand,
   inboxCommand,
   inSection,
+  MEMO_SCENARIOS,
   mcpCommand,
   mentionsCommand,
   messagesCommand,
@@ -152,7 +153,7 @@ const definition: ProgramDefinition = {
     skillCommand(TG, SKILL),
     guideCommand(TG, {
       directory: fileURLToPath(new URL("../scenarios", import.meta.url)),
-      worksWith: [{ tool: "memo", name: "person-brief", title: "one person across every tool" }],
+      worksWith: [MEMO_SCENARIOS.personBrief],
     }),
   ],
 }

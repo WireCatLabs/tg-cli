@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`tg guide` lists memo's scenario under the same title as memo and the other tools:** "One person across every
+  tool", capitalised. On cli-core 0.370.0 the scenario check in the tests also catches shell characters left
+  outside quotes in a step.
+
 ## 0.76.0 — 19.10.2026
 
 ### Changed — may break callers
