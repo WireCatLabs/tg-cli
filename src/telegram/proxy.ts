@@ -7,10 +7,11 @@ import {
   SocksProxyTcpTransport,
 } from "@mtcute/node"
 import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-base"
+import type { CheckWords } from "@wirecat/cli-core"
 import { fromFile, type Settings } from "@wirecat/cli-core/cli"
 import { APP, isolated, pathsFor } from "../paths.js"
 import { type ProxyServer, parseProxy, proxyError, proxyLabel } from "../proxy.js"
-import type { Words } from "./feature.js"
+import type { Check } from "./feature.js"
 
 type TelegramTransport = ReturnType<typeof proxyTransportFromUrl>
 
@@ -51,7 +52,11 @@ export interface ProxyInUse {
  */
 export const resolveProxy = (
   settings: Pick<Settings, "profile" | "configured" | "shared">,
-  { env = process.env, keyring, checks }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore; checks: Words },
+  {
+    env = process.env,
+    keyring,
+    checks,
+  }: { env?: NodeJS.ProcessEnv; keyring?: KeyringStore; checks: CheckWords<Check> },
 ): ProxyInUse | undefined => {
   const given = env[PROXY_ENV]?.trim()
   if (given) return { proxy: parseProxy(given, PROXY_ENV), from: PROXY_ENV }

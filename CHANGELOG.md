@@ -10,6 +10,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **Markdown headings are refused when sending (cli-core parser).** Send text now goes through cli-core's shared
   Markdown parser, as `max` does. A line that starts with `#` used to go out as typed; it now fails with a
   validation error, because Telegram has no headings. Write the line in bold instead. Nothing else changes.
+- **A message that sends you to another command names it with your profile:** after a send or an edit with no answer
+  from Telegram, "check `tg personal chats list`" replaces "check `tg chats list`", so it can be pasted as it
+  stands. The words now come from cli-core.
 
 ## 0.77.0 — 20.10.2026
 

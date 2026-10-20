@@ -1,7 +1,7 @@
 import { type TelegramClient, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { JoinRequest, Page } from "@wirecat/cli-core"
-import type { Words } from "./feature.js"
+import type { CheckWords, JoinRequest, Page } from "@wirecat/cli-core"
+import type { Check } from "./feature.js"
 import { toMember } from "./map.js"
 
 type Client = Pick<TelegramClient, "getInviteLinkMembers" | "hideJoinRequest">
@@ -35,7 +35,7 @@ export const answerJoinRequestOf = async (
   chatId: number,
   personId: number,
   accept: boolean,
-  words: Words,
+  words: CheckWords<Check>,
 ): Promise<{ already: boolean }> => {
   try {
     await client.hideJoinRequest({ chatId, user: personId, action: accept ? "approve" : "decline" })

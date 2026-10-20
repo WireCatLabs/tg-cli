@@ -4,11 +4,12 @@ import { setTimeout as sleep } from "node:timers/promises"
 import { getMarkedPeerId, Long, MtPeerNotFoundError, TelegramClient } from "@mtcute/node"
 import { links } from "@mtcute/node/utils.js"
 import { CliError, isCliError } from "@wirecat/cli-base"
+import type { CheckWords } from "@wirecat/cli-core"
 import type { BotAdapter, EventSink } from "@wirecat/cli-core/cli"
 import type { ProxyServer } from "../proxy.js"
 import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
-import type { Words } from "./feature.js"
+import type { Check } from "./feature.js"
 import { toHistoryChannel, toHistoryMessages } from "./map.js"
 import { proxiedTransport } from "./proxy.js"
 import { openSessionStorage } from "./storage.js"
@@ -26,7 +27,7 @@ export interface BotHistoryOptions {
   events?: EventSink
   track?: (reader: Pick<BotHistoryReader, "close">) => void
   proxy?: ProxyServer
-  checks: Words
+  checks: CheckWords<Check>
 }
 
 const numberOf = (id: string, maximum = 2_147_483_647): number => {
@@ -47,7 +48,7 @@ const channelNumber = (chat: string): number => {
   return id
 }
 
-const historyError = (error: unknown, words: Words) => {
+const historyError = (error: unknown, words: CheckWords<Check>) => {
   const mapped = toCliError(error, words, words("bot.auth.set"))
   if (isCliError(mapped)) return mapped
   return new CliError(

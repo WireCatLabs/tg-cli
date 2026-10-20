@@ -1,6 +1,6 @@
 import { tl } from "@mtcute/node"
+import { bareCheck } from "@wirecat/cli-core"
 import { describe, expect, it, vi } from "vitest"
-import { bareCheck } from "./feature.js"
 import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
 
 const member = (id: number, bio: string | null) => ({

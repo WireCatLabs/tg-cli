@@ -1,9 +1,10 @@
 import type { Poll as TgPoll } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { Poll } from "@wirecat/cli-core"
+import type { CheckWords, Poll } from "@wirecat/cli-core"
 import type { NewPoll } from "@wirecat/cli-core/cli"
 import { pollClosed } from "./errors.js"
 import {
+  type Check,
   type Feature,
   messageNumber,
   parseSendId,
@@ -12,14 +13,13 @@ import {
   type Sent,
   topicNumber,
   unknownIfUnanswered,
-  type Words,
 } from "./feature.js"
 import { answerId, toInputPoll, toMessage, toPoll } from "./map.js"
 import { pollVotersOf } from "./poll-voters.js"
 import { sendAsPeer } from "./send-as.js"
 
 /** What Telegram would refuse anyway, said before anything is sent — the same checks max-cli makes. */
-const refuseVote = (poll: TgPoll, answerIds: readonly string[], words: Words): void => {
+const refuseVote = (poll: TgPoll, answerIds: readonly string[], words: CheckWords<Check>): void => {
   if (poll.isClosed) throw new CliError("validation_error", pollClosed(words))
   const voted = poll.answers.some((answer) => answer.chosen)
   if (answerIds.length === 0 && !voted) throw new CliError("validation_error", "you have not voted in this poll")

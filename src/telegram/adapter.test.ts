@@ -2,10 +2,9 @@ import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { errorObjectOf } from "@wirecat/cli-base"
-import type { MessageEvent } from "@wirecat/cli-core"
+import { checkWords, type MessageEvent } from "@wirecat/cli-core"
 import { REMOTE_WRITE } from "@wirecat/cli-core/cli"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { checkWords } from "../commands/checks.js"
 import {
   type Check,
   FLOOD_SLEEP,
@@ -1445,12 +1444,13 @@ describe("forum setup", () => {
   })
 
   it("names where to check in the words the command layer gives it", async () => {
-    const { adapter, client } = await open({ checks: checkWords })
+    const { adapter, client } = await open({ checks: checkWords<Check>("tg", "personal") })
 
     client.deleteForumTopicHistory.mockRejectedValueOnce(new MtTimeoutError(1000))
     await expect(adapter.deleteTopic("-100500", "12")).rejects.toMatchObject({
       code: "outcome_unknown",
-      message: "no answer from Telegram — the topic may have been deleted; check `tg topics list` before repeating",
+      message:
+        "no answer from Telegram — the topic may have been deleted; check `tg personal topics list` before repeating",
     })
   })
 
