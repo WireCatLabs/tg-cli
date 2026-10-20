@@ -59,6 +59,26 @@
       }
     },
     {
+      "includes": ["src/telegram/**", "!**/*.test.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["**/commands/**", "../commands/*", "**/program.js", "../program.js"],
+                    "message": "the adapter maps Telegram onto the shared messenger port; commands, the command context and the program are above it"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["spec/bot/api.json"],
       "formatter": {
         "enabled": false
