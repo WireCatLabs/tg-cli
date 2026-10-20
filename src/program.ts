@@ -1,4 +1,3 @@
-import { appendFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 import { exitCodeFor, processStreams } from "@wirecat/cli-base"
 import {
@@ -168,10 +167,6 @@ export const run = async (argv: string[], environment: Environment = {}): Promis
   })
   const code = await runCli(argv, definition, environment as Record<string, unknown>)
   const line = await notice
-  const argvLog = process.env.TG_TEST_ARGV_LOG
-  // --version ends before any action, so the preAction hook never sees it.
-  if (argvLog && code === 0 && argv.some((word) => word === "--version" || word === "-V"))
-    appendFileSync(argvLog, `${JSON.stringify({ command: "", options: ["--version"] })}\n`)
   if (line && code === 0) (environment.streams ?? processStreams).diagnostic(line)
   return code
 }
