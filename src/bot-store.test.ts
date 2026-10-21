@@ -32,7 +32,7 @@ const history: NonNullable<Environment["botHistory"]> = async (options) => {
   return {
     close,
     historyBefore: async (_chat, { limit, before }) => {
-      if (start === undefined) throw new CliError("validation_error", "give --from <message link>")
+      if (start === undefined) throw new CliError("validation_error", "give --until-id <message link>")
       const older = MESSAGES.filter((one) => Number(one.id) < Number(before ?? Number(start) + 1)).reverse()
       start ??= "250"
       return { items: older.slice(0, Math.min(100, limit)), hasMore: older.length > Math.min(100, limit) }
@@ -149,7 +149,7 @@ describe("tg bot store fetch", () => {
     expect(JSON.parse(failed.err)).toMatchObject({
       error: {
         code: "validation_error",
-        message: expect.stringContaining("--from <message link>"),
+        message: expect.stringContaining("--until-id <message link>"),
       },
     })
     expect(close).toHaveBeenCalledOnce()

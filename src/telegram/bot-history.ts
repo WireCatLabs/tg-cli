@@ -135,7 +135,7 @@ export const openBotHistory = async (options: BotHistoryOptions): Promise<BotHis
           if (newest === undefined)
             throw new CliError(
               "validation_error",
-              "no newest message number is known for this chat — give --from <message link>, or keep a bot update first",
+              "no newest message number is known for this chat — give --until-id <message link>, or keep a bot update first",
             )
           before = numberOf(newest) + 1
         }
