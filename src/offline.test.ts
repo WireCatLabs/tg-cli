@@ -97,7 +97,7 @@ describe("--offline", () => {
         message.chatId,
         "--offline",
         "--since-time",
-        "2000-01-01",
+        "2000-01-01T00:00:00Z",
         "--by",
         "day",
         "--timezone",

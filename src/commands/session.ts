@@ -1,6 +1,7 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
 import { annotate } from "@wirecat/cli-base/commands"
+import { timezoneOf } from "@wirecat/cli-base/query"
 import { type Account, atTerminal, loginQr, readSecret } from "@wirecat/cli-core"
 import { servingProfiles } from "@wirecat/cli-core/background"
 import {
@@ -71,6 +72,11 @@ const appCredentials = async (
     id: parseApiId(await ask("App api_id: ", true)),
     hash: parseApiHash(await ask("App api_hash (not shown): ", false)),
   }
+}
+
+const clockTime = (time: Date): string => {
+  const zone = timezoneOf()
+  return `${time.toLocaleTimeString("en-GB", { timeZone: zone })} ${zone}`
 }
 
 const KEYS_IN = {
@@ -174,7 +180,7 @@ export const startSession = async (
         asked = true
         qr.show(
           url,
-          `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${expires.toLocaleTimeString()})`,
+          `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${clockTime(expires)})`,
           expires,
         )
       },

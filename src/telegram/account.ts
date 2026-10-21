@@ -28,7 +28,7 @@ export const frozenOf = (config: Record<string, unknown>): FrozenStanding | unde
     ...(appealUrl ? { appealUrl } : {}),
     hint:
       "Telegram froze this account: it can read but not write" +
-      (until ? `, and deletes it on ${until.slice(0, 10)}` : "") +
+      (until ? `, and deletes it on ${until.slice(0, 10)} (UTC)` : "") +
       (appealUrl ? ` unless an appeal is accepted — appeal at ${appealUrl}` : " unless an appeal is accepted"),
   }
 }

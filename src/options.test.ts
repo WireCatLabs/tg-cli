@@ -3,7 +3,7 @@ import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { CliError } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-core"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { NO_RESTART_ON } from "./program.js"
 import { chat, dialog, message, scripted, tg } from "./testing/scripted.js"
 import { VERSION } from "./version.js"
@@ -113,7 +113,10 @@ describe("the global options", () => {
 })
 
 describe("chats events", () => {
-  it("a time query passes the moment on", async () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it("a time query passes the moment on, a date alone at local midnight", async () => {
+    vi.stubEnv("TZ", "Asia/Vladivostok")
     let since = 0
     const events = scripted({
       chatEvents: async (_chat, window) => {
@@ -147,7 +150,7 @@ describe("chats events", () => {
     })
 
     expect(code, stderr.join("")).toBe(0)
-    expect(since).toBe(Date.parse("2026-09-20T00:00:00Z"))
+    expect(since).toBe(Date.parse("2026-09-19T14:00:00Z"))
     expect(json(stdout).items.map((one: { type: string }) => one.type)).toEqual(["join", "pin"])
   })
 })

@@ -367,7 +367,8 @@ describe("the archive, from the store", () => {
     const store = await backfilled()
 
     const transcript = await tg(["archive", "store", "export", CHAT, "--format", "markdown"], store)
-    expect(transcript.stdout.join("\n")).toContain("## 2026-09-26")
+    const localDay = new Date(Date.UTC(2026, 8, 26, 10) + 101 * 60_000).toLocaleDateString("en-CA")
+    expect(transcript.stdout.join("\n")).toContain(`## ${localDay}`)
     expect(transcript.stdout.join("\n")).toContain("invoice #8 due")
 
     const found = await tg(["archive", "search", "messages", "body:/.*invoice.*/", "--json"], store)

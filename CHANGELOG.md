@@ -3,6 +3,23 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **A time typed without a zone is read in your zone, and a date alone means local midnight** (cli-core 0.379.0).
+  This covers `messages send --at-time`, `chats link create` and `chats link update --expire-time`,
+  `chats mute --until` and date-only `time>=` queries, such as `chats events Valencia time>=2026-09-20`. Before,
+  some of them read a date alone as midnight UTC. A time with `Z` or an offset is read as before, and JSON and MCP
+  output still give every time in UTC with `Z`.
+
+### Fixed
+
+- **The QR login line names the zone of its time:** "valid until 22:00:00 Asia/Vladivostok". Before, it gave the
+  computer's local time without saying so.
+- **A frozen account's deletion date says it is a UTC date:** "deletes it on 2026-10-03 (UTC)". The `until` field
+  is unchanged.
+
 ## 0.79.0 — 21.10.2026
 
 ### Fixed
