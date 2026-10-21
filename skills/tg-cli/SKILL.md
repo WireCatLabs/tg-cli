@@ -309,7 +309,7 @@ seen (use the id), `7` the chat is not on the bot's recipient list or an `ask` l
 owner the `bot recipients add` command, never add it yourself — `8` the bot's `sends_per_hour`, `14` unknown outcome.
 
 `tg <bot> bot store fetch <chat>` imports a channel or supergroup by message number, read-only over
-a separate MTProto bot session. Only when the owner asks. `--from <message link>` gives the first
+a separate MTProto bot session. Only when the owner asks. `--until-id <message link>` gives the first
 number when neither the bot's copy nor the same profile's personal session knows it. Private
 chats and basic groups are refused. Sending and updates stay on the Bot API.
 

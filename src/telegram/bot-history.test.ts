@@ -162,7 +162,7 @@ describe("bot MTProto history", () => {
     for (const before of ["0", "abc", "2147483649"])
       await expect(reader.historyBefore(CHAT, { limit: 1, before })).rejects.toMatchObject({ code: "validation_error" })
     await expect(reader.historyBefore(CHAT, { limit: 1 })).rejects.toMatchObject({
-      message: expect.stringContaining("--from <message link>"),
+      message: expect.stringContaining("--until-id <message link>"),
     })
     expect(stand.client.call).not.toHaveBeenCalled()
     await reader.close()
