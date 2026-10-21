@@ -3,19 +3,23 @@
  * Run by hand, never by CI, and only with the owner's yes each time.
  *
  *   TG_PROFILE=<profile> pnpm smoke:live
+ *   TG_PROFILE=<a Premium profile> pnpm smoke:live --only premium
  *
  * It drives `bin/tg`, the checkout's own build with its own profile in `.tg/` — never the installed
  * `tg`, whose store a branch build could migrate. Each command reuses the saved session; a
  * `session start` would be a new device on the owner's account. From an agent inside this
  * repository's sandbox `bin/tg` has no network when a script starts it: run this from a terminal.
  *
- * Printed: one line per step, `ok` or `FAIL` with the error code the command gave. Never a message
- * of the owner's, a name or an id. Everything it creates is deleted at the end.
+ * Printed: one line per step, `ok`, `FAIL` with the error code the command gave, or `skip` for a step
+ * Telegram keeps for Premium when the account has none. Never a message of the owner's, a name or an
+ * id. Everything it creates is deleted at the end. `--only premium` runs the Premium steps and what
+ * they stand on.
  */
 import { spawnSync } from "node:child_process"
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
+import { parseArgs } from "node:util"
 
 const root = resolve(import.meta.dirname, "..")
 const SAVED = "me"
@@ -23,8 +27,15 @@ const stamp = new Date().toISOString()
 // Telegram answers a burst of writes with FLOOD_WAIT; a person's pace costs half a minute.
 const PACE_MS = 2000
 
+const { only } = parseArgs({ options: { only: { type: "string" } } }).values
+if (only !== undefined && only !== "premium") {
+  console.log(`--only takes premium, got "${only}"`)
+  process.exit(2)
+}
+const all = only === undefined
+
 type Answer = {
-  item?: { message?: { id?: unknown }; id?: unknown }
+  item?: { message?: { id?: unknown }; id?: unknown; flags?: { premium?: unknown } }
   items?: { id?: unknown; text?: unknown }[]
 }
 
@@ -40,6 +51,8 @@ const tg = (...args: string[]) => {
 
 const created: string[] = []
 const failures: string[] = []
+let premium = false
+let skipped = 0
 
 const step = async <T>(label: string, run: () => T | Promise<T>): Promise<T | undefined> => {
   await new Promise((done) => setTimeout(done, PACE_MS))
@@ -52,6 +65,17 @@ const step = async <T>(label: string, run: () => T | Promise<T>): Promise<T | un
     failures.push(label)
     return undefined
   }
+}
+
+const premiumStep = async (label: string, run: () => unknown): Promise<void> => {
+  if (premium) {
+    await step(label, run)
+    return
+  }
+  skipped += 1
+  console.log(
+    `skip  ${label}: needs Telegram Premium — rerun with TG_PROFILE=<a Premium profile> pnpm smoke:live --only premium`,
+  )
 }
 
 const keep = (answer: Answer | undefined) => {
@@ -78,27 +102,42 @@ try {
     console.log("\nno session in this checkout — run `bin/tg session start` or seed the worktree first")
     process.exit(2)
   }
+  // `account show` has no Premium flag; the owner's own profile does.
+  premium =
+    (await step("check for Premium", () => tg("contacts", "profile", "me").item?.flags?.premium === true)) === true
 
   const text = keep(await step("send text", () => tg("messages", "send", SAVED, `tg-cli smoke ${stamp}`)))
-  keep(await step("send with markdown", () => tg("messages", "send", SAVED, "tg-cli smoke **bold** _italic_", "--md")))
-  if (text) {
-    keep(await step("reply", () => tg("messages", "send", SAVED, "tg-cli smoke reply", "--reply-to", text)))
-    await step("edit", () => tg("messages", "edit", SAVED, text, `tg-cli smoke ${stamp} (edited)`))
-    await step("react", () => tg("reactions", "add", SAVED, text, "👍"))
-    await step("unreact", () => tg("reactions", "remove", SAVED, text))
-    keep(await step("forward", () => tg("messages", "forward", SAVED, text, "--to", SAVED)))
-    await step("pin", () => tg("messages", "pin", SAVED, text))
-    await step("unpin", () => tg("messages", "unpin", SAVED, text))
+  if (all) {
+    keep(
+      await step("send with markdown", () => tg("messages", "send", SAVED, "tg-cli smoke **bold** _italic_", "--md")),
+    )
   }
-  keep(await step("send a photo", () => tg("messages", "send", SAVED, "", "--photo", pixel)))
-  keep(await step("send a file", () => tg("messages", "send", SAVED, "", "--file", note)))
+  if (text) {
+    if (all) {
+      keep(await step("reply", () => tg("messages", "send", SAVED, "tg-cli smoke reply", "--reply-to", text)))
+      await step("edit", () => tg("messages", "edit", SAVED, text, `tg-cli smoke ${stamp} (edited)`))
+    }
+    await premiumStep("react", () => tg("reactions", "add", SAVED, text, "👍"))
+    await premiumStep("unreact", () => tg("reactions", "remove", SAVED, text))
+    if (all) {
+      keep(await step("forward", () => tg("messages", "forward", SAVED, text, "--to", SAVED)))
+      await step("pin", () => tg("messages", "pin", SAVED, text))
+      await step("unpin", () => tg("messages", "unpin", SAVED, text))
+    }
+  }
+  if (all) {
+    keep(await step("send a photo", () => tg("messages", "send", SAVED, "", "--photo", pixel)))
+    keep(await step("send a file", () => tg("messages", "send", SAVED, "", "--file", note)))
+  }
 
-  const poll = keep(await step("create a poll", () => tg("polls", "create", SAVED, "tg-cli smoke poll", "one", "two")))
+  const poll = all
+    ? keep(await step("create a poll", () => tg("polls", "create", SAVED, "tg-cli smoke poll", "one", "two")))
+    : undefined
   if (poll) await step("close the poll", () => tg("polls", "close", SAVED, poll))
 
-  const scheduled = await step("schedule a send", () =>
-    tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "1m"),
-  )
+  const scheduled = all
+    ? await step("schedule a send", () => tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "1m"))
+    : undefined
   if (scheduled) {
     await step("list the scheduled", () => {
       if (!tg("messages", "scheduled", SAVED).items?.length) throw new Error("the queue is empty")
@@ -136,5 +175,6 @@ try {
   rmSync(files, { recursive: true, force: true })
 }
 
-console.log(failures.length === 0 ? "\nall steps passed" : `\n${failures.length} failed: ${failures.join("; ")}`)
+const passed = skipped === 0 ? "all steps passed" : `all steps passed, ${skipped} skipped`
+console.log(failures.length === 0 ? `\n${passed}` : `\n${failures.length} failed: ${failures.join("; ")}`)
 process.exit(failures.length === 0 ? 0 : 1)

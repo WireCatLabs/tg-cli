@@ -41,13 +41,16 @@ test replaces mtcute's `TelegramClient` with a stand-in. A test that could open 
 ```sh
 node --experimental-strip-types scripts/seed-worktree.ts <main checkout> "$PWD"   # a worktree, once
 TG_PROFILE=<profile> pnpm smoke:live
+TG_PROFILE=<a Premium profile> pnpm smoke:live --only premium   # when the first run printed skip
 ```
 
 `scripts/smoke-live.ts` does every write once against the real Telegram, **in Saved Messages only**:
 send, Markdown, reply, edit, react and unreact, forward, pin and unpin, a photo, a file, a poll and
 its close, a scheduled send. Then it deletes everything it made. It runs `bin/tg`, the checkout's own
 build with its own `.tg/`, and prints one `ok` or `FAIL` line per step, never a message, a name or
-an id. CI never runs it, and nobody runs it without the owner's yes, each time. Run it from a
+an id. React and unreact need Telegram Premium: it reads the account's Premium flag from
+`contacts profile me`, and on an account without it prints `skip` for them, which is not a failure.
+`--only premium` runs just those, with the account check, the message they react to and the cleanup. CI never runs it, and nobody runs it without the owner's yes, each time. Run it from a
 terminal: an agent inside this repository's sandbox gets no network for a `bin/tg` that a script
 starts ([agents.md](agents.md#what-an-agent-may-do-and-what-stops-it)).
 
