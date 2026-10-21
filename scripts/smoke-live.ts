@@ -139,8 +139,12 @@ try {
     ? await step("schedule a send", () => tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "1m"))
     : undefined
   if (scheduled) {
-    await step("list the scheduled", () => {
-      if (!tg("messages", "scheduled", SAVED).items?.length) throw new Error("the queue is empty")
+    await step("list the scheduled", async () => {
+      const deadline = Date.now() + 20_000
+      while (!tg("messages", "scheduled", SAVED).items?.length) {
+        if (Date.now() > deadline) throw new Error("the queue is still empty after 20 s")
+        await new Promise((done) => setTimeout(done, 2_000))
+      }
     })
     // Sent, it is a new message with a new id, so the queued id would delete nothing.
     await step("wait for the scheduled send to fire (≤ 3 min)", async () => {
