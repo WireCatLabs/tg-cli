@@ -56,7 +56,7 @@ class FakeClient {
   members: unknown = []
   membersTotal: number | undefined
   found: unknown = null
-  transcripts: { text: string; pending?: boolean }[] = []
+  transcripts: ({ text: string; pending?: boolean } | Error)[] = []
   resolvePeer = async (peer: unknown): Promise<unknown> => ({ _: "inputPeerChannel", peer })
   exportedLink: string | Error = "https://t.me/test_channel/1"
   resolveChannel = vi.fn(async (_peer: unknown) => ({ _: "inputChannel", channelId: 500, accessHash: 42 }))
@@ -108,7 +108,9 @@ class FakeClient {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
       return this.forwardAnswer
     }
-    return this.transcripts.shift() ?? { text: "", pending: true }
+    const transcript = this.transcripts.shift() ?? { text: "", pending: true }
+    if (transcript instanceof Error) throw transcript
+    return transcript
   }
   resolvePhoneNumber = async (phone: string) => {
     this.#record("resolvePhoneNumber", [phone])
@@ -1268,6 +1270,17 @@ describe("transcribing", () => {
     await vi.advanceTimersByTimeAsync(61_000)
 
     expect(await answer).toEqual({ text: "", pending: true })
+  })
+
+  it("says a refusal for want of Premium is about transcription", async () => {
+    const { adapter, client } = await open()
+    client.transcripts = [new tl.RpcError(403, "PREMIUM_ACCOUNT_REQUIRED")]
+
+    await expect(adapter.transcribe("me", "5")).rejects.toMatchObject({
+      code: "permission_error",
+      message: expect.stringContaining("Telegram transcribes only for Premium accounts"),
+      details: { provider_error: "PREMIUM_ACCOUNT_REQUIRED" },
+    })
   })
 })
 

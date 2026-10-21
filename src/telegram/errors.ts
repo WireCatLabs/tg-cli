@@ -40,10 +40,7 @@ const EXPLAINED: Record<string, [ErrorCode, string | ((words: CheckWords<Check>)
   TOPIC_ID_INVALID: ["not_found", "that forum topic does not exist; check `topics list`"],
   MSG_VOICE_MISSING: ["validation_error", "that message is not a voice or video note"],
   MSG_VOICE_TOO_LONG: ["validation_error", "the voice message is too long for Telegram to transcribe"],
-  PREMIUM_ACCOUNT_REQUIRED: [
-    "permission_error",
-    "Telegram transcribes only for Premium accounts, or a few messages a week on the free trial, used up now",
-  ],
+  PREMIUM_ACCOUNT_REQUIRED: ["permission_error", "that needs Telegram Premium on this account"],
   TRANSCRIPTION_FAILED: ["provider_error", "Telegram could not transcribe this voice message"],
   PHONE_NOT_OCCUPIED: ["not_found", "nobody Telegram lets you find has this number"],
   USER_NOT_MUTUAL_CONTACT: [

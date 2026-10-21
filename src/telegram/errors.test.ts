@@ -94,7 +94,13 @@ describe("Telegram's refusals", () => {
       code: "validation_error",
       message: "that message is not a voice or video note",
     })
-    expect(toCliError(rpc(403, "PREMIUM_ACCOUNT_REQUIRED"), bareCheck)).toMatchObject({ code: "permission_error" })
+  })
+
+  it("says any action Telegram keeps for Premium needs Premium, without naming transcription", () => {
+    expect(toCliError(rpc(403, "PREMIUM_ACCOUNT_REQUIRED"), bareCheck)).toMatchObject({
+      code: "permission_error",
+      message: "that needs Telegram Premium on this account",
+    })
   })
 
   it("makes an unreachable network a network error", () => {
