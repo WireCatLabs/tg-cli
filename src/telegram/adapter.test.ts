@@ -488,6 +488,7 @@ beforeEach(() => {
 })
 afterEach(() => {
   process.umask(umask)
+  vi.unstubAllEnvs()
 })
 
 const open = async (
@@ -570,6 +571,13 @@ describe("health", () => {
       appealUrl: "https://example.org/appeal",
       hint: expect.stringContaining("appeal at https://example.org/appeal"),
     })
+  })
+
+  it("names UTC for the day Telegram deletes a frozen account", async () => {
+    vi.stubEnv("TZ", "America/Los_Angeles")
+    const { adapter, client } = await open()
+    client.appConfigValue = { freeze_since_date: 1_788_000_000, freeze_until_date: 1_791_000_000 }
+    expect((await adapter.health()).standing?.hint).toContain("deletes it on 2026-10-03 (UTC)")
   })
 
   it("treats a zero freeze date as not frozen, and still answers the clock when the app configuration fails", async () => {

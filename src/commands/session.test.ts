@@ -100,6 +100,17 @@ describe("session start", () => {
     expect(opened.urls).toEqual([])
   })
 
+  it("says until when the QR code is valid in the computer's zone, and names it", async () => {
+    vi.stubEnv("TZ", "Asia/Vladivostok")
+    const { code, stderr } = await tg(["session", "start", "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      adapter: () => loginAdapter({}),
+    })
+
+    expect(code).toBe(0)
+    expect(stderr.join("\n")).toContain("(valid until 22:00:00 Asia/Vladivostok)")
+  })
+
   // The app shows a path under home as `~/…` with forward slashes, on Windows too.
   const shownPath = (file: string) => {
     const home = homedir().replaceAll("\\", "/")
