@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **An action Telegram keeps for Premium accounts now says so** ("that needs Telegram Premium on this account").
+  Before, every such refusal, for example a reaction from a free account, said that Telegram transcribes only for
+  Premium. `messages transcribe` keeps its own message about Premium and the free trial.
+
 ## 0.79.0 — 21.10.2026
 
 ### Fixed

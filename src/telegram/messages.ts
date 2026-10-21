@@ -491,7 +491,16 @@ export const transcribe = (feature: Feature, reference: string, messageId: strin
     const peer = await feature.client.resolvePeer(await feature.inputOf(reference))
     const deadline = Date.now() + TRANSCRIBE_WAIT_MS
     for (;;) {
-      const answer = await feature.client.call({ _: "messages.transcribeAudio", peer, msgId: id })
+      const answer = await feature.client
+        .call({ _: "messages.transcribeAudio", peer, msgId: id })
+        .catch((error: unknown) => {
+          if (!tl.RpcError.is(error, "PREMIUM_ACCOUNT_REQUIRED")) throw error
+          throw new CliError(
+            "permission_error",
+            "Telegram transcribes only for Premium accounts, or a few messages a week on the free trial, used up now",
+            { provider_error: error.text, status: error.code },
+          )
+        })
       if (answer.pending !== true || Date.now() >= deadline) {
         return { text: answer.text, pending: answer.pending === true }
       }
