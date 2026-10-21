@@ -69,8 +69,10 @@ code. Each one gets **holds** or **broken**, with `path:line`.
   ```
 
   Inside this repository's sandbox a script gets no network for the `bin/tg` it starts: ask the
-  owner to run it from a terminal and paste the `ok` / `FAIL` lines. Any `FAIL` stops the release
-  until the owner rules on it.
+  owner to run it from a terminal and paste the `ok` / `skip` / `FAIL` lines. Any `FAIL` stops the release
+  until the owner rules on it. A `skip` is a step Telegram keeps for Premium (`react`, `unreact`) on an account
+  without it: rerun those on a Premium profile, `TG_PROFILE=<a Premium profile> pnpm smoke:live --only premium`,
+  and paste both runs.
 - **A command only a live run checks** (the ⛔ rows of `docs/dev/test-matrix.md`) changed: the
   `test-live` skill, with the owner's yes.
 - **Neither**: say so in the release pull request. No live run.

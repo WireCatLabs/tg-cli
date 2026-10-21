@@ -44,7 +44,7 @@ stdout, stderr empty or one diagnostic, and the keys and item counts. Never the 
 | Id | What | Commands | Puts back |
 |---|---|---|---|
 | S1 | reads answer and exit | `account show`, `account sessions list`, `chats list --limit 3`, `messages list me --limit 2`, `search messages` | nothing changed |
-| S2 | every write once | `pnpm smoke:live` | deletes all it sent |
+| S2 | every write once; on an account without Premium, `react` and `unreact` print `skip` and a Premium profile reruns them with `--only premium` | `pnpm smoke:live`, `pnpm smoke:live --only premium` | deletes all it sent |
 | S3 | a scheduled send fires under a new id | `messages send me --at 1m`, `messages scheduled me`, `messages list me` | deleted after it fires |
 | S4 | download and transcribe | `messages download`, `messages transcribe` on a voice note the scenario sends | the note and the files deleted |
 | S5 | `watch` and `serve` end, and see a write | `watch --events` and `serve` in the background, a send to `me`, stop by PID | the message deleted |
