@@ -15,6 +15,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`stats chats retention` and `chats stats show` read `--since-time`/`--until-time` in their `--timezone`**, and a
+  date alone in retention's `--until-time` covers that whole local day (cli-core 0.380.0). `stats charts`, `contacts
+  timeline` and the MCP `stats` tool name the zone in `meta.timezone` and give the UTC window in `meta.window`.
+
 - **The QR login line names the zone of its time:** "valid until 22:00:00 Asia/Vladivostok". Before, it gave the
   computer's local time without saying so.
 - **A frozen account's deletion date says it is a UTC date:** "deletes it on 2026-10-03 (UTC)". The `until` field
