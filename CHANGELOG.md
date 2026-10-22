@@ -7,7 +7,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
-- **JSON answers of commands with a date filter say how they read the date** (cli-core 0.384.0): `meta.window` gives
+- **JSON answers of commands with a date filter say how they read the date** (cli-core 0.385.0): `meta.window` gives
   the bounds used, in UTC, and `meta.timezone` names the zone a date typed without one was read in. This covers
   `store export`, `messages sync`, `stats chats show`, `stats chats retention`, `contacts context`,
   `search conversations`, `replies test`, `runs search`, `stats messages unanswered`, `stats contacts responses`,
