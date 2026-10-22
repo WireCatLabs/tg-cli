@@ -3,6 +3,17 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **JSON answers of commands with a date filter say how they read the date** (cli-core 0.385.0): `meta.window` gives
+  the bounds used, in UTC, and `meta.timezone` names the zone a date typed without one was read in. This covers
+  `store export`, `messages sync`, `stats chats show`, `stats chats retention`, `contacts context`,
+  `search conversations`, `replies test`, `runs search`, `stats messages unanswered`, `stats contacts responses`,
+  `stats chats newcomers`, `stats messages discussion`, and a `time:` or `date:` term in `chats events`,
+  `chats members history`, `inbox` and `review`.
+
 ## 0.80.0 — 22.10.2026
 
 ### Changed — may break callers
