@@ -180,19 +180,30 @@ Every command is a tool, writes included; the profile's permissions limit what t
 a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
 terminal:
 
-- **Login and setup**: `session start|end`, `upgrade`, `complete`, `mcp config|setup|doctor`, `skill install`,
+- **Login and setup**: `session start|end`, `upgrade`, `complete`, `mcp config|setup|doctor`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
-- **Commands that change what a later run may do**: `config set|unset`, `recipients add|remove|clear`,
-  `chats rules set|unset`, the `replies` rules and consents, `schedule command|agent|remove`, `server install|uninstall`,
-  `attachments jobs install|uninstall`, `models text key set|remove`, `flood clear`, and on the bot
-  `recipients add|remove|clear` and `chats rules set|unset`. An agent locked to read-only could otherwise unlock a
-  later run.
 - **Writes no permission limits yet**: `store backup|restore|migrate|repair|reset|clear|decrypt|copies delete`,
   `server start|stop|restart`, `attachments jobs start|stop`, model downloads (`models audio|text download`,
   `images models download`), `schedule run|exec`, `doctor report create`, `account sessions end`, `bot store fetch`
   and the raw `bot api` methods.
 
 `tg commands --json` marks each of them `mcp: false`.
+
+### Commands that change what a later run may do
+
+`config set|unset`, `recipients add|remove|clear`, `chats rules set|unset`, the `replies` rules and consents,
+`schedule command|agent|remove`, `server install|uninstall`, `skill install`, `attachments jobs install|uninstall`,
+`models text key set|remove`, `flood clear`, and on the bot `recipients add|remove|clear` and `chats rules set|unset`
+are offered only when the profile sets `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default, so
+the server does not list them and a call is refused. An agent locked to read-only could otherwise unlock a later run.
+An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
+and only on a profile whose agent you trust with its own limits:
+
+```sh
+tg agent config set permissions.mcp.authority allow
+```
+
+[Permissions](permissions.md#let-an-agent-change-its-own-limits) says more.
 
 ## Prompts, and chats by `@`
 

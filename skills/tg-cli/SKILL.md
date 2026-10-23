@@ -305,7 +305,7 @@ tg personal search messages "invoice march" --json  # Telegram messages only, an
 tg personal conversations build --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
 tg personal search conversations "<question>" --json  # by meaning, after the owner ran tg personal conversations embed --chat <chat>
-tg personal watch --jsonl                          # new messages as they arrive
+tg personal watch --jsonl                          # new messages as {"type":"item","data"} lines, then a {"type":"end"} line
 ```
 
 An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg personal mcp`. The
@@ -475,10 +475,10 @@ never prints a whole phone number unless the owner asks for `--show-phone`; MCP 
 ```sh
 tg personal contacts alias set 101 'Project lead'
 tg personal contacts alias rm 101
-tg personal contacts notes add 101 --file /path/to/own-note.md
+tg personal contacts notes add 101 --text-file /path/to/own-note.md
 tg personal contacts notes list 101 --json
 tg personal contacts notes show 101 NOTE_ID --json
-tg personal contacts notes edit 101 NOTE_ID --revision 1 --file /path/to/own-note.md
+tg personal contacts notes edit 101 NOTE_ID --revision 1 --text-file /path/to/own-note.md
 tg personal contacts notes remove 101 NOTE_ID
 tg personal contacts show 101 --with-notes --json
 tg personal metadata get --chat CHAT_ID --json
@@ -486,7 +486,7 @@ tg personal metadata refresh --chat CHAT_ID --limit 1 --json
 tg personal tags auto --chat CHAT_ID --dry-run --json
 tg personal tags auto --chat CHAT_ID --sync-first --limit 1 --json
 tg personal tags list sources:auto --json
-tg personal tags remove news --chat CHAT_ID --source auto
+tg personal tags remove news --chat CHAT_ID --claim auto
 ```
 
 Automatic tags use local keyword rules on cached group/channel titles, usernames and descriptions;

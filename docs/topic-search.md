@@ -296,8 +296,8 @@ A service can compute the vectors instead, with your own key:
 
 ```sh
 tg personal models text key set openai
-tg personal conversations embed --chat "Book club" --provider openai
-tg personal search conversations "renting a flat" --provider openai
+tg personal conversations embed --chat "Book club" --embedding-provider openai
+tg personal search conversations "renting a flat" --embedding-provider openai
 ```
 
 Then the text of the chat's conversations goes to that service, and each search sends your question.

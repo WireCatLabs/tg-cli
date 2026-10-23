@@ -253,7 +253,7 @@ Previously good indexed text is preserved when a replacement fails.
 After ten attempts, failures above 50% stop new items. `MESSAGING_BATCH_MAX_ERROR_PERCENT` sets
 a whole percentage from 1 to 100. Rate limits or authentication failures stop earlier; concurrent
 requests already in flight may still finish. Honor the provider's wait and resume unfinished work.
-Search partial diagnostic records with `tg personal runs search --status partial --json` or MCP `tg_read` with `command: "runs search"`
+Search partial diagnostic records with `tg personal search runs status:partial --json` or MCP `tg_read` with `command: "search runs"`
 ([diagnostics](diagnostics.md)).
 
 ## Keep copies after source deletion

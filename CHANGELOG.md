@@ -3,6 +3,41 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`permissions.mcp.authority` decides whether an MCP server offers the commands that change what a later run may
+  do** (cli-core 0.400.0): `config set|unset`, `schedule command|agent|remove`, reply rules and consents, recipient lists,
+  chat rules, `server install`, `skill install`, model keys, media archive timers and `flood clear`. It is `deny` by
+  default, so an agent still cannot loosen its own limits until you run
+  `tg <profile> config set permissions.mcp.authority allow` in a terminal (add `--bot` for a bot's server).
+  [Permissions](docs/permissions.md#let-an-agent-change-its-own-limits) and
+  [the MCP guide](docs/mcp.md#commands-that-change-what-a-later-run-may-do) explain it.
+
+### Changed — may break callers
+
+- **`tg <profile> watch --jsonl` prints `{"type":"item","data":…}` lines and a final `{"type":"end","complete":true}`.**
+  Read each message or event from `data`, and stop at the `end` line. Fields are snake_case. A timeout or a normal stop
+  ends with `complete: true`; a failure ends with `complete: false` and its exit code.
+- **`runs search` is now `search runs`.** Filters are terms in the query: `status:failed`, `error_code:timeout`,
+  `operation:messages.download`, `profile:work`, next to plain words. Saved MCP requests use the new command path.
+- **`stats` reports take their filters as query terms.** `--message-kind` is `message_kind:posts|comments|all`,
+  `--min-messages 5` is `min_messages:5`, `--min-views` and `--max-replies` are `min_views:` and `max_replies:`,
+  `--older-than 24h` is `older_than:24h`, and `--chat` is `chat:<chat>` on the rankings and reports; exact words use `exact:` in place of `--exact`. Update saved
+  commands and MCP requests.
+
+- **Options have one meaning each** (cli-core 0.399.0). Use `--analysis-provider` for analysis and `--embedding-provider`
+  for vector search (`conversations build|embed|related|status`, `search conversations`), `--consent-provider` for
+  `conversations consents revoke`, `--claim` for `tags remove`, `--answer-model` for `conversations links clear`,
+  `--template-mode` for reply templates and `--text-file` for `contacts notes add|edit`. `inbox` and `review` take
+  `kind:group,channel` in their query. The old spellings still work, hidden, for one release.
+
+### Fixed
+
+- **Downloading media skips service events and keyboards** (cli-core 0.400.0). A chat with a group event or an inline
+  keyboard no longer makes `attachments download` fail with `provider.invalid-response`.
+
 ## 0.83.0 — 23.10.2026
 
 ### Added

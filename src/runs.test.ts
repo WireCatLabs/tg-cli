@@ -106,17 +106,13 @@ describe("run records", () => {
     })
     const before = listRuns(dir).length
     const { code, stdout, stderr } = await tg([
-      "runs",
       "search",
+      "runs",
       "50",
-      "--status",
-      "partial",
-      "--error-code",
-      "rate_limited",
-      "--operation",
-      "messages.download",
-      "--profile",
-      "search-fixture",
+      "status:partial",
+      "error_code:rate_limited",
+      "operation:messages.download",
+      "profile:search-fixture",
       "--since-time",
       "2020-01-01",
       "--limit",

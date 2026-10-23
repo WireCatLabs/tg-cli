@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2373 ✅ · 106 ⛔ · 0 ❌** — 517 commands, 1962 options.
+**2353 ✅ · 119 ⛔ · 0 ❌** — 517 commands, 1955 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -173,8 +173,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts notes list` |  | ✅ |  |
 | `contacts notes show` |  | ✅ |  |
 | `contacts notes add` |  | ✅ |  |
+| `contacts notes add` | `--text-file` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `contacts notes add` | `--file` | ✅ |  |
 | `contacts notes edit` |  | ✅ |  |
+| `contacts notes edit` | `--text-file` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `contacts notes edit` | `--file` | ✅ |  |
 | `contacts notes edit` | `--revision` | ✅ |  |
 | `contacts notes remove` |  | ✅ |  |
@@ -400,6 +402,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations build` |  | ✅ |  |
 | `conversations build` | `--chat` | ✅ |  |
 | `conversations build` | `--analyze` | ✅ |  |
+| `conversations build` | `--analysis-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations build` | `--provider` | ✅ |  |
 | `conversations build` | `--model` | ✅ |  |
 | `conversations build` | `--base-url` | ✅ |  |
@@ -412,12 +415,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations related` |  | ✅ |  |
 | `conversations related` | `--limit` | ✅ |  |
 | `conversations related` | `--model` | ✅ |  |
+| `conversations related` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations related` | `--provider` | ✅ |  |
 | `conversations related` | `--base-url` | ✅ |  |
 | `conversations related` | `--dims` | ✅ |  |
 | `conversations status` |  | ✅ |  |
 | `conversations status` | `--chat` | ✅ |  |
 | `conversations status` | `--model` | ✅ |  |
+| `conversations status` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations status` | `--provider` | ✅ |  |
 | `conversations status` | `--base-url` | ✅ |  |
 | `conversations status` | `--dims` | ✅ |  |
@@ -431,6 +436,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations links add` | `--batch` | ✅ |  |
 | `conversations links clear` |  | ✅ |  |
 | `conversations links clear` | `--chat` | ✅ |  |
+| `conversations links clear` | `--answer-model` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations links clear` | `--model` | ✅ |  |
 | `conversations rebuild` |  | ✅ |  |
 | `conversations rebuild` | `--chat` | ✅ |  |
@@ -439,10 +445,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations consents list` |  | ✅ |  |
 | `conversations consents revoke` |  | ✅ |  |
 | `conversations consents revoke` | `--chat` | ✅ |  |
+| `conversations consents revoke` | `--consent-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations consents revoke` | `--provider` | ✅ |  |
 | `conversations embed` |  | ✅ |  |
 | `conversations embed` | `--chat` | ✅ |  |
 | `conversations embed` | `--model` | ✅ |  |
+| `conversations embed` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations embed` | `--provider` | ✅ |  |
 | `conversations embed` | `--base-url` | ✅ |  |
 | `conversations embed` | `--dims` | ✅ |  |
@@ -454,12 +462,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed status` |  | ✅ |  |
 | `conversations embed status` | `--chat` | ✅ |  |
 | `conversations embed status` | `--model` | ✅ |  |
+| `conversations embed status` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations embed status` | `--provider` | ✅ |  |
 | `conversations embed status` | `--base-url` | ✅ |  |
 | `conversations embed status` | `--dims` | ✅ |  |
 | `conversations embed clear` |  | ✅ |  |
 | `conversations embed clear` | `--chat` | ✅ |  |
 | `conversations embed clear` | `--model` | ✅ |  |
+| `conversations embed clear` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `conversations embed clear` | `--provider` | ✅ |  |
 | `conversations embed clear` | `--base-url` | ✅ |  |
 | `conversations embed clear` | `--dims` | ✅ |  |
@@ -517,6 +527,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tags remove` | `--contact` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags remove` | `--message` | ⛔ | cli-core src/cli/messenger/tags.test.ts covers chat, contact and message targets through the shared command; consumer integration tests cover mounting, account isolation and permissions |
 | `tags remove` | `--task` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tags remove` | `--claim` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `tags remove` | `--source` | ✅ |  |
 | `tags list` |  | ✅ |  |
 | `mentions list` |  | ✅ |  |
@@ -581,23 +592,16 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages counters refresh` | `--sync-time` | ✅ |  |
 | `stats messages counters refresh` | `--dry-run` | ✅ |  |
 | `stats messages unanswered` |  | ✅ |  |
-| `stats messages unanswered` | `--chat` | ✅ |  |
 | `stats messages unanswered` | `--source` | ✅ |  |
-| `stats messages unanswered` | `--exact` | ✅ |  |
 | `stats messages unanswered` | `--saved` | ✅ |  |
 | `stats messages unanswered` | `--timezone` | ✅ |  |
 | `stats messages unanswered` | `--limit` | ✅ |  |
 | `stats messages unanswered` | `--answerer` | ✅ |  |
-| `stats messages unanswered` | `--older-than` | ✅ |  |
 | `stats messages discussion` |  | ✅ |  |
-| `stats messages discussion` | `--chat` | ✅ |  |
 | `stats messages discussion` | `--source` | ✅ |  |
-| `stats messages discussion` | `--exact` | ✅ |  |
 | `stats messages discussion` | `--saved` | ⛔ | cli-core src/services/admin-statistics.test.ts covers shared report saved-run scope and typed overrides; native admin-statistics-adoption.test.ts checks mounted report paths and both evidence targets without connecting |
 | `stats messages discussion` | `--timezone` | ✅ |  |
 | `stats messages discussion` | `--limit` | ✅ |  |
-| `stats messages discussion` | `--min-views` | ✅ |  |
-| `stats messages discussion` | `--max-replies` | ✅ |  |
 | `stats messages top` |  | ✅ |  |
 | `stats messages top` | `--sync-first` | ✅ |  |
 | `stats messages top` | `--max-chats` | ✅ |  |
@@ -606,11 +610,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages top` | `--measure` | ✅ |  |
 | `stats messages top` | `--score` | ✅ |  |
 | `stats messages top` | `--weights` | ✅ |  |
-| `stats messages top` | `--message-kind` | ✅ |  |
-| `stats messages top` | `--chat` | ✅ |  |
 | `stats messages top` | `--source` | ✅ |  |
 | `stats messages top` | `--timezone` | ✅ |  |
-| `stats messages top` | `--exact` | ✅ |  |
 | `stats messages top` | `--limit` | ✅ |  |
 | `stats messages top` | `--saved` | ✅ |  |
 | `stats messages evidence` |  | ✅ |  |
@@ -619,9 +620,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats messages evidence` | `--limit` | ✅ |  |
 | `stats messages evidence` | `--cursor` | ✅ |  |
 | `stats contacts responses` |  | ✅ |  |
-| `stats contacts responses` | `--chat` | ✅ |  |
 | `stats contacts responses` | `--source` | ✅ |  |
-| `stats contacts responses` | `--exact` | ✅ |  |
 | `stats contacts responses` | `--saved` | ✅ |  |
 | `stats contacts responses` | `--timezone` | ✅ |  |
 | `stats contacts responses` | `--limit` | ✅ |  |
@@ -634,14 +633,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats contacts top` | `--measure` | ✅ |  |
 | `stats contacts top` | `--score` | ✅ |  |
 | `stats contacts top` | `--weights` | ✅ |  |
-| `stats contacts top` | `--message-kind` | ✅ |  |
-| `stats contacts top` | `--chat` | ✅ |  |
 | `stats contacts top` | `--source` | ✅ |  |
 | `stats contacts top` | `--timezone` | ✅ |  |
-| `stats contacts top` | `--exact` | ✅ |  |
 | `stats contacts top` | `--limit` | ✅ |  |
 | `stats contacts top` | `--saved` | ✅ |  |
-| `stats contacts top` | `--min-messages` | ✅ |  |
 | `stats contacts evidence` |  | ✅ |  |
 | `stats contacts evidence` | `--selection` | ✅ |  |
 | `stats contacts evidence` | `--component` | ✅ |  |
@@ -770,6 +765,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search notes` | `--timezone` | ✅ |  |
 | `search conversations` |  | ✅ |  |
 | `search conversations` | `--model` | ✅ |  |
+| `search conversations` | `--embedding-provider` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `search conversations` | `--provider` | ✅ |  |
 | `search conversations` | `--base-url` | ✅ |  |
 | `search conversations` | `--dims` | ✅ |  |
@@ -785,6 +781,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search conversations` | `--timezone` | ✅ |  |
 | `search conversations` | `--limit` | ✅ |  |
 | `search conversations` | `--catch-up` | ✅ |  |
+| `search runs` |  | ✅ |  |
+| `search runs` | `--since-time` | ✅ |  |
+| `search runs` | `--limit` | ✅ |  |
+| `search runs` | `--page` | ✅ |  |
 | `search topics` |  | ✅ |  |
 | `search topics` | `--limit` | ✅ |  |
 | `search topics` | `--page` | ✅ |  |
@@ -827,7 +827,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `replies edit` | `--contacts-only` | ✅ |  |
 | `replies edit` | `--no-contacts-only` | ✅ |  |
 | `replies edit` | `--template` | ✅ |  |
-| `replies edit` | `--model` | ✅ |  |
+| `replies edit` | `--template-mode` | ⛔ | the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file |
 | `replies edit` | `--as-reply` | ✅ |  |
 | `replies edit` | `--no-as-reply` | ✅ |  |
 | `replies edit` | `--per-chat` | ✅ |  |
@@ -836,6 +836,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `replies edit` | `--days` | ✅ |  |
 | `replies edit` | `--timezone` | ✅ |  |
 | `replies edit` | `--no-hours` | ✅ |  |
+| `replies edit` | `--model` | ✅ |  |
 | `replies audience` |  | ✅ |  |
 | `replies audience` | `--reply` | ✅ |  |
 | `replies audience` | `--allow-people` | ✅ |  |
@@ -866,14 +867,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `runs list` | `--page` | ✅ |  |
 | `runs show` |  | ✅ |  |
 | `runs show` | `--problems` | ✅ |  |
-| `runs search` |  | ✅ |  |
-| `runs search` | `--status` | ✅ |  |
-| `runs search` | `--error-code` | ✅ |  |
-| `runs search` | `--operation` | ✅ |  |
-| `runs search` | `--profile` | ✅ |  |
-| `runs search` | `--since-time` | ✅ |  |
-| `runs search` | `--limit` | ✅ |  |
-| `runs search` | `--page` | ✅ |  |
 | `runs path` |  | ✅ |  |
 | `config show` |  | ✅ |  |
 | `config show` | `--bot` | ✅ |  |

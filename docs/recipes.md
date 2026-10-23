@@ -166,7 +166,7 @@ The other side then sees that you read it.
 
 ### Direct chats, groups and channels apart
 
-`--kind` keeps only chats of that kind: `dialog` (one-to-one), `group`, `channel`. A news summary of
+The term `kind:` keeps only chats of that kind: `dialog` (one-to-one), `group`, `channel`. A news summary of
 channels and a summary of your conversations can run apart, at different times. Each chat has its own
 point, so one run never hides what the other has not shown yet.
 
@@ -175,8 +175,8 @@ point, so one run never hides what the other has not shown yet.
 0 19 * * * claude -p "$(cat ~/tg-recipes/news.md)" --allowedTools "Bash(tg personal inbox:*)"
 ```
 
-In `morning.md`, `tg personal inbox --new --kind dialog,group --json`; in `news.md`, `tg personal inbox --new --kind
-channel --json` and a request to pick what matters. Without `--kind`, everything together.
+In `morning.md`, `tg personal inbox --new kind:dialog,group --json`; in `news.md`, `tg personal inbox --new kind:channel
+--json` and a request to pick what matters. Without `kind:`, everything together.
 
 ## Weekly report on a chat
 

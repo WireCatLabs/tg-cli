@@ -117,11 +117,11 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `read_other_bots` | `false` | a bot only: whether `tg personal bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
 | `update_check` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
 | `skill_hint` | `true` | a line, at most once a day, for an agent whose copy of tg's skill is missing or older than tg; only under `defaults` | none |
-| `embedding_provider` | `local` | local model or `openai` | `--provider` |
+| `embedding_provider` | `local` | local model or `openai` | `--embedding-provider` |
 | `embedding_model` | provider default | embedding model | `--model` |
 | `embedding_base_url` | provider default | embedding API endpoint | `--base-url` |
 | `embedding_dims` | model default | integer 1–65,536 | `--dims` |
-| `analysis_provider` | `agent` | `agent`, `openai` or `anthropic` | `build --provider` |
+| `analysis_provider` | `agent` | `agent`, `openai` or `anthropic` | `build --analysis-provider` |
 | `analysis_model` | none; required for `--analyze` | analysis model | `build --model` |
 | `analysis_base_url` | provider default | analysis API endpoint | `build --base-url` |
 | `models` | none | external models by purpose ([below](#models-by-purpose)) | `TG_MODELS_*` variables |
@@ -180,7 +180,9 @@ and deleting asks again, as it does by default.
 
 `inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
 count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
-`mcp` and the store's own upkeep are never limited.
+`mcp` and the store's own upkeep are never limited. One key sits outside the command paths:
+`mcp.authority` (`deny` by default) decides whether an MCP server offers the commands that change what a later run may
+do ([permissions](permissions.md#let-an-agent-change-its-own-limits)).
 
 **The defaults allow everything except a few changes that are hard to reverse.** These ask: `messages.delete`,
 `bot.messages.delete`, `chats.delete`, `chats.clear`, `topics.enable`, `topics.delete` and

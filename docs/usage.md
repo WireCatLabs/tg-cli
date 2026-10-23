@@ -1215,7 +1215,7 @@ tg personal watch                  # new messages, until Ctrl-C or --timeout
 ```
 
 ```sh
-tg personal watch --jsonl          # one message per line, as messages list --jsonl
+tg personal watch --jsonl          # one {"type":"item","data":message} line per message, then a {"type":"end"} line
 ```
 
 ```sh
@@ -1230,8 +1230,9 @@ tg personal watch --events --jsonl  # edits, deletions and reactions too
 tg personal watch --jsonl --timeout 2m  # a timeout ends it normally, with exit code 0
 ```
 
-With `--events` every line names its event: `message`, `edit`, `delete` or `reaction`. Without it,
-the lines are bare messages. Telegram does not say in which chat a message was deleted in a private
+Each line is `{"type":"item","data":…}`; the last is `{"type":"end","complete":true}`, or `false` after a failure,
+which also sets the exit code. Fields are snake_case. With `--events` every `data` names its `event`: `message`,
+`edit`, `delete` or `reaction`. Without it, `data` is the bare message. Telegram does not say in which chat a message was deleted in a private
 chat or a small group, so such a line has no chat.
 
 **`watch` starts from now.** What arrived while nothing was listening is not shown. To keep the local

@@ -109,18 +109,6 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "stats messages top",
-    option: "--message-kind",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats messages top",
-    option: "--chat",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats messages top",
     option: "--source",
     reason:
       "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
@@ -128,12 +116,6 @@ export const UNTESTED: Untested[] = [
   {
     command: "stats messages top",
     option: "--timezone",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats messages top",
-    option: "--exact",
     reason:
       "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
   },
@@ -222,18 +204,6 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "stats contacts top",
-    option: "--message-kind",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats contacts top",
-    option: "--chat",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats contacts top",
     option: "--source",
     reason:
       "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
@@ -246,12 +216,6 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "stats contacts top",
-    option: "--exact",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats contacts top",
     option: "--limit",
     reason:
       "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
@@ -259,12 +223,6 @@ export const UNTESTED: Untested[] = [
   {
     command: "stats contacts top",
     option: "--saved",
-    reason:
-      "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
-  },
-  {
-    command: "stats contacts top",
-    option: "--min-messages",
     reason:
       "cli-core src/cli/messenger/rankings-command.test.ts, src/services/rankings.test.ts and src/store/rankings.test.ts cover the rankings over the local store; tg mounts the shared stats and searches commands and reads only its store",
   },
@@ -842,4 +800,24 @@ export const UNTESTED: Untested[] = [
     reason:
       "src/help.test.ts runs it; help ends before the hook that records argv. cli-core src/cli/help/first-screen.test.ts covers the full help it prints (0.344.0)",
   },
+  ...[
+    ["contacts notes add", "--text-file"],
+    ["contacts notes edit", "--text-file"],
+    ["conversations build", "--analysis-provider"],
+    ["conversations related", "--embedding-provider"],
+    ["conversations status", "--embedding-provider"],
+    ["conversations links clear", "--answer-model"],
+    ["conversations consents revoke", "--consent-provider"],
+    ["conversations embed", "--embedding-provider"],
+    ["conversations embed status", "--embedding-provider"],
+    ["conversations embed clear", "--embedding-provider"],
+    ["search conversations", "--embedding-provider"],
+    ["tags remove", "--claim"],
+    ["replies edit", "--template-mode"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file",
+  })),
 ]

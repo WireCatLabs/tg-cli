@@ -246,9 +246,9 @@ record: the same name in both messengers is never taken as the same person.
 ```sh
 tg personal contacts alias set "Bob Synthetic" Bobby   # your own name for a person, on this computer only
 tg personal contacts alias rm "Bob Synthetic"
-tg personal contacts notes add "Bob Synthetic" --file note.txt  # or the text from stdin
+tg personal contacts notes add "Bob Synthetic" --text-file note.txt  # or the text from stdin
 tg personal contacts notes list "Bob Synthetic"
-tg personal contacts notes edit "Bob Synthetic" <id> --revision 1 --file note.txt
+tg personal contacts notes edit "Bob Synthetic" <id> --revision 1 --text-file note.txt
 tg personal contacts notes remove "Bob Synthetic" <id>
 tg personal contacts show "Bob Synthetic" --with-notes
 ```
