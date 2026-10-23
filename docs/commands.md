@@ -118,7 +118,7 @@ tg account list
 
 **Returns:** every profile on this computer, and the account each is logged in as; asks the messenger…
 
-**Example:** `tg account list`
+**Example:** `tg personal account list`
 
 ### `tg account show`
 
@@ -134,7 +134,7 @@ tg account show [options]
 
 **Returns:** account — provider, id, name, username, phone, scope; every field: tg commands schema account show
 
-**Example:** `tg account show`
+**Example:** `tg personal account show`
 
 ### `tg account update`
 
@@ -155,7 +155,7 @@ tg account update [options]
 
 **Returns:** change the name, the description or the photo everyone sees on your profile
 
-**Example:** `tg account update`
+**Example:** `tg personal account update --first-name Alex`
 
 ### `tg account sessions`
 
@@ -175,7 +175,7 @@ tg account sessions list [query]
 
 **Returns:** account session — current, client, device, location, last_active_at, created_at; every field: tg commands schema account sessions list
 
-**Example:** `tg account sessions list`
+**Example:** `tg personal account sessions list`
 
 #### `tg account sessions end`
 
@@ -193,7 +193,7 @@ tg account sessions end [options]
 
 **Returns:** log out every other device, your phone included; this one stays
 
-**Example:** `tg account sessions end`
+**Example:** `tg personal account sessions end --others`
 
 ## `tg chats`
 
@@ -2377,7 +2377,7 @@ tg models audio list [query]
 
 **Next usually:** `tg models audio download <model>`, `tg models text download <model>`, `tg images models download <model>`
 
-**Example:** `tg models audio list`
+**Example:** `tg personal models audio list`
 
 #### `tg models audio download`
 
@@ -2397,7 +2397,7 @@ tg models audio download <model>
 
 **Next usually:** `tg models text download <model>`, `tg images models download <model>`
 
-**Example:** `tg models audio download default`
+**Example:** `tg personal models audio download parakeet-v3`
 
 ### `tg models text`
 
@@ -2419,7 +2419,7 @@ tg models text list [query]
 
 **Next usually:** `tg models text download <model>`, `tg models audio download <model>`, `tg images models download <model>`
 
-**Example:** `tg models text list`
+**Example:** `tg personal models text list`
 
 #### `tg models text download`
 
@@ -2443,7 +2443,7 @@ tg models text download <model> [options]
 
 **Next usually:** `tg models audio download <model>`, `tg images models download <model>`
 
-**Example:** `tg models text download default`
+**Example:** `tg personal models text download e5-small`
 
 #### `tg models text key`
 
@@ -2465,7 +2465,7 @@ tg models text key set <provider>
 
 **Returns:** store a key, typed at a hidden prompt or piped on stdin — never as an argument
 
-**Example:** `tg models text key set <provider>`
+**Example:** `tg personal models text key set openai`
 
 #### `tg models text key remove`
 
@@ -2483,7 +2483,7 @@ tg models text key remove <provider>
 
 **Returns:** forget a stored key
 
-**Example:** `tg models text key remove <provider>`
+**Example:** `tg personal models text key remove openai`
 
 ## `tg inbox`
 
@@ -3365,7 +3365,7 @@ tg conversations build [options]
 
 **Returns:** find a chat's conversations in what the store holds, replacing the last build; without…
 
-**Example:** `tg conversations build`
+**Example:** `tg personal conversations build --chat "Book club"`
 
 ### `tg conversations list`
 
@@ -3386,7 +3386,7 @@ tg conversations list <chat> [query] [options]
 
 **Returns:** conversation — id, chat, first_message, started_at, ended_at, messages_count, senders_count, built_at, and 1 more; every field: tg commands schema conversations list
 
-**Example:** `tg conversations list Team`
+**Example:** `tg personal conversations list "Book club"`
 
 ### `tg conversations show`
 
@@ -3403,7 +3403,7 @@ tg conversations show <conversation> [message]
 
 **Returns:** one conversation's messages, oldest first — by its id, or the one a message is in
 
-**Example:** `tg conversations show <conversation> 1234`
+**Example:** `tg personal conversations show "Book club" 101`
 
 ### `tg conversations related`
 
@@ -3428,7 +3428,7 @@ tg conversations related <chat> <message> [options]
 
 **Returns:** the conversations nearest in meaning to the one a message is in, in every built chat,…
 
-**Example:** `tg conversations related Team 1234`
+**Example:** `tg personal conversations related "Book club" 101`
 
 ### `tg conversations status`
 
@@ -3448,7 +3448,7 @@ tg conversations status [options]
 
 **Returns:** how fresh each built chat's conversations and vectors are: messages the build has not…
 
-**Example:** `tg conversations status`
+**Example:** `tg personal conversations status`
 
 ### `tg conversations batches`
 
@@ -3469,7 +3469,7 @@ tg conversations batches status [options]
 
 **Returns:** how many messages still wait for an answer, in how many batches, and how much text
 
-**Example:** `tg conversations batches status --chat Team`
+**Example:** `tg personal conversations batches status --chat "Book club"`
 
 #### `tg conversations batches next`
 
@@ -3486,7 +3486,7 @@ tg conversations batches next [options]
 
 **Returns:** the next window to answer, with the messages before it; message text goes to stdout only
 
-**Example:** `tg conversations batches next --chat Team`
+**Example:** `tg personal conversations batches next --chat "Book club"`
 
 ### `tg conversations links`
 
@@ -3508,7 +3508,7 @@ tg conversations links add [options]
 
 **Returns:** store your agent's answer to a batch, read as JSON from stdin: { "model", "answers": [{…
 
-**Example:** `tg conversations links add --batch 1`
+**Example:** `tg personal conversations links add --batch "$batch"`
 
 #### `tg conversations links clear`
 
@@ -3527,7 +3527,7 @@ tg conversations links clear [options]
 
 **Returns:** drop your agent's answers for a chat, or only one model's; messages are never touched
 
-**Example:** `tg conversations links clear --chat Team`
+**Example:** `tg personal conversations links clear --chat "Book club"`
 
 ### `tg conversations rebuild`
 
@@ -3563,7 +3563,7 @@ tg conversations consents list
 
 **Returns:** which chats and provider endpoints you allowed to analyse, and when
 
-**Example:** `tg conversations consents list`
+**Example:** `tg personal conversations consents list`
 
 #### `tg conversations consents revoke`
 
@@ -3582,7 +3582,7 @@ tg conversations consents revoke [options]
 
 **Returns:** forget analysis permissions so the next analysis asks again
 
-**Example:** `tg conversations consents revoke`
+**Example:** `tg personal conversations consents revoke --chat "Book club"`
 
 ### `tg conversations embed`
 
@@ -3625,7 +3625,7 @@ tg conversations embed status [options]
 
 **Returns:** how many chunks of a chat have a vector of the model, how many are left, and what is left…
 
-**Example:** `tg conversations embed status`
+**Example:** `tg personal conversations embed status --chat "Book club"`
 
 #### `tg conversations embed clear`
 
@@ -3647,7 +3647,7 @@ tg conversations embed clear [options]
 
 **Returns:** drop a chat's vectors, or only one model's; messages and conversations are never touched
 
-**Example:** `tg conversations embed clear`
+**Example:** `tg personal conversations embed clear --chat "Book club"`
 
 ## `tg attachments`
 
@@ -3891,6 +3891,30 @@ tg attachments jobs uninstall <dir>
 **Returns:** remove this directory's stopped archive timer; keep archived files
 
 **Example:** `tg attachments jobs uninstall ./media-archive`
+
+### `tg attachments move`
+
+move older images into another verified archive; remember their new locations
+
+**Changes something on this computer only.**
+
+```sh
+tg attachments move <dir> <archive-dir> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `dir` | required | source media archive directory. |
+| `archive-dir` | required | destination archive directory; created if needed. |
+
+| Option | What it does |
+|---|---|
+| `--before-time <time>` | move images whose message date is before this ISO timestamp with zone. |
+| `--dry-run` | show counts and bytes without moving files or creating the destination. |
+
+**Returns:** move older images into another verified archive; remember their new locations
+
+**Example:** `tg attachments move ./media-archive ./older-images --before-time 2026-10-01T00:00:00Z --dry-run`
 
 ## `tg tags`
 
@@ -4696,7 +4720,7 @@ tg tasks list [query] [options]
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks plan <task>`
 
-**Example:** `tg tasks list`
+**Example:** `tg personal tasks list --limit 10`
 
 ### `tg tasks add`
 
@@ -4726,7 +4750,7 @@ tg tasks add <message> [options]
 
 **Returns:** add a task for a stored message or note — a promise, a request
 
-**Example:** `tg tasks add 1234 --type <type> --category daily`
+**Example:** `tg personal tasks add note:101 --type promise --category documents --title "Review draft"`
 
 ### `tg tasks plan`
 
@@ -4753,7 +4777,7 @@ tg tasks plan <task> [options]
 
 **Returns:** set a task's title, description, due date, next check, category and assignee
 
-**Example:** `tg tasks plan 12`
+**Example:** `tg personal tasks plan DOC-12 --title "Review draft"`
 
 ### `tg tasks link`
 
@@ -4777,7 +4801,7 @@ tg tasks link <task> [targets] [options]
 
 **Returns:** link a task to messages, chats, people or URLs — or to another task: task:<id>
 
-**Example:** `tg tasks link 12`
+**Example:** `tg personal tasks link DOC-12 https://example.com/draft`
 
 ### `tg tasks show`
 
@@ -4793,7 +4817,7 @@ tg tasks show <task>
 
 **Returns:** one task: its plan and everything linked to it
 
-**Example:** `tg tasks show 12`
+**Example:** `tg personal tasks show DOC-12`
 
 ### `tg tasks related`
 
@@ -4931,7 +4955,7 @@ tg tasks agenda [query] [options]
 
 **Returns:** agenda — at, account, stored_at, stale, tasks, owed, waiting, unsynced, and 2 more; every field: tg commands schema tasks agenda
 
-**Example:** `tg tasks agenda`
+**Example:** `tg personal tasks agenda`
 
 ### `tg tasks categories`
 
