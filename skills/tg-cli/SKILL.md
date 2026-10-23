@@ -228,6 +228,10 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
     `memo --version`, `@wirecat/cli-memo`). An older install may lack the fix. In a zsh loop over command
     paths, `$c` is not split into words: `tg $c --help` passes `search messages` as one argument; write
     `${=c}`.
+22. **Nothing relevant: search again in other words before saying it is not there.** A search finds the words
+    it is given, and a paraphrase misses. Try the words the answer itself would contain (a document's title, the
+    term the sender would use), one or two key words instead of a sentence, a synonym, the other language; for a
+    question, `--discover`. After two or three tries, say what you searched for.
 
 ## The usual path
 

@@ -21,6 +21,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   values are unchanged. Login details stay under `item.session`. What to do: read `item.commands.<name>` where you
   read `item.next.<name>`.
 
+### Changed
+
+- **The skill tells an agent to search again in other words before saying something is not there.** A search
+  finds the words it is given, and a paraphrase shares none with its answer.
+
 ### Fixed
 
 - **The docs and the skill say `search all` also asks Telegram.** By default it sends the query's words to
