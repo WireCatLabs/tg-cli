@@ -16,7 +16,7 @@ The words this page uses:
 
 Installation compiles nothing for `tg` itself: SQLite comes from the runtime, or from tg's own copy when a Linux
 Node's system SQLite is too old. The Telegram library (`@mtcute/node`) depends on `better-sqlite3`, a native
-module with an install script, so npm 12 may list that script as blocked.
+module with an install script, so npm may list that script as blocked; tg never loads `better-sqlite3`.
 Installation starts nothing in the background. A global npm installation can install the bundled
 skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 
@@ -38,7 +38,11 @@ pnpm add -g @wirecat/tg-cli --config.minimumReleaseAgeExclude='@wirecat/*'
 bun add -g @wirecat/tg-cli
 ```
 
-npm 12 prints "install scripts blocked". That is harmless: `tg skill install --for all` does what the script would.
+npm may warn about two install scripts: npm 12 prints "install scripts blocked", and npm 11.17
+prints `allow-scripts … not yet covered by allowScripts` for `@wirecat/tg-cli` and `better-sqlite3`. Both are
+harmless, and you do not need to allow them. The `@wirecat/tg-cli` script only repairs PATH on Windows and installs the
+skill when `TG_INSTALL_AGENT` asks for it; `tg skill install --for all` and the PowerShell installer below do both. The `better-sqlite3` script builds a database module that
+tg never loads: tg keeps its session and its store with the runtime's SQLite or its own copy.
 On Windows, if `tg` is not found, open a new terminal; if it is still missing, use the PowerShell installer in
 [Windows: one install command](#windows-one-install-command).
 

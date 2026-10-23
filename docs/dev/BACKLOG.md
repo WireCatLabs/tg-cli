@@ -17,24 +17,15 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 
 ## Launch blockers (P1)
 
-- **TG-1** · P1 · Docs and the skill say `search all` reads only this machine; by default it also sends the
-  query to Telegram's server (`--backend both`). Say so, and say that `--offline` keeps it local — verified
-  2026-10-23: no network connection, exit 0, exit 6 on an empty store. Fix README.md:76, docs/usage.md:541,
-  skills/tg-cli/SKILL.md:150 and :293 to match docs/search.md:526; name `--offline` and `--backend archive` in
-  `search all --help`.
-- **TG-31** · P1 · `docs/compare.md` is stale: it links the old tgcli upstream, says tgcli has no multi-account
-  (it has), and leaves out tlgr and mcp-telegram. Evidence: cli-private `research/comparisons/tg.md`.
+- **TG-1** · P1 · 🟡 Docs and the skill now say `search all` also asks Telegram's server by default and that
+  `--offline` keeps it local. Left: name `--offline` and `--backend archive` in `search all --help` — the
+  description is cli-core's (`search-command.ts`).
 - **TG-2** · P1 · Release main: npm 0.81.0 still accepts a mistyped `permissions` key with only a warning, so the
   restriction does not hold, and still has `catch_up_marks_read`; main fixed both (cli-core 0.391.0). Starts at
   `CHANGELOG.md` `## Unreleased`, `bin/release`. Ship TG-4 in it.
-- **TG-3** · P1 · Installation names only npm 12's "install scripts blocked"; npm 11.17 already prints
-  `allow-scripts … not yet covered by allowScripts` for `@wirecat/tg-cli` and `better-sqlite3`. Say both are
-  harmless and why. docs/installation.md:19,41, README.md:50.
 
 ## Next (P2)
 
-- **TG-4** · P2 · `contacts prepare` (unreleased) is only in the generated commands page: add it to
-  docs/people.md and skills/tg-cli/SKILL.md beside `contacts context`.
 - **TG-5** · P2 · Chat archive, pin and mark unread: mount cli-core's `chats archive|unarchive|pin|unpin|mark-unread`
   in the adapter (wa has them). mtcute `archiveChats`, `markChatUnread`; pin is raw. Starts in
   src/telegram/adapter.ts. [Plan, slice 4](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#4-archive-chat-pins-and-unread--shared-commands-built-tg-and-max-adapters-open).

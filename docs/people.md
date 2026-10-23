@@ -21,6 +21,7 @@ Some words on this page:
 | --- | --- |
 | See who a person is and where you talk to them | `tg personal contacts profile` |
 | Read what they said, in every chat or in the chats you name | `tg personal contacts context` |
+| Get ready to talk to them: chats, open tasks, facts, notes and meetings | `tg personal contacts prepare` |
 | Check whether the account looks like a bot, a fake or a spammer | `tg personal contacts check` |
 | Check the most suspicious members of a group | `tg personal chats members audit --deep` |
 | Record that a Telegram account and a MAX account are the same person | `tg personal contacts link` |
@@ -137,6 +138,25 @@ tg personal contacts context @example_user --chat "Book club" --sync-first
 - `more: true` means there are older messages than the limit; `complete: false` means the store does
   not hold the chat from its start.
 - A voice message carries `transcript` once it has been turned into text.
+
+## Before you talk to them: `contacts prepare`
+
+Use it before a call, a meeting or a reply, when you want everything relevant about one person in one answer.
+It gives what `contacts context` gives, plus the one-to-one chats where their message is the newest one stored,
+the open tasks assigned to them, accepted facts about them and their projects, your notes about them, and their
+recent meetings. Each item carries its reference, so you can open it. It reads only the store and never connects.
+
+```sh
+tg personal contacts prepare @example_user
+tg personal contacts prepare @example_user --limit 5 --since-time 30d
+```
+
+- `--limit` caps the messages and the items in each section (10 by default); `--since-time` leaves out older
+  messages and meetings.
+- Everything fits one size budget. `prepare.coverage` says what each section left out and why.
+- Tasks of another Telegram account, and facts on a project bound to one, stay out.
+- With `contacts.notes.list: deny` the notes are left out, and the answer says so. With `messages: deny` the command
+  is refused, as `contacts context` is.
 
 ## Bot, fake or spammer: `contacts check`
 

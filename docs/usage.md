@@ -538,7 +538,11 @@ tg personal contacts list 'name:*ann*'  # people by name or @username
 ```
 
 ```sh
-tg personal search all "contract"            # messages and notes this machine has kept
+tg personal search all "contract"            # messages and notes kept here, and Telegram's own search
+```
+
+```sh
+tg personal search all "contract" --offline  # only this computer; the query never leaves it
 ```
 
 ```sh

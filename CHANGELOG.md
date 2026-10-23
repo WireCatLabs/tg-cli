@@ -13,6 +13,16 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   values are unchanged. Login details stay under `item.session`. What to do: read `item.commands.<name>` where you
   read `item.next.<name>`.
 
+### Fixed
+
+- **The docs and the skill say `search all` also asks Telegram.** By default it sends the query's words to
+  Telegram's own search too (`--backend both`); `--offline` or `--backend archive` keeps the query on your computer.
+  README, usage, search and the skill said it read only this computer.
+- **Installation explains npm's install-script warnings.** npm 11.17 also prints `not yet covered by allowScripts`
+  for `@wirecat/tg-cli` and `better-sqlite3`; both are harmless, and the guide says why.
+- **`contacts prepare` is in the people guide and the skill**, and the comparison page covers tlgr and
+  mcp-telegram, links the maintained tgcli and marks tgcli's several accounts.
+
 ## 0.82.0 — 23.10.2026
 
 ### Added
