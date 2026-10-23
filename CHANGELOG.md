@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## 0.82.0 — 23.10.2026
+## Unreleased
 
 ### Added
 
@@ -12,6 +12,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   daily timers. Completed copies survive interrupted runs and message-store deletion; interrupted files restart.
   `attachments move <dir> <archive-dir> --before-time <time>` moves older images into another verified archive,
   retaining relocation records so checks follow the copies and later downloads do not duplicate them.
+
+## 0.82.0 — 23.10.2026
+
+### Added
 
 - **`tg <profile> contacts prepare <person>`: what to know before talking to someone** (cli-core 0.394.0). What
   `contacts context` gives, plus the one-to-one chats where their message is the newest the store holds, open tasks
