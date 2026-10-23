@@ -558,7 +558,7 @@ describe("messages", () => {
     expect(alone.code).toBe(2)
   })
 
-  it("list marks the chat read only with --mark-read, up to the newest message shown", async () => {
+  it("list reads without receipts and refuses the obsolete --mark-read option", async () => {
     const marked: unknown[] = []
     const reading = scripted({
       history: async () => ({ items: [message("76"), message("77")], hasMore: false }),
@@ -569,10 +569,10 @@ describe("messages", () => {
     await tg(["messages", "list", "Valencia", "--json"], { adapter: () => reading })
     expect(marked).toEqual([])
 
-    const { stderr } = await tg(["messages", "list", "Valencia", "--mark-read", "--json"], { adapter: () => reading })
+    const refused = await tg(["messages", "list", "Valencia", "--mark-read", "--json"], { adapter: () => reading })
 
-    expect(marked).toEqual([[chat.id, "77"]])
-    expect(stderr.join("\n")).toContain("marked read up to 77")
+    expect(refused.code).toBe(2)
+    expect(marked).toEqual([])
   })
 
   it("transcribe answers a voice message's text", async () => {
@@ -752,7 +752,7 @@ describe("inbox", () => {
     expect(ids(json(stdout))).toEqual(["71"])
   })
 
-  it("--kind keeps those kinds, and --mark-read marks the chats shown read, --no-mark-read never", async () => {
+  it("--kind keeps those kinds and inbox refuses obsolete receipt options", async () => {
     const marks: string[] = []
     const marking = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
@@ -766,15 +766,16 @@ describe("inbox", () => {
     const none = json((await tg(["inbox", "date>1h", "--kind", other, "--json"], { adapter: () => marking })).stdout)
     await tg(["inbox", "date>1h", "--no-mark-read", "--json"], { adapter: () => marking })
     expect(marks).toEqual([])
-    const marked = await tg(["inbox", "date>1h", "--mark-read", "--json"], { adapter: () => marking })
+    const refused = await tg(["inbox", "date>1h", "--mark-read", "--json"], { adapter: () => marking })
+    const listed = await tg(["inbox", "date>1h", "--json"], { adapter: () => marking })
 
     expect(none.items).toEqual([])
-    expect(ids(json(marked.stdout))).toEqual(["71"])
-    expect(marked.stderr.join("\n")).toContain("marked 1 chat(s) read")
-    expect(marks).toEqual([chat.id])
+    expect(ids(json(listed.stdout))).toEqual(["71"])
+    expect(refused.code).toBe(2)
+    expect(marks).toEqual([])
   })
 
-  it("review --new reads each chat once, by --kind, and marks read only when asked", async () => {
+  it("review --new reads each chat once, by --kind, without receipts", async () => {
     const marks: string[] = []
     const marking = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
@@ -785,16 +786,14 @@ describe("inbox", () => {
     })
     const other = chat.kind === "channel" ? "dialog" : "channel"
 
-    const none = json(
-      (await tg(["review", "--new", "--kind", other, "--no-mark-read", "--json"], { adapter: () => marking })).stdout,
-    )
-    const first = json((await tg(["review", "--new", "--mark-read", "--json"], { adapter: () => marking })).stdout)
+    const none = json((await tg(["review", "--new", "--kind", other, "--json"], { adapter: () => marking })).stdout)
+    const first = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
     const second = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
 
     expect(none.items).toEqual([])
     expect(ids(first)).toEqual(["71"])
     expect(second.items).toEqual([])
-    expect(marks).toEqual([chat.id])
+    expect(marks).toEqual([])
   })
 
   it("--transcribe hears the voice messages it shows", async () => {

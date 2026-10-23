@@ -193,7 +193,7 @@ A person (`<person>`, in `contacts show`) is an id, an `@username` or part of th
 ## Reading
 
 **Reading marks nothing read.** No command below shows the other side that you looked. Only
-`tg personal chats mark-read` and `tg personal messages list --mark-read` do ([below](#marking-a-chat-read)).
+`tg personal chats mark-read` does ([below](#marking-a-chat-read)).
 
 ### Chats
 
@@ -799,7 +799,7 @@ tg personal chats mark-read "Hiking" --topic 12  # only this forum topic
 ```
 
 ```sh
-tg personal messages list "Book club" --mark-read  # read it, and mark it read up to the newest shown
+tg personal messages list "Book club"  # read without sending a receipt
 ```
 
 The other side sees that you read it. It goes through the guard as the action `read`, and does not

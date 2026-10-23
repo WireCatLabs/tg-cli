@@ -221,7 +221,7 @@ tg chats list [query] [options]
 
 **Next usually:** `tg chats events <chat> [query]`, `tg chats show <chat>`, `tg chats send-as <chat>`
 
-**Example:** `tg chats list`
+**Example:** `tg personal chats list --limit 10`
 
 ### `tg chats events`
 
@@ -238,7 +238,7 @@ tg chats events <chat> [query]
 
 **Returns:** chat event — chat_id, time, type, people, message_id, by, title, before; every field: tg commands schema chats events
 
-**Example:** `tg chats events Team`
+**Example:** `tg personal chats events "Book club"`
 
 ### `tg chats inspect`
 
@@ -254,7 +254,7 @@ tg chats inspect <link>
 
 **Returns:** what an invite or public link leads to, without joining it
 
-**Example:** `tg chats inspect https://example.com/join/abc`
+**Example:** `tg personal chats inspect https://example.com/invite/book-club`
 
 ### `tg chats show`
 
@@ -272,7 +272,7 @@ tg chats show <chat>
 
 **Next usually:** `tg chats events <chat> [query]`, `tg chats send-as <chat>`, `tg chats documents list <chat>`
 
-**Example:** `tg chats show Team`
+**Example:** `tg personal chats show "Book club"`
 
 ### `tg chats send-as`
 
@@ -288,7 +288,7 @@ tg chats send-as <chat>
 
 **Returns:** who this account may post as in a chat; changes no saved choice
 
-**Example:** `tg chats send-as Team`
+**Example:** `tg personal chats send-as "Project room"`
 
 ### `tg chats documents`
 
@@ -313,7 +313,7 @@ tg chats documents list <chat> [options]
 
 **Returns:** every document link in the chat, newest first, and whether the store has it
 
-**Example:** `tg chats documents list Team`
+**Example:** `tg personal chats documents list "Project room" --limit 10`
 
 ### `tg chats members`
 
@@ -342,7 +342,7 @@ tg chats members list <chat> [query] [options]
 
 **Next usually:** `tg contacts show <person>`, `tg contacts profile <person>`, `tg contacts context <person>`
 
-**Example:** `tg chats members list Team`
+**Example:** `tg personal chats members list "Book club"`
 
 #### `tg chats members audit`
 
@@ -366,7 +366,7 @@ tg chats members audit <chat> [query] [options]
 
 **Next usually:** `tg contacts show <person>`, `tg contacts profile <person>`, `tg contacts context <person>`
 
-**Example:** `tg chats members audit Team`
+**Example:** `tg personal chats members audit "Book club"`
 
 #### `tg chats members history`
 
@@ -383,7 +383,7 @@ tg chats members history <chat> [query]
 
 **Returns:** chat event — chat_id, time, type, people, message_id, by, title, before; every field: tg commands schema chats members history
 
-**Example:** `tg chats members history Team`
+**Example:** `tg personal chats members history "Book club"`
 
 #### `tg chats members fetch`
 
@@ -406,7 +406,7 @@ tg chats members fetch <chat> [options]
 
 **Returns:** read a group's whole member list into the local store's member history: who joined, who…
 
-**Example:** `tg chats members fetch Team`
+**Example:** `tg personal chats members fetch "Book club"`
 
 #### `tg chats members add`
 
@@ -425,7 +425,7 @@ tg chats members add <chat> <person>
 
 **Returns:** add people; they are told
 
-**Example:** `tg chats members add Team Anna`
+**Example:** `tg personal chats members add "Book club" "Alex Example"`
 
 #### `tg chats members remove`
 
@@ -444,7 +444,7 @@ tg chats members remove <chat> <person>
 
 **Returns:** remove people; their messages stay
 
-**Example:** `tg chats members remove Team Anna`
+**Example:** `tg personal chats members remove "Book club" "Alex Example"`
 
 ### `tg chats mark-read`
 
@@ -467,7 +467,7 @@ tg chats mark-read <chat> [options]
 
 **Returns:** mark a chat read; the other side sees that you read it
 
-**Example:** `tg chats mark-read Team`
+**Example:** `tg personal chats mark-read "Book club" --until-id 101`
 
 ### `tg chats tracking`
 
@@ -483,7 +483,7 @@ tg chats tracking list
 
 **Returns:** every tracked chat: since when, and its last member count
 
-**Example:** `tg chats tracking list`
+**Example:** `tg personal chats tracking list`
 
 #### `tg chats tracking show`
 
@@ -499,7 +499,7 @@ tg chats tracking show <chat>
 
 **Returns:** one chat: whether it is tracked, and its member count per day for the last 30 days
 
-**Example:** `tg chats tracking show Team`
+**Example:** `tg personal chats tracking show "Book club"`
 
 #### `tg chats tracking add`
 
@@ -517,7 +517,7 @@ tg chats tracking add <chat>
 
 **Returns:** fetch this chat's member list daily while serve runs, from its next run
 
-**Example:** `tg chats tracking add Team`
+**Example:** `tg personal chats tracking add "Book club"`
 
 #### `tg chats tracking remove`
 
@@ -535,7 +535,7 @@ tg chats tracking remove <chat>
 
 **Returns:** stop fetching it daily; the history already kept stays
 
-**Example:** `tg chats tracking remove Team`
+**Example:** `tg personal chats tracking remove "Book club"`
 
 ### `tg chats create`
 
@@ -558,7 +558,7 @@ tg chats create <title> [person] [options]
 
 **Returns:** create a group or a channel; the people added are told
 
-**Example:** `tg chats create "Weekly sync" Anna`
+**Example:** `tg personal chats create "Book club" "Alex Example"`
 
 ### `tg chats join`
 
@@ -576,7 +576,7 @@ tg chats join <link>
 
 **Returns:** join a group or channel by its link; the others in it see that you joined
 
-**Example:** `tg chats join https://example.com/join/abc`
+**Example:** `tg personal chats join https://example.com/invite/book-club`
 
 ### `tg chats leave`
 
@@ -594,7 +594,7 @@ tg chats leave <chat>
 
 **Returns:** leave a group or channel; the others in it see that you left
 
-**Example:** `tg chats leave Team`
+**Example:** `tg personal chats leave "Book club"`
 
 ### `tg chats update`
 
@@ -620,7 +620,7 @@ tg chats update <chat> [options]
 
 **Returns:** rename a group or channel, change its description, or turn one of its settings on or off
 
-**Example:** `tg chats update Team`
+**Example:** `tg personal chats update "Book club" --title "Reading group"`
 
 ### `tg chats link`
 
@@ -640,7 +640,7 @@ tg chats link show <chat>
 
 **Returns:** the invite link, if you may see it
 
-**Example:** `tg chats link show Team`
+**Example:** `tg personal chats link show "Book club"`
 
 #### `tg chats link create`
 
@@ -664,7 +664,7 @@ tg chats link create <chat> [options]
 
 **Returns:** make another invite link; nobody is told until you share it
 
-**Example:** `tg chats link create Team`
+**Example:** `tg personal chats link create "Book club"`
 
 #### `tg chats link list`
 
@@ -686,7 +686,7 @@ tg chats link list <chat> [query] [options]
 
 **Returns:** invite link — link, approval, expires_at, max_uses, primary, revoked, pending_count, joined_count; every field: tg commands schema chats link list
 
-**Example:** `tg chats link list Team`
+**Example:** `tg personal chats link list "Book club"`
 
 #### `tg chats link revoke`
 
@@ -705,7 +705,7 @@ tg chats link revoke <chat> <link>
 
 **Returns:** stop one link; for the group's own link, the answer is the new one
 
-**Example:** `tg chats link revoke Team https://example.com/join/abc`
+**Example:** `tg personal chats link revoke "Book club" https://example.com/invite/book-club`
 
 #### `tg chats link update`
 
@@ -749,7 +749,7 @@ tg chats link reset <chat>
 
 **Returns:** replace the invite link; the old one stops working
 
-**Example:** `tg chats link reset Team`
+**Example:** `tg personal chats link reset "Book club"`
 
 ### `tg chats requests`
 
@@ -775,7 +775,7 @@ tg chats requests list <chat> [query] [options]
 
 **Returns:** join request — person_id, name, username, requested_at, about; every field: tg commands schema chats requests list
 
-**Example:** `tg chats requests list Team`
+**Example:** `tg personal chats requests list "Book club"`
 
 #### `tg chats requests accept`
 
@@ -799,7 +799,7 @@ tg chats requests accept <chat> [person] [options]
 
 **Returns:** let them in; the group sees them join
 
-**Example:** `tg chats requests accept Team Anna`
+**Example:** `tg personal chats requests accept "Book club" "Alex Example"`
 
 #### `tg chats requests decline`
 
@@ -823,7 +823,7 @@ tg chats requests decline <chat> [person] [options]
 
 **Returns:** turn the request away
 
-**Example:** `tg chats requests decline Team Anna`
+**Example:** `tg personal chats requests decline "Book club" "Alex Example"`
 
 ### `tg chats admins`
 
@@ -850,7 +850,7 @@ tg chats admins add <chat> <person> [options]
 
 **Returns:** make a member an admin with these rights
 
-**Example:** `tg chats admins add Team Anna --can <rights>`
+**Example:** `tg personal chats admins add "Book club" "Alex Example" --can members`
 
 #### `tg chats admins remove`
 
@@ -869,7 +869,7 @@ tg chats admins remove <chat> <person>
 
 **Returns:** take an admin's rights back; they stay a member
 
-**Example:** `tg chats admins remove Team Anna`
+**Example:** `tg personal chats admins remove "Book club" "Alex Example"`
 
 ### `tg chats folders`
 
@@ -891,7 +891,7 @@ tg chats folders list [query]
 
 **Next usually:** `tg chats folders show <folder>`, `tg chats folders update <folder>`, `tg chats folders delete <folder>`
 
-**Example:** `tg chats folders list`
+**Example:** `tg personal chats folders list`
 
 #### `tg chats folders show`
 
@@ -909,7 +909,7 @@ tg chats folders show <folder>
 
 **Next usually:** `tg chats folders update <folder>`, `tg chats folders delete <folder>`, `tg chats folders order <folders>`
 
-**Example:** `tg chats folders show Work`
+**Example:** `tg personal chats folders show "Reading"`
 
 #### `tg chats folders create`
 
@@ -936,7 +936,7 @@ tg chats folders create <title> [options]
 
 **Returns:** create a chat folder
 
-**Example:** `tg chats folders create "Weekly sync"`
+**Example:** `tg personal chats folders create "Reading" --chat "Book club"`
 
 #### `tg chats folders update`
 
@@ -965,7 +965,7 @@ tg chats folders update <folder> [options]
 
 **Returns:** rename a folder, or change which chats are in it
 
-**Example:** `tg chats folders update Work`
+**Example:** `tg personal chats folders update "Reading" --title "Books"`
 
 #### `tg chats folders delete`
 
@@ -983,7 +983,7 @@ tg chats folders delete <folder>
 
 **Returns:** delete a folder; the chats in it stay
 
-**Example:** `tg chats folders delete Work`
+**Example:** `tg personal chats folders delete "Reading"`
 
 #### `tg chats folders order`
 
@@ -1001,7 +1001,7 @@ tg chats folders order <folders>
 
 **Returns:** put folders in this order; the ones not named keep theirs after them
 
-**Example:** `tg chats folders order <folders>`
+**Example:** `tg personal chats folders order "Reading" "Work"`
 
 #### `tg chats folders join`
 
@@ -1019,7 +1019,7 @@ tg chats folders join <link>
 
 **Returns:** add a folder someone shared by a link; joins every chat in it, and the others there see…
 
-**Example:** `tg chats folders join https://example.com/join/abc`
+**Example:** `tg personal chats folders join https://t.me/addlist/example`
 
 ### `tg chats rules`
 
@@ -1039,7 +1039,7 @@ tg chats rules show <chat>
 
 **Returns:** the group's rules; the defaults, marked not saved, if it has none yet
 
-**Example:** `tg chats rules show Team`
+**Example:** `tg personal chats rules show "Book club"`
 
 #### `tg chats rules set`
 
@@ -1059,7 +1059,7 @@ tg chats rules set <chat> <key> <value>
 
 **Returns:** change one rule; the group's first change writes every rule with its default
 
-**Example:** `tg chats rules set Team <key> <value>`
+**Example:** `tg personal chats rules set "Book club" links report`
 
 #### `tg chats rules unset`
 
@@ -1078,7 +1078,7 @@ tg chats rules unset <chat> <key>
 
 **Returns:** put one rule back to its default
 
-**Example:** `tg chats rules unset Team <key>`
+**Example:** `tg personal chats rules unset "Book club" links`
 
 ### `tg chats moderate`
 
@@ -1103,7 +1103,7 @@ tg chats moderate <chat> [options]
 
 **Returns:** judge a group's new messages and members by its rules, and act as they allow
 
-**Example:** `tg chats moderate Team`
+**Example:** `tg personal chats moderate "Book club" --dry-run`
 
 ## `tg contacts`
 
@@ -1132,7 +1132,7 @@ tg contacts list [query] [options]
 
 **Next usually:** `tg contacts show <person>`, `tg contacts profile <person>`, `tg contacts context <person>`
 
-**Example:** `tg contacts list`
+**Example:** `tg personal contacts list --limit 10`
 
 ### `tg contacts show`
 
@@ -1152,9 +1152,9 @@ tg contacts show <person> [options]
 
 **Returns:** contact — ref, id, name, username, description, last_messaged_at, alias, display_name, and 2 more; every field: tg commands schema contacts show
 
-**Next usually:** `tg contacts profile <person>`, `tg contacts context <person>`, `tg contacts timeline <person>`
+**Next usually:** `tg contacts profile <person>`, `tg contacts context <person>`, `tg contacts prepare <person>`
 
-**Example:** `tg contacts show Anna`
+**Example:** `tg personal contacts show "Alex Example"`
 
 ### `tg contacts profile`
 
@@ -1174,7 +1174,7 @@ tg contacts profile <person> [options]
 
 **Returns:** everything the messenger says about one person — handles, flags, last seen, when they…
 
-**Example:** `tg contacts profile Anna`
+**Example:** `tg personal contacts profile "Alex Example"`
 
 ### `tg contacts context`
 
@@ -1197,7 +1197,28 @@ tg contacts context <person> [options]
 
 **Returns:** what the local store holds about a person; --chat --sync-first explicitly asks Telegram…
 
-**Example:** `tg contacts context Anna`
+**Example:** `tg personal contacts context "Alex Example" --limit 10`
+
+### `tg contacts prepare`
+
+before you talk to someone: what contacts context gives, plus the one-to-one chats where they wrote last, open tasks, accepted facts, your notes and their recent meetings, each with its reference; never connects
+
+```sh
+tg contacts prepare <person> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `person` | required | their id, @username, or part of their name. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | at most this many messages, and items in each section; 10 if not given. |
+| `--since-time <time>` | no message or meeting older than this ISO 8601 time, or 2h / 1d ago. |
+
+**Returns:** what to know before you talk to someone, each item with its reference
+
+**Example:** `tg contacts prepare Ana`
 
 ### `tg contacts timeline`
 
@@ -1221,7 +1242,7 @@ tg contacts timeline <person> [options]
 
 **Returns:** everything one person took part in, in every messenger linked to them — messages they…
 
-**Example:** `tg contacts timeline Anna`
+**Example:** `tg personal contacts timeline "Alex Example" --limit 10`
 
 ### `tg contacts check`
 
@@ -1241,7 +1262,7 @@ tg contacts check <person> [options]
 
 **Returns:** whether one person looks like a bot, a fake or a spammer: their profile, what they wrote…
 
-**Example:** `tg contacts check Anna`
+**Example:** `tg personal contacts check "Alex Example"`
 
 ### `tg contacts link`
 
@@ -1260,7 +1281,7 @@ tg contacts link <person> <other>
 
 **Returns:** record that two people in the store are one person — the same name is never enough
 
-**Example:** `tg contacts link Anna <other>`
+**Example:** `tg personal contacts link "Alex Example" zoom:101`
 
 ### `tg contacts unlink`
 
@@ -1278,7 +1299,7 @@ tg contacts unlink <person>
 
 **Returns:** undo contacts link for one identity: it is a person of its own again
 
-**Example:** `tg contacts unlink Anna`
+**Example:** `tg personal contacts unlink "Alex Example"`
 
 ### `tg contacts lookup`
 
@@ -1290,7 +1311,7 @@ tg contacts lookup
 
 **Returns:** who has this phone number — asks for it, or reads it from stdin; never an argument
 
-**Example:** `tg contacts lookup`
+**Example:** `tg personal contacts lookup`
 
 ### `tg contacts sync`
 
@@ -1304,7 +1325,7 @@ tg contacts sync
 
 **Returns:** take the whole contact list from the messenger into the local store
 
-**Example:** `tg contacts sync`
+**Example:** `tg personal contacts sync`
 
 ### `tg contacts alias`
 
@@ -1327,7 +1348,7 @@ tg contacts alias set <person> <alias>
 
 **Returns:** your own name for a person in this account; kept on this machine, never sent
 
-**Example:** `tg contacts alias set Anna <alias>`
+**Example:** `tg personal contacts alias set "Alex Example" "Reading partner"`
 
 #### `tg contacts alias rm`
 
@@ -1345,7 +1366,7 @@ tg contacts alias rm <person>
 
 **Returns:** drop your local name for a person; their own name shows again
 
-**Example:** `tg contacts alias rm Anna`
+**Example:** `tg personal contacts alias rm "Alex Example"`
 
 ### `tg contacts notes`
 
@@ -1366,7 +1387,7 @@ tg contacts notes list <person> [query]
 
 **Returns:** contact note — id, contact, text, revision, created_at, updated_at; every field: tg commands schema contacts notes list
 
-**Example:** `tg contacts notes list Anna`
+**Example:** `tg personal contacts notes list "Alex Example"`
 
 #### `tg contacts notes show`
 
@@ -1383,7 +1404,7 @@ tg contacts notes show <person> <id>
 
 **Returns:** contact note — id, contact, text, revision, created_at, updated_at; every field: tg commands schema contacts notes show
 
-**Example:** `tg contacts notes show Anna 1`
+**Example:** `tg personal contacts notes show "Alex Example" 1`
 
 #### `tg contacts notes add`
 
@@ -1405,7 +1426,7 @@ tg contacts notes add <person> [options]
 
 **Returns:** contact note — id, contact, text, revision, created_at, updated_at; every field: tg commands schema contacts notes add
 
-**Example:** `tg contacts notes add Anna`
+**Example:** `tg personal contacts notes add "Alex Example" --file ./note.txt`
 
 #### `tg contacts notes edit`
 
@@ -1429,7 +1450,7 @@ tg contacts notes edit <person> <id> [options]
 
 **Returns:** contact note — id, contact, text, revision, created_at, updated_at; every field: tg commands schema contacts notes edit
 
-**Example:** `tg contacts notes edit Anna 1 --revision <n>`
+**Example:** `tg personal contacts notes edit "Alex Example" 1 --revision 1 --file ./note.txt`
 
 #### `tg contacts notes remove`
 
@@ -1448,7 +1469,7 @@ tg contacts notes remove <person> <id>
 
 **Returns:** delete one private note on a person
 
-**Example:** `tg contacts notes remove Anna 1`
+**Example:** `tg personal contacts notes remove "Alex Example" 1`
 
 ### `tg contacts add`
 
@@ -1466,7 +1487,7 @@ tg contacts add <person>
 
 **Returns:** add a person to your contacts — `contacts list` still shows only people you have a dialog…
 
-**Example:** `tg contacts add Anna`
+**Example:** `tg personal contacts add "Alex Example"`
 
 ### `tg contacts remove`
 
@@ -1484,7 +1505,7 @@ tg contacts remove <person>
 
 **Returns:** remove a person from your contacts; the chat stays, a name you gave them may not
 
-**Example:** `tg contacts remove Anna`
+**Example:** `tg personal contacts remove "Alex Example"`
 
 ### `tg contacts block`
 
@@ -1502,7 +1523,7 @@ tg contacts block <person>
 
 **Returns:** stop a person from writing to you — they need not be a contact
 
-**Example:** `tg contacts block Anna`
+**Example:** `tg personal contacts block "Alex Example"`
 
 ### `tg contacts unblock`
 
@@ -1520,7 +1541,7 @@ tg contacts unblock <person>
 
 **Returns:** let a blocked person write to you again
 
-**Example:** `tg contacts unblock Anna`
+**Example:** `tg personal contacts unblock "Alex Example"`
 
 ### `tg contacts rename`
 
@@ -1540,7 +1561,7 @@ tg contacts rename <person> <first-name> [last-name]
 
 **Returns:** rename the contact in the messenger address book; use contacts alias for a private local…
 
-**Example:** `tg contacts rename Anna <first-name>`
+**Example:** `tg personal contacts rename "Alex Example" Alex Example`
 
 ### `tg contacts import`
 
@@ -1558,7 +1579,7 @@ tg contacts import <file>
 
 **Returns:** upload phone numbers and add the people the messenger has under them
 
-**Example:** `tg contacts import ./report.pdf`
+**Example:** `tg personal contacts import ./contacts.csv`
 
 ## `tg messages`
 
@@ -1583,7 +1604,7 @@ tg messages evidence <chat> [options]
 
 **Returns:** a bounded evidence packet from stored messages, newest first
 
-**Example:** `tg messages evidence Team`
+**Example:** `tg personal messages evidence "Book club" --limit 10`
 
 ### `tg messages list`
 
@@ -1604,13 +1625,12 @@ tg messages list <chat> [query] [options]
 | `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
-| `--mark-read` | also mark the chat read up to the newest message shown; the other person sees it. |
 
 **Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages list
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
-**Example:** `tg messages list Team`
+**Example:** `tg personal messages list "Book club" --limit 20`
 
 ### `tg messages send`
 
@@ -1650,7 +1670,7 @@ tg messages send <chat> [text] [options]
 
 **Returns:** send a text message; without [text], the text is read from stdin
 
-**Example:** `tg messages send Team "on my way"`
+**Example:** `tg personal messages send "Book club" "The meeting starts at 10."`
 
 ### `tg messages show`
 
@@ -1667,7 +1687,7 @@ tg messages show <chat> [message]
 
 **Returns:** one message, by its chat and id or by its msg: locator
 
-**Example:** `tg messages show Team 1234`
+**Example:** `tg personal messages show "Book club" 101`
 
 ### `tg messages context`
 
@@ -1694,7 +1714,7 @@ tg messages context <chat> [message] [options]
 
 **Returns:** a message and what came either side of it, oldest first
 
-**Example:** `tg messages context Team 1234`
+**Example:** `tg personal messages context "Book club" 101 --before-n 3 --after-n 3`
 
 ### `tg messages download`
 
@@ -1720,7 +1740,7 @@ tg messages download <chat> [message] [options]
 
 **Returns:** save a message's photos, files, videos and voice notes to a folder — or a whole chat's…
 
-**Example:** `tg messages download Team 1234`
+**Example:** `tg personal messages download "Book club" 101 --output-dir ./downloads`
 
 ### `tg messages transcribe`
 
@@ -1742,7 +1762,7 @@ tg messages transcribe <chat> <message> [options]
 
 **Returns:** a voice message as text — by Telegram where it can, else by a model on this machine
 
-**Example:** `tg messages transcribe Team 1234`
+**Example:** `tg personal messages transcribe "Book club" 101`
 
 ### `tg messages edit`
 
@@ -1767,7 +1787,7 @@ tg messages edit <chat> <message> [text] [options]
 
 **Returns:** change the text of your own message; the other side may have read it already
 
-**Example:** `tg messages edit Team 1234 "on my way"`
+**Example:** `tg personal messages edit "Book club" 101 "The meeting starts at 11."`
 
 ### `tg messages delete`
 
@@ -1791,7 +1811,7 @@ tg messages delete <chat> <messages> [options]
 
 **Returns:** delete messages for you only; with --for-everyone, for everyone in the chat
 
-**Example:** `tg messages delete Team <messages>`
+**Example:** `tg personal messages delete "Book club" 101`
 
 ### `tg messages forward`
 
@@ -1818,7 +1838,7 @@ tg messages forward <chat> <message> [options]
 
 **Returns:** forward one message to another chat
 
-**Example:** `tg messages forward Team 1234 --to Team`
+**Example:** `tg personal messages forward "Book club" 101 --to "Project room"`
 
 ### `tg messages pin`
 
@@ -1878,7 +1898,7 @@ tg messages scheduled <chat>
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
-**Example:** `tg messages scheduled Team`
+**Example:** `tg personal messages scheduled "Book club"`
 
 ### `tg messages link`
 
@@ -1897,7 +1917,7 @@ tg messages link <chat> [message]
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
-**Example:** `tg messages link Team 1234`
+**Example:** `tg personal messages link "Book club" 101`
 
 ### `tg messages comments`
 
@@ -1922,7 +1942,7 @@ tg messages comments <chat> <post> [query] [options]
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg polls show <chat> <message>`
 
-**Example:** `tg messages comments Team 1234`
+**Example:** `tg personal messages comments "News channel" 101 --limit 20`
 
 ### `tg messages links`
 
@@ -1939,7 +1959,7 @@ tg messages links <chat> <message>
 
 **Returns:** why a message is in its conversation: each link it has, and the chain of answers back to…
 
-**Example:** `tg messages links Team 1234`
+**Example:** `tg personal messages links "Book club" 101`
 
 ### `tg messages sync`
 
@@ -1973,7 +1993,7 @@ tg messages sync [chat] [options]
 
 **Returns:** bring a chat's history in the local store up to date, newest first; run it again to…
 
-**Example:** `tg messages sync Team`
+**Example:** `tg personal messages sync "Book club" --last 100`
 
 ## `tg reactions`
 
@@ -2291,8 +2311,6 @@ tg inbox [query] [options]
 | `--kind <kinds>` | only chats of these kinds, comma-separated: dialog, group, channel, saved. |
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
-| `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
-| `--no-mark-read` | do not, whatever the catch_up_marks_read setting says. |
 
 **Returns:** message summary — ref, chat_id, timestamp, sender_name, outgoing, text, attachments, chat_title, and 1 more; every field: tg commands schema inbox
 
@@ -2320,8 +2338,6 @@ tg review [query] [options]
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 | `--new` | what changed since the last `review --new`, a point per chat — for scheduled runs. |
-| `--mark-read` | also mark each chat shown read, up to the newest message shown; the other side sees it. |
-| `--no-mark-read` | do not, whatever the catch_up_marks_read setting says. |
 
 **Returns:** message summary — ref, chat_id, timestamp, sender_name, outgoing, text, attachments, chat_title, and 1 more; every field: tg commands schema review
 
@@ -2757,7 +2773,7 @@ tg store status [chat]
 
 **Returns:** per chat: messages stored, the oldest and newest, and the stretches held completely
 
-**Example:** `tg store status Team`
+**Example:** `tg personal store status "Book club"`
 
 ### `tg store gaps`
 
@@ -2777,7 +2793,7 @@ tg store gaps plan <chat>
 
 **Returns:** local coverage plan; missing message ids alone do not imply missing history
 
-**Example:** `tg store gaps plan Team`
+**Example:** `tg personal store gaps plan "Book club"`
 
 #### `tg store gaps repair`
 
@@ -2810,7 +2826,7 @@ tg store gaps repair <chat> [options]
 
 **Returns:** fetch bounded interior gaps and recheck coverage; never delete unseen messages
 
-**Example:** `tg store gaps repair Team`
+**Example:** `tg personal store gaps repair "Book club" --limit 100`
 
 ### `tg store jobs`
 
@@ -2836,7 +2852,7 @@ tg store jobs list [query] [options]
 
 **Returns:** job — id, chat, state, pid, started_at, fetched, finished_at, message_limit, and 5 more; every field: tg commands schema store jobs list
 
-**Example:** `tg store jobs list`
+**Example:** `tg personal store jobs list`
 
 #### `tg store jobs show`
 
@@ -2852,7 +2868,7 @@ tg store jobs show [job]
 
 **Returns:** one background job — the newest when none is named — and what the store now holds of its…
 
-**Example:** `tg store jobs show`
+**Example:** `tg personal store jobs show`
 
 #### `tg store jobs cancel`
 
@@ -2870,7 +2886,7 @@ tg store jobs cancel <job>
 
 **Returns:** stop a running background job after its current page; a later sync resumes where it…
 
-**Example:** `tg store jobs cancel <job>`
+**Example:** `tg personal store jobs cancel job-101`
 
 #### `tg store jobs retry`
 
@@ -2892,7 +2908,7 @@ tg store jobs retry [job] [options]
 
 **Returns:** start a partial, failed or died job again, as a new job; the sync resumes where the store…
 
-**Example:** `tg store jobs retry`
+**Example:** `tg personal store jobs retry --failed`
 
 #### `tg store jobs clear`
 
@@ -2906,7 +2922,7 @@ tg store jobs clear
 
 **Returns:** forget finished jobs and remove their logs; a running job is kept
 
-**Example:** `tg store jobs clear`
+**Example:** `tg personal store jobs clear`
 
 ### `tg store export`
 
@@ -2934,7 +2950,7 @@ tg store export [chats] [options]
 
 **Returns:** a chat's stored messages, oldest first: --jsonl one message per line, --json the list…
 
-**Example:** `tg store export`
+**Example:** `tg personal store export "Book club" --output ./messages.jsonl`
 
 ### `tg store clear`
 
@@ -2954,7 +2970,7 @@ tg store clear [options]
 
 **Returns:** delete from the store the chats this account has left, with their messages
 
-**Example:** `tg store clear`
+**Example:** `tg personal store clear --left --dry-run`
 
 ### `tg store info`
 
@@ -2966,7 +2982,7 @@ tg store info
 
 **Returns:** the store file: where it is, its size, its schema and how many rows it holds; changes…
 
-**Example:** `tg store info`
+**Example:** `tg personal store info`
 
 ### `tg store check`
 
@@ -2978,7 +2994,7 @@ tg store check
 
 **Returns:** whether the store is healthy — integrity, search indexes, disk, and which chats are behind
 
-**Example:** `tg store check`
+**Example:** `tg personal store check`
 
 ### `tg store migrate`
 
@@ -2992,7 +3008,7 @@ tg store migrate
 
 **Returns:** bring the store up to this build's schema, then normalize, index and stem the messages…
 
-**Example:** `tg store migrate`
+**Example:** `tg personal store migrate`
 
 ### `tg store reindex`
 
@@ -3006,7 +3022,7 @@ tg store reindex
 
 **Returns:** rebuild the word index, its typo vocabulary, the stems, the files' word index, the notes'…
 
-**Example:** `tg store reindex`
+**Example:** `tg personal store reindex`
 
 ### `tg store backup`
 
@@ -3028,7 +3044,7 @@ tg store backup <file> [options]
 
 **Returns:** copy the store into a new file, while it is in use; never overwrites a file
 
-**Example:** `tg store backup ./report.pdf`
+**Example:** `tg personal store backup ./backup.db`
 
 ### `tg store restore`
 
@@ -3046,7 +3062,7 @@ tg store restore <file>
 
 **Returns:** put a backup in place of the store; the store it replaces is kept beside it, never deleted
 
-**Example:** `tg store restore ./report.pdf`
+**Example:** `tg personal store restore ./backup.db`
 
 ### `tg store decrypt`
 
@@ -3068,7 +3084,7 @@ tg store decrypt <file> [options]
 
 **Returns:** open a file written with --encrypt into a new file; asks for its password
 
-**Example:** `tg store decrypt ./report.pdf --output ./report.pdf`
+**Example:** `tg personal store decrypt ./backup.enc --output ./restored.db`
 
 ### `tg store repair`
 
@@ -3086,7 +3102,7 @@ tg store repair [options]
 
 **Returns:** bring every table to this build's shape, deleting nothing: a table of the wrong shape is…
 
-**Example:** `tg store repair`
+**Example:** `tg personal store repair --dry-run`
 
 ### `tg store reset`
 
@@ -3104,7 +3120,7 @@ tg store reset [options]
 
 **Returns:** back the store up beside itself, then delete it and start an empty one at this build's…
 
-**Example:** `tg store reset`
+**Example:** `tg personal store reset`
 
 ### `tg store copies`
 
@@ -3126,7 +3142,7 @@ tg store copies delete <name>
 
 **Returns:** delete one copy `store repair` kept, named exactly; refuses any other table
 
-**Example:** `tg store copies delete daily`
+**Example:** `tg personal store copies delete messages_copy_1`
 
 ## `tg conversations`
 
@@ -3566,7 +3582,7 @@ tg tags auto [options]
 
 **Returns:** derive local group/channel tags from cached metadata using keyword rules
 
-**Example:** `tg tags auto`
+**Example:** `tg personal tags auto --chat "Book club" --dry-run`
 
 ### `tg tags add`
 
@@ -3591,7 +3607,7 @@ tg tags add <tag> [options]
 
 **Returns:** put tags on one chat, person, message or task
 
-**Example:** `tg tags add <tag>`
+**Example:** `tg personal tags add reading --chat "Book club"`
 
 ### `tg tags remove`
 
@@ -3617,7 +3633,7 @@ tg tags remove <tag> [options]
 
 **Returns:** take tags off one chat, person, message or task
 
-**Example:** `tg tags remove <tag>`
+**Example:** `tg personal tags remove reading --chat "Book club"`
 
 ### `tg tags list`
 
@@ -3633,7 +3649,7 @@ tg tags list [query]
 
 **Returns:** tagging — tag, type, target, name, sources, created_at; every field: tg commands schema tags list
 
-**Example:** `tg tags list`
+**Example:** `tg personal tags list`, `tg personal tags list tag:reading`
 
 ## `tg mentions`
 
@@ -3921,7 +3937,7 @@ tg stats messages show [query] [options]
 
 **Returns:** message counts — by, total, rows; every field: tg commands schema stats messages show
 
-**Example:** `tg stats messages show "invoice"`
+**Example:** `tg personal stats messages show --chat "Book club" --by day`
 
 #### `tg stats messages counters`
 
@@ -3952,7 +3968,7 @@ tg stats messages counters show [query] [options]
 
 **Returns:** counters — cutoff, max_age_ms, selection, rows; every field: tg commands schema stats messages counters show
 
-**Example:** `tg stats messages counters show "invoice"`
+**Example:** `tg personal stats messages counters show --chat "Book club" --limit 10`
 
 #### `tg stats messages counters refresh`
 
@@ -3983,7 +3999,7 @@ tg stats messages counters refresh [query] [options]
 
 **Returns:** counter refresh — dry_run, targets, counters, supported, unsupported, max_messages, time_ms, results, and 2 more; every field: tg commands schema stats messages counters refresh
 
-**Example:** `tg stats messages counters refresh "invoice"`
+**Example:** `tg personal stats messages counters refresh --chat "Book club" --dry-run`
 
 #### `tg stats messages unanswered`
 
@@ -4010,7 +4026,7 @@ tg stats messages unanswered [query] [options]
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands schema stats messages unanswered
 
-**Example:** `tg stats messages unanswered "invoice"`
+**Example:** `tg personal stats messages unanswered --chat "Project room"`
 
 #### `tg stats messages discussion`
 
@@ -4037,7 +4053,7 @@ tg stats messages discussion [query] [options]
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands schema stats messages discussion
 
-**Example:** `tg stats messages discussion "invoice"`
+**Example:** `tg personal stats messages discussion --chat "Book club"`
 
 #### `tg stats messages top`
 
@@ -4070,7 +4086,7 @@ tg stats messages top [query] [options]
 
 **Returns:** ranking — target, measure, order, preset, weights, min_messages, message_kind, total, and 7 more; every field: tg commands schema stats messages top
 
-**Example:** `tg stats messages top "invoice"`
+**Example:** `tg personal stats messages top --chat "Book club" --limit 10`
 
 #### `tg stats messages evidence`
 
@@ -4093,7 +4109,7 @@ tg stats messages evidence <message> [options]
 
 **Returns:** evidence — ; every field: tg commands schema stats messages evidence
 
-**Example:** `tg stats messages evidence 1234 --selection <json> --component daily`
+**Example:** `tg personal stats messages evidence "$message" --selection "$selection" --component reactions`
 
 ### `tg stats contacts`
 
@@ -4123,7 +4139,7 @@ tg stats contacts responses [query] [options]
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands schema stats contacts responses
 
-**Example:** `tg stats contacts responses "invoice"`
+**Example:** `tg personal stats contacts responses --chat "Project room"`
 
 #### `tg stats contacts top`
 
@@ -4157,7 +4173,7 @@ tg stats contacts top [query] [options]
 
 **Returns:** ranking — target, measure, order, preset, weights, min_messages, message_kind, total, and 7 more; every field: tg commands schema stats contacts top
 
-**Example:** `tg stats contacts top "invoice"`
+**Example:** `tg personal stats contacts top --chat "Book club" --limit 10`
 
 #### `tg stats contacts evidence`
 
@@ -4180,7 +4196,7 @@ tg stats contacts evidence <person> [options]
 
 **Returns:** evidence — ; every field: tg commands schema stats contacts evidence
 
-**Example:** `tg stats contacts evidence Anna --selection <json> --component daily`
+**Example:** `tg personal stats contacts evidence 101 --selection "$selection" --component messages`
 
 ### `tg stats chats`
 
@@ -4206,7 +4222,7 @@ tg stats chats show <chat> [options]
 
 **Returns:** chat stats — chat, since, until, complete, completeness, messages, senders, replies, and 10 more; every field: tg commands schema stats chats show
 
-**Example:** `tg stats chats show Team`
+**Example:** `tg personal stats chats show "Book club"`
 
 #### `tg stats chats newcomers`
 
@@ -4232,7 +4248,7 @@ tg stats chats newcomers <chat> [options]
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands schema stats chats newcomers
 
-**Example:** `tg stats chats newcomers Team`
+**Example:** `tg personal stats chats newcomers "Book club"`
 
 #### `tg stats chats retention`
 
@@ -4258,7 +4274,7 @@ tg stats chats retention <chat> [options]
 
 **Returns:** retention — chat_ref, cutoff, since, until, checkpoints_ms, within_ms, by, timezone, and 5 more; every field: tg commands schema stats chats retention
 
-**Example:** `tg stats chats retention Team`
+**Example:** `tg personal stats chats retention "Book club"`
 
 #### `tg stats chats official`
 
@@ -4295,7 +4311,7 @@ tg stats tasks show [options]
 
 **Returns:** task stats — open, rows; every field: tg commands schema stats tasks show
 
-**Example:** `tg stats tasks show`
+**Example:** `tg personal stats tasks show --chat "Project room"`
 
 ### `tg stats charts`
 
@@ -4321,7 +4337,7 @@ tg stats charts <chat> [options]
 
 **Returns:** chart — version, kind, title, x, series, unit, timezone, partial, and 2 more; every field: tg commands schema stats charts
 
-**Example:** `tg stats charts Team`
+**Example:** `tg personal stats charts "Book club" --output ./activity.svg`
 
 ## `tg tasks`
 
@@ -5472,7 +5488,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 | `value` | required | a number, true or false, or for allow a list like send,reaction; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -5497,7 +5513,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, catch_up_marks_read, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, analysis_provider, analysis_model, analysis_base_url, models, proxy, read_other_bots, update_check, skill_hint, default_profile, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|
@@ -6288,6 +6304,8 @@ tg bot watch [options]
 |---|---|
 | `--events` | also edits, deletions, buttons pressed and people coming and going; every line names its event. |
 | `--types <types>` | only these update types, comma-separated, in the messenger's words. |
+| `--public-url <url>` | receive by webhook at your tunnel's https address instead of polling, e.g. https://<name>.ts.net. |
+| `--port <port>` | the local port behind the tunnel for --public-url (default 8766). |
 
 **Returns:** print new messages as they arrive and keep them, until Ctrl-C or --timeout (either ends…
 

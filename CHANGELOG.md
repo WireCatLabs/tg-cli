@@ -3,6 +3,34 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg <profile> contacts prepare <person>`: what to know before talking to someone** (cli-core 0.394.0). What
+  `contacts context` gives, plus the one-to-one chats where their message is the newest the store holds, open tasks
+  assigned to them, accepted facts about them and their projects, your notes about them, and their recent meetings —
+  each with its reference, under one size budget, with `prepare.coverage` saying what each section left out and why.
+  Tasks of another Telegram account, and facts on a project bound to one, stay out. `contacts.notes.list: deny`
+  leaves the notes out and says so; `messages: deny` refuses the command, as it does `contacts context`.
+- **Message search reads `"a b"~N`: the words at most N words apart in one message** (cli-core 0.391.0).
+- **`bot watch --public-url <url> [--port <n>]` receives a bot's updates by webhook** (cli-core 0.391.0).
+
+### Changed — may break callers
+
+- **Reads never mark chats read** (cli-core 0.391.0). `messages list`, `inbox` and `review` no longer take
+  `--mark-read` or `--no-mark-read`, and the `catch_up_marks_read` setting is refused. Why: a command that only read
+  sent the other person a read receipt. What to do: remove `catch_up_marks_read`; run `tg <profile> chats mark-read
+  <chat>` when you mean to mark a chat read.
+- **An unknown key under `permissions` refuses messenger commands with `configuration_error`** (cli-core 0.391.0),
+  typos such as `messages.sedn` included. It was a warning, and the restriction did not hold. What to do: correct the
+  key or remove it with `config unset`.
+
+### Fixed
+
+- **A local read with an unknown profile lists the profiles on this computer** (cli-core 0.391.0), instead of
+  suggesting to link a new account.
+
 ## 0.81.0 — 22.10.2026
 
 ### Added

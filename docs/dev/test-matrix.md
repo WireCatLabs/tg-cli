@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2357 ✅ · 92 ⛔ · 0 ❌** — 498 commands, 1951 options.
+**2353 ✅ · 96 ⛔ · 0 ❌** — 499 commands, 1950 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -141,6 +141,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts context` | `--since-time` | ⛔ | cli-core src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing |
 | `contacts context` | `--chat` | ✅ |  |
 | `contacts context` | `--sync-first` | ✅ |  |
+| `contacts prepare` |  | ✅ |  |
+| `contacts prepare` | `--limit` | ⛔ | cli-core src/services/person-preparation.test.ts covers the per-section limit and byte budget; shared option parsing |
+| `contacts prepare` | `--since-time` | ⛔ | cli-core src/cli/messenger/messenger.test.ts covers the shared date window; shared option parsing |
 | `contacts timeline` |  | ✅ |  |
 | `contacts timeline` | `--scope` | ✅ |  |
 | `contacts timeline` | `--since-time` | ✅ |  |
@@ -177,7 +180,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages list` | `--cursor` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler |
 | `messages list` | `--transcribe` | ✅ |  |
 | `messages list` | `--model` | ✅ |  |
-| `messages list` | `--mark-read` | ✅ |  |
 | `messages send` |  | ✅ |  |
 | `messages send` | `--topic` | ✅ |  |
 | `messages send` | `--reply-to` | ✅ |  |
@@ -284,8 +286,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `inbox` | `--kind` | ✅ |  |
 | `inbox` | `--transcribe` | ✅ |  |
 | `inbox` | `--model` | ✅ |  |
-| `inbox` | `--mark-read` | ✅ |  |
-| `inbox` | `--no-mark-read` | ✅ |  |
 | `review` |  | ✅ |  |
 | `review` | `--kind` | ✅ |  |
 | `review` | `--unanswered` | ✅ |  |
@@ -293,8 +293,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `review` | `--transcribe` | ✅ |  |
 | `review` | `--model` | ✅ |  |
 | `review` | `--new` | ✅ |  |
-| `review` | `--mark-read` | ✅ |  |
-| `review` | `--no-mark-read` | ✅ |  |
 | `topics list` |  | ✅ |  |
 | `topics list` | `--limit` | ✅ |  |
 | `topics list` | `--page` | ✅ |  |
@@ -946,6 +944,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot watch` |  | ✅ |  |
 | `bot watch` | `--events` | ✅ |  |
 | `bot watch` | `--types` | ✅ |  |
+| `bot watch` | `--public-url` | ⛔ | cli-core src/cli/bot/webhook-receiver.test.ts covers receiving updates by webhook on a local port; this consumer mounts the shared command |
+| `bot watch` | `--port` | ⛔ | cli-core src/cli/bot/webhook-receiver.test.ts covers the local port the webhook receiver listens on; shared option parsing |
 | `bot callbacks answer` |  | ✅ |  |
 | `bot callbacks answer` | `--text` | ✅ |  |
 | `bot callbacks answer` | `--notification` | ✅ |  |
