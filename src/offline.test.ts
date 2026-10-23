@@ -137,14 +137,16 @@ describe("--offline", () => {
     }
   })
 
-  it("refuses a profile it has never seen online, and says what to do", async () => {
+  it("names available profiles when the selected profile is unknown", async () => {
     const { code, stderr } = await tg(["stranger", "chats", "list", "--offline"], {
       store: freshStore(),
       online: false,
     })
 
     expect(code).toBe(6)
-    expect(JSON.parse(stderr[0] ?? "").error.message).toContain("without --offline")
+    const error = JSON.parse(stderr[0] ?? "").error
+    expect(error.message).toContain('no profile named "stranger"')
+    expect(error.details.profiles).toEqual(expect.arrayContaining(["kept"]))
   })
 
   it("refuses to send", async () => {

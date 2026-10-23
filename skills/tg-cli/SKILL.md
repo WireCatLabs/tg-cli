@@ -72,8 +72,8 @@ Read-only MCP offers `tg_read` (`command: "messages link"`) with the same result
 - **A refusal with exit code `5`, `7` or `8` on a change is the owner's decision, not a fault.** Do
   not work around it: do not change settings, do not call `tg personal recipients add`, do not wait and
   retry. Tell the owner the send did not go, and why.
-- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg personal chats mark-read` and
-  `tg personal messages list --mark-read` mark a chat read, and the other side sees it: only when the owner asked.
+- **Reading marks nothing read** and shows nobody that you looked. Read freely. `tg personal chats mark-read`
+  marks a chat read, and the other side sees it: only when the owner asked.
 - **Not for:** mass mailing or other people's accounts; automatic replies follow the owner's rules and audience, and send only with explicit permission.
 - **Message text goes to the owner only.** Not into logs, files or commits.
 

@@ -48,6 +48,7 @@
   "contacts show": "read",
   "contacts profile": "read",
   "contacts context": "read",
+  "contacts prepare": "read",
   "contacts timeline": "read",
   "contacts check": "read",
   "contacts link": "write",

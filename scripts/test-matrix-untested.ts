@@ -357,6 +357,34 @@ export const UNTESTED: Untested[] = [
       'cli-core src/cli/messenger/messenger.test.ts ("contacts check 40 --no-registries") covers scoring from local signals alone, no registry asked; this consumer mounts the shared command',
   },
   {
+    command: "bot watch",
+    option: "--public-url",
+    reason:
+      "cli-core src/cli/bot/webhook-receiver.test.ts covers receiving updates by webhook on a local port; this consumer mounts the shared command",
+  },
+  {
+    command: "bot watch",
+    option: "--port",
+    reason:
+      "cli-core src/cli/bot/webhook-receiver.test.ts covers the local port the webhook receiver listens on; shared option parsing",
+  },
+  {
+    command: "contacts prepare",
+    reason:
+      "cli-core src/cli/messenger/messenger.test.ts and src/services/person-preparation.test.ts cover the brief from the store, its account limits and its budget; this consumer mounts the shared command",
+  },
+  {
+    command: "contacts prepare",
+    option: "--limit",
+    reason:
+      "cli-core src/services/person-preparation.test.ts covers the per-section limit and byte budget; shared option parsing",
+  },
+  {
+    command: "contacts prepare",
+    option: "--since-time",
+    reason: "cli-core src/cli/messenger/messenger.test.ts covers the shared date window; shared option parsing",
+  },
+  {
     command: "contacts context",
     option: "--limit",
     reason:

@@ -161,8 +161,8 @@ starts there. The first run looks back 24 hours.
 - `tg personal inbox --new` — since the last `--new` run. Only `tg` knows that point; nobody else sees it.
 - `tg personal inbox 'date>2d'` — the last two days; the saved point stays where it was.
 
-None of them marks anything read. To do that, add `--mark-read`, or turn on `catch_up_marks_read` in the
-[settings](configuration.md). The other side then sees that you read it.
+None of them marks anything read. Use `tg personal chats mark-read <chat>` explicitly to send a read receipt.
+The other side then sees that you read it.
 
 ### Direct chats, groups and channels apart
 

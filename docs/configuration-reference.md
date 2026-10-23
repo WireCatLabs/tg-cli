@@ -83,7 +83,7 @@ creates it with `limit`, `keep_runs_for_days`, `sends_per_hour`, `update_check` 
     "default": { "limit": 50 },
     "work": { "permissions": { "messages": "readonly", "messages.send": "allow" }, "record": true }
   },
-  "personal": { "defaults": { "catch_up_marks_read": true } },
+  "personal": { "defaults": { "search_catch_up": true } },
   "bot": { "profiles": { "shop": { "sends_per_hour": 200 } } }
 }
 ```
@@ -104,7 +104,6 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `timeout_ms` | none | how long **one** request to Telegram may wait, in milliseconds. A command makes several, so for a limit on the whole command use `--timeout` | none (`--timeout` is a different thing) |
 | `color` | from the terminal | colour in the table view | none; with no setting, `NO_COLOR` turns it off |
 | `sender_colors` | `false` | a colour per sender in the table view of messages | none |
-| `catch_up_marks_read` | `false` | `inbox` and `review` mark each chat they show read, up to the newest message shown. The other side sees it | `--mark-read`, `--no-mark-read` |
 | `search_catch_up` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
 | `picture_search` | `false` | search stored pictures by what they show. `images embed` reads the stored pictures once the model is downloaded, and then `search messages` also returns a `pictures` list ([pictures](search.md#pictures-by-what-they-show)) | none |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
@@ -340,7 +339,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 |---|---|---|
 | `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
 | `requests_per_minute` | integer ≥ 0 | profile |
-| `color`, `sender_colors`, `catch_up_marks_read`, `search_catch_up`, `record` | boolean | profile |
+| `color`, `sender_colors`, `search_catch_up`, `record` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
 | `read_other_bots` | boolean or array of profile names | bot only |
 | `update_check`, `skill_hint` | boolean | root `defaults` only |

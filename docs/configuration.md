@@ -31,7 +31,6 @@ way to override it, in the [settings reference](configuration-reference.md#the-f
 | `color` | colour in tables | decided by your terminal |
 | `sender_colors` | a different colour for each sender in a message list | `false` |
 | `timeout_ms` | how long **one** request to Telegram may wait, in milliseconds. To limit a whole command, use `--timeout` instead | the connection's own wait |
-| `catch_up_marks_read` | `inbox` and `review` mark the chats they show as read. The other person sees it | `false` |
 | `proxy` | a proxy server to reach Telegram through, where it is blocked ([proxy setup](configuration-reference.md#through-a-proxy)) | none |
 | `transcribe_with` | who turns voice messages into text: `auto`, `messenger` or `local` | `auto` |
 | `update_check` | once a day, say when a newer `tg` exists | `true` |
@@ -88,7 +87,7 @@ for one command. Remove the profile's `limit` and the value from `defaults` appl
     }
   },
   "personal": {
-    "defaults": { "catch_up_marks_read": false, "search_catch_up": true }
+    "defaults": { "search_catch_up": true }
   },
   "bot": {
     "defaults": { "permissions": { "bot": "readonly", "bot.messages.send": "allow" } },
