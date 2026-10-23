@@ -14,6 +14,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   which signs you in.
 - **The skill tells an agent to search again in other words before saying something is not there.** A search
   finds the words it is given, and a paraphrase shares none with its answer.
+- **`tg <profile> chats archive|unarchive|pin|unpin|mark-unread|mute|unmute <chat>`: your own chat list from the
+  command line.** Telegram's archive, pinned chats, the unread dot and notifications, with `mute --until 2h` for a
+  time and plain `mute` for good. They change only your list; nobody in the chat is told, and repeating one is safe.
 
 ### Changed — may break callers
 

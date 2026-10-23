@@ -333,6 +333,10 @@ An upgrade that succeeded before enable failed is retained; inspect the partial 
 promise rollback to a basic group. Do not silently move old message locators to the new id.
 
 
+Your own chat list: `chats archive|unarchive|pin|unpin|mark-unread <chat>` and `chats mute <chat> [--until 2h]` /
+`unmute`. They change only your list and notifications; nobody in the chat is told. Repeating one is safe;
+an unknown outcome is checked with `chats list`.
+
 Folder rules: `chats folders create|update --include contacts,groups --skip muted,archived`.
 On update these flags replace the previous rules; `none` clears them. Shared folders take no rules.
 `--exclude-chat` excludes a chat and `--pin` puts it first. The returned emoji is the stored Telegram

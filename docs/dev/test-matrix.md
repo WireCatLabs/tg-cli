@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2358 ✅ · 96 ⛔ · 0 ❌** — 502 commands, 1952 options.
+**2366 ✅ · 96 ⛔ · 0 ❌** — 509 commands, 1953 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -127,6 +127,14 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `chats moderate` | `--dry-run` | ⛔ | P2's shared command; cli-core's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
 | `chats moderate` | `--allow-dangerous` | ⛔ | P2's shared command; cli-core's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
 | `chats moderate` | `--max-actions` | ⛔ | P2's shared command; cli-core's moderation tests drive it through the port, and tg's own test comes with P2's Telegram moderation work |
+| `chats mute` |  | ✅ |  |
+| `chats mute` | `--until` | ✅ |  |
+| `chats unmute` |  | ✅ |  |
+| `chats archive` |  | ✅ |  |
+| `chats unarchive` |  | ✅ |  |
+| `chats pin` |  | ✅ |  |
+| `chats unpin` |  | ✅ |  |
+| `chats mark-unread` |  | ✅ |  |
 | `chats start` |  | ✅ |  |
 | `chats start` | `--start` | ✅ |  |
 | `chats app` |  | ✅ |  |
