@@ -12,6 +12,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   or text. A button that asks for your 2FA password is refused, never pressed. `chats start` starts a bot as its Start
   button does (`--start <param>`, or a `t.me/<bot>?start=` link), and `chats app` prints the address of its mini app,
   which signs you in.
+- **The skill tells an agent to search again in other words before saying something is not there.** A search
+  finds the words it is given, and a paraphrase shares none with its answer.
 
 ### Changed — may break callers
 
