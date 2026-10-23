@@ -18,8 +18,12 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 ## Launch blockers (P1)
 
 - **TG-1** · P1 · Docs and the skill say `search all` reads only this machine; by default it also sends the
-  query to Telegram's server (`--backend both`). Fix README.md:76, docs/usage.md:541, skills/tg-cli/SKILL.md:150
-  and :293 to match docs/search.md:526.
+  query to Telegram's server (`--backend both`). Say so, and say that `--offline` keeps it local — verified
+  2026-10-23: no network connection, exit 0, exit 6 on an empty store. Fix README.md:76, docs/usage.md:541,
+  skills/tg-cli/SKILL.md:150 and :293 to match docs/search.md:526; name `--offline` and `--backend archive` in
+  `search all --help`.
+- **TG-31** · P1 · `docs/compare.md` is stale: it links the old tgcli upstream, says tgcli has no multi-account
+  (it has), and leaves out tlgr and mcp-telegram. Evidence: cli-private `research/comparisons/tg.md`.
 - **TG-2** · P1 · Release main: npm 0.81.0 still accepts a mistyped `permissions` key with only a warning, so the
   restriction does not hold, and still has `catch_up_marks_read`; main fixed both (cli-core 0.391.0). Starts at
   `CHANGELOG.md` `## Unreleased`, `bin/release`. Ship TG-4 in it.
@@ -56,3 +60,9 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
   docs/dev/agents.md where a lane gets it.
 - **TG-14** · P2 · Decide PR #469 (skill: search again in other words before saying "not there"), open since
   2026-10-13: merge after a rebase or close.
+- **TG-19** · P2 · Bot buttons and bots: `messages press` (`getCallbackAnswer`, never its password), `chats start`,
+  `chats app`. Needs a shared button model and a verb (🚩).
+  [Slice 6](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#6-pressing-buttons-in-bot-messages--shared-model-first).
+- **TG-32** · P2 · MCP offers every command (owner, 2026-10-23); 95 commands and the 185 raw `bot api` methods are
+  missing today — among them `store export|backup`, `replies *`, `schedule *`, `recipients add|remove|clear`,
+  `chats rules set`, `bot webhooks *`. The docs list the few exceptions.

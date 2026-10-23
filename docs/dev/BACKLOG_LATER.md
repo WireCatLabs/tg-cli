@@ -12,9 +12,6 @@ with the same id. Same rules and marks as there.
 - **TG-17** · P3 🚩 · `chats delete` and `chats clear` for yourself (max and wa have them). Owner rules first whether
   clearing is allowed at all. [Slice 8](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#8-later-or-only-after-a-ruling).
 - **TG-18** · P3 · Server reads: `calls list`, `chats media --type` (max has them). Issue #447.
-- **TG-19** · P3 · Bot buttons and bots: `messages press` (`getCallbackAnswer`, never its password), `chats start`,
-  `chats app`. Needs a shared button model and a verb (🚩).
-  [Slice 6](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#6-pressing-buttons-in-bot-messages--shared-model-first).
 - **TG-20** · P3 · Stickers: `stickers list`, `messages send --sticker` (max has them).
 - **TG-21** · P3 · Group photo: `chats update --photo|--remove-photo`; also `--only-admins-send`,
   `--only-admins-edit-info`, `--disappear-time` (Telegram's default banned rights and auto-delete timer).
@@ -24,6 +21,8 @@ with the same id. Same rules and marks as there.
   [Slice 5](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#5-typing-and-location--both-shared).
 - **TG-24** · P3 ⏸️ · Commands and MCP through a running `serve`: Telegram asks for one main session per login, and
   every process opens its own connection. Measured harmless so far. Design: [session-sharing.md](session-sharing.md).
+
+- **TG-33** · P3 · Parallel bulk download with resume, as tdl does.
 
 ## Research
 
