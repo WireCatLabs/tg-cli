@@ -10,12 +10,28 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...["--public-url", "--port"].map((option) => ({
+    command: "bot watch",
+    option,
+    reason:
+      "shared cli-core webhook receiver; exercised with injected HTTP and bot ports in src/cli/bot/webhook-receiver.test.ts",
+  })),
+  ...[undefined, "--limit", "--since-time"].map((option) => ({
+    command: "contacts prepare",
+    ...(option ? { option } : {}),
+    reason:
+      "shared cli-core bounded person briefing; tested in src/services/person-preparation.test.ts and src/cli/messenger/messenger.test.ts",
+  })),
+
   ...[
     ["attachments download"],
     ["attachments download", "--chat"],
     ["attachments download", "--since-time"],
     ["attachments download", "--pause"],
     ["attachments check"],
+    ["attachments move"],
+    ["attachments move", "--before-time"],
+    ["attachments move", "--dry-run"],
     ["attachments jobs *"],
     ["attachments jobs install", "--at"],
     ["attachments jobs install", "--timezone"],
@@ -25,7 +41,7 @@ export const UNTESTED: Untested[] = [
     command: command as string,
     ...(option ? { option } : {}),
     reason:
-      "shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts and src/background/daily-archive-timer.test.ts",
+      "shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts",
   })),
 
   {
