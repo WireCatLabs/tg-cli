@@ -218,7 +218,7 @@ describe("setup", () => {
     expect(input.prompts).toEqual([])
     expect(prompt.text()).not.toContain("Agent [")
     expect(installSkill).not.toHaveBeenCalled()
-    expect(JSON.parse(result.stdout[0] ?? "").item.next.mcp).toBe("tg default mcp config")
+    expect(JSON.parse(result.stdout[0] ?? "").item.commands.mcp).toBe("tg default mcp config")
   })
 
   it("rejects an unknown interactive choice without installing a skill", async () => {
@@ -459,7 +459,7 @@ describe("setup", () => {
       update: { scriptPath: "/home/test/.npm/_npx/key/node_modules/@wirecat/tg-cli/dist/bin/tg.js" },
     })
     expect(result.code).toBe(0)
-    expect(JSON.parse(result.stdout[0] ?? "").item.next.inbox).toMatch(
+    expect(JSON.parse(result.stdout[0] ?? "").item.commands.inbox).toMatch(
       /npm(?:\.cmd)? exec --yes --package=@wirecat\/tg-cli -- tg work inbox --limit 5/,
     )
   })

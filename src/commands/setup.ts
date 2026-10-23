@@ -179,7 +179,7 @@ export const setupCommand = () =>
           agent === "all" ? ["claude", "agents"] : [agent === "claude" ? "claude" : "agents"]
         cancellation.signal.throwIfAborted()
         const written = agent === "none" ? [] : installSkill(TG, SKILL, { targets, env: context.env })
-        const next = {
+        const commands = {
           instructions: `${command}skill show`,
           inbox: `${command}inbox --limit 5`,
           chats: `${command}chats list --limit 5`,
@@ -195,21 +195,21 @@ export const setupCommand = () =>
           account: { id: account.id, name: account.name, username: account.username },
           chats: { checked: chats.items.length, has_more: chats.hasMore },
           agent: { name: agent, written },
-          next,
+          commands,
         }
         return answer
       })
-      const { agent, next, chats } = answer
+      const { agent, commands, chats } = answer
       if (context.format !== "pretty") printItem(context, answer)
       else {
         const rows = {
-          "Try now": next.inbox,
-          History: `${next.history}  (choose the chat and the amount first)`,
+          "Try now": commands.inbox,
+          History: `${commands.history}  (choose the chat and the amount first)`,
           "Agent skill":
             agent.name === "none"
-              ? `skipped — install later: ${next.skill}`
+              ? `skipped — install later: ${commands.skill}`
               : `installed for ${agent.name}; start a new agent session if it is not found`,
-          "For an agent": next.instructions,
+          "For an agent": commands.instructions,
         }
         context.streams.data(
           `\n✓ Telegram is ready — profile ${context.profile}, ${chatCount(chats.checked)} checked\n\n` +
