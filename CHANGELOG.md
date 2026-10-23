@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.83.0 — 23.10.2026
 
 ### Added
 
@@ -18,6 +18,21 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   command line.** Telegram's archive, pinned chats, the unread dot and notifications, with `mute --until 2h` for a
   time and plain `mute` for good. They change only your list; nobody in the chat is told, and repeating one is safe.
 
+- **`tg <profile> messages press <chat> <message> <button>`, `chats start <bot>` and `chats app <bot>` work with bots.**
+  `messages show` now numbers the inline buttons under a bot's message; `press` presses a callback button by its number
+  or text. A button that asks for your 2FA password is refused, never pressed. `chats start` starts a bot as its Start
+  button does (`--start <param>`, or a `t.me/<bot>?start=` link), and `chats app` prints the address of its mini app,
+  which signs you in.
+
+- **Verified media backups.** `attachments download <dir>` archives available files across chats with size and
+  SHA-256 manifests; `attachments check <dir>` verifies them offline. `attachments jobs` manages opt-in Linux
+  daily timers. Completed copies survive interrupted runs and message-store deletion; interrupted files restart.
+  `attachments move <dir> <archive-dir> --before-time <time>` moves older images into another verified archive,
+  retaining relocation records so checks follow the copies and later downloads do not duplicate them.
+
+- Saved voice-note transcripts match word forms and spellings that speech recognition may have garbled.
+  `text:` searches written text only; `exact:` disables expansion for that word.
+
 ### Changed — may break callers
 
 - **`tg <profile> setup --json`: the command map is `item.commands`, not `item.next`.** The envelope's `next` is
@@ -25,6 +40,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `history`, `history_status`, and `skill`, `mcp` when no agent skill was installed) moved to `item.commands`; the
   values are unchanged. Login details stay under `item.session`. What to do: read `item.commands.<name>` where you
   read `item.next.<name>`.
+
+- MCP message deletion takes `message`, chat export takes `chat`, and duplicate-task operations take `task`
+  and, for a pair, `other_task`. Update saved MCP requests using `messages`, `chats` or `dup`.
+  CLI positional arguments keep their order.
+- Command discovery (`commands` and `commands schema`) rejects `--jsonl`; use `--json` for its single document.
 
 ### Fixed
 
@@ -35,6 +55,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   for `@wirecat/tg-cli` and `better-sqlite3`; both are harmless, and the guide says why.
 - **`contacts prepare` is in the people guide and the skill**, and the comparison page covers tlgr and
   mcp-telegram, links the maintained tgcli and marks tgcli's several accounts.
+
+- Message-search commands no longer list or delete saved meeting searches.
+- Command corrections preserve the chosen profile; help shows concise descriptions and concrete examples.
 
 ## 0.82.0 — 23.10.2026
 

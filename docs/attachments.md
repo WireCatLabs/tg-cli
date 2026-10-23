@@ -255,3 +255,7 @@ a whole percentage from 1 to 100. Rate limits or authentication failures stop ea
 requests already in flight may still finish. Honor the provider's wait and resume unfinished work.
 Search partial diagnostic records with `tg personal runs search --status partial --json` or MCP `tg_read` with `command: "runs search"`
 ([diagnostics](diagnostics.md)).
+
+## Keep copies after source deletion
+
+For verified file copies and opt-in daily backups, use the [independent media archive](archive.md#keep-independent-media-copies).

@@ -10,6 +10,27 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...[
+    ["attachments download"],
+    ["attachments download", "--chat"],
+    ["attachments download", "--since-time"],
+    ["attachments download", "--pause"],
+    ["attachments check"],
+    ["attachments move"],
+    ["attachments move", "--before-time"],
+    ["attachments move", "--dry-run"],
+    ["attachments jobs *"],
+    ["attachments jobs install", "--at"],
+    ["attachments jobs install", "--timezone"],
+    ["attachments jobs install", "--chat"],
+    ["attachments jobs install", "--since-time"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    ...(option ? { option } : {}),
+    reason:
+      "shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts",
+  })),
+
   {
     command: "attachments show",
     option: "--page",
