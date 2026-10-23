@@ -18,6 +18,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   command line.** Telegram's archive, pinned chats, the unread dot and notifications, with `mute --until 2h` for a
   time and plain `mute` for good. They change only your list; nobody in the chat is told, and repeating one is safe.
 
+- **`tg <profile> messages press <chat> <message> <button>`, `chats start <bot>` and `chats app <bot>` work with bots.**
+  `messages show` now numbers the inline buttons under a bot's message; `press` presses a callback button by its number
+  or text. A button that asks for your 2FA password is refused, never pressed. `chats start` starts a bot as its Start
+  button does (`--start <param>`, or a `t.me/<bot>?start=` link), and `chats app` prints the address of its mini app,
+  which signs you in.
+
 - **Verified media backups.** `attachments download <dir>` archives available files across chats with size and
   SHA-256 manifests; `attachments check <dir>` verifies them offline. `attachments jobs` manages opt-in Linux
   daily timers. Completed copies survive interrupted runs and message-store deletion; interrupted files restart.
