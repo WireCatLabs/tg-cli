@@ -39,7 +39,7 @@ Find the messages with the most recorded reactions.
 **Command:**
 
 ```sh
-tg personal stats messages top --chat "Hiking" --measure reactions --limit 3 --json
+tg personal stats messages top chat:Hiking --measure reactions --limit 3 --json
 ```
 
 **Example agent answer:**
@@ -63,7 +63,7 @@ Compare people by their observed answers to questions.
 **Command:**
 
 ```sh
-tg personal stats contacts top --chat "Hiking" --measure answers --limit 3 --json
+tg personal stats contacts top chat:Hiking --measure answers --limit 3 --json
 ```
 
 **Example agent answer:**
@@ -89,7 +89,7 @@ Find older questions without an observed direct answer.
 **Command:**
 
 ```sh
-tg personal stats messages unanswered --chat "Hiking" --older-than 24h --json
+tg personal stats messages unanswered chat:Hiking older_than:24h --json
 ```
 
 **Example agent answer:**
@@ -115,7 +115,7 @@ See the number of answers and waiting times for a selected person.
 **Command:**
 
 ```sh
-tg personal stats contacts responses --chat "Hiking" --answerer "Alex Rivera" --json
+tg personal stats contacts responses chat:Hiking --answerer "Alex Rivera" --json
 ```
 
 **Example agent answer:**
@@ -194,7 +194,7 @@ Find viewed posts with little recorded discussion.
 **Command:**
 
 ```sh
-tg personal stats messages discussion --chat "News" --min-views 100 --max-replies 0 --json
+tg personal stats messages discussion chat:News min_views:100 max_replies:0 --json
 ```
 
 **Example agent answer:**

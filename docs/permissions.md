@@ -69,6 +69,21 @@ process. Saved settings stay the same. The flag only tightens: an override that 
 profile's level is refused at startup. Over MCP, `ask` does not require a server form: the app controls
 its own approvals and may allow a call without asking again. Use `deny` or `readonly` to refuse changes. [Browser setup](remote.md) explains the full connection.
 
+## Let an agent change its own limits
+
+Over MCP, commands that change what a later run may do are hidden by default: `config set|unset`, recipient lists,
+chat rules, reply rules and consents, schedules, `server install`, `skill install`, model keys, media archive timers
+and `flood clear`. One key opens them:
+
+```sh
+tg work config set permissions.mcp.authority allow
+```
+
+For a bot's server add `--bot`: `tg support config set permissions.mcp.authority allow --bot`.
+`deny` is the default; `allow` and `ask` both offer them. Leave it at `deny` for a profile you give to an agent:
+with it open, the agent can loosen its own permissions. An agent cannot set the key through `config set`, since
+that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
+
 ## Limits and detailed rules
 
 An assistant that can edit configuration files or run unrestricted terminal commands may be able

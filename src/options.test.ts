@@ -92,7 +92,7 @@ describe("the global options", () => {
     const { code, stdout } = await tg(["watch", "--jsonl", "--timeout", "20ms"], { adapter: () => silent })
 
     expect(code).toBe(0)
-    expect(stdout).toEqual([])
+    expect(stdout.map((line) => JSON.parse(line))).toMatchObject([{ type: "end", complete: true }])
   })
 
   it("--no-record keeps no run even of a failure", async () => {
@@ -932,8 +932,9 @@ describe("listening", () => {
     const all = await tg(["watch", "--jsonl", "--events"], { adapter: () => live })
     const plain = await tg(["watch", "--jsonl"], { adapter: () => live })
 
-    expect(all.stdout.map((line) => JSON.parse(line).event)).toEqual(["message", "edit", "delete"])
-    expect(plain.stdout.map((line) => JSON.parse(line).id)).toEqual(["80"])
+    const items = (lines: string[]) => lines.map((line) => JSON.parse(line)).filter((record) => record.type === "item")
+    expect(items(all.stdout).map((record) => record.data.event)).toEqual(["message", "edit", "delete"])
+    expect(items(plain.stdout).map((record) => record.data.id)).toEqual(["80"])
   })
 
   it("serve keeps what arrives, and says how much when it stops", async () => {
