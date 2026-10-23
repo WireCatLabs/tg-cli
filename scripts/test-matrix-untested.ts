@@ -10,19 +10,6 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
-  ...["--public-url", "--port"].map((option) => ({
-    command: "bot watch",
-    option,
-    reason:
-      "shared cli-core webhook receiver; exercised with injected HTTP and bot ports in src/cli/bot/webhook-receiver.test.ts",
-  })),
-  ...[undefined, "--limit", "--since-time"].map((option) => ({
-    command: "contacts prepare",
-    ...(option ? { option } : {}),
-    reason:
-      "shared cli-core bounded person briefing; tested in src/services/person-preparation.test.ts and src/cli/messenger/messenger.test.ts",
-  })),
-
   ...[
     ["attachments download"],
     ["attachments download", "--chat"],

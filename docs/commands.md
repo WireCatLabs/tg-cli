@@ -1800,7 +1800,7 @@ tg messages list <chat> [query] [options]
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages list
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages list
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -2088,7 +2088,7 @@ tg messages scheduled <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages scheduled
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages scheduled
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -2132,7 +2132,7 @@ tg messages comments <chat> <post> [query] [options]
 | `--limit <n>` | how many. |
 | `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages comments
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages comments
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg polls show <chat> <message>`
 
@@ -2251,7 +2251,7 @@ tg polls show <chat> <message>
 
 **Returns:** a poll and its answer ids, as the message carries it now
 
-**Example:** `tg polls show Team 1234`
+**Example:** `tg personal polls show "Book club" 101`
 
 ### `tg polls voters`
 
@@ -2274,7 +2274,7 @@ tg polls voters <chat> <message> [query] [options]
 
 **Returns:** poll vote — person_id, name, username, answers, voted_at; every field: tg commands schema polls voters
 
-**Example:** `tg polls voters Team 1234`
+**Example:** `tg personal polls voters "Book club" 101 answers:0 --limit 10`
 
 ### `tg polls vote`
 
@@ -2298,7 +2298,7 @@ tg polls vote <chat> <message> [answers] [options]
 
 **Returns:** vote in a poll, or take your vote back; the others see it unless the poll is anonymous
 
-**Example:** `tg polls vote Team 1234`
+**Example:** `tg personal polls vote "Book club" 101 0`
 
 ### `tg polls close`
 
@@ -2317,7 +2317,7 @@ tg polls close <chat> <message>
 
 **Returns:** close your own poll; nobody can vote after that, and it cannot be reopened
 
-**Example:** `tg polls close Team 1234`
+**Example:** `tg personal polls close "Book club" 101`
 
 ### `tg polls create`
 
@@ -2351,7 +2351,7 @@ tg polls create <chat> <question> <answers> [options]
 
 **Returns:** send a poll to a chat, as a message of its own; public unless --anonymous
 
-**Example:** `tg polls create Team <question> <answers>`
+**Example:** `tg personal polls create "Book club" "Which day?" Monday Tuesday`
 
 ## `tg models`
 
@@ -2741,7 +2741,7 @@ tg server start
 
 **Returns:** start serve in the background — through the unit if one is installed — and answer once it…
 
-**Example:** `tg server start`
+**Example:** `tg personal server start`
 
 ### `tg server stop`
 
@@ -2755,7 +2755,7 @@ tg server stop
 
 **Returns:** stop this profile's serve — through the unit if it runs under one
 
-**Example:** `tg server stop`
+**Example:** `tg personal server stop`
 
 ### `tg server restart`
 
@@ -2769,7 +2769,7 @@ tg server restart
 
 **Returns:** stop it and start it again
 
-**Example:** `tg server restart`
+**Example:** `tg personal server restart`
 
 ### `tg server status`
 
@@ -2781,7 +2781,7 @@ tg server status
 
 **Returns:** whether serve runs for this profile, since when, who started it, and the unit if there is…
 
-**Example:** `tg server status`
+**Example:** `tg personal server status`
 
 ### `tg server logs`
 
@@ -2797,7 +2797,7 @@ tg server logs [options]
 
 **Returns:** serve's latest log lines — from the journal under systemd, else its log file
 
-**Example:** `tg server logs`
+**Example:** `tg personal server logs --limit 20`
 
 ### `tg server install`
 
@@ -2811,7 +2811,7 @@ tg server install
 
 **Returns:** write a systemd user unit or a launchd agent for this profile; starts nothing
 
-**Example:** `tg server install`
+**Example:** `tg personal server install`
 
 ### `tg server uninstall`
 
@@ -2825,7 +2825,7 @@ tg server uninstall
 
 **Returns:** remove this profile's unit; stop it first
 
-**Example:** `tg server uninstall`
+**Example:** `tg personal server uninstall`
 
 ## `tg schedule`
 
@@ -5113,7 +5113,7 @@ tg search all <query> [options]
 
 **Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 4 more; every field: tg commands schema search all
 
-**Example:** `tg search all "invoice"`
+**Example:** `tg personal search all draft`
 
 ### `tg search messages`
 
@@ -5150,11 +5150,11 @@ tg search messages [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
-**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, found_in, and 3 more; every field: tg commands schema search messages
+**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, match, and 5 more; every field: tg commands schema search messages
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
-**Example:** `tg search messages "invoice"`
+**Example:** `tg personal search messages draft --limit 10`
 
 ### `tg search notes`
 
@@ -5179,7 +5179,7 @@ tg search notes <query> [options]
 
 **Returns:** note hit — ref, source, folder_id, path, title, updated_at, kind, provider, and 5 more; every field: tg commands schema search notes
 
-**Example:** `tg search notes "invoice"`
+**Example:** `tg personal search notes draft --limit 10`
 
 ### `tg search conversations`
 
@@ -5216,7 +5216,7 @@ tg search conversations <query> [options]
 
 **Returns:** the conversations nearest to a query in meaning and in words, best first, in one chat or…
 
-**Example:** `tg search conversations "invoice"`
+**Example:** `tg personal search conversations "Reviewing the project draft"`
 
 ### `tg search topics`
 
@@ -5239,7 +5239,7 @@ tg search topics <chat> <text> [options]
 
 **Returns:** a forum group's topics whose title matches
 
-**Example:** `tg search topics Team "on my way"`
+**Example:** `tg personal search topics "Book club" draft`
 
 ## `tg searches`
 
@@ -5749,7 +5749,7 @@ tg runs list [options]
 
 **Returns:** recorded runs, newest first
 
-**Example:** `tg runs list`
+**Example:** `tg runs list --limit 10`
 
 ### `tg runs show`
 
@@ -5769,7 +5769,7 @@ tg runs show <run-id> [options]
 
 **Returns:** one run: what it was, how it ended, and every event it logged
 
-**Example:** `tg runs show <run-id>`
+**Example:** `tg runs show run-101`
 
 ### `tg runs search`
 
@@ -5795,7 +5795,7 @@ tg runs search [query] [options]
 
 **Returns:** search recorded diagnostic metadata and events; no message contents
 
-**Example:** `tg runs search "invoice"`
+**Example:** `tg runs search timeout --limit 10`
 
 ### `tg runs path`
 
@@ -5811,7 +5811,7 @@ tg runs path <run-id>
 
 **Returns:** the directory holding one run
 
-**Example:** `tg runs path <run-id>`
+**Example:** `tg runs path run-101`
 
 ## `tg config`
 
@@ -5831,7 +5831,7 @@ tg config show [options]
 
 **Returns:** the profile, the profiles that exist, and each setting with where it came from
 
-**Example:** `tg config show`
+**Example:** `tg personal config show`
 
 ### `tg config set`
 
@@ -5856,7 +5856,7 @@ tg config set <setting> <value> [options]
 
 **Returns:** save a setting to the configuration file
 
-**Example:** `tg config set <setting> <value>`
+**Example:** `tg personal config set limit 20`
 
 ### `tg config unset`
 
@@ -5880,7 +5880,7 @@ tg config unset <setting> [options]
 
 **Returns:** remove a setting from the configuration file
 
-**Example:** `tg config unset <setting>`
+**Example:** `tg personal config unset limit`
 
 ## `tg doctor`
 
@@ -6003,7 +6003,7 @@ tg mcp config [options]
 
 **Returns:** print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes…
 
-**Example:** `tg mcp config`
+**Example:** `tg personal mcp config`
 
 ### `tg mcp setup`
 
@@ -6026,7 +6026,7 @@ tg mcp setup <client> [options]
 
 **Returns:** add this profile's local MCP server to Codex or Claude Code
 
-**Example:** `tg mcp setup <client>`
+**Example:** `tg personal mcp setup codex --allow-writes`
 
 ### `tg mcp doctor`
 
@@ -6042,7 +6042,7 @@ tg mcp doctor [options]
 
 **Returns:** check this profile's local MCP handshake and tool list
 
-**Example:** `tg mcp doctor`
+**Example:** `tg personal mcp doctor`
 
 ## `tg bot`
 
@@ -11255,7 +11255,7 @@ tg skill show [name]
 
 **Returns:** print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look…
 
-**Example:** `tg skill show daily`
+**Example:** `tg skill show`, `tg skill show follow-ups`
 
 ### `tg skill install`
 
@@ -11273,7 +11273,7 @@ tg skill install [options]
 
 **Returns:** write SKILL.md to ~/.claude/skills/tg-cli/ (Claude Code) and ~/.agents/skills/tg-cli/…
 
-**Example:** `tg skill install`
+**Example:** `tg skill install --for agents`
 
 ## `tg guide`
 
