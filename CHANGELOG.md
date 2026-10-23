@@ -40,6 +40,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
+- **Verified media backups.** `attachments download <dir>` archives available files across chats with size and
+  SHA-256 manifests; `attachments check <dir>` verifies them offline. `attachments jobs` manages opt-in Linux
+  daily timers. Completed copies survive interrupted runs and message-store deletion; interrupted files restart.
+  `attachments move <dir> <archive-dir> --before-time <time>` moves older images into another verified archive,
+  retaining relocation records so checks follow the copies and later downloads do not duplicate them.
+
 - **`tg <profile> contacts prepare <person>`: what to know before talking to someone** (cli-core 0.394.0). What
   `contacts context` gives, plus the one-to-one chats where their message is the newest the store holds, open tasks
   assigned to them, accepted facts about them and their projects, your notes about them, and their recent meetings —
