@@ -48,8 +48,8 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
   `saveDraft`. [Slice 2](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#2-drafts--both-shared-owned-by-telegram-actions-g4-b3).
 - **TG-10** · P2 · Verified media archive: mount cli-core's `attachments download|check|jobs` once cli-core#1758
   is released. 🚧 `feat/media-archive` (PR #659, draft).
-- **TG-11** · P2 · The release-checks workflow still calls cli-base's `release-checks.yml` 0.31.0; bump it (PR #657)
-  and cli-base 0.49.0 → 0.50.1 in package.json.
+- **TG-11** · P2 · 🟡 The release-checks workflow now calls cli-base's `release-checks.yml` 0.50.1. Left: cli-base
+  0.49.0 → 0.50.1 in package.json, which PR #662 does with cli-core 0.396.0.
 - **TG-12** · P2 · cli-core's parity.json is behind tg: it lists `guide`, `mentions`, `runs search`, `tasks reject`,
   `--brief`/`--full` as missing from tg, and its "tg-cli backlog: …" pointers named no item here. Point them at
   TG-5…TG-8 and BACKLOG_LATER ids. Starts in cli-core `parity.json`.
