@@ -26,11 +26,6 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 
 ## Next (P2)
 
-- **TG-5** · P2 · Chat archive, pin and mark unread: mount cli-core's `chats archive|unarchive|pin|unpin|mark-unread`
-  in the adapter (wa has them). mtcute `archiveChats`, `markChatUnread`; pin is raw. Starts in
-  src/telegram/adapter.ts. [Plan, slice 4](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#4-archive-chat-pins-and-unread--shared-commands-built-tg-and-max-adapters-open).
-- **TG-6** · P2 · Settings writes: `chats mute|unmute --until` (max and wa have them). Starts in
-  src/telegram/adapter.ts; the shared command's `AccountSettings` group. Issue #447.
 - **TG-7** · P2 · Several photos in one album: `messages send --file` repeated, through raw
   `messages.sendMultiMedia` with random ids from the send id. Refusal today: src/telegram/messages.ts:270.
   [Slice 3](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#3-albums--tg-only),

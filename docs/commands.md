@@ -1105,6 +1105,136 @@ tg chats moderate <chat> [options]
 
 **Example:** `tg personal chats moderate "Book club" --dry-run`
 
+### `tg chats mute`
+
+stop notifications from a chat, for good or until a time; nobody in it is told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats mute <chat> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+| Option | What it does |
+|---|---|
+| `--until <time>` | only until then: 2026-09-25T09:00 (local time), or 30m, 2h, 7d from now. |
+
+**Returns:** stop notifications from a chat, for good or until a time; nobody in it is told
+
+**Example:** `tg chats mute "Book club"`, `tg chats mute "Book club" --until 2h`
+
+### `tg chats unmute`
+
+hear a muted chat again
+
+**Changes something in Telegram.**
+
+```sh
+tg chats unmute <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** hear a muted chat again
+
+**Example:** `tg chats unmute "Book club"`
+
+### `tg chats archive`
+
+move a chat into the archive; nobody in it is told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats archive <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** move a chat into the archive; nobody in it is told
+
+**Example:** `tg chats archive 123456789`
+
+### `tg chats unarchive`
+
+bring an archived chat back to the chat list
+
+**Changes something in Telegram.**
+
+```sh
+tg chats unarchive <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** bring an archived chat back to the chat list
+
+**Example:** `tg chats unarchive 123456789`
+
+### `tg chats pin`
+
+keep a chat at the top of your chat list; nobody in it is told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats pin <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** keep a chat at the top of your chat list; nobody in it is told
+
+**Example:** `tg chats pin 123456789`
+
+### `tg chats unpin`
+
+let a pinned chat move down the chat list again
+
+**Changes something in Telegram.**
+
+```sh
+tg chats unpin <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** let a pinned chat move down the chat list again
+
+**Example:** `tg chats unpin 123456789`
+
+### `tg chats mark-unread`
+
+mark a chat unread on your own devices; nobody in it is told
+
+**Changes something in Telegram.**
+
+```sh
+tg chats mark-unread <chat>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+
+**Returns:** mark a chat unread on your own devices; nobody in it is told
+
+**Example:** `tg chats mark-unread 123456789`
+
 ### `tg chats start`
 
 start a bot, as its Start button does; the bot sees that you started it

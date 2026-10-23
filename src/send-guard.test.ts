@@ -833,6 +833,49 @@ describe("the send guard in front of the other writes", () => {
     ])
   })
 
+  it("**changes where a chat sits in the list through the guard**", async () => {
+    const done: string[] = []
+    const adapter = scripted({
+      mute: async (id, until) => {
+        done.push(`mute ${id} ${until}`)
+      },
+      archiveChat: async (id, archived) => {
+        done.push(`archive ${id} ${archived}`)
+      },
+      pinChat: async (id, pinned) => {
+        done.push(`pin ${id} ${pinned}`)
+      },
+      markChatUnread: async (id) => {
+        done.push(`unread ${id}`)
+      },
+    })
+
+    const codes = []
+    for (const argv of [
+      ["mute", "Valencia"],
+      ["mute", "Valencia", "--until", "2h"],
+      ["unmute", "Valencia"],
+      ["archive", "Valencia"],
+      ["unarchive", "Valencia"],
+      ["pin", "Valencia"],
+      ["unpin", "Valencia"],
+      ["mark-unread", "Valencia"],
+    ])
+      codes.push((await tg(["g-list", "chats", ...argv], adapter)).code)
+
+    expect(codes).toEqual([0, 0, 0, 0, 0, 0, 0, 0])
+    expect(done).toEqual([
+      `mute ${chat.id} forever`,
+      expect.stringMatching(new RegExp(`^mute ${chat.id} \\d{4}-`)),
+      `mute ${chat.id} null`,
+      `archive ${chat.id} true`,
+      `archive ${chat.id} false`,
+      `pin ${chat.id} true`,
+      `pin ${chat.id} false`,
+      `unread ${chat.id}`,
+    ])
+  })
+
   it("**changes the profile and ends other sessions through the guard**", async () => {
     const photo = join(mkdtempSync(join(tmpdir(), "tg-photo-")), "me.jpg")
     writeFileSync(photo, new Uint8Array([0xff, 0xd8]))

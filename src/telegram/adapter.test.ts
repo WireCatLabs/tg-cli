@@ -91,6 +91,7 @@ class FakeClient {
       if (this.topicAnswer instanceof Error) throw this.topicAnswer
       return this.topicAnswer
     }
+    if (request._ === "account.updateNotifySettings" || request._ === "messages.toggleDialogPin") return true
     if (request._ === "account.getAuthorizations") return { authorizations: this.authorizations }
     if (request._ === "messages.search" || request._ === "messages.searchGlobal") {
       if (this.searchAnswer instanceof Error) throw this.searchAnswer
@@ -255,6 +256,9 @@ class FakeClient {
   deleteContacts = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [])
   blockUser = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   unblockUser = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  archiveChats = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  unarchiveChats = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  markChatUnread = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   importContacts = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ imported: [{ userId: 91 }] }))
   updateProfile = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   setMyProfilePhoto = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
@@ -2578,6 +2582,35 @@ describe("the address book and the profile", () => {
     expect(client.deleteContacts.mock.calls).toEqual([[[91]]])
     expect(client.blockUser.mock.calls).toEqual([[91]])
     expect(client.unblockUser.mock.calls).toEqual([[91]])
+  })
+
+  it("**changes where a chat sits in the owner's list**: archive, pin, unread and mute", async () => {
+    const { adapter, client } = await open()
+
+    await adapter.archiveChat("-100123", true)
+    await adapter.archiveChat("-100123", false)
+    await adapter.markChatUnread("-100123")
+    await adapter.pinChat("-100123", true)
+    await adapter.pinChat("-100123", false)
+    await adapter.mute("-100123", "forever")
+    await adapter.mute("-100123", "2026-10-23T12:00:00.000Z")
+    await adapter.mute("-100123", null)
+
+    expect(client.archiveChats.mock.calls).toEqual([[-100123]])
+    expect(client.unarchiveChats.mock.calls).toEqual([[-100123]])
+    expect(client.markChatUnread.mock.calls).toEqual([[-100123]])
+    const peer = { _: "inputPeerChannel", peer: -100123 }
+    const sent = client.calls.filter((one) => one.method === "call").map((one) => one.args[0])
+    expect(sent).toEqual([
+      { _: "messages.toggleDialogPin", pinned: true, peer: { _: "inputDialogPeer", peer } },
+      { _: "messages.toggleDialogPin", pinned: false, peer: { _: "inputDialogPeer", peer } },
+      expect.objectContaining({ settings: { _: "inputPeerNotifySettings", muteUntil: 2_147_483_647 } }),
+      expect.objectContaining({ settings: { _: "inputPeerNotifySettings", muteUntil: 1_792_756_800 } }),
+      expect.objectContaining({
+        peer: { _: "inputNotifyPeer", peer },
+        settings: { _: "inputPeerNotifySettings", muteUntil: 0 },
+      }),
+    ])
   })
 
   it("imports numbers with a plus, the name split at its first space, and answers who Telegram knew", async () => {

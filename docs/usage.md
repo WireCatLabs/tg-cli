@@ -811,6 +811,27 @@ when Telegram does not answer; the message says whether repeating is safe. A fol
 look in `tg personal chats folders list` first, or you may get two. A message sent with `--at-time` is never repeated:
 look in `tg personal messages scheduled <chat>` instead.
 
+### Your chat list: archive, pin, mark unread, mute
+
+```sh
+tg personal chats archive "Book club"        # into the archive; `unarchive` brings it back
+```
+
+```sh
+tg personal chats pin "Book club"            # to the top of your list; `unpin` lets it move down
+```
+
+```sh
+tg personal chats mark-unread "Book club"    # the dot on your own devices; nobody sees it
+```
+
+```sh
+tg personal chats mute "Book club" --until 2h  # without --until, for good; `unmute` hears it again
+```
+
+These change only your own list and notifications; nobody in the chat is told. Telegram refuses a pin past
+its limit of pinned chats, and a pin in the archive is refused too.
+
 ### Marking a chat read
 
 ```sh

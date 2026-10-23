@@ -49,6 +49,7 @@ import type {
 import type { ProxyServer } from "../proxy.js"
 import * as account from "./account.js"
 import * as bots from "./bots.js"
+import * as chatList from "./chat-list.js"
 import * as chats from "./chats.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import * as contacts from "./contacts.js"
@@ -607,6 +608,12 @@ export class TelegramAdapter {
   importContacts(entries: PhoneBookEntry[]): Promise<Member[]> {
     return contacts.importContacts(this.#feature, entries)
   }
+
+  mute = (chatId: string, until: string | null): Promise<void> => chatList.mute(this.#feature, chatId, until)
+  archiveChat = (chatId: string, archived: boolean): Promise<void> =>
+    chatList.archiveChat(this.#feature, chatId, archived)
+  pinChat = (chatId: string, pinned: boolean): Promise<void> => chatList.pinChat(this.#feature, chatId, pinned)
+  markChatUnread = (chatId: string): Promise<void> => chatList.markChatUnread(this.#feature, chatId)
 
   endOtherSessions(): Promise<AccountSession[]> {
     return login.endOtherSessions(this.#feature)
