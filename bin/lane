@@ -43,4 +43,6 @@ done
 node "$main/scripts/seed-worktree.ts" "$main" "$into/tg-cli"
 # Not tracked: inside the sandbox git cannot create .claude/skills, so a tracked one stops every switch.
 ln -s ../docs/dev/skills "$into/tg-cli/.claude/skills"
+# HANDOFF.md is kept out of git (#614), so a new worktree has none; a link keeps one copy current.
+[ ! -f "$main/HANDOFF.md" ] || ln -s "$main/HANDOFF.md" "$into/tg-cli/HANDOFF.md"
 echo "ready: $into/tg-cli and $into/cli-messaging — cd $into/tg-cli && claude"

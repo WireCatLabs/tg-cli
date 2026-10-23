@@ -54,7 +54,9 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 
 ## Rules for a lane
 
-- **Read your handoff first.** It says what to read, in order.
+- **Read your handoff first.** It says what to read, in order. The project's own `HANDOFF.md` is not in git: it
+  lives in the main checkout, `bin/lane` links it into the lane's worktree, and a worktree made by hand reads
+  it at `../../HANDOFF.md` from `.worktrees/<name>/` (or the main checkout's absolute path).
 - **A branch and a PR per item**, off `origin/main`, in both repositories: `git switch -c feat/<item>
   --no-track origin/main`. The worktree's own `lane/<lane>` branch is only where it parks.
 - **Rebase-merge your PR once CI is green**, then start the next item without waiting.

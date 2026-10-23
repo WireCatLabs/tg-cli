@@ -53,9 +53,6 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 - **TG-12** · P2 · cli-core's parity.json is behind tg: it lists `guide`, `mentions`, `runs search`, `tasks reject`,
   `--brief`/`--full` as missing from tg, and its "tg-cli backlog: …" pointers named no item here. Point them at
   TG-5…TG-8 and BACKLOG_LATER ids. Starts in cli-core `parity.json`.
-- **TG-13** · P2 · The on-disk `HANDOFF.md` (kept out of git since #614) was last changed 2026-10-14 and a new
-  worktree has no copy; cli-core's gaps plan cites a "§3b.5" it does not have. Refresh it, and say in
-  docs/dev/agents.md where a lane gets it.
 - **TG-14** · P2 · Decide PR #469 (skill: search again in other words before saying "not there"), open since
   2026-10-13: merge after a rebase or close.
 - **TG-19** · P2 · Bot buttons and bots: `messages press` (`getCallbackAnswer`, never its password), `chats start`,
