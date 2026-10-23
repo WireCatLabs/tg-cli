@@ -33,8 +33,8 @@ The tools:
 | Files and media | ✅ | 🟡 | ✅ | ✅ | ✅ | ✅ |
 | Several photos as one album | ❌ | ❌ | ✅ | ✅ | ✅ | ➖ |
 | Drafts | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ |
-| Archive, pin, mute or mark a chat unread | ❌ | ❌ | ✅ | 🟡 | ✅ | ❌ |
-| Press a bot's buttons | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Archive, pin, mute or mark a chat unread | ✅ | ❌ | ✅ | 🟡 | ✅ | ❌ |
+| Press a bot's buttons | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Download many files, resumable | 🟡 | 🟡 | ✅ | 🟡 | 🟡 | ✅ |
 | A local archive kept current | ✅ | ✅ | 🟡 | ❌ | ❌ | 🟡 |
 | Search the archive without connecting | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -70,8 +70,8 @@ hourly cap on sends.
 
 - **tdl** — you mostly move files: bulk downloads, uploads and forwarding at full speed, from one
   binary that most package managers can install.
-- **tlgr** — you want the most chat housekeeping from a command line today: drafts, albums, archive, mute and bot
-  buttons, with parallel downloads that resume, and you do not need a local archive.
+- **tlgr** — you want drafts and albums from a command line today, or parallel downloads that resume, and you do not
+  need a local archive.
 - **telegram-mcp** — you want the widest set of agent actions in Claude Desktop, installed in one
   step, with a large community behind it.
 - **mcp-telegram** — you want a large MCP tool set started with one `npx` command, without Python.
