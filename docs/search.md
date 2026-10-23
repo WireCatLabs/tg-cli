@@ -189,7 +189,11 @@ tg personal search messages 'invoic*'            # every word that starts with "
 Words next to each other must all be in the message. Search includes word forms, according to
 the store's language settings: `piso` can find `pisos`. Quotes keep words together and also allow
 word forms. Use `exact:piso` or add `--exact` for words without an explicit field. An explicit
-`text:` still matches forms. Case and accents are ignored. Typos are not corrected automatically.
+`text:` still matches forms. Case and accents are ignored. Written message text is not corrected for typos.
+
+Bare words and `transcript:` also search saved voice-note transcripts, including word forms and
+single-word spellings that speech recognition may have garbled. `text:` searches written text only;
+`exact:` or `--exact` for bare words keeps those words exact without widening transcript spellings.
 
 ## People and chats
 
