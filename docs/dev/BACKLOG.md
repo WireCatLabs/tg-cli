@@ -46,9 +46,6 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
   TG-5…TG-8 and BACKLOG_LATER ids. Starts in cli-core `parity.json`.
 - **TG-14** · P2 · Decide PR #469 (skill: search again in other words before saying "not there"), open since
   2026-10-13: merge after a rebase or close.
-- **TG-19** · P2 · Bot buttons and bots: `messages press` (`getCallbackAnswer`, never its password), `chats start`,
-  `chats app`. Needs a shared button model and a verb (🚩).
-  [Slice 6](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#6-pressing-buttons-in-bot-messages--shared-model-first).
 - **TG-32** · P2 · MCP offers every command (owner, 2026-10-23); 95 commands and the 185 raw `bot api` methods are
   missing today — among them `store export|backup`, `replies *`, `schedule *`, `recipients add|remove|clear`,
   `chats rules set`, `bot webhooks *`. The docs list the few exceptions.

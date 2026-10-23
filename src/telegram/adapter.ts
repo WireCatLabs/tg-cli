@@ -48,6 +48,7 @@ import type {
 } from "@wirecat/cli-core/cli"
 import type { ProxyServer } from "../proxy.js"
 import * as account from "./account.js"
+import * as bots from "./bots.js"
 import * as chats from "./chats.js"
 import { commentsOf, discussionOf } from "./comments.js"
 import * as contacts from "./contacts.js"
@@ -355,6 +356,14 @@ export class TelegramAdapter {
   ): Promise<Sent> {
     return polls.createPoll(this.#feature, chatId, poll, options)
   }
+
+  buttons = (chatId: string, messageId: string) => bots.buttons(this.#feature, chatId, messageId)
+  pressButton = (chatId: string, messageId: string, row: number, column: number) =>
+    bots.pressButton(this.#feature, chatId, messageId, row, column)
+  botByLink = (reference: string) => bots.botByLink(this.#feature, reference)
+  startBot = (chatId: string, options: { sendId: string; payload?: string }) =>
+    bots.startBot(this.#feature, chatId, options)
+  botApp = (chatId: string, options: { startParam?: string }) => bots.botApp(this.#feature, chatId, options)
 
   officialChatStats(reference: string): Promise<OfficialChatStats> {
     return stats.officialChatStats(this.#feature, reference)

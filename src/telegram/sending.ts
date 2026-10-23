@@ -4,7 +4,7 @@ import { CliError } from "@wirecat/cli-base"
 import { bareCheck } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
 
-const SENDS = new Set(["messages.sendMessage", "messages.sendMedia", "messages.forwardMessages"])
+const SENDS = new Set(["messages.sendMessage", "messages.sendMedia", "messages.forwardMessages", "messages.startBot"])
 const send = new AsyncLocalStorage<{ accepted: boolean }>()
 
 /**

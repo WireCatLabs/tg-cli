@@ -104,6 +104,7 @@ class FakeClient {
         users: [],
       }
     }
+    if (request._ === "messages.startBot") return { _: "updates", updates: [] }
     if (request._ === "messages.forwardMessages") {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
       return this.forwardAnswer
@@ -258,6 +259,9 @@ class FakeClient {
   updateProfile = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   setMyProfilePhoto = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
   sendReaction = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  getCallbackAnswer = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({}))
+  resolveUser = async (peer: unknown): Promise<unknown> => ({ _: "inputUser", userId: peer, accessHash: 0 })
+  openWebview = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ url: "https://app.invalid/?tgWebAppData=x" }))
   editMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(5))
   forwardMessagesById = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(60)])
   pinMessage = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
@@ -2093,6 +2097,118 @@ describe("reacting", () => {
     client.sendReaction.mockRejectedValueOnce(new tl.RpcError(400, "REACTION_INVALID"))
 
     await expect(adapter.react("-100500", "5", "🦄")).rejects.toMatchObject({ code: "provider_error" })
+  })
+})
+
+describe("a bot's buttons", () => {
+  const keyboard = (...rows: unknown[][]) => ({
+    type: "inline",
+    buttons: rows.map((row) => row.map((type, at) => ({ _: "keyboardInlineButton", text: `b${at}`, type }))),
+  })
+  const callback = (data: number[], requiresPassword = false) => ({
+    _: "inlineButtonTypeCallback",
+    data: new Uint8Array(data),
+    requiresPassword,
+  })
+  const bot = { type: "user", isBot: true, id: 900 }
+
+  it("**lists the keyboard by kind, and a password button is not pressable**", async () => {
+    const { adapter, client } = await open()
+    client.found = {
+      ...message(5),
+      markup: keyboard(
+        [callback([1]), { _: "inlineButtonTypeUrl", url: "https://example.invalid" }],
+        [callback([2], true), { _: "inlineButtonTypeWebView", url: "https://app.invalid" }],
+      ),
+    }
+
+    expect(await adapter.buttons("900", "5")).toEqual([
+      [
+        { kind: "callback", text: "b0" },
+        { kind: "link", text: "b1", url: "https://example.invalid" },
+      ],
+      [
+        { kind: "other", text: "b0" },
+        { kind: "app", text: "b1" },
+      ],
+    ])
+  })
+
+  it("presses a callback button with its own data, read again from the message", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(5), markup: keyboard([callback([1]), callback([7, 8])]) }
+
+    await adapter.pressButton("900", "5", 0, 1)
+
+    expect(client.getCallbackAnswer.mock.calls).toEqual([[{ chatId: 900, message: 5, data: new Uint8Array([7, 8]) }]])
+  })
+
+  it("**refuses a button that asks for the 2FA password** without a request", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(5), markup: keyboard([callback([1], true)]) }
+
+    await expect(adapter.pressButton("900", "5", 0, 0)).rejects.toMatchObject({ code: "validation_error" })
+    expect(client.getCallbackAnswer).not.toHaveBeenCalled()
+  })
+
+  it("counts a bot that never answers the press as pressed", async () => {
+    const { adapter, client } = await open()
+    client.found = { ...message(5), markup: keyboard([callback([1])]) }
+    client.getCallbackAnswer.mockRejectedValueOnce(new tl.RpcError(400, "BOT_RESPONSE_TIMEOUT"))
+
+    await expect(adapter.pressButton("900", "5", 0, 0)).resolves.toBeUndefined()
+  })
+
+  it("answers no buttons for a message without a keyboard", async () => {
+    const { adapter, client } = await open()
+    client.found = message(5)
+
+    expect(await adapter.buttons("900", "5")).toEqual([])
+  })
+
+  it("starts a bot with its start parameter and the given send id", async () => {
+    const { adapter, client } = await open()
+    client.peer = bot
+
+    await adapter.startBot("900", { sendId: "123", payload: "ref7" })
+
+    const request = client.calls.find((call) => call.method === "call")?.args[0] as Record<string, unknown>
+    expect(request).toMatchObject({
+      _: "messages.startBot",
+      bot: { _: "inputUser", userId: 900 },
+      startParam: "ref7",
+    })
+    expect(String(request.randomId)).toBe("123")
+  })
+
+  it("does not start a chat that is not a bot", async () => {
+    const { adapter, client } = await open()
+    client.peer = { type: "user", isBot: false, id: 900 }
+
+    await expect(adapter.startBot("900", { sendId: "123" })).rejects.toMatchObject({ code: "validation_error" })
+    expect(client.calls.some((call) => call.method === "call")).toBe(false)
+  })
+
+  it("reads a bot's link, and leaves any other reference alone", async () => {
+    const { adapter, client } = await open()
+    client.resolvePeer = async () => ({ _: "inputPeerUser", userId: 900, accessHash: 0 })
+
+    expect(await adapter.botByLink("https://t.me/shop_bot?start=ref7")).toEqual({ chatId: "900", payload: "ref7" })
+    expect(await adapter.botByLink("tg://resolve?domain=shop_bot&start=x")).toEqual({ chatId: "900", payload: "x" })
+    expect(await adapter.botByLink("t.me/shop_bot")).toEqual({ chatId: "900" })
+    expect(await adapter.botByLink("https://t.me/some_channel")).toBeUndefined()
+    expect(await adapter.botByLink("Shop")).toBeUndefined()
+  })
+
+  it("opens a bot's main mini app with the start parameter", async () => {
+    const { adapter, client } = await open()
+    client.peer = bot
+
+    expect(await adapter.botApp("900", { startParam: "go" })).toEqual({ url: "https://app.invalid/?tgWebAppData=x" })
+    expect(client.openWebview.mock.calls[0]?.[0]).toMatchObject({
+      webview: { type: "main", startParam: "go" },
+      bot: 900,
+    })
   })
 })
 

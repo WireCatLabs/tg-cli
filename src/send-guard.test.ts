@@ -102,6 +102,64 @@ const tg = async (argv: string[], adapter: Adapter) => {
 
 const journal = (profile: string) => new SendJournal(sendsPathFor(TG, profile)).entries()
 
+describe("bots through the shared commands", () => {
+  const keyboard = [
+    [
+      { kind: "link" as const, text: "Site", url: "https://example.invalid" },
+      { kind: "callback" as const, text: "Order" },
+    ],
+    [{ kind: "other" as const, text: "Secure" }],
+  ]
+
+  it("presses a callback button by its number or text, and refuses one that is not a callback", async () => {
+    const pressed: string[] = []
+    const adapter = scripted({
+      buttons: async () => keyboard,
+      pressButton: async (_chat, messageId, row, column) => {
+        pressed.push(`${messageId} ${row},${column}`)
+      },
+    })
+
+    const byNumber = await tg(["g-press", "messages", "press", "Valencia", "5", "2", "--json"], adapter)
+    const byText = await tg(["g-press", "messages", "press", "Valencia", "5", "Order"], adapter)
+    const link = await tg(["g-press", "messages", "press", "Valencia", "5", "1"], adapter)
+    const password = await tg(["g-press", "messages", "press", "Valencia", "5", "3"], adapter)
+
+    expect([byNumber.code, byText.code, link.code, password.code]).toEqual([0, 0, 2, 2])
+    expect(pressed).toEqual(["5 0,1", "5 0,1"])
+    expect(JSON.parse(byNumber.stdout[0] ?? "")).toMatchObject({ item: { message_id: "5", button: { text: "Order" } } })
+  })
+
+  it("starts a bot with its start parameter, a link's own parameter included", async () => {
+    const started: string[] = []
+    const adapter = scripted({
+      botByLink: async (reference) =>
+        reference.startsWith("https://t.me/") ? { chatId: chat.id, payload: "from-link" } : undefined,
+      startBot: async (_chat, { payload }) => {
+        started.push(payload ?? "none")
+      },
+    })
+
+    await tg(["g-start", "chats", "start", "Valencia", "--start", "ref7"], adapter)
+    await tg(["g-start", "chats", "start", "https://t.me/shop_bot?start=from-link"], adapter)
+    await tg(["g-start", "chats", "start", "Valencia"], adapter)
+
+    expect(started).toEqual(["ref7", "from-link", "none"])
+  })
+
+  it("prints a mini app's address only in the answer, never in the journal", async () => {
+    const adapter = scripted({
+      botApp: async (_chat, { startParam }) => ({ url: `https://app.invalid/?x=${startParam ?? ""}` }),
+    })
+
+    const { code, stdout } = await tg(["g-app", "chats", "app", "Valencia", "--start", "go", "--json"], adapter)
+
+    expect(code).toBe(0)
+    expect(JSON.parse(stdout[0] ?? "")).toMatchObject({ item: { url: "https://app.invalid/?x=go" } })
+    expect(readFileSync(sendsPathFor(TG, "g-app"), "utf8")).not.toContain("app.invalid")
+  })
+})
+
 describe("the send guard in front of messages send", () => {
   it("sends --comment-to as a reply in the post's discussion group, which the journal records", async () => {
     const replies: (string | undefined)[] = []
