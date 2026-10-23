@@ -18,17 +18,19 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   command line.** Telegram's archive, pinned chats, the unread dot and notifications, with `mute --until 2h` for a
   time and plain `mute` for good. They change only your list; nobody in the chat is told, and repeating one is safe.
 
-- **`tg <profile> messages press <chat> <message> <button>`, `chats start <bot>` and `chats app <bot>` work with bots.**
-  `messages show` now numbers the inline buttons under a bot's message; `press` presses a callback button by its number
-  or text. A button that asks for your 2FA password is refused, never pressed. `chats start` starts a bot as its Start
-  button does (`--start <param>`, or a `t.me/<bot>?start=` link), and `chats app` prints the address of its mini app,
-  which signs you in.
-
 - **Verified media backups.** `attachments download <dir>` archives available files across chats with size and
   SHA-256 manifests; `attachments check <dir>` verifies them offline. `attachments jobs` manages opt-in Linux
   daily timers. Completed copies survive interrupted runs and message-store deletion; interrupted files restart.
   `attachments move <dir> <archive-dir> --before-time <time>` moves older images into another verified archive,
   retaining relocation records so checks follow the copies and later downloads do not duplicate them.
+
+- **`tg <profile> review --offline` reads the local store** (cli-core 0.398.0) instead of refusing. It shows only
+  what was already synced and says so (`missing` in JSON, a warning on the terminal).
+- **The MCP server offers more commands, each limited by the profile's permissions** (cli-core 0.398.0): `runs`,
+  `store status|info|check|export|reindex`, `store jobs`, `attachments move`, `attachments jobs status`, `config show`,
+  `commands schema`, `guide`, `skill show`, `doctor report`, the `models` lists, `replies status|test|consents show`,
+  `schedule list`, `server status|logs`, and on the bot server `webhooks`, `commands set|clear`, `chats leave` and
+  `chats admins`. [The MCP guide](docs/mcp.md#commands-the-server-leaves-out) lists the few it leaves out, and why.
 
 - Saved voice-note transcripts match word forms and spellings that speech recognition may have garbled.
   `text:` searches written text only; `exact:` disables expansion for that word.
@@ -56,6 +58,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`contacts prepare` is in the people guide and the skill**, and the comparison page covers tlgr and
   mcp-telegram, links the maintained tgcli and marks tgcli's several accounts.
 
+- **A pasted `--help` example runs** (cli-core 0.398.0): an account command's example names the profile
+  (`tg personal messages list Team`) instead of failing with "name a profile".
+- **`search all --help` says it asks Telegram's server by default** and names `--offline` and `--backend archive`
+  to keep the query local (cli-core 0.398.0).
 - Message-search commands no longer list or delete saved meeting searches.
 - Command corrections preserve the chosen profile; help shows concise descriptions and concrete examples.
 

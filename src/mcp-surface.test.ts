@@ -19,7 +19,7 @@ describe("tg's bot MCP surface", () => {
   it("**offers the bot commands by the profile's levels**: every write by default, none when read-only", () => {
     const all = botServer().offered
     expect(all).toEqual(expect.arrayContaining(["messages send", "messages delete", "chats list"]))
-    expect(all.some((command) => /^(api|auth|store|webhooks|mcp)\b|comments|people/.test(command))).toBe(false)
+    expect(all.some((command) => /^(api|auth|store|mcp)\b|comments|people/.test(command))).toBe(false)
 
     const reads = botServer({ bot: "readonly" })
     expect(reads.offered).toEqual(expect.arrayContaining(["messages list", "me"]))
