@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2353 ✅ · 96 ⛔ · 0 ❌** — 499 commands, 1950 options.
+**2360 ✅ · 106 ⛔ · 0 ❌** — 507 commands, 1959 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -472,6 +472,23 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `attachments text set` |  | ✅ |  |
 | `attachments text set` | `--attachment` | ✅ |  |
 | `attachments text set` | `--text-file` | ✅ |  |
+| `attachments download` |  | ✅ |  |
+| `attachments download` | `--chat` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments download` | `--since-time` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments download` | `--pause` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments check` |  | ✅ |  |
+| `attachments jobs install` |  | ✅ |  |
+| `attachments jobs install` | `--at` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments jobs install` | `--timezone` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments jobs install` | `--chat` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments jobs install` | `--since-time` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments jobs start` |  | ✅ |  |
+| `attachments jobs stop` |  | ✅ |  |
+| `attachments jobs status` |  | ✅ |  |
+| `attachments jobs uninstall` |  | ✅ |  |
+| `attachments move` |  | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments move` | `--before-time` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
+| `attachments move` | `--dry-run` | ⛔ | shared cli-core archive over injected message streams and systemd; tested in src/cli/messenger/media-archive.test.ts, media-archive-command.test.ts, media-archive-move.test.ts and src/background/daily-archive-timer.test.ts |
 | `tags auto` |  | ✅ |  |
 | `tags auto` | `--chat` | ✅ |  |
 | `tags auto` | `--limit` | ✅ |  |

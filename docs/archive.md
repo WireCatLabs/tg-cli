@@ -580,7 +580,7 @@ tg personal attachments jobs stop ~/media-archive
 tg personal attachments jobs uninstall ~/media-archive
 ```
 
-Stop prevents future runs; a download already running finishes. Uninstall waits for a disabled, inactive
+Stop prevents future runs; a download already running finishes. Uninstall requires a disabled, inactive
 timer and an inactive service and keeps the archive. Use the same profile and destination for these commands.
 To change the schedule or executable, stop, uninstall and install again; edited unit files are preserved.
 
