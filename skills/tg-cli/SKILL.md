@@ -58,11 +58,15 @@ Read-only MCP offers `tg_read` (`command: "messages link"`) with the same result
 ## Boundaries
 
 - **Send nothing the owner did not ask for.** `tg personal messages send` (also with `--reply-to`), `edit`, `forward`,
-`pin`, `tg personal reactions add` and `tg personal polls create` only when the
+`pin`, `tg personal reactions add`, `tg personal polls create`, `tg personal messages press`,
+  `tg personal chats start` and `tg personal chats app` only when the
   owner asked for this exact text in this exact chat. A draft, "we should probably answer", a conclusion
   drawn from what you read — none of these is a request.
 - **A vote in a public poll shows the owner's name to everyone in the chat.** Vote only as the owner
   asked, by the answer ids `tg personal polls show` prints — never by an answer's position.
+- **A bot sees a press and a start.** `messages press` takes the number `messages show` prints under a bot's
+  message; it presses only callback buttons and refuses one that asks for the 2FA password. `chats app` prints an
+  address that signs the owner in — never paste it anywhere.
 - **Delete only the exact messages the owner named, and never add `--allow-dangerous`, `--yes` or
   `--for-everyone` on your own.** A deletion cannot be undone; the flags are the owner's word.
   `--allow-dangerous` and `--yes` answer the question the profile asks before a change.

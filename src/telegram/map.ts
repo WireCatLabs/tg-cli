@@ -26,6 +26,8 @@ import { CliError } from "@wirecat/cli-base"
 import type {
   AccountSession,
   Attachment,
+  Button,
+  ButtonKind,
   Chat,
   ChatKind,
   Folder,
@@ -171,8 +173,37 @@ export const toChat = (dialog: Dialog): Chat => ({
   unreadMentions: dialog.unreadMentionsCount,
 })
 
+/**
+ * Only a callback button is pressable. One that asks for the 2FA password is `other`, so a press is
+ * refused before any request; the callback data stays out of the model and is read again on a press.
+ */
+const buttonOf = ({ text, type }: tl.RawKeyboardInlineButton): Button => {
+  const kind: ButtonKind = (() => {
+    switch (type._) {
+      case "inlineButtonTypeCallback":
+        return type.requiresPassword ? "other" : "callback"
+      case "inlineButtonTypeUrl":
+        return "link"
+      case "inlineButtonTypeWebView":
+        return "app"
+      case "inlineButtonTypeCopy":
+        return "clipboard"
+      default:
+        return "other"
+    }
+  })()
+  return { kind, text, ...(type._ === "inlineButtonTypeUrl" ? { url: type.url } : {}) }
+}
+
+/** A bot's inline keyboard row by row; a reply keyboard is not under the message, so it is not listed. */
+export const toButtons = (markup: TgMessage["markup"]): Button[][] | undefined =>
+  markup?.type === "inline" && markup.buttons.some((row) => row.length > 0)
+    ? markup.buttons.map((row) => row.map(buttonOf))
+    : undefined
+
 export const toMessage = (message: TgMessage): Message => {
   const reply = message.replyToMessage
+  const buttons = toButtons(message.markup)
   const metadata = compact({
     views: message.views ?? undefined,
     forwards: message.forwards ?? undefined,
@@ -218,6 +249,7 @@ export const toMessage = (message: TgMessage): Message => {
     forwardedFrom: message.forward ? forwardOf(message) : null,
     ...(message.isTopicMessage && reply?.threadId != null ? { threadId: String(reply.threadId) } : {}),
     reactions: message.reactions ? reactionsOf(message.reactions) : null,
+    ...(buttons ? { buttons } : {}),
     ...(message.isScheduled ? { scheduledFor: message.date.toISOString() } : {}),
     ...(metadata ? { providerMetadata: metadata } : {}),
     ...mentionsOf(message),

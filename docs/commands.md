@@ -1105,6 +1105,50 @@ tg chats moderate <chat> [options]
 
 **Example:** `tg personal chats moderate "Book club" --dry-run`
 
+### `tg chats start`
+
+start a bot, as its Start button does; the bot sees that you started it
+
+**Changes something in Telegram.**
+
+```sh
+tg chats start <bot> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `bot` | required | the chat with the bot — its id or its name — or the bot's link, even one never opened. |
+
+| Option | What it does |
+|---|---|
+| `--start <param>` | the start parameter the bot reads; a link's own ?start= when not given. |
+
+**Returns:** start a bot, as its Start button does; the bot sees that you started it
+
+**Example:** `tg chats start <bot>`
+
+### `tg chats app`
+
+the address that opens a bot's mini app, signed in as you — keep it to yourself
+
+**Changes something in Telegram.**
+
+```sh
+tg chats app <bot> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `bot` | required | the chat with the bot: its id or its name. |
+
+| Option | What it does |
+|---|---|
+| `--start <param>` | the start parameter the app reads. |
+
+**Returns:** the address that opens a bot's mini app, signed in as you — keep it to yourself
+
+**Example:** `tg chats app <bot>`
+
 ## `tg contacts`
 
 people this account has a one-to-one chat with
@@ -1881,6 +1925,26 @@ tg messages unpin <chat> <message>
 **Returns:** unpin a message in a chat
 
 **Example:** `tg messages unpin <chat> <message>`
+
+### `tg messages press`
+
+press a bot's button under a message; the bot sees that you pressed it
+
+**Changes something in Telegram.**
+
+```sh
+tg messages press <chat> <message> <button>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the id of the message with the buttons. |
+| `button` | required | its number as `messages show` prints it, or its exact text. |
+
+**Returns:** press a bot's button under a message; the bot sees that you pressed it
+
+**Example:** `tg messages press Team 1234 <button>`
 
 ### `tg messages scheduled`
 

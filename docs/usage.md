@@ -729,6 +729,29 @@ made with `--revote`. A vote in a closed poll, two answers in a one-answer poll,
 where the vote is final, and `--retract` with no vote are refused before anything is sent; so is closing a
 poll someone else made.
 
+### Bots and their buttons
+
+Use this when a bot answers with buttons under a message, or you want to start a bot or open its mini app.
+
+```sh
+tg personal messages show "Shop bot" 4300   # the buttons are numbered under the message
+```
+
+```sh
+tg personal messages press "Shop bot" 4300 2        # button 2, counted from 1 across the rows
+tg personal messages press "Shop bot" 4300 "Order"  # or by its exact text
+```
+
+```sh
+tg personal chats start "Shop bot" --start ref7     # the same as its Start button; the bot sees it
+tg personal chats start "https://t.me/shop_bot?start=ref7"  # a bot's link, even one you never opened
+tg personal chats app "Shop bot" --start go         # the address of its mini app, signed in as you
+```
+
+The bot sees that you pressed or started it. `press` takes only callback buttons. A button that asks for your
+2FA password, a link, a button that sends your phone number or place, and one that opens a mini app are refused
+before anything is sent. The address `chats app` prints signs you in to the bot's app: keep it to yourself.
+
 ### Editing, forwarding, pinning, deleting
 
 ```sh
