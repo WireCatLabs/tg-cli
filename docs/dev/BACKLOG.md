@@ -17,9 +17,6 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 
 ## Launch blockers (P1)
 
-- **TG-1** · P1 · 🟡 Docs and the skill now say `search all` also asks Telegram's server by default and that
-  `--offline` keeps it local. Left: name `--offline` and `--backend archive` in `search all --help` — the
-  description is cli-core's (`search-command.ts`).
 - **TG-2** · P1 · Release main: npm 0.81.0 still accepts a mistyped `permissions` key with only a warning, so the
   restriction does not hold, and still has `catch_up_marks_read`; main fixed both (cli-core 0.391.0). Starts at
   `CHANGELOG.md` `## Unreleased`, `bin/release`. Ship TG-4 in it.
@@ -35,12 +32,3 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
   adapter is one call. [Slice 2](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#2-drafts--both-shared-owned-by-telegram-actions-g4-b3).
 - **TG-10** · P2 · Verified media archive: mount cli-core's `attachments download|check|jobs` once cli-core#1758
   is released. 🚧 `feat/media-archive` (PR #659, draft).
-- **TG-11** · P2 · 🟡 The release-checks workflow now calls cli-base's `release-checks.yml` 0.50.1. Left: cli-base
-  0.49.0 → 0.50.1 in package.json, which PR #662 does with cli-core 0.396.0.
-- **TG-12** · P2 · cli-core's parity.json is behind tg: it lists `guide`, `mentions`, `runs search`, `tasks reject`,
-  `--brief`/`--full` as missing from tg, and its "tg-cli backlog: …" pointers named no item here. Point them at
-  TG-5…TG-8 and BACKLOG_LATER ids. Starts in cli-core `parity.json`.
-- **TG-32** · P2 · MCP offers every command (owner, 2026-10-23); 95 commands and the 185 raw `bot api` methods are
-  missing today — among them `store export|backup`, `replies *`, `schedule *`, `recipients add|remove|clear`,
-  `chats rules set`, `bot webhooks *`. The docs list the few exceptions. Waits on cli-core, which marks them
-  `mcp: false`; tg's own exception is only `session` (login). Then list what stays out in docs/mcp.md.

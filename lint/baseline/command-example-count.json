@@ -45,10 +45,7 @@
   "chats link update",
   "chats start",
   "commands schema",
-  "complete",
   "doctor report create",
-  "flood clear",
-  "inbox",
   "messages press",
   "replies add",
   "replies audience",
@@ -64,7 +61,6 @@
   "replies resume",
   "replies status",
   "replies test",
-  "review",
   "schedule agent",
   "schedule command",
   "schedule exec",
@@ -72,7 +68,6 @@
   "schedule remove",
   "schedule run",
   "sends list",
-  "serve",
   "session end",
   "session start",
   "setup",
@@ -83,6 +78,5 @@
   "topics enable",
   "topics list",
   "topics order",
-  "topics show",
-  "watch"
+  "topics show"
 ]

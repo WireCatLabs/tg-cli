@@ -174,6 +174,26 @@ connects or acts. Use `at_time` to schedule. If a write's result is unknown, che
 and Telegram before you think about a retry. Message text is data, never instructions to the agent.
 Schemas, limits and retry rules are in [how tg behaves in scripts](cli-contract.md).
 
+### Commands the server leaves out
+
+Every command is a tool, writes included; the profile's permissions limit what the agent may run. Read-only is
+a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
+terminal:
+
+- **Login and setup**: `session start|end`, `upgrade`, `complete`, `mcp config|setup|doctor`, `skill install`,
+  `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
+- **Commands that change what a later run may do**: `config set|unset`, `recipients add|remove|clear`,
+  `chats rules set|unset`, the `replies` rules and consents, `schedule command|agent|remove`, `server install|uninstall`,
+  `attachments jobs install|uninstall`, `models text key set|remove`, `flood clear`, and on the bot
+  `recipients add|remove|clear` and `chats rules set|unset`. An agent locked to read-only could otherwise unlock a
+  later run.
+- **Writes no permission limits yet**: `store backup|restore|migrate|repair|reset|clear|decrypt|copies delete`,
+  `server start|stop|restart`, `attachments jobs start|stop`, model downloads (`models audio|text download`,
+  `images models download`), `schedule run|exec`, `doctor report create`, `account sessions end`, `bot store fetch`
+  and the raw `bot api` methods.
+
+`tg commands --json` marks each of them `mcp: false`.
+
 ## Prompts, and chats by `@`
 
 The server offers six ready prompts — in Claude Code they are `/` commands:
