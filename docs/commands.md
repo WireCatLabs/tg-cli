@@ -118,7 +118,7 @@ tg account list
 
 **Returns:** every profile on this computer, and the account each is logged in as; asks the messenger…
 
-**Example:** `tg account list`
+**Example:** `tg personal account list`
 
 ### `tg account show`
 
@@ -134,7 +134,7 @@ tg account show [options]
 
 **Returns:** account — provider, id, name, username, phone, scope; every field: tg commands schema account show
 
-**Example:** `tg account show`
+**Example:** `tg personal account show`
 
 ### `tg account update`
 
@@ -155,7 +155,7 @@ tg account update [options]
 
 **Returns:** change the name, the description or the photo everyone sees on your profile
 
-**Example:** `tg account update`
+**Example:** `tg personal account update --first-name Alex`
 
 ### `tg account sessions`
 
@@ -175,7 +175,7 @@ tg account sessions list [query]
 
 **Returns:** account session — current, client, device, location, last_active_at, created_at; every field: tg commands schema account sessions list
 
-**Example:** `tg account sessions list`
+**Example:** `tg personal account sessions list`
 
 #### `tg account sessions end`
 
@@ -193,7 +193,7 @@ tg account sessions end [options]
 
 **Returns:** log out every other device, your phone included; this one stays
 
-**Example:** `tg account sessions end`
+**Example:** `tg personal account sessions end --others`
 
 ## `tg chats`
 
@@ -1626,7 +1626,7 @@ tg messages list <chat> [query] [options]
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <id>` | which downloaded speech model hears them, with --transcribe; `models audio list` shows them. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages list
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages list
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -1894,7 +1894,7 @@ tg messages scheduled <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages scheduled
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages scheduled
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -1938,7 +1938,7 @@ tg messages comments <chat> <post> [query] [options]
 | `--limit <n>` | how many. |
 | `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 27 more; every field: tg commands schema messages comments
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, timestamp, edited_at, text, and 29 more; every field: tg commands schema messages comments
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg polls show <chat> <message>`
 
@@ -2057,7 +2057,7 @@ tg polls show <chat> <message>
 
 **Returns:** a poll and its answer ids, as the message carries it now
 
-**Example:** `tg polls show Team 1234`
+**Example:** `tg personal polls show "Book club" 101`
 
 ### `tg polls voters`
 
@@ -2080,7 +2080,7 @@ tg polls voters <chat> <message> [query] [options]
 
 **Returns:** poll vote — person_id, name, username, answers, voted_at; every field: tg commands schema polls voters
 
-**Example:** `tg polls voters Team 1234`
+**Example:** `tg personal polls voters "Book club" 101 answers:0 --limit 10`
 
 ### `tg polls vote`
 
@@ -2104,7 +2104,7 @@ tg polls vote <chat> <message> [answers] [options]
 
 **Returns:** vote in a poll, or take your vote back; the others see it unless the poll is anonymous
 
-**Example:** `tg polls vote Team 1234`
+**Example:** `tg personal polls vote "Book club" 101 0`
 
 ### `tg polls close`
 
@@ -2123,7 +2123,7 @@ tg polls close <chat> <message>
 
 **Returns:** close your own poll; nobody can vote after that, and it cannot be reopened
 
-**Example:** `tg polls close Team 1234`
+**Example:** `tg personal polls close "Book club" 101`
 
 ### `tg polls create`
 
@@ -2157,7 +2157,7 @@ tg polls create <chat> <question> <answers> [options]
 
 **Returns:** send a poll to a chat, as a message of its own; public unless --anonymous
 
-**Example:** `tg polls create Team <question> <answers>`
+**Example:** `tg personal polls create "Book club" "Which day?" Monday Tuesday`
 
 ## `tg models`
 
@@ -2183,7 +2183,7 @@ tg models audio list [query]
 
 **Next usually:** `tg models audio download <model>`, `tg models text download <model>`, `tg images models download <model>`
 
-**Example:** `tg models audio list`
+**Example:** `tg personal models audio list`
 
 #### `tg models audio download`
 
@@ -2203,7 +2203,7 @@ tg models audio download <model>
 
 **Next usually:** `tg models text download <model>`, `tg images models download <model>`
 
-**Example:** `tg models audio download default`
+**Example:** `tg personal models audio download parakeet-v3`
 
 ### `tg models text`
 
@@ -2225,7 +2225,7 @@ tg models text list [query]
 
 **Next usually:** `tg models text download <model>`, `tg models audio download <model>`, `tg images models download <model>`
 
-**Example:** `tg models text list`
+**Example:** `tg personal models text list`
 
 #### `tg models text download`
 
@@ -2249,7 +2249,7 @@ tg models text download <model> [options]
 
 **Next usually:** `tg models audio download <model>`, `tg images models download <model>`
 
-**Example:** `tg models text download default`
+**Example:** `tg personal models text download e5-small`
 
 #### `tg models text key`
 
@@ -2271,7 +2271,7 @@ tg models text key set <provider>
 
 **Returns:** store a key, typed at a hidden prompt or piped on stdin — never as an argument
 
-**Example:** `tg models text key set <provider>`
+**Example:** `tg personal models text key set openai`
 
 #### `tg models text key remove`
 
@@ -2289,7 +2289,7 @@ tg models text key remove <provider>
 
 **Returns:** forget a stored key
 
-**Example:** `tg models text key remove <provider>`
+**Example:** `tg personal models text key remove openai`
 
 ## `tg inbox`
 
@@ -2547,7 +2547,7 @@ tg server start
 
 **Returns:** start serve in the background — through the unit if one is installed — and answer once it…
 
-**Example:** `tg server start`
+**Example:** `tg personal server start`
 
 ### `tg server stop`
 
@@ -2561,7 +2561,7 @@ tg server stop
 
 **Returns:** stop this profile's serve — through the unit if it runs under one
 
-**Example:** `tg server stop`
+**Example:** `tg personal server stop`
 
 ### `tg server restart`
 
@@ -2575,7 +2575,7 @@ tg server restart
 
 **Returns:** stop it and start it again
 
-**Example:** `tg server restart`
+**Example:** `tg personal server restart`
 
 ### `tg server status`
 
@@ -2587,7 +2587,7 @@ tg server status
 
 **Returns:** whether serve runs for this profile, since when, who started it, and the unit if there is…
 
-**Example:** `tg server status`
+**Example:** `tg personal server status`
 
 ### `tg server logs`
 
@@ -2603,7 +2603,7 @@ tg server logs [options]
 
 **Returns:** serve's latest log lines — from the journal under systemd, else its log file
 
-**Example:** `tg server logs`
+**Example:** `tg personal server logs --limit 20`
 
 ### `tg server install`
 
@@ -2617,7 +2617,7 @@ tg server install
 
 **Returns:** write a systemd user unit or a launchd agent for this profile; starts nothing
 
-**Example:** `tg server install`
+**Example:** `tg personal server install`
 
 ### `tg server uninstall`
 
@@ -2631,7 +2631,7 @@ tg server uninstall
 
 **Returns:** remove this profile's unit; stop it first
 
-**Example:** `tg server uninstall`
+**Example:** `tg personal server uninstall`
 
 ## `tg schedule`
 
@@ -3171,7 +3171,7 @@ tg conversations build [options]
 
 **Returns:** find a chat's conversations in what the store holds, replacing the last build; without…
 
-**Example:** `tg conversations build`
+**Example:** `tg personal conversations build --chat "Book club"`
 
 ### `tg conversations list`
 
@@ -3192,7 +3192,7 @@ tg conversations list <chat> [query] [options]
 
 **Returns:** conversation — id, chat, first_message, started_at, ended_at, messages_count, senders_count, built_at, and 1 more; every field: tg commands schema conversations list
 
-**Example:** `tg conversations list Team`
+**Example:** `tg personal conversations list "Book club"`
 
 ### `tg conversations show`
 
@@ -3209,7 +3209,7 @@ tg conversations show <conversation> [message]
 
 **Returns:** one conversation's messages, oldest first — by its id, or the one a message is in
 
-**Example:** `tg conversations show <conversation> 1234`
+**Example:** `tg personal conversations show "Book club" 101`
 
 ### `tg conversations related`
 
@@ -3234,7 +3234,7 @@ tg conversations related <chat> <message> [options]
 
 **Returns:** the conversations nearest in meaning to the one a message is in, in every built chat,…
 
-**Example:** `tg conversations related Team 1234`
+**Example:** `tg personal conversations related "Book club" 101`
 
 ### `tg conversations status`
 
@@ -3254,7 +3254,7 @@ tg conversations status [options]
 
 **Returns:** how fresh each built chat's conversations and vectors are: messages the build has not…
 
-**Example:** `tg conversations status`
+**Example:** `tg personal conversations status`
 
 ### `tg conversations batches`
 
@@ -3275,7 +3275,7 @@ tg conversations batches status [options]
 
 **Returns:** how many messages still wait for an answer, in how many batches, and how much text
 
-**Example:** `tg conversations batches status --chat Team`
+**Example:** `tg personal conversations batches status --chat "Book club"`
 
 #### `tg conversations batches next`
 
@@ -3292,7 +3292,7 @@ tg conversations batches next [options]
 
 **Returns:** the next window to answer, with the messages before it; message text goes to stdout only
 
-**Example:** `tg conversations batches next --chat Team`
+**Example:** `tg personal conversations batches next --chat "Book club"`
 
 ### `tg conversations links`
 
@@ -3314,7 +3314,7 @@ tg conversations links add [options]
 
 **Returns:** store your agent's answer to a batch, read as JSON from stdin: { "model", "answers": [{…
 
-**Example:** `tg conversations links add --batch 1`
+**Example:** `tg personal conversations links add --batch "$batch"`
 
 #### `tg conversations links clear`
 
@@ -3333,7 +3333,7 @@ tg conversations links clear [options]
 
 **Returns:** drop your agent's answers for a chat, or only one model's; messages are never touched
 
-**Example:** `tg conversations links clear --chat Team`
+**Example:** `tg personal conversations links clear --chat "Book club"`
 
 ### `tg conversations rebuild`
 
@@ -3369,7 +3369,7 @@ tg conversations consents list
 
 **Returns:** which chats and provider endpoints you allowed to analyse, and when
 
-**Example:** `tg conversations consents list`
+**Example:** `tg personal conversations consents list`
 
 #### `tg conversations consents revoke`
 
@@ -3388,7 +3388,7 @@ tg conversations consents revoke [options]
 
 **Returns:** forget analysis permissions so the next analysis asks again
 
-**Example:** `tg conversations consents revoke`
+**Example:** `tg personal conversations consents revoke --chat "Book club"`
 
 ### `tg conversations embed`
 
@@ -3431,7 +3431,7 @@ tg conversations embed status [options]
 
 **Returns:** how many chunks of a chat have a vector of the model, how many are left, and what is left…
 
-**Example:** `tg conversations embed status`
+**Example:** `tg personal conversations embed status --chat "Book club"`
 
 #### `tg conversations embed clear`
 
@@ -3453,7 +3453,7 @@ tg conversations embed clear [options]
 
 **Returns:** drop a chat's vectors, or only one model's; messages and conversations are never touched
 
-**Example:** `tg conversations embed clear`
+**Example:** `tg personal conversations embed clear --chat "Book club"`
 
 ## `tg attachments`
 
@@ -3482,7 +3482,7 @@ tg attachments extract [options]
 
 **Returns:** read the text of downloaded files — text, PDF/DOCX text layers, ODT/ODS/XLSX/PPTX/EPUB —…
 
-**Example:** `tg attachments extract`
+**Example:** `tg personal attachments extract --chat "Book club" --limit 10`
 
 ### `tg attachments list`
 
@@ -3504,7 +3504,7 @@ tg attachments list [query] [options]
 
 **Returns:** attachment — kind, message, position, url, name, title, mime, size, and 7 more; every field: tg commands schema attachments list
 
-**Example:** `tg attachments list`
+**Example:** `tg personal attachments list --limit 10`
 
 ### `tg attachments show`
 
@@ -3529,7 +3529,7 @@ tg attachments show <chat> [message] [options]
 
 **Returns:** read a bounded chunk of one retained attachment; JSON includes base64 bytes
 
-**Example:** `tg attachments show Team 1234`
+**Example:** `tg personal attachments show "Book club" 101 --attachment 1`
 
 ### `tg attachments text`
 
@@ -3557,7 +3557,7 @@ tg attachments text set <chat> [message] [options]
 
 **Returns:** keep the text an agent read from a file — a scan, a photo — so search finds it; nothing…
 
-**Example:** `tg attachments text set Team 1234`
+**Example:** `tg personal attachments text set "Book club" 101 --text-file ./transcript.txt`
 
 ## `tg tags`
 
@@ -4363,7 +4363,7 @@ tg tasks list [query] [options]
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks plan <task>`
 
-**Example:** `tg tasks list`
+**Example:** `tg personal tasks list --limit 10`
 
 ### `tg tasks add`
 
@@ -4393,7 +4393,7 @@ tg tasks add <message> [options]
 
 **Returns:** add a task for a stored message or note — a promise, a request
 
-**Example:** `tg tasks add 1234 --type <type> --category daily`
+**Example:** `tg personal tasks add note:101 --type promise --category documents --title "Review draft"`
 
 ### `tg tasks plan`
 
@@ -4420,7 +4420,7 @@ tg tasks plan <task> [options]
 
 **Returns:** set a task's title, description, due date, next check, category and assignee
 
-**Example:** `tg tasks plan 12`
+**Example:** `tg personal tasks plan DOC-12 --title "Review draft"`
 
 ### `tg tasks link`
 
@@ -4444,7 +4444,7 @@ tg tasks link <task> [targets] [options]
 
 **Returns:** link a task to messages, chats, people or URLs — or to another task: task:<id>
 
-**Example:** `tg tasks link 12`
+**Example:** `tg personal tasks link DOC-12 https://example.com/draft`
 
 ### `tg tasks show`
 
@@ -4460,7 +4460,7 @@ tg tasks show <task>
 
 **Returns:** one task: its plan and everything linked to it
 
-**Example:** `tg tasks show 12`
+**Example:** `tg personal tasks show DOC-12`
 
 ### `tg tasks related`
 
@@ -4598,7 +4598,7 @@ tg tasks agenda [query] [options]
 
 **Returns:** agenda — at, account, stored_at, stale, tasks, owed, waiting, unsynced, and 2 more; every field: tg commands schema tasks agenda
 
-**Example:** `tg tasks agenda`
+**Example:** `tg personal tasks agenda`
 
 ### `tg tasks categories`
 
@@ -4756,7 +4756,7 @@ tg search all <query> [options]
 
 **Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 4 more; every field: tg commands schema search all
 
-**Example:** `tg search all "invoice"`
+**Example:** `tg personal search all draft`
 
 ### `tg search messages`
 
@@ -4793,11 +4793,11 @@ tg search messages [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
-**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, found_in, and 3 more; every field: tg commands schema search messages
+**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, match, and 5 more; every field: tg commands schema search messages
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
-**Example:** `tg search messages "invoice"`
+**Example:** `tg personal search messages draft --limit 10`
 
 ### `tg search notes`
 
@@ -4822,7 +4822,7 @@ tg search notes <query> [options]
 
 **Returns:** note hit — ref, source, folder_id, path, title, updated_at, kind, provider, and 5 more; every field: tg commands schema search notes
 
-**Example:** `tg search notes "invoice"`
+**Example:** `tg personal search notes draft --limit 10`
 
 ### `tg search conversations`
 
@@ -4859,7 +4859,7 @@ tg search conversations <query> [options]
 
 **Returns:** the conversations nearest to a query in meaning and in words, best first, in one chat or…
 
-**Example:** `tg search conversations "invoice"`
+**Example:** `tg personal search conversations "Reviewing the project draft"`
 
 ### `tg search topics`
 
@@ -4882,7 +4882,7 @@ tg search topics <chat> <text> [options]
 
 **Returns:** a forum group's topics whose title matches
 
-**Example:** `tg search topics Team "on my way"`
+**Example:** `tg personal search topics "Book club" draft`
 
 ## `tg searches`
 
@@ -5392,7 +5392,7 @@ tg runs list [options]
 
 **Returns:** recorded runs, newest first
 
-**Example:** `tg runs list`
+**Example:** `tg runs list --limit 10`
 
 ### `tg runs show`
 
@@ -5412,7 +5412,7 @@ tg runs show <run-id> [options]
 
 **Returns:** one run: what it was, how it ended, and every event it logged
 
-**Example:** `tg runs show <run-id>`
+**Example:** `tg runs show run-101`
 
 ### `tg runs search`
 
@@ -5438,7 +5438,7 @@ tg runs search [query] [options]
 
 **Returns:** search recorded diagnostic metadata and events; no message contents
 
-**Example:** `tg runs search "invoice"`
+**Example:** `tg runs search timeout --limit 10`
 
 ### `tg runs path`
 
@@ -5454,7 +5454,7 @@ tg runs path <run-id>
 
 **Returns:** the directory holding one run
 
-**Example:** `tg runs path <run-id>`
+**Example:** `tg runs path run-101`
 
 ## `tg config`
 
@@ -5474,7 +5474,7 @@ tg config show [options]
 
 **Returns:** the profile, the profiles that exist, and each setting with where it came from
 
-**Example:** `tg config show`
+**Example:** `tg personal config show`
 
 ### `tg config set`
 
@@ -5499,7 +5499,7 @@ tg config set <setting> <value> [options]
 
 **Returns:** save a setting to the configuration file
 
-**Example:** `tg config set <setting> <value>`
+**Example:** `tg personal config set limit 20`
 
 ### `tg config unset`
 
@@ -5523,7 +5523,7 @@ tg config unset <setting> [options]
 
 **Returns:** remove a setting from the configuration file
 
-**Example:** `tg config unset <setting>`
+**Example:** `tg personal config unset limit`
 
 ## `tg doctor`
 
@@ -5646,7 +5646,7 @@ tg mcp config [options]
 
 **Returns:** print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes…
 
-**Example:** `tg mcp config`
+**Example:** `tg personal mcp config`
 
 ### `tg mcp setup`
 
@@ -5669,7 +5669,7 @@ tg mcp setup <client> [options]
 
 **Returns:** add this profile's local MCP server to Codex or Claude Code
 
-**Example:** `tg mcp setup <client>`
+**Example:** `tg personal mcp setup codex --allow-writes`
 
 ### `tg mcp doctor`
 
@@ -5685,7 +5685,7 @@ tg mcp doctor [options]
 
 **Returns:** check this profile's local MCP handshake and tool list
 
-**Example:** `tg mcp doctor`
+**Example:** `tg personal mcp doctor`
 
 ## `tg bot`
 
@@ -10896,9 +10896,9 @@ tg skill show [name]
 |---|---|---|
 | `name` | optional | one of the skills shipped for a task: follow-ups, link-conversations. |
 
-**Returns:** print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look…
+**Returns:** print the tool's instructions for AI agents
 
-**Example:** `tg skill show daily`
+**Example:** `tg skill show`, `tg skill show follow-ups`
 
 ### `tg skill install`
 
@@ -10914,9 +10914,9 @@ tg skill install [options]
 |---|---|
 | `--for <agents>` | which agents to install for. One of: `claude`, `agents`, `all`. Default: `all`. |
 
-**Returns:** write SKILL.md to ~/.claude/skills/tg-cli/ (Claude Code) and ~/.agents/skills/tg-cli/…
+**Returns:** install the tool's instructions for AI agents
 
-**Example:** `tg skill install`
+**Example:** `tg skill install --for agents`
 
 ## `tg guide`
 

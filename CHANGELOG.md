@@ -15,6 +15,14 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   leaves the notes out and says so; `messages: deny` refuses the command, as it does `contacts context`.
 - **Message search reads `"a b"~N`: the words at most N words apart in one message** (cli-core 0.391.0).
 - **`bot watch --public-url <url> [--port <n>]` receives a bot's updates by webhook** (cli-core 0.391.0).
+- **A voice note's transcript is found in any form of a word, and in the spellings speech recognition garbles**
+  (cli-core 0.396.0). `tg <profile> search messages риелтор` finds a transcript saying «риелтору», and also
+  «реелтора». A hit found only through a garbled spelling has `match: "corrected"` and `corrections`, and the
+  answer's `corrections` lists them. Number words, phrases and `exact:` never widen; typed messages never do. Text
+  an agent wrote on a voice note counts as its transcript too. The store moves
+  to version 29 on the first run and indexes its transcripts on the next search.
+- **Concrete examples in help and `tg commands`** for account, attachment, config, model, MCP, poll, run, search,
+  skill, task, conversation and server commands (cli-core 0.395.0, 0.396.0).
 
 ### Changed — may break callers
 
@@ -25,6 +33,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **An unknown key under `permissions` refuses messenger commands with `configuration_error`** (cli-core 0.391.0),
   typos such as `messages.sedn` included. It was a warning, and the restriction did not hold. What to do: correct the
   key or remove it with `config unset`.
+- **`tg commands` and `tg commands schema` refuse `--jsonl`** with `output.one-object` (cli-core 0.396.0). They
+  printed a line with no stream end record. What to do: use `--json`.
+- **`tg <profile> searches list`, `history` and `clear` cover only message searches** (cli-core 0.395.0). The store's
+  saved searches are shared by every CLI on it; a saved meeting search shown, run or deleted from tg is refused with
+  `details.reason: "search.kind"`.
 
 ### Fixed
 

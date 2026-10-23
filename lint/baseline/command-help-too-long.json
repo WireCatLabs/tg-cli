@@ -89,8 +89,6 @@
   "server",
   "server start",
   "server status",
-  "skill install",
-  "skill show",
   "stats chats official",
   "stats chats retention",
   "stats chats show",
