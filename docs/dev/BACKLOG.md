@@ -46,8 +46,6 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
   issue #445. 🚩 NEED: does an album count once or per item toward `sends_per_hour`.
 - **TG-8** · P2 · Save a reply into the chat's draft: `messages send --draft` (decided 2026-10-04), mtcute
   `saveDraft`. [Slice 2](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#2-drafts--both-shared-owned-by-telegram-actions-g4-b3).
-- **TG-9** · P2 · Setup JSON alignment (WC-OUT-9, WC-OUT-11, WC-OUT-12): rename `item.next` to `item.commands`,
-  keep login details under `item.session`. src/commands/setup.ts:182. [Notes](BACKLOG-NOTES.md#tg-9).
 - **TG-10** · P2 · Verified media archive: mount cli-core's `attachments download|check|jobs` once cli-core#1758
   is released. 🚧 `feat/media-archive` (PR #659, draft).
 - **TG-11** · P2 · The release-checks workflow still calls cli-base's `release-checks.yml` 0.31.0; bump it (PR #657)

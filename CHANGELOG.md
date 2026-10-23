@@ -3,6 +3,16 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **`tg <profile> setup --json`: the command map is `item.commands`, not `item.next`.** The envelope's `next` is
+  reserved for structured continuation steps, so the map of follow-up commands (`instructions`, `inbox`, `chats`,
+  `history`, `history_status`, and `skill`, `mcp` when no agent skill was installed) moved to `item.commands`; the
+  values are unchanged. Login details stay under `item.session`. What to do: read `item.commands.<name>` where you
+  read `item.next.<name>`.
+
 ## 0.82.0 — 23.10.2026
 
 ### Added
