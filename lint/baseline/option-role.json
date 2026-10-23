@@ -1,5 +1,4 @@
 [
-  "bot api --store-token",
   "bot search messages --from",
   "chats folders create --skip",
   "chats folders update --skip",
