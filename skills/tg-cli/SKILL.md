@@ -147,8 +147,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **Start a search with `tg personal search all`**: messages and notes on this machine in one answer, each hit
-   typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
+5. **Start a search with `tg personal search all`**: messages and notes on this machine, plus Telegram's own
+   search of messages, in one answer; each hit typed (`message`, `note`, `document`). The query goes to Telegram
+   unless you add `--offline` (or `--backend archive`); use that when the owner wants nothing to leave the machine. Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
    For a natural question or uncertain wording, use `tg personal search messages '<question>' --discover`
    or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
@@ -290,7 +291,8 @@ tg personal messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
 tg personal messages download -1001234567890 4242 --output-dir /tmp/tg --json  # the message's file; answers its path
 tg personal messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m  # every file of the chat; run it again to continue
 tg personal messages transcribe -1001234567890 4242 --json  # a voice note as text; can take up to a minute; never download a model yourself
-tg personal search all "invoice march" --json      # messages and notes kept on this machine
+tg personal search all "invoice march" --json      # messages and notes kept here, plus Telegram's own search
+tg personal search all "invoice march" --offline --json  # this machine only; the query is not sent to Telegram
 tg personal search messages "invoice march" --json  # Telegram messages only, and Telegram's own search
 tg personal conversations build --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
@@ -447,6 +449,9 @@ both survive contact refresh, and never change messenger profiles or address-boo
 address book; use `contacts alias` for a local name. Duplicate aliases require an explicit id.
 Private notes are separate from the contact's public bio. Read/search them only when relevant.
 
+Before the owner talks to someone (a call, a meeting, a reply), call `contacts prepare <person>`: context plus the
+chats where they wrote last, their open tasks, accepted facts, notes and recent meetings, each with its reference,
+from the store only; `prepare.coverage` says what was left out.
 To summarise what one person said, call `contacts context <person> --chat <chat> --limit <n>` (MCP:
 `chats` and `limit`); the answer is `{ at, text }` per message. Ask for `-v` (MCP `detail: 1`) only when
 you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked

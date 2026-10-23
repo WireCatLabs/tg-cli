@@ -47,7 +47,8 @@ tg personal setup                 # app registration and login
 tg personal inbox                 # other people's unread messages, in every chat; nothing is marked read
 ```
 
-A global install does not install the agent skill: `tg personal setup` offers it, or run `tg skill install --for all`. npm 12 prints "install scripts blocked"; that is harmless.
+A global install does not install the agent skill: `tg personal setup` offers it, or run `tg skill install --for all`. npm may warn that install scripts are blocked or "not yet covered by allowScripts" (`@wirecat/tg-cli`,
+`better-sqlite3`); that is harmless, and you need not allow them — [why](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md#install).
 On Windows, if `tg` is not found, open a new terminal, or use the PowerShell installer in
 [the installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md#windows-one-install-command).
 
@@ -73,8 +74,10 @@ tg personal review 'date>1d'
 and the message itself.
 
 ```sh
-tg personal search all "venue"                # messages and notes kept on this computer
+tg personal search all "venue"                # messages and notes on this computer, and Telegram's own search
 ```
+
+By default the words also go to Telegram's server search; add `--offline` to keep the query on this computer.
 
 **Keep your promises.** *"Use tg CLI. What did I promise, and what am I still waiting on?"* `tg personal review`
 hands over everything said since the last review in one call, your own messages too.
@@ -117,8 +120,8 @@ More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.
 
 - **Your whole account, not only bots.** Every chat, group, channel and contact, with its history —
   `tg` is one more of your devices.
-- **Local-first search.** Everything read is kept on your computer. Search is fast, and `--offline`
-  answers without connecting.
+- **Local-first search.** Everything read is kept on your computer. Search reads that copy and, by default,
+  asks Telegram's own search too; `--offline` keeps the query on your computer.
 - **Made for agents.** One operation per call, the same JSON shape every time with `--json`, a fixed
   exit code for each kind of failure, an MCP server and a skill.
 - **Safe by default.** Reading marks nothing read. A profile decides which actions an agent may take,

@@ -49,7 +49,7 @@ written, start with `search all`.
 
 | Task | Command |
 |---|---|
-| Search messages and notes in one answer | `tg personal search all '<query>'` |
+| Search messages and notes in one answer; without `--offline`, also on Telegram's server | `tg personal search all '<query>'` |
 | Search Telegram messages only; without `--discover`, also on Telegram's server | `tg personal search messages '<query>'` |
 | Search mail | memo's: install @wirecat/cli-memo, then `memo search mail '<query>'` |
 | Search notes written in memo or imported from a folder | `tg personal search notes '<query>'` |
@@ -80,6 +80,14 @@ tg personal search conversations 'moving to the country'  # conversations close 
 
 ```sh
 tg personal search topics "Hiking" "gear"         # topic titles in one forum group
+```
+
+Like `search messages`, `search all` also sends the query's words to Telegram's own search by default
+(`--backend both`, [below](#asking-telegram-too---backend)); notes are searched only here. To keep the query on
+this computer, add `--offline` (tg then does not connect at all) or `--backend archive`.
+
+```sh
+tg personal search all 'lease agreement' --offline  # the store only; nothing is sent to Telegram
 ```
 
 `search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). tg never searches mail:
