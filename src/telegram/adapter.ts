@@ -293,6 +293,14 @@ export class TelegramAdapter {
     return messages.send(this.#feature, chatId, text, options)
   }
 
+  saveDraft(
+    chatId: string,
+    text: string,
+    options: Pick<SendOptions, "replyTo" | "threadId" | "formatting" | "noPreview">,
+  ) {
+    return messages.saveDraft(this.#feature, chatId, text, options)
+  }
+
   edit(chatId: string, messageId: string, text: string, spans?: { markup?: Markup[]; formatting?: TextSpan[] }) {
     return messages.edit(this.#feature, chatId, messageId, text, spans)
   }
