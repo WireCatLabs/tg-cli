@@ -3,6 +3,18 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **A banned Telegram account returns `permission_error` (exit 5).** A new login cannot lift a ban; this uses the same reason/code contract as the other CLIs.
+
+- **Shared CLI contracts now require explicit provider overrides.** Command discovery exports the inherited definitions, schemas, error reasons and exact accepted differences. Contact activity uses `scope:` and `at:` queries; diagnostic run searches use `started_at:` bounds instead of time flags. Unknown chat rosters and unrestricted webhook type lists are omitted instead of `null`.
+
+### Security
+
+- **Dependency resolutions exclude vulnerable Zod and Vite versions.** Local and fresh production audits use the fixed versions.
+
 ## 0.87.0 — 24.10.2026
 
 ### Fixed

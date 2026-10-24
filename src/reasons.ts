@@ -7,7 +7,7 @@ export const REASONS: ErrorReason[] = defineReasons(
       ["login.revoked", "authentication_error", "Telegram ended this login"],
       ["login.duplicated", "authentication_error", "Telegram ended this login: two connections used it at once"],
       ["account.deactivated", "authentication_error", "this Telegram account was deleted"],
-      ["account.banned", "authentication_error", "Telegram banned this account"],
+      ["account.banned", "permission_error", "Telegram banned this account"],
       ["account.frozen", "permission_error", "Telegram froze this account: it can read but not write"],
       ["account.limited", "permission_error", "Telegram limited this account's messages as spam"],
       [
