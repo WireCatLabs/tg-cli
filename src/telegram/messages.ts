@@ -241,6 +241,29 @@ export const scheduled = (feature: Feature, reference: string): Promise<Message[
   })
 }
 
+export const saveDraft = (
+  feature: Feature,
+  chatId: string,
+  text: string,
+  { replyTo, threadId, formatting, noPreview }: Pick<SendOptions, "replyTo" | "threadId" | "formatting" | "noPreview">,
+): Promise<void> => {
+  if (text.trim() === "")
+    throw new CliError("validation_error", "a draft needs nonempty text; clearing is not supported")
+  const thread = threadId === undefined || threadId === "1" ? undefined : topicNumber(threadId)
+  const answering = replyTo === undefined ? thread : messageNumber(replyTo, "a message id is a number")
+  const body = toFormatted(text, formatting ?? [])
+  return feature.write("the draft may have been saved — repeating it is safe", () =>
+    feature.client.saveDraft(Number(chatId), {
+      message: body.text,
+      entities: body.entities,
+      ...(noPreview ? { noWebpage: true } : {}),
+      ...(answering === undefined
+        ? {}
+        : { replyTo: { _: "inputReplyToMessage", replyToMsgId: answering, ...(thread ? { topMsgId: thread } : {}) } }),
+    }),
+  )
+}
+
 /**
  * One logical send carries one `random_id`, made before the request and repeated by a retry:
  * Telegram delivers one message for both (measured 2026-09-27, across two connections).

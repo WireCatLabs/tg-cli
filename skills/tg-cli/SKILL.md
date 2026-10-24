@@ -46,6 +46,14 @@ installs the skill even with disabled lifecycle scripts and verifies bare `tg`. 
 and verify your skill is loaded before login. If your process predates installation, refresh your
 shell PATH from the user/machine environment yourself; do not ask the user to edit PATH.
 
+## Telegram drafts
+
+`tg personal messages send CHAT "text" --draft` saves a draft for the owner to review and send in Telegram.
+It replaces any existing draft in that chat/topic, so confirm the intended replacement when needed.
+It sends no message and uses the separate `drafts` permission. Formatting, `--reply-to`, `--topic` and
+`--no-preview` work; empty text, attachments, scheduling and other send-only flags are refused.
+The receipt has `saved: true`; never describe it as a sent message. Clearing drafts is not exposed.
+
 ## Message permalinks
 
 `tg personal messages link <chat> <message>` or `tg personal messages link <msg:locator>` returns

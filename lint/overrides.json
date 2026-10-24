@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "rule": "option-role",
+    "target": "messages send --draft",
+    "reason": "A mode switch saving text for review without sending. Registered centrally in cli-base #313; Core 0.408 requires cli-base <0.51, so remove this exception when the compatible shared-contract upgrade adopts the published vocabulary.",
+    "owner": "@WireCatLabs",
+    "review_after": "2026-11-01"
+  }
+]

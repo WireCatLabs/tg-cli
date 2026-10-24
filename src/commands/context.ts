@@ -144,6 +144,7 @@ export const TELEGRAM: Messenger = {
   pollCloseSeconds: [5, 600],
   inviteLinkUpdate: true,
   html: true,
+  drafts: true,
   folderRules: true,
   chatMute: true,
   chatArchive: true,

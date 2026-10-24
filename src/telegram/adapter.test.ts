@@ -171,6 +171,7 @@ class FakeClient {
   deleteMessagesById = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendVote = vi.fn(async (..._args: unknown[]): Promise<unknown> => fakePoll({ chosen: 1 }))
   closePoll = vi.fn(async (..._args: unknown[]): Promise<unknown> => ({ ...fakePoll({}), isClosed: true }))
+  saveDraft = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   sendText = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(99))
   uploadFile = vi.fn(
     async (params: { file: Uint8Array; fileName?: string; fileMime?: string }): Promise<unknown> => ({
@@ -1542,6 +1543,44 @@ describe("forum setup", () => {
     client.resolvePeer = async () => ({ _: "inputPeerChat", chatId: 500 })
     client.migrationAnswer = new MtTimeoutError(1000)
     await expect(adapter.upgradeForum("-500")).rejects.toMatchObject({ code: "outcome_unknown" })
+  })
+})
+
+describe("Telegram drafts", () => {
+  it("saves formatted text, reply and topic without sending a message", async () => {
+    const { adapter, client } = await open()
+    const body = await adapter.formatMarkdown("🧪 **review**")
+    await adapter.saveDraft("-100500", body.text, {
+      replyTo: "14",
+      threadId: "12",
+      formatting: body.spans,
+      noPreview: true,
+    })
+    expect(client.saveDraft).toHaveBeenCalledWith(-100500, {
+      message: "🧪 review",
+      entities: [{ _: "messageEntityBold", offset: 3, length: 6 }],
+      noWebpage: true,
+      replyTo: { _: "inputReplyToMessage", replyToMsgId: 14, topMsgId: 12 },
+    })
+    expect(client.sendText).not.toHaveBeenCalled()
+    expect(client.sendMedia).not.toHaveBeenCalled()
+    await adapter.close()
+  })
+
+  it("addresses a topic's own draft and omits General's implicit thread", async () => {
+    const { adapter, client } = await open()
+    await adapter.saveDraft("-100500", "review", { threadId: "12" })
+    expect(client.saveDraft.mock.calls[0]?.[1]).toMatchObject({
+      replyTo: { _: "inputReplyToMessage", replyToMsgId: 12, topMsgId: 12 },
+    })
+    await adapter.saveDraft("-100500", "review", { threadId: "1" })
+    expect(client.saveDraft.mock.calls[1]?.[1]).not.toHaveProperty("replyTo")
+    expect(() => adapter.saveDraft("-100500", "review", { replyTo: "bad" })).toThrow()
+    expect(() => adapter.saveDraft("-100500", " ", {})).toThrow()
+    expect(client.saveDraft).toHaveBeenCalledTimes(2)
+    client.saveDraft.mockRejectedValueOnce(new MtTimeoutError(1000))
+    await expect(adapter.saveDraft("-100500", "review", {})).rejects.toMatchObject({ code: "outcome_unknown" })
+    await adapter.close()
   })
 })
 
