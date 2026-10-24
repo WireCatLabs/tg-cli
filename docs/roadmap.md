@@ -10,17 +10,6 @@ Reading, sending, search, the local store, groups, people, bots, MCP and permiss
 [using tg](usage.md) and [every command](commands.md). What each released version changed is in the
 [changelog](../CHANGELOG.md).
 
-## In progress
-
-- **A checked copy of a chat's files.** Download a chat's files into a folder you choose, check later that
-  every copy is still whole, and repeat it on a daily timer.
-
-## Next
-
-- **Several photos in one message.** Until then, see [what tg cannot send yet](usage.md#not-in-tg-yet).
-- **Archive, pin and mute a chat, or mark it unread.** The WhatsApp and MAX tools already can.
-- **A reply saved as the chat's draft.** Your agent writes it, you read it in Telegram and press send.
-
 ## Later
 
 - **Your own notes on chats.** Private notes on a chat, like the ones

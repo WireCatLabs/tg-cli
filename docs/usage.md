@@ -958,7 +958,7 @@ channel.
 
 ### Not in tg yet
 
-Several photos in one message remain on the [roadmap](roadmap.md).
+Sending stickers and locations remains on the [roadmap](roadmap.md). Several photos or videos can already be sent as one album by repeating `--photo` or `--file`.
 
 ### Save a reply for review
 

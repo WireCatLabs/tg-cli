@@ -247,6 +247,8 @@ export const saveDraft = (
   text: string,
   { replyTo, threadId, formatting, noPreview }: Pick<SendOptions, "replyTo" | "threadId" | "formatting" | "noPreview">,
 ): Promise<void> => {
+  if (text.trim() === "")
+    throw new CliError("validation_error", "a draft needs nonempty text; clearing is not supported")
   const thread = threadId === undefined || threadId === "1" ? undefined : topicNumber(threadId)
   const answering = replyTo === undefined ? thread : messageNumber(replyTo, "a message id is a number")
   const body = toFormatted(text, formatting ?? [])

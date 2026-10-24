@@ -1576,6 +1576,7 @@ describe("Telegram drafts", () => {
     await adapter.saveDraft("-100500", "review", { threadId: "1" })
     expect(client.saveDraft.mock.calls[1]?.[1]).not.toHaveProperty("replyTo")
     expect(() => adapter.saveDraft("-100500", "review", { replyTo: "bad" })).toThrow()
+    expect(() => adapter.saveDraft("-100500", " ", {})).toThrow()
     expect(client.saveDraft).toHaveBeenCalledTimes(2)
     client.saveDraft.mockRejectedValueOnce(new MtTimeoutError(1000))
     await expect(adapter.saveDraft("-100500", "review", {})).rejects.toMatchObject({ code: "outcome_unknown" })

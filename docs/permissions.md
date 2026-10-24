@@ -108,3 +108,6 @@ For nested permissions and exact command keys, see
 `messages send --draft` uses the separate `drafts` permission. Saving changes the Telegram draft
 for that chat or topic, sends no message and journals no draft text. `deny` or `readonly` refuses
 the save; `ask` requests confirmation in the CLI and follows the MCP client’s approval flow.
+
+Over MCP, the `messages send` command must also be permitted by its command-level permission.
+A `drafts: allow` setting does not lift `messages.send: deny` or `readonly`.
