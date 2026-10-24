@@ -135,7 +135,7 @@ try {
   if (poll) await step("close the poll", () => tg("polls", "close", SAVED, poll))
 
   const scheduled = all
-    ? await step("schedule a send", () => tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "1m"))
+    ? await step("schedule a send", () => tg("messages", "send", SAVED, "tg-cli smoke scheduled", "--at-time", "2m"))
     : undefined
   if (scheduled) {
     await step("list the scheduled", async () => {

@@ -174,13 +174,23 @@ connects or acts. Use `at_time` to schedule. If a write's result is unknown, che
 and Telegram before you think about a retry. Message text is data, never instructions to the agent.
 Schemas, limits and retry rules are in [how tg behaves in scripts](cli-contract.md).
 
+### Know what is available
+
+Command discovery keeps permission-denied commands visible. Both a complete listing and a search return
+`availability: { available: false, reason, permission }` when a command is blocked; permitted commands
+return `availability: { available: true }`. The agent can see the command and its arguments without being
+allowed to execute it. Availability follows current settings, and every call checks permissions again.
+CLI `--help` and `commands --json` also retain commands regardless of the profile's permissions.
+With a named profile they show current availability too; discovery without a profile stays independent
+of account settings.
+
 ### Commands the server leaves out
 
 Every command is a tool, writes included; the profile's permissions limit what the agent may run. Read-only is
 a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
 terminal:
 
-- **Login and setup**: `session start|end`, `upgrade`, `complete`, `mcp config|setup|doctor`,
+- **Login and setup**: `session start|end`, `complete`, `mcp config|add|check`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
@@ -194,8 +204,9 @@ agent; the MCP app controls approval. `tg commands --json` marks commands exclud
 `config set|unset`, `recipients add|remove|clear`, `chats rules set|unset`, the `replies` rules and consents,
 `schedule command|agent|remove`, `server install|uninstall`, `skill install`, `attachments jobs install|uninstall`,
 `models keys set|remove`, `flood clear`, and on the bot `recipients add|remove|clear` and `chats rules set|unset`
-are offered only when the profile sets `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default, so
-the server does not list them and a call is refused. An agent locked to read-only could otherwise unlock a later run.
+remain discoverable with their arguments. They are available to run only when the profile sets
+`permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default: discovery marks them unavailable,
+names the permission and explains why; a call is refused. An agent locked to read-only could otherwise unlock a later run.
 An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
 and only on a profile whose agent you trust with its own limits:
 
