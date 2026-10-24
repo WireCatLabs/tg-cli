@@ -6,7 +6,7 @@ account to an agent. Use it to pick the tool that fits your job.
 
 Every mark was checked on 24 October 2026. Our marks come from the `main` branch of `tg` and from running it; the
 albums row is on `main` and ships in the next release. A mark for another tool comes from its own documentation or
-source, linked [below the tables](#where-the-marks-come-from). A tool may do more than its documentation says.
+source, linked [below the table](#where-the-marks-come-from). A tool may do more than its documentation says.
 
 ✅ yes · 🟡 partly · ❌ no · ➖ not in its documentation
 
@@ -23,63 +23,38 @@ The tools:
   `npx`.
 - **[tdl](https://github.com/iyear/tdl)** — a fast downloader and uploader for files and media.
 
-## Catch up
+## What each tool does
 
 | Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Catch up** | | | | | | |
 | See unread chats without telling anyone you read them | ✅ | ❌ | ✅ | 🟡 | 🟡 | ❌ |
 | See what you owe people, and what they owe you | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | Read a voice message as text | ✅ | ➖ | ✅ | ✅ | ✅ | ➖ |
-
-## Reply and send
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Reply and send** | | | | | | |
 | Send a message or a reply, now or at a set time | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | Edit, delete, forward and pin messages | ✅ | ❌ | ✅ | ✅ | ✅ | 🟡 |
 | Send photos, files and voice messages | ✅ | 🟡 | ✅ | ✅ | ✅ | 🟡 |
 | Send several photos as one album | ✅ | ❌ | ✅ | ✅ | ✅ | ➖ |
 | Save a draft that shows in your Telegram app | ❌ | ❌ | ✅ | ✅ | ✅ | ➖ |
-
-## Find
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Find** | | | | | | |
 | Search messages on Telegram's server | ✅ | 🟡 | 🟡 | ✅ | ✅ | ❌ |
 | Search your saved messages with no internet | ✅ | ✅ | ➖ | ❌ | ➖ | ➖ |
 | Find a message by what it means, not only its words | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | Find a file or photo someone sent, in any chat | ✅ | ➖ | ✅ | ➖ | ➖ | ➖ |
 | Search inside the files you received, and by what a picture shows | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | Download all the files of a chat, and carry on after a stop | 🟡 | 🟡 | ✅ | 🟡 | 🟡 | ✅ |
-
-## Organise
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Organise** | | | | | | |
 | Archive, pin, mute or mark a chat unread | ✅ | ➖ | ✅ | 🟡 | ✅ | ➖ |
 | Keep chats in folders | ✅ | ➖ | ✅ | ✅ | ✅ | ❌ |
-
-## Group overview
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Group overview** | | | | | | |
 | Create a group, manage admins, members, topics and join requests | ✅ | 🟡 | ✅ | ✅ | ✅ | 🟡 |
 | See who joined, who left and who added them | ✅ | ➖ | ➖ | ➖ | 🟡 | 🟡 |
 | See a group's numbers: messages, active members, questions answered | ✅ | 🟡 | 🟡 | ➖ | 🟡 | ➖ |
-
-## Bot
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Bot** | | | | | | |
 | Run your own bot through the Bot API | ✅ | ❌ | ✅ | 🟡 | ❌ | ❌ |
 | Press a bot's buttons | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-
-## Agents and safety
-
-What an agent may do without asking, how a wrong send is stopped, and what you can see afterwards.
-
-| Task | tg | tgcli | tlgr | telegram-mcp | mcp-telegram | tdl |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Agents and safety** | | | | | | |
 | Works with an agent that has a terminal, with a skill that teaches it | ✅ | ✅ | ✅ | 🟡 | ➖ | ➖ |
 | An MCP server that offers every command | ✅ | 🟡 | ❌ | ✅ | ✅ | ❌ |
 | An agent can read but not send, until you allow it | ✅ | ➖ | 🟡 | ✅ | ➖ | ➖ |
@@ -89,6 +64,8 @@ What an agent may do without asking, how a wrong send is stopped, and what you c
 | An agent cannot loosen its own limits | ✅ | ➖ | ➖ | ➖ | ➖ | ➖ |
 | The login is kept in the system keyring | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | Several accounts, and none picked for you | ✅ | ❌ | ➖ | ➖ | ➖ | ❌ |
+
+What an agent may do without asking, how a wrong send is stopped, and what you can see afterwards.
 
 Notes on these rows:
 
