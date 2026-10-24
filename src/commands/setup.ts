@@ -1,6 +1,6 @@
 import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
 import { CliError, indent, renderPretty } from "@wirecat/cli-base"
-import { annotate } from "@wirecat/cli-base/commands"
+import { annotate, customizeSharedCommand } from "@wirecat/cli-base/commands"
 import { installSkill, type SkillTarget } from "@wirecat/cli-base/skill"
 import { atTerminal } from "@wirecat/cli-core"
 import {
@@ -19,11 +19,13 @@ import {
   runtime,
   screenFor,
   secretInputOf,
+  sharedCommandTemplate,
   withDeadline,
 } from "@wirecat/cli-core/cli"
 import { levelFor } from "@wirecat/cli-core/sends"
 import { Command, Option } from "commander"
 import { TG } from "../app.js"
+import { SHELL_OVERRIDES } from "../contract-overrides.js"
 import { pathsFor } from "../paths.js"
 import { installer } from "../update.js"
 import { type CommandContext, type Environment, forCommand, SKILL } from "./context.js"
@@ -37,7 +39,7 @@ type Options = {
 
 const STEPS = 5
 const chatCount = (count: number) => `${count} ${count === 1 ? "chat" : "chats"}`
-export const setupCommand = () =>
+const setupCommandDefinition = () =>
   logsInOrOut(annotate(new Command("setup"), { effects: REMOTE_WRITE, lifetime: "interactive" }))
     .description("set up Telegram and connect your agent")
     .configureHelp({ showGlobalOptions: true })
@@ -217,3 +219,11 @@ export const setupCommand = () =>
         )
       }
     })
+
+export const setupCommand = (...args: Parameters<typeof setupCommandDefinition>) =>
+  customizeSharedCommand(
+    sharedCommandTemplate(TG, "setup"),
+    "This provider binds its own account linking protocol, credential flow and typed receipt to the shared setup lifecycle.",
+    () => setupCommandDefinition(...args),
+    SHELL_OVERRIDES.setup,
+  )

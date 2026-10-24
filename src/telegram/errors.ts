@@ -113,7 +113,7 @@ const STANDINGS: Record<string, Standing> = {
     "deactivated",
   ],
   USER_DEACTIVATED_BAN: () => [
-    "authentication_error",
+    "permission_error",
     "Telegram banned this account — a new login cannot lift it; only Telegram can",
     "banned",
   ],
