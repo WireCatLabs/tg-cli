@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **The first command at a terminal asks three questions once for every WireCat tool** (cli-core 0.404.0): which
+  languages you write and speak, which other WireCat tools to install, and whether commands and agents may only read.
+  Answered in any tool, they hold in all of them; "read only" caps every profile, over MCP too. `tg setup` asks them
+  again. Agents, `--json`, `--no-input`, `CI` and `TG_READ_ONLY` are never asked.
+
 ## 0.84.0 — 24.10.2026
 
 ### Added
