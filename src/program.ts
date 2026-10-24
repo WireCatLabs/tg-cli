@@ -94,15 +94,15 @@ const definition: ProgramDefinition = {
     contacts?.commands
       .find((command) => command.name() === "context")
       ?.description("what the local store holds about a person; --chat --sync-first explicitly asks Telegram first")
-    const audit = program.commands
+    const membersCheck = program.commands
       .find((command) => command.name() === "chats")
       ?.commands.find((command) => command.name() === "members")
-      ?.commands.find((command) => command.name() === "audit")
-    audit?.description(
+      ?.commands.find((command) => command.name() === "check")
+    membersCheck?.description(
       "members that look like bots, each with its reasons, from the member list and local store; " +
         "--deep checks selected people individually; removes nobody",
     )
-    const deep = audit?.options.find((option) => option.long === "--deep")
+    const deep = membersCheck?.options.find((option) => option.long === "--deep")
     if (deep)
       deep.description =
         "also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, " +

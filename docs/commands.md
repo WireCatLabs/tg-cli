@@ -351,7 +351,7 @@ tg chats members list <chat> [query] [options]
 
 #### `tg chats members check`
 
-members that look like bots, each with its reasons — read from the member list and the local store; never one request per person, and it removes nobody
+members that look like bots, each with its reasons, from the member list and local store; --deep checks selected people individually; removes nobody
 
 ```sh
 tg chats members check <chat> [query] [options]
@@ -365,7 +365,7 @@ tg chats members check <chat> [query] [options]
 | Option | What it does |
 |---|---|
 | `--max-pages <pages>` | at most this many pages of 200 members, a pause between them (default: 10). |
-| `--deep <n>` | also check the top n in full — profile, photos, everything they wrote, and the public ban lists, which are sent their ids — one person a second. |
+| `--deep <n>` | also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second. |
 
 **Returns:** member — id, name, username, role, last_seen_at, registered_at, joined_at, invited_by, and 7 more; every field: tg commands info chats members check
 
