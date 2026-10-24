@@ -934,6 +934,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages between` | `--all-bots` | ✅ |  |
 | `bot messages between` | `--bots` | ✅ |  |
 | `bot messages between` | `--limit` | ✅ |  |
+| `bot messages sync` |  | ✅ |  |
+| `bot messages sync` | `--limit` | ✅ |  |
+| `bot messages sync` | `--page-size` | ✅ |  |
+| `bot messages sync` | `--pause` | ✅ |  |
+| `bot messages sync` | `--since-time` | ✅ |  |
+| `bot messages sync` | `--last` | ✅ |  |
+| `bot messages sync` | `--until-id` | ✅ |  |
 | `bot search messages` |  | ✅ |  |
 | `bot search messages` | `--all-bots` | ✅ |  |
 | `bot search messages` | `--bots` | ✅ |  |
@@ -968,13 +975,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot contacts show` | `--limit` | ✅ |  |
 | `bot contacts show` | `--sync-first` | ✅ |  |
 | `bot me` |  | ✅ |  |
-| `bot store fetch` |  | ✅ |  |
-| `bot store fetch` | `--limit` | ✅ |  |
-| `bot store fetch` | `--page-size` | ✅ |  |
-| `bot store fetch` | `--pause` | ✅ |  |
-| `bot store fetch` | `--since-time` | ✅ |  |
-| `bot store fetch` | `--last` | ✅ |  |
-| `bot store fetch` | `--until-id` | ✅ |  |
 | `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, and src/bot.test.ts the tools tg offers |
 | `bot mcp config` |  | ✅ |  |
 | `bot api get-updates` |  | ✅ |  |

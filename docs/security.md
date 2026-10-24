@@ -109,7 +109,7 @@ downloaded file's name also loses any leading dot.
 ## What goes over the network
 
 - **Telegram**, over MTProto for personal-account commands, including files and photos. Bot commands
-  use the HTTPS Bot API; `bot store fetch` uses a separate MTProto bot session for history.
+  use the HTTPS Bot API; `bot messages sync` uses a separate MTProto bot session for history.
 - **npm**, once a day at a terminal, to see whether a newer `tg` exists, and on `tg upgrade`.
   `update_check` or `TG_NO_UPDATE_CHECK=1` turns it off ([configuration](configuration.md)).
 - **my.telegram.org**, only during `tg personal setup` or `tg personal session start`: opened in your browser, or, with `--app auto`,

@@ -3,6 +3,12 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **`tg <bot> bot store fetch` is now `tg <bot> bot messages sync`, and the `bot store` group is gone.** It reads a channel's or supergroup's older messages into the bot's local copy, which is what the personal `messages sync` does, so it carries the same name; `store` is for the local database. The options are unchanged. The old path answers with a pointer to the new one. A saved `permissions.bot.store.fetch` is refused until you rename it to `permissions.bot.messages.sync`.
+
 ## 0.89.0 — 25.10.2026
 
 ### Changed — may break callers

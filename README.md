@@ -248,7 +248,7 @@ tg personal bot list --check             # every bot on this computer
   what it did, without the text.
 - **Messages, admins, members, buttons, the menu, webhooks** — send, edit, delete and pin; `bot chats
   admins`, `bot callbacks answer`, `bot commands`, `bot webhooks`.
-- **History.** `bot watch` prints and keeps what happens in the bot's chats; `bot store fetch` imports
+- **History.** `bot watch` prints and keeps what happens in the bot's chats; `bot messages sync` imports
   older channel and supergroup messages.
 
 More: [a Telegram bot](https://github.com/WireCatLabs/tg-cli/blob/main/docs/bot.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/bot)
