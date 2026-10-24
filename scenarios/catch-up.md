@@ -13,4 +13,4 @@ look:
   - promises in your own messages that no task holds yet
 ---
 
-`review` reads the local store and the chats that changed; by default nothing is marked read; `--mark-read` asks for it.
+`review` reads the local store and the chats that changed without marking messages read. To mark a chat read, use `tg personal chats mark-read "Book club"`.
