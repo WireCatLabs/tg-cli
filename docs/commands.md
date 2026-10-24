@@ -1840,9 +1840,9 @@ tg messages send <chat> [text] [options]
 | `--silent` | deliver without a notification. |
 | `--no-preview` | no preview card for a link in the text. |
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
-| `--file <file>` | attach a file; the text becomes its caption. |
-| `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
-| `--as-file` | send the --file as a file to download, a video included. |
+| `--file <file>` | attach a file; the text becomes its caption; repeat it for an album. Default: ``. |
+| `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption; repeat it for an album. Default: ``. |
+| `--as-file` | send each --file as a file to download, a video included. |
 | `--voice <file>` | send an Ogg Opus file as a voice message, alone, with no text. |
 | `--allow-any-file` | send a file even from credential folders or this CLI's own folders. |
 | `--at-time <time>` | let the messenger send it later, even with this machine off: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
@@ -1851,7 +1851,7 @@ tg messages send <chat> [text] [options]
 | `--filename <name>` | the name others see for the --file, instead of its name on disk. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
-**Returns:** message write — operation_id, message, scheduled_for; every field: tg commands schema messages send
+**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands schema messages send
 
 **Example:** `tg personal messages send "Book club" "The meeting starts at 10."`
 
@@ -1970,7 +1970,7 @@ tg messages edit <chat> <message> [text] [options]
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
-**Returns:** message write — operation_id, message, scheduled_for; every field: tg commands schema messages edit
+**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands schema messages edit
 
 **Example:** `tg personal messages edit "Book club" 101 "The meeting starts at 11."`
 
@@ -2021,7 +2021,7 @@ tg messages forward <chat> <message> [options]
 | `--operation-id <id>` | repeat a forward whose outcome was unknown, without risking a second copy. |
 | `--topic <id>` | forward into this forum topic of the --to chat. |
 
-**Returns:** message write — operation_id, message, scheduled_for; every field: tg commands schema messages forward
+**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands schema messages forward
 
 **Example:** `tg personal messages forward "Book club" 101 --to "Project room"`
 
@@ -2360,7 +2360,7 @@ tg polls create <chat> <question> <answers> [options]
 | `--solution <text>` | with --quiz: what people see once they answered. |
 | `--close-time <delay>` | it closes by itself this long after sending: 5s to 10m, like 90s or 5m. |
 
-**Returns:** message write — operation_id, message, scheduled_for; every field: tg commands schema polls create
+**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands schema polls create
 
 **Example:** `tg personal polls create "Book club" "Which day?" Monday Tuesday`
 
@@ -4838,10 +4838,14 @@ tg tasks related <task> [options]
 
 ### `tg tasks duplicates`
 
+pairs of tasks that may be one job
+
+#### `tg tasks duplicates list`
+
 pairs of tasks a rule opened that may be one job, newest first, with score and reasons: merge, reject or defer each; decision:unsure lists the ones deferred to the owner
 
 ```sh
-tg tasks duplicates [query] [options]
+tg tasks duplicates list [query] [options]
 ```
 
 | Argument | | What it is |
@@ -4851,6 +4855,10 @@ tg tasks duplicates [query] [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
+
+**Returns:** task pair — task, source, other, score, band, levels, reasons, decision, and 2 more; every field: tg commands schema tasks duplicates list
+
+**Example:** `tg personal tasks duplicates list --limit 10`, `tg personal tasks duplicates list decision:unsure`
 
 #### `tg tasks duplicates reject`
 
@@ -5108,7 +5116,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 4 more; every field: tg commands schema search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 6 more; every field: tg commands schema search all
 
 **Example:** `tg personal search all draft`
 

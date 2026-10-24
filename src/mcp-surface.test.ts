@@ -23,7 +23,9 @@ describe("tg's bot MCP surface", () => {
   it("**offers the bot commands by the profile's levels**: every write by default, none when read-only", () => {
     const all = botServer().offered
     expect(all).toEqual(expect.arrayContaining(["messages send", "messages delete", "chats list"]))
-    expect(all.some((command) => /^(api|auth|store|mcp)\b|comments|people/.test(command))).toBe(false)
+    expect(all.some((command) => /^(api|auth|mcp)\b|^store (?!fetch$)|comments|people/.test(command))).toBe(false)
+    // NEED-1663 A: `bot store fetch` has an ask key of its own, so the server offers it.
+    expect(all).toContain("store fetch")
 
     const reads = botServer({ bot: "readonly" })
     expect(reads.offered).toEqual(expect.arrayContaining(["messages list", "me"]))

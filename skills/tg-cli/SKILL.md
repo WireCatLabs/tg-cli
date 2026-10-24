@@ -276,7 +276,7 @@ tg personal tasks list "assignee:any state:open" --json   # what others owe the 
 # the owner edits the list in ~/.config/WireCat/config.json, section task_categories ("name": "meaning | words" or null)
 tg personal tasks add <ref> --type request --category documents --json
 # exit 2 task.duplicate-candidates: may be the same job as an open task; rerun with --into <id> or --new
-tg personal tasks duplicates --json               # pairs that may be one job; tasks merge <dup> --into <task>
+tg personal tasks duplicates list --json              # pairs that may be one job; tasks merge <dup> --into <task>
 tg personal tasks claim <task> --lease 30m --json     # take before work; tasks release <task> gives it back
 # tasks agenda omits others’ claims unless claimed:any; the default claim lasts 30 minutes.
 tg personal tasks close <task> --as dismissed --reason no-reply-needed --certainty <0..1> --json  # only after the owner says so

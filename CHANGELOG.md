@@ -17,6 +17,16 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break callers
 
+- **`tg mcp` offers the writes that had no permission key before, each `ask` by default** (cli-core 0.401.0): store
+  backup, restore, migrate, repair, reset, clear, decrypt and copy deletion, server start/stop/restart, model downloads,
+  `schedule run|exec`, `doctor report create` and `account sessions end`; the bot server offers `store fetch`. Over MCP
+  `ask` goes ahead, so set a key to `readonly` or `deny` to hide a tool. `tasks duplicates` is `tasks duplicates list`.
+
+- **`tg <profile> events list --json` writes times as ISO 8601 and ids as strings** (cli-core 0.401.0): `starts_at`,
+  `ends_at`, `deleted_at`, `created_at` and `updated_at`, as every other answer does.
+- **A bot's MCP server can offer `bot api`, behind `permissions.bot.api`** (cli-core 0.402.0). It is `deny` by default;
+  `tg <profile> config set --bot permissions.bot.api allow` in a terminal turns it on.
+
 - **`tg <profile> watch --jsonl` prints `{"type":"item","data":…}` lines and a final `{"type":"end","complete":true}`.**
   Read each message or event from `data`, and stop at the `end` line. Fields are snake_case. A timeout or a normal stop
   ends with `complete: true`; a failure ends with `complete: false` and its exit code.
@@ -34,6 +44,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `kind:group,channel` in their query. The old spellings still work, hidden, for one release.
 
 ### Fixed
+
+- **Voice-note search no longer finds a different real English or Spanish word for the one you typed** (cli-core
+  0.402.0). A misheard spelling still turns up: "budget" finds "budjet", but "cost" no longer finds "cast".
 
 - **Downloading media skips service events and keyboards** (cli-core 0.400.0). A chat with a group event or an inline
   keyboard no longer makes `attachments download` fail with `provider.invalid-response`.

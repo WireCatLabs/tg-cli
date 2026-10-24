@@ -736,7 +736,7 @@ export const UNTESTED: Untested[] = [
   ...[
     ["tasks add", "--into"],
     ["tasks add", "--new"],
-    ["tasks duplicates"],
+    ["tasks duplicates list"],
     ["tasks merge"],
     ["tasks merge", "--into"],
   ].map(([command, option]) => ({
@@ -764,7 +764,7 @@ export const UNTESTED: Untested[] = [
     ["mentions domains", "--limit"],
     ["mentions domains", "--page"],
     ["tasks related", "--limit"],
-    ["tasks duplicates", "--limit"],
+    ["tasks duplicates list", "--limit"],
   ].map(([command, option]) => ({
     command: command as string,
     option,

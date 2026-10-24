@@ -731,5 +731,57 @@
     },
     "required": [],
     "$schema": "http://json-schema.org/draft-07/schema#"
+  },
+  "store fetch": {
+    "type": "object",
+    "properties": {
+      "chat": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!-$)[\\s\\S]+$",
+        "description": "a chat id, or the title of a chat this bot has seen"
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "at most this many messages in this run; 1000 if not given"
+      },
+      "page_size": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "how many messages one request asks for; 100 if not given"
+      },
+      "pause": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!-$)[\\s\\S]+$",
+        "description": "pause between pages, to stay under the messenger's limits"
+      },
+      "since_time": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!-$)[\\s\\S]+$",
+        "description": "stop once it reaches messages older than this: ISO 8601, or 2h / 1d ago"
+      },
+      "last": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "stop once the newest n messages are held"
+      },
+      "until_id": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^(?!-$)[\\s\\S]+$",
+        "description": "start at this message, by its t.me link, inclusive; otherwise the newest message already known"
+      },
+      "offline": {
+        "type": "boolean",
+        "description": "answer from the copy on this machine only"
+      }
+    },
+    "required": [
+      "chat"
+    ],
+    "$schema": "http://json-schema.org/draft-07/schema#"
   }
 }
