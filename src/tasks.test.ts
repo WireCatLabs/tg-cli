@@ -116,3 +116,20 @@ describe("tasks through tg", () => {
     ).toBe(5)
   })
 })
+
+it("updates project task priority and parent offline through the shared command", async () => {
+  const store = await openStore()
+  let parentId: string, childId: string
+  try {
+    const project = await store.knowledge.addProject({ name: "Synthetic Task Query", key: "STQ", type: "work" })
+    const parent = await store.tasks.create({ project: project.ref, title: "Synthetic parent", type: "chore" }, "owner")
+    const child = await store.tasks.create({ project: project.ref, title: "Synthetic child", type: "chore" }, "owner")
+    parentId = parent.id
+    childId = child.id
+  } finally {
+    await store.close()
+  }
+  const updated = await cli(["tasks", "update", childId, "--priority", "1", "--parent", parentId, "--json"])
+  expect(updated.code, updated.err).toBe(0)
+  expect(JSON.parse(updated.out).item).toMatchObject({ id: childId, priority: 1, parent: `task:${parentId}` })
+})

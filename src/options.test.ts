@@ -418,7 +418,7 @@ describe("messages", () => {
     expect(JSON.parse(detailed.stdout[0] ?? "null").item.chats[0].messages[0]).toHaveProperty("locator")
   })
 
-  it("contacts events reads one person's stored messages within --scope, the time range and --limit", async () => {
+  it("contacts events reads stored messages with native scope/time queries before --limit", async () => {
     const said = (id: string) =>
       message(id, { senderId: "778", senderName: "Bea", timestamp: `2026-09-26T10:0${id}:00.000Z` })
     const adapter = scripted({
@@ -431,12 +431,8 @@ describe("messages", () => {
         "contacts",
         "events",
         "778",
-        "--scope",
-        "personal",
-        "--since-time",
-        "2026-09-26T10:01:30Z",
-        "--until-time",
-        "2026-09-26T10:05:00Z",
+        "scope:personal",
+        "at:[2026-09-26T10:01:30Z TO 2026-09-26T10:05:00Z]",
         "--limit",
         "1",
         "--json",
@@ -455,7 +451,16 @@ describe("messages", () => {
     })
 
     const next = await tg(
-      ["contacts", "events", "778", "--scope", "personal", "--cursor", timeline.page.next_cursor, "--json"],
+      [
+        "contacts",
+        "events",
+        "778",
+        "scope:personal",
+        "at:[2026-09-26T10:01:30Z TO 2026-09-26T10:05:00Z]",
+        "--cursor",
+        timeline.page.next_cursor,
+        "--json",
+      ],
       { adapter: () => adapter },
     )
     expect(next.code, next.stderr.join("")).toBe(0)

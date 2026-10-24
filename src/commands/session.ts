@@ -1,6 +1,6 @@
 import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import { annotate } from "@wirecat/cli-base/commands"
+import { annotate, customizeSharedCommand } from "@wirecat/cli-base/commands"
 import { timezoneOf } from "@wirecat/cli-base/query"
 import { type Account, atTerminal, loginQr, readSecret } from "@wirecat/cli-core"
 import { servingProfiles } from "@wirecat/cli-core/background"
@@ -13,11 +13,13 @@ import {
   refuseCommandName,
   rememberAccount,
   rootOf,
+  sharedCommandTemplate,
 } from "@wirecat/cli-core/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
+import { SHELL_OVERRIDES } from "../contract-overrides.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, forCommand } from "./context.js"
@@ -206,7 +208,7 @@ export const startSession = async (
   }
 }
 
-export const sessionCommand = () => {
+const sessionCommandDefinition = () => {
   const session = annotate(new Command("session"), { mcp: false }).description(
     "log this profile in to Telegram, or out",
   )
@@ -280,3 +282,11 @@ export const sessionCommand = () => {
 
   return session
 }
+
+export const sessionCommand = (...args: Parameters<typeof sessionCommandDefinition>) =>
+  customizeSharedCommand(
+    sharedCommandTemplate(TG, "session"),
+    "This provider binds its own account linking protocol, credential flow and typed receipt to the shared session lifecycle.",
+    () => sessionCommandDefinition(...args),
+    SHELL_OVERRIDES.session,
+  )

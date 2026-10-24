@@ -10,6 +10,8 @@ import {
   checkApiBody,
   checkApiParameter,
   generatedApiCommand,
+  overrideSharedContract,
+  ownerOnlyOption,
   prepareRpcApiBody,
 } from "@wirecat/cli-core/cli"
 import {
@@ -146,6 +148,14 @@ export const telegramBotApiCommand = (): Command => {
       })
     },
   })
-  group.option("--allow-any-file", "read @path files even from credential folders or this CLI's own folders")
+  overrideSharedContract(
+    group,
+    "This provider accepts multipart @path uploads, with an explicit owner-only file-policy exception.",
+    (command) => {
+      command.addOption(
+        ownerOnlyOption("--allow-any-file", "read @path files even from credential folders or this CLI's own folders"),
+      )
+    },
+  )
   return group
 }

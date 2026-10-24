@@ -1,15 +1,1 @@
-[
-  "bot store fetch",
-  "chats folders join",
-  "messages scheduled",
-  "polls vote",
-  "replies audience",
-  "replies consents grant",
-  "replies pause",
-  "replies test",
-  "schedule",
-  "schedule agent",
-  "schedule command",
-  "stats chats official",
-  "topics create"
-]
+[]

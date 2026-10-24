@@ -69,7 +69,7 @@ describe("Telegram's refusals", () => {
 
   it("names a banned or deleted account, and does not send it to log in again", () => {
     const banned = toCliError(rpc(401, "USER_DEACTIVATED_BAN"), bareCheck)
-    expect(banned).toMatchObject({ code: "authentication_error", details: { standing: { state: "banned" } } })
+    expect(banned).toMatchObject({ code: "permission_error", details: { standing: { state: "banned" } } })
     expect((banned as Error).message).not.toContain("session start")
     expect(toCliError(rpc(401, "USER_DEACTIVATED"), bareCheck)).toMatchObject({
       details: { standing: { state: "deactivated" } },
