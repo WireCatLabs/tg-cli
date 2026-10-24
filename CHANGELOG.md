@@ -3,10 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.86.1 — 24.10.2026
 
 ### Fixed
 
+- The MCP guides describe permission-keyed writes and the separate opt-in for raw Bot API calls.
+- The catch-up scenario uses `chats mark-read` as a separate command. Installation guidance explains
+  how to recover when pnpm's global bin directory is missing from PATH.
 - **`chats members check --help` gives tg's description again**: what `--deep` reads and that it sends ids to the
   public ban lists. Since 0.86.0 it showed the shared wording, which leaves both out.
 
