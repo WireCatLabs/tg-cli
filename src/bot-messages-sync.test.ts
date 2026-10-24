@@ -70,14 +70,14 @@ beforeEach(() => {
   new BotTokenStore({ app: TG, profile: "sales", env, keyring }).write(TOKEN)
 })
 
-describe("tg bot store fetch", () => {
+describe("tg bot messages sync", () => {
   it("**fetches and resumes without sending**, then answers offline from the bot's copy", async () => {
     const before = await tg(["sales", "bot", "sends", "list", "--json"])
     const first = await tg([
       "sales",
       "bot",
-      "store",
-      "fetch",
+      "messages",
+      "sync",
       CHAT,
       "--until-id",
       "https://t.me/c/700/250",
@@ -97,7 +97,7 @@ describe("tg bot store fetch", () => {
       sessionPath: botSessionFile("sales", "900", env),
     })
     expect(opened[0]?.sessionPath).not.toBe(sessionFile("sales", env))
-    const second = await tg(["sales", "bot", "store", "fetch", CHAT, "--pause", "1ms", "--json"])
+    const second = await tg(["sales", "bot", "messages", "sync", CHAT, "--pause", "1ms", "--json"])
     expect(second.code).toBe(0)
     expect(second.answer.item).toMatchObject({ complete: true })
     const kept = await tg(["sales", "bot", "messages", "list", CHAT, "--offline", "--limit", "300", "--json"])
@@ -109,7 +109,7 @@ describe("tg bot store fetch", () => {
   })
 
   it("stops at --last and --since-time, and refuses them together or --offline", async () => {
-    const args = ["sales", "bot", "store", "fetch", CHAT, "--until-id", "https://t.me/c/700/250", "--pause", "1ms"]
+    const args = ["sales", "bot", "messages", "sync", CHAT, "--until-id", "https://t.me/c/700/250", "--pause", "1ms"]
     expect((await tg([...args, "--last", "30", "--json"])).answer.item).toMatchObject({ reached_last: true })
     expect((await tg([...args, "--since-time", MESSAGES[200]?.timestamp ?? "", "--json"])).answer.item).toMatchObject({
       reached_since: true,
@@ -129,7 +129,7 @@ describe("tg bot store fetch", () => {
       hasMore: false,
     }))
     const adapter = vi.fn(() => scripted({ history: personalHistory, close: personalClose }))
-    const result = await tg(["sales", "bot", "store", "fetch", CHAT, "--limit", "1", "--pause", "1ms", "--json"], {
+    const result = await tg(["sales", "bot", "messages", "sync", CHAT, "--limit", "1", "--pause", "1ms", "--json"], {
       adapter,
     })
     expect(result.code).toBe(0)
@@ -143,7 +143,7 @@ describe("tg bot store fetch", () => {
   })
 
   it("asks for a link when neither account knows the newest, and closes the reader on failure", async () => {
-    const failed = await tg(["sales", "bot", "store", "fetch", CHAT, "--json"])
+    const failed = await tg(["sales", "bot", "messages", "sync", CHAT, "--json"])
     expect(failed.code).toBe(2)
     expect(failed.out).toBe("")
     expect(JSON.parse(failed.err)).toMatchObject({
@@ -154,7 +154,7 @@ describe("tg bot store fetch", () => {
     })
     expect(close).toHaveBeenCalledOnce()
     const personalClose = vi.fn(async () => {})
-    const other = await tg(["sales", "bot", "store", "fetch", CHAT, "--json"], {
+    const other = await tg(["sales", "bot", "messages", "sync", CHAT, "--json"], {
       adapter: () =>
         scripted({
           history: async () => {
@@ -176,14 +176,25 @@ describe("tg bot store fetch", () => {
     delete env.TG_API_HASH
     expect((await tg(["sales", "bot", "auth", "show", "--json"])).code).toBe(0)
     expect(opened).toEqual([])
-    expect((await tg(["sales", "bot", "store", "fetch", CHAT, "--json"])).code).toBe(4)
+    expect((await tg(["sales", "bot", "messages", "sync", CHAT, "--json"])).code).toBe(4)
     apiCredentials({ profile: "sales", env, keyring }).write({ id: 2, hash: "bot-app" })
-    await tg(["sales", "bot", "store", "fetch", CHAT, "--until-id", "https://t.me/c/700/250", "--limit", "1", "--json"])
+    await tg([
+      "sales",
+      "bot",
+      "messages",
+      "sync",
+      CHAT,
+      "--until-id",
+      "https://t.me/c/700/250",
+      "--limit",
+      "1",
+      "--json",
+    ])
     expect(opened[0]?.credentials).toEqual({ id: 2, hash: "bot-app" })
   })
 
   it("closes a history connection that times out while logging in", async () => {
-    const result = await tg(["sales", "bot", "store", "fetch", CHAT, "--timeout", "5ms", "--json"], {
+    const result = await tg(["sales", "bot", "messages", "sync", CHAT, "--timeout", "5ms", "--json"], {
       botHistory: async (options) => {
         options.track?.({ close })
         await new Promise<void>((resolve) => options.stop?.addEventListener("abort", () => resolve(), { once: true }))

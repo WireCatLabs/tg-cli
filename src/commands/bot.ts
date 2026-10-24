@@ -74,7 +74,7 @@ export const TELEGRAM_BOT: BotMessenger = {
     if (!credentials)
       throw new CliError(
         "authentication_error",
-        `bot store fetch needs Telegram app credentials — run \`tg ${profile} session start\` first, or set TG_API_ID and TG_API_HASH`,
+        `bot messages sync needs Telegram app credentials — run \`tg ${profile} session start\` first, or set TG_API_ID and TG_API_HASH`,
       )
     const botId = token.split(":", 1)[0] ?? ""
     if (!/^\d+$/.test(botId)) throw new CliError("authentication_error", "the bot token has no valid bot id")

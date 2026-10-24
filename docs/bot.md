@@ -26,7 +26,7 @@ Some words on this page:
 | Send, edit, delete and pin messages and files | `tg <bot> bot messages send\|edit\|delete\|pin` |
 | See new messages, button presses and joins | `tg <bot> bot watch` |
 | Read and search what the bot saw | `tg <bot> bot messages list`, `tg <bot> bot search messages` |
-| Import older messages of a channel or supergroup | `tg <bot> bot store fetch` |
+| Import older messages of a channel or supergroup | `tg <bot> bot messages sync` |
 | Manage admins and remove members | `tg <bot> bot chats admins`, `tg <bot> bot chats members remove` |
 | Keep a group in order by your rules | `tg <bot> bot chats moderate` |
 | Answer buttons, set the command menu and webhooks | `tg <bot> bot callbacks`, `commands`, `webhooks` |
@@ -187,17 +187,17 @@ tg sales bot messages between @ann Bob       # what both wrote, in the chats bot
 ```
 
 **Telegram's Bot API has no history call.** `messages list` and `messages show` answer from what
-the bot has sent, what `bot watch` received, and what `bot store fetch` imported on this computer,
+the bot has sent, what `bot watch` received, and what `bot messages sync` imported on this computer,
 and say so. Search needs every word; `"a phrase"`, `-word`, `a OR b` and the filters `from:`,
 `chat:`, `after:`, `before:` and `has:` work, and a typo is corrected. `contacts show --sync-first` is
-refused: import older messages with `bot store fetch` first.
+refused: import older messages with `bot messages sync` first.
 
 `--all-bots` and `--bots <names>` also read other bots' copies, when the profile's `read_other_bots`
 allows it.
 
 ### Fetching older messages
 
-`bot store fetch` reads older messages in a channel or supergroup into the bot's local copy.
+`bot messages sync` reads older messages in a channel or supergroup into the bot's local copy.
 It signs the bot in to Telegram's MTProto API with its existing bot token, in a separate session.
 It reads message numbers through [channels.getMessages](https://core.telegram.org/method/channels.getMessages).
 Sending and `bot watch` continue through the Bot API; the history session has updates off.
@@ -206,8 +206,8 @@ The command sends nothing and marks nothing read.
 These examples use a synthetic chat id and message link:
 
 ```sh
-tg sales bot store fetch -1001234567890 --until-id https://t.me/c/1234567890/512 --limit 20 --json
-tg sales bot store fetch -1001234567890 --last 200 --pause 1s
+tg sales bot messages sync -1001234567890 --until-id https://t.me/c/1234567890/512 --limit 20 --json
+tg sales bot messages sync -1001234567890 --last 200 --pause 1s
 ```
 
 `--from` starts at that message, inclusive, and must name the same chat. Without it, the command
@@ -260,7 +260,7 @@ tg sales bot chats moderate -1001234567890 --dry-run         # what breaks the r
 tg sales bot chats moderate -1001234567890                   # act as the rules allow
 ```
 
-The bot judges only what `tg sales bot watch` kept or `bot store fetch` imported on this
+The bot judges only what `tg sales bot watch` kept or `bot messages sync` imported on this
 computer. Joins are not judged. A removed person cannot come
 back by the link unless `--no-block`. The rules live in the same file as those of your account profile
 of the same name.

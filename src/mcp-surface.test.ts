@@ -25,8 +25,8 @@ describe("tg's bot MCP surface", () => {
     expect(all.offered).toEqual(
       expect.arrayContaining(["messages send", "messages delete", "chats list", "config set", "api get-me"]),
     )
-    expect(all.offered.some((command) => /^(auth|mcp)\b|^store (?!fetch$)|comments|people/.test(command))).toBe(false)
-    expect(all.offered).toContain("store fetch")
+    expect(all.offered.some((command) => /^(auth|mcp)\b|^store\b|comments|people/.test(command))).toBe(false)
+    expect(all.offered).toContain("messages sync")
     const reads = botServer({ bot: "readonly" })
     expect(reads.offered).toEqual(all.offered)
     expect(reads.tools.find((tool) => tool.command === "messages send")?.availability?.()).toMatchObject({

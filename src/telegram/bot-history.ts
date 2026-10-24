@@ -42,7 +42,7 @@ const channelNumber = (chat: string): number => {
   if (!/^-\d+$/.test(chat) || !Number.isSafeInteger(id) || id >= -1_000_000_000_000)
     throw new CliError(
       "validation_error",
-      "bot store fetch supports channels and supergroups only; private chats and basic groups share " +
+      "bot messages sync supports channels and supergroups only; private chats and basic groups share " +
         "one message numbering across all of the bot's chats",
     )
   return id
