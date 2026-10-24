@@ -167,17 +167,17 @@ The whole file is in the folder `tg personal runs path <run-id>` prints.
 
 ```sh
 tg personal search runs error_code:rate_limited --json
-tg personal search runs status:partial --since-time 2026-10-01 --json
+tg personal search runs status:partial 'started_at>=2026-10-01' --json
 ```
 
 `search runs` matches literal diagnostic text in metadata and safe events. Narrow it with the terms `status:`,
-`error_code:`, `operation:` and `profile:`, and with `--since-time`, `--limit` and `--page`. Each page allows up to 100 runs and
+`error_code:`, `operation:`, `profile:` and `started_at:` comparisons/ranges, with `--limit` and `--page`. Each page allows up to 100 runs and
 each run returns at most 100 matched events, with `events_truncated` for additional events.
 A failed batch item or history page creates `status: "partial"` with failed IDs, stages and
 codes; message contents and provider error payloads are not copied into that record. Partial
 records are kept by default unless recording was explicitly disabled. Search does not record itself.
 
-MCP `tg_read` with `command: "search runs"` accepts these `arguments`: `query` (the terms above), `since_time`, `limit` and `page`.
+MCP `tg_read` with `command: "search runs"` accepts these `arguments`: `query` (including time predicates), `limit` and `page`.
 It reads only the active profile's diagnostic runs, does not connect to Telegram and does not open
 raw background-job logs. The original partial result contains recovery actions; diagnostic records
 keep only safe identifiers and codes.
