@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`chats members check --help` gives tg's description again**: what `--deep` reads and that it sends ids to the
+  public ban lists. Since 0.86.0 it showed the shared wording, which leaves both out.
+
 ## 0.86.0 — 24.10.2026
 
 ### Added
