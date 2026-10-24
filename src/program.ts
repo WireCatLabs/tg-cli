@@ -23,6 +23,7 @@ import {
   messagesCommand,
   metadataCommand,
   modelsCommand,
+  overrideSharedContract,
   type ProgramDefinition,
   pollsCommand,
   reactionsCommand,
@@ -89,24 +90,50 @@ const definition: ProgramDefinition = {
     const contacts = program.commands.find((command) => command.name() === "contacts")
     const check = contacts?.commands.find((command) => command.name() === "check")
     const registries = check?.options.find((option) => option.long === "--no-registries")
-    if (registries)
-      registries.description = "skip public ban lists; still ask Telegram for the profile and photos unless --offline"
-    contacts?.commands
-      .find((command) => command.name() === "context")
-      ?.description("what the local store holds about a person; --chat --sync-first explicitly asks Telegram first")
+    if (registries && check)
+      overrideSharedContract(
+        check,
+        "Telegram can query its profile and photos independently of the public ban registries.",
+        () => {
+          registries.description =
+            "skip public ban lists; still ask Telegram for the profile and photos unless --offline"
+        },
+      )
+    const contactContext = contacts?.commands.find((command) => command.name() === "context")
+    if (contactContext)
+      overrideSharedContract(
+        contactContext,
+        "Telegram's contact context stays local unless the caller explicitly asks to sync.",
+        (command) => {
+          command.description(
+            "what the local store holds about a person; --chat --sync-first explicitly asks Telegram first",
+          )
+        },
+      )
     const membersCheck = program.commands
       .find((command) => command.name() === "chats")
       ?.commands.find((command) => command.name() === "members")
       ?.commands.find((command) => command.name() === "check")
-    membersCheck?.description(
-      "members that look like bots, each with its reasons, from the member list and local store; " +
-        "--deep checks selected people individually; removes nobody",
-    )
+    if (membersCheck)
+      overrideSharedContract(
+        membersCheck,
+        "Telegram supports an explicit deep member check with bounded profile and history reads.",
+        (command) => {
+          command.description(
+            "members that look like bots, each with its reasons, from the member list and local store; --deep checks selected people individually; removes nobody",
+          )
+        },
+      )
     const deep = membersCheck?.options.find((option) => option.long === "--deep")
-    if (deep)
-      deep.description =
-        "also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, " +
-        "which are sent their ids — one person a second"
+    if (deep && membersCheck)
+      overrideSharedContract(
+        membersCheck,
+        "Telegram's deep check describes its provider-specific disclosure and request pace.",
+        () => {
+          deep.description =
+            "also check the top n profiles, oldest photos, up to 1,000 stored messages each and public ban lists, which are sent their ids — one person a second"
+        },
+      )
   },
   commands: () => [
     inSection(sessionCommand(), "setup"),
