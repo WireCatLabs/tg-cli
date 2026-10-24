@@ -407,8 +407,9 @@ tg sales config set --bot permissions.bot.api allow
 Each tool is the command you would type, run in the server's process, so guarded bot commands use the bot's recipient list
 and journal. Its arguments are the command's own arguments and options in snake_case:
 `messages send` takes `chat`, `text`, `md` or `html`, `reply_to` and `silent`.
-The token, the webhooks, the command menu and the recipient list stay yours to change, and so do
-sending files, `--allow-dangerous` and moderation's `--max-actions`: the agent's tools leave them out.
+Webhook changes, the command menu and the recipient list remain discoverable; execution requires
+the bot profile's permissions, including authority for changes to later runs. Token management stays
+in the terminal. Agent tools omit file inputs, `--allow-dangerous` and moderation's `--max-actions`.
 
 Bot `--md` uses the same [Telegram formatting rules](usage.md#sending) as personal sends.
 Text edits and file/photo captions use that formatter too.

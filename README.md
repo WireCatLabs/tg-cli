@@ -263,8 +263,9 @@ tg skill install --for all        # both folders, without logging in
 tg skill show                     # the complete instructions, without installing them
 ```
 
-**The MCP server.** The profile's `permissions` decide which tools it offers. `readonly` stops the
-agent from changing anything; at `ask` the server shows no form, so set up approval in your agent app.
+**The MCP server.** Commands stay discoverable with their arguments and current availability. The
+profile's `permissions` decide which may run. `readonly` stops writes; at `ask` the server shows no
+form, so set up approval in your agent app.
 
 ```sh
 claude mcp add tg -- tg personal mcp  # Claude Code, by hand
