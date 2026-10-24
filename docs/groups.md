@@ -320,7 +320,7 @@ moved by `MESSAGING_STORE` reads the `config.json` beside it.
 If the task may be the same job as an open one, `tasks add` refuses with exit code 2 and lists the
 candidates. Repeat with `--into <task>` to link the message to that task, or with `--new` to open it anyway.
 If it matches only a task closed in the last 14 days, `tasks add` opens it as a follow-up, linked
-`follow-up-of` the closed one. `tasks duplicates` lists the pairs the rules found, and
+`follow-up-of` the closed one. `tasks duplicates list` lists the pairs the rules found, and
 `tasks merge <task> --into <other>` joins them:
 
 ```sh
@@ -362,7 +362,7 @@ chats where you wait for theirs. It reads the local store, not the messages' tex
 tg personal tasks agenda
 ```
 
-`tasks agenda` and `tasks duplicates` take query fields:
+`tasks agenda` and `tasks duplicates list` take query fields:
 
 - `tag:` and `category:` keep the tasks with that tag or category: `tag:urgent`, `category:money`.
 - `claimed:` says whose claim a task is under: `none`, `mine`, `others` or `any`. Without it, the agenda
@@ -375,7 +375,7 @@ tg personal tasks agenda category:money tag:urgent claimed:any
 ```
 
 ```sh
-tg personal tasks duplicates decision:unsure
+tg personal tasks duplicates list decision:unsure
 ```
 
 `tg skill show follow-ups` prints a daily routine for an AI agent that drafts replies from this list

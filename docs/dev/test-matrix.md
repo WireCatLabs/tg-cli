@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2353 ✅ · 119 ⛔ · 0 ❌** — 517 commands, 1955 options.
+**2354 ✅ · 118 ⛔ · 0 ❌** — 517 commands, 1955 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -697,8 +697,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks show` |  | ✅ |  |
 | `tasks related` |  | ✅ |  |
 | `tasks related` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
-| `tasks duplicates` |  | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --into, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
-| `tasks duplicates` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
+| `tasks duplicates list` |  | ✅ |  |
+| `tasks duplicates list` | `--limit` | ⛔ | paging is cli-core's shared list envelope, covered by its own tests; the command itself is driven in cli-core src/cli/messenger/mentions.test.ts and tasks.test.ts through the shared handler this consumer mounts (0.285.0) |
 | `tasks duplicates reject` |  | ✅ |  |
 | `tasks duplicates defer` |  | ✅ |  |
 | `tasks merge` |  | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks that may be one job": refuses, --into, --new, lists, merges, unmerges) drives this through the shared handler tg mounts (0.285.0) |
