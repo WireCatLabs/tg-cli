@@ -395,8 +395,16 @@ applies: actions requiring it return a plan for you to approve through the CLI.
 `tg_bot_read` (`command: "status"`) says which profile
 the server speaks for and which writing tools are on.
 
-Each tool is the command you would type, run in the server's process, so the bot's recipient list
-and journal apply. Its arguments are the command's own arguments and options in snake_case:
+Raw `bot api <operation>` tools need `permissions.bot.api: allow`; the default is `deny`, and
+`permissions.bot: allow` does not enable them. These calls bypass the send guard and the recipient
+list. Enable them from a terminal only when the agent needs unrestricted Bot API calls:
+
+```sh
+tg sales config set --bot permissions.bot.api allow
+```
+
+Each tool is the command you would type, run in the server's process, so guarded bot commands use the bot's recipient list
+and journal. Its arguments are the command's own arguments and options in snake_case:
 `messages send` takes `chat`, `text`, `md` or `html`, `reply_to` and `silent`.
 The token, the webhooks, the command menu and the recipient list stay yours to change, and so do
 sending files, `--allow-dangerous` and moderation's `--max-actions`: the agent's tools leave them out.

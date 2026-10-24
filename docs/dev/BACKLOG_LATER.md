@@ -38,5 +38,3 @@ with the same id. Same rules and marks as there.
 ## Tooling
 
 - **TG-29** · P3 · Port max-cli's `bin/next-id` so ids come from one locked counter across worktrees.
-- **TG-30** · P3 · Installation: pnpm 12 refuses a global add with `ERR_PNPM_GLOBAL_BIN_DIR_NOT_IN_PATH` until
-  `pnpm setup` has run; the page still speaks of pnpm 11. docs/installation.md:44.

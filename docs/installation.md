@@ -46,9 +46,13 @@ tg never loads: tg keeps its session and its store with the runtime's SQLite or 
 On Windows, if `tg` is not found, open a new terminal; if it is still missing, use the PowerShell installer in
 [Windows: one install command](#windows-one-install-command).
 
-pnpm 11 installs only versions published at least a day ago ([`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage)).
+pnpm installs only versions published at least a day ago ([`minimumReleaseAge`](https://pnpm.io/settings#minimumreleaseage)).
 The `minimumReleaseAgeExclude` setting lifts that wait for `tg`'s own packages only, so a fix reaches you the day it is
 released; every other package keeps the wait. Without it, pnpm can install a `tg` older than the one you have.
+
+With pnpm 12, if a global install fails with `ERR_PNPM_GLOBAL_BIN_DIR_NOT_IN_PATH`, run
+[`pnpm setup`](https://pnpm.io/cli/setup), open a new terminal and repeat the install command.
+Setup adds pnpm's home directory to your shell's PATH.
 
 To try it without installing:
 
