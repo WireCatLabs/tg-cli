@@ -661,6 +661,15 @@ tg personal messages send "Book club" --voice note.ogg        # a voice message,
 tg personal messages send "Book club" --file 3f9a.pdf --filename "Report Q3.pdf"  # the name others see
 ```
 
+Repeat `--photo` or `--file` to send up to ten attachments as one album. Photos and videos can share
+an album; documents must be grouped separately. Voice messages are sent separately. The caption goes
+on the first item, and every item counts toward your hourly send limit. JSON includes the first
+`message` and the complete `messages` list.
+
+```sh
+tg personal messages send "Book club" "Trip photos" --photo first.jpg --photo second.jpg
+```
+
 `--photo` takes a `.jpg`, `.png` or `.webp`. A `.mp4` or `.mov` given with `--file` goes as a video
 unless you add `--as-file`. `--voice` takes an Ogg Opus file (`.ogg`, `.oga`, `.opus`) and goes alone:
 no text, no other file. Known credential files and folders, `tg`'s own folders and the local store

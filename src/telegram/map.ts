@@ -448,7 +448,7 @@ export const toFormatted = (text: string, markup: readonly (Markup | TextSpan)[]
 const VIDEO: Record<string, string> = { ".mp4": "video/mp4", ".m4v": "video/mp4", ".mov": "video/quicktime" }
 
 /** A video plays in the chat unless `asFile`; a `document` is always a file to download (`forceFile`). */
-const videoMime = ({ kind, name, asFile }: Upload): string | undefined =>
+export const videoMime = ({ kind, name, asFile }: Upload): string | undefined =>
   kind === "file" && !asFile ? VIDEO[extname(name).toLowerCase()] : undefined
 
 /** What `uploadFile` needs, besides the file, to store it as `toInputMedia` will send it. */

@@ -15,6 +15,8 @@ import {
   TRANSCRIBE_POLL_MS,
 } from "./adapter.js"
 
+import { albumRandomId } from "./albums.js"
+
 type Handler = (value: unknown) => void
 
 const stand = vi.hoisted(() => ({
@@ -63,6 +65,7 @@ class FakeClient {
   authorizations: unknown[] = []
   phoneOwner: unknown = null
   contacts: unknown[] = []
+  albumAnswer: unknown = undefined
   forwardAnswer: unknown = forwarded(60)
   searchAnswer: unknown = found([7, 5])
   migrationAnswer: unknown = undefined
@@ -106,6 +109,10 @@ class FakeClient {
       }
     }
     if (request._ === "messages.startBot") return { _: "updates", updates: [] }
+    if (request._ === "messages.sendMultiMedia") {
+      if (this.albumAnswer instanceof Error) throw this.albumAnswer
+      return this.albumAnswer
+    }
     if (request._ === "messages.forwardMessages") {
       if (this.forwardAnswer instanceof Error) throw this.forwardAnswer
       return this.forwardAnswer
@@ -170,6 +177,14 @@ class FakeClient {
       inputFile: { _: "inputFile", name: params.fileName },
       size: params.file.length,
       mime: params.fileMime ?? "application/octet-stream",
+    }),
+  )
+  uploadMedia = vi.fn(
+    async (..._args: unknown[]): Promise<unknown> => ({
+      inputMedia: {
+        _: "inputMediaPhoto",
+        id: { _: "inputPhoto", id: Long.ONE, accessHash: Long.ONE, fileReference: new Uint8Array() },
+      },
     }),
   )
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
@@ -1814,15 +1829,173 @@ describe("sending", () => {
     expect(options).toMatchObject({ replyTo: 7 })
     expect(file).toMatchObject({ type: "document", fileName: "plan.pdf" })
     expect(client.sendText).not.toHaveBeenCalled()
-    expect(() =>
-      adapter.send("-100500", "", {
-        sendId: "42",
-        attachments: [
-          { kind: "photo", name: "a.png", source: { kind: "bytes" as const, bytes } },
-          { kind: "photo", name: "b.png", source: { kind: "bytes" as const, bytes } },
+  })
+
+  it("sends an album once, maps every id in request order and preserves options on retry", async () => {
+    const { adapter, client } = await open()
+    const answer = forwarded(61)
+    const other = forwarded(62)
+    const ids = [0, 1].map((index) => albumRandomId(Long.fromString("42"), index))
+    client.albumAnswer = {
+      ...answer,
+      updates: [
+        ...other.updates,
+        ...answer.updates,
+        { _: "updateMessageID", id: 61, randomId: ids[0] },
+        { _: "updateMessageID", id: 62, randomId: ids[1] },
+      ],
+    }
+    const options = {
+      sendId: "42",
+      replyTo: "7",
+      threadId: "12",
+      silent: true,
+      captionAbove: true,
+      spoiler: true,
+      sendAs: "-1002",
+      at: "2030-01-01T09:00:00.000Z",
+      formatting: [{ type: "bold" as const, from: 0, length: 4 }],
+      attachments: ["a.png", "b.png"].map((name) => ({
+        kind: "photo" as const,
+        name,
+        source: { kind: "bytes" as const, bytes: new Uint8Array([1]) },
+      })),
+    }
+    const sent = await adapter.send("-1000000000500", "look", options)
+    await adapter.send("-1000000000500", "look", options)
+    expect(sent.message.id).toBe("61")
+    expect(sent.messages?.map((item) => item.id)).toEqual(["61", "62"])
+    const requests = client.calls
+      .filter((call) => call.method === "call")
+      .map((call) => call.args[0])
+      .filter((request) => (request as { _: string })._ === "messages.sendMultiMedia")
+    expect(requests).toHaveLength(2)
+    expect(requests[0]).toEqual(requests[1])
+    expect(requests[0]).toMatchObject({
+      silent: true,
+      invertMedia: true,
+      scheduleDate: 1893488400,
+      replyTo: { _: "inputReplyToMessage", replyToMsgId: 7, topMsgId: 12 },
+      sendAs: { peer: -1002 },
+      multiMedia: [
+        {
+          randomId: ids[0],
+          message: "look",
+          entities: [{ _: "messageEntityBold", offset: 0, length: 4 }],
+          media: { _: "inputMediaPhoto", spoiler: true },
+        },
+        { randomId: ids[1], message: "" },
+      ],
+    })
+    expect(client.uploadMedia).toHaveBeenCalledTimes(4)
+    expect(client.sendMedia).not.toHaveBeenCalled()
+    expect(client.sendText).not.toHaveBeenCalled()
+  })
+
+  it("accepts photo/video and document-only albums, including scheduled updates", async () => {
+    const { adapter, client } = await open()
+    for (const names of [
+      ["photo.png", "trip.mp4"],
+      ["a.pdf", "b.pdf"],
+    ]) {
+      const answer = forwarded(61)
+      const second = forwarded(62)
+      client.albumAnswer = {
+        ...answer,
+        updates: [
+          ...[...answer.updates, ...second.updates].map((one) => ({ ...one, _: "updateNewScheduledMessage" })),
+          ...[61, 62].map((id, index) => ({
+            _: "updateMessageID",
+            id,
+            randomId: albumRandomId(Long.fromString("42"), index),
+          })),
         ],
-      }),
-    ).toThrow(/one file or photo/)
+      }
+      const attachments = names.map((name) => ({
+        kind: name.endsWith("png") ? ("photo" as const) : ("file" as const),
+        name,
+        source: { kind: "bytes" as const, bytes: new Uint8Array([1]) },
+      }))
+      const sent = await adapter.send("-1000000000500", "", { sendId: "42", attachments, threadId: "1" })
+      expect(sent.messages?.map((one) => one.id)).toEqual(["61", "62"])
+    }
+    expect(client.uploadMedia.mock.calls.map((call) => call[0])).toMatchObject([
+      { type: "photo" },
+      { type: "video" },
+      { type: "document" },
+      { type: "document" },
+    ])
+    const requests = client.calls.filter((one) => one.method === "call")
+    for (const one of requests) expect(one.args[0]).not.toHaveProperty("replyTo")
+  })
+
+  it("derives distinct stable signed int64 album ids, including at the boundaries", () => {
+    expect(albumRandomId(Long.fromString("42"), 0).toString()).toBe("-7224684395835430549")
+    for (const value of ["0", "-1", "9223372036854775807", "-9223372036854775808"]) {
+      const id = Long.fromString(value)
+      const ids = Array.from({ length: 10 }, (_, index) => albumRandomId(id, index).toString())
+      expect(new Set(ids).size).toBe(10)
+      expect(ids).toEqual(Array.from({ length: 10 }, (_, index) => albumRandomId(id, index).toString()))
+      expect(ids).not.toContain(value)
+    }
+    expect(albumRandomId(Long.ONE, 0).eq(albumRandomId(Long.fromNumber(2), 0))).toBe(false)
+  })
+
+  it("refuses unsupported albums before upload or send", async () => {
+    const { adapter, client } = await open()
+    const photo = {
+      kind: "photo" as const,
+      name: "a.png",
+      source: { kind: "bytes" as const, bytes: new Uint8Array([1]) },
+    }
+    const document = { ...photo, kind: "file" as const, name: "a.pdf" }
+    const voice = { ...photo, kind: "voice" as const, name: "a.ogg" }
+    for (const attachments of [
+      Array.from({ length: 11 }, () => photo),
+      [photo, document],
+      [photo, voice],
+      [voice, voice],
+      [{ ...document, name: "a.mp4" }, document],
+    ]) {
+      expect(() => adapter.send("1", "", { sendId: "42", attachments })).toThrow(
+        expect.objectContaining({ code: "validation_error" }),
+      )
+    }
+    expect(() => adapter.send("1", "", { sendId: "42", attachments: [document, document], spoiler: true })).toThrow(
+      /spoiler/,
+    )
+    expect(client.uploadFile).not.toHaveBeenCalled()
+    expect(client.uploadMedia).not.toHaveBeenCalled()
+    expect(client.sendMedia).not.toHaveBeenCalled()
+    expect(client.calls.some((call) => call.method === "call")).toBe(false)
+  })
+
+  it("reports unknown album outcomes with the same operation id, including an incomplete answer", async () => {
+    const { adapter, client } = await open()
+    const attachments = ["a.png", "b.png"].map((name) => ({
+      kind: "photo" as const,
+      name,
+      source: { kind: "bytes" as const, bytes: new Uint8Array([1]) },
+    }))
+    for (const answer of [new MtTimeoutError(1000), forwarded(61)]) {
+      client.albumAnswer = answer
+      await expect(adapter.send("-1000000000500", "", { sendId: "42", attachments })).rejects.toMatchObject({
+        code: "outcome_unknown",
+        details: { operation_id: "42" },
+      })
+    }
+  })
+
+  it("does not send an album after a failed media upload", async () => {
+    const { adapter, client } = await open()
+    client.uploadMedia.mockRejectedValueOnce(new MtTimeoutError(1000))
+    const attachments = ["a.png", "b.png"].map((name) => ({
+      kind: "photo" as const,
+      name,
+      source: { kind: "bytes" as const, bytes: new Uint8Array([1]) },
+    }))
+    await expect(adapter.send("1", "", { sendId: "42", attachments })).rejects.toMatchObject({ code: "timeout" })
+    expect(client.calls.some((call) => call.method === "call")).toBe(false)
   })
 
   it("schedules with --at, and lists the queue soonest first, each with the time it goes", async () => {

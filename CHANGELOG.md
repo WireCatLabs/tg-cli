@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **Send up to ten attachments as one album** by repeating `messages send --photo` or `--file`.
+  Photos and videos can share an album; documents form a separate group. The caption belongs to the first
+  item, and JSON includes every sent message. Each item counts toward the hourly send limit. Retrying an
+  unscheduled send with the same operation id repeats the same per-item Telegram ids.
+
 ## 0.85.0 — 24.10.2026
 
 ### Added

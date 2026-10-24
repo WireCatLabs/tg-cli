@@ -197,7 +197,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 14. **`--at-time 2h` or `--at-time 2026-10-01T09:00` (local time) hands the message to Telegram to send later.**
     It is never repeated: `--operation-id` is refused with it, and after exit `14` look in
     `tg personal messages scheduled <chat>` — a second send would be a second message. Cancel one in the app.
-15. **`--photo <path>` or `--file <path>` attaches one file, the text as its caption.** A photo is
+15. **`--photo <path>` or `--file <path>` attaches a file, the text as its caption.**
+    Repeat for an album of up to ten items: photos/videos together, or documents only. The caption goes
+    on the first item; every item counts toward the hourly limit. JSON returns all `messages`. A photo is
     recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
     folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
     the same `--operation-id` is safe here too (measured 2026-09-29).
