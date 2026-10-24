@@ -20,24 +20,42 @@ const botServer = (permissions: Record<string, "deny" | "readonly" | "ask" | "al
 }
 
 describe("tg's bot MCP surface", () => {
-  it("**offers the bot commands by the profile's levels**: every write by default, none when read-only", () => {
-    const all = botServer().offered
-    expect(all).toEqual(expect.arrayContaining(["messages send", "messages delete", "chats list"]))
-    expect(all.some((command) => /^(api|auth|mcp)\b|^store (?!fetch$)|comments|people/.test(command))).toBe(false)
-    // NEED-1663 A: `bot store fetch` has an ask key of its own, so the server offers it.
-    expect(all).toContain("store fetch")
-
+  it("keeps bot commands discoverable and marks unavailable writes", () => {
+    const all = botServer()
+    expect(all.offered).toEqual(
+      expect.arrayContaining(["messages send", "messages delete", "chats list", "config set", "api get-me"]),
+    )
+    expect(all.offered.some((command) => /^(auth|mcp)\b|^store (?!fetch$)|comments|people/.test(command))).toBe(false)
+    expect(all.offered).toContain("store fetch")
     const reads = botServer({ bot: "readonly" })
-    expect(reads.offered).toEqual(expect.arrayContaining(["messages list", "me"]))
-    expect(reads.tools.filter((tool) => tool.writes)).toEqual([])
+    expect(reads.offered).toEqual(all.offered)
+    expect(reads.tools.find((tool) => tool.command === "messages send")?.availability?.()).toMatchObject({
+      available: false,
+    })
+    expect(reads.tools.filter((tool) => tool.writes && tool.availability?.().available)).toEqual([])
   })
 
-  it("offers raw API calls only with an explicit bot.api allow", () => {
-    const api = (permissions: Record<string, "allow" | "deny" | "readonly" | "ask">) =>
-      botServer(permissions).offered.filter((command) => command.startsWith("api "))
-    expect(api({})).toEqual([])
-    expect(api({ bot: "allow" })).toEqual([])
-    expect(api({ "bot.api": "allow" })).toContain("api get-me")
+  it("lists raw API calls with their separate permission requirement", () => {
+    const variants: Record<string, "allow">[] = [{}, { bot: "allow" }]
+    for (const permissions of variants) {
+      const tool = botServer(permissions).tools.find((tool) => tool.command === "api get-me")
+      expect(tool?.availability?.()).toMatchObject({ available: false, permission: "bot.api" })
+    }
+    expect(
+      botServer({ "bot.api": "allow" })
+        .tools.find((tool) => tool.command === "api get-me")
+        ?.availability?.(),
+    ).toEqual({ available: true })
+    expect(
+      botServer()
+        .tools.find((tool) => tool.command === "config set")
+        ?.availability?.(),
+    ).toMatchObject({ available: false, permission: "mcp.authority" })
+    expect(
+      botServer({ "mcp.authority": "allow" })
+        .tools.find((tool) => tool.command === "config set")
+        ?.availability?.(),
+    ).toEqual({ available: true })
   })
 
   it("**is pinned**: a command or an argument agents gain or lose shows up in the contract", async () => {

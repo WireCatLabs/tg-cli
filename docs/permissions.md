@@ -71,7 +71,7 @@ its own approvals and may allow a call without asking again. Use `deny` or `read
 
 ## Let an agent change its own limits
 
-Over MCP, commands that change what a later run may do are hidden by default: `config set|unset`, recipient lists,
+Over MCP, commands that change what a later run may do remain visible in discovery, marked unavailable by default: `config set|unset`, recipient lists,
 chat rules, reply rules and consents, schedules, `server install`, `skill install`, model keys, media archive timers
 and `flood clear`. One key opens them:
 
@@ -80,21 +80,21 @@ tg work config set permissions.mcp.authority allow
 ```
 
 For a bot's server add `--bot`: `tg support config set permissions.mcp.authority allow --bot`.
-`deny` is the default; `allow` and `ask` both offer them. Leave it at `deny` for a profile you give to an agent:
+`deny` is the default; `allow` and `ask` permit execution. Leave it at `deny` for a profile you give to an agent:
 with it open, the agent can loosen its own permissions. An agent cannot set the key through `config set`, since
 that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
 
 ## Raw bot API calls
 
-Raw `bot api <operation>` calls bypass the send guard and the bot's recipient list. MCP hides them
-unless `permissions.bot.api` is `allow`; its default is `deny`, and a broader `permissions.bot: allow`
+Raw `bot api <operation>` calls bypass the send guard and the bot's recipient list. MCP lists them as unavailable
+unless `permissions.bot.api` is `allow` or `ask`; its default is `deny`, and a broader `permissions.bot: allow`
 does not enable them. Set this separate permission from a terminal:
 
 ```sh
 tg support config set --bot permissions.bot.api allow
 ```
 
-Set it back to `deny` to hide those tools again. An agent cannot change this key through MCP.
+Set it back to `deny` to make those tools unavailable again; they remain discoverable. An agent cannot change this key through MCP.
 
 ## Limits and detailed rules
 

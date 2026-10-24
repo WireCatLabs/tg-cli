@@ -395,8 +395,9 @@ applies: actions requiring it return a plan for you to approve through the CLI.
 `tg_bot_read` (`command: "status"`) says which profile
 the server speaks for and which writing tools are on.
 
-Raw `bot api <operation>` tools need `permissions.bot.api: allow`; the default is `deny`, and
-`permissions.bot: allow` does not enable them. These calls bypass the send guard and the recipient
+Raw `bot api <operation>` tools need `permissions.bot.api: allow` (or `ask`); the default is `deny`, and
+`permissions.bot: allow` does not enable them. Discovery keeps these commands visible and names the
+missing permission when they are unavailable. These calls bypass the send guard and the recipient
 list. Enable them from a terminal only when the agent needs unrestricted Bot API calls:
 
 ```sh
