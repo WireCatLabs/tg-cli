@@ -58,15 +58,15 @@ const leaves = (command: Command, path: string[] = []): string[][] =>
   })
 
 describe("--help on a command", () => {
-  it("prints its help and exits 0 for every command", async () => {
-    const failed: string[] = []
-    for (const path of leaves(createProgram()).filter(([top]) => top !== "help")) {
-      const streams = captureStreams()
-      const code = await run([...path, "--help"], { streams, tty: false, keyring: memoryKeyring() })
-      if (code !== 0) failed.push(`${path.join(" ")}: ${code} ${streams.stderr.join(" ")}`)
-    }
-    expect(failed).toEqual([])
-  }, 60_000)
+  it.each(
+    leaves(createProgram())
+      .filter(([top]) => top !== "help")
+      .map((path) => [path.join(" "), path] as const),
+  )("prints help and exits 0 for %s", async (_label, path) => {
+    const streams = captureStreams()
+    const code = await run([...path, "--help"], { streams, tty: false, keyring: memoryKeyring() })
+    expect(code, streams.stderr.join(" ")).toBe(0)
+  })
 
   it("`setup --help` keeps its Global Options block under the profile usage line", async () => {
     const streams = captureStreams()
