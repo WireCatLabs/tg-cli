@@ -3140,6 +3140,41 @@ describe("listening", () => {
     expect(client.onNewMessage.handlers.size + client.onRawUpdate.handlers.size).toBe(0)
   })
 
+  it("emits reaction observations when Telegram delivers them as message edits, including removal", async () => {
+    const { adapter, client } = await open({ listen: true })
+    const events: MessageEvent[] = []
+    const stop = new AbortController()
+    let ready = false
+    const watching = adapter.watch(
+      (event) => events.push(event),
+      stop.signal,
+      () => {
+        ready = true
+      },
+    )
+    await vi.waitFor(() => expect(ready).toBe(true))
+    client.onEditMessage.emit({ ...message(7), reactions: { reactions: [{ emoji: "👍", count: 1, order: null }] } })
+    client.onEditMessage.emit({ ...message(7), reactions: { reactions: [] } })
+    client.onEditMessage.emit(message(8))
+    stop.abort()
+    await watching
+    expect(events.map(({ event }) => event)).toEqual(["edit", "reaction", "edit", "reaction", "edit"])
+    expect(events[1]).toMatchObject({
+      event: "reaction",
+      messageId: "7",
+      reactions: { total: 1 },
+      counterObservation: { value: 1, source: "remote_update" },
+    })
+    expect(events[3]).toMatchObject({
+      event: "reaction",
+      messageId: "7",
+      reactions: { total: 0 },
+      counterObservation: { value: 0, source: "remote_update" },
+    })
+    expect(client.onEditMessage.handlers.size).toBe(0)
+    await adapter.close()
+  })
+
   it("**fails on a revoked login before it says it is ready**, rather than listening to nothing", async () => {
     const { adapter, client } = await open({ listen: true })
     client.call = async (request: { _: string }) => {

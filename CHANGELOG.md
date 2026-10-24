@@ -9,6 +9,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - `messages send --draft` saves text in the chat for you to review and send from Telegram. It supports formatting, replies and forum topics, uses the separate `drafts` permission, and never sends a message. Empty drafts and send-only options are refused.
 
+### Fixed
+
+- `watch --events` and `serve` receive reaction snapshots delivered as message edits, including reaction removal. Reaction counts stay current even when Telegram does not send a standalone reaction update.
+
 ## 0.87.0 — 24.10.2026
 
 ### Fixed

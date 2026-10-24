@@ -26,8 +26,7 @@ with the same id. Same rules and marks as there.
 
 ## Research
 
-- **TG-25** · P3 · A reaction update seen live: `watch --events` and `serve` handle reactions through mtcute's raw
-  update stream, but no live run has observed one yet. [live-scenarios.md](live-scenarios.md).
+
 - **TG-26** · P3 · Search ranking quality is unmeasured; it needs a person to judge results. Shared with cli-core's
   "one message search" ranking test set.
 - **TG-27** · P3 · `tasks` help says "review and serve add them"; max's says "review, inbox and messages sync add
