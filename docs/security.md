@@ -115,11 +115,11 @@ downloaded file's name also loses any leading dot.
 - **my.telegram.org**, only during `tg personal setup` or `tg personal session start`: opened in your browser, or, with `--app auto`,
   driven by `tg`. An app `tg` creates there is titled `tg-cli`, with this project's GitHub page as its
   address.
-- **Hugging Face and GitHub**, only when you run `tg personal models audio download` or `tg personal models text download`. A voice message never goes
+- **Hugging Face and GitHub**, only when you run `tg personal models download` or `tg personal models download`. A voice message never goes
   there: a local model runs on this machine.
 - **Configured embedding endpoints** receive conversation text from `conversations embed` after consent,
   and query text from remote `search conversations`, including MCP searches. Local embeddings send no text.
-- **Configured analysis endpoints** receive bounded message batches only with `conversations build --analyze --chat`,
+- **Configured analysis endpoints** receive bounded message batches only with `conversations links rebuild --analyze --chat`,
   after consent scoped to account, chat and provider; ordinary build sends nothing.
 
 There is no telemetry.

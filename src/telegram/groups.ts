@@ -305,7 +305,7 @@ export const resetInviteLink = (feature: Feature, chatId: string): Promise<Group
     try {
       await feature.client.exportInviteLink(peer)
     } catch (error) {
-      throw feature.unanswered(error, { what: "the link may or may not have been replaced", check: "chats.link.show" })
+      throw feature.unanswered(error, { what: "the link may or may not have been replaced", check: "chats.links.show" })
     }
     return toGroupCard(await feature.client.getFullChat(peer))
   })
@@ -374,7 +374,7 @@ export const revokeInviteLink = (feature: Feature, chatId: string, link: string)
     try {
       return toInviteLink(await feature.client.revokeInviteLink(Number(chatId), link))
     } catch (error) {
-      throw feature.unanswered(error, { what: "the link may or may not have been revoked", check: "chats.link.list" })
+      throw feature.unanswered(error, { what: "the link may or may not have been revoked", check: "chats.links.list" })
     }
   })
 
@@ -398,7 +398,7 @@ export const updateInviteLink = (
       })
       return toInviteLink(new ChatInviteLink(answer.invite, PeersIndex.from(answer)))
     } catch (error) {
-      throw feature.unanswered(error, { what: "the link may or may not have been changed", check: "chats.link.list" })
+      throw feature.unanswered(error, { what: "the link may or may not have been changed", check: "chats.links.list" })
     }
   })
 

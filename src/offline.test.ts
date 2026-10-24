@@ -240,7 +240,7 @@ describe("the tgcli parity follow-ups, offline", () => {
     })
 
     await call(["chats", "list", "--json"])
-    const refreshed = await call(["--offline", "metadata", "refresh", "--only-missing", "--json"])
+    const refreshed = await call(["--offline", "metadata", "sync", "--only-missing", "--json"])
     expect(refreshed.code, refreshed.stderr.join("\n")).toBe(0)
     expect(refreshed.answer.item).toMatchObject({ chats: [{ chat_id: "-1001234567890" }], has_more: false })
   })

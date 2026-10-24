@@ -46,36 +46,38 @@ it("authors local contact metadata and classifies cached channels without a mess
     expect(code, streams.stderr.join("")).toBe(0)
     return JSON.parse(streams.stdout.join(""))
   }
-  expect(await call(["contacts", "alias", "set", "101", "Local label"])).toMatchObject({
+  expect(await call(["contacts", "aliases", "set", "101", "Local label"])).toMatchObject({
     item: { person_id: "101", alias: "Local label" },
   })
   const file = join(root, "own-note.md")
   writeFileSync(file, "Own synthetic note")
-  const { item: note } = await call(["contacts", "notes", "add", "Local label", "--file", file])
+  const { item: note } = await call(["contacts", "notes", "add", "Local label", "--text-file", file])
   expect(await call(["contacts", "notes", "list", "101"])).toMatchObject({ items: [{ id: note.id }] })
   expect(await call(["contacts", "notes", "show", "101", note.id])).toMatchObject({
     item: { text: "Own synthetic note" },
   })
-  expect(await call(["contacts", "notes", "edit", "101", note.id, "--revision", "1", "--file", file])).toMatchObject({
+  expect(
+    await call(["contacts", "notes", "edit", "101", note.id, "--revision", "1", "--text-file", file]),
+  ).toMatchObject({
     item: { revision: 2 },
   })
   expect(await call(["contacts", "show", "101", "--with-notes"])).toMatchObject({
     item: { alias: "Local label", notes: [{ text: "Own synthetic note" }] },
   })
-  expect(await call(["metadata", "get", "--chat", "99"])).toMatchObject({
+  expect(await call(["metadata", "show", "--chat", "99"])).toMatchObject({
     item: { metadata: { title: "AI news" } },
   })
-  expect(await call(["tags", "auto", "--chat", "99", "--limit", "1", "--dry-run"])).toMatchObject({
+  expect(await call(["tags", "rebuild", "--chat", "99", "--limit", "1", "--dry-run"])).toMatchObject({
     item: { dry_run: true },
   })
-  await call(["tags", "auto", "--chat", "99", "--limit", "1"])
+  await call(["tags", "rebuild", "--chat", "99", "--limit", "1"])
   expect(await call(["tags", "list"])).toMatchObject({
     items: [
       { tag: "ai", sources: ["auto"] },
       { tag: "news", sources: ["auto"] },
     ],
   })
-  await call(["tags", "remove", "news", "--chat", "99", "--source", "auto"])
+  await call(["tags", "remove", "news", "--chat", "99", "--claim", "auto"])
   await call(["contacts", "notes", "remove", "101", note.id])
-  await call(["contacts", "alias", "rm", "101"])
+  await call(["contacts", "aliases", "remove", "101"])
 })

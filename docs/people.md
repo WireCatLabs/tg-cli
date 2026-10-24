@@ -19,21 +19,21 @@ Some words on this page:
 
 | Task | Command |
 | --- | --- |
-| See who a person is and where you talk to them | `tg personal contacts profile` |
+| See who a person is and where you talk to them | `tg personal contacts info` |
 | Read what they said, in every chat or in the chats you name | `tg personal contacts context` |
 | Get ready to talk to them: chats, open tasks, facts, notes and meetings | `tg personal contacts prepare` |
 | Check whether the account looks like a bot, a fake or a spammer | `tg personal contacts check` |
-| Check the most suspicious members of a group | `tg personal chats members audit --deep` |
+| Check the most suspicious members of a group | `tg personal chats members check --deep` |
 | Record that a Telegram account and a MAX account are the same person | `tg personal contacts link` |
-| Keep your own name and notes for a person | `tg personal contacts alias`, `tg personal contacts notes` |
+| Keep your own name and notes for a person | `tg personal contacts aliases`, `tg personal contacts notes` |
 
 Every option of these commands is in the [command reference for contacts](commands.md#tg-contacts).
 
-## Who they are: `contacts profile`
+## Who they are: `contacts info`
 
 ```sh
-tg personal contacts profile @example_user
-tg personal contacts profile @example_user --json
+tg personal contacts info @example_user
+tg personal contacts info @example_user --json
 ```
 
 It answers everything Telegram says about the person, and how many of their messages your local
@@ -214,14 +214,14 @@ A key for CAS is optional for now. When you have one from Combot, keep it in you
 the account `registries:cas` of the `tg-cli` service, or in `TG_CAS_API_KEY`. `tg` sends it only in a
 request header, never in the address, and never prints it.
 
-## The members of a group: `chats members audit --deep`
+## The members of a group: `chats members check --deep`
 
 ```sh
-tg personal chats members audit "Book club"
-tg personal chats members audit "Book club" --deep 10
+tg personal chats members check "Book club"
+tg personal chats members check "Book club" --deep 10
 ```
 
-`chats members audit` scores every member from the member list and the store, without one request per
+`chats members check` scores every member from the member list and the store, without one request per
 person, and lists those with a reason, highest first. `--deep 10` then runs the full `contacts check`
 on the ten highest, one person a second, spam lists included. It removes nobody. The owner and the
 admins are left out.
@@ -237,15 +237,17 @@ tg personal contacts unlink @example_user
 ```
 
 After that, `contacts context` without `--chat` gathers both accounts: the chats you share and the
-messages from the Telegram account and from the MAX account. `contacts profile` and
+messages from the Telegram account and from the MAX account. `contacts info` and
 `contacts context --chat` still show only the account you named. The link is only ever what you
 record: the same name in both messengers is never taken as the same person.
 
-## Your own names and notes: `contacts alias`, `contacts notes`
+<a id="your-own-names-and-notes-contacts-alias-contacts-notes"></a>
+
+## Your own names and notes: `contacts aliases`, `contacts notes`
 
 ```sh
-tg personal contacts alias set "Bob Synthetic" Bobby   # your own name for a person, on this computer only
-tg personal contacts alias rm "Bob Synthetic"
+tg personal contacts aliases set "Bob Synthetic" Bobby   # your own name for a person, on this computer only
+tg personal contacts aliases remove "Bob Synthetic"
 tg personal contacts notes add "Bob Synthetic" --text-file note.txt  # or the text from stdin
 tg personal contacts notes list "Bob Synthetic"
 tg personal contacts notes edit "Bob Synthetic" <id> --revision 1 --text-file note.txt

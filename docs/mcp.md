@@ -47,25 +47,25 @@ The personal tools use the same catalogue as `max`. Telegram also has topics.
 ## Connecting
 
 First run `tg personal setup --agent none` in a local terminal. It logs in to your Telegram account. The MCP
-server never logs in for you. `tg personal mcp setup` then connects the app, as a separate step. An agent can
+server never logs in for you. `tg personal mcp add` then connects the app, as a separate step. An agent can
 read `tg skill show` before you log in; it explains both steps.
 
 **Codex or Claude Code on this computer:**
 
 ```sh
-tg personal mcp doctor       # check that MCP starts and lists tools
-tg personal mcp setup codex  # add it to Codex
-tg personal mcp setup claude-code  # or add it to Claude Code
+tg personal mcp check       # check that MCP starts and lists tools
+tg personal mcp add codex  # add it to Codex
+tg personal mcp add claude-code  # or add it to Claude Code
 ```
 
-Put a profile first, for example `tg work mcp setup codex`. Setup uses the app's own command and
+Put a profile first, for example `tg work mcp add codex`. Setup uses the app's own command and
 leaves its other servers alone. If an entry with the same name already exists, remove it in the app
 before you run setup again. The default profile offers tools that write. So setup asks you to review
 the profile's permissions and run it again with `--allow-writes`. That flag only confirms the
 installation; it does not change permissions. To limit what the agent can do, set the profile's
 `permissions` first ([below](#what-an-agent-may-do)).
 
-`mcp doctor` reads no messages and does not log in to Telegram. A good result means the MCP
+`mcp check` reads no messages and does not log in to Telegram. A good result means the MCP
 handshake and the tool list work. It does not mean the account session is valid. `potential_writes`
 counts the tools that are not marked read-only. When the server does not start, the error shows the
 last lines it wrote to stderr, with your home folder, long numbers and tokens hidden. Browser and
@@ -184,7 +184,7 @@ terminal:
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
-`schedule run|exec`, `doctor report create`, `account sessions end`, `chats delete|clear` and
+`schedule run|exec`, `doctor reports create`, `account sessions end`, `chats delete|clear` and
 `bot store fetch` have their own permission keys, set to `ask` by default. They are offered to the
 agent; the MCP app controls approval. `tg commands --json` marks commands excluded from MCP as
 `mcp: false`. Raw `bot api` operations need their own explicit [permission](permissions.md#raw-bot-api-calls).
@@ -193,7 +193,7 @@ agent; the MCP app controls approval. `tg commands --json` marks commands exclud
 
 `config set|unset`, `recipients add|remove|clear`, `chats rules set|unset`, the `replies` rules and consents,
 `schedule command|agent|remove`, `server install|uninstall`, `skill install`, `attachments jobs install|uninstall`,
-`models text key set|remove`, `flood clear`, and on the bot `recipients add|remove|clear` and `chats rules set|unset`
+`models keys set|remove`, `flood clear`, and on the bot `recipients add|remove|clear` and `chats rules set|unset`
 are offered only when the profile sets `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default, so
 the server does not list them and a call is refused. An agent locked to read-only could otherwise unlock a later run.
 An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
@@ -242,16 +242,16 @@ are not available here.
 
 The `link-conversations` prompt lets the agent link replies into conversations. The agent first
 reports the size of the work with `tg_read` (`command: "conversations batches status"`) and waits for
-your consent. Then it reads batches with `tg_read` (`command: "conversations batches next"`), saves
+your consent. Then it reads batches with `tg_read` (`command: "conversations batches show"`), saves
 its answers with `tg_write` (`command: "conversations links add"`) and rebuilds with `tg_write`
-(`command: "conversations build"`). `tg_write` (`command: "conversations links clear"`) removes the
+(`command: "conversations links rebuild"`). `tg_write` (`command: "conversations links clear"`) removes the
 agent's answers; rebuild after it too. Saving needs the `conversations.links` permission. If you set
 up an external service for search vectors, MCP search sends the query text to that service too.
 
 ## Files and saved messages
 
 `tg_read` (`command: "attachments list"`) shows saved file paths and whether their text was
-extracted. `tg_write` (`command: "attachments text set"`) saves text the agent read from a file.
+extracted. `tg_write` (`command: "attachments update"`) saves text the agent read from a file.
 Extracting text is done in the terminal only. `tg_read` with `command: "messages context"` and
 `arguments: { offline: true }` reads only the local copy.
 

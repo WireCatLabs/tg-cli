@@ -1,7 +1,9 @@
 import { tl } from "@mtcute/node"
 import { memoryKeyring } from "@wirecat/cli-base/testing"
 import { checkWords as wordsOf } from "@wirecat/cli-core"
+import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
+import { createProgram } from "../program.js"
 import { pollClosed, toCliError } from "./errors.js"
 import { CHECKS, type Check, type Unanswered, unansweredText } from "./feature.js"
 import { answerJoinRequestOf } from "./join-requests.js"
@@ -36,20 +38,20 @@ const BEFORE: [Unanswered, string][] = [
     "the group may have changed in part; check `tg personal chats show`",
   ],
   [
-    { what: "the link may or may not have been replaced", check: "chats.link.show" },
-    "the link may or may not have been replaced; check `tg personal chats link show`",
+    { what: "the link may or may not have been replaced", check: "chats.links.show" },
+    "the link may or may not have been replaced; check `tg personal chats links show`",
   ],
   [
     { what: "the requests may or may not have been answered", check: "chats.requests.list" },
     "the requests may or may not have been answered; check `tg personal chats requests list`",
   ],
   [
-    { what: "the link may or may not have been revoked", check: "chats.link.list" },
-    "the link may or may not have been revoked; check `tg personal chats link list`",
+    { what: "the link may or may not have been revoked", check: "chats.links.list" },
+    "the link may or may not have been revoked; check `tg personal chats links list`",
   ],
   [
-    { what: "the link may or may not have been changed", check: "chats.link.list" },
-    "the link may or may not have been changed; check `tg personal chats link list`",
+    { what: "the link may or may not have been changed", check: "chats.links.list" },
+    "the link may or may not have been changed; check `tg personal chats links list`",
   ],
   [
     { what: "the request of 42 may or may not have been answered", check: "chats.requests.list" },
@@ -104,10 +106,10 @@ const thrown = async (work: () => unknown) => {
 const HINTS: [string, Check[], () => string | Promise<string>, string][] = [
   [
     "USER_NOT_MUTUAL_CONTACT",
-    ["chats.link.show"],
+    ["chats.links.show"],
     () => refusal(400, "USER_NOT_MUTUAL_CONTACT"),
     "Telegram lets you add someone who left or was removed only if you are each other's contacts — " +
-      "send them the invite link instead (`tg personal chats link show <chat>`)",
+      "send them the invite link instead (`tg personal chats links show <chat>`)",
   ],
   [
     "MESSAGE_POLL_CLOSED",
@@ -129,10 +131,10 @@ const HINTS: [string, Check[], () => string | Promise<string>, string][] = [
   ],
   [
     "CHAT_PUBLIC_REQUIRED",
-    ["chats.link.create"],
+    ["chats.links.create"],
     () => refusal(400, "CHAT_PUBLIC_REQUIRED"),
     "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
-      "`tg personal chats link create <chat> --approval`",
+      "`tg personal chats links create <chat> --approval`",
   ],
   [
     "FROZEN_METHOD_INVALID",
@@ -204,5 +206,16 @@ describe("check words", () => {
   it("covers every command a message names", () => {
     const named = [...BEFORE.map(([reason]) => reason.check), ...HINTS.flatMap(([, checks]) => checks)]
     expect(new Set(named)).toEqual(new Set(CHECKS))
+  })
+
+  it("names only commands tg mounts", () => {
+    const mounted = (check: Check) =>
+      check
+        .split(".")
+        .reduce<Command | undefined>(
+          (at, name) => at?.commands.find((command) => command.name() === name),
+          createProgram(),
+        )
+    expect(CHECKS.filter((check) => !mounted(check))).toEqual([])
   })
 })

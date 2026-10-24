@@ -216,7 +216,7 @@ describe("messages comments", () => {
   })
 })
 
-describe("contacts profile", () => {
+describe("contacts info", () => {
   const described = scripted({
     profile: async () => ({
       id: "7",
@@ -232,9 +232,9 @@ describe("contacts profile", () => {
   })
 
   it("shows the phone's last four digits unless --show-phone", async () => {
-    const masked = json((await tg(["contacts", "profile", "7", "--json"], { adapter: () => described })).stdout)
+    const masked = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described })).stdout)
     const whole = json(
-      (await tg(["contacts", "profile", "7", "--show-phone", "--json"], { adapter: () => described })).stdout,
+      (await tg(["contacts", "info", "7", "--show-phone", "--json"], { adapter: () => described })).stdout,
     )
 
     expect(masked.item).toMatchObject({ phone: "***0123", seen: "week", registered: { source: "estimate" } })
@@ -250,7 +250,7 @@ describe("contacts profile", () => {
     await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe Old") })
     await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe") })
 
-    const shown = json((await tg(["contacts", "profile", "7", "--json"], { adapter: () => described })).stdout)
+    const shown = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described })).stdout)
 
     expect(shown.item.aliases).toMatchObject([{ name: "Zoe Old", source: "profile" }])
   })
@@ -418,7 +418,7 @@ describe("messages", () => {
     expect(JSON.parse(detailed.stdout[0] ?? "null").item.chats[0].messages[0]).toHaveProperty("locator")
   })
 
-  it("contacts timeline reads one person's stored messages within --scope, the time range and --limit", async () => {
+  it("contacts events reads one person's stored messages within --scope, the time range and --limit", async () => {
     const said = (id: string) =>
       message(id, { senderId: "778", senderName: "Bea", timestamp: `2026-09-26T10:0${id}:00.000Z` })
     const adapter = scripted({
@@ -429,7 +429,7 @@ describe("messages", () => {
     const found = await tg(
       [
         "contacts",
-        "timeline",
+        "events",
         "778",
         "--scope",
         "personal",
@@ -455,7 +455,7 @@ describe("messages", () => {
     })
 
     const next = await tg(
-      ["contacts", "timeline", "778", "--scope", "personal", "--cursor", timeline.page.next_cursor, "--json"],
+      ["contacts", "events", "778", "--scope", "personal", "--cursor", timeline.page.next_cursor, "--json"],
       { adapter: () => adapter },
     )
     expect(next.code, next.stderr.join("")).toBe(0)
@@ -585,7 +585,7 @@ describe("messages", () => {
     expect(json(stdout).item).toEqual({ message_id: "42", text: "hola", pending: false, via: "telegram" })
   })
 
-  it("**models audio list puts Parakeet first**, and transcribe --local or --model names the download instead of connecting", async () => {
+  it("**models list kind:audio puts Parakeet first**, and transcribe --local or --model names the download instead of connecting", async () => {
     const cache = mkdtempSync(join(tmpdir(), "tg-models-"))
     const environment = {
       env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h", WIRECAT_STATE_DIR: cache },
@@ -593,15 +593,15 @@ describe("messages", () => {
         throw new Error("a missing model must not cost a connection")
       },
     }
-    const listed = await tg(["models", "audio", "list", "--json"], environment)
+    const listed = await tg(["models", "list", "kind:audio", "--json"], environment)
     const local = await tg(["messages", "transcribe", "Valencia", "42", "--local"], environment)
     const model = await tg(["messages", "transcribe", "Valencia", "42", "--model", "gigaam-v3"], environment)
-    const unknown = await tg(["models", "audio", "download", "whisper"], environment)
+    const unknown = await tg(["models", "download", "whisper"], environment)
 
     expect(json(listed.stdout).items[0]).toMatchObject({ id: "parakeet-v3", default: true, downloaded: false })
-    expect(local.stderr.join("")).toContain("tg models audio download parakeet-v3")
-    expect(model.stderr.join("")).toContain("tg models audio download gigaam-v3")
-    expect(unknown.stderr.join("")).toContain("whisper")
+    expect(local.stderr.join("")).toContain("tg models download parakeet-v3")
+    expect(model.stderr.join("")).toContain("tg models download gigaam-v3")
+    expect(unknown.stderr.join("")).toContain("unknown model")
   })
 
   it("send --reply-to repeats a send with the --operation-id it is given, and answers the message", async () => {
@@ -752,7 +752,7 @@ describe("inbox", () => {
     expect(ids(json(stdout))).toEqual(["71"])
   })
 
-  it("--kind keeps those kinds and inbox refuses obsolete receipt options", async () => {
+  it("kind: keeps those kinds and inbox refuses obsolete receipt options", async () => {
     const marks: string[] = []
     const marking = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
@@ -763,7 +763,7 @@ describe("inbox", () => {
     })
     const other = chat.kind === "channel" ? "dialog" : "channel"
 
-    const none = json((await tg(["inbox", "date>1h", "--kind", other, "--json"], { adapter: () => marking })).stdout)
+    const none = json((await tg(["inbox", "date>1h", `kind:${other}`, "--json"], { adapter: () => marking })).stdout)
     await tg(["inbox", "date>1h", "--no-mark-read", "--json"], { adapter: () => marking })
     expect(marks).toEqual([])
     const refused = await tg(["inbox", "date>1h", "--mark-read", "--json"], { adapter: () => marking })
@@ -775,7 +775,7 @@ describe("inbox", () => {
     expect(marks).toEqual([])
   })
 
-  it("review --new reads each chat once, by --kind, without receipts", async () => {
+  it("review --new reads each chat once, by kind:, without receipts", async () => {
     const marks: string[] = []
     const marking = scripted({
       chats: async () => ({ items: [{ ...chat, lastMessageAt: latest }], hasMore: false }),
@@ -786,7 +786,7 @@ describe("inbox", () => {
     })
     const other = chat.kind === "channel" ? "dialog" : "channel"
 
-    const none = json((await tg(["review", "--new", "--kind", other, "--json"], { adapter: () => marking })).stdout)
+    const none = json((await tg(["review", "--new", `kind:${other}`, "--json"], { adapter: () => marking })).stdout)
     const first = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
     const second = json((await tg(["review", "--new", "--json"], { adapter: () => marking })).stdout)
 

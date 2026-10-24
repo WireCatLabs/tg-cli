@@ -47,7 +47,7 @@ const EXPLAINED: Record<string, [ErrorCode, string | ((words: CheckWords<Check>)
     "permission_error",
     (words) =>
       "Telegram lets you add someone who left or was removed only if you are each other's contacts — " +
-      `send them the invite link instead (${words("chats.link.show", "<chat>")})`,
+      `send them the invite link instead (${words("chats.links.show", "<chat>")})`,
   ],
   USER_PRIVACY_RESTRICTED: ["permission_error", "their privacy settings do not let you add them to a group"],
   CHAT_ADMIN_REQUIRED: ["permission_error", "only an admin of this chat may do that"],
@@ -79,7 +79,7 @@ const EXPLAINED: Record<string, [ErrorCode, string | ((words: CheckWords<Check>)
     "validation_error",
     (words) =>
       "Telegram would not make this group ask everyone for approval — make an invite link that needs it: " +
-      words("chats.link.create", "<chat> --approval"),
+      words("chats.links.create", "<chat> --approval"),
   ],
   MEGAGROUP_REQUIRED: ["validation_error", "that works only in a supergroup"],
   BROADCAST_REQUIRED: ["validation_error", "that works only in a channel"],

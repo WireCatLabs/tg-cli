@@ -114,7 +114,7 @@ describe("refusals a person has to act on", () => {
   it("says to send the invite link when someone who left cannot be added back", () => {
     const known = toCliError(new tl.RpcError(400, "USER_NOT_MUTUAL_CONTACT"), bareCheck)
     expect(known).toMatchObject({ code: "permission_error" })
-    expect((known as Error).message).toContain("chats link show")
+    expect((known as Error).message).toContain("chats links show")
   })
 
   it.each([

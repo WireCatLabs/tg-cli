@@ -518,8 +518,8 @@ describe("the send guard in front of the other writes", () => {
       ],
       adapter,
     )
-    const shown = await tg(["g-group", "chats", "link", "show", "Valencia", "--json"], adapter)
-    const reset = await tg(["g-group", "chats", "link", "reset", "Valencia", "--json"], adapter)
+    const shown = await tg(["g-group", "chats", "links", "show", "Valencia", "--json"], adapter)
+    const reset = await tg(["g-group", "chats", "links", "reset", "Valencia", "--json"], adapter)
 
     expect([updated.code, shown.code, reset.code]).toEqual([0, 0, 0])
     expect(changed).toEqual([
@@ -542,8 +542,8 @@ describe("the send guard in front of the other writes", () => {
     })
 
     const listed = await tg(["g-requests", "chats", "requests", "list", "Valencia", "--limit", "1", "--json"], adapter)
-    const accepted = await tg(["g-requests", "chats", "requests", "accept", "Valencia", "91", "--json"], adapter)
-    const declined = await tg(["g-requests", "chats", "requests", "decline", "Valencia", "92", "--json"], adapter)
+    const accepted = await tg(["g-requests", "chats", "requests", "confirm", "Valencia", "91", "--json"], adapter)
+    const declined = await tg(["g-requests", "chats", "requests", "reject", "Valencia", "92", "--json"], adapter)
 
     expect([listed.code, accepted.code, declined.code]).toEqual([0, 0, 0])
     expect(JSON.parse(listed.stdout[0] ?? "")).toMatchObject({
@@ -583,10 +583,10 @@ describe("the send guard in front of the other writes", () => {
 
     const on = await tg(["g-approval", "chats", "update", "Valencia", "--join-approval", "on", "--json"], adapter)
     const link = await tg(
-      ["g-approval", "chats", "link", "create", "Valencia", "--approval", "--expire-time", "7d", "--json"],
+      ["g-approval", "chats", "links", "create", "Valencia", "--approval", "--expire-time", "7d", "--json"],
       adapter,
     )
-    const limited = await tg(["g-approval", "chats", "link", "create", "Valencia", "--max-uses", "5"], adapter)
+    const limited = await tg(["g-approval", "chats", "links", "create", "Valencia", "--max-uses", "5"], adapter)
 
     expect([on.code, link.code, limited.code]).toEqual([0, 0, 0])
     expect(changed).toEqual([{ settings: { joinApproval: true } }])
@@ -607,7 +607,7 @@ describe("the send guard in front of the other writes", () => {
     })
 
     const update = (...options: string[]) =>
-      tg(["g-link-update", "chats", "link", "update", "Valencia", "https://t.me/+extra", ...options], adapter)
+      tg(["g-link-update", "chats", "links", "update", "Valencia", "https://t.me/+extra", ...options], adapter)
 
     const on = await update("--approval", "--expire-time", "7d")
     const off = await update("--no-approval", "--max-uses", "5")
@@ -634,19 +634,19 @@ describe("the send guard in front of the other writes", () => {
     })
 
     const all = await tg(
-      ["g-bulk", "chats", "requests", "accept", "Valencia", "--all", "--link", "https://t.me/+extra", "--json"],
+      ["g-bulk", "chats", "requests", "confirm", "Valencia", "--all", "--link", "https://t.me/+extra", "--json"],
       adapter,
     )
     const declined = await tg(
-      ["g-bulk", "chats", "requests", "decline", "Valencia", "--all", "--link", "https://t.me/+other", "--json"],
+      ["g-bulk", "chats", "requests", "reject", "Valencia", "--all", "--link", "https://t.me/+other", "--json"],
       adapter,
     )
     const listed = await tg(
-      ["g-bulk", "chats", "link", "list", "Valencia", "revoked:true", "--limit", "5", "--json"],
+      ["g-bulk", "chats", "links", "list", "Valencia", "revoked:true", "--limit", "5", "--json"],
       adapter,
     )
     const revoked = await tg(
-      ["g-bulk", "chats", "link", "revoke", "Valencia", "https://t.me/+extra", "--json"],
+      ["g-bulk", "chats", "links", "remove", "Valencia", "https://t.me/+extra", "--json"],
       adapter,
     )
 

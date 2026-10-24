@@ -25,7 +25,7 @@ Reading, sending, search, the local store, groups, people, bots, MCP and permiss
 
 - **Your own notes on chats.** Private notes on a chat, like the ones
   [tgcli](https://github.com/kfastov/tgcli) keeps beside its tags. Private names and notes for people already work:
-  [your own names and notes for people](people.md#your-own-names-and-notes-contacts-alias-contacts-notes).
+  [your own names and notes for people](people.md#your-own-names-and-notes-contacts-aliases-contacts-notes).
 - **Reactions by emoji in message rankings.** Beside the total, how many of each reaction a message got.
 - **What `max` can do and `tg` cannot yet.** Privacy settings, call history, a chat's media, stickers,
   deleting or clearing a chat for yourself, a group photo, pressing a bot's buttons, starting a bot and

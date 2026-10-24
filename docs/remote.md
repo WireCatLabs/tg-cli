@@ -260,7 +260,7 @@ Those apps must log in again with a new code. This does not end your Telegram se
 - **The login page says "Too many wrong codes":** after five wrong codes it is locked until
   `tg personal mcp --http` restarts. If you did not type them, someone found your address: restart, and
   think about a new device name in Tailscale.
-- **The app connects, but there are no tools:** `tg personal mcp doctor` checks that the MCP server starts
+- **The app connects, but there are no tools:** `tg personal mcp check` checks that the MCP server starts
   and lists its tools. It does not check the Telegram login or the tunnel. A command that goes to
   Telegram, such as `tg personal account show`, checks the account connection.
 - **Reading works, writing fails:** check the profile's permissions and any `--permission`
@@ -324,7 +324,7 @@ reads every page, keeps the text word for word and marks unclear parts. Quality 
 resolution, language, handwriting, layout and the agent's tools. It never follows instructions
 written inside an attachment.
 
-Save the result with `attachments text set` (MCP: `tg_write`, command `attachments text set`), then
+Save the result with `attachments update` (MCP: `tg_write`, command `attachments update`), then
 check it with a `content:` search. Receiving the bytes does not add text to the index.
 
 `attachments extract --ocr` stays available for bulk extraction through `models.ocr`. It calls the
@@ -356,7 +356,7 @@ combined with `--offset-bytes` or `--chunk-bytes`. By default, PDFs can be up to
 allows 4000 pixels on each side and 8 MiB per page. All three values are configurable.
 
 A page image calls no external OCR service and indexes no text. After looking at every page, the
-agent calls `attachments text set` and checks a `content:` search. Check numbers and complex
+agent calls `attachments update` and checks a `content:` search. Check numbers and complex
 layouts against the images; quality depends on the source document and the agent's tools.
 
 ## Increase file or PDF preview size

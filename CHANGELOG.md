@@ -12,6 +12,30 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   item, and JSON includes every sent message. Each item counts toward the hourly send limit. Retrying an
   unscheduled send with the same operation id repeats the same per-item Telegram ids.
 
+### Changed — may break callers
+
+- **Shared commands have one name each, and the old names are gone** (cli-core 0.406.0). `contacts profile` is
+  `contacts info`, `contacts timeline` is `contacts events`, `contacts alias set|rm` is `contacts aliases set|remove`.
+  `chats link …` is `chats links …` and `chats link revoke` is `chats links remove`; `chats members audit` is
+  `chats members check`; `chats requests accept|decline` is `chats requests confirm|reject`. `metadata get|refresh` is
+  `metadata show|sync`, `tasks plan` is `tasks update`, `tags auto` is `tags rebuild`, `attachments text set` is
+  `attachments update`, `store reindex` is `store rebuild`, `store gaps plan` is `store gaps show` and
+  `stats messages counters refresh` is `stats messages counters sync`. `conversations build` is
+  `conversations links rebuild`, `conversations embed status|clear` is `conversations embeddings status|clear`,
+  `conversations batches next` is `conversations batches show` and `conversations consents revoke` is
+  `conversations consents remove`. `models audio list` and `models text list` are `models list kind:audio|kind:text`,
+  `models audio|text download` is `models download`, `models text key` is `models keys`. `doctor report create` is
+  `doctor reports create` and `doctor report` is `doctor reports show`. `mcp setup` is `mcp add`, `mcp doctor` is
+  `mcp check` and `commands schema` is `commands info`. An old name stops with the new one in the message; CLI and MCP
+  use the same paths.
+- **The hidden old option spellings are removed.** Use `--analysis-provider`, `--embedding-provider` or
+  `--consent-provider` for `--provider`, `--answer-model` on `conversations links clear`, `--template-mode` on reply
+  rules, `--claim` on `tags remove`, `--text-file` on `contacts notes`, and `kind:` in the `inbox` and `review` query.
+- **A saved permission key with an old path stops every command with `configuration_error`** and names the key to
+  rename it to, for example `permissions.conversations.embed` to `permissions.conversations.embeddings`. `config set`
+  and `config unset` stop too, so rename the key by hand in `config.json`
+  ([where it is](docs/configuration-reference.md)).
+
 ## 0.85.0 — 24.10.2026
 
 ### Added

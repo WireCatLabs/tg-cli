@@ -434,14 +434,14 @@ tg personal store clear --left --allow-dangerous  # delete the chats you have le
 
 ## Repair and index maintenance
 
-`tg personal store migrate` builds unfinished indexes; `tg personal store reindex` rebuilds them. `store info` and
+`tg personal store migrate` builds unfinished indexes; `tg personal store rebuild` rebuilds them. `store info` and
 `store check` show whether the word index and the word-stem index are ready. Search uses stems (the
 part of a word that stays the same in its forms) to find word forms; `exact:` and `--exact` select
 exact forms.
 
 `tg config set search_stemmers.cyrillic russian` and `search_stemmers.latin english,spanish` set the
 shared store's stemmers: Latin takes `english`, `spanish` or both (the default, so a Latin word matches
-the stems of both), and `none` disables one; run `store reindex` after your own choice. When a tg
+the stems of both), and `none` disables one; run `store rebuild` after your own choice. When a tg
 update changes the default, the stems rebuild by themselves: until they are ready a search matches
 exact word forms and says so, `tg personal serve` finishes them in the background and `store migrate` at once.
 The setting affects both messengers and every profile; a profile-locked process cannot change it.
@@ -513,7 +513,7 @@ files keep their filled literal fallback with warnings; new files need no model 
 Choose `models.replies.provider`, `.model`, and optionally `.base_url`; `models.default` is the
 fallback and `provider off` disables a purpose. Existing analysis settings remain supported.
 `config set` / `unset` accept dotted fields; `config show` reports each source. Keys stay in
-`models text key set`; custom endpoints use their host/port key, never a public provider's key.
+`models keys set`; custom endpoints use their host/port key, never a public provider's key.
 
 `tg personal replies consents show|grant|revoke` controls model consent separately from sending permission.
 Grant explicitly permits incoming data to go to the configured provider across this profile,

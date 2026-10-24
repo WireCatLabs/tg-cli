@@ -112,7 +112,7 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
 | `requests_per_minute` | unset, which means `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |
 | `transcribe_with` | `auto` | who turns voice into text: `auto` (Telegram, else a local model), `messenger` or `local` | `--local`, or `--model`, which implies it |
-| `speech_model` | none | which downloaded model `--local` uses (`tg personal models audio list`) | `--model` |
+| `speech_model` | none | which downloaded model `--local` uses (`tg personal models list kind:audio`) | `--model` |
 | `proxy` | none | the SOCKS5, HTTP `CONNECT` or MTProxy server to reach Telegram through ([below](#through-a-proxy)) | `TG_PROXY` |
 | `read_other_bots` | `false` | a bot only: whether `tg personal bot` may read what other bots on this machine kept — `true`, or a list of profile names ([bots](bot.md)) | none; `--all-bots` and `--bots` ask, the setting allows |
 | `update_check` | `true` | the daily "a newer version exists" line; only under `defaults` | none; `TG_NO_UPDATE_CHECK`, `NO_UPDATE_NOTIFIER` or `CI` turn it off |
@@ -383,8 +383,8 @@ become underscores in its environment name. Credentials are not part of this obj
 
 Embedding and analysis settings are independent and may differ by profile. Endpoints must be
 HTTP/S without embedded credentials, query or fragment. Remote embeddings also receive the query
-text of MCP searches. Keys are set with `models text key set openai|anthropic` and stay outside
-`config.json`. Ordinary `build` does not start remote analysis: explicit `--analyze` is required.
+text of MCP searches. Keys are set with `models keys set openai|anthropic` and stay outside
+`config.json`. Ordinary `conversations links rebuild` does not start remote analysis: explicit `--analyze` is required.
 
 ### Model environment variables
 

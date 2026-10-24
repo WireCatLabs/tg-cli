@@ -27,11 +27,11 @@ this page:
 | Sum up a week: decisions, promises, open questions | `tg personal review 'date>7d'` |
 | Keep a list of what waits on you | `tg personal tasks list` |
 | Remove spam by your own rules | `tg personal chats rules set`, `tg personal chats moderate` |
-| Replace a leaked invite link | `tg personal chats link reset` |
+| Replace a leaked invite link | `tg personal chats links reset` |
 | Let people in, or turn them away | `tg personal chats requests list\|accept\|decline` |
 | See the week's activity and Telegram's own statistics | `tg personal stats chats show`, `tg personal stats chats official` |
 | Save the member list every day | `tg personal chats members fetch --track` |
-| Find members that look like bots or spammers | `tg personal chats members audit` |
+| Find members that look like bots or spammers | `tg personal chats members check` |
 
 The full list of group commands is [below](#what-there-is). Details of each command are in
 [groups and channels in the usage guide](usage.md#groups-and-channels); every option is in the
@@ -110,7 +110,7 @@ Replace an invite link only when you have asked for that change.
 **Replace the link:**
 
 ```sh
-tg personal chats link reset "Hiking" --json
+tg personal chats links reset "Hiking" --json
 ```
 
 **Restrict member additions:**
@@ -214,8 +214,8 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 | `tg personal chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
 | `tg personal chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
 | `tg personal chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
-| `tg personal chats link update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
-| `tg personal chats link show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
+| `tg personal chats links update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
+| `tg personal chats links show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
 | `tg personal chats requests list\|accept\|decline <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
 | `tg personal chats rules show\|set\|unset <chat>` | the group's rules |
 | `tg personal chats moderate <chat>` | check the group by its rules; does what the rules allow |
@@ -280,7 +280,7 @@ tg personal tasks list "assignee:any state:open"
 ```
 
 `--assignee sender` is whoever sent the message; `--assignee person:<id>` names someone else, and
-`tasks plan <task> --assignee none` clears it. A task with no assignee is fine: better than a missed one.
+`tasks update <task> --assignee none` clears it. A task with no assignee is fine: better than a missed one.
 
 See what waits on you, oldest first, then only questions and mentions in one group:
 
@@ -348,7 +348,7 @@ Give a task a title, a due date and a date to look at it again, and link the mes
 belongs to. The next-check date is for you or your agent; tg never reminds anyone:
 
 ```sh
-tg personal tasks plan <task> --title "Send Anna the contract" --due 2d --remind-time 1d
+tg personal tasks update <task> --title "Send Anna the contract" --due 2d --remind-time 1d
 ```
 
 ```sh
@@ -557,7 +557,7 @@ partial reads do not replace it. Without a complete snapshot, this list can be e
 profiles and events have already been recorded.
 Profiles and history stay in the local store alongside messages.
 
-`tg personal chats members audit` lists members with bot-like signals and reasons; `--max-pages` caps pages and
+`tg personal chats members check` lists members with bot-like signals and reasons; `--max-pages` caps pages and
 a query such as `score>=3` sets the threshold (`score>=2` when not given). It removes nobody and excludes admins
 and the owner. `meta.truncated` means not every member was read. It is unavailable with `--offline`;
 scores need human review. Telegram supplies bot, scam, fake, deleted, photo, join and inviter metadata
@@ -590,7 +590,7 @@ tg personal chats tracking show "Hiking Club" --offline --json
 ```
 
 ```sh
-tg personal chats members audit "Hiking Club" --json
+tg personal chats members check "Hiking Club" --json
 ```
 
 Ask your agent to report messages, active senders, unanswered questions, membership changes and days

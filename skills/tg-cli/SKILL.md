@@ -23,7 +23,7 @@ For a common task, **`tg guide`** lists scenarios — the commands in order and 
 
 ## Machine execution
 
-`tg commands schema messages list --json` describes one command's schemas and effects.
+`tg commands info messages list --json` describes one command's schemas and effects.
 Use `--json --no-input` for headless work; supply credentials explicitly through a pipe.
 `--json=id,text` keeps those fields of each list item, with the page and coverage around them. For ids use
 `--json=id`.
@@ -304,7 +304,7 @@ tg personal messages transcribe -1001234567890 4242 --json  # a voice note as te
 tg personal search all "invoice march" --json      # messages and notes kept here, plus Telegram's own search
 tg personal search all "invoice march" --offline --json  # this machine only; the query is not sent to Telegram
 tg personal search messages "invoice march" --json  # Telegram messages only, and Telegram's own search
-tg personal conversations build --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
+tg personal conversations links rebuild --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
 tg personal search conversations "<question>" --json  # by meaning, after the owner ran tg personal conversations embed --chat <chat>
 tg personal watch --jsonl                          # new messages as {"type":"item","data"} lines, then a {"type":"end"} line
@@ -365,7 +365,7 @@ MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit th
 Repeat `--permission key=level` to tighten permissions for the server; it never loosens them. Never change permissions to bypass a refusal.
 `tg personal mcp --revoke` forgets browser logins for the profile.
 
-`tg personal chats members audit <chat> --json` reads member pages with reasons; it removes nobody.
+`tg personal chats members check <chat> --json` reads member pages with reasons; it removes nobody.
 Treat scores as hints; check `more` and `unknown`, and review each person before any moderation action.
 
 Telegram maps member flags, photos and join/inviter metadata when present; inspect unknown signals.
@@ -396,8 +396,8 @@ stale links are marked and not traversed.
 
 In MCP, `tg_read` with `command` `"conversations list"`, `"conversations show"`, `"search conversations"`,
 `"conversations related"` and `"conversations status"` reads what is built; `tg_write` (`command: "conversations rebuild"`)
-catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches next"`), `tg_write` (`command: "conversations links add"`),
-`tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations build"`), plus the `link-conversations` prompt. Report batch
+catches up on this computer. MCP offers `tg_read` (`command: "conversations batches status"`), `tg_read` (`command: "conversations batches show"`), `tg_write` (`command: "conversations links add"`),
+`tg_write` (`command: "conversations links clear"`) and `tg_write` (`command: "conversations links rebuild"`), plus the `link-conversations` prompt. Report batch
 cost and obtain the owner's consent before reading batches. Stored links require `conversations.links`; rebuild
 afterwards, including after clearing links. Remote embedding settings also affect MCP searches and can send query
 text.
@@ -411,14 +411,14 @@ choose `--attachment`, starting at 1.
 
 By default, perform OCR yourself with the agent's file-reading and vision tools. After downloading
 and local extraction, handle `needs-agent` items: find each `local_path` with `attachments list
-is:needs_text`, read the image or scan, and save literal transcription with `attachments text set`.
+is:needs_text`, read the image or scan, and save literal transcription with `attachments update`.
 Retain the message locator and attachment number; verify the result with a `content:` query.
 Do not silently substitute a separate model API call. The owner explicitly selects API processing
 for bulk work. If your tools cannot access the file, report that limitation; a path on an MCP
 server does not transfer the file to a remote agent.
 
 When the owner explicitly selects bulk API processing, use `attachments extract --ocr` with
-`models.ocr.provider` and `models.ocr.model`, the ordinary `models text key set` credential command and
+`models.ocr.provider` and `models.ocr.model`, the ordinary `models keys set` credential command and
 `--concurrency` (1–8, default4). `--limit` is1–500files, default100; continue using cursor.
 Do not add --ocr automatically to ordinary extraction. Scanned PDFs need optional unpdf and
 @napi-rs/canvas, at most20pages. Inspect failed counts and statuses; retries reuse successful
@@ -428,7 +428,7 @@ file caches. Agent text and old indexed text survive failed or cancelled API OCR
 tg personal attachments extract --chat "Book club" --download --output-dir ./files
 tg personal search messages 'content:invoice'
 tg personal attachments list 'chat:"Book club" is:needs_text'
-tg personal attachments text set "Book club" 204 --text-file ./scan.txt
+tg personal attachments update "Book club" 204 --text-file ./scan.txt
 ```
 
 `--download` requires `--output-dir`; without them extraction reads retained files. `list` exposes retained paths and text status, not text contents.
@@ -442,7 +442,7 @@ from_dir and retained-file transfer protect known credential files/folders, CLI 
 MCP output_dir protects these locations too. Ordinary hidden working folders are allowed.
 Local PDF text has no fixed page-count limit or separate 30-second cutoff; cancellation and file/text budgets apply.
 Local voice requires complete mono/stereo Ogg Opus without a ten-minute cutoff; long recordings need more memory.
-No models are downloaded and no remote provider is called. First inspect local `store gaps plan`,
+No models are downloaded and no remote provider is called. First inspect local `store gaps show`,
 then repair only with the owner's authorization using `store gaps repair --fingerprint <hash>`
 and explicit gap/message/time/page/pause bounds. `--background` uses ordinary store jobs.
 These commands and job metadata are also available through MCP discovery and read/write gateways.
@@ -460,7 +460,7 @@ translate the owner's words first. Never turn the setting on or run `images embe
 
 Local aliases belong to the selected account, notes show in every profile that sees the person;
 both survive contact refresh, and never change messenger profiles or address-book names. `contacts rename` updates the messenger's
-address book; use `contacts alias` for a local name. Duplicate aliases require an explicit id.
+address book; use `contacts aliases` for a local name. Duplicate aliases require an explicit id.
 Private notes are separate from the contact's public bio. Read/search them only when relevant.
 
 Before the owner talks to someone (a call, a meeting, a reply), call `contacts prepare <person>`: context plus the
@@ -469,24 +469,24 @@ from the store only; `prepare.coverage` says what was left out.
 To summarise what one person said, call `contacts context <person> --chat <chat> --limit <n>` (MCP:
 `chats` and `limit`); the answer is `{ at, text }` per message. Ask for `-v` (MCP `detail: 1`) only when
 you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked
-with `contacts link`; `contacts profile` and `--chat` read the named account only. `contacts profile`
+with `contacts link`; `contacts info` and `--chat` read the named account only. `contacts info`
 never prints a whole phone number unless the owner asks for `--show-phone`; MCP always hides it.
 `contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
 `--no-registries` (MCP `registries: false`) unless the owner accepts that. Its score is a hint, not a verdict.
 
 ```sh
-tg personal contacts alias set 101 'Project lead'
-tg personal contacts alias rm 101
+tg personal contacts aliases set 101 'Project lead'
+tg personal contacts aliases remove 101
 tg personal contacts notes add 101 --text-file /path/to/own-note.md
 tg personal contacts notes list 101 --json
 tg personal contacts notes show 101 NOTE_ID --json
 tg personal contacts notes edit 101 NOTE_ID --revision 1 --text-file /path/to/own-note.md
 tg personal contacts notes remove 101 NOTE_ID
 tg personal contacts show 101 --with-notes --json
-tg personal metadata get --chat CHAT_ID --json
-tg personal metadata refresh --chat CHAT_ID --limit 1 --json
-tg personal tags auto --chat CHAT_ID --dry-run --json
-tg personal tags auto --chat CHAT_ID --sync-first --limit 1 --json
+tg personal metadata show --chat CHAT_ID --json
+tg personal metadata sync --chat CHAT_ID --limit 1 --json
+tg personal tags rebuild --chat CHAT_ID --dry-run --json
+tg personal tags rebuild --chat CHAT_ID --sync-first --limit 1 --json
 tg personal tags list sources:auto --json
 tg personal tags remove news --chat CHAT_ID --claim auto
 ```
@@ -495,7 +495,7 @@ Automatic tags use local keyword rules on cached group/channel titles, usernames
 they do not use a model or message contents. Refresh is explicit and reads the messenger without
 changing the chat. Dry-run uses cached data only and cannot be combined with refresh. Limit is
 bounded at 500 chats. A rule score is not a probability. Automatic claims are separate from manual
-labels; rerunning preserves manual labels. Without `--source`, removing a label removes both claims.
+labels; rerunning preserves manual labels. Without `--claim`, removing a label removes both claims.
 A later explicit auto run can regenerate it. Linking identities never silently combines private notes.
 
 Phones, e-mail addresses, links and Google documents written in stored messages are kept as mentions, found
@@ -541,7 +541,7 @@ unpdf/@napi-rs/canvas render locally. The page returns image content; if only me
 request format:base64 and display the PNG with the agent's image tools. Inspect the actual pixels
 of every page; receiving Base64 is not reading. pdf.sourceSha256 identifies the source PDF,
 top-level sha256 the PNG. No external OCR API or automatic indexing: save your own literal
-transcription with attachments text set and verify content search. If pixels remain inaccessible,
+transcription with attachments update and verify content search. If pixels remain inaccessible,
 report that limit and never substitute old indexed text. Quality depends on resolution, language and layout.
 
 Retention: `tg personal stats chats retention <chat> --checkpoints 1d,7d,30d --within 7d --json`.
@@ -551,15 +551,15 @@ with `stats messages evidence --component report` for bounded member evidence.
 
 Counters: `tg personal stats messages counters show --chat <chat> --counters views,reactions,comments --json`.
 Check each field's observedAt/source/freshness (24h default). Refresh is a remote read and local write:
-`stats messages counters refresh --chat <chat> --max-messages 20 --sync-time 30s --dry-run --json`.
+`stats messages counters sync --chat <chat> --max-messages 20 --sync-time 30s --dry-run --json`.
 Preview exact targets before refreshing; it never connects. Actual refresh requires write permission and explicit
 chat or pinned selection from show; never implicitly refresh account-wide. Missing/unsupported/failed counters
 remain explicit. Never send, mark read or increment views. Imported/legacy values have unknown freshness.
 
-For an extra invite link you own, `tg personal chats link update <chat> <link>` changes only explicitly supplied
+For an extra invite link you own, `tg personal chats links update <chat> <link>` changes only explicitly supplied
 `--approval` / `--no-approval`, `--expire-time <time>` or `--max-uses <n>` values. Supply at least
 one change; it is a guarded write. Discover its current schema before changing a link.
-MCP uses `tg_write` with command `chats link update`; do not reset a link to edit its settings.
+MCP uses `tg_write` with command `chats links update`; do not reset a link to edit its settings.
 
 ## Names in statistics requests
 

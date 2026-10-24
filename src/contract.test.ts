@@ -25,7 +25,7 @@ const PLACEHOLDER: Record<string, string> = {
 
 /** Options a command needs so the suite writes nothing outside its sandbox. */
 const CONFINED: Record<string, string[]> = {
-  "doctor report create": ["--output", join(process.env.TG_TEST_SANDBOX ?? tmpdir(), "report.json")],
+  "doctor reports create": ["--output", join(process.env.TG_TEST_SANDBOX ?? tmpdir(), "report.json")],
 }
 
 const leaves = (list: readonly CommandInfo[]): CommandInfo[] =>

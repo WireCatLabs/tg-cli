@@ -107,11 +107,11 @@ Your agent. Your Telegram. Your rules.
   `tg personal mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply`, `/find`, `/open-tasks` and `/link-conversations`.
 
 ```sh
-tg personal mcp setup claude-code  # or: tg personal mcp setup codex
+tg personal mcp add claude-code  # or: tg personal mcp add codex
 tg personal mcp config      # the entry for Claude Desktop, Cursor and others
 ```
 
-The profile can send by default, so `mcp setup` stops first. Check the profile's permissions, then run
+The profile can send by default, so `mcp add` stops first. Check the profile's permissions, then run
 it again with `--allow-writes`.
 
 More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/mcp)
@@ -268,7 +268,7 @@ agent from changing anything; at `ask` the server shows no form, so set up appro
 
 ```sh
 claude mcp add tg -- tg personal mcp  # Claude Code, by hand
-tg personal mcp doctor            # check the local MCP server
+tg personal mcp check            # check the local MCP server
 ```
 
 **From the browser.** ChatGPT or Claude in the browser reach `tg personal mcp --http --public-url <url>` behind

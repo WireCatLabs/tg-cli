@@ -48,17 +48,14 @@ export const UNTESTED: Untested[] = [
       "cli-core src/services/admin-statistics.test.ts covers shared report saved-run scope and typed overrides; native admin-statistics-adoption.test.ts checks mounted report paths and both evidence targets without connecting",
   })),
 
-  ...[
-    ["metadata get"],
-    ["metadata get", "--chat"],
-    ["metadata refresh", "--chat"],
-    ["metadata refresh", "--limit"],
-  ].map(([command, option]) => ({
-    command: command as string,
-    ...(option ? { option } : {}),
-    reason:
-      "cli-core src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-core 0.174.0)",
-  })),
+  ...[["metadata show"], ["metadata show", "--chat"], ["metadata sync", "--chat"], ["metadata sync", "--limit"]].map(
+    ([command, option]) => ({
+      command: command as string,
+      ...(option ? { option } : {}),
+      reason:
+        "cli-core src/services/private-people.test.ts («refreshes supported metadata through a read capability…», «bounds work…») covers the shared metadata command this consumer mounts (cli-core 0.174.0)",
+    }),
+  ),
   {
     command: "messages sync",
     option: "--all",
@@ -304,7 +301,7 @@ export const UNTESTED: Untested[] = [
     reason:
       "cli-core src/cli/messenger/attachments.test.ts covers extraction from a directory and its cursor; this consumer mounts the shared command (cli-core 0.162.0)",
   })),
-  ...["mcp setup", "mcp doctor"].map((command) => ({
+  ...["mcp add", "mcp check"].map((command) => ({
     command,
     option: "--permission",
     reason:
@@ -312,10 +309,10 @@ export const UNTESTED: Untested[] = [
   })),
 
   {
-    command: "chats members audit",
+    command: "chats members check",
     option: "--deep",
     reason:
-      'cli-core src/cli/messenger/messenger.test.ts ("chats members audit 7 --deep 1") and src/services/members-audit.test.ts cover the deep check of the top flagged members; this consumer mounts the shared command',
+      'cli-core src/cli/messenger/messenger.test.ts ("chats members check 7 --deep 1") and src/services/members-audit.test.ts cover the deep check of the top flagged members; this consumer mounts the shared command',
   },
   {
     command: "chats members fetch",
@@ -475,7 +472,7 @@ export const UNTESTED: Untested[] = [
       "cli-core src/services/searches.test.ts covers bounded newest history and pruning; consumer integration tests cover no-record and named-query preservation",
   },
   ...["--max-pages"].map((option) => ({
-    command: "chats members audit",
+    command: "chats members check",
     ...(option ? { option } : {}),
     reason:
       "shared member audit; cli-core src/cli/messenger/messenger.test.ts drives the command and src/services/members-audit.test.ts covers page budgets, thresholds and unavailable signals with synthetic members",
@@ -521,7 +518,7 @@ export const UNTESTED: Untested[] = [
       "the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check",
   },
   {
-    command: "mcp setup",
+    command: "mcp add",
     option: "--allow-writes",
     reason:
       "registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home",
@@ -544,7 +541,7 @@ export const UNTESTED: Untested[] = [
     reason: "downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline",
   },
   {
-    command: "models text download",
+    command: "models download",
     option: "--accept-terms",
     reason: "phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline",
   },
@@ -555,49 +552,31 @@ export const UNTESTED: Untested[] = [
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags auto",
+    command: "tags rebuild",
     option: "--chat",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags auto",
+    command: "tags rebuild",
     option: "--limit",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags auto",
+    command: "tags rebuild",
     option: "--sync-first",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags auto",
+    command: "tags rebuild",
     option: "--dry-run",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
   {
-    command: "tags remove",
-    option: "--source",
-    reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
-  },
-  {
-    command: "contacts notes add",
-    option: "--file",
-    reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
-  },
-  {
     command: "contacts notes edit",
-    reason:
-      "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
-  },
-  {
-    command: "contacts notes edit",
-    option: "--file",
     reason:
       "cli-core src/services/private-people.test.ts covers scoped notes search/exposure, offline note CRUD with file/revision, tag provenance filters, bounded metadata auto tagging, dry-run and retained metadata after failed refresh; this consumer mounts the shared handlers",
   },
@@ -611,8 +590,8 @@ export const UNTESTED: Untested[] = [
     ["tasks add", "--title"],
     ["tasks add", "--due"],
     ["tasks add", "--remind-time"],
-    ["tasks plan", "--due"],
-    ["tasks plan", "--remind-time"],
+    ["tasks update", "--due"],
+    ["tasks update", "--remind-time"],
     ["tasks link", "--chat"],
     ["tasks link", "--kind"],
     ["tasks agenda", "--due-within"],
@@ -627,7 +606,7 @@ export const UNTESTED: Untested[] = [
   ...[
     ["tags add", "--task"],
     ["tags remove", "--task"],
-    ["tasks plan", "--category"],
+    ["tasks update", "--category"],
     ["tasks agenda", "--holder"],
     ["tasks claim", "--lease"],
     ["tasks claim", "--holder"],
@@ -640,8 +619,8 @@ export const UNTESTED: Untested[] = [
   })),
   ...[
     ["tasks add", "--description"],
-    ["tasks plan", "--title"],
-    ["tasks plan", "--description"],
+    ["tasks update", "--title"],
+    ["tasks update", "--description"],
     ["tasks agenda", "--unanswered"],
   ].map(([command, option]) => ({
     command: command as string,
@@ -703,7 +682,7 @@ export const UNTESTED: Untested[] = [
       "cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0)",
   })),
   {
-    command: "chats link list",
+    command: "chats links list",
     option: "--page",
     reason:
       "paging is cli-core's shared list envelope, covered by its own tests; this consumer mounts the shared handler",
@@ -788,7 +767,7 @@ export const UNTESTED: Untested[] = [
     option: "--last",
     reason: `cli-core src/cli/messenger/tasks.test.ts ("tasks scan lists what a chat's history would open, and opens it only with --yes") drives this through the shared handler tg mounts (0.320.0)`,
   },
-  ...[["tasks add"], ["tasks plan"]].map(([command]) => ({
+  ...[["tasks add"], ["tasks update"]].map(([command]) => ({
     command: command as string,
     option: "--assignee",
     reason:
@@ -803,14 +782,14 @@ export const UNTESTED: Untested[] = [
   ...[
     ["contacts notes add", "--text-file"],
     ["contacts notes edit", "--text-file"],
-    ["conversations build", "--analysis-provider"],
+    ["conversations links rebuild", "--analysis-provider"],
     ["conversations related", "--embedding-provider"],
     ["conversations status", "--embedding-provider"],
     ["conversations links clear", "--answer-model"],
-    ["conversations consents revoke", "--consent-provider"],
+    ["conversations consents remove", "--consent-provider"],
     ["conversations embed", "--embedding-provider"],
-    ["conversations embed status", "--embedding-provider"],
-    ["conversations embed clear", "--embedding-provider"],
+    ["conversations embeddings status", "--embedding-provider"],
+    ["conversations embeddings clear", "--embedding-provider"],
     ["search conversations", "--embedding-provider"],
     ["tags remove", "--claim"],
     ["replies edit", "--template-mode"],

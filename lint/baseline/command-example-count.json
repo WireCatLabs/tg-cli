@@ -1,9 +1,8 @@
 [
   "bot store fetch",
   "chats app",
-  "chats link update",
+  "chats links update",
   "chats start",
-  "commands schema",
   "messages press",
   "replies add",
   "replies audience",

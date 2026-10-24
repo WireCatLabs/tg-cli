@@ -46,7 +46,7 @@ a Telegram group. A conversation here is something tg finds by itself, in any ch
 | Other words for the same thing | no: "flat" does not find "apartment" | yes |
 | Other languages | no | yes, about 100 languages with the default model |
 | Exact filters (sender, date, file, link) | yes, the full [query language](query-language.md) | yes, through `--filter` |
-| Preparation | download the history | download the history, then `build` and `embed` |
+| Preparation | download the history | download the history, then `conversations links rebuild` and `conversations embed` |
 | Asks Telegram | yes, by default | no, it reads only this computer |
 
 Use word search when you remember a word, a number, a name or a file. Use topic search when you
@@ -66,8 +66,8 @@ Prepare one chat once, then ask as many questions as you like.
 
 ```sh
 tg personal messages sync "Book club"              # 1. download the history, if it is not saved yet
-tg personal conversations build --chat "Book club"  # 2. separate the chat into conversations
-tg personal models text download e5-small        # 3. once: download the model, 135 MB, shared with max
+tg personal conversations links rebuild --chat "Book club"  # 2. separate the chat into conversations
+tg personal models download e5-small        # 3. once: download the model, 135 MB, shared with max
 tg personal conversations embed --chat "Book club"  # 4. compute a vector for each piece
 tg personal search conversations "where do we meet" --chat "Book club"  # 5. ask
 tg personal conversations show 91                # 6. read the conversation that was found
@@ -92,7 +92,7 @@ Topic search has three stages. The first two prepare a chat once; the third runs
 
 ### 1. Build: separate the chat into conversations
 
-`tg personal conversations build` reads the saved messages of a chat, oldest first, and decides for each
+`tg personal conversations links rebuild` reads the saved messages of a chat, oldest first, and decides for each
 message which earlier message it continues. It uses no AI and does not ask Telegram. The links come from,
 in this order:
 
@@ -229,14 +229,14 @@ New messages reach a conversation only after the next build, and a vector only a
 
 ```sh
 tg personal conversations status                 # what is behind, chat by chat
-tg personal conversations build                  # every chat that changed, and groups never built
+tg personal conversations links rebuild                  # every chat that changed, and groups never built
 tg personal conversations embed                  # every built chat with pieces left
 tg personal search conversations "renting a flat" --catch-up  # catch up first, then search
 ```
 
 `status` counts, for each built chat, the messages the build has not seen (new, edited, deleted), the
 pieces whose vector is current, stale or missing, and how many groups were never built. Without `--chat`,
-`build`, `embed` and `search conversations --catch-up` take at most 20 chats a run (`--max-chats`) and embed at most
+`conversations links rebuild`, `conversations embed` and `search conversations --catch-up` take at most 20 chats a run (`--max-chats`) and embed at most
 2,000 pieces a run (`--max-chunks`); run them again to go on. They never download a model.
 `--catch-up` cannot be combined with `--filter` or `--source`: build and embed the chats you want first.
 
@@ -259,14 +259,14 @@ tg personal conversations batches status --chat "Book club"  # how many messages
 ```
 
 The agent reads the instructions, tells you how much text it would read and waits for your yes. Then it
-takes the chat a batch at a time (`tg personal conversations batches next`), decides which earlier message each one
+takes the chat a batch at a time (`tg personal conversations batches show`), decides which earlier message each one
 answers and saves its answer (`tg personal conversations links add`). The next build uses them: Telegram's own
 replies come first, then the agent's links, then the rules. `tg personal conversations links clear --chat "Book club"`
 drops the agent's answers; build again afterwards. In this workflow tg itself does not call a model. The
 profile permission `conversations.links` decides whether answers may be saved.
 
-tg can also send the batches to a model service itself. Ordinary `build` uses rules and saved links;
-`tg personal conversations build --chat <chat> --analyze` sends bounded batches to a configured OpenAI-compatible
+tg can also send the batches to a model service itself. Ordinary `conversations links rebuild` uses rules and saved links;
+`tg personal conversations links rebuild --chat <chat> --analyze` sends bounded batches to a configured OpenAI-compatible
 or Anthropic endpoint. An explicit `--chat` is required. Before the first batch it shows the volume, the
 endpoint and the token limit, and asks for consent. Consent is remembered for that account, chat and
 provider until you revoke it. Defaults are 50 messages per batch (`--size`) and at most 100,000 tokens
@@ -280,8 +280,8 @@ By default nothing leaves your computer. The model runs here, and a model is dow
 ask:
 
 ```sh
-tg personal models text list                     # the models, and which are downloaded
-tg personal models text download embeddinggemma --accept-terms
+tg personal models list kind:text                     # the models, and which are downloaded
+tg personal models download embeddinggemma --accept-terms
 ```
 
 `e5-small` is the default: small and fast, about 100 languages. `embeddinggemma` finds more but runs
@@ -295,7 +295,7 @@ little over 20 minutes, once. Later runs embed only what changed.
 A service can compute the vectors instead, with your own key:
 
 ```sh
-tg personal models text key set openai
+tg personal models keys set openai
 tg personal conversations embed --chat "Book club" --embedding-provider openai
 tg personal search conversations "renting a flat" --embedding-provider openai
 ```
@@ -304,7 +304,7 @@ Then the text of the chat's conversations goes to that service, and each search 
 Before sending anything, `embed` says how many pieces, at most how many tokens and at most what price,
 and waits for your yes (`--yes` in scripts; `--max-tokens` sets a limit). `--base-url` takes any server
 with OpenAI's embeddings API, such as Ollama or LM Studio on your own computer, with `--model` and
-`--dims`. `tg personal models text key remove openai` forgets the key. Remote embedding settings also apply to
+`--dims`. `tg personal models keys remove openai` forgets the key. Remote embedding settings also apply to
 searches your agent runs over MCP, so its questions go to that service too.
 
 ## Next
