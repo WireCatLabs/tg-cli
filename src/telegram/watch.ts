@@ -80,22 +80,35 @@ export const watch = async (
 ): Promise<void> => {
   const { client } = feature
   const message = (found: TgMessage) => onEvent({ event: "message", message: remoteHit(found, "remote_update") })
-  const edit = (found: TgMessage) => onEvent({ event: "edit", message: remoteHit(found, "remote_update") })
+  const reaction = (change: Extract<MessageEvent, { event: "reaction" }>) =>
+    onEvent({
+      ...change,
+      counterObservation: {
+        value: change.reactions.total,
+        observedAt: new Date().toISOString(),
+        source: "remote_update",
+        reactions: change.reactions,
+      },
+    })
+  const edit = (found: TgMessage) => {
+    const message = remoteHit(found, "remote_update")
+    onEvent({ event: "edit", message })
+    // Telegram also delivers reaction snapshots in updateEditMessage, including empty removals.
+    if (message.reactions)
+      reaction({
+        event: "reaction",
+        chatId: message.chatId,
+        chatTitle: message.chatTitle ?? null,
+        messageId: message.id,
+        reactions: message.reactions,
+      })
+  }
   const deletion = (update: DeleteMessageUpdate) => {
     for (const change of toDeletions(update)) onEvent(change)
   }
   const raw = (info: RawUpdateInfo) => {
     const change = toReactionChange(info)
-    if (change?.event === "reaction")
-      onEvent({
-        ...change,
-        counterObservation: {
-          value: change.reactions.total,
-          observedAt: new Date().toISOString(),
-          source: "remote_update",
-          reactions: change.reactions,
-        },
-      })
+    if (change?.event === "reaction") reaction(change)
     else if (change) onEvent(change)
   }
   client.onNewMessage.add(message)
