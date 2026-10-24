@@ -1457,7 +1457,7 @@ After updating, read old messages again once: `tg <profile> mentions rebuild per
   `--background` runs it as a job. Search needs it: [prepare your archive](docs/search.md#prepare-your-archive-first).
 - **Your own names and notes for people: `tg contacts alias` and `tg contacts notes`**, kept on this computer
   only; `contacts show --with-notes` and `contacts list --search-notes` show and search them
-  ([people](docs/people.md#your-own-names-and-notes-contacts-aliases-contacts-notes)).
+  ([people](docs/people.md#your-own-names-and-notes-contacts-alias-contacts-notes)).
 - **Automatic tags for groups and channels: `tg metadata refresh` and `tg tags auto`**, from title and
   description, never touching your own tags ([search](docs/search.md#tags)).
 

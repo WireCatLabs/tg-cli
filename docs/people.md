@@ -241,6 +241,8 @@ messages from the Telegram account and from the MAX account. `contacts info` and
 `contacts context --chat` still show only the account you named. The link is only ever what you
 record: the same name in both messengers is never taken as the same person.
 
+<a id="your-own-names-and-notes-contacts-alias-contacts-notes"></a>
+
 ## Your own names and notes: `contacts aliases`, `contacts notes`
 
 ```sh
