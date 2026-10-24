@@ -87,7 +87,7 @@ that command is behind the key. See [the MCP server](mcp.md#commands-that-change
 ## Raw bot API calls
 
 Raw `bot api <operation>` calls bypass the send guard and the bot's recipient list. MCP lists them as unavailable
-unless `permissions.bot.api` is `allow`; its default is `deny`, and a broader `permissions.bot: allow`
+unless `permissions.bot.api` is `allow` or `ask`; its default is `deny`, and a broader `permissions.bot: allow`
 does not enable them. Set this separate permission from a terminal:
 
 ```sh
