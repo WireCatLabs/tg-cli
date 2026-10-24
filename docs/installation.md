@@ -167,7 +167,7 @@ other tools:
   (`inbox/`), background fetch jobs, and the log and lock of `serve`.
 - **the local store** is shared with other messenger tools built on the same library, such as
   [max-cli](https://github.com/WireCatLabs/max-cli). [The local store](archive.md) page describes it.
-- **speech models** are downloaded only when you ask (`tg personal models audio download`), for
+- **speech models** are downloaded only when you ask (`tg personal models download`), for
   `messages transcribe --local`.
 
 `tg personal doctor` prints the exact paths on this machine.

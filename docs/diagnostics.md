@@ -22,7 +22,7 @@ A few words this page uses:
 | Find a failed run later | `tg personal runs list` | a failed run is kept by itself |
 | Keep a record of every run | `tg personal config set record true` | yes, every run |
 | Check the installation | `tg personal doctor`, `tg personal doctor --online` | no |
-| Make a problem report | `tg personal doctor report create` | yes, one file you send |
+| Make a problem report | `tg personal doctor reports create` | yes, one file you send |
 
 ## Show it: `--trace`
 
@@ -133,8 +133,8 @@ the runs kept.
 ## A problem report
 
 ```sh
-tg personal doctor report create          # about the newest failed run
-tg personal doctor report create --run <run-id>  # about this one
+tg personal doctor reports create          # about the newest failed run
+tg personal doctor reports create --run <run-id>  # about this one
 ```
 
 It writes a JSON file — what `tg personal doctor` shows plus the run — and says where to send it: a new issue

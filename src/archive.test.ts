@@ -95,7 +95,7 @@ describe("the archive, from the store", () => {
   it("**builds a chat's conversations** from what was fetched, and says why a message is in one", async () => {
     const store = await backfilled()
 
-    const built = await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+    const built = await tg(["archive", "conversations", "links", "rebuild", "--chat", CHAT, "--json"], store)
     expect(built.answer).toMatchObject({ item: { chat: CHAT, messages: 3, conversations: 1 } })
     const listed = await tg(
       ["archive", "conversations", "list", CHAT, "started_at>=2026-09-01", "--limit", "5", "--json"],
@@ -115,7 +115,7 @@ describe("the archive, from the store", () => {
 
   it("**hands a chat to the user's agent in batches**: how much is left, then the next batch", async () => {
     const store = await backfilled()
-    await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+    await tg(["archive", "conversations", "links", "rebuild", "--chat", CHAT, "--json"], store)
 
     const status = await tg(
       ["archive", "conversations", "batches", "status", "--chat", CHAT, "--size", "10", "--json"],
@@ -123,7 +123,7 @@ describe("the archive, from the store", () => {
     )
     expect(status.code).toBe(0)
     const next = await tg(
-      ["archive", "conversations", "batches", "next", "--chat", CHAT, "--size", "10", "--json"],
+      ["archive", "conversations", "batches", "show", "--chat", CHAT, "--size", "10", "--json"],
       store,
     )
     expect(next.code).toBe(0)
@@ -131,14 +131,14 @@ describe("the archive, from the store", () => {
 
   it("**stores the agent's answer** read from stdin, and drops one model's answers", async () => {
     const store = await backfilled()
-    const next = await tg(["archive", "conversations", "batches", "next", "--chat", CHAT, "--json"], store)
+    const next = await tg(["archive", "conversations", "batches", "show", "--chat", CHAT, "--json"], store)
     const { batch } = (next.answer as { item: { batch: string } }).item
     const answer = JSON.stringify({ model: "m", answers: [{ message: "103", parent: "101", confidence: 0.9 }] })
 
     const added = await tg(["archive", "conversations", "links", "add", "--batch", batch, "--json"], store, {}, answer)
     expect(added.answer).toMatchObject({ item: { chat: CHAT, stored: 1 } })
     const cleared = await tg(
-      ["archive", "conversations", "links", "clear", "--chat", CHAT, "--model", "m", "--json"],
+      ["archive", "conversations", "links", "clear", "--chat", CHAT, "--answer-model", "m", "--json"],
       store,
     )
     expect(cleared.answer).toMatchObject({ item: { chat: CHAT, cleared: 1 } })
@@ -146,7 +146,7 @@ describe("the archive, from the store", () => {
 
   it("**embeds and searches a chat by meaning** through a model server, and refuses a model not downloaded", async () => {
     const store = await backfilled()
-    await tg(["archive", "conversations", "build", "--chat", CHAT, "--json"], store)
+    await tg(["archive", "conversations", "links", "rebuild", "--chat", CHAT, "--json"], store)
     vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
       const { input } = JSON.parse(String(init.body)) as { input: string[] }
       const dims = url.startsWith("https://api.openai.com") ? 1536 : 8
@@ -176,7 +176,7 @@ describe("the archive, from the store", () => {
       )
       expect(embedded.answer).toMatchObject({ item: { chat: CHAT, embedded: 1 } })
       const status = await tg(
-        ["archive", "conversations", "embed", "status", "--chat", CHAT, ...server, "--json"],
+        ["archive", "conversations", "embeddings", "status", "--chat", CHAT, ...server, "--json"],
         store,
         env,
       )
@@ -210,13 +210,18 @@ describe("the archive, from the store", () => {
       expect(fresh.code).toBe(0)
       expect(related.code).toBe(0)
 
-      const openai = ["--provider", "openai"]
+      const openai = ["--embedding-provider", "openai"]
       expect(
         (await tg(["archive", "conversations", "embed", "--chat", CHAT, ...openai, "--json"], store, env)).code,
       ).not.toBe(0)
       expect(
-        (await tg(["archive", "conversations", "embed", "status", "--chat", CHAT, ...openai, "--json"], store, env))
-          .answer,
+        (
+          await tg(
+            ["archive", "conversations", "embeddings", "status", "--chat", CHAT, ...openai, "--json"],
+            store,
+            env,
+          )
+        ).answer,
       ).toMatchObject({ item: { left: 1 } })
       expect(
         (await tg(["archive", "conversations", "status", "--chat", CHAT, ...openai, "--json"], store, env)).code,
@@ -228,11 +233,11 @@ describe("the archive, from the store", () => {
         0,
       )
       expect(
-        (await tg(["archive", "conversations", "embed", "clear", "--chat", CHAT, ...openai, "--json"], store, env))
+        (await tg(["archive", "conversations", "embeddings", "clear", "--chat", CHAT, ...openai, "--json"], store, env))
           .code,
       ).toBe(0)
       const cleared = await tg(
-        ["archive", "conversations", "embed", "clear", "--chat", CHAT, ...server, "--json"],
+        ["archive", "conversations", "embeddings", "clear", "--chat", CHAT, ...server, "--json"],
         store,
         env,
       )
@@ -243,7 +248,7 @@ describe("the archive, from the store", () => {
         store,
         env,
       )
-      expect(local.stderr.join("\n")).toContain("models text download e5-small")
+      expect(local.stderr.join("\n")).toContain("models download e5-small")
     } finally {
       vi.unstubAllGlobals()
     }
@@ -292,7 +297,7 @@ describe("the archive, from the store", () => {
   it("**builds every changed chat a bounded number at a time**, and counts what a query matches", async () => {
     const store = await backfilled()
 
-    const built = await tg(["archive", "conversations", "build", "--max-chats", "1", "--json"], store)
+    const built = await tg(["archive", "conversations", "links", "rebuild", "--max-chats", "1", "--json"], store)
     const counted = await tg(
       [
         "archive",
@@ -341,7 +346,7 @@ describe("the archive, from the store", () => {
     expect(built.code).toBe(0)
     expect(counted.code).toBe(0)
     expect(embedded.code).toBe(6)
-    expect(embedded.stderr.join("\n")).toContain("models text download e5-small")
+    expect(embedded.stderr.join("\n")).toContain("models download e5-small")
     expect(refreshed.code).toBe(0)
     expect((refreshed.answer as { missing: unknown[] }).missing).toContainEqual(
       expect.objectContaining({ field: "by", step: "models.download" }),
@@ -393,10 +398,10 @@ describe("the archive, from the store", () => {
   })
 })
 
-describe("doctor report", () => {
+describe("doctor reports show", () => {
   it("**explains itself, then writes a report with no message text in it**", async () => {
     const store = await backfilled()
-    const explained = await tg(["archive", "doctor", "report", "--json"], store)
+    const explained = await tg(["archive", "doctor", "reports", "show", "--json"], store)
     expect(explained.answer).toMatchObject({ item: { send_to: "https://github.com/WireCatLabs/tg-cli/issues/new" } })
 
     const runs = join(pathsFor().state, "runs", "2026-09-29", "20260929T100000Z-chats-list-abc123")
@@ -417,7 +422,7 @@ describe("doctor report", () => {
       [
         "archive",
         "doctor",
-        "report",
+        "reports",
         "create",
         "--run",
         "20260929T100000Z-chats-list-abc123",

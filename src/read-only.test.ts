@@ -134,7 +134,7 @@ describe("TG_READ_ONLY", () => {
   it.each([
     ["config set", ["config", "set", "limit", "5"]],
     ["config unset", ["config", "unset", "limit"]],
-    ["mcp setup", ["mcp", "setup", "codex"]],
+    ["mcp add", ["mcp", "add", "codex"]],
     ["server install", ["server", "install"]],
     ["schedule command", ["schedule", "command", "nightly", "chats list"]],
     ["skill install", ["skill", "install"]],

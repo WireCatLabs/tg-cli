@@ -33,12 +33,12 @@ tg [profile] [options] <resource> <action> [arguments]
 | Catch up | other people's unread messages; what you promised and what is open | `tg personal inbox`, `tg personal review` |
 | Voice | turn voice messages into text, on this computer | `tg personal messages transcribe` |
 | Files | download a message's files or a whole chat's | `tg personal messages download` |
-| People | contacts, a person's profile, a bot check | `tg personal contacts list`, `tg personal contacts profile` |
+| People | contacts, a person's profile, a bot check | `tg personal contacts list`, `tg personal contacts info` |
 | Search | messages, files, dates, people; discussions by meaning | `tg personal search messages`, `tg personal search conversations` |
 | Send | text, files, voice, replies, scheduled messages | `tg personal messages send` |
 | Change | edit, forward, pin, delete, react, vote, mark read | `tg personal messages edit`, `tg personal reactions add` |
 | Organize | folders | `tg personal chats folders list` |
-| Groups | members, invite links, join requests, topics, admins | `tg personal chats members list`, `tg personal chats link create` |
+| Groups | members, invite links, join requests, topics, admins | `tg personal chats members list`, `tg personal chats links create` |
 | Follow | new messages as they arrive; keep the local store current | `tg personal watch`, `tg personal server start` |
 | Check | what a command did; what a profile may do | `tg personal runs list`, `tg config show` |
 
@@ -366,11 +366,11 @@ a model on this machine does the work, and the recording never leaves the comput
 downloaded once, and only when you ask:
 
 ```sh
-tg personal models audio list          # the models, which is downloaded, which is the default
+tg personal models list kind:audio          # the models, which is downloaded, which is the default
 ```
 
 ```sh
-tg personal models audio download parakeet-v3  # once, checked against the sha256 this version expects
+tg personal models download parakeet-v3  # once, checked against the sha256 this version expects
 ```
 
 | Model | Languages | Size |
@@ -424,7 +424,7 @@ tg personal contacts sync              # your whole Telegram contact list into t
 ```
 
 ```sh
-tg personal contacts profile @example_user  # flags, last seen, registered, messages per shared chat
+tg personal contacts info @example_user  # flags, last seen, registered, messages per shared chat
 ```
 
 ```sh
@@ -1040,19 +1040,19 @@ tg personal chats update "Hiking 2027" --all-can-pin off --only-admins-add on
 ```
 
 ```sh
-tg personal chats link show "Hiking 2027"          # the invite link, if you may see it
+tg personal chats links show "Hiking 2027"          # the invite link, if you may see it
 ```
 
 ```sh
-tg personal chats link reset "Hiking 2027"         # a new one; the old one stops working
+tg personal chats links reset "Hiking 2027"         # a new one; the old one stops working
 ```
 
 ```sh
-tg personal chats link create "Hiking 2027" --approval --expire-time 7d  # another link; who joins asks first
+tg personal chats links create "Hiking 2027" --approval --expire-time 7d  # another link; who joins asks first
 ```
 
 ```sh
-tg personal chats link create "Hiking 2027" --max-uses 20  # at most 20 people join by it
+tg personal chats links create "Hiking 2027" --max-uses 20  # at most 20 people join by it
 ```
 
 ```sh
@@ -1068,23 +1068,23 @@ tg personal chats requests list "Hiking 2027" 'name:*Ana*'  # by name; or link:<
 ```
 
 ```sh
-tg personal chats requests accept "Hiking 2027" 67890  # let them in; decline turns them away
+tg personal chats requests confirm "Hiking 2027" 67890  # let them in; decline turns them away
 ```
 
 ```sh
-tg personal chats requests decline "Hiking 2027" --all  # every pending request at once; --link narrows it
+tg personal chats requests reject "Hiking 2027" --all  # every pending request at once; --link narrows it
 ```
 
 ```sh
-tg personal chats link list "Hiking 2027"          # your links, with how many joined and how many wait
+tg personal chats links list "Hiking 2027"          # your links, with how many joined and how many wait
 ```
 
 ```sh
-tg personal chats link revoke "Hiking 2027" https://t.me/+AbCd  # stop one link
+tg personal chats links remove "Hiking 2027" https://t.me/+AbCd  # stop one link
 ```
 
 ```sh
-tg personal chats link update "Hiking 2027" https://t.me/+AbCd --no-approval --max-uses 50  # change only these
+tg personal chats links update "Hiking 2027" https://t.me/+AbCd --no-approval --max-uses 50  # change only these
 ```
 
 ```sh
@@ -1109,9 +1109,9 @@ admins approve who joins answers `requested: true` and exits `0`: the request is
 admin accepts it. Each goes through the guard as a `chat` change,
 and each person added counts toward the hourly limit.
 
-`chats link create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
+`chats links create` makes another invite link and tells nobody: `--approval` makes whoever joins by it ask
 first, `--expire-time` stops it at a time (`2026-12-01T09:00`, or `30m`, `2h`, `7d` from now), and
-`--max-uses` lets at most that many people in. `chats link update` changes the same three on one of your
+`--max-uses` lets at most that many people in. `chats links update` changes the same three on one of your
 links, the group's own one too (`--no-approval` turns approval off, `--expire-time never` takes the expiry
 away); what you leave out stays. A link that asks first has no use limit, so `--approval` with `--max-uses` is
 refused. `chats update --join-approval on` makes everyone ask first,
@@ -1121,12 +1121,12 @@ In a group whose admins approve who joins, `chats requests list` shows the pendi
 note a person sent; only admins see them, and reading tells nobody. A query narrows it:
 `name:` or `username:` finds people, `link:` keeps those who asked through one invite link; Telegram cannot do
 both at once.
-`accept` and `decline` answer one,
+`confirm` and `reject` answer one,
 by the id from the list. An accepted request counts toward the hourly limit, a declined one does not;
 the recipient list checks the group only. Someone who is already a member is answered with
 `already: true`, and a request that is gone ends in exit `6`. `--all` answers every pending request, or
 with `--link` those that came by one link; they are counted first, and an accept that would go over the
-hourly limit is refused before anyone is let in. `chats link list` shows only your own links; revoking the
+hourly limit is refused before anyone is let in. `chats links list` shows only your own links; revoking the
 group's own link makes Telegram issue a new one, which the answer shows.
 
 `chats update` changes the title, the description and the two settings Telegram has, in one go; the
@@ -1337,7 +1337,7 @@ secret.** Every setting and variable: [configuration](configuration.md).
 
 ## One person
 
-`tg personal contacts profile <person>` shows what Telegram says about one person and how active they are in the
+`tg personal contacts info <person>` shows what Telegram says about one person and how active they are in the
 chats you share. `tg personal contacts check <person>` scores them as a possible bot, fake or spammer, with every
 reason. `tg personal contacts context <person>` reads what the store holds about them: without `--chat`, across every
 account linked to them with `contacts link`; with `--chat`, their newest messages in each chat you name. What each one asks Telegram or a public spam list, and what it sends where:

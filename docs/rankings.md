@@ -235,7 +235,7 @@ tg personal stats messages counters show --chat "Hiking" --counters views,reacti
 Before fetching new counters, ask for the exact messages and limits.
 
 ```sh
-tg personal stats messages counters refresh --chat "Hiking" --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
+tg personal stats messages counters sync --chat "Hiking" --counters views,reactions --max-messages 20 --sync-time 30s --dry-run --json
 ```
 
 > **Plan:** at most 20 messages, up to 30 seconds. Views and reactions are supported.

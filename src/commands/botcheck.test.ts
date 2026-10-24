@@ -57,10 +57,10 @@ describe("contacts check through tg", () => {
     expect(asked.sort()).toEqual(["api.cas.chat", "api.lols.bot"])
   })
 
-  it("checks the audit's top member in full with chats members audit --deep", async () => {
+  it("checks the audit's top member in full with chats members check --deep", async () => {
     vi.stubGlobal("fetch", banLists)
 
-    const { code, stdout } = await tg(["chats", "members", "audit", "-1001234567890", "--deep", "1", "--json"], {
+    const { code, stdout } = await tg(["chats", "members", "check", "-1001234567890", "--deep", "1", "--json"], {
       adapter: person,
     })
 

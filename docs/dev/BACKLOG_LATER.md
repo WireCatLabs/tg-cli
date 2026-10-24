@@ -14,7 +14,7 @@ with the same id. Same rules and marks as there.
 - **TG-18** · P3 · Server reads: `calls list`, `chats media --type` (max has them). Issue #447.
 - **TG-20** · P3 · Stickers: `stickers list`, `messages send --sticker` (max has them).
 - **TG-21** · P3 · Group photo: `chats update --photo|--remove-photo`; also `--only-admins-send`,
-  `--only-admins-edit-info`, `--disappear-time` (Telegram's default banned rights and auto-delete timer).
+  `--only-admins-edit-info`, `--disappear-after` (Telegram's default banned rights and auto-delete timer).
 - **TG-22** · P3 · Account privacy: `account privacy show|set` (max and wa have them). Lowest priority: a wrong
   setting can expose the phone number.
 - **TG-23** · P3 · Typing and location: `messages send --location <lat,lon>` and a typing signal.

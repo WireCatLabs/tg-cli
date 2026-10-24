@@ -23,7 +23,7 @@ describe("the adopted agent CLI contract", () => {
   it("discovers the canonical statistics schema without connecting", async () => {
     const { code, streams, opened } = await invoke([
       "commands",
-      "schema",
+      "info",
       "stats",
       "messages",
       "show",
@@ -55,7 +55,7 @@ describe("the adopted agent CLI contract", () => {
   it("fails an output byte limit before emitting a partial document", async () => {
     const { code, streams, opened } = await invoke([
       "commands",
-      "schema",
+      "info",
       "messages",
       "list",
       "--json",

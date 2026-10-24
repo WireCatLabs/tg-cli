@@ -303,7 +303,7 @@ tg personal attachments list 'chat:"Book club" is:needs_text'
 ```
 
 ```sh
-tg personal attachments text set "Book club" 204 --text-file ./scan.txt
+tg personal attachments update "Book club" 204 --text-file ./scan.txt
 ```
 
 `attachments extract` reads plain text, Word files and PDFs with a text layer on this computer.
@@ -323,16 +323,16 @@ global npm install: `npm install -g unpdf mammoth`. A missing package is reporte
 the text instead.
 
 **Photos and scans** have no text layer. Your agent normally reads them with its own OCR or vision
-tools and writes the text with `attachments text set`. `attachments list is:needs_text` gives it the
+tools and writes the text with `attachments update`. `attachments list is:needs_text` gives it the
 saved path, the message locator and the attachment number; it shows paths and text status, never the
 text itself. Check the result with a `content:` search. A path on an MCP server does not move the file
 to an agent on another computer: the agent needs access to the file. Such an agent can receive the
 saved file's bytes in bounded parts and check their hash through
 [attachments show](attachments.md); delivering the file does not recognize or index text, so it still
-writes the text back with `attachments text set`.
+writes the text back with `attachments update`.
 
 **Many scans at once** can go to a model service that you choose. Configure a vision model under
-`models.ocr` and keep its key with the usual `models text key set`. Replace `your-vision-model` with
+`models.ocr` and keep its key with the usual `models keys set`. Replace `your-vision-model` with
 your model's name.
 
 ```sh
@@ -344,7 +344,7 @@ tg personal config set models.ocr.model your-vision-model
 ```
 
 ```sh
-tg personal models text key set openai
+tg personal models keys set openai
 ```
 
 ```sh
@@ -445,19 +445,19 @@ Groups and channels can be tagged automatically, from their title, username and 
 and no model:
 
 ```sh
-tg personal metadata refresh --chat "Book club"  # read the chat's description from Telegram; the chat is not changed
+tg personal metadata sync --chat "Book club"  # read the chat's description from Telegram; the chat is not changed
 ```
 
 ```sh
-tg personal metadata refresh --only-missing  # every stored group and channel with no description read yet
+tg personal metadata sync --only-missing  # every stored group and channel with no description read yet
 ```
 
 ```sh
-tg personal tags auto --dry-run          # what it would tag, without writing
+tg personal tags rebuild --dry-run          # what it would tag, without writing
 ```
 
 ```sh
-tg personal tags auto                    # write the automatic tags
+tg personal tags rebuild                    # write the automatic tags
 ```
 
 ```sh
@@ -606,7 +606,7 @@ An empty answer means "not in the store you searched", not "never sent". Check w
 searched and how complete they are, even when nothing matched. If tg asks for `tg personal store migrate`, the
 word index is still being built; searches without words (`has:file`, `date:today`) already work.
 
-**Gaps in a chat's history.** `tg personal store gaps plan <chat>` looks, on this computer, for gaps between the
+**Gaps in a chat's history.** `tg personal store gaps show <chat>` looks, on this computer, for gaps between the
 stretches of history the store holds. Missing message ids and quiet periods alone do not prove missing
 history; the edges of the saved history stay `unknown`. Check the plan, then run
 `tg personal store gaps repair <chat> --fingerprint <hash>` to download the gaps. Defaults are five gaps, 500

@@ -303,7 +303,7 @@ carries it as `provider_error`; the message never repeats what you typed. Some h
 sentence:
 
 - **"Telegram transcribes only for Premium accounts…"** — exit code `5`. Use a model on this machine:
-  `tg personal models audio download parakeet-v3`, then `tg personal messages transcribe <chat> <id> --local`.
+  `tg personal models download parakeet-v3`, then `tg personal messages transcribe <chat> <id> --local`.
 - **"that message is not a voice or video note"** — exit code `2`: the id points at another message.
 - **"Telegram could not transcribe this voice message"** — exit code `11`; try `--local`.
 
@@ -435,9 +435,9 @@ the keyring is open, or without `XDG_RUNTIME_DIR`. After moving Node or `tg`, ru
 ## Report a problem
 
 ```sh
-tg personal doctor report  # what a report holds, and what it never holds; writes nothing
-tg personal doctor report create  # write it to a file, and say where to send it
-tg personal doctor report create --run <id>  # about another run; ids from tg personal runs list
+tg personal doctor reports show  # what a report holds, and what it never holds; writes nothing
+tg personal doctor reports create  # write it to a file, and say where to send it
+tg personal doctor reports create --run <id>  # about another run; ids from tg personal runs list
 ```
 
 `create` writes `tg-report-<time>.json` to the current folder (or `--output`), readable only by you.

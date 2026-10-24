@@ -122,7 +122,7 @@ an `else`, the message gets no reply and the reason is recorded.
 
 Choose the model with `models.replies.provider` (`openai` or `anthropic`), `models.replies.model` and,
 for your own server, `models.replies.base_url`; `models.default` fills what is not set. Keep the key with
-`tg personal models text key set`.
+`tg personal models keys set`.
 
 Using a model needs its own consent, separate from the right to send:
 
