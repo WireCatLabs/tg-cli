@@ -1833,6 +1833,7 @@ tg messages send <chat> [text] [options]
 | Option | What it does |
 |---|---|
 | `--topic <id>` | send to this forum topic. |
+| `--draft` | save the text as a draft for the owner to review and send. |
 | `--reply-to <message>` | answer this message, by its id in the same chat. |
 | `--comment-to <post>` | comment on this post of the channel; it goes to the post's discussion group. |
 | `--send-as <id>` | post as one of the identities `chats send-as` lists; required where the chat posts as someone else by default. |
@@ -1851,7 +1852,7 @@ tg messages send <chat> [text] [options]
 | `--filename <name>` | the name others see for the --file, instead of its name on disk. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
 
-**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands info messages send
+**Returns:** message send — ; every field: tg commands info messages send
 
 **Example:** `tg personal messages send "Book club" "The meeting starts at 10."`
 

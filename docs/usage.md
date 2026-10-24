@@ -960,6 +960,20 @@ channel.
 
 Several photos in one message remain on the [roadmap](roadmap.md).
 
+### Save a reply for review
+
+Use a Telegram draft when you want to review the text in the app and press Send yourself:
+
+```sh
+tg personal messages send me "Review this text" --draft
+tg personal messages send CHAT "A **formatted** reply" --draft --md --reply-to MESSAGE_ID
+```
+
+This replaces the existing draft in that chat or forum topic and sends no message. `--topic`,
+`--reply-to`, `--md`, `--html` and `--no-preview` work with drafts. The separate `drafts` permission
+controls saving. Empty text, attachments, scheduling and other send-only options are refused;
+this command does not clear drafts. The receipt reports `saved: true`, rather than a sent message.
+
 ## Groups and channels
 
 Everything for a group you run — moderation rules, checks, the full list of settings — is in

@@ -102,3 +102,9 @@ An assistant that can edit configuration files or run unrestricted terminal comm
 to change these settings. Read [security](security.md) before giving that access.
 For nested permissions and exact command keys, see
 [what a profile may do](configuration-reference.md#what-a-profile-may-do).
+
+## Saving a draft
+
+`messages send --draft` uses the separate `drafts` permission. Saving changes the Telegram draft
+for that chat or topic, sends no message and journals no draft text. `deny` or `readonly` refuses
+the save; `ask` requests confirmation in the CLI and follows the MCP client’s approval flow.
