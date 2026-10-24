@@ -77,8 +77,8 @@ Notes on these rows:
   mcp-telegram limits its request rate, tdl has a delay between requests, tlgr limits the commands.
 - **Never twice.** tg repeats a send with the same operation id, so Telegram makes one message; a scheduled send is
   checked, not repeated. tlgr ends with a special exit code when the outcome is unknown.
-- **Loosen its own limits.** Over MCP, tg hides the commands that change what a later run may do (settings,
-  recipient lists, schedules) until you open them from a terminal.
+- **Loosen its own limits.** Over MCP, tg lists commands that change what a later run may do (settings,
+  recipient lists, schedules), marks them unavailable and names the permission to set from a terminal.
 
 ## Setup
 
