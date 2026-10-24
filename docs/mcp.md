@@ -182,12 +182,12 @@ terminal:
 
 - **Login and setup**: `session start|end`, `upgrade`, `complete`, `mcp config|setup|doctor`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
-- **Writes no permission limits yet**: `store backup|restore|migrate|repair|reset|clear|decrypt|copies delete`,
-  `server start|stop|restart`, `attachments jobs start|stop`, model downloads (`models audio|text download`,
-  `images models download`), `schedule run|exec`, `doctor report create`, `account sessions end`, `bot store fetch`
-  and the raw `bot api` methods.
 
-`tg commands --json` marks each of them `mcp: false`.
+Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
+`schedule run|exec`, `doctor report create`, `account sessions end`, `chats delete|clear` and
+`bot store fetch` have their own permission keys, set to `ask` by default. They are offered to the
+agent; the MCP app controls approval. `tg commands --json` marks commands excluded from MCP as
+`mcp: false`. Raw `bot api` operations need their own explicit [permission](permissions.md#raw-bot-api-calls).
 
 ### Commands that change what a later run may do
 

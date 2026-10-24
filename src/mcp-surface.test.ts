@@ -32,6 +32,14 @@ describe("tg's bot MCP surface", () => {
     expect(reads.tools.filter((tool) => tool.writes)).toEqual([])
   })
 
+  it("offers raw API calls only with an explicit bot.api allow", () => {
+    const api = (permissions: Record<string, "allow" | "deny" | "readonly" | "ask">) =>
+      botServer(permissions).offered.filter((command) => command.startsWith("api "))
+    expect(api({})).toEqual([])
+    expect(api({ bot: "allow" })).toEqual([])
+    expect(api({ "bot.api": "allow" })).toContain("api get-me")
+  })
+
   it("**is pinned**: a command or an argument agents gain or lose shows up in the contract", async () => {
     const catalogue = Object.fromEntries(botServer().tools.map((tool) => [tool.command, toJsonSchema(tool.input)]))
 

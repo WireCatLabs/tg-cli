@@ -84,6 +84,18 @@ For a bot's server add `--bot`: `tg support config set permissions.mcp.authority
 with it open, the agent can loosen its own permissions. An agent cannot set the key through `config set`, since
 that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
 
+## Raw bot API calls
+
+Raw `bot api <operation>` calls bypass the send guard and the bot's recipient list. MCP hides them
+unless `permissions.bot.api` is `allow`; its default is `deny`, and a broader `permissions.bot: allow`
+does not enable them. Set this separate permission from a terminal:
+
+```sh
+tg support config set --bot permissions.bot.api allow
+```
+
+Set it back to `deny` to hide those tools again. An agent cannot change this key through MCP.
+
 ## Limits and detailed rules
 
 An assistant that can edit configuration files or run unrestricted terminal commands may be able

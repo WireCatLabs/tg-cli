@@ -17,9 +17,7 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 
 ## Launch blockers (P1)
 
-- **TG-2** · P1 · Release main: npm 0.81.0 still accepts a mistyped `permissions` key with only a warning, so the
-  restriction does not hold, and still has `catch_up_marks_read`; main fixed both (cli-core 0.391.0). Starts at
-  `CHANGELOG.md` `## Unreleased`, `bin/release`. Ship TG-4 in it.
+None.
 
 ## Next (P2)
 
@@ -30,5 +28,3 @@ What tg does today: [`../commands.md`](../commands.md) (generated). What shipped
 - **TG-8** · P2 · Save a reply into the chat's draft: `messages send --draft` (decided 2026-10-04), mtcute
   `saveDraft`. Waits on cli-core: the shared `--draft` option, a port method and a guard key (`drafts`); then the
   adapter is one call. [Slice 2](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#2-drafts--both-shared-owned-by-telegram-actions-g4-b3).
-- **TG-10** · P2 · Verified media archive: mount cli-core's `attachments download|check|jobs` once cli-core#1758
-  is released. 🚧 `feat/media-archive` (PR #659, draft).
