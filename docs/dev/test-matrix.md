@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2350 ✅ · 105 ⛔ · 0 ❌** — 515 commands, 1940 options.
+**2346 ✅ · 105 ⛔ · 2 ❌** — 515 commands, 1938 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -157,9 +157,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts prepare` | `--limit` | ⛔ | cli-core src/services/person-preparation.test.ts covers the per-section limit and byte budget; shared option parsing |
 | `contacts prepare` | `--since-time` | ⛔ | cli-core src/cli/messenger/messenger.test.ts covers the shared date window; shared option parsing |
 | `contacts events` |  | ✅ |  |
-| `contacts events` | `--scope` | ✅ |  |
-| `contacts events` | `--since-time` | ✅ |  |
-| `contacts events` | `--until-time` | ✅ |  |
 | `contacts events` | `--limit` | ✅ |  |
 | `contacts events` | `--cursor` | ✅ |  |
 | `contacts check` |  | ✅ |  |
@@ -671,6 +668,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks add` | `--assignee` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("lists what someone owes the owner with assignee:, after tasks add --assignee sender") drives this through the shared handler tg mounts (0.320.0) |
 | `tasks update` |  | ✅ |  |
 | `tasks update` | `--category` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("keys, categorizes, tags and claims a task") drives this through the shared handler tg mounts (0.282.0) |
+| `tasks update` | `--priority` | ❌ |  |
+| `tasks update` | `--parent` | ❌ |  |
 | `tasks update` | `--title` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks update` | `--description` | ⛔ | cli-core src/cli/messenger/tasks.test.ts drives the sibling options of this command through the shared handler tg mounts, not this one; parsed by the same code (0.247.0) |
 | `tasks update` | `--due` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("plans, links and shows a task, and lists it on the agenda") drives this through the shared handler tg mounts (0.247.0) |
@@ -766,7 +765,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search conversations` | `--limit` | ✅ |  |
 | `search conversations` | `--catch-up` | ✅ |  |
 | `search runs` |  | ✅ |  |
-| `search runs` | `--since-time` | ✅ |  |
 | `search runs` | `--limit` | ✅ |  |
 | `search runs` | `--page` | ✅ |  |
 | `search topics` |  | ✅ |  |
