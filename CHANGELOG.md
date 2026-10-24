@@ -3,15 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## 0.88.0 — 24.10.2026
-
-### Added
-
-- `messages send --draft` saves text in the chat for you to review and send from Telegram. It supports formatting, replies and forum topics, uses the separate `drafts` permission, and never sends a message. Empty drafts and send-only options are refused.
-
-### Fixed
-
-- `watch --events` and `serve` receive reaction snapshots delivered as message edits, including reaction removal. Reaction counts stay current even when Telegram does not send a standalone reaction update.
+## Unreleased
 
 ### Changed — may break callers
 
@@ -22,6 +14,16 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 ### Security
 
 - **Dependency resolutions exclude vulnerable Zod and Vite versions.** Local and fresh production audits use the fixed versions.
+
+## 0.88.0 — 24.10.2026
+
+### Added
+
+- `messages send --draft` saves text in the chat for you to review and send from Telegram. It supports formatting, replies and forum topics, uses the separate `drafts` permission, and never sends a message. Empty drafts and send-only options are refused.
+
+### Fixed
+
+- `watch --events` and `serve` receive reaction snapshots delivered as message edits, including reaction removal. Reaction counts stay current even when Telegram does not send a standalone reaction update.
 
 ## 0.87.0 — 24.10.2026
 
