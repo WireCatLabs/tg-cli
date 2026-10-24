@@ -181,8 +181,8 @@ and deleting asks again, as it does by default.
 `inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
 count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
 `mcp` and the store's own upkeep are never limited. One key sits outside the command paths:
-`mcp.authority` (`deny` by default) decides whether an MCP server offers the commands that change what a later run may
-do ([permissions](permissions.md#let-an-agent-change-its-own-limits)).
+`mcp.authority` (`deny` by default) decides whether an MCP server may execute commands that change what a later run may
+do; those commands remain discoverable with current availability ([permissions](permissions.md#let-an-agent-change-its-own-limits)).
 
 **The defaults allow everything except a few changes that are hard to reverse.** These ask: `messages.delete`,
 `bot.messages.delete`, `chats.delete`, `chats.clear`, `topics.enable`, `topics.delete` and

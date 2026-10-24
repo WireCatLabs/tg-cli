@@ -311,8 +311,9 @@ tg personal watch --jsonl                          # new messages as {"type":"it
 ```
 
 An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg personal mcp`. The
-profile's `permissions` decide which commands it offers, through `tg_tools_search`, `tg_read` and
-`tg_write`; there is no confirmation form. `tg personal mcp config` prints the entry with full paths.
+profile's `permissions` decide which commands may run, through `tg_tools_search`, `tg_read` and
+`tg_write`. Discovery keeps denied commands and their arguments, marking current unavailability
+with a reason and permission key. There is no confirmation form. `tg personal mcp config` prints the entry with full paths.
 
 `tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `tg_bot_read` (`command: "me"`).
 Bot commands print data only on stdout with `--json`, in the same message shape as the account. Bot exit codes:
