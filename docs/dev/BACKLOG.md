@@ -21,10 +21,6 @@ None.
 
 ## Next (P2)
 
-- **TG-7** · P2 · Several photos in one album: `messages send --file` repeated, through raw
-  `messages.sendMultiMedia` with random ids from the send id. Refusal today: src/telegram/messages.ts:270.
-  [Slice 3](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#3-albums--tg-only),
-  issue #445. Each item counts toward `sends_per_hour` (cli-core). 🚧 `feat/tg-albums`.
 - **TG-8** · P2 · Save a reply into the chat's draft: `messages send --draft` (decided 2026-10-04), mtcute
   `saveDraft`. Waits on cli-core: the shared `--draft` option, a port method and a guard key (`drafts`); then the
   adapter is one call. [Slice 2](https://github.com/WireCatLabs/cli-core/blob/main/docs/dev/messenger-feature-gaps.md#2-drafts--both-shared-owned-by-telegram-actions-g4-b3).

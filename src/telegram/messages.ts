@@ -12,6 +12,7 @@ import {
   type Page,
 } from "@wirecat/cli-core"
 import type { After, Download, SendOptions, ServerQuery, Transcript } from "@wirecat/cli-core/cli"
+import { checkAlbum, sendAlbum } from "./albums.js"
 import { toCliError } from "./errors.js"
 import {
   type Feature,
@@ -267,7 +268,7 @@ export const send = (
   const thread = threadId === undefined ? undefined : topicNumber(threadId)
   const answering = replyTo === undefined ? undefined : messageNumber(replyTo, "a message id is a number")
   const author = sendAs === undefined ? undefined : sendAsPeer(chatId, sendAs, feature.self(), feature.checks)
-  if (attachments.length > 1) throw new CliError("validation_error", "tg sends one file or photo per message")
+  if (attachments.length > 1) checkAlbum(attachments, spoiler)
   const spans = formatting ?? markup
   const body = spans ? toFormatted(text, spans) : text
   const common = {
@@ -278,6 +279,19 @@ export const send = (
     ...(at === undefined ? {} : { schedule: new Date(at) }),
     ...(author === undefined ? {} : { sendAs: author }),
   }
+  if (attachments.length > 1)
+    return sendAlbum(feature, chatId, text, {
+      sendId,
+      replyTo,
+      threadId,
+      silent,
+      formatting: spans,
+      at,
+      attachments,
+      sendAs,
+      spoiler,
+      captionAbove,
+    })
   return feature.send(async () => {
     const [attachment] = attachments
     if (spoiler && attachment) checkSpoiler(attachment)

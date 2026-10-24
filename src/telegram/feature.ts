@@ -61,6 +61,7 @@ export interface Feature {
 
 export interface Sent {
   message: Message
+  messages?: Message[]
   /** Telegram's `random_id` for this send, as a string. Repeat it with `--operation-id` after an unknown outcome. */
   sendId: string
 }
