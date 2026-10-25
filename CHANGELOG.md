@@ -5,6 +5,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break callers
+
+- **A failed `bot` command's run names the Bot API call that failed.** `runs show` and `runs list` give its `error.http` the `method` and `endpoint_template` beside the status — `{ "method": "POST", "endpoint_template": "/:token/sendMessage", "status": 400 }` — where before they had only the status. The token is always written `:token`: Telegram puts it in the address, and the real one never reaches a run or a trace. Bot requests in `--trace` and in a recorded run carry the same two fields, and a pretty trace line shows them after the method's name (`← getMe  POST /:token/getMe  401 …`). A script that parses `--trace` text sees that extra column.
+
 ### Added
 
 - **`store reset --dry-run` lists what a reset would empty and deletes nothing** (cli-core 0.429.0): the store's files and bytes, every data table with its rows, whether a backup comes first, and whether a serve or another process has the file open.

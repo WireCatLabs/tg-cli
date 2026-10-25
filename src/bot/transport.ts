@@ -74,7 +74,9 @@ export class TelegramBotTransport {
       timeoutMs?: number
     } = {},
   ): Promise<unknown> {
-    this.#events?.({ event: "request", operation: method })
+    // The token is the first segment of the real path; `:token` is how cli-core writes it in a run.
+    const http = { method: "POST", endpointTemplate: `/:token/${method}` }
+    this.#events?.({ event: "request", operation: method, ...http })
     const started = performance.now()
     const signals = [AbortSignal.timeout(timeoutMs), ...(this.#signal ? [this.#signal] : [])]
     let response: Response
@@ -97,7 +99,7 @@ export class TelegramBotTransport {
       })
     } catch (error) {
       const failure = this.#unanswered(method, error, reads, timeoutMs)
-      this.#events?.({ event: "response", operation: method, outcome: "error", errorCode: failure.code })
+      this.#events?.({ event: "response", operation: method, ...http, outcome: "error", errorCode: failure.code })
       throw failure
     }
 
@@ -106,12 +108,13 @@ export class TelegramBotTransport {
       text = await response.text()
     } catch (error) {
       const failure = this.#unanswered(method, error, reads, timeoutMs)
-      this.#events?.({ event: "response", operation: method, outcome: "error", errorCode: failure.code })
+      this.#events?.({ event: "response", operation: method, ...http, outcome: "error", errorCode: failure.code })
       throw failure
     }
     const answered = {
       event: "response" as const,
       operation: method,
+      ...http,
       status: response.status,
       bytes: Buffer.byteLength(text),
       durationMs: Math.round(performance.now() - started),
