@@ -43,9 +43,7 @@ tg personal stats tasks show --json
 tg personal stats charts <chat> --json
 ```
 
-The older paths `messages stats`, `chats stats` and `tasks stats` no longer exist, and there are no
-aliases for them. If your permissions name these paths, rename them to the `stats` paths with
-`tg config set`. Permission for statistics does not
+Permission for statistics does not
 override a denied permission for the messages, chats or tasks underneath.
 
 ## Output and errors

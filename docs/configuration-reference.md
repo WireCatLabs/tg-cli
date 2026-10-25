@@ -151,13 +151,14 @@ The file is written `0600` when first created and `0644` by `config set`. It hol
 | `allow` | it goes ahead and never asks |
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
-`polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
+`messages.sync`, `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
 starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`,
 `bot`, `conversations`, `tags`, `search`, `searches`, `tasks`, `replies`, `attachments`, `stats`,
 `store` or `metadata` — and must name a known command or checked write. Unknown command keys are
 refused by `config set` with exit code 2, including keys inside a whole `permissions` object.
-`config unset` can remove an old unknown key. Reading an existing file with one warns on stderr and
-continues.
+A saved key under a known resource that names no command stops every other command with a configuration error
+that gives the `config unset` to remove it; `config show`, `set` and `unset` still run. A saved key that starts with
+no known resource makes the whole file invalid, `config` included, until it is removed from the file.
 
 **The most specific key you set wins**: with the example above, `messages.send` is allowed and every
 other change to messages is refused. There is no wildcard: `messages: readonly` does not touch
@@ -178,8 +179,8 @@ longest key**. A key a profile sets hides the same key and every key under it in
 It works both ways: a profile's `messages: allow` also hides `messages.delete: deny` from `defaults`,
 and deleting asks again, as it does by default.
 
-`inbox`, `review`, `watch`, `serve` and `messages sync`, `export` and `search` show messages, so they
-count as `messages`: `messages: deny` stops them too. `config`, `session`, `doctor`, `recipients`,
+`inbox`, `review`, `watch`, `serve`, `export` and `search` show messages, so they count as `messages`:
+`messages: deny` stops them too, as it stops `messages.sync`. `config`, `session`, `doctor`, `recipients`,
 `mcp` and the store's own upkeep are never limited. One key sits outside the command paths:
 `mcp.authority` (`deny` by default) decides whether an MCP server may execute commands that change what a later run may
 do; those commands remain discoverable with current availability ([permissions](permissions.md#let-an-agent-change-its-own-limits)).

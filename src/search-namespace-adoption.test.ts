@@ -80,12 +80,7 @@ describe("search <resource> adoption", () => {
     expect(mail.stderr).toContain("memo search mail")
   })
 
-  it("search mail points to memo, and search messages never returns mail", async () => {
-    const mail = await invoke(["search", "mail", "invoice"])
-    expect(mail.code).toBe(2)
-    expect(mail.stderr).toContain(
-      "mail is searched by the separate memo CLI: install @wirecat/cli-memo, then `memo search mail …`",
-    )
+  it("search messages never returns mail", async () => {
     const messagesPage = await invoke(["search", "messages", "invoice", "--page", "1", "--limit", "5"])
     expect(messagesPage.code).toBe(0)
     const messages = await invoke(["search", "messages", "invoice has:text", "--source", "all"])

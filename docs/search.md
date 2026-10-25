@@ -91,10 +91,9 @@ tg personal search all 'lease agreement' --offline  # the store only; nothing is
 ```
 
 `search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). tg never searches mail:
-`tg personal search mail` answers "mail is memo's: install @wirecat/cli-memo, then `memo search mail …`", and
-`search all --only mail` is refused the same way. In `search messages`, `NOT has:attachment`, `has:voice` and
-`has:file` in the query keep only text, voice or files; in `search notes`, `source:internal` and `source:file` keep
-the notes written in memo or imported from a folder.
+`search all --only mail` is refused with a pointer to `memo search mail`. In `search messages`,
+`NOT has:attachment`, `has:voice` and `has:file` in the query keep only text, voice or files; in
+`search notes`, `source:internal` and `source:file` keep the notes written in memo or imported from a folder.
 When a field does not apply — `chat:`/`from:` for notes — `search all` skips that resource and explains why.
 
 Mail and notes reach the store through memo: `memo sync --mail` and `memo import`. Without them,
