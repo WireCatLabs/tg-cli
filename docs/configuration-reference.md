@@ -315,7 +315,7 @@ uses its own proxy settings.
 | `TG_NO_UPDATE_CHECK` | `1` turns off the daily "a newer version exists" line |
 | `NO_COLOR` | no colour in the table view |
 | `XDG_RUNTIME_DIR` | on Linux, how the keyring is reached; cron and ssh often leave it out |
-| `TG_EMBEDDING_*`, `TG_ANALYSIS_*`, `TG_MODELS_*` | model settings ([below](#model-environment-variables)) |
+| `TG_EMBEDDING_*`, `TG_MODELS_*` | model settings ([below](#model-environment-variables)) |
 
 ## A separate set of settings for a while
 
