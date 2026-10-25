@@ -27,6 +27,9 @@ describe("offline store reset", () => {
       })
       return { code, stdout: streams.stdout, answer: JSON.parse(streams.stdout[0] ?? "null") }
     }
+    const preview = await call(["store", "reset", "--dry-run", "--json"])
+    expect(preview.code).toBe(0)
+    expect(preview.answer.item).toMatchObject({ path, reset: false, dry_run: true, backup_first: true })
     const refused = await call(["store", "reset", "--json"])
     expect(refused.code).not.toBe(0)
     const untouched = await openStore({ path })

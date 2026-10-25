@@ -7,7 +7,8 @@ import { bareCheck } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { parseProxy } from "../proxy.js"
 import { TelegramAdapter } from "./adapter.js"
-import { proxiedTransport, proxySecrets, resolveProxy } from "./proxy.js"
+import { proxySecrets, resolveProxy } from "./proxy.js"
+import { proxiedTransport } from "./proxy-transport.js"
 
 const MT_SECRET = `ee${"00".repeat(16)}${Buffer.from("example.com").toString("hex")}`
 const settings = (

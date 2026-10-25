@@ -14,14 +14,6 @@
       "!lint/baseline"
     ]
   },
-  "markdown": {
-    "formatter": {
-      "enabled": false
-    },
-    "linter": {
-      "enabled": false
-    }
-  },
   "overrides": [
     {
       "includes": ["src/**", "!src/telegram/**"],

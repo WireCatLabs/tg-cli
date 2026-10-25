@@ -4,7 +4,7 @@ import { environmentOf } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { CONFIG } from "../app.js"
 import { parseProxy, proxyLabel } from "../proxy.js"
-import { checkProxy, proxySecrets } from "../telegram/proxy.js"
+import { proxySecrets } from "../telegram/proxy.js"
 import type { Environment } from "./context.js"
 
 /**
@@ -49,6 +49,7 @@ export const withProxySecrets = (config: Command): Command => {
         "validation_error",
         "an MTProxy link needs its secret — run `tg config set proxy -` and paste the whole link",
       )
+    const { checkProxy } = await import("../telegram/proxy-transport.js")
     asValidation(() => checkProxy(proxy))
     const label = proxyLabel(proxy)
     action.processedArgs[1] = label

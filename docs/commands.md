@@ -3137,13 +3137,13 @@ tg store clear [options]
 
 ### `tg store info`
 
-the store file: where it is, its size, its schema and how many rows it holds, by provider, chat kind, account, year (UTC) and attachment kind, over every account; changes nothing
+the store file: where it is, its size, its schema against the one this tool speaks, which tools used it and how many rows it holds, by provider, chat kind, account, year (UTC) and attachment kind, over every account; changes nothing
 
 ```sh
 tg store info
 ```
 
-**Returns:** store info — path, exists, opens, error, bytes, schema, rows, pending_normalization, and 7 more; every field: tg commands info store info
+**Returns:** store info — path, exists, schema, opens, error, bytes, journal_mode, pages, and 12 more; every field: tg commands info store info
 
 **Example:** `tg personal store info`
 
@@ -3280,8 +3280,9 @@ tg store reset [options]
 | Option | What it does |
 |---|---|
 | `--no-backup` | delete the store without backing it up first. |
+| `--dry-run` | list every table it would empty, with its rows, and delete nothing. |
 
-**Returns:** store reset — path, exists, reset, backup, backed_up, schema; every field: tg commands info store reset
+**Returns:** store reset — path, exists, reset, dry_run, files, bytes, schema, tables, and 4 more; every field: tg commands info store reset
 
 **Example:** `tg personal store reset`
 
@@ -3306,6 +3307,26 @@ tg store copies delete <name>
 **Returns:** store copy removal — path, deleted; every field: tg commands info store copies delete
 
 **Example:** `tg personal store copies delete messages_copy_1`
+
+### `tg store tables`
+
+the tables of the local archive
+
+#### `tg store tables list`
+
+every table of the local archive: its kind (data, search index, part of a search index, internal) and its rows, a search index's rows not counted; --full adds each table's size on disk, which reads the whole file (about ten seconds for 3 GB); changes nothing
+
+```sh
+tg store tables list [query]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
+
+**Returns:** store table — name, kind, rows, bytes; every field: tg commands info store tables list
+
+**Example:** `tg personal store tables list`, `tg personal store tables list kind:data`, `tg personal store tables list --full --json`
 
 ## `tg conversations`
 
@@ -11257,15 +11278,19 @@ the instructions an agent is given for this tool
 
 ### `tg skill show`
 
-print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it
+print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it; --for prints the copy already there
 
 ```sh
-tg skill show [name]
+tg skill show [name] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `name` | optional | one of the skills shipped for a task: follow-ups, link-conversations. |
+
+| Option | What it does |
+|---|---|
+| `--for <agents>` | print the copy installed for these agents instead of this version's. One of: `claude`, `agents`. |
 
 **Returns:** print the tool's instructions for AI agents
 
@@ -11288,6 +11313,18 @@ tg skill install [options]
 **Returns:** install the tool's instructions for AI agents
 
 **Example:** `tg skill install --for agents`
+
+### `tg skill status`
+
+for each place `tg skill install` writes to: the path, the version installed there, and whether it is current, stale, missing or unversioned
+
+```sh
+tg skill status
+```
+
+**Returns:** whether the installed instructions for AI agents match this version
+
+**Example:** `tg skill status`, `tg skill status --json`
 
 ## `tg guide`
 

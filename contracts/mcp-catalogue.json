@@ -151,6 +151,7 @@
   "store repair": "write",
   "store reset": "write",
   "store copies delete": "write",
+  "store tables list": "read",
   "conversations list": "read",
   "conversations show": "read",
   "conversations related": "read",
@@ -274,5 +275,6 @@
   "upgrade": "write",
   "skill show": "read",
   "skill install": "write",
+  "skill status": "read",
   "guide": "read"
 }

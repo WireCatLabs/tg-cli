@@ -7,7 +7,18 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
-- **`store info` breaks the store down by provider, chat kind, account, year and attachment kind, and a run records `cli_command`, `argv` and, on failure, a masked `error`** (cli-core 0.426.0).
+- **`store reset --dry-run` lists what a reset would empty and deletes nothing** (cli-core 0.429.0): the store's files and bytes, every data table with its rows, whether a backup comes first, and whether a serve or another process has the file open.
+
+### Changed — may break callers
+
+- **tg needs Node 22.19+ or 24+ (was 22.16+).** The Bot API proxy support uses undici 8, which requires Node 22.19. Bun is unaffected.
+
+### Fixed
+
+- **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
+- **A bare `--version` answers before the program loads**: the bin starts through `@wirecat/cli-core/cli/start` (cli-core 0.429.0).
+
+## 0.92.0 — 25.10.2026
 
 ### Changed — may break callers
 
@@ -17,18 +28,24 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`doctor --json` reports the config file's problems as `config.issues` (cli-core 0.423.0).** `config.error` is gone. Each issue has a `kind` (`invalid_json`, `unknown_setting`, `unknown_permission`, `missing_setting` or `invalid_value`), the `file`, the `profile` and `key` where they apply, `line` and `column` for invalid JSON, a sentence that says what the value has to be (never the value), and `fix`, the `config unset` command that removes it. `doctor` lists every problem in the file, still exits 0, and still answers when the JSON is broken. A profile lock, a flag or an environment variable the settings refuse is reported in `settings.error`.
 - **`default_profile`, `analysis_provider`, `analysis_model` and `analysis_base_url` are unknown settings, and `TG_ANALYSIS_PROVIDER`, `TG_ANALYSIS_MODEL` and `TG_ANALYSIS_BASE_URL` are not read.** A file that has one is refused like any unknown setting, with the `config unset` that removes it. Analysis is set with `models.analysis.provider`, `models.analysis.model` and `models.analysis.base_url` (`TG_MODELS_ANALYSIS_*`); `--model` and `--base-url` of `conversations links rebuild` override those.
 - **A command refused for a problem in the config file names the first problem and the command that removes it**, and says how many more `doctor` lists. `config show`, `set` and `unset` run on such a file, and `config unset` removes a setting no schema knows. An unknown permission key in any section of the file is refused, not only in the sections the command reads.
-- **A run with no profile named is recorded without `profile` (cli-core 0.426.0).** `run.json`, `runs list`, `runs show` and `search runs` used to say `"profile": "default"`. MCP no longer offers a command group that only prints its help, and every `--dry-run` preview gains `effects.service_contacted: false` beside `messenger_contacted`.
-- **tg needs Node 22.19+ or 24+ (was 22.16+).** The Bot API proxy support uses undici 8, which requires Node 22.19. Bun is unaffected.
+- **`config set` saves `config.json` readable by you only (`0600`) (cli-core 0.428.0, cli-base 0.57.0).** It used to rewrite the file as `0644`. Anything that reads the config as another user — a system-wide service, a container under another uid — can no longer read it after the next save; run it as the owner, or give it its own config.
+- **A run record names how it was started and why it failed (cli-core 0.425.0).** `run.json`, `runs list`, `runs show` and `search runs` gain `cli_command` (the whole command, `tg messages list`), `argv` with every value that may be content written `[redacted]`, `agent` (the coding agent and its session, where it gives one) and, for a failed run, `error`. A run with no profile named leaves `profile` out instead of recording `default` (cli-core 0.424.0).
+- **The first screen says zm and drive are "searchable with your other WireCat data"** (cli-core 0.426.0), and `guide`'s example names a real scenario instead of `<name>`.
 
-### Fixed
+### Added
 
-- **A deny saved on a sync command now stops it.** `permissions.messages.sync: deny` can be saved and is honoured, and `permissions.bot.messages.sync: deny` is no longer ignored. A denied `bot.messages` also stops `bot messages list` and `bot messages sync` before they connect.
-- **A crash in the middle of a command is reported like any other failure.** It used to print Node's stack trace; now it prints the `internal_error` failure (`command.crashed`) — one line at a terminal, the JSON error object otherwise — and still exits 1. A stack trace tells a script nothing it can act on, and can carry text that should not reach the screen. A script that read the stack trace on stderr reads the error object instead.
-- **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
+- **`tg skill status` and `tg skill show --for claude|agents`** (cli-base 0.56.0, through cli-core 0.427.0). `skill status` says, for Claude Code and for `~/.agents`, whether the installed SKILL.md matches this version; `skill show --for` prints the copy installed there.
+- **`tg store tables list` lists every table of the local archive** with its kind and rows; `--full` adds each table's size (cli-core 0.427.0). `store info` also says which tools opened the store, its journal mode, pages, migrations and last backup, and counts by provider, chat kind, account, year and attachment kind.
 
 ### Security
 
-- **Development dependencies resolve fixed `body-parser`, `fast-uri` and `ip-address` versions.** The installed package had none of them; the audit is clean.
+- **`doctor` reports a `config.json` or config folder that other users can read, with the `chmod` that fixes it (cli-core 0.428.0).** `files.problems` lists the config file (wants `0600`) and its folder (wants `0700`), also when `TG_CONFIG_DIR` names the folder, and stderr prints `to make it private: chmod 600 '<path>'`. `files` is in the answer also with no profile named and when the settings are refused. Nothing is changed on disk; Windows is not checked.
+
+### Fixed
+
+- **Every command starts faster: Telegram's client library is loaded only when a command connects.** `tg --version`, `--help`, `config show` and `runs list` loaded about 1,900 module files, 650 of them mtcute's; now about 1,100.
+- **A deny saved on a sync command now stops it.** `permissions.messages.sync: deny` can be saved and is honoured, and `permissions.bot.messages.sync: deny` is no longer ignored. A denied `bot.messages` also stops `bot messages list` and `bot messages sync` before they connect.
+- **A crash in the middle of a command is reported like any other failure.** It used to print Node's stack trace; now it prints the `internal_error` failure (`command.crashed`) — one line at a terminal, the JSON error object otherwise — and still exits 1. A stack trace tells a script nothing it can act on, and can carry text that should not reach the screen. A script that read the stack trace on stderr reads the error object instead.
 
 ## 0.91.0 — 25.10.2026
 

@@ -119,9 +119,11 @@ the runs kept.
 - **`login`** is `not checked` without `--online`. A session file on disk does not mean Telegram
   still accepts it. With `--online` it is `ok` or `failed`, with a hint.
 - **`files`** and **`telegram.session.files`** name each private file or folder that other users of
-  this machine can read: the session, the store, their SQLite `-wal` and `-shm` files, the send
-  journal and the runs folder. Each has the `chmod` command that fixes it. `doctor` never changes a
-  file mode itself. Windows is not checked.
+  this machine can read: the config file (it wants `0600`) and its folder (`0700`), the session, the
+  store, their SQLite `-wal` and `-shm` files, the send journal and the runs folder. Each problem is
+  `{ path, mode, want }`, and stderr prints the `chmod` that fixes it: `to make it private: chmod 600
+  '<path>'`. With no profile named, or when the settings are refused, `files` checks the config file and
+  its folder only. `doctor` never changes a file mode itself. Windows is not checked.
 - **`online.clock`** (with `--online`) compares this computer's clock with Telegram's.
   `skew_ms` is positive when this computer is ahead. It warns (`ok: false`) at 10 seconds. Telegram
   refuses a request stamped more than 30 seconds ahead of its own clock.
