@@ -1,20 +1,9 @@
-import type { AppIdentity } from "@wirecat/cli-core/cli"
 import { type Configuration, settingsFor } from "@wirecat/cli-core/cli"
 import * as v from "valibot"
+import { TG } from "./identity.js"
 import { proxySetting } from "./proxy.js"
-import { REASONS } from "./reasons.js"
-import { VERSION } from "./version.js"
 
-export const TG: AppIdentity = {
-  command: "tg",
-  appName: "tg-cli",
-  envPrefix: "TG",
-  description: "A personal Telegram account from the command line, for agents and scripts",
-  version: VERSION,
-  issues: "https://github.com/WireCatLabs/tg-cli/issues/new",
-  locale: "en-GB",
-  errors: { reasons: REASONS, details: ["migrated_chat_id", "proxy"] },
-}
+export { TG } from "./identity.js"
 
 export const CONFIG: Configuration = settingsFor(TG, { profile: { proxy: v.optional(proxySetting) } })
 export const { resolveSettings, configuredProfiles, changeSetting } = CONFIG
