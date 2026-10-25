@@ -23,7 +23,7 @@ exit code says the same as the `code`. Every code is also in the
 |---|---|---|---|
 | `1` | `internal_error` | a fault in `tg` itself | [report it](#report-a-problem) |
 | `2` | `validation_error` | a typo in a command or option, a value or a combination of options `tg` does not accept; a name that fits several chats | [unknown command](#unknown-command-), [values](#--limit-takes-a-whole-number-from-1-upwards), [several chats](#-matches-3-chats--name-one-by-its-id) |
-| `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-valid-config), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
+| `3` | `configuration_error` | `config.json` is wrong, the proxy refused or cannot be reached, or the store is newer than this `tg` | [config](#-is-not-a-setting-of-tg), [proxy](#the-proxy--cannot-be-reached-or--refused), [store](#the-message-store-was-written-by-a-newer-version-) |
 | `4` | `authentication_error` | not logged in, the session was ended, or the keyring cannot be reached | [no session](#no-session-for-profile-personal--run-tg-personal-setup-in-a-local-terminal) |
 | `5` | `permission_error` | the profile's `permissions` refused it, or Telegram did | [not allowed](#profile--does-not-let--write-or-profile--denies-), [Telegram refused](#telegram-refused-), [PEER_FLOOD](#telegram-limited-this-accounts-messages-as-spam-peer_flood) |
 | `6` | `not_found` | no such chat, message or person; nothing in the store yet | [no chat](#no-chat-matches-), [nothing recorded](#nothing-recorded-for-profile--yet--run-the-command-once-without---offline) |
@@ -96,8 +96,7 @@ export TG_PROFILE=personal     # or for the whole shell session
 ```
 
 On a computer with no profile yet, the message says to run `tg personal setup`; any name works in
-place of `personal`. If the message says `default_profile is no longer read` (exit code `2`), the config file still
-has that setting from an older `tg`: name the profile, and `tg config unset default_profile` removes it.
+place of `personal`.
 
 ### "no session for profile "personal" — run `tg personal setup` in a local terminal"
 
@@ -177,11 +176,12 @@ Here `chat` was read as a profile, and `list` is not a command. The command is `
 
 ## Settings and option values
 
-### "… is not a valid config"
+### "… is not a setting of tg"
 
-Exit code `3`. `config.json` has a setting `tg` does not know, or a value of the wrong type. The error
-names the setting and the profile it is under. It is refused on purpose: a setting silently ignored
-costs half a day. Fix it by hand, or remove it with `tg personal config unset <setting>`
+Exit code `3`. `config.json` has a setting `tg` does not know, a value of the wrong type, or is not
+valid JSON. The error names the first problem and, unless the JSON is broken, the `config unset` that
+removes it; run that command as written. It is refused on purpose: a setting silently ignored costs
+half a day. `tg personal doctor` lists every problem in the file
 ([a typo is an error](configuration-reference.md#a-typo-is-an-error-not-a-default)).
 
 ### "--limit takes a whole number from 1 upwards"

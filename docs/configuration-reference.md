@@ -94,9 +94,7 @@ creates it with `limit`, `keep_runs_for_days`, `sends_per_hour`, `update_check` 
 - `bot.defaults`, `bot.profiles.<name>`: only `tg <name> bot …` commands.
 
 No setting picks a profile: the first word (`tg work …`) or `TG_PROFILE` names it. Without either, a
-command that uses an account stops with exit code `2` and lists the profiles on this computer. A file
-that still has `default_profile` from an older `tg` stops that command too;
-`tg config unset default_profile` removes it.
+command that uses an account stops with exit code `2` and lists the profiles on this computer.
 
 | Setting | Default | What it does | Overridden for one run by |
 |---|---|---|---|
@@ -121,9 +119,6 @@ that still has `default_profile` from an older `tg` stops that command too;
 | `embedding_model` | provider default | embedding model | `--model` |
 | `embedding_base_url` | provider default | embedding API endpoint | `--base-url` |
 | `embedding_dims` | model default | integer 1–65,536 | `--dims` |
-| `analysis_provider` | `agent` | `agent`, `openai` or `anthropic` | `build --analysis-provider` |
-| `analysis_model` | none; required for `--analyze` | analysis model | `build --model` |
-| `analysis_base_url` | provider default | analysis API endpoint | `build --base-url` |
 | `models` | none | external models by purpose ([below](#models-by-purpose)) | `TG_MODELS_*` variables |
 | `search_stemmers.cyrillic`, `search_stemmers.latin` | `russian`, `english,spanish` | the word-stem languages for search in the whole store ([below](#search-languages)) | none |
 | `phone_countries` | `ru` | country codes, comma-separated, that read a phone number written without `+` (`es,ru`); the first that fits wins ([search](query-language.md)) | none |
@@ -254,15 +249,17 @@ rebuild the search index ([index maintenance](archive.md#repair-and-index-mainte
 
 ## A typo is an error, not a default
 
-A setting the file does not know stops every command, with exit code `3`:
+A setting the file does not know stops every command but `config` and `doctor`, with exit code `3`.
+The message names the first problem and the command that removes it:
 
 ```text
-config.json is not a valid config:
-  profiles.default.limt: unknown setting — the known ones are limit, timeout_ms, …
+/home/alice/.config/tg-cli/config.json: setting limt is not a setting of tg — remove it with `tg work config unset limt`
 ```
 
 A misspelled setting that was silently ignored would run with the default and never say why. The
-same holds for a key in `permissions` that does not start with a resource.
+same holds for a key in `permissions` that names no command, in any section of the file.
+`tg personal doctor` lists every problem in the file, each with its `config unset`
+([diagnostics](diagnostics.md#check-the-installation-tg-personal-doctor)).
 
 ## Through a proxy
 
@@ -350,10 +347,9 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `speech_model` | downloaded model id as a string | profile |
 | `proxy` | supported proxy URL as a string | profile |
 | `embedding_provider` | `local`, `openai` | profile |
-| `embedding_model`, `analysis_model` | nonempty string, at most 200 characters | profile |
-| `embedding_base_url`, `analysis_base_url` | HTTP(S) URL without credentials, query or fragment | profile |
+| `embedding_model` | nonempty string, at most 200 characters | profile |
+| `embedding_base_url` | HTTP(S) URL without credentials, query or fragment | profile |
 | `embedding_dims` | integer 1–65,536 | profile |
-| `analysis_provider` | `agent`, `openai`, `anthropic` | profile |
 | `models` | purpose objects described below | profile |
 | `phone_countries` | country codes, comma-separated | shared store, through `config set` |
 | `task_categories.<name>`, `account_groups.<name>` | a string, as above | shared store, through `config set` |
@@ -378,9 +374,8 @@ An absent provider or `off` disables external model calls.
 | `models.<purpose>.base_url` | HTTP(S) URL without credentials, query or fragment | provider endpoint |
 
 For each field, precedence is `TG_MODELS_<PURPOSE>_PROVIDER`, `_MODEL` or `_BASE_URL`,
-then the nearest configured purpose field, explicit legacy `analysis*` fields for `analysis`,
-then environment and configuration fields under `models.default`. Hyphens in a purpose
-become underscores in its environment name. Credentials are not part of this object.
+then the nearest configured purpose field, then environment and configuration fields under
+`models.default`. Hyphens in a purpose become underscores in its environment name. Credentials are not part of this object.
 
 Embedding and analysis settings are independent and may differ by profile. Endpoints must be
 HTTP/S without embedded credentials, query or fragment. Remote embeddings also receive the query
@@ -389,11 +384,10 @@ text of MCP searches. Keys are set with `models keys set openai|anthropic` and s
 
 ### Model environment variables
 
-The legacy fields accept `TG_EMBEDDING_PROVIDER`, `TG_EMBEDDING_MODEL`,
-`TG_EMBEDDING_BASE_URL`, `TG_EMBEDDING_DIMS`, `TG_ANALYSIS_PROVIDER`,
-`TG_ANALYSIS_MODEL` and `TG_ANALYSIS_BASE_URL` before file values; command options win over them.
+`TG_EMBEDDING_PROVIDER`, `TG_EMBEDDING_MODEL`, `TG_EMBEDDING_BASE_URL` and `TG_EMBEDDING_DIMS`
+win over the embedding settings in the file; command options win over them.
 `TG_MODELS_DEFAULT_PROVIDER`, `TG_MODELS_DEFAULT_MODEL` and `TG_MODELS_DEFAULT_BASE_URL`
-supply common fields in the new format; replace `DEFAULT` with a purpose, such as `ANALYSIS`.
+supply common fields of `models`; replace `DEFAULT` with a purpose, such as `ANALYSIS`.
 An empty variable does not override a setting. Invalid values return `configuration_error`.
 
 ## Next
