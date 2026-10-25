@@ -11,7 +11,7 @@ import type { ApiCredentials } from "./credentials.js"
 import { toCliError } from "./errors.js"
 import type { Check } from "./feature.js"
 import { toHistoryChannel, toHistoryMessages } from "./map.js"
-import { proxiedTransport } from "./proxy.js"
+import { proxiedTransport } from "./proxy-transport.js"
 import { openSessionStorage } from "./storage.js"
 
 export type BotHistoryReader = Required<Pick<BotAdapter, "historyBefore" | "close">>

@@ -21,10 +21,11 @@ import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"
 import { isolated, sessionFile } from "../paths.js"
 import { proxyLabel } from "../proxy.js"
-import { ADMIN_RIGHTS, type Check, GROUP_SETTINGS, TelegramAdapter } from "../telegram/adapter.js"
+import type { Check, TelegramAdapter } from "../telegram/adapter.js"
 import type { BotHistoryOptions, BotHistoryReader } from "../telegram/bot-history.js"
 import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
+import { ADMIN_RIGHTS, GROUP_SETTINGS } from "../telegram/rights.js"
 import type { UpdateEnvironment } from "../update.js"
 
 export interface Environment extends BaseEnvironment {
@@ -95,7 +96,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
     const options = { credentials: resolved, sessionPath, ...connecting }
     return environment.adapter
       ? await environment.adapter(options)
-      : await TelegramAdapter.open({
+      : await (await import("../telegram/adapter.js")).TelegramAdapter.open({
           ...options,
           ...proxyOption(proxy()),
           diagnostic: (line) => base.streams.diagnostic(line),

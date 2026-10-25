@@ -15,8 +15,7 @@ import { BOT_ADMIN_RIGHTS } from "../bot/map.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { TelegramBotTransport } from "../bot/transport.js"
 import { botSessionFile, sessionFile } from "../paths.js"
-import { type Check, TelegramAdapter } from "../telegram/adapter.js"
-import { openBotHistory } from "../telegram/bot-history.js"
+import type { Check, TelegramAdapter } from "../telegram/adapter.js"
 import { apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
 import { type Adapter, type Environment, proxyOption, SKILL } from "./context.js"
@@ -78,7 +77,7 @@ export const TELEGRAM_BOT: BotMessenger = {
       )
     const botId = token.split(":", 1)[0] ?? ""
     if (!/^\d+$/.test(botId)) throw new CliError("authentication_error", "the bot token has no valid bot id")
-    const reader = await (environment.botHistory ?? openBotHistory)({
+    const reader = await (environment.botHistory ?? (await import("../telegram/bot-history.js")).openBotHistory)({
       credentials,
       sessionPath: botSessionFile(profile, botId, env),
       token,
@@ -98,7 +97,7 @@ export const TELEGRAM_BOT: BotMessenger = {
         try {
           personal = environment.adapter
             ? await environment.adapter({ credentials, sessionPath: personalPath })
-            : await TelegramAdapter.open({
+            : await (await import("../telegram/adapter.js")).TelegramAdapter.open({
                 credentials,
                 sessionPath: personalPath,
                 checks: words,
