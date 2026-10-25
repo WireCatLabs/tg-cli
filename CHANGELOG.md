@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.92.0 — 25.10.2026
 
 ### Changed — may break callers
 
@@ -28,7 +28,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
-- **Every command starts faster: Telegram's client library is loaded only when a command connects.** `tg --version`, `--help`, `config show` and `runs list` loaded about 1,900 module files, 650 of them mtcute's; now about 1,100. A `src/startup.test.ts` check keeps mtcute out of what the program imports at start.
+- **Every command starts faster: Telegram's client library is loaded only when a command connects.** `tg --version`, `--help`, `config show` and `runs list` loaded about 1,900 module files, 650 of them mtcute's; now about 1,100.
 - **A deny saved on a sync command now stops it.** `permissions.messages.sync: deny` can be saved and is honoured, and `permissions.bot.messages.sync: deny` is no longer ignored. A denied `bot.messages` also stops `bot messages list` and `bot messages sync` before they connect.
 - **A crash in the middle of a command is reported like any other failure.** It used to print Node's stack trace; now it prints the `internal_error` failure (`command.crashed`) — one line at a terminal, the JSON error object otherwise — and still exits 1. A stack trace tells a script nothing it can act on, and can carry text that should not reach the screen. A script that read the stack trace on stderr reads the error object instead.
 
