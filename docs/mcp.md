@@ -205,9 +205,10 @@ explicit [permission](permissions.md#raw-bot-api-calls).
 ### Commands that change what a later run may do
 
 `config set|unset`, `recipients add|remove|clear`, `chats rules set|unset`, the `replies` rules and consents,
-`schedule command|agent|remove`, `server install|uninstall`, `skill install`, `attachments jobs install|uninstall`,
-`models keys set|remove`, `flood clear`, `upgrade` (`upgrade --check` only looks and is not gated), and on the bot
-`recipients add|remove|clear` and `chats rules set|unset` remain discoverable with their arguments. They are available to run only when the profile sets
+`schedule command|agent|remove`, `server install|uninstall`, `skill install`,
+`attachments jobs install|start|stop|uninstall`, `models keys set|remove`, `flood clear`, `upgrade` (`upgrade --check`
+only looks and is not gated), and on the bot `recipients add|remove|clear` and `chats rules set|unset` remain
+discoverable with their arguments. They are available to run only when the profile sets
 `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default: discovery marks them unavailable,
 names the permission and explains why; a call is refused. An agent locked to read-only could otherwise unlock a later run.
 An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
