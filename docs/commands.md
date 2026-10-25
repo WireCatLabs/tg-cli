@@ -2409,7 +2409,7 @@ tg models keys remove <provider>
 
 ### `tg models list`
 
-speech and embedding models, their download status and the default of each kind
+speech, embedding and reranker models: downloaded or not, each kind's default
 
 ```sh
 tg models list [query]
@@ -2427,7 +2427,7 @@ tg models list [query]
 
 ### `tg models download`
 
-download and verify one speech or embedding model: tens to hundreds of MB, each size in models list
+download and verify one speech, embedding or reranker model: tens to hundreds of MB, each size in models list
 
 **Reads from an outside service.**
 
@@ -2447,7 +2447,7 @@ tg models download <model> [options]
 
 **Next usually:** `tg images models download <model>`
 
-**Example:** `tg personal models download e5-small`
+**Example:** `tg personal models download e5-small`, `tg personal models download mmarco`
 
 ## `tg inbox`
 
@@ -3175,7 +3175,7 @@ tg store migrate
 
 ### `tg store rebuild`
 
-rebuild the word index, its typo vocabulary, the stems, the files' word index, the notes' indexes and who took part in what, from what is stored; loses nothing
+rebuild the word index, its typo vocabulary, the stems, the files' word index, the notes' indexes and who took part in what, from what is stored, and drop the vectors no stored text uses; loses nothing
 
 **Changes something on this computer only.**
 
@@ -3183,7 +3183,7 @@ rebuild the word index, its typo vocabulary, the stems, the files' word index, t
 tg store rebuild
 ```
 
-**Returns:** store reindex — path, exists, normalized, indexed, terms, stemmed, notes_indexed, file_texts, and 1 more; every field: tg commands info store rebuild
+**Returns:** store reindex — path, exists, normalized, indexed, terms, stemmed, notes_indexed, file_texts, and 2 more; every field: tg commands info store rebuild
 
 **Example:** `tg personal store rebuild`
 
@@ -3545,7 +3545,7 @@ tg conversations embeddings status [options]
 
 #### `tg conversations embeddings clear`
 
-drop a chat's vectors, or only one model's; messages and conversations are never touched
+drop a chat's conversation and message vectors, or only one model's; messages and conversations are never touched
 
 **Changes something on this computer only.**
 
@@ -5844,7 +5844,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -5869,7 +5869,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|
@@ -5980,7 +5980,7 @@ tg upgrade [options]
 
 **Returns:** upgrade tg with the package manager that installed it; --check only looks
 
-**Example:** `tg upgrade --check`, `tg upgrade`
+**Example:** `tg upgrade --check`
 
 ## `tg mcp`
 
