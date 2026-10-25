@@ -190,21 +190,24 @@ Every command is a tool, writes included; the profile's permissions limit what t
 a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
 terminal:
 
-- **Login and setup**: `session start|end`, `complete`, `mcp config|add|check`,
+- **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
+- **Long-running commands**: `watch`, `serve` and `bot watch` run until you stop them, and an agent call must
+  return. The MCP server itself (`mcp`, `bot mcp`) is left out for the same reason.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
-`schedule run|exec`, `doctor reports create`, `account sessions end`, `chats delete|clear` and
+`schedule run|exec`, `doctor reports create`, `account sessions end` and
 `bot messages sync` have their own permission keys, set to `ask` by default. They are offered to the
-agent; the MCP app controls approval. `tg commands --json` marks commands excluded from MCP as
-`mcp: false`. Raw `bot api` operations need their own explicit [permission](permissions.md#raw-bot-api-calls).
+agent; the MCP app controls approval. In `tg commands --json`, a command left out of MCP is marked
+`mcp: false`, and a long-running one carries a `lifetime` instead. Raw `bot api` operations need their own
+explicit [permission](permissions.md#raw-bot-api-calls).
 
 ### Commands that change what a later run may do
 
 `config set|unset`, `recipients add|remove|clear`, `chats rules set|unset`, the `replies` rules and consents,
 `schedule command|agent|remove`, `server install|uninstall`, `skill install`, `attachments jobs install|uninstall`,
-`models keys set|remove`, `flood clear`, and on the bot `recipients add|remove|clear` and `chats rules set|unset`
-remain discoverable with their arguments. They are available to run only when the profile sets
+`models keys set|remove`, `flood clear`, `upgrade` (`upgrade --check` only looks and is not gated), and on the bot
+`recipients add|remove|clear` and `chats rules set|unset` remain discoverable with their arguments. They are available to run only when the profile sets
 `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default: discovery marks them unavailable,
 names the permission and explains why; a call is refused. An agent locked to read-only could otherwise unlock a later run.
 An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
