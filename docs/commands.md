@@ -3567,7 +3567,7 @@ tg conversations embeddings clear [options]
 
 ### `tg conversations rebuild`
 
-build, then embed with the model on this machine, the chats that changed since their build and the group chats never built — or only --chat; bounded per run, so run it again for the rest; never asks the messenger, downloads no model and sends no text anywhere
+build, then embed with the model on this machine, the chats that changed since their build and the group chats never built — or only --chat; with the default model, also each message on its own, which `search messages --discover` reads; bounded per run, so run it again for the rest; never asks the messenger, downloads no model and sends no text anywhere
 
 **Changes something on this computer only.**
 
@@ -3581,7 +3581,7 @@ tg conversations rebuild [options]
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
 | `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given. |
 
-**Returns:** conversation preparation — model, model_available, built, embedded, left; every field: tg commands info conversations rebuild
+**Returns:** conversation preparation — model, model_available, built, embedded, left, messages; every field: tg commands info conversations rebuild
 
 **Example:** `tg personal conversations rebuild --max-chats 5`
 
@@ -3647,7 +3647,7 @@ tg conversations embed [options]
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
 | `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given, and no limit with --chat. |
 
-**Returns:** conversation embedding — chat, model, embedded, skipped, model_available, built, left; every field: tg commands info conversations embed
+**Returns:** conversation embedding — chat, model, embedded, skipped, model_available, built, left, messages; every field: tg commands info conversations embed
 
 **Example:** `tg personal conversations embed --chat "Book club"`
 
@@ -5138,7 +5138,7 @@ tg search messages [query] [options]
 | `--newest` | newest first instead of best first. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does; text: still matches every form. |
 | `--context <n>` | messages before and after each hit; 2 in the terminal, 0 otherwise. |
-| `--discover` | find partial lexical matches and eligible replies in the local archive; results are evidence, not confirmed answers. |
+| `--discover` | find partial word matches, eligible replies and, once messages have vectors, messages close in meaning in the local archive; results are evidence, not confirmed answers. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
