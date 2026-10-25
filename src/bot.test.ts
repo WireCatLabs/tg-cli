@@ -1,6 +1,6 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { botCopy, ChatRegistry } from "@wirecat/cli-core/cli"
+import { botCopy, ChatRegistry, listRuns, runsDirFor } from "@wirecat/cli-core/cli"
 import { beforeEach, describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"
@@ -98,6 +98,21 @@ describe("the token never leaves the client", () => {
     expect(failed.err).toContain("network_error")
     expect(failed.err).not.toContain(SECRET)
     expect(failed.out).not.toContain(SECRET)
+  })
+
+  it("**a failed run names the method and the path with `:token` for the token**", async () => {
+    await tg(["httprun", "bot", "auth", "set"], telegram({ getMe: ME }), TOKEN)
+    const refused = { status: 401, body: { ok: false, error_code: 401, description: "Unauthorized" } }
+    const failed = await tg(
+      ["httprun", "bot", "auth", "show", "--json", "--trace", "--record"],
+      telegram({ getMe: refused }),
+    )
+    const kept = listRuns(runsDirFor(TG)).find((one) => one.profile === "httprun")
+
+    expect(failed.code).toBe(4)
+    expect(kept?.error?.http).toEqual({ method: "POST", endpoint_template: "/:token/getMe", status: 401 })
+    expect(failed.err).toContain('"endpoint_template":"/:token/getMe"')
+    for (const text of [failed.err, JSON.stringify(kept)]) expect(text).not.toContain(SECRET)
   })
 })
 
