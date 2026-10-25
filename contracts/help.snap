@@ -22,6 +22,7 @@ Works with:
   memo context <person>   one person across messengers, mail, notes and meetings
 
 Start here:   tg personal setup  (any profile name works)
+              tg account list    your profiles and their logged-in accounts
 Next:         tg commands        every command, by section
               tg guide           scenarios: command sequences for common tasks
               tg help options    output, offline, timeouts, dry run
