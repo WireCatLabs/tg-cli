@@ -128,7 +128,8 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `task_first_pass_per_chat` | `0` | how many tasks the first sync may open per chat | none |
 | `account_groups.<name>` | none | a named list of accounts for `--source group:<name>`, for example `tg:work,max:Alice,email:me@x` | none |
 
-The file is written `0600` when first created and `0644` by `config set`. It holds no secret.
+The file is written `0600`, readable by you only, in a `0700` folder, and `config set` keeps it so. It holds no
+secret. `tg doctor` names the file or its folder when other users can read it ([diagnostics](diagnostics.md#check-the-installation-tg-personal-doctor)).
 
 ## What a profile may do
 

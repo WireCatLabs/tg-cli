@@ -2427,7 +2427,7 @@ tg models list [query]
 
 ### `tg models download`
 
-download and verify one speech or embedding model
+download and verify one speech or embedding model: tens to hundreds of MB, each size in models list
 
 **Reads from an outside service.**
 
@@ -2447,7 +2447,7 @@ tg models download <model> [options]
 
 **Next usually:** `tg images models download <model>`
 
-**Example:** `tg personal models download parakeet-v3`, `tg personal models download e5-small`
+**Example:** `tg personal models download e5-small`
 
 ## `tg inbox`
 
@@ -3137,13 +3137,13 @@ tg store clear [options]
 
 ### `tg store info`
 
-the store file: where it is, its size, its schema and how many rows it holds; changes nothing
+the store file: where it is, its size, its schema against the one this tool speaks, which tools used it and how many rows it holds, by provider, chat kind, account, year (UTC) and attachment kind, over every account; changes nothing
 
 ```sh
 tg store info
 ```
 
-**Returns:** store info — path, exists, opens, error, bytes, schema, rows, pending_normalization, and 2 more; every field: tg commands info store info
+**Returns:** store info — path, exists, schema, opens, error, bytes, journal_mode, pages, and 12 more; every field: tg commands info store info
 
 **Example:** `tg personal store info`
 
@@ -3306,6 +3306,26 @@ tg store copies delete <name>
 **Returns:** store copy removal — path, deleted; every field: tg commands info store copies delete
 
 **Example:** `tg personal store copies delete messages_copy_1`
+
+### `tg store tables`
+
+the tables of the local archive
+
+#### `tg store tables list`
+
+every table of the local archive: its kind (data, search index, part of a search index, internal) and its rows, a search index's rows not counted; --full adds each table's size on disk, which reads the whole file (about ten seconds for 3 GB); changes nothing
+
+```sh
+tg store tables list [query]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
+
+**Returns:** store table — name, kind, rows, bytes; every field: tg commands info store tables list
+
+**Example:** `tg personal store tables list`, `tg personal store tables list kind:data`, `tg personal store tables list --full --json`
 
 ## `tg conversations`
 
@@ -5206,7 +5226,7 @@ tg search runs [query] [options]
 | `--limit <n>` | matches per page, at most 100. Default: `20`. |
 | `--page <n>` | result page. Default: `1`. |
 
-**Returns:** run hit — run_id, command, profile, started_at, status, cli_version, events, events_truncated, and 13 more; every field: tg commands info search runs
+**Returns:** run hit — run_id, command, started_at, status, cli_version, events, events_truncated, profile, and 18 more; every field: tg commands info search runs
 
 **Example:** `tg personal search runs timeout status:failed --limit 10`
 
@@ -5751,7 +5771,7 @@ tg runs list [query] [options]
 | `--limit <n>` | how many to show. Default: `20`. |
 | `--page <n>` | which page, starting at 1. Default: `1`. |
 
-**Returns:** run — run_id, command, profile, started_at, status, cli_version, completed_at, requests, and 15 more; every field: tg commands info runs list
+**Returns:** run — run_id, command, started_at, status, cli_version, profile, completed_at, requests, and 20 more; every field: tg commands info runs list
 
 **Example:** `tg personal runs list --limit 10`
 
@@ -5771,7 +5791,7 @@ tg runs show <run-id> [options]
 |---|---|
 | `--problems` | only failed responses, warnings and crashes. |
 
-**Returns:** run details — run_id, command, profile, started_at, status, cli_version, directory, event_count, and 14 more; every field: tg commands info runs show
+**Returns:** run details — run_id, command, started_at, status, cli_version, directory, event_count, events, and 19 more; every field: tg commands info runs show
 
 **Example:** `tg personal runs show run-101`
 
@@ -11257,15 +11277,19 @@ the instructions an agent is given for this tool
 
 ### `tg skill show`
 
-print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it
+print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it; --for prints the copy already there
 
 ```sh
-tg skill show [name]
+tg skill show [name] [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `name` | optional | one of the skills shipped for a task: follow-ups, link-conversations. |
+
+| Option | What it does |
+|---|---|
+| `--for <agents>` | print the copy installed for these agents instead of this version's. One of: `claude`, `agents`. |
 
 **Returns:** print the tool's instructions for AI agents
 
@@ -11289,6 +11313,18 @@ tg skill install [options]
 
 **Example:** `tg skill install --for agents`
 
+### `tg skill status`
+
+for each place `tg skill install` writes to: the path, the version installed there, and whether it is current, stale, missing or unversioned
+
+```sh
+tg skill status
+```
+
+**Returns:** whether the installed instructions for AI agents match this version
+
+**Example:** `tg skill status`, `tg skill status --json`
+
 ## `tg guide`
 
 scenarios: the commands for a common task, in order, and why each
@@ -11303,7 +11339,7 @@ tg guide [name]
 
 **Returns:** scenarios: the commands for a common task, in order, and why each
 
-**Example:** `tg guide`, `tg guide <name> --json`
+**Example:** `tg guide`, `tg guide agent-without-send --json`
 
 ## Exit codes
 
