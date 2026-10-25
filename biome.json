@@ -6,12 +6,21 @@
       "**",
       "!**/dist",
       "!**/node_modules",
-      "!pnpm-lock.yaml",
+      "!**/pnpm-lock.yaml",
+      "!**/pnpm-workspace.yaml",
       "!.claude/settings.json",
       "!.worktrees",
       "!config/wirecat",
       "!lint/baseline"
     ]
+  },
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
   },
   "overrides": [
     {
