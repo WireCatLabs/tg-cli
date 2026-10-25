@@ -112,6 +112,10 @@ credentials exist (never their values), whether `TG_*_DIR` moved the keyring ent
 (its path, its version, and how many chats and messages it holds), the sends of the last hour, and
 the runs kept.
 
+- **`config.issues`** lists every problem in the config file: invalid JSON (with the line and
+  column where reading stopped), a setting or a permission key `tg` does not know, a value of the wrong
+  type. Each problem says what the value has to be, never the value itself. All but invalid JSON
+  come with the `config unset` command that removes them (`fix`). `doctor` still answers, with exit code `0`.
 - **`login`** is `not checked` without `--online`. A session file on disk does not mean Telegram
   still accepts it. With `--online` it is `ok` or `failed`, with a hint.
 - **`files`** and **`telegram.session.files`** name each private file or folder that other users of
