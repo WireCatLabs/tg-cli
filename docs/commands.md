@@ -3280,8 +3280,9 @@ tg store reset [options]
 | Option | What it does |
 |---|---|
 | `--no-backup` | delete the store without backing it up first. |
+| `--dry-run` | list every table it would empty, with its rows, and delete nothing. |
 
-**Returns:** store reset — path, exists, reset, backup, backed_up, schema; every field: tg commands info store reset
+**Returns:** store reset — path, exists, reset, dry_run, files, bytes, schema, tables, and 4 more; every field: tg commands info store reset
 
 **Example:** `tg personal store reset`
 
