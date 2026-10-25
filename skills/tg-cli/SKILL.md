@@ -208,7 +208,7 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 15. **`--photo <path>` or `--file <path>` attaches a file, the text as its caption.**
     Repeat for an album of up to ten items: photos/videos together, or documents only. The caption goes
     on the first item; every item counts toward the hourly limit. JSON returns all `messages`. A photo is
-    recompressed by Telegram; a file goes byte for byte. Hidden files and folders, `~/.ssh`, tg's own
+    recompressed by Telegram; a file goes byte for byte. Hidden files and folders, SSH keys, tg's own
     folders and the message store are refused — only the owner adds `--allow-any-file`. A retry with
     the same `--operation-id` is safe here too (measured 2026-09-29).
 **Forum sends:** `messages send --topic`, `messages forward --topic` and `polls create --topic` use a topic id
