@@ -75,24 +75,30 @@ describe("an upload through a proxy", () => {
         response.end("{}")
       })
     })
-    // undici sends a plain http:// request to the proxy in absolute form instead of opening a tunnel.
+    await new Promise<void>((resolve) => target.listen(0, "127.0.0.1", resolve))
+    servers.push(target)
+    const targetPort = (target.address() as { port: number }).port
+    const asked: (string | undefined)[] = []
+    // undici sends a plain http:// request to the proxy in absolute form instead of opening a tunnel. The proxy
+    // forwards to the fixed test server, never to the address it is given, so code scanning has no forgery to flag.
     const proxy = createServer((incoming, outgoing) => {
-      const forwarded = request(incoming.url ?? "", { method: incoming.method, headers: incoming.headers }, (answer) =>
-        answer.pipe(outgoing),
+      asked.push(incoming.url)
+      const forwarded = request(
+        { host: "127.0.0.1", port: targetPort, path: "/", method: incoming.method, headers: incoming.headers },
+        (answer) => answer.pipe(outgoing),
       )
       incoming.pipe(forwarded)
     })
-    for (const server of [target, proxy]) {
-      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve))
-      servers.push(server)
-    }
+    await new Promise<void>((resolve) => proxy.listen(0, "127.0.0.1", resolve))
+    servers.push(proxy)
     const fetch = proxiedFetch(parseProxy(`http://127.0.0.1:${(proxy.address() as { port: number }).port}`, "x"))
     const form = new FormData()
     form.append("chat_id", "42")
     form.append("document", new Blob(["file bytes"]), "a.txt")
 
-    await fetch?.(`http://127.0.0.1:${(target.address() as { port: number }).port}/`, { method: "POST", body: form })
+    await fetch?.(`http://127.0.0.1:${targetPort}/`, { method: "POST", body: form })
 
+    expect(asked).toEqual([`http://127.0.0.1:${targetPort}/`])
     expect(received[0]?.type).toMatch(/^multipart\/form-data; boundary=/)
     expect(received[0]?.body).toContain("file bytes")
     expect(received[0]?.body).toContain('filename="a.txt"')
