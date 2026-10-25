@@ -1,4 +1,4 @@
-import { createServer } from "node:http"
+import { createServer, request } from "node:http"
 import { ProxyAgent, Socks5ProxyAgent } from "undici"
 import { afterEach, describe, expect, it } from "vitest"
 import { parseProxy } from "../proxy.js"
@@ -61,5 +61,40 @@ describe("the Bot API through an HTTP proxy", () => {
     await expect(transport.call("sendMessage", { chat_id: 1, text: "x" }, { reads: false })).rejects.toMatchObject({
       code: "configuration_error",
     })
+  })
+})
+
+describe("an upload through a proxy", () => {
+  it("arrives as multipart with the file's bytes, not as the text of a FormData", async () => {
+    const received: { type?: string; body: string }[] = []
+    const target = createServer((request, response) => {
+      let body = ""
+      request.on("data", (chunk) => (body += chunk))
+      request.on("end", () => {
+        received.push({ ...(request.headers["content-type"] ? { type: request.headers["content-type"] } : {}), body })
+        response.end("{}")
+      })
+    })
+    // undici sends a plain http:// request to the proxy in absolute form instead of opening a tunnel.
+    const proxy = createServer((incoming, outgoing) => {
+      const forwarded = request(incoming.url ?? "", { method: incoming.method, headers: incoming.headers }, (answer) =>
+        answer.pipe(outgoing),
+      )
+      incoming.pipe(forwarded)
+    })
+    for (const server of [target, proxy]) {
+      await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve))
+      servers.push(server)
+    }
+    const fetch = proxiedFetch(parseProxy(`http://127.0.0.1:${(proxy.address() as { port: number }).port}`, "x"))
+    const form = new FormData()
+    form.append("chat_id", "42")
+    form.append("document", new Blob(["file bytes"]), "a.txt")
+
+    await fetch?.(`http://127.0.0.1:${(target.address() as { port: number }).port}/`, { method: "POST", body: form })
+
+    expect(received[0]?.type).toMatch(/^multipart\/form-data; boundary=/)
+    expect(received[0]?.body).toContain("file bytes")
+    expect(received[0]?.body).toContain('filename="a.txt"')
   })
 })

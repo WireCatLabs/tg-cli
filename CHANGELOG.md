@@ -19,6 +19,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - **A deny saved on a sync command now stops it.** `permissions.messages.sync: deny` can be saved and is honoured, and `permissions.bot.messages.sync: deny` is no longer ignored. A denied `bot.messages` also stops `bot messages list` and `bot messages sync` before they connect.
 - **A crash in the middle of a command is reported like any other failure.** It used to print Node's stack trace; now it prints the `internal_error` failure (`command.crashed`) — one line at a terminal, the JSON error object otherwise — and still exits 1. A stack trace tells a script nothing it can act on, and can carry text that should not reach the screen. A script that read the stack trace on stderr reads the error object instead.
+- **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
 
 ### Security
 
