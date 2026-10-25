@@ -22,7 +22,7 @@ skill and, on Windows, repair the user PATH. It never logs in or reads chats.
 
 ## What it needs
 
-- **Node 22.16+ (22.x) or 24+** with npm. The command also supports **Bun**; CI runs the built
+- **Node 22.19+ (22.x) or 24+** with npm. The command also supports **Bun**; CI runs the built
   command under both.
 - Linux, macOS or Windows.
 - **Your own Telegram app** from [my.telegram.org](https://my.telegram.org/apps). `tg` asks for it at
@@ -99,7 +99,7 @@ Setup then suggests the next commands in the same form.
 
 ### Windows: one install command
 
-Run this in PowerShell with Node.js 22.16+ or 24+ installed:
+Run this in PowerShell with Node.js 22.19+ or 24+ installed:
 
 ```powershell
 & ([scriptblock]::Create((Invoke-RestMethod 'https://wirecat.dev/install.ps1'))) -Tool tg -Agent all

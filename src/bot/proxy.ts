@@ -35,13 +35,30 @@ export const proxiedFetch = (proxy: ProxyServer): FetchLike | undefined => {
   let dispatcher: Promise<Dispatcher | undefined> | undefined
   return async (url, init) => {
     dispatcher ??= botDispatcher(proxy)
-    const [{ fetch }, agent] = await Promise.all([import("undici"), dispatcher])
+    const [undici, agent] = await Promise.all([import("undici"), dispatcher])
+    // undici's fetch does not recognise the runtime's FormData and would send "[object FormData]" as text.
+    const body = init.body instanceof FormData ? copyForm(init.body, new undici.FormData()) : init.body
     try {
-      return (await fetch(url, { ...(init as object), ...(agent ? { dispatcher: agent } : {}) })) as unknown as Response
+      return (await undici.fetch(url, {
+        ...(init as object),
+        body,
+        ...(agent ? { dispatcher: agent } : {}),
+      })) as unknown as Response
     } catch (error) {
       throw proxyRefusal(proxy, error) ?? error
     }
   }
+}
+
+const copyForm = <T extends { append(name: string, value: string | Blob, file?: string): void }>(
+  form: FormData,
+  into: T,
+): T => {
+  for (const [name, value] of form) {
+    if (typeof value === "string") into.append(name, value)
+    else into.append(name, value, value.name)
+  }
+  return into
 }
 
 /**

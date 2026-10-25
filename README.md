@@ -56,7 +56,7 @@ Allow about five minutes. `tg personal setup` registers your own Telegram app at
 [my.telegram.org](https://my.telegram.org/apps), logs in by QR code, checks your first chats and installs
 the agent skill. Downloading older history is a separate step.
 
-It needs **Node 22.16+ or 24+**, or **Bun**, on macOS, Linux or Windows. Try it without installing:
+It needs **Node 22.19+ or 24+**, or **Bun**, on macOS, Linux or Windows. Try it without installing:
 `npx @wirecat/tg-cli --help`.
 
 More: [installation guide](https://github.com/WireCatLabs/tg-cli/blob/main/docs/installation.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/installation)

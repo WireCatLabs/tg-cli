@@ -52,7 +52,7 @@ tg support bot auth set                          # the token, typed without show
 tg support bot api get-me --json
 ```
 
-`tg` needs Node 22.16+ or 24+, or Bun ([what to install first](installation.md#what-it-needs)). The
+`tg` needs Node 22.19+ or 24+, or Bun ([what to install first](installation.md#what-it-needs)). The
 first login asks for your own Telegram app; `tg` can register it for you
 ([your Telegram app](sessions.md#the-app-from-mytelegramorg)).
 
