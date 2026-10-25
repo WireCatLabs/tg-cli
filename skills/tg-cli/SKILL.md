@@ -33,7 +33,7 @@ before action; it opens no messenger connection, reserves no write and leaves ta
 See the [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-contract.md).
 
 MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, arguments}`.
-Use the CLI path such as `stats messages show`; former per-command tool names are gone.
+Use the CLI path such as `stats messages show`.
 Bots use `tg_bot_tools_search/read/write` with commands without `bot`; arguments are the command's options in
 snake_case. There are no forms;
 profile permissions decide access and `ask` permits the requested MCP write. CLI confirmation remains.

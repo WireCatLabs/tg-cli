@@ -163,8 +163,7 @@ Both run tools take `{command, arguments}`. Use the command path that search ret
 ```
 
 `status` reads the profile's state through `tg_read`. Search shows only what the profile's
-permissions and Telegram allow. The earlier one-tool-per-command names, such as `tg_messages_list`
-and `tg_status`, no longer exist. Bot servers use `tg_bot_tools_search`, `tg_bot_read` and
+permissions and Telegram allow. Bot servers use `tg_bot_tools_search`, `tg_bot_read` and
 `tg_bot_write`; their command paths leave out `bot`.
 
 Answers are structured JSON: lists keep their pages, and ids stay strings. A failure is
@@ -196,8 +195,7 @@ terminal:
   return. The MCP server itself (`mcp`, `bot mcp`) is left out for the same reason.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
-`schedule run|exec`, `doctor reports create`, `account sessions end` and
-`bot messages sync` have their own permission keys, set to `ask` by default. They are offered to the
+`schedule run|exec`, `doctor reports create` and `account sessions end` have their own permission keys, set to `ask` by default. They are offered to the
 agent; the MCP app controls approval. In `tg commands --json`, a command left out of MCP is marked
 `mcp: false`, and a long-running one carries a `lifetime` instead. Raw `bot api` operations need their own
 explicit [permission](permissions.md#raw-bot-api-calls).

@@ -3,6 +3,18 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **Permissions are checked under each command's full key (cli-core 0.421.0).** `messages sync` is checked as `messages.sync` and `bot messages sync` as `bot.messages.sync`; a level on `messages` or `bot.messages` still applies to them. A saved key is read only as written, so `chats.mute` no longer covers `chats unmute`.
+- **A saved permission key that names no command is refused, for bot commands too.** For a key under a known resource, every command except `config show`, `set` and `unset` stops with a `configuration_error` that names the key and the `config unset` that removes it.
+- **`tg <profile> search mail` is an unknown command.** Mail is searched with `memo search mail`.
+
+### Fixed
+
+- **A deny saved on a sync command now stops it.** `permissions.messages.sync: deny` can be saved and is honoured, and `permissions.bot.messages.sync: deny` is no longer ignored. A denied `bot.messages` also stops `bot messages list` and `bot messages sync` before they connect.
+
 ## 0.91.0 — 25.10.2026
 
 ### Changed — may break callers
