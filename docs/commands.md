@@ -2427,7 +2427,7 @@ tg models list [query]
 
 ### `tg models download`
 
-download and verify one speech or embedding model
+download and verify one speech or embedding model: tens to hundreds of MB, each size in models list
 
 **Reads from an outside service.**
 
@@ -2447,7 +2447,7 @@ tg models download <model> [options]
 
 **Next usually:** `tg images models download <model>`
 
-**Example:** `tg personal models download parakeet-v3`, `tg personal models download e5-small`
+**Example:** `tg personal models download e5-small`
 
 ## `tg inbox`
 
@@ -3137,13 +3137,13 @@ tg store clear [options]
 
 ### `tg store info`
 
-the store file: where it is, its size, its schema and how many rows it holds; changes nothing
+the store file: where it is, its size, its schema and how many rows it holds, by provider, chat kind, account, year (UTC) and attachment kind, over every account; changes nothing
 
 ```sh
 tg store info
 ```
 
-**Returns:** store info — path, exists, opens, error, bytes, schema, rows, pending_normalization, and 2 more; every field: tg commands info store info
+**Returns:** store info — path, exists, opens, error, bytes, schema, rows, pending_normalization, and 7 more; every field: tg commands info store info
 
 **Example:** `tg personal store info`
 
@@ -5206,7 +5206,7 @@ tg search runs [query] [options]
 | `--limit <n>` | matches per page, at most 100. Default: `20`. |
 | `--page <n>` | result page. Default: `1`. |
 
-**Returns:** run hit — run_id, command, profile, started_at, status, cli_version, events, events_truncated, and 13 more; every field: tg commands info search runs
+**Returns:** run hit — run_id, command, started_at, status, cli_version, events, events_truncated, profile, and 18 more; every field: tg commands info search runs
 
 **Example:** `tg personal search runs timeout status:failed --limit 10`
 
@@ -5751,7 +5751,7 @@ tg runs list [query] [options]
 | `--limit <n>` | how many to show. Default: `20`. |
 | `--page <n>` | which page, starting at 1. Default: `1`. |
 
-**Returns:** run — run_id, command, profile, started_at, status, cli_version, completed_at, requests, and 15 more; every field: tg commands info runs list
+**Returns:** run — run_id, command, started_at, status, cli_version, profile, completed_at, requests, and 20 more; every field: tg commands info runs list
 
 **Example:** `tg personal runs list --limit 10`
 
@@ -5771,7 +5771,7 @@ tg runs show <run-id> [options]
 |---|---|
 | `--problems` | only failed responses, warnings and crashes. |
 
-**Returns:** run details — run_id, command, profile, started_at, status, cli_version, directory, event_count, and 14 more; every field: tg commands info runs show
+**Returns:** run details — run_id, command, started_at, status, cli_version, directory, event_count, events, and 19 more; every field: tg commands info runs show
 
 **Example:** `tg personal runs show run-101`
 
@@ -11303,7 +11303,7 @@ tg guide [name]
 
 **Returns:** scenarios: the commands for a common task, in order, and why each
 
-**Example:** `tg guide`, `tg guide <name> --json`
+**Example:** `tg guide`, `tg guide agent-without-send --json`
 
 ## Exit codes
 

@@ -5,6 +5,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Added
+
+- **`store info` breaks the store down by provider, chat kind, account, year and attachment kind, and a run records `cli_command`, `argv` and, on failure, a masked `error`** (cli-core 0.426.0).
+
 ### Changed — may break callers
 
 - **Permissions are checked under each command's full key (cli-core 0.421.0).** `messages sync` is checked as `messages.sync` and `bot messages sync` as `bot.messages.sync`; a level on `messages` or `bot.messages` still applies to them. A saved key is read only as written, so `chats.mute` no longer covers `chats unmute`.
@@ -13,6 +17,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`doctor --json` reports the config file's problems as `config.issues` (cli-core 0.423.0).** `config.error` is gone. Each issue has a `kind` (`invalid_json`, `unknown_setting`, `unknown_permission`, `missing_setting` or `invalid_value`), the `file`, the `profile` and `key` where they apply, `line` and `column` for invalid JSON, a sentence that says what the value has to be (never the value), and `fix`, the `config unset` command that removes it. `doctor` lists every problem in the file, still exits 0, and still answers when the JSON is broken. A profile lock, a flag or an environment variable the settings refuse is reported in `settings.error`.
 - **`default_profile`, `analysis_provider`, `analysis_model` and `analysis_base_url` are unknown settings, and `TG_ANALYSIS_PROVIDER`, `TG_ANALYSIS_MODEL` and `TG_ANALYSIS_BASE_URL` are not read.** A file that has one is refused like any unknown setting, with the `config unset` that removes it. Analysis is set with `models.analysis.provider`, `models.analysis.model` and `models.analysis.base_url` (`TG_MODELS_ANALYSIS_*`); `--model` and `--base-url` of `conversations links rebuild` override those.
 - **A command refused for a problem in the config file names the first problem and the command that removes it**, and says how many more `doctor` lists. `config show`, `set` and `unset` run on such a file, and `config unset` removes a setting no schema knows. An unknown permission key in any section of the file is refused, not only in the sections the command reads.
+- **A run with no profile named is recorded without `profile` (cli-core 0.426.0).** `run.json`, `runs list`, `runs show` and `search runs` used to say `"profile": "default"`. MCP no longer offers a command group that only prints its help, and every `--dry-run` preview gains `effects.service_contacted: false` beside `messenger_contacted`.
 - **tg needs Node 22.19+ or 24+ (was 22.16+).** The Bot API proxy support uses undici 8, which requires Node 22.19. Bun is unaffected.
 
 ### Fixed
