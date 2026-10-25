@@ -17,6 +17,5 @@ Reading, sending, search, the local store, groups, people, bots, MCP and permiss
   [your own names and notes for people](people.md#your-own-names-and-notes-contacts-aliases-contacts-notes).
 - **Reactions by emoji in message rankings.** Beside the total, how many of each reaction a message got.
 - **What `max` can do and `tg` cannot yet.** Privacy settings, call history, a chat's media, stickers,
-  deleting or clearing a chat for yourself, a group photo, pressing a bot's buttons, starting a bot and
-  opening its mini app.
+  deleting or clearing a chat for yourself and a group photo.
 - **Your location in a message.**
