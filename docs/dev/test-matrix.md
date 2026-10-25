@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2349 ✅ · 105 ⛔ · 0 ❌** — 515 commands, 1939 options.
+**2352 ✅ · 105 ⛔ · 0 ❌** — 517 commands, 1940 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -391,6 +391,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store reset` |  | ✅ |  |
 | `store reset` | `--no-backup` | ✅ |  |
 | `store copies delete` |  | ✅ |  |
+| `store tables list` |  | ✅ |  |
 | `conversations list` |  | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |
@@ -2442,8 +2443,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot api get-game-high-scores` | `--body` | ✅ |  |
 | `bot api get-game-high-scores` | `--body-file` | ✅ |  |
 | `skill show` |  | ✅ |  |
+| `skill show` | `--for` | ✅ |  |
 | `skill install` |  | ✅ |  |
 | `skill install` | `--for` | ✅ |  |
+| `skill status` |  | ✅ |  |
 | `guide` |  | ✅ |  |
 | `help` |  | ✅ |  |
 | *global* | `--version` | ✅ |  |
