@@ -3,13 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.93.0 — 25.10.2026
 
 ### Fixed
 
 - **Hermes Agent installs the `tg-cli` skill without a security warning.** Its install scan held the skill at "caution" because one sentence named the SSH folder by its path, although the sentence says tg refuses to send it. The sentence now says "SSH keys"; what tg refuses is unchanged.
-
-## 0.93.0 — 25.10.2026
+- **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
+- **A bare `--version` answers before the program loads**: the bin starts through `@wirecat/cli-core/cli/start` (cli-core 0.429.0).
 
 ### Added
 
@@ -20,11 +20,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - **A failed `bot` command's run names the Bot API call that failed.** `runs show` and `runs list` give its `error.http` the `method` and `endpoint_template` beside the status — `{ "method": "POST", "endpoint_template": "/:token/sendMessage", "status": 400 }` — where before they had only the status. The token is always written `:token`: Telegram puts it in the address, and the real one never reaches a run or a trace. Bot requests in `--trace` and in a recorded run carry the same two fields, and a pretty trace line shows them after the method's name (`← getMe  POST /:token/getMe  401 …`). A script that parses `--trace` text sees that extra column.
 - **tg needs Node 22.19+ or 24+ (was 22.16+).** The Bot API proxy support uses undici 8, which requires Node 22.19. Bun is unaffected.
-
-### Fixed
-
-- **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
-- **A bare `--version` answers before the program loads**: the bin starts through `@wirecat/cli-core/cli/start` (cli-core 0.429.0).
 
 ## 0.92.0 — 25.10.2026
 
