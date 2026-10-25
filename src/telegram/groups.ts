@@ -23,10 +23,8 @@ import { toCliError } from "./errors.js"
 import { type Feature, publicName } from "./feature.js"
 import { answerJoinRequestOf, joinRequestsOf } from "./join-requests.js"
 import {
-  ADMIN_RIGHT_FIELDS,
   type EventOf,
   eventOf,
-  GROUP_SETTINGS,
   groupMembersCount,
   toGroupCard,
   toGroupMember,
@@ -34,11 +32,9 @@ import {
   toInvitePreview,
   toLinkChat,
 } from "./map.js"
+import { ADMIN_RIGHT_FIELDS, GROUP_SETTINGS } from "./rights.js"
 
-export { GROUP_SETTINGS }
-
-/** The rights `chats admins add --can` offers: max's, less `read`. */
-export const ADMIN_RIGHTS = Object.keys(ADMIN_RIGHT_FIELDS) as AdminRight[]
+export { ADMIN_RIGHTS, GROUP_SETTINGS } from "./rights.js"
 
 /** Telegram's own cap on a group's member list. */
 const MEMBERS_MAX = 10_000
