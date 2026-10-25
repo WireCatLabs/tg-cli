@@ -21,7 +21,4 @@ None.
 
 ## Next (P2)
 
-- **TG-34** · P2 · Switch `src/bin/tg.ts` to cli-core's `startCli` ([cli-core
-  #1924](https://github.com/WireCatLabs/cli-core/pull/1924)): `sqlite: true`, `run: ({ args }) => run(args)`. Only the
-  bin changes — cli-core's `run()` keeps the signals and pipes, so do not wrap it in a second set. Start:
-  `src/bin/tg.ts`.
+None.
