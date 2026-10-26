@@ -7,13 +7,14 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2353 ✅ · 105 ⛔ · 0 ❌** — 517 commands, 1941 options.
+**2357 ✅ · 108 ⛔ · 0 ❌** — 520 commands, 1945 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
 | `session start` |  | ✅ |  |
 | `session start` | `--app` | ✅ |  |
 | `session start` | `--sms` | ✅ |  |
+| `session start` | `--answer-stdin` | ✅ |  |
 | `session end` |  | ✅ |  |
 | `setup` |  | ✅ |  |
 | `setup` | `--agent` | ✅ |  |
@@ -879,6 +880,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `mcp` | `--port` | ✅ |  |
 | `mcp` | `--public-url` | ✅ |  |
 | `mcp` | `--revoke` | ✅ |  |
+| `mcp server start` |  | ✅ |  |
+| `mcp server start` | `--port` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
+| `mcp server start` | `--public-url` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
+| `mcp server start` | `--permission` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
+| `mcp server stop` |  | ✅ |  |
+| `mcp server status` |  | ✅ |  |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--permission` | ✅ |  |
 | `mcp add` |  | ✅ |  |

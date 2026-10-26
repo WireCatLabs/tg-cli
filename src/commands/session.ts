@@ -5,6 +5,7 @@ import { timezoneOf } from "@wirecat/cli-base/query"
 import { type Account, atTerminal, loginQr, readSecret } from "@wirecat/cli-core"
 import { servingProfiles } from "@wirecat/cli-core/background"
 import {
+  answerStdinOption,
   asFirstWord,
   commandWords,
   logsInOrOut,
@@ -13,7 +14,9 @@ import {
   refuseCommandName,
   rememberAccount,
   rootOf,
+  type SignInSteps,
   sharedCommandTemplate,
+  signInSteps,
 } from "@wirecat/cli-core/cli"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
@@ -24,7 +27,8 @@ import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/crede
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, forCommand } from "./context.js"
 
-type Ask = (prompt: string, echo: boolean) => Promise<string>
+/** `field` names the question for a window that answers it (`--answer-stdin`). */
+type Ask = (prompt: string, echo: boolean, field: string) => Promise<string>
 
 /** The app registration, asked for once per profile: by opening the site, or by filling it in for the owner. */
 const appCredentials = async (
@@ -32,6 +36,7 @@ const appCredentials = async (
   how: "browser" | "auto",
   command: string,
   ask: Ask,
+  steps: SignInSteps,
   phone: () => Promise<string>,
   signal?: AbortSignal,
 ) => {
@@ -43,7 +48,7 @@ const appCredentials = async (
       app = await registerApp(
         {
           phone,
-          code: () => ask("code from Telegram for my.telegram.org (app registration): ", true),
+          code: () => ask("code from Telegram for my.telegram.org (app registration): ", true, "code"),
           note: context.renderer.note,
         },
         { ...(signal === undefined ? {} : { signal }), ...(fetch ? { fetch } : {}) },
@@ -63,16 +68,24 @@ const appCredentials = async (
 
   const url = `${MY_TELEGRAM}/apps`
   const opened = openInBrowser(url)
-  context.renderer.note(
-    `${opened ? "opened" : "open"} ${url}\n` +
-      "1. Log in with your phone number; the site sends its code in the Telegram app.\n" +
-      "2. Open API development tools. If no app exists, fill App title and Short name, choose Desktop, and create it.\n" +
-      "3. Copy App api_id and App api_hash into this terminal. The hash is hidden as you type.\n" +
-      "Or rerun with --app auto to have the application step done for you.",
-  )
+  if (steps.answers)
+    steps.openUrl(
+      url,
+      "Log in with your phone number; the site sends its code in the Telegram app. Open API development tools " +
+        "(if no app exists, fill App title and Short name, choose Desktop, and create it), then copy App api_id " +
+        "and App api_hash.",
+    )
+  else
+    context.renderer.note(
+      `${opened ? "opened" : "open"} ${url}\n` +
+        "1. Log in with your phone number; the site sends its code in the Telegram app.\n" +
+        "2. Open API development tools. If no app exists, fill App title and Short name, choose Desktop, and create it.\n" +
+        "3. Copy App api_id and App api_hash into this terminal. The hash is hidden as you type.\n" +
+        "Or rerun with --app auto to have the application step done for you.",
+    )
   return {
-    id: parseApiId(await ask("App api_id: ", true)),
-    hash: parseApiHash(await ask("App api_hash (not shown): ", false)),
+    id: parseApiId(await ask("App api_id: ", true, "api_id")),
+    hash: parseApiHash(await ask("App api_hash (not shown): ", false, "api_hash")),
   }
 }
 
@@ -122,6 +135,8 @@ export interface StartSessionOptions {
   method: "qr" | "phone"
   app: "browser" | "auto"
   sms?: boolean
+  /** `--answer-stdin`: each question is a `needs` line, answered on stdin by the window that started the login. */
+  answers?: boolean
   command?: string
   progress?: (step: "app" | "login") => void
   signal?: AbortSignal
@@ -131,20 +146,36 @@ export interface StartSessionOptions {
 
 export const startSession = async (
   context: CommandContext,
-  { method, app, sms, command = "tg session start", progress, signal, indent: pad = 0 }: StartSessionOptions,
+  {
+    method,
+    app,
+    sms,
+    answers = false,
+    command = "tg session start",
+    progress,
+    signal,
+    indent: pad = 0,
+  }: StartSessionOptions,
 ) => {
   if (sms && method !== "phone") throw new CliError("validation_error", "--sms is for a phone login")
   const input = context.stdin
   const terminal = atTerminal(input)
   const stored = context.credentials.read()
+  const steps = signInSteps({
+    diagnostic: context.streams.diagnostic,
+    json: context.format !== "pretty",
+    answers,
+    input,
+  })
   // A QR login with stored app keys and no 2FA asks nothing, so an agent can run it and pass the code on as text.
-  if (!terminal && (method === "phone" || !stored))
+  if (!terminal && !answers && (method === "phone" || !stored))
     throw new CliError(
       "validation_error",
       `${command} asks questions — run it in a terminal${method === "qr" ? "; without one it needs stored app keys" : ""}`,
     )
-  const ask: Ask = (prompt, echo) => {
+  const ask: Ask = (prompt, echo, field) => {
     signal?.throwIfAborted()
+    if (answers) return steps.ask({ field, secret: !echo, prompt: prompt.replace(/:\s*$/, "") }, signal)
     if (!atTerminal(input)) {
       throw new CliError("validation_error", `\`${command}\` needs a terminal to ask for the ${prompt.trim()}`)
     }
@@ -162,14 +193,14 @@ export const startSession = async (
   let asked = false
   const phone = async () => {
     asked = true
-    typedPhone ??= await ask("phone number, international format: ", true)
+    typedPhone ??= await ask("phone number, international format: ", true, "phone")
     return typedPhone
   }
 
   progress?.("app")
   const typed: ApiCredentials | undefined = stored
     ? undefined
-    : await appCredentials(context, app, command, ask, phone, signal)
+    : await appCredentials(context, app, command, ask, steps, phone, signal)
 
   progress?.("login")
   const telegram = await context.open(stored ?? typed)
@@ -189,11 +220,11 @@ export const startSession = async (
       phone,
       code: () => {
         asked = true
-        return ask("login code: ", true)
+        return ask("login code: ", true, "code")
       },
       password: () => {
         asked = true
-        return ask("2FA password (not shown): ", false)
+        return ask("2FA password (not shown): ", false, "password")
       },
       note: context.renderer.note,
     })
@@ -222,6 +253,7 @@ const sessionCommandDefinition = () => {
         .default("browser"),
     )
     .option("--sms", "phone login: ask Telegram to send the code by SMS, not to the app; Telegram may still refuse")
+    .addOption(answerStdinOption())
     .addHelpText(
       "after",
       "\nFirst time? Use `tg personal setup` for login, a check of five chats and an agent skill.\n" +
@@ -242,12 +274,13 @@ const sessionCommandDefinition = () => {
     .action(async function (this: Command, method: "qr" | "phone") {
       const context = forCommand(this)
       refuseCommandName(context.profile, commandWords(rootOf(this)), "tg")
-      const { app, sms } = this.opts<{ app: "browser" | "auto"; sms?: boolean }>()
+      const { app, sms, answerStdin } = this.opts<{ app: "browser" | "auto"; sms?: boolean; answerStdin?: boolean }>()
       const answer = await startSession(context, {
         command: `tg ${asFirstWord(context.profile)}session start`,
         method,
         app,
         ...(sms ? { sms } : {}),
+        answers: answerStdin === true,
       })
       if (context.format === "pretty") context.streams.data(loggedIn(answer, context.env))
       else {

@@ -139,6 +139,13 @@ export const SHELL_OVERRIDES: Readonly<{
           takes_value: false,
           mandatory: false,
         },
+        {
+          flags: "--answer-stdin",
+          description:
+            "with --json and no terminal: print each question as a `needs` line on stderr and read its answer, one line, from stdin",
+          takes_value: false,
+          mandatory: false,
+        },
       ],
       reason:
         "This provider binds its own account linking protocol, credential flow and typed receipt to the shared session lifecycle.",

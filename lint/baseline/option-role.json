@@ -20,6 +20,7 @@
   "replies edit --template",
   "replies edit --words",
   "replies test --ai",
+  "session start --answer-stdin",
   "session start --app",
   "session start --sms",
   "setup --app",
