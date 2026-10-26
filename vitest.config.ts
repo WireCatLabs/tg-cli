@@ -1,11 +1,17 @@
 import { defineConfig } from "vitest/config"
 
+// CI's shards report with the blob reporter, which never prints vitest's own seed line; a red order must be replayable.
+const seed = Number(process.env.TEST_SEED) || Date.now()
+process.stderr.write(`tests in random order, seed ${seed}; TEST_SEED=${seed} repeats it\n`)
+
 export default defineConfig({
   // Oxc does not resolve TypeScript package exports; tsc still checks the project configs.
   tsconfig: "./node_modules/@wirecat/cli-base/config/tsconfig.base.json",
   test: {
     include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
     globals: false,
+    // Each test sets up what it needs; a fixed order would hide one that leans on an earlier test (2026-10-26).
+    sequence: { shuffle: true, seed },
     // Agents run suites side by side on 24 cores; one worker per core ran the machine out of memory (2026-10-11).
     maxWorkers: 4,
     // Whole-command tests under coverage reach 4.4 s on a 4-core CI runner (2026-10-26), against vitest's 5 s default.

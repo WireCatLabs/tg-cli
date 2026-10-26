@@ -6,6 +6,7 @@ import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { beforeEach, describe, expect, it } from "vitest"
 import type { FetchLike } from "./bot/transport.js"
 import { run } from "./program.js"
+import { freshHomeEachTest } from "./testing/fresh-home.js"
 
 const TOKEN = "123456789:AAsecretSECRETsecretSECRETsecret0"
 const BOT = { id: 7_000_000_001, is_bot: true, first_name: "Sales", username: "sales_bot" }
@@ -126,6 +127,7 @@ const tg = async (argv: string[], stdin = "") => {
   return { code, answer: lines.length === 1 ? lines[0] : undefined, lines, err: streams.stderr.join("\n") }
 }
 
+freshHomeEachTest()
 beforeEach(async () => {
   keyring = memoryKeyring()
   requests = []

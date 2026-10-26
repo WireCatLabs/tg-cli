@@ -32,6 +32,15 @@ message store at a temporary directory, and clears `TG_API_ID`, `TG_API_HASH`, `
 `TG_PROFILE_LOCK` and `TG_TIMEOUT` for every test file. The moved directories also move the keyring
 entry. **A new variable that can point at something real goes there.**
 
+## Tests run in random order
+
+That directory is one per test file, so the tests of a file share profiles, config, recorded runs and
+the store. Vitest shuffles files and tests on every run (`sequence.shuffle`), so a test that only
+passes after another one fails sooner or later. The run prints its seed on stderr, even under CI's
+blob reporter; `TEST_SEED=<seed> pnpm test` repeats that order. A test that needs an empty home takes
+one from `src/testing/fresh-home.ts`: `freshHome()` for one test's `env`, `freshHomeEachTest()` for a
+whole file that reads `process.env`.
+
 Telegram is never contacted: command tests hand `run()` a scripted adapter, and the adapter's own
 test replaces mtcute's `TelegramClient` with a stand-in. A test that could open a browser
 (`session start --app browser`) or reach my.telegram.org (`--app auto`) mocks that module.

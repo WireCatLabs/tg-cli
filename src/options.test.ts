@@ -5,6 +5,7 @@ import { CliError } from "@wirecat/cli-base"
 import type { MessageEvent } from "@wirecat/cli-core"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { NO_RESTART_ON } from "./program.js"
+import { freshHome } from "./testing/fresh-home.js"
 import { chat, dialog, message, scripted, tg } from "./testing/scripted.js"
 import { VERSION } from "./version.js"
 
@@ -47,8 +48,9 @@ describe("the global options", () => {
   })
 
   it("--quiet turns the diagnostics off", async () => {
-    const said = await tg(["quiet", "runs", "list"])
-    const quiet = await tg(["quiet", "runs", "list", "--quiet"])
+    const home = env(freshHome())
+    const said = await tg(["quiet", "runs", "list"], { env: home })
+    const quiet = await tg(["quiet", "runs", "list", "--quiet"], { env: home })
 
     expect(said.stderr.join("\n")).toContain("nothing recorded")
     expect(quiet.stderr).toEqual([])
@@ -232,9 +234,10 @@ describe("contacts info", () => {
   })
 
   it("shows the phone's last four digits unless --show-phone", async () => {
-    const masked = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described })).stdout)
+    const home = env(freshHome())
+    const masked = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described, env: home })).stdout)
     const whole = json(
-      (await tg(["contacts", "info", "7", "--show-phone", "--json"], { adapter: () => described })).stdout,
+      (await tg(["contacts", "info", "7", "--show-phone", "--json"], { adapter: () => described, env: home })).stdout,
     )
 
     expect(masked.item).toMatchObject({ phone: "***0123", seen: "week", registered: { source: "estimate" } })
@@ -651,7 +654,9 @@ describe("messages", () => {
         hasMore: false,
       }),
     })
-    await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads })
+    const home = env(freshHome())
+    await tg(["searching", "chats", "list"], { adapter: () => reads, env: home })
+    await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads, env: home })
 
     const { code, stdout } = await tg(
       [
@@ -666,7 +671,7 @@ describe("messages", () => {
         "1",
         "--json",
       ],
-      { adapter: () => reads },
+      { adapter: () => reads, env: home },
     )
 
     expect(code).toBe(0)
@@ -689,10 +694,11 @@ describe("messages", () => {
         hasMore: false,
       }),
     })
-    await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads })
+    const home = env(freshHome())
+    await tg(["searching", "messages", "list", "Valencia"], { adapter: () => reads, env: home })
 
     const argv = ["searching", "search", "messages", "atico", "--newest", "--context", "1", "--source", "telegram"]
-    const { code, stdout } = await tg([...argv, "--json"], { adapter: () => reads })
+    const { code, stdout } = await tg([...argv, "--json"], { adapter: () => reads, env: home })
 
     const { items } = json(stdout)
     expect(code).toBe(0)
