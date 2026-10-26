@@ -3,28 +3,30 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
-
-### Fixed
-
-- **Hermes Agent installs the `tg-cli` skill without a security warning.** Its install scan held the skill at "caution" because one sentence named the SSH folder by its path, although the sentence says tg refuses to send it. The sentence now says "SSH keys"; what tg refuses is unchanged.
-
 ## 0.93.0 — 25.10.2026
 
 ### Added
 
 - **`store reset --dry-run` lists what a reset would empty and deletes nothing** (cli-core 0.429.0): the store's files and bytes, every data table with its rows, whether a backup comes first, and whether a serve or another process has the file open.
 - **`search messages --discover` also finds messages close in meaning** once e5-small is downloaded and `conversations rebuild` has given messages their own vectors (cli-core 0.432.0). Each hit's `discovery.found_by` says which search found it. Until then discovery searches by words as before and says why. Nothing is downloaded and no text leaves the computer.
+- **`search messages --discover` reranks its first 50 hits once a reranker is downloaded (cli-core 0.435.0).** A local model reads the question with each hit, and its score is mixed with discovery's own; the hits after the first 50 keep their order. The default is mMARCO (136 MB, `tg models download mmarco`); the profile setting `search_reranker` picks `bge-reranker-v2-m3` (588 MB) or `off`. Each reranked hit has `discovery.reranker_score`; `score` stays discovery's. Without the model, discovery keeps its order and says `not reranked: …` (in `--json` and MCP: `missing` and `next`). A search never downloads a model and never sends text anywhere; `--exact`, `--newest` and strict queries are untouched.
+- **`search all` finds messages by meaning too, once e5-small is downloaded and messages have their vectors (cli-core 0.435.0).** The meaning hits are merged with the word hits into one messages list; each item's `foundBy` says which search found it. A query with NOT, or with a filter under OR or in a group, stays words only. Without the model or the vectors, `search all` reads words as before and says why. `--exact` and `--backend server` stay words only.
 
 ### Changed — may break callers
 
 - **A failed `bot` command's run names the Bot API call that failed.** `runs show` and `runs list` give its `error.http` the `method` and `endpoint_template` beside the status — `{ "method": "POST", "endpoint_template": "/:token/sendMessage", "status": 400 }` — where before they had only the status. The token is always written `:token`: Telegram puts it in the address, and the real one never reaches a run or a trace. Bot requests in `--trace` and in a recorded run carry the same two fields, and a pretty trace line shows them after the method's name (`← getMe  POST /:token/getMe  401 …`). A script that parses `--trace` text sees that extra column.
 - **tg needs Node 22.19+ or 24+ (was 22.16+).** The Bot API proxy support uses undici 8, which requires Node 22.19. Bun is unaffected.
+- **The shared store moves to version 34 (cli-core 0.434.0).** Search by meaning ranks through a vector index kept in the store, built on the first open by this version. Once this version opens the store, a CLI on cli-core 0.433.0 or older refuses it and asks to be upgraded, so upgrade every WireCat CLI that shares the store together. When the index's SQLite extension is missing or does not load, opening the store fails with `store.vector-extension-missing` or `store.vector-extension-failed`: reinstall tg. `store check` reports `vector_indexes` and fails when an index is out of step.
+- **`tg upgrade --help` shows only `tg upgrade --check` as its example (cli-core 0.433.0).** The bare `tg upgrade` example is gone: copied and run, it upgraded.
+- **Analysis through Anthropic sends the key as `Authorization: Bearer` (cli-core 0.433.0).** It used to send `X-Api-Key`. A gateway at a custom `models.<purpose>.base_url` that reads `X-Api-Key` must read `Authorization` instead.
 
 ### Fixed
 
+- **Hermes Agent installs the `tg-cli` skill without a security warning.** Its install scan held the skill at "caution" because one sentence named the SSH folder by its path, although the sentence says tg refuses to send it. The sentence now says "SSH keys"; what tg refuses is unchanged.
 - **A bot's file upload through a SOCKS5 or HTTP proxy sends the file.** Before, the proxied request carried the text `[object FormData]` instead of the form, so Telegram refused photos, documents and voice notes sent with `--proxy`.
 - **A bare `--version` answers before the program loads**: the bin starts through `@wirecat/cli-core/cli/start` (cli-core 0.429.0).
+- **A stored vector goes once no text in the store uses it (cli-core 0.435.0).** An image whose picture changed and a purged chat (`store clear --left`, a chat merged into another) left vectors behind, and no longer do. `store rebuild` drops the ones older versions left (`unused_vectors_dropped`), and `store check` counts them (`vectors.unused`).
+- **`conversations embeddings clear --chat` drops the chat's message vectors too (cli-core 0.435.0)**, not only its conversations'.
 
 ## 0.92.0 — 25.10.2026
 

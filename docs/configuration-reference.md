@@ -104,6 +104,7 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `sender_colors` | `false` | a colour per sender in the table view of messages | none |
 | `search_catch_up` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
 | `picture_search` | `false` | search stored pictures by what they show. `images embed` reads the stored pictures once the model is downloaded, and then `search messages` also returns a `pictures` list ([pictures](search.md#pictures-by-what-they-show)) | none |
+| `search_reranker` | `mmarco` | the model that reranks the first 50 hits of `search messages --discover`: `mmarco` (136 MB), `bge-reranker-v2-m3` (588 MB) or `off`. A reranker that is not downloaded is skipped, and discovery says so; `tg models download mmarco` downloads it | none |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
 | `keep_runs_for_days` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
@@ -347,6 +348,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `transcribe_with` | `auto`, `messenger`, `local` | profile |
 | `speech_model` | downloaded model id as a string | profile |
 | `proxy` | supported proxy URL as a string | profile |
+| `search_reranker` | `mmarco`, `bge-reranker-v2-m3`, `off` | profile |
 | `embedding_provider` | `local`, `openai` | profile |
 | `embedding_model` | nonempty string, at most 200 characters | profile |
 | `embedding_base_url` | HTTP(S) URL without credentials, query or fragment | profile |
