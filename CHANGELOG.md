@@ -7,6 +7,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Every command spends less time getting ready (cli-base 0.62.0, cli-core 0.449.0).** The check of shared commands now
+  describes each command once, not again for every group above it. A warm `run(["--version"])` went from 49 to 29 ms.
+  It catches the same changes as before.
 - **Commands outside `bot api` start faster: its 185 generated Bot API commands are built only when needed.** `tg messages list`, `tg --help` and the other commands no longer load about 1.5 MB of generated code. `bot api`, `bot --help`, `bot mcp`, `commands`, `complete`, `help`, `mcp`, `serve`, `config` and `doctor` still build the group, and so does any command when the config saves a `bot.api` permission. Output is unchanged.
 - **Search by meaning and `search messages --discover`'s reranker run 2–3× faster on Linux and Apple-silicon Macs after the next `tg models download` (cli-core 0.448.0).** The download installs a native ONNX Runtime, and the models run on it; without it they run as before. The reranker now reads only the start of the message a hit replies to (cli-core 0.447.0).
 
