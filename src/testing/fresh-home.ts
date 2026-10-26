@@ -6,12 +6,16 @@ import { afterEach, beforeEach, vi } from "vitest"
 /**
  * The setup file gives each test file one home, so its tests share profiles, config, recorded runs and the store.
  * The XDG folders and not `TG_*_DIR`: those mark the paths as overridden, which the CLI treats as an isolated install.
+ * On Windows cli-base ignores XDG and reads USERPROFILE, APPDATA and LOCALAPPDATA, so those move too.
  */
 export const freshHome = () => {
   const home = mkdtempSync(join(tmpdir(), "home-"))
   const data = join(home, ".local", "share")
   return {
     HOME: home,
+    USERPROFILE: home,
+    APPDATA: join(home, "AppData", "Roaming"),
+    LOCALAPPDATA: join(home, "AppData", "Local"),
     XDG_CONFIG_HOME: join(home, ".config"),
     XDG_DATA_HOME: data,
     XDG_STATE_HOME: join(home, ".local", "state"),
