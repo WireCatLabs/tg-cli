@@ -4,8 +4,8 @@ import { type CommandInfo, describeProgram } from "@wirecat/cli-base/commands"
 import { withVersion } from "@wirecat/cli-base/skill"
 import { validateSkill } from "@wirecat/cli-core/skill-validation"
 import { CONFIG } from "../dist/app.js"
-import { createProgram } from "../dist/program.js"
 import { VERSION } from "../dist/version.js"
+import { createProgram } from "../dist/whole-program.js"
 
 const keys = CONFIG.allSettings
 const file = new URL("../skills/tg-cli/SKILL.md", import.meta.url)

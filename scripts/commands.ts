@@ -15,7 +15,7 @@ import { dirname, join } from "node:path"
 import { fileURLToPath } from "node:url"
 import { COMMANDS_PAGE_LABELS, commandsPage, describeOptions, describeProgram } from "@wirecat/cli-base/commands"
 import { commandHelpMarkdown } from "@wirecat/cli-core/cli"
-import { createProgram } from "../dist/program.js"
+import { createProgram } from "../dist/whole-program.js"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 const program = createProgram()

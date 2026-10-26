@@ -62,7 +62,7 @@
     "contracts:upgrade": "pnpm --dir contracts/previous install --frozen-lockfile --ignore-scripts && cli-contract contracts/upgrade.json && cli-contract contracts/legacy-store.json",
     "security:no-leak": "cli-testing security no-leak . contracts/no-leak.json",
     "lint:commands": "cli-dev lint --cli dist/bin/tg.js",
-    "test:matrix:check": "cli-dev test-matrix --program dist/program.js --untested scripts/test-matrix-untested.ts --name tg --check && git diff --exit-code -- docs/dev/test-matrix.md",
+    "test:matrix:check": "cli-dev test-matrix --program dist/whole-program.js --untested scripts/test-matrix-untested.ts --name tg --check && git diff --exit-code -- docs/dev/test-matrix.md",
     "generate:check": "pnpm bot:generate:check && pnpm build && node --experimental-strip-types scripts/commands.ts && git diff --exit-code -- docs/commands.md",
     "package:check": "node --experimental-strip-types scripts/release-check.ts --package-only"
   },

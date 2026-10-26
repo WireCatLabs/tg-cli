@@ -3,6 +3,12 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **Commands outside `bot api` start faster: its 185 generated Bot API commands are built only when needed.** `tg messages list`, `tg --help` and the other commands no longer load about 1.5 MB of generated code. `bot api`, `bot --help`, `bot mcp`, `commands`, `complete`, `help`, `mcp`, `serve`, `config` and `doctor` still build the group, and so does any command when the config saves a `bot.api` permission. Output is unchanged.
+
 ## 0.95.0 — 26.10.2026
 
 ### Added
