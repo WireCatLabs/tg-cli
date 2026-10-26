@@ -8,7 +8,3 @@ it("**pins the personal catalogue**: every command agents get from `tg mcp`, bef
   const catalogue = Object.fromEntries(tools.map((tool) => [tool.command, tool.writes ? "write" : "read"]))
   await expect(`${JSON.stringify(catalogue, null, 2)}\n`).toMatchFileSnapshot("../contracts/mcp-catalogue.json")
 })
-
-it("scratch: fails on purpose to prove a failed shard fails coverage", () => {
-  expect(1).toBe(2)
-})
