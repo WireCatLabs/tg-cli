@@ -34,8 +34,11 @@ const keptFor = (profile: string): string => {
     .join("\n")
 }
 
+/** Since cli-core 0.439 a run keeps the command line as typed (`argv`, `record_input` turns it off); nothing else may. */
+const besideArgv = (kept: string) => kept.replace(/"argv": ?\[[^\]]*\]/g, "")
+
 describe("run records", () => {
-  it("**keep a send's ids and never the chat's title or the text**", async () => {
+  it("**keep a send's ids, and the chat's title and the text only as typed**", async () => {
     const { code, stdout } = await tg(["recorded", "messages", "send", "Valencia", BODY, "--record", "--json"])
 
     expect(code).toBe(0)
@@ -44,8 +47,9 @@ describe("run records", () => {
     const kept = keptFor("recorded")
     expect(kept).toContain('"operation":"messages.send"')
     expect(kept).toContain('"chat":"-1001234567890"')
-    expect(kept).not.toContain("Valencia")
-    expect(kept).not.toContain(BODY)
+    expect(kept).toContain(JSON.stringify(["recorded", "messages", "send", "Valencia", BODY, "--record", "--json"]))
+    expect(besideArgv(kept)).not.toContain("Valencia")
+    expect(besideArgv(kept)).not.toContain(BODY)
   })
 
   it("keep a failed read with Telegram's name for the refusal", async () => {
@@ -67,13 +71,13 @@ describe("run records", () => {
     })
   })
 
-  it("keep a usage error, naming the command and never what was typed", async () => {
+  it("keep a usage error, naming the command, with what was typed only as typed", async () => {
     const { code } = await tg(["usage", "messages", "send", "Valencia", BODY, "--no-such-flag"])
 
     expect(code).not.toBe(0)
     expect(runsOf("usage")).toHaveLength(1)
     expect(runsOf("usage")[0]).toMatchObject({ command: "messages send", errorCode: "validation_error" })
-    expect(keptFor("usage")).not.toContain(BODY)
+    expect(besideArgv(keptFor("usage"))).not.toContain(BODY)
   })
 
   it("are listed by `tg runs list` without it starting a run of its own", async () => {

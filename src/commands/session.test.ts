@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
 import { dirname } from "node:path"
-import { Readable } from "node:stream"
+import { PassThrough, Readable } from "node:stream"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { itemEnvelopeSchema } from "@wirecat/cli-base/standards"
 import { PASTE_QR, plainQr } from "@wirecat/cli-core"
@@ -320,6 +320,53 @@ describe("session start", () => {
       adapter: () => loginAdapter({}),
     })
     expect(JSON.parse(phone.stderr.at(-1) ?? "").error.message).toContain("asks questions — run it in a terminal")
+  })
+
+  it("**asks each question as a `needs` line and reads its answer from stdin** with --answer-stdin", async () => {
+    const keyring = memoryKeyring()
+    const stdin = Object.assign(new PassThrough(), { isTTY: false })
+    stdin.write("12345\nabcdef\n+34600000000\n55555\nnot-a-real-2fa\n")
+    const given: string[] = []
+    const { code, stdout, stderr } = await tg(["session", "start", "phone", "--json", "--answer-stdin"], {
+      tty: false,
+      stdin,
+      keyring,
+      adapter: (options) => {
+        expect(options.credentials).toEqual({ id: 12345, hash: "abcdef" })
+        return {
+          ...loginAdapter({}),
+          login: async (prompts: LoginPrompts) => {
+            given.push(await prompts.phone(), await prompts.code(), await prompts.password())
+            return { id: "1", name: "Owner", username: null }
+          },
+        }
+      },
+    })
+
+    expect(code).toBe(0)
+    expect(given).toEqual(["+34600000000", "55555", "not-a-real-2fa"])
+    const events = stderr.filter((line) => line.startsWith('{"event"')).map((line) => JSON.parse(line))
+    expect(events.map((e) => [e.event, e.field ?? e.url, e.secret])).toEqual([
+      ["open_url", "https://my.telegram.org/apps", undefined],
+      ["needs", "api_id", false],
+      ["needs", "api_hash", true],
+      ["needs", "phone", false],
+      ["needs", "code", false],
+      ["needs", "password", true],
+    ])
+    expect([...stdout, ...stderr].join("\n")).not.toContain("not-a-real-2fa")
+    expect(answers.prompts).toEqual([])
+  })
+
+  it("still refuses a phone login without a terminal when --answer-stdin is left out", async () => {
+    const { code, stderr } = await tg(["session", "start", "phone", "--json"], {
+      env: { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" },
+      tty: false,
+      stdin: Object.assign(new PassThrough(), { isTTY: false }),
+      adapter: () => loginAdapter({}),
+    })
+    expect(code).toBe(2)
+    expect(JSON.parse(stderr.at(-1) ?? "").error.message).toContain("asks questions — run it in a terminal")
   })
 
   it("refuses a profile named like a command", async () => {
