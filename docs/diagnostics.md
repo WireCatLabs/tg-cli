@@ -7,8 +7,9 @@ send a problem report that holds no message text.
 A few words this page uses:
 
 - A **run** is one call of `tg`, from start to exit.
-- A **run record** is a folder that keeps what one run did: its command, its outcome and one line per
-  request to Telegram. It never holds message text, names or titles.
+- A **run record** is a folder that keeps what one run did: its command line, its outcome and one line
+  per request to Telegram. Those lines never hold message text, names or titles. What it keeps of the
+  command line you typed is under [What you typed](#what-you-typed).
 - **`tg personal doctor`** checks the installation: the version, the login, the settings and the local store.
 - A **problem report** is one JSON file made from `tg personal doctor` and a failed run. You attach it to an
   issue.
@@ -63,8 +64,8 @@ When a command ends in an error, its run is kept even without `--record`. `run.j
 `"kept_because_failed": true`. This is true for every command and every error: a bad option, an
 unknown command, a check before any work, and commands that never connect (`models`, `server`,
 `upgrade`). A failure before the command started, such as a config file that does not load, is kept
-as a run named `tg`. The record holds only the command's words, such as `messages list`, never what
-followed them.
+as a run named `tg`. What the record keeps of the command line is under [What you typed](#what-you-typed);
+a run whose settings did not load hides every typed value that may be text.
 
 A fully successful run leaves no record unless you ask for one; partial runs are retained by default too. So a problem report always has a failure to
 attach. `--no-record`, or `"record": false` in the settings, turns this off too.
@@ -90,15 +91,32 @@ by the folder's name, so nothing has to be opened to decide.
 
 ## What is never in a record
 
-A run record and `--trace` carry an operation's name, ids, counts, durations and error codes. They
+A run's events and `--trace` carry an operation's name, ids, counts, durations and error codes. They
 never carry:
 
 - the text of a message, or a caption;
 - a chat title, a person's name or a username;
-- **what you typed as `<chat>`**, because a typed chat is often a title;
 - a phone number, a login code, a 2FA password, the session or the app hash.
 
-The same is true for a report made from a run.
+### What you typed
+
+`run.json` also keeps the command line. What it keeps depends on your version of `tg`:
+
+- **A version that lists `record_input` in `tg personal config show`** keeps the command line as you
+  typed it — a chat's title, a search, message text — so you can read back what you ran. A secret is
+  always `[redacted]`: the value of an option named for a token, password, passphrase, secret,
+  credential, cookie, authorization or API key; a value `tg` marks secret, such as `bot api --body`; a
+  password inside a URL; a long string that looks like a token. To hide every typed value that may be
+  text again:
+
+  ```sh
+  tg personal config set record_input false
+  ```
+
+- **An older version** keeps the command's words and option names, such as `messages list --limit`.
+  Every value that may be text, such as what you typed as `<chat>`, is `[redacted]`.
+
+A problem report made from a run hides those typed values in every version.
 
 ## Check the installation: `tg personal doctor`
 
