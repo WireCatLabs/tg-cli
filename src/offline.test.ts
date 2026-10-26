@@ -138,10 +138,9 @@ describe("--offline", () => {
   })
 
   it("names available profiles when the selected profile is unknown", async () => {
-    const { code, stderr } = await tg(["stranger", "chats", "list", "--offline"], {
-      store: freshStore(),
-      online: false,
-    })
+    const store = freshStore()
+    await tg(["kept", "chats", "list"], { store })
+    const { code, stderr } = await tg(["stranger", "chats", "list", "--offline"], { store, online: false })
 
     expect(code).toBe(6)
     const error = JSON.parse(stderr[0] ?? "").error

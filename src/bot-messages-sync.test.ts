@@ -1,6 +1,3 @@
-import { mkdtempSync } from "node:fs"
-import { tmpdir } from "node:os"
-import { join } from "node:path"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { BotTokenStore } from "@wirecat/cli-core/cli"
 import { beforeEach, describe, expect, it, vi } from "vitest"
@@ -10,6 +7,7 @@ import { botSessionFile, sessionFile } from "./paths.js"
 import { run } from "./program.js"
 import type { BotHistoryOptions } from "./telegram/bot-history.js"
 import { apiCredentials } from "./telegram/credentials.js"
+import { freshHomeEachTest } from "./testing/fresh-home.js"
 import { message, scripted } from "./testing/scripted.js"
 
 const CHAT = "-1000000000700"
@@ -60,8 +58,8 @@ const tg = async (argv: string[], extra: Partial<Environment> = {}) => {
   return { code, answer: out ? JSON.parse(out) : undefined, out, err: streams.stderr.join("\n") }
 }
 
+freshHomeEachTest()
 beforeEach(() => {
-  process.env.MESSAGING_STORE = join(mkdtempSync(join(tmpdir(), "tg-bot-fetch-")), "messages.db")
   env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "synthetic" }
   keyring = memoryKeyring()
   opened = []

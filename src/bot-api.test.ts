@@ -11,6 +11,7 @@ import { definitions } from "./bot/generated/definitions.js"
 import { operations } from "./bot/generated/manifest.js"
 import type { FetchLike } from "./bot/transport.js"
 import { run } from "./program.js"
+import { freshHomeEachTest } from "./testing/fresh-home.js"
 
 const token = "123:synthetic_fixture_for_tests_only"
 const managed = "456:synthetic_fixture_for_tests_only"
@@ -33,6 +34,7 @@ const invoke = async (args: string[]) => {
   })
   return { code, out: streams.stdout.join(""), err: streams.stderr.join("") }
 }
+freshHomeEachTest()
 beforeEach(() => {
   keyring = memoryKeyring()
   new BotTokenStore({ app: TG, profile: "api-test", keyring }).writeKeyring(token)
