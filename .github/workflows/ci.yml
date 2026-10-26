@@ -28,7 +28,7 @@ jobs:
       parity: true
       bin: tg
       platforms: ${{ !inputs.skip-platforms }}
-      test-shards: 4
+      test-shards: 2
       # Commands that need no login and reach no network.
       platform-run: |
         export TG_NO_UPDATE_CHECK=1
