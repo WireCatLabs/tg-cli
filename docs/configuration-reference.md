@@ -106,6 +106,7 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `picture_search` | `false` | search stored pictures by what they show. `images embed` reads the stored pictures once the model is downloaded, and then `search messages` also returns a `pictures` list ([pictures](search.md#pictures-by-what-they-show)) | none |
 | `search_reranker` | `mmarco` | the model that reranks the first 50 hits of `search messages --discover`: `mmarco` (136 MB), `bge-reranker-v2-m3` (588 MB) or `off`. A reranker that is not downloaded is skipped, and discovery says so; `tg models download mmarco` downloads it | none |
 | `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
+| `record_input` | `true` | keep a run's command line as typed, secrets hidden; `false` writes `[redacted]` for every typed value that may be text ([diagnostics](diagnostics.md#what-you-typed)) | none |
 | `keep_runs_for_days` | `30` | recorded runs older than this are removed when the next one is kept | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
@@ -341,7 +342,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 |---|---|---|
 | `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
 | `requests_per_minute` | integer ≥ 0 | profile |
-| `color`, `sender_colors`, `search_catch_up`, `record` | boolean | profile |
+| `color`, `sender_colors`, `search_catch_up`, `record`, `record_input` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
 | `read_other_bots` | boolean or array of profile names | bot only |
 | `update_check`, `skill_hint` | boolean | root `defaults` only |
