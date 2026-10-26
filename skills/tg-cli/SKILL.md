@@ -32,6 +32,9 @@ changed with `--timeout`; background history fetch jobs have no default deadline
 before action; it opens no messenger connection, reserves no write and leaves targets unresolved.
 See the [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-contract.md).
 
+The command line is the default. MCP is the rare case for a client that cannot run commands (a chat app,
+a remote agent): `tg <profile> mcp` starts the server, `tg <profile> mcp config` prints the client entry.
+Its permissions are the profile's, the same as on the command line. Prefer the commands above when you can run them.
 MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, arguments}`.
 Use the CLI path such as `stats messages show`.
 Bots use `tg_bot_tools_search/read/write` with commands without `bot`; arguments are the command's options in
