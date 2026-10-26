@@ -9,6 +9,7 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - **`tg skill install --for hermes` gives Hermes Agent the skill, and `tg skill status` says what Hermes reads (cli-base 0.59.0).** It adds `~/.agents/skills` to Hermes's `skills.external_dirs` through `hermes config set`, keeping the folders already listed, or copies the file into Hermes's home when that fails. With no Hermes installed it fails with `not_found` and writes nothing. A bare `tg skill install` and `--for all` still write only the Claude Code and `~/.agents/skills` copies. `skill status --json` gains `hermes` beside `targets`.
 - **A run started by OpenClaw or Hermes Agent names that agent (cli-core 0.437.0).** `runs show` gives `agent` as `openclaw` for a command OpenClaw's agent ran, with `from_chat: true` when a chat message started it; a Hermes run carries its session, so a task claim from Hermes is held per session.
+- **The `tg-cli` skill tells OpenClaw and ClawHub that it needs `tg`, and how to install it** (`metadata.openclaw`: `requires.bins` and the npm package `@wirecat/tg-cli`). With `tg` missing from PATH, OpenClaw marks the skill not ready and offers to install the package. Claude Code and Codex ignore the block.
 
 ## 0.93.0 — 25.10.2026
 

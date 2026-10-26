@@ -2,6 +2,14 @@
 name: tg-cli
 description: >-
   Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked to install or connect Telegram, find a chat or person, read a conversation, or send a message.
+metadata:
+  openclaw:
+    requires:
+      bins: [tg]
+    install:
+      - kind: node
+        package: "@wirecat/tg-cli"
+        bins: [tg]
 ---
 
 # tg — the owner's personal Telegram from the command line
