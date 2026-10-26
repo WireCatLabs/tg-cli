@@ -9,9 +9,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 - **`tg <profile> session start --json --answer-stdin` signs in without a terminal, for WireCat Desktop (cli-core 0.443.0).** Each question is a `needs` line on stderr (`{"event":"needs","field","secret","prompt","hint"}`: `api_id`, `api_hash`, `phone`, `code`, `password`) and its answer is one line on stdin; my.telegram.org is an `open_url` line. Without `--answer-stdin`, a run with no terminal still refuses, so an agent's shell never waits on a question. Answers are never printed and never kept in a run record.
 
+- **`tg <profile> mcp server start|stop|status` runs the HTTP MCP server in the background (cli-core 0.445.0).** `start` takes `--public-url`, `--port` and `--permission` as `mcp --http` does and returns once the server listens; `status` gives the port, the address, the one-time login code and the apps that logged in; `stop` ends only the server it started. WireCat Desktop starts and stops it from the tool's Manage panel.
+
 ### Changed — may break callers
 
-- **A run record keeps the command line as typed (cli-core 0.439.0 to 0.443.0).** `runs show` and `run.json` carry `argv`, the words after `tg`, with secrets `[redacted]` (a secret-named option, a password in a URL, a known token format, a random-looking string) and a phone number never kept. `tg <profile> config set record_input false` keeps `[redacted]` in place of every typed value that may be text. Recorded events still hold ids, never a chat's title or a message's text.
+- **A run record keeps the command line as typed (cli-core 0.439.0 to 0.447.0).** `runs show` and `run.json` carry `argv`, the words after `tg`, with secrets `[redacted]` (a secret-named option, a password in a URL, a known token format, a random-looking string) and a phone number never kept. `tg <profile> config set record_input false` keeps `[redacted]` in place of every typed value that may be text. Recorded events still hold ids, never a chat's title or a message's text.
 
 ## 0.94.0 — 26.10.2026
 

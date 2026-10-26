@@ -6001,6 +6001,56 @@ tg mcp [options]
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
 | `--revoke` | forget every login given to a browser app; each must log in again. |
 
+### `tg mcp server`
+
+start, stop and check `mcp --http` in the background; status shows the login code for a browser app
+
+#### `tg mcp server start`
+
+start `mcp --http` apart from this shell and answer once it listens, with its login code
+
+**Changes something on this computer only.**
+
+```sh
+tg mcp server start [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--port <port>` | the local port (default 8765). |
+| `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
+| `--permission <key=level>` | make a permission stricter for this server only; repeat for more keys. |
+
+**Returns:** start the HTTP MCP server in the background
+
+**Example:** `tg personal mcp server start --public-url https://laptop.example.ts.net`
+
+#### `tg mcp server stop`
+
+stop `mcp --http` — only one that `mcp server start` started
+
+**Changes something on this computer only.**
+
+```sh
+tg mcp server stop
+```
+
+**Returns:** stop the background HTTP MCP server
+
+**Example:** `tg personal mcp server stop`
+
+#### `tg mcp server status`
+
+whether `mcp --http` runs, on which port and address, the login code for a new browser app, and the apps logged in
+
+```sh
+tg mcp server status
+```
+
+**Returns:** whether the HTTP MCP server runs, its login code and the apps logged in
+
+**Example:** `tg personal mcp server status --json`
+
 ### `tg mcp config`
 
 print the mcpServers entry for Claude Desktop, Cursor and others, with full paths; writes nothing
