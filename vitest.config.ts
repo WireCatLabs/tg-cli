@@ -8,6 +8,8 @@ export default defineConfig({
     globals: false,
     // Agents run suites side by side on 24 cores; one worker per core ran the machine out of memory (2026-10-11).
     maxWorkers: 4,
+    // Whole-command tests under coverage reach 4.4 s on a 4-core CI runner (2026-10-26), against vitest's 5 s default.
+    testTimeout: 15_000,
     setupFiles: ["@wirecat/cli-base/testing/setup", "src/testing/sandbox.ts"],
     globalSetup: ["src/testing/argv-log.ts"],
     coverage: {
