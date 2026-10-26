@@ -90,6 +90,9 @@ it and says the old one expired. With `--json`, each code is also one line on st
 
 The code is drawn for a dark terminal theme. Without a terminal this works only when the profile
 already has its app and the account has no 2FA password: anything else you have to type yourself.
+A program that shows the questions in its own window, such as WireCat Desktop, runs
+`tg personal session start phone --json --answer-stdin`: each question is a `needs` line on stderr,
+answered with one line on stdin.
 `tg personal setup` works the same way. Login is not offered as an MCP tool: an agent that has
 only MCP asks you to run the command, or runs it through its shell.
 
