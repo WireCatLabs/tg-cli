@@ -11298,7 +11298,7 @@ tg skill show [name] [options]
 
 ### `tg skill install`
 
-write SKILL.md to \~/.claude/skills/tg-cli/ (Claude Code) and \~/.agents/skills/tg-cli/ (Codex, Gemini CLI)
+write SKILL.md to \~/.claude/skills/tg-cli/ (Claude Code) and \~/.agents/skills/tg-cli/ (Codex, Gemini CLI, OpenClaw); --for hermes also has Hermes read \~/.agents/skills, which changes Hermes's own settings, so all leaves it out
 
 **Changes something on this computer only.**
 
@@ -11308,7 +11308,7 @@ tg skill install [options]
 
 | Option | What it does |
 |---|---|
-| `--for <agents>` | which agents to install for. One of: `claude`, `agents`, `all`. Default: `all`. |
+| `--for <agents>` | which agents to install for. One of: `claude`, `agents`, `hermes`, `all`. Default: `all`. |
 
 **Returns:** install the tool's instructions for AI agents
 
@@ -11316,7 +11316,7 @@ tg skill install [options]
 
 ### `tg skill status`
 
-for each place `tg skill install` writes to: the path, the version installed there, and whether it is current, stale, missing or unversioned
+for each place `tg skill install` writes to, and for the copy Hermes reads: the path, the version installed there, and whether it is current, stale, missing or unversioned
 
 ```sh
 tg skill status
