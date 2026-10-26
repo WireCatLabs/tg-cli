@@ -1,0 +1,35 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "dev.wirecat/tg-cli",
+  "title": "WireCat Telegram",
+  "description": "Your Telegram account for agents: read, search and send messages. Sign in with the tg CLI first.",
+  "websiteUrl": "https://wirecat.dev/en/docs/tg",
+  "repository": {
+    "url": "https://github.com/WireCatLabs/tg-cli",
+    "source": "github"
+  },
+  "version": "0.95.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@wirecat/tg-cli",
+      "version": "0.95.0",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "valueHint": "profile",
+          "description": "The tg profile you signed in with",
+          "isRequired": true
+        },
+        {
+          "type": "positional",
+          "value": "mcp"
+        }
+      ]
+    }
+  ]
+}
