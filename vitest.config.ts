@@ -24,7 +24,7 @@ export default defineConfig({
       reporter: ["text-summary", "json-summary", "html"],
       // A little under what the suite reaches (2026-09-29), so coverage can rise and not fall.
       thresholds: {
-        lines: 93,
+        lines: 99,
         statements: 92,
         functions: 90,
         branches: 80,
