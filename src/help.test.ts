@@ -2,7 +2,7 @@ import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { checkGuide } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
-import { createProgram, run } from "./program.js"
+import { createProgram, run } from "./whole-program.js"
 
 // Commander keeps whether a command has its own action private; a group without one only routes.
 const routesOnly = (command: Command) => (command as unknown as { _actionHandler: unknown })._actionHandler === null

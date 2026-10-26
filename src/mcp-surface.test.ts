@@ -6,7 +6,7 @@ import { createBotServer } from "@wirecat/cli-core/mcp"
 import { describe, expect, it } from "vitest"
 import { resolveSettings } from "./app.js"
 import { botMcpRun, TELEGRAM_BOT } from "./commands/bot.js"
-import { createProgram, run } from "./program.js"
+import { createProgram, run } from "./whole-program.js"
 
 const botServer = (permissions: Record<string, "deny" | "readonly" | "ask" | "allow"> = {}) => {
   const root = createProgram()

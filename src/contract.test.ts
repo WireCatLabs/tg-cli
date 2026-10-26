@@ -4,8 +4,8 @@ import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { type CommandInfo, describeProgram } from "@wirecat/cli-base/commands"
 import { describe, expect, it } from "vitest"
-import { createProgram, run } from "./program.js"
 import { chat, message, scripted } from "./testing/scripted.js"
+import { createProgram, run } from "./whole-program.js"
 
 const telegram = scripted({
   chat: async () => ({ ...chat, members: [] }),
