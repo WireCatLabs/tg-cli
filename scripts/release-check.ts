@@ -46,7 +46,7 @@ const failed = releaseCheck(
         "cli-dev",
         "test-matrix",
         "--program",
-        "dist/program.js",
+        "dist/whole-program.js",
         "--untested",
         "scripts/test-matrix-untested.ts",
         "--name",

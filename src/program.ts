@@ -10,7 +10,6 @@ import {
   configCommand,
   contactsCommand,
   conversationsCommand,
-  createProgram as create,
   doctorCommand,
   floodCommand,
   guideCommand,
@@ -48,8 +47,8 @@ import {
 } from "@wirecat/cli-core/cli"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
+import { needsBotApi } from "./bot-api-need.js"
 import { botMcp, TELEGRAM_BOT } from "./commands/bot.js"
-import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { type Environment, SKILL, TELEGRAM } from "./commands/context.js"
 import { withProxySecrets } from "./commands/proxy-config.js"
 import { sessionCommand } from "./commands/session.js"
@@ -60,7 +59,20 @@ import { updateNotice } from "./update.js"
 /** A revoked or missing login fails the same on every retry; serve reports a locked keyring with another code. */
 export const NO_RESTART_ON = [exitCodeFor("authentication_error")]
 
-const definition: ProgramDefinition = {
+// The generated Bot API commands, about 1.5 MB of modules: only a command line that reaches them pays for them.
+let botApi: (() => Command) | undefined
+
+/** Builds every later program with `bot api`; the tree walkers' entry (`whole-program.ts`) calls it first. */
+export const useBotApi = (group: () => Command): void => {
+  botApi = group
+}
+
+const bot = (): Command => {
+  const command = botCommand({ ...TELEGRAM_BOT, mcp: botMcp(run) })
+  return botApi ? command.addCommand(botApi()) : command
+}
+
+export const definition: ProgramDefinition = {
   app: TG,
   configuration: CONFIG,
   firstScreen: {
@@ -174,7 +186,7 @@ const definition: ProgramDefinition = {
     completeCommand(TELEGRAM, CONFIG),
     upgradeCommand(),
     mcpCommand(TELEGRAM),
-    botCommand({ ...TELEGRAM_BOT, mcp: botMcp(run) }).addCommand(telegramBotApiCommand()),
+    bot(),
     skillCommand(TG, SKILL),
     guideCommand(TG, {
       directory: fileURLToPath(new URL("../scenarios", import.meta.url)),
@@ -183,10 +195,10 @@ const definition: ProgramDefinition = {
   ],
 }
 
-export const createProgram = (): Command => create(definition)
-
 /** Never throws: every outcome is an exit code, and a failure is said once, on stderr. */
 export const run = async (argv: string[], environment: Environment = {}): Promise<number> => {
+  if (!botApi && needsBotApi(argv, environment.env ?? process.env))
+    useBotApi((await import("./commands/bot-api.js")).telegramBotApiCommand)
   const notice = updateNotice(argv, {
     ...(environment.tty === undefined ? {} : { tty: environment.tty }),
     ...(environment.update ? { environment: environment.update } : {}),
