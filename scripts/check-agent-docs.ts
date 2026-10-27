@@ -8,7 +8,7 @@ import { VERSION } from "../dist/version.js"
 import { createProgram } from "../dist/whole-program.js"
 
 const keys = CONFIG.allSettings
-const file = new URL("../skills/tg-cli/SKILL.md", import.meta.url)
+const file = new URL("../skills/wirecat-tg/SKILL.md", import.meta.url)
 const source = readFileSync(file, "utf8")
 const program = createProgram()
 assert.deepEqual(validateSkill(source, { folder: "tg-cli", file: file.pathname, program }), [])

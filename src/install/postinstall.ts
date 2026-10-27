@@ -61,7 +61,7 @@ export const completeGlobalInstall = ({
           : (["agents"] as const)
     installSkill(
       { command: "tg", appName: "tg-cli", version: VERSION },
-      pathToFileURL(join(packageRoot, "skills/tg-cli/SKILL.md")),
+      pathToFileURL(join(packageRoot, "skills/wirecat-tg/SKILL.md")),
       { env, targets },
     )
     note("tg: agent skill installed. Agent: read tg skill show before login; verify the installed skill is loaded.")

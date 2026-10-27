@@ -75,7 +75,7 @@ pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm test:matrix && pnpm do
 
 **The MCP tool comes in the same pull request** (cli-core `src/mcp/tools/<resource>.ts`). A write
 tool carries `permission` and goes through the same guard. If an agent should know the command, add
-a line to [`skills/tg-cli/SKILL.md`](../../../../skills/tg-cli/SKILL.md), which `tg skill show` prints.
+a line to [`skills/wirecat-tg/SKILL.md`](../../../../skills/wirecat-tg/SKILL.md), which `tg skill show` prints.
 
 ## 5. Docs
 

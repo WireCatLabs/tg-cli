@@ -100,7 +100,7 @@ More: [recipes, with a schedule and limits for each](https://github.com/WireCatL
 Your agent. Your Telegram. Your rules.
 
 - **Agents with a terminal** (for example Claude Code, Codex, Gemini CLI) run `tg` commands
-  themselves. The bundled [skill](https://github.com/WireCatLabs/tg-cli/blob/main/skills/tg-cli/SKILL.md)
+  themselves. The bundled [skill](https://github.com/WireCatLabs/tg-cli/blob/main/skills/wirecat-tg/SKILL.md)
   tells them how: `tg personal setup --agent …` or `tg skill install` puts it in place, and `tg skill show`
   prints it before login.
 - **Apps without a terminal** (for example Claude Desktop, Cursor and other MCP clients) connect to

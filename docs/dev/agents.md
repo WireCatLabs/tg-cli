@@ -76,7 +76,7 @@ bin/lane --remove l1-reading   # at the end; refuses while either worktree has u
 | `tg-cli/src/telegram/adapter.ts`, `map.ts` | every lane adds methods. Put the work in the feature's module (`folders.ts`, `topics.ts`, `groups.ts` …) and a one-line method at the end of the class; a rebase conflict here is two groups, keep both |
 | `MessengerAdapter` in `port.ts` | a new method is optional (`edit?`), asked for with `capability()`; the wrappers pass it through (`throughWrapper`) — no edit to `observed.ts`/`stored.ts` unless you want ids in the run or a save |
 | `mcp/tools/<resource>.ts` | one file per resource; a new one is a file and a line in `tools.ts` |
-| `README.md`, `docs/mcp.md`, `skills/tg-cli/SKILL.md` | lists; on a conflict keep both rows |
+| `README.md`, `docs/mcp.md`, `skills/wirecat-tg/SKILL.md` | lists; on a conflict keep both rows |
 | the version in `package.json` | see releasing, above |
 | `docs/dev/test-matrix.md` | generated — on a conflict run `pnpm test:matrix` and commit what it writes, never merge it by hand. A new command or option needs a test through `run()` or an entry in `scripts/test-matrix-untested.ts`, or `pnpm test:matrix` and full validation fail ([TESTING.md](TESTING.md#every-command-and-option-has-a-test-or-a-reason)) |
 | coverage (`pnpm test:coverage`) | every file keeps at least 50 % of its lines; a new adapter group comes with its cases in `src/telegram/adapter.test.ts` ([TESTING.md](TESTING.md#coverage-has-a-floor)) |
