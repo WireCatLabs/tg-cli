@@ -11,7 +11,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   before doing any work; it now loads about 55 that hold the same code. `tg messages list --help` went from 389 to
   192 ms, and from 534 to 272 ms on the first run after an install or a reboot. A command that connects still loads
   Telegram's client library as before. Output is unchanged. The package is larger: 3.0 MB to download instead of
-  0.5 MB, 16 MB on disk instead of 4 MB.
+  0.5 MB, 16 MB on disk instead of 4 MB. A running `tg serve`, `watch` or MCP server loads all of its code a few
+  seconds after it starts, so upgrading `tg` under it does not leave it unable to find a file it had not used yet.
 - **Tg's agent skill publishes to ClawHub as `tg-cli` again.** ClawHub keeps skill names per publisher, so
   `wirecat/tg-cli` is tg's own name even though another publisher has a `tg-cli` too, and every WireCat tool's skill
   now uses its plain name. `tg skill install` still writes `skills/tg-cli/`.
