@@ -7,6 +7,17 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Tg's agent skill publishes to ClawHub as `tg-cli` again.** ClawHub keeps skill names per publisher, so
+  `wirecat/tg-cli` is tg's own name even though another publisher has a `tg-cli` too, and every WireCat tool's skill
+  now uses its plain name. `tg skill install` still writes `skills/tg-cli/`.
+
+## 0.99.0 — 27.10.2026
+
+### Fixed
+
+- **With no session, the error and the MCP instructions also offer WireCat Desktop.** `no session`, `not logged in`
+  and missing app keys now say: run the command in a terminal, or sign in from WireCat Desktop (Tools → Telegram →
+  Manage). Over MCP the agent is told never to ask for codes or passwords (cli-core 0.452.0).
 - **Tg's agent skill publishes to ClawHub as `wirecat-tg`.** The ClawHub name `tg-cli` belongs to another publisher,
   so tg's skill could not be listed under it. `tg skill install` still writes `skills/tg-cli/`.
 
@@ -14,9 +25,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
-- **With no session, the error and the MCP instructions also offer WireCat Desktop.** `no session`, `not logged in`
-  and missing app keys now say: run the command in a terminal, or sign in from WireCat Desktop (Tools → Telegram →
-  Manage). Over MCP the agent is told never to ask for codes or passwords (cli-core 0.452.0).
 - **Meaning search and `--discover` run on the native ONNX Runtime on Windows too (cli-core 0.451.0).** After
   `tg <profile> models download`, text models and the reranker use the native library on Windows x64 and arm64, as
   they already did on Linux and macOS: 2–3× faster than WebAssembly. The download takes `onnxruntime.dll` from the

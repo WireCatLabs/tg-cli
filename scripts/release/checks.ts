@@ -50,7 +50,7 @@ export const PACKED = [
   "README.md",
   "LICENSE",
   "THIRD_PARTY_NOTICES",
-  "skills/wirecat-tg/SKILL.md",
+  "skills/tg-cli/SKILL.md",
   "scenarios/",
   "spec/bot/LICENSE",
   "spec/bot/README.md",
@@ -62,7 +62,7 @@ const GENERATED = new Set(["docs/commands.md"])
 
 export const docsRules = (root: string): DocsRules => ({
   files: [
-    ...["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", "skills/wirecat-tg/SKILL.md"].map((name) =>
+    ...["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", "skills/tg-cli/SKILL.md"].map((name) =>
       join(root, name),
     ),
     ...markdownFiles(join(root, "docs")),
