@@ -506,7 +506,7 @@ export const UNTESTED: Untested[] = [
       "comes with P2's Telegram moderation work",
   },
   {
-    command: "bot mcp",
+    command: "bot mcp serve",
     reason:
       "serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, " +
       "and src/bot.test.ts the tools tg offers",
@@ -519,7 +519,7 @@ export const UNTESTED: Untested[] = [
       "src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options",
   })),
   {
-    command: "mcp",
+    command: "mcp serve",
     reason:
       "serves MCP on the process's own stdin until the client closes; cli-core's src/mcp/mcp.test.ts drives " +
       "the server — tools offered by the profile's permissions — and HANDOFF.md §3b names the live check",
