@@ -175,7 +175,11 @@ export const toCliError = (error: unknown, words: CheckWords<Check>, login = wor
       return new CliError(code, message, { ...details, reason, standing: { state, hint: message } })
     }
     if (error.code === RpcError.UNAUTHORIZED) {
-      return new CliError("authentication_error", `not logged in, or the session was ended — run ${login}`, details)
+      return new CliError(
+        "authentication_error",
+        `not logged in, or the session was ended — run ${login}, or sign in from WireCat Desktop (Tools → Telegram → Manage)`,
+        details,
+      )
     }
     const explained = EXPLAINED[error.text]
     if (explained) {

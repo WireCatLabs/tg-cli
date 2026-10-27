@@ -121,7 +121,8 @@ because it waits for the scan and the shell tool shows nothing until it exits. R
 paste the QR text block into the chat as a code block, exactly as printed. When a new block is
 printed, paste it and say the old one expired. With `--json` each code is also a stderr line
 `{"event":"qr","qr":{"text","expires_at","scan"}}`. Login is not an MCP tool: with only MCP, ask
-the owner to run the command. Existing sessions are checked without a new login. Missing keyring access
+the owner to run the command in a terminal or to sign in from WireCat Desktop (Tools → Telegram → Manage).
+Existing sessions are checked without a new login. Missing keyring access
 requires fixing the environment, not another login. Pick a chat and an amount of history with
 the owner before `tg personal messages sync <chat> --last 100`; setup starts no background service.
 
