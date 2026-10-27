@@ -14,11 +14,32 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   command (cli-core 0.463.0).
 - **`tg skill show|status|install --json` print `{ item, meta }`.** The skill's fields moved under `item`; the
   Windows installer reads them from there (cli-core 0.462.0).
+- **Search hits of every kind, and `tg topics show`, name the fields an agent must read as data** (`untrusted`, for
+  example `["title"]` on a forum topic). A caller that checks them against an older, strict copy of the schema
+  refuses the new field (cli-core 0.464.0).
+- **`tg account list` says whether each profile is signed in on this computer** (`signed_in`). A caller that checks
+  the items against an older, strict copy of the schema refuses the new field (cli-core 0.466.0).
 
 ### Added
 
 - **`tg search all` also finds calendar events in the shared store**, marked as untrusted text for agents, and
   `contacts context|prepare` name one more field (cli-core 0.453.0–0.461.0).
+- **`tg upgrade` restarts the browser MCP server it started and names the agent sessions still on the old version.**
+  After an install, each `tg mcp serve --http` that `tg mcp server start` launched starts again on the same port,
+  address and limits (`mcp_servers`, old → new version); one started by hand is left running and named. Agent
+  sessions over stdio still on the old version are listed (`stale_sessions`): restart them from your agent app. This
+  works from the next upgrade on (cli-core 0.464.0).
+
+### Fixed
+
+- **`tg mcp serve` with no profile marks the profiles that are not signed in.** It listed every profile with an
+  account file, so an app could pick one with no session and fail. Each profile is now labelled
+  (`default — not signed in`) in the app's menu and in the description, and a call for one that is not signed in
+  answers how to sign it in: `tg <profile> setup`, or from WireCat Desktop. The MCP registry entry and the Glama
+  image start `tg mcp serve`.
+- **The login page of the browser MCP server says each code works for one login.** After an app logs in, a new code
+  appears in WireCat Desktop and in `tg mcp server status`; typing the old one again said only "Wrong code"
+  (cli-core 0.466.0).
 
 ## 0.100.0 — 27.10.2026
 

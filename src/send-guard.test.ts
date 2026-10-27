@@ -362,6 +362,7 @@ describe("the send guard in front of the other writes", () => {
       created_at: topic.createdAt,
       last_message_at: topic.lastMessageAt,
       unread_count: topic.unreadCount,
+      untrusted: ["title"],
     })
     expect(journal("g-topic")).toEqual([])
   })
