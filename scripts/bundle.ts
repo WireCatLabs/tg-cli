@@ -17,7 +17,7 @@
  */
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import { isBuiltin } from "node:module"
-import { dirname, join, relative, sep } from "node:path"
+import { basename, dirname, join, relative, sep } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { build, type Plugin } from "esbuild"
 
@@ -212,7 +212,40 @@ if (problems.length > 0) {
   console.error(`the bundle would look for these in the wrong place:\n${problems.join("\n")}`)
   process.exit(1)
 }
+// An upgrade replaces the chunks under a running server, and their names carry a hash: a server that had not yet
+// loaded one would fail to find it. A server loads them all soon after it starts, and finds a chunk it holds without
+// looking on disk, where Node's resolver would look again for each new importer. A short command loads only what it
+// uses.
+const lazy = new Set<string>()
+for (const { imports } of Object.values(metafile.outputs)) {
+  for (const { path, kind, external } of imports) {
+    if (kind === "dynamic-import" && !external) lazy.add(`../bundle/${basename(path)}`)
+  }
+}
 writeFileSync(
   bin,
-  `#!/usr/bin/env node\n${LOADER}import { enableCompileCache } from "node:module"\n\n// Before the bundle compiles: the bundle's own call comes after its chunks.\nenableCompileCache()\nawait import("../bundle/tg.js")\n`,
+  `#!/usr/bin/env node
+${LOADER}import * as module from "node:module"
+
+// Before the bundle compiles: the bundle's own call comes after its chunks.
+module.enableCompileCache()
+const words = process.argv.slice(2)
+const serves = words
+  .slice(0, 3)
+  .some((word, at) => ["serve", "watch"].includes(word) || (word === "mcp" && !/^[^-]/.test(words[at + 1] ?? "")))
+if (serves && module.registerHooks) {
+  const bundle = new URL("../bundle/", import.meta.url).href
+  module.registerHooks({
+    resolve: (specifier, context, next) =>
+      specifier.startsWith("./") && context.parentURL?.startsWith(bundle)
+        ? { url: new URL(specifier, context.parentURL).href, format: "module", shortCircuit: true }
+        : next(specifier, context),
+  })
+}
+const running = import("../bundle/tg.js")
+const chunks = ${JSON.stringify([...lazy].sort())}
+// After the server answers its first request, so it starts no later.
+if (serves) setTimeout(() => void Promise.allSettled(chunks.map((chunk) => import(chunk))), 2000).unref()
+await running
+`,
 )

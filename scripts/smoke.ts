@@ -6,7 +6,7 @@
  *   pnpm build && pnpm smoke:bun
  */
 import { spawnSync } from "node:child_process"
-import { mkdtempSync, readFileSync, rmSync } from "node:fs"
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { NodePlatform } from "@mtcute/node"
@@ -54,6 +54,13 @@ const skill = tg("skill", "show")
 check("skill show prints the SKILL.md the package ships", skill.status === 0 && skill.stdout.startsWith("---"))
 
 check("the bin starts the bundle", readFileSync("dist/bin/tg.js", "utf8").includes('import("../bundle/tg.js")'))
+const preloaded = [...readFileSync("dist/bin/tg.js", "utf8").matchAll(/"\.\.\/bundle\/([^"]+)"/g)]
+  .map(([, chunk]) => chunk ?? "")
+  .filter((chunk) => chunk !== "tg.js")
+check(
+  "a server preloads only chunks the bundle has",
+  preloaded.length > 0 && preloaded.every((chunk) => existsSync(join("dist/bundle", chunk))),
+)
 check("skill show finds cli-core's skills from the bundle", tg("skill", "show", "follow-ups").stdout.startsWith("---"))
 check("guide reads the scenarios the package ships", tg("guide", "catch-up").stdout.includes("Catch up"))
 
