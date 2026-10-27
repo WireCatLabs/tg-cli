@@ -6,7 +6,7 @@
  *   pnpm build && pnpm smoke:bun
  */
 import { spawnSync } from "node:child_process"
-import { mkdtempSync, rmSync } from "node:fs"
+import { mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { NodePlatform } from "@mtcute/node"
@@ -52,6 +52,10 @@ check("an unknown option explains itself on stderr", bad.stderr.includes("unknow
 
 const skill = tg("skill", "show")
 check("skill show prints the SKILL.md the package ships", skill.status === 0 && skill.stdout.startsWith("---"))
+
+check("the bin starts the bundle", readFileSync("dist/bin/tg.js", "utf8").includes('import("../bundle/tg.js")'))
+check("skill show finds cli-core's skills from the bundle", tg("skill", "show", "follow-ups").stdout.startsWith("---"))
+check("guide reads the scenarios the package ships", tg("guide", "catch-up").stdout.includes("Catch up"))
 
 const doctor = tg("doctor", "--json")
 check("doctor answers one JSON value with no login", doctor.stdout !== "" && JSON.parse(doctor.stdout) !== null)
