@@ -5,21 +5,21 @@ Usage: tg <profile> <command> [options]
 Account commands start with your profile, a name you choose; none is ever assumed.
 
 What you can do:
-  review 'date>1d'        what changed in every chat since yesterday
-  tasks agenda            tasks due, replies you owe, replies you wait for
-  inbox --transcribe      unread in every chat, voice as text; marks nothing read by default
-  search all invoice      messages and notes, from the local store and Telegram's server
-  attachments extract     text of PDFs and documents, ready for search
-  schedule agent …        an agent on a timer; it runs read-only and can never send
-  mcp --permission …      your account in any agent, with messages.send=deny
-  TG_READ_ONLY=1 tg …     a run that can read and sync but never send, edit or delete
+  review 'date>1d'          what changed in every chat since yesterday
+  tasks agenda              tasks due, replies you owe, replies you wait for
+  inbox --transcribe        unread in every chat, voice as text; marks nothing read by default
+  search all invoice        messages and notes, from the local store and Telegram's server
+  attachments extract       text of PDFs and documents, ready for search
+  schedule agent …          an agent on a timer; it runs read-only and can never send
+  mcp serve --permission …  your account in any agent, with messages.send=deny
+  TG_READ_ONLY=1 tg …       a run that can read and sync but never send, edit or delete
 
 Works with:
-  max                     MAX in the same local store: search, review and tasks offline
-  wa                      WhatsApp in the same local store: search, review and tasks offline
-  zm                      Zoom meetings: transcripts and summaries, searchable with your other WireCat data
-  drive                   Google Drive and Docs as local text, searchable with your other WireCat data
-  memo context <person>   one person across messengers, mail, notes and meetings
+  max                       MAX in the same local store: search, review and tasks offline
+  wa                        WhatsApp in the same local store: search, review and tasks offline
+  zm                        Zoom meetings: transcripts and summaries, searchable with your other WireCat data
+  drive                     Google Drive and Docs as local text, searchable with your other WireCat data
+  memo context <person>     one person across messengers, mail, notes and meetings
 
 Start here:   tg personal setup  (any profile name works)
               tg account list    your profiles and their logged-in accounts

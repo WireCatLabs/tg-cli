@@ -32,7 +32,10 @@ const leaves = (list: readonly CommandInfo[]): CommandInfo[] =>
   list.flatMap((one) => (one.commands.length > 0 ? leaves(one.commands) : [one]))
 
 describe("the stdout contract", () => {
-  const commands = leaves(describeProgram(createProgram())).filter((one) => one.path.join(" ") !== "help")
+  // `mcp serve` speaks MCP on stdout until stdin closes, so one JSON value is not its contract.
+  const commands = leaves(describeProgram(createProgram())).filter(
+    (one) => !["help", "mcp serve"].includes(one.path.join(" ")),
+  )
 
   it.each(commands.map((one) => [one.path.join(" "), one] as const))(
     "**%s --json** prints one JSON value when it succeeds and nothing when it fails",

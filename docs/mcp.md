@@ -8,7 +8,7 @@ do, and use ready prompts and chat mentions.
 A few terms first:
 
 - **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is a standard way for an AI app
-  to use outside tools. The app is the **MCP client**; `tg personal mcp` is the **MCP server**.
+  to use outside tools. The app is the **MCP client**; `tg personal mcp serve` is the **MCP server**.
 - A **tool** is one action the server offers the agent, such as "read" or "write".
 - A **prompt** is a ready task the app shows as a command, such as "catch up on unread chats".
 - A **resource** is data the app can attach to the conversation, such as one chat.
@@ -16,7 +16,7 @@ A few terms first:
   [profiles](profiles.md).
 
 The server comes with `tg`; there is nothing else to install. By default it talks to the app over
-stdin and stdout. `tg personal mcp --http --public-url` serves it on a local port behind your HTTPS tunnel
+stdin and stdout. `tg personal mcp serve --http --public-url` serves it on a local port behind your HTTPS tunnel
 instead.
 
 ## Do you need it
@@ -28,7 +28,7 @@ same things; it learns how from the skill that `tg skill show` prints. MCP is fo
 - apps without a terminal, such as Claude Desktop or Cursor's chat;
 - anyone who wants the app to ask before each send.
 
-For ChatGPT or Claude **in the browser**, use `tg personal mcp --http` — see
+For ChatGPT or Claude **in the browser**, use `tg personal mcp serve --http` — see
 [connecting a browser or phone app](remote.md).
 
 ## What the server gives
@@ -74,13 +74,13 @@ phone apps need a separate remote connection ([connecting a browser or phone app
 **Claude Code, by hand:**
 
 ```sh
-claude mcp add tg -- tg personal mcp
+claude mcp add tg -- tg personal mcp serve
 ```
 
 With a profile — it goes first, as in any command:
 
 ```sh
-claude mcp add tg-work -- tg work mcp
+claude mcp add tg-work -- tg work mcp serve
 ```
 
 **Claude Desktop, Cursor and other apps:** `tg` prints the entry for their settings file:
@@ -96,7 +96,7 @@ tg work mcp config                  # another profile
     "tg-personal": {
       "type": "stdio",
       "command": "/usr/bin/node",
-      "args": ["/usr/lib/node_modules/@wirecat/tg-cli/dist/bin/tg.js", "personal", "mcp"],
+      "args": ["/usr/lib/node_modules/@wirecat/tg-cli/dist/bin/tg.js", "personal", "mcp", "serve"],
       "env": { "XDG_RUNTIME_DIR": "/run/user/1000" }
     }
   }
@@ -126,7 +126,7 @@ they are set in the terminal and not for the MCP app, or the other way round, th
 An app that starts servers with a trimmed environment leaves it out, and every tool then answers
 that the keyring is probably out of reach. The entry from `tg personal mcp config` includes it.
 
-A bot has its own server, `tg <name> bot mcp`; see [the bot for an agent](bot.md#the-bot-for-an-agent-mcp).
+A bot has its own server, `tg <name> bot mcp serve`; see [the bot for an agent](bot.md#the-bot-for-an-agent-mcp).
 
 ## What an agent may do
 
@@ -189,10 +189,11 @@ Every command is a tool, writes included; the profile's permissions limit what t
 a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
 terminal:
 
-- **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check`,
+- **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check|revoke`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
+  `mcp` and `bot mcp` alone only print their help.
 - **Long-running commands**: `watch`, `serve` and `bot watch` run until you stop them, and an agent call must
-  return. The MCP server itself (`mcp`, `bot mcp`) is left out for the same reason, and so is
+  return. The MCP server itself (`mcp serve`, `bot mcp serve`) is left out for the same reason, and so is
   `mcp server` and `mcp server start|stop|status`, which run it in the background.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
@@ -277,5 +278,5 @@ reads a stale snapshot. The next call connects again. Calls run one at a time, e
 sends them together.
 
 Over stdin and stdout, the server exits as soon as the app closes stdin, and closes its connection to
-Telegram. Over HTTP it runs until Ctrl-C. `tg personal mcp --revoke` ends every login given to a browser app
+Telegram. Over HTTP it runs until Ctrl-C. `tg personal mcp revoke` ends every login given to a browser app
 and keeps your Telegram session. See [connecting a browser or phone app](remote.md).

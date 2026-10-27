@@ -3,6 +3,23 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **The MCP server is `tg <profile> mcp serve`; `tg <profile> mcp` alone prints help.** Browser logins are
+  forgotten with `tg <profile> mcp revoke` instead of `mcp --revoke`. A bot's server is `tg <name> bot mcp serve`.
+  An app entry that runs `tg personal mcp` must change to `tg personal mcp serve`: run `tg personal mcp add <app>`
+  or `tg personal mcp config` again. `mcp server start` and the entries `mcp config` prints already run the new
+  command (cli-core 0.463.0).
+- **`tg skill show|status|install --json` print `{ item, meta }`.** The skill's fields moved under `item`; the
+  Windows installer reads them from there (cli-core 0.462.0).
+
+### Added
+
+- **`tg search all` also finds calendar events in the shared store**, marked as untrusted text for agents, and
+  `contacts context|prepare` name one more field (cli-core 0.453.0–0.461.0).
+
 ## 0.100.0 — 27.10.2026
 
 ### Fixed

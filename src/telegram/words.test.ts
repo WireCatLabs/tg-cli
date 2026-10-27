@@ -146,7 +146,7 @@ const HINTS: [string, Check[], () => string | Promise<string>, string][] = [
     "AUTH_KEY_DUPLICATED without a profile's login",
     ["session.start"],
     () => refusal(406, "AUTH_KEY_DUPLICATED"),
-    "Telegram ended this login because two connections used it at once (tg serve, tg mcp, " +
+    "Telegram ended this login because two connections used it at once (tg serve, tg mcp serve, " +
       "tg watch or a command beside them) — run `tg personal session start`",
   ],
   [

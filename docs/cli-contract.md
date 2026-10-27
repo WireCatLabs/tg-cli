@@ -15,7 +15,7 @@ A few terms the page uses:
   names the kind of failure.
 - **Machine mode** is output as JSON for a program, instead of text for a person.
 - **One-shot command** does one thing and exits, for example `tg personal messages list`. A **persistent
-  command** keeps running until you stop it: `watch`, `serve` and `mcp`.
+  command** keeps running until you stop it: `watch`, `serve` and `mcp serve`.
 - **Write** is any command that changes something in Telegram: it sends, edits, deletes or marks read.
 
 ## What you can rely on
