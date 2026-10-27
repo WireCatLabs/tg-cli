@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **`tg --version` answers before any of the bundle loads** (about 45 ms instead of 70 under load). The bundle is now
+  built by cli-base's shared `cli-dev bundle` instead of tg's own `scripts/bundle.ts`; the chunks and every output are
+  the same.
+
 ## 0.100.0 — 27.10.2026
 
 ### Fixed
