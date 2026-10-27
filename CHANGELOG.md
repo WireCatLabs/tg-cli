@@ -7,6 +7,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **cli-core 0.461.0.** `tg search all` also finds calendar events when the shared store holds a calendar
+  (`--only events`), each event hit marked `untrusted` so an agent reads its invitation text as data;
+  `contacts context` and `contacts prepare` answer upcoming events; `mcp server status` says what each logged-in
+  browser app last did. The store moves to version 35 on first run.
 - **Commands start about 0.2 s sooner: the package runs from a bundle.** A command loaded about 1,110 module files
   before doing any work; it now loads about 55 that hold the same code. `tg messages list --help` went from 389 to
   192 ms, and from 534 to 272 ms on the first run after an install or a reboot. A command that connects still loads
