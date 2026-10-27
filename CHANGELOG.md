@@ -3,6 +3,13 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **Tg's agent skill publishes to ClawHub as `wirecat-tg`.** The ClawHub name `tg-cli` belongs to another publisher,
+  so tg's skill could not be listed under it. `tg skill install` still writes `skills/tg-cli/`.
+
 ## 0.98.0 — 27.10.2026
 
 ### Fixed
