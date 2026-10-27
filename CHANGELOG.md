@@ -60,7 +60,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **The login page of the browser MCP server says each code works for one login.** After an app logs in, a new code
   appears in WireCat Desktop and in `tg mcp server status`; typing the old one again said only "Wrong code"
   (cli-core 0.466.0).
-||||||| parent of d0321c3 (feat(runs): a request line for every Telegram call, with attempts and waits)
 
 ## 0.100.0 — 27.10.2026
 
