@@ -28,7 +28,7 @@
     "spec/bot/LICENSE"
   ],
   "scripts": {
-    "build": "tsc --build --force && cli-dev bundle --bin dist/bin/tg.js --external '@mtcute/*' --external undici",
+    "build": "tsc --build --force && cli-dev bundle --bin dist/bin/tg.js --external \"@mtcute/*\" --external undici",
     "typecheck": "tsc --build --force --emitDeclarationOnly && tsc -p tsconfig.test.json && tsc -p tsconfig.scripts.json",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
