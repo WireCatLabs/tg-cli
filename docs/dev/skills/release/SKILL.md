@@ -44,7 +44,7 @@ version gets the entries a tg user notices, said in tg's words. No internal ids,
 
 ## 3. The docs against the diff
 
-RELEASING.md, "The docs against the diff": `README.md`, `docs/*.md` and `skills/wirecat-tg/SKILL.md`,
+RELEASING.md, "The docs against the diff": `README.md`, `docs/*.md` and `skills/tg-cli/SKILL.md`,
 which `tg skill show` prints. `docs/commands.md` and `docs/dev/test-matrix.md` are generated:
 `pnpm generate`, `pnpm test:matrix`.
 
