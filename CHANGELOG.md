@@ -5,6 +5,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Added
+
+- **`tg mcp server status` says what each logged-in browser app last did** (cli-core 0.454.0): per app the time of
+  its last request, its last tool call and how many calls today. Names and times only, never arguments. WireCat
+  Desktop shows it as "last call 2 min ago · tg_read" and uses it to confirm a newly connected ChatGPT or Claude.
+
 ### Fixed
 
 - **Tg's agent skill publishes to ClawHub as `tg-cli` again.** ClawHub keeps skill names per publisher, so
