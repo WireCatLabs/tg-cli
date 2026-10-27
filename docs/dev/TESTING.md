@@ -5,7 +5,8 @@ pnpm lint && pnpm typecheck && pnpm test:coverage   # the full suite, with the c
 pnpm test:matrix                                    # every command and option has a test or a reason
 pnpm docs:check                                     # links, anchors, user pages, the changelog's shape
 pnpm test:slow                                      # the 20 slowest tests and the 10 slowest files
-pnpm build && pnpm smoke:bun                        # the built command, executed under Bun
+pnpm build && pnpm smoke:node                       # the built command: the bundle a user installs
+pnpm build && pnpm smoke:bun                        # the same, executed under Bun
 pnpm release:check                                  # all of the above and the release's own checks
 pnpm generate                                       # rewrites docs/commands.md from the command tree
 bin/tg session start                                # everything under .tg/ in this checkout, never the real profile
@@ -80,9 +81,10 @@ fall under the per-file floor.
 
 ## The second runtime
 
-`scripts/smoke.ts` runs the built `dist/bin/tg.js` under Bun with directories of its own: the version,
-help and an unknown option, `doctor`, a failure kept as a run, and tg's session storage over
-`bun:sqlite`. Bun cannot run the vitest suite, so this is the only proof the Bun path works.
+`scripts/smoke.ts` runs the built `dist/bin/tg.js`, the bundle, with directories of its own: the version,
+help and an unknown option, `doctor`, cli-core's skills and tg's scenarios found from the bundle, a failure kept as
+a run, and tg's session storage. CI runs it under Node (`smoke:node`) and Bun (`smoke:bun`); the vitest suite runs
+against `src/`, so this is the proof the bundle works, and under Bun the only proof the Bun path works.
 
 ## Every command and option has a test, or a reason
 

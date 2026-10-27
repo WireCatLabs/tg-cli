@@ -36,6 +36,7 @@ jobs:
         node dist/bin/tg.js default mcp config --json
         node dist/bin/tg.js commands --json
       checks: |
+        pnpm smoke:node
         pnpm check:agent-docs
         git diff --exit-code
 

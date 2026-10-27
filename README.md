@@ -401,7 +401,8 @@ What each version changed: [CHANGELOG.md](https://github.com/WireCatLabs/tg-cli/
 ```sh
 pnpm install
 pnpm lint && pnpm typecheck && pnpm test
-pnpm build && pnpm smoke:bun  # the built command under Bun
+pnpm build && pnpm smoke:node # the built command, the bundle a user installs
+pnpm build && pnpm smoke:bun  # the same under Bun
 pnpm generate                 # rewrites docs/commands.md from the command tree
 bin/tg session start          # everything under .tg/ in this checkout, never the real profile
 ```

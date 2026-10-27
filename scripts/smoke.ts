@@ -6,7 +6,7 @@
  *   pnpm build && pnpm smoke:bun
  */
 import { spawnSync } from "node:child_process"
-import { mkdtempSync, rmSync } from "node:fs"
+import { mkdtempSync, readFileSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { NodePlatform } from "@mtcute/node"
@@ -53,6 +53,10 @@ check("an unknown option explains itself on stderr", bad.stderr.includes("unknow
 const skill = tg("skill", "show")
 check("skill show prints the SKILL.md the package ships", skill.status === 0 && skill.stdout.startsWith("---"))
 
+check("the bin starts the bundle", readFileSync("dist/bin/tg.js", "utf8").includes('import("../bundle/tg.js")'))
+check("skill show finds cli-core's skills from the bundle", tg("skill", "show", "follow-ups").stdout.startsWith("---"))
+check("guide reads the scenarios the package ships", tg("guide", "catch-up").stdout.includes("Catch up"))
+
 const doctor = tg("doctor", "--json")
 check("doctor answers one JSON value with no login", doctor.stdout !== "" && JSON.parse(doctor.stdout) !== null)
 
@@ -71,6 +75,12 @@ check("doctor exits cleanly with no login", doctor.status === 0)
 const offline = tg("chats", "list", "--offline", "--json")
 check("an offline read with nothing recorded fails", offline.status !== 0)
 check("and keeps stdout clean", offline.stdout === "")
+
+// A profile takes the read as far as the store: its SQLite and extension load from cli-core's own dependencies.
+tg("smoke", "config", "set", "limit", "20")
+const stored = tg("smoke", "chats", "list", "--offline", "--json")
+check("the store opens and has nothing recorded", stored.stderr.includes('"reason":"item.not-found"'))
+check("doctor finds the document readers", tg("doctor", "--json").stdout.includes('"unpdf":"built in"'))
 
 const opened = async (path: string) => {
   const storage = await openSessionStorage(path)
