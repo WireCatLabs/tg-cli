@@ -18,7 +18,7 @@ Terms used on this page:
 - **Send guard**: the checks every send passes — a read-only profile, the list of allowed recipients
   and an hourly limit ([the send guard](security.md#the-send-guard)).
 
-Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp`
+Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp serve`
 stay running, and each of them says so.
 
 ```sh
@@ -1277,11 +1277,11 @@ tg personal server install  # a systemd user unit or a launchd agent; starts not
 ## What a command did
 
 ```sh
-tg personal --trace chats list          # show each request on stderr, keep nothing
+tg personal --trace chats list          # also show each request on stderr
 ```
 
 ```sh
-tg personal --record chats list         # keep it, show nothing
+tg personal --no-record chats list      # keep nothing of this run
 ```
 
 ```sh

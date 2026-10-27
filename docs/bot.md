@@ -32,7 +32,7 @@ Some words on this page:
 | Answer buttons, set the command menu and webhooks | `tg <bot> bot callbacks`, `commands`, `webhooks` |
 | Limit the chats the bot may write to | `tg <bot> bot recipients` |
 | Call any Bot API method | `tg <bot> bot api <method>` |
-| Give the bot to your AI agent | `tg <bot> bot mcp` |
+| Give the bot to your AI agent | `tg <bot> bot mcp serve` |
 
 Every command and option is in the [command reference](commands.md).
 
@@ -374,14 +374,14 @@ A refused or failed command says why in its error message and ends with a code:
 
 Every code is in the [command reference](commands.md). `--trace` and `--record` work for a bot too:
 each Bot API request is a line on stderr, never with its address, since the token is in it. A failed
-run is kept and shows in `tg personal runs list` (see [diagnostics](diagnostics.md)).
+run is kept and shows in `tg personal runs list`, with each Bot API request, its timing and any retry (see [diagnostics](diagnostics.md)).
 
 ## The bot for an agent (MCP)
 
-`tg <name> bot mcp` serves the bot to your AI agent, as `tg personal mcp` serves your account:
+`tg <name> bot mcp serve` serves the bot to your AI agent, as `tg personal mcp serve` serves your account:
 
 ```sh
-claude mcp add sales-bot -- tg sales bot mcp
+claude mcp add sales-bot -- tg sales bot mcp serve
 tg sales bot mcp config          # the entry for Claude Desktop, Cursor and other apps
 ```
 

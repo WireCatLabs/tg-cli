@@ -7,9 +7,68 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
-- **`tg --version` answers before any of the bundle loads** (about 45 ms instead of 70 under load). The bundle is now
-  built by cli-base's shared `cli-dev bundle` instead of tg's own `scripts/bundle.ts`; the chunks and every output are
-  the same.
+- **`tg --version` answers before any of the bundle loads.** The bundle is now built by cli-base's shared
+  `cli-dev bundle` instead of tg's own `scripts/bundle.ts`; the chunks and every output are the same. A server started
+  with a flag before `mcp serve` (`tg work --read-only mcp serve`) now loads every chunk soon after it starts, as a
+  plain `mcp serve` does, so an in-place upgrade cannot pull a chunk from under it.
+
+## 0.102.0 — 27.10.2026
+
+### Changed — may break callers
+
+- **Every run is now kept, the ones that worked too.** A run that worked is kept 7 days
+  (`keep_successful_runs_for_days`), a failed one 30 (`keep_runs_for_days`), and the runs folder stays under 200 MB
+  (`runs_size_limit_mb`). With `record_input` on, as by default, a `send` that worked now keeps what you typed (the
+  message, a chat named by its title) in a run readable only by you, on this computer, for 7 days.
+  `record_input failed` keeps it only in a run that failed; `record false` keeps failed runs only; `--no-record`
+  keeps nothing. `watch`, `serve` and `mcp serve` keep a run that worked only with `--record`. A run now says who
+  asked for it: the command line, an MCP app (and its tool call), or WireCat Desktop (cli-core 0.467.0).
+
+### Added
+
+- **`tg runs show` lists each request Telegram got, with its timing, retries and waits.** A command's run now has a
+  line for every call to Telegram, for an account and for a bot: the method (`messages.getHistory`, `sendMessage`),
+  how long it took, and how it ended. When Telegram asks to wait (`FLOOD_WAIT`, or a Bot API `429`) and `tg` waits
+  and tries again, the run shows the refused call, then the retry as attempt 2 with the time waited. Message text,
+  names, phone numbers and the bot token are never written.
+
+## 0.101.0 — 27.10.2026
+
+### Changed — may break callers
+
+- **The MCP server is `tg <profile> mcp serve`; `tg <profile> mcp` alone prints help.** Browser logins are
+  forgotten with `tg <profile> mcp revoke` instead of `mcp --revoke`. A bot's server is `tg <name> bot mcp serve`.
+  An app entry that runs `tg personal mcp` must change to `tg personal mcp serve`: run `tg personal mcp add <app>`
+  or `tg personal mcp config` again. `mcp server start` and the entries `mcp config` prints already run the new
+  command (cli-core 0.463.0).
+- **`tg skill show|status|install --json` print `{ item, meta }`.** The skill's fields moved under `item`; the
+  Windows installer reads them from there (cli-core 0.462.0).
+- **Search hits of every kind, and `tg topics show`, name the fields an agent must read as data** (`untrusted`, for
+  example `["title"]` on a forum topic). A caller that checks them against an older, strict copy of the schema
+  refuses the new field (cli-core 0.464.0).
+- **`tg account list` says whether each profile is signed in on this computer** (`signed_in`). A caller that checks
+  the items against an older, strict copy of the schema refuses the new field (cli-core 0.466.0).
+
+### Added
+
+- **`tg search all` also finds calendar events in the shared store**, marked as untrusted text for agents, and
+  `contacts context|prepare` name one more field (cli-core 0.453.0–0.461.0).
+- **`tg upgrade` restarts the browser MCP server it started and names the agent sessions still on the old version.**
+  After an install, each `tg mcp serve --http` that `tg mcp server start` launched starts again on the same port,
+  address and limits (`mcp_servers`, old → new version); one started by hand is left running and named. Agent
+  sessions over stdio still on the old version are listed (`stale_sessions`): restart them from your agent app. This
+  works from the next upgrade on (cli-core 0.464.0).
+
+### Fixed
+
+- **`tg mcp serve` with no profile marks the profiles that are not signed in.** It listed every profile with an
+  account file, so an app could pick one with no session and fail. Each profile is now labelled
+  (`default — not signed in`) in the app's menu and in the description, and a call for one that is not signed in
+  answers how to sign it in: `tg <profile> setup`, or from WireCat Desktop. The MCP registry entry and the Glama
+  image start `tg mcp serve`.
+- **The login page of the browser MCP server says each code works for one login.** After an app logs in, a new code
+  appears in WireCat Desktop and in `tg mcp server status`; typing the old one again said only "Wrong code"
+  (cli-core 0.466.0).
 
 ## 0.100.0 — 27.10.2026
 

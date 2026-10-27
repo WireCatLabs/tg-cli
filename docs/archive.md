@@ -423,7 +423,7 @@ tg personal store clear --left --allow-dangerous  # delete the chats you have le
   keep using the store.
 - **`restore` keeps the store it replaces** beside it and says where. It refuses while `serve` runs
   for any profile — `tg personal server stop` first — and checks that the backup is a readable, undamaged
-  store. Afterwards, restart every `serve` and `mcp` of either CLI that was running, so they read the
+  store. Afterwards, restart every `serve` and `mcp serve` of either CLI that was running, so they read the
   restored store.
 - **A chat you have left drops out of `chats list --offline`** the next time `tg personal chats list` reads
   your whole chat list; its messages stay in the store. If you rejoin it, it comes back.

@@ -163,7 +163,7 @@ export const toCliError = (error: unknown, words: CheckWords<Check>, login = wor
     if (error.text === "AUTH_KEY_DUPLICATED") {
       return new CliError(
         "authentication_error",
-        `Telegram ended this login because two connections used it at once (tg serve, tg mcp, ` +
+        `Telegram ended this login because two connections used it at once (tg serve, tg mcp serve, ` +
           `tg watch or a command beside them) — run ${login}`,
         { ...details, reason: "login.duplicated" },
       )

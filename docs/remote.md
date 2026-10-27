@@ -8,11 +8,11 @@ to stop it or take its access back.
 
 Terms used on this page:
 
-- **MCP** (Model Context Protocol) is the standard way an AI app calls outside tools. `tg personal mcp` is
+- **MCP** (Model Context Protocol) is the standard way an AI app calls outside tools. `tg personal mcp serve` is
   the MCP server that comes with `tg`; the [MCP server guide](mcp.md) covers apps on your own
   computer.
 - **Remote connection** means the app connects from its own servers, over the internet, to the
-  address you give it. `tg personal mcp --http` serves the same tools over HTTP on `127.0.0.1` for this.
+  address you give it. `tg personal mcp serve --http` serves the same tools over HTTP on `127.0.0.1` for this.
 - **HTTPS tunnel** is a program that gives a port on your computer a public HTTPS address.
   This page uses [Tailscale Funnel](https://tailscale.com/docs/features/tailscale-funnel); Cloudflare
   Tunnel also works. You do not need to buy a domain for Funnel.
@@ -22,7 +22,7 @@ Terms used on this page:
   for it, so only a person who sees that terminal can connect an app.
 
 ```text
-ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ tg personal mcp --http (login) ──▶ Telegram
+ChatGPT / Claude ──internet──▶ Tailscale Funnel ──▶ tg personal mcp serve --http (login) ──▶ Telegram
 ```
 
 If your Tailscale connection already works, keep it; you do not need a second tunnel. The local
@@ -42,7 +42,7 @@ stdin/stdout connection keeps working as before.
 ## Before you start
 
 - **Whoever logs in reads your Telegram.** The login needs the access code from your terminal.
-  Never put a tunnel in front of `tg personal mcp` without `--http`: that mode has no login at all.
+  Never put a tunnel in front of `tg personal mcp serve` without `--http`: that mode has no login at all.
 - **Profile permissions decide what the app may change.** `deny` and `readonly` block writes;
   `ask` and `allow` let a requested MCP write go through without a form on the server. The app's own
   approval is separate and depends on its settings. Recipient restrictions and hourly limits still
@@ -65,7 +65,7 @@ not work, [open an issue](https://github.com/WireCatLabs/tg-cli/issues).
 
 Install the CLI and log in to Telegram first ([installation guide](installation.md)). Use the same
 operating system user and profile for setup and for the MCP server. Put a profile before the
-command when needed: `tg work mcp`. Tailscale is a separate installation; both `tg` and `max`
+command when needed: `tg work mcp serve`. Tailscale is a separate installation; both `tg` and `max`
 support this setup.
 
 Install [Tailscale](https://tailscale.com/download), sign in, and enable
@@ -100,7 +100,7 @@ Second window: normal PowerShell, as the user who logged in to Telegram:
 
 ```powershell
 $mcpPublicUrl = Read-Host 'Paste the HTTPS origin printed by Funnel (no /mcp)'
-tg.cmd personal mcp --http --port 8765 --public-url $mcpPublicUrl
+tg.cmd personal mcp serve --http --port 8765 --public-url $mcpPublicUrl
 ```
 
 Run both processes in Windows itself. WSL is a separate environment: a Windows tunnel that points
@@ -122,7 +122,7 @@ and bash:
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl"
+tg personal mcp serve --http --port 8765 --public-url "$mcpPublicUrl"
 ```
 
 ### Linux (Terminal)
@@ -140,7 +140,7 @@ Second terminal window: your normal user, without `sudo`, so `tg` finds the sess
 ```sh
 printf 'Paste the HTTPS origin printed by Funnel (no /mcp): '
 IFS= read -r mcpPublicUrl
-tg personal mcp --http --port 8765 --public-url "$mcpPublicUrl"
+tg personal mcp serve --http --port 8765 --public-url "$mcpPublicUrl"
 ```
 
 ## Run MAX and Telegram together
@@ -164,7 +164,7 @@ same computer.
 Start the server in a second terminal:
 
 ```sh
-tg personal mcp --http --port 8765 --public-url https://mcp.example.com
+tg personal mcp serve --http --port 8765 --public-url https://mcp.example.com
 ```
 
 Add `https://mcp.example.com/mcp` to your AI app with OAuth and DCR, as described in
@@ -246,7 +246,7 @@ Taking access back from apps is separate from stopping a process. To log out eve
 profile:
 
 ```sh
-tg personal mcp --revoke --json
+tg personal mcp revoke --json
 ```
 
 Those apps must log in again with a new code. This does not end your Telegram session.
@@ -258,7 +258,7 @@ Those apps must log in again with a new code. This does not end your Telegram se
   must show a short JSON. If it does not, Funnel is not running, is not enabled in your Tailscale
   network, or points at another port.
 - **The login page says "Too many wrong codes":** after five wrong codes it is locked until
-  `tg personal mcp --http` restarts. If you did not type them, someone found your address: restart, and
+  `tg personal mcp serve --http` restarts. If you did not type them, someone found your address: restart, and
   think about a new device name in Tailscale.
 - **The app connects, but there are no tools:** `tg personal mcp check` checks that the MCP server starts
   and lists its tools. It does not check the Telegram login or the tunnel. A command that goes to

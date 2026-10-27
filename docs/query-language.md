@@ -194,7 +194,7 @@ command options do; `saved` runs a saved search. `thread`, `thread_hops`, `threa
 `thread_bytes`, `thread_within` and `sync_first` match the options `--thread…` and `--sync-first`;
 `sync_first` is offered only with `messages.sync-first: allow`. The answer has the same fields as
 `--json`. `tg_read` (`command: "stats messages show"`) counts the same queries. The query history follows
-the server: `tg personal mcp --no-record`, or `record` set to `false`, keeps its calls out.
+the server: `tg personal mcp serve --no-record`, or `record` set to `false`, keeps its calls out.
 
 ## Next
 

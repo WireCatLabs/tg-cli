@@ -349,7 +349,7 @@ came back: the network or Telegram, not `tg` ([reading a trace](diagnostics.md#s
 
 If a command printed its answer and still does not exit, that is a fault. `tg` names what stayed open
 five seconds after a command finished (`tg: finished, but … stayed open`) and exits; report it with
-that line. `watch`, `serve` and `mcp` are meant to run until stopped.
+that line. `watch`, `serve` and `mcp serve` are meant to run until stopped.
 
 ## After a send
 
@@ -445,7 +445,7 @@ It holds the version, the runtime and the system, what `tg personal doctor` answ
 each request's operation, duration and error code — and the last 20 send attempts, outcome and length
 only. Every chat, message and account id is replaced by a label that means nothing outside the file.
 It holds no message text, chat titles, names, phone numbers, session or app credentials. A failed run
-is kept by itself, even without `--record` ([failed runs](diagnostics.md#a-failed-run-is-always-kept)).
+is kept by itself, even with `record` set to `false` ([failed runs](diagnostics.md#a-failed-run-is-always-kept)).
 
 Send it as a new issue at
 [github.com/WireCatLabs/tg-cli/issues](https://github.com/WireCatLabs/tg-cli/issues/new): say what you did

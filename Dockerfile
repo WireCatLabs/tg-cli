@@ -4,4 +4,4 @@ FROM node:24-slim
 # hadolint ignore=DL3016
 RUN npm install -g @wirecat/tg-cli && npm cache clean --force
 USER node
-CMD ["tg", "glama", "mcp"]
+CMD ["tg", "glama", "mcp", "serve"]

@@ -360,7 +360,7 @@ describe("the archive, from the store", () => {
     expect(existsSync(join(home, ".claude", "skills", "tg-cli", "SKILL.md"))).toBe(true)
     const shown = await tg(["skill", "show", "--for", "claude", "--json"], await backfilled(), { HOME: home })
     expect(shown.code).toBe(0)
-    expect(shown.answer).toMatchObject({ target: "claude", content: expect.stringContaining("name: tg-cli") })
+    expect(shown.answer).toMatchObject({ item: { target: "claude", content: expect.stringContaining("name: tg-cli") } })
   })
 
   it("**estimates what a full fetch would still cost** without asking Telegram", async () => {

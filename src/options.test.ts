@@ -1097,7 +1097,7 @@ describe("mcp", () => {
     } as never)
 
     expect(code).toBe(0)
-    expect(JSON.stringify(json(stdout))).toContain('"mcp"]')
+    expect(JSON.stringify(json(stdout))).toContain('"mcp","serve"]')
   })
 
   it("refuses the retired access flags", async () => {

@@ -534,7 +534,7 @@ describe("app credentials out of reach", () => {
 describe("MCP startup overrides", () => {
   it("preserves temporary permissions in the generated client configuration without connecting", async () => {
     const adapter = vi.fn(() => scripted())
-    const result = await tg(["mcp", "--permission", "messages.send=deny", "config", "--json"], { adapter })
+    const result = await tg(["mcp", "config", "--permission", "messages.send=deny", "--json"], { adapter })
     expect(result.code).toBe(0)
     const entry = JSON.parse(result.stdout.join(""))
     expect(entry.item.config.mcpServers["tg-default"].args).toEqual(
@@ -544,14 +544,14 @@ describe("MCP startup overrides", () => {
   })
   it("rejects malformed startup permissions before requiring a tunnel or connection", async () => {
     const adapter = vi.fn(() => scripted())
-    const result = await tg(["mcp", "--http", "--permission", "messages.send=yes", "--json"], { adapter })
+    const result = await tg(["mcp", "serve", "--http", "--permission", "messages.send=yes", "--json"], { adapter })
     expect(result.code).toBe(2)
     expect(result.stderr.join("")).toContain("--permission takes")
     expect(adapter).not.toHaveBeenCalled()
   })
   it("validates the HTTP public URL before connecting", async () => {
     const adapter = vi.fn(() => scripted())
-    const result = await tg(["mcp", "--http", "--json"], {
+    const result = await tg(["mcp", "serve", "--http", "--json"], {
       adapter,
     })
     expect(result.code).toBe(3)

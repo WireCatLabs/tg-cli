@@ -41,7 +41,7 @@ before action; it opens no messenger connection, reserves no write and leaves ta
 See the [CLI contract](https://github.com/WireCatLabs/tg-cli/blob/main/docs/cli-contract.md).
 
 The command line is the default. MCP is the rare case for a client that cannot run commands (a chat app,
-a remote agent): `tg <profile> mcp` starts the server, `tg <profile> mcp config` prints the client entry.
+a remote agent): `tg <profile> mcp serve` starts the server, `tg <profile> mcp config` prints the client entry.
 Its permissions are the profile's, the same as on the command line. Prefer the commands above when you can run them.
 MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, arguments}`.
 Use the CLI path such as `stats messages show`.
@@ -330,7 +330,7 @@ tg personal search conversations "<question>" --json  # by meaning, after the ow
 tg personal watch --jsonl                          # new messages as {"type":"item","data"} lines, then a {"type":"end"} line
 ```
 
-An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg personal mcp`. The
+An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg personal mcp serve`. The
 profile's `permissions` decide which commands may run, through `tg_tools_search`, `tg_read` and
 `tg_write`. Discovery keeps denied commands and their arguments, marking current unavailability
 with a reason and permission key. There is no confirmation form. `tg personal mcp config` prints the entry with full paths.
@@ -381,10 +381,10 @@ Never ask the owner to paste a credential into argv, print one, or fall back to 
 
 Use `tg personal stats chats show <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
-`tg personal mcp --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
+`tg personal mcp serve --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
 MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit the requested write.
 Repeat `--permission key=level` to tighten permissions for the server; it never loosens them. Never change permissions to bypass a refusal.
-`tg personal mcp --revoke` forgets browser logins for the profile.
+`tg personal mcp revoke` forgets browser logins for the profile.
 
 `tg personal chats members check <chat> --json` reads member pages with reasons; it removes nobody.
 Treat scores as hints; check `more` and `unknown`, and review each person before any moderation action.

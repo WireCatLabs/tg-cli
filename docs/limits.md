@@ -18,7 +18,7 @@ Words this page uses:
 
 ## The pace: one allowance per profile
 
-Every request `tg` makes for a profile — from a command, `tg personal mcp`, `tg personal serve` or a background job —
+Every request `tg` makes for a profile — from a command, `tg personal mcp serve`, `tg personal serve` or a background job —
 takes a turn in one pace for that profile:
 
 - a burst of **20 requests** goes at once, so ordinary commands never wait;

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2357 ✅ · 108 ⛔ · 0 ❌** — 520 commands, 1945 options.
+**2358 ✅ · 107 ⛔ · 0 ❌** — 521 commands, 1944 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -874,12 +874,12 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `complete` |  | ✅ |  |
 | `upgrade` |  | ✅ |  |
 | `upgrade` | `--check` | ✅ |  |
-| `mcp` |  | ✅ |  |
-| `mcp` | `--permission` | ✅ |  |
-| `mcp` | `--http` | ✅ |  |
-| `mcp` | `--port` | ✅ |  |
-| `mcp` | `--public-url` | ✅ |  |
-| `mcp` | `--revoke` | ✅ |  |
+| `mcp serve` |  | ✅ |  |
+| `mcp serve` | `--permission` | ✅ |  |
+| `mcp serve` | `--http` | ✅ |  |
+| `mcp serve` | `--port` | ✅ |  |
+| `mcp serve` | `--public-url` | ✅ |  |
+| `mcp revoke` |  | ✅ |  |
 | `mcp server start` |  | ✅ |  |
 | `mcp server start` | `--port` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
 | `mcp server start` | `--public-url` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
@@ -984,7 +984,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot contacts show` | `--limit` | ✅ |  |
 | `bot contacts show` | `--sync-first` | ✅ |  |
 | `bot me` |  | ✅ |  |
-| `bot mcp` |  | ⛔ | serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, and src/bot.test.ts the tools tg offers |
+| `bot mcp serve` |  | ✅ |  |
 | `bot mcp config` |  | ✅ |  |
 | `bot api get-updates` |  | ✅ |  |
 | `bot api get-updates` | `--offset` | ✅ |  |

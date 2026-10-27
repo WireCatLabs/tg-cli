@@ -86,7 +86,7 @@ export const definition: ProgramDefinition = {
       { command: "search all invoice", does: "messages and notes, from the local store and Telegram's server" },
       { command: "attachments extract", does: "text of PDFs and documents, ready for search" },
       { command: "schedule agent …", does: "an agent on a timer; it runs read-only and can never send" },
-      { command: "mcp --permission …", does: "your account in any agent, with messages.send=deny" },
+      { command: "mcp serve --permission …", does: "your account in any agent, with messages.send=deny" },
       { command: "TG_READ_ONLY=1 tg …", does: "a run that can read and sync but never send, edit or delete" },
     ],
   },

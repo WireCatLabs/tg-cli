@@ -1,6 +1,6 @@
 import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@wirecat/cli-base"
 import type { EventSink } from "@wirecat/cli-core/cli"
-import { apiJson, apiPlainJson, parseApiJson } from "@wirecat/cli-core/cli"
+import { apiJson, apiPlainJson, currentAttempt, parseApiJson, providerRequest } from "@wirecat/cli-core/cli"
 
 const API = "https://api.telegram.org"
 const DEFAULT_TIMEOUT_MS = 30_000
@@ -75,9 +75,13 @@ export class TelegramBotTransport {
     } = {},
   ): Promise<unknown> {
     // The token is the first segment of the real path; `:token` is how cli-core writes it in a run.
-    const http = { method: "POST", endpointTemplate: `/:token/${method}` }
-    this.#events?.({ event: "request", operation: method, ...http })
-    const started = performance.now()
+    const end = providerRequest(method, this.#events ?? (() => {}), {
+      method: "POST",
+      endpointTemplate: `/:token/${method}`,
+      transport: "http",
+      // A rate-limit retry is made above the transport (cli-core's `patiently`), which names the attempt itself.
+      ...(currentAttempt() ? {} : { attempt: 1 }),
+    })
     const signals = [AbortSignal.timeout(timeoutMs), ...(this.#signal ? [this.#signal] : [])]
     let response: Response
     try {
@@ -99,7 +103,7 @@ export class TelegramBotTransport {
       })
     } catch (error) {
       const failure = this.#unanswered(method, error, reads, timeoutMs)
-      this.#events?.({ event: "response", operation: method, ...http, outcome: "error", errorCode: failure.code })
+      end({ errorCode: failure.code })
       throw failure
     }
 
@@ -108,29 +112,22 @@ export class TelegramBotTransport {
       text = await response.text()
     } catch (error) {
       const failure = this.#unanswered(method, error, reads, timeoutMs)
-      this.#events?.({ event: "response", operation: method, ...http, outcome: "error", errorCode: failure.code })
+      end({ status: response.status, errorCode: failure.code })
       throw failure
     }
-    const answered = {
-      event: "response" as const,
-      operation: method,
-      ...http,
-      status: response.status,
-      bytes: Buffer.byteLength(text),
-      durationMs: Math.round(performance.now() - started),
-    }
+    const answered = { status: response.status, bytes: Buffer.byteLength(text) }
     let answer: Answer
     try {
       answer = apiPlainJson(parseApiJson(text)) as Answer
     } catch {
-      this.#events?.({ ...answered, outcome: "error", errorCode: "invalid_response" })
+      end({ ...answered, errorCode: "invalid_response" })
       throw new CliError("invalid_response", `Telegram answered ${method} with something that is not JSON`, {
         operation: method,
         status: response.status,
       })
     }
     if (answer.ok === true) {
-      this.#events?.({ ...answered, outcome: "ok" })
+      end(answered)
       return answer.result
     }
     const secretValues = [this.#token, ...secrets]
@@ -140,7 +137,7 @@ export class TelegramBotTransport {
       answer.description = answer.description.replace(/\b\d+:[A-Za-z0-9_-]{20,}\b/g, "[redacted]")
     }
     const refusal = refusalOf(method, answer, response.status)
-    this.#events?.({ ...answered, outcome: "error", errorCode: refusal.code })
+    end({ ...answered, errorCode: refusal.code })
     throw refusal
   }
 
