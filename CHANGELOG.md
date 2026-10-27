@@ -12,6 +12,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   finds a server started with a flag before `mcp serve`. From cli-core 0.468, an MCP server offers a command that only
   fetches into the store through its read tool.
 
+### Fixed
+
+- **`tg --version` answers before any of the bundle loads.** The bundle is now built by cli-base's shared
+  `cli-dev bundle` instead of tg's own `scripts/bundle.ts`; the chunks and every output are the same. A server started
+  with a flag before `mcp serve` (`tg work --read-only mcp serve`) now loads every chunk soon after it starts, as a
+  plain `mcp serve` does, so an in-place upgrade cannot pull a chunk from under it.
+
 ## 0.102.0 — 27.10.2026
 
 ### Changed — may break callers

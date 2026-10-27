@@ -42,6 +42,12 @@ const version = tg("--version")
 check("--version exits cleanly", version.status === 0)
 check("--version prints a version on stdout", /^\d+\.\d+\.\d+$/.test(version.stdout.trim()))
 check("--version says nothing on stderr", version.stderr === "")
+// The loader answers --version alone; with the argv log on, the bundle answers it as before. Both must agree.
+const recorded = spawnSync(process.execPath, ["dist/bin/tg.js", "--version"], {
+  encoding: "utf8",
+  env: { ...process.env, TG_TEST_ARGV_LOG: join(isolated, "argv.jsonl") },
+})
+check("the loader's --version is the bundle's", recorded.stdout === version.stdout)
 
 check("--help names the command", tg("--help").stdout.includes("Usage: tg"))
 
