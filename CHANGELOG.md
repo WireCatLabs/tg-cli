@@ -3,6 +3,16 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **Meaning search and `--discover` run on the native ONNX Runtime on Windows too (cli-core 0.451.0).** After
+  `tg <profile> models download`, text models and the reranker use the native library on Windows x64 and arm64, as
+  they already did on Linux and macOS: 2–3× faster than WebAssembly. The download takes `onnxruntime.dll` from the
+  `onnxruntime-node` npm package (113.5 MB, once, checked by sha256). Picture models (CLIP, SigLIP2) now use the
+  native library as well, wherever it is installed. Results are the same.
+
 ## 0.97.0 — 27.10.2026
 
 ### Added
