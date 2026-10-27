@@ -349,7 +349,7 @@ came back: the network or Telegram, not `tg` ([reading a trace](diagnostics.md#s
 
 If a command printed its answer and still does not exit, that is a fault. `tg` names what stayed open
 five seconds after a command finished (`tg: finished, but … stayed open`) and exits; report it with
-that line. `watch`, `serve` and `mcp` are meant to run until stopped.
+that line. `watch`, `serve` and `mcp serve` are meant to run until stopped.
 
 ## After a send
 

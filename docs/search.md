@@ -505,7 +505,7 @@ Options you type with `--saved` replace the saved ones. The saved text is read a
 
 Every search and count that succeeds is written to the history: the query and its options, never the
 messages it found. The newest 1,000 runs are kept. `--no-record` keeps one run out of it; for MCP,
-`tg personal mcp --no-record` or `record` set to `false` keeps the server's calls out. `searches clear` empties
+`tg personal mcp serve --no-record` or `record` set to `false` keeps the server's calls out. `searches clear` empties
 the history and keeps the saved searches. This history is separate from the run records of `tg personal runs`.
 
 Saved searches and the history live in the store that tg and max share: both see the same ones, and

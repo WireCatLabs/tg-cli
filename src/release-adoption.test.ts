@@ -51,7 +51,7 @@ describe("the shared release through the Telegram program", () => {
       ["--http", "--public-url", "http://public.example"],
       ["--http", "--public-url", "https://public.example", "--port", "0"],
     ]) {
-      const found = await tg(["mcp", ...options, "--json"], { adapter: connect })
+      const found = await tg(["mcp", "serve", ...options, "--json"], { adapter: connect })
       expect(found.code).toBe(options.length === 1 ? 3 : 2)
       expect(found.stdout).toEqual([])
     }
@@ -62,7 +62,7 @@ describe("the shared release through the Telegram program", () => {
     const connect = vi.fn(() => {
       throw new Error("revoke must not connect")
     })
-    const found = await tg(["mcp", "--revoke", "--json"], { adapter: connect })
+    const found = await tg(["mcp", "revoke", "--json"], { adapter: connect })
     expect(found.code).toBe(0)
     expect(decoded(found.stdout)).toMatchObject({ item: { revoked: true } })
     expect(connect).not.toHaveBeenCalled()

@@ -12,7 +12,7 @@ Terms on this page:
 - **Skill** — a file that tells the agent how to use `tg`. `tg skill install` puts it where the agent
   looks for it.
 - **MCP client** — an AI app without a terminal, such as Claude Desktop. It reaches `tg` through the
-  MCP server `tg personal mcp` instead of running commands.
+  MCP server `tg personal mcp serve` instead of running commands.
 - **Headless mode** — the agent takes one request, does it and exits, with no conversation. Claude
   Code calls it `-p` mode; Codex calls it `codex exec`.
 - **cron** — the scheduler built into Linux and macOS. It starts a command at set times.
@@ -235,7 +235,7 @@ schedule.
 > question. Do not send it — show me the text.
 
 Once you agree, the agent sends it: `tg personal messages send @example_user "…"`. An MCP client connects with
-`tg personal mcp`. Leave `tg_write` unapproved in the client, and it asks you before each send. The profile's
+`tg personal mcp serve`. Leave `tg_write` unapproved in the client, and it asks you before each send. The profile's
 permissions still limit what it may write. See [the MCP server](mcp.md).
 
 ## A group you run

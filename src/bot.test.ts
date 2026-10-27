@@ -188,7 +188,7 @@ describe("tg bot mcp config", () => {
     expect(code).toBe(0)
     const servers = JSON.parse(streams.stdout.join("")).item.config.mcpServers
     expect(Object.keys(servers)).toEqual(["tg-bot-sales"])
-    expect(servers["tg-bot-sales"].args).toEqual(["/opt/tg/tg.js", "sales", "bot", "mcp"])
+    expect(servers["tg-bot-sales"].args).toEqual(["/opt/tg/tg.js", "sales", "bot", "mcp", "serve"])
   })
 })
 

@@ -104,7 +104,7 @@ Your agent. Your Telegram. Your rules.
   tells them how: `tg personal setup --agent …` or `tg skill install` puts it in place, and `tg skill show`
   prints it before login.
 - **Apps without a terminal** (for example Claude Desktop, Cursor and other MCP clients) connect to
-  `tg personal mcp`. It comes with ready prompts: `/catch-up`, `/review`, `/reply`, `/find`, `/open-tasks` and `/link-conversations`.
+  `tg personal mcp serve`. It comes with ready prompts: `/catch-up`, `/review`, `/reply`, `/find`, `/open-tasks` and `/link-conversations`.
 
 ```sh
 tg personal mcp add claude-code  # or: tg personal mcp add codex
@@ -268,11 +268,11 @@ profile's `permissions` decide which may run. `readonly` stops writes; at `ask` 
 form, so set up approval in your agent app.
 
 ```sh
-claude mcp add tg -- tg personal mcp  # Claude Code, by hand
+claude mcp add tg -- tg personal mcp serve  # Claude Code, by hand
 tg personal mcp check            # check the local MCP server
 ```
 
-**From the browser.** ChatGPT or Claude in the browser reach `tg personal mcp --http --public-url <url>` behind
+**From the browser.** ChatGPT or Claude in the browser reach `tg personal mcp serve --http --public-url <url>` behind
 your tunnel, after a login with a one-time access code from your terminal.
 
 More: [the MCP server](https://github.com/WireCatLabs/tg-cli/blob/main/docs/mcp.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/mcp) · [remote access](https://github.com/WireCatLabs/tg-cli/blob/main/docs/remote.md) · [on wirecat.dev](https://wirecat.dev/en/docs/tg/remote)

@@ -18,7 +18,7 @@ Terms used on this page:
 - **Send guard**: the checks every send passes — a read-only profile, the list of allowed recipients
   and an hourly limit ([the send guard](security.md#the-send-guard)).
 
-Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp`
+Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp serve`
 stay running, and each of them says so.
 
 ```sh

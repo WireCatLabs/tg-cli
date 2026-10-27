@@ -1379,7 +1379,7 @@ tg contacts context <person> [options]
 | `--chat <chat>` | a chat, by id or name; repeat it for more — then their newest messages in each, 20 unless --limit, short unless -v. |
 | `--sync-first` | with --chat, read their newest messages in each from the messenger first. |
 
-**Returns:** contact context — person, shared, last, recent, mentions, limits, complete, not_read, and 1 more; every field: tg commands info contacts context
+**Returns:** contact context — person, shared, last, recent, mentions, limits, complete, not_read, and 2 more; every field: tg commands info contacts context
 
 **Example:** `tg personal contacts context "Alex Example" --limit 10`
 
@@ -1400,7 +1400,7 @@ tg contacts prepare <person> [options]
 | `--limit <n>` | at most this many messages, and items in each section; 10 if not given. |
 | `--since-time <time>` | no message or meeting older than this ISO 8601 time, or 2h / 1d ago. |
 
-**Returns:** contact preparation — person, shared, last, recent, mentions, limits, complete, not_read, and 1 more; every field: tg commands info contacts prepare
+**Returns:** contact preparation — person, shared, last, recent, mentions, limits, complete, not_read, and 2 more; every field: tg commands info contacts prepare
 
 **Example:** `tg personal contacts prepare Ana`
 
@@ -5082,7 +5082,7 @@ find things by text: one resource when you know it (messages, notes), or search 
 
 ### `tg search all`
 
-search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes are local only; --backend archive or --offline keeps it to the local store), and a meeting account's transcripts when --source names one — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
+search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and a meeting account's transcripts when --source names one — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
 
 ```sh
 tg search all <query> [options]
@@ -5094,7 +5094,7 @@ tg search all <query> [options]
 
 | Option | What it does |
 |---|---|
-| `--only <resources>` | only these resources, separated by commas: messages, notes; meetings when --source names a meeting account. |
+| `--only <resources>` | only these resources, separated by commas: messages, notes, events; meetings when --source names a meeting account. |
 | `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
 | `--max-meetings <n>` | how many of the meeting account's meetings to look through, newest first, or all for every one (default 100). |
 | `--limit <n>` | how many. |
@@ -5104,7 +5104,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 6 more; every field: tg commands info search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 7 more; every field: tg commands info search all
 
 **Example:** `tg personal search all draft`
 
@@ -5985,12 +5985,16 @@ tg upgrade [options]
 
 ## `tg mcp`
 
-serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg <profile> mcp`; with no profile, `tg mcp` serves every profile and each tool asks which
+serve this profile to an agent over MCP and set it up — `claude mcp add tg -- tg <profile> mcp serve`
+
+### `tg mcp serve`
+
+serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg <profile> mcp serve`; with no profile, `tg mcp serve` serves every profile and each tool asks which
 
 **Changes something in Telegram.**
 
 ```sh
-tg mcp [options]
+tg mcp serve [options]
 ```
 
 | Option | What it does |
@@ -5999,15 +6003,32 @@ tg mcp [options]
 | `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
 | `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net or https://<name>.ts.net/tg. |
-| `--revoke` | forget every login given to a browser app; each must log in again. |
+
+**Returns:** serve this profile's commands to an AI agent
+
+**Example:** `tg personal mcp serve`, `tg personal mcp serve --http --public-url https://laptop.example.ts.net`
+
+### `tg mcp revoke`
+
+forget every login `mcp serve --http` gave a browser app, of this profile or, with no profile, of the server of every profile; each app must log in again
+
+**Changes something on this computer only.**
+
+```sh
+tg mcp revoke
+```
+
+**Returns:** forget every login given to a browser app
+
+**Example:** `tg personal mcp revoke`
 
 ### `tg mcp server`
 
-start, stop and check `mcp --http` in the background; status shows the login code for a browser app
+start, stop and check `mcp serve --http` in the background; status shows the login code for a browser app
 
 #### `tg mcp server start`
 
-start `mcp --http` apart from this shell and answer once it listens, with its login code
+start `mcp serve --http` apart from this shell and answer once it listens, with its login code
 
 **Changes something on this computer only.**
 
@@ -6027,7 +6048,7 @@ tg mcp server start [options]
 
 #### `tg mcp server stop`
 
-stop `mcp --http` — only one that `mcp server start` started
+stop `mcp serve --http` — only one that `mcp server start` started
 
 **Changes something on this computer only.**
 
@@ -6041,7 +6062,7 @@ tg mcp server stop
 
 #### `tg mcp server status`
 
-whether `mcp --http` runs, on which port and address, the login code for a new browser app, and the apps logged in
+whether `mcp serve --http` runs, on which port and address, the login code for a new browser app, and the apps logged in
 
 ```sh
 tg mcp server status
@@ -6958,7 +6979,21 @@ tg bot me
 
 ### `tg bot mcp`
 
-serve this bot to an agent over MCP, on stdin and stdout — `claude mcp add sales-bot -- tg sales bot mcp`
+serve this bot to an agent over MCP and set it up — `claude mcp add sales-bot -- tg sales bot mcp serve`
+
+#### `tg bot mcp serve`
+
+serve this bot to an agent over MCP, on stdin and stdout — `claude mcp add sales-bot -- tg sales bot mcp serve`
+
+**Changes something in Telegram.**
+
+```sh
+tg bot mcp serve
+```
+
+**Returns:** serve this bot to an agent over MCP, on stdin and stdout
+
+**Example:** `tg sales bot mcp serve`
 
 #### `tg bot mcp config`
 
