@@ -5985,7 +5985,7 @@ tg upgrade [options]
 
 ## `tg mcp`
 
-serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg <profile> mcp`
+serve this profile to an agent over MCP, on stdin and stdout — `claude mcp add tg -- tg <profile> mcp`; with no profile, `tg mcp` serves every profile and each tool asks which
 
 **Changes something in Telegram.**
 
@@ -5998,7 +5998,7 @@ tg mcp [options]
 | `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 | `--http` | serve over HTTP on 127.0.0.1 for ChatGPT and Claude in the browser, behind your tunnel; the profile's permissions decide. |
 | `--port <port>` | the local port for --http (default 8765). |
-| `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
+| `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net or https://<name>.ts.net/tg. |
 | `--revoke` | forget every login given to a browser app; each must log in again. |
 
 ### `tg mcp server`
@@ -6018,7 +6018,7 @@ tg mcp server start [options]
 | Option | What it does |
 |---|---|
 | `--port <port>` | the local port (default 8765). |
-| `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net. |
+| `--public-url <url>` | the tunnel's https address the browser apps use, e.g. https://<name>.ts.net or https://<name>.ts.net/tg. |
 | `--permission <key=level>` | make a permission stricter for this server only; repeat for more keys. |
 
 **Returns:** start the HTTP MCP server in the background
@@ -6063,7 +6063,7 @@ tg mcp config [options]
 |---|---|
 | `--permission <key=level>` | make a permission stricter for this server only, like messages.send=deny; it never loosens the profile; repeat for more keys. |
 
-**Returns:** print this profile's local MCP configuration
+**Returns:** print the local MCP configuration, of this profile or of every profile
 
 **Example:** `tg personal mcp config`
 

@@ -3,6 +3,23 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg mcp` with no profile serves every profile, on stdio and with `--http` (cli-core 0.450.0).** An AI app needs one
+  connector for Telegram, not one per profile. Each tool (`tg_tools_search`, `tg_read`, `tg_write`) takes a required
+  `profile` (every profile here, no default) and the agent is told to ask when you did not name the account. The call
+  runs in that profile's own `tg <profile> mcp`, started on first use and closed after 10 idle minutes, so each
+  profile's permissions, session and audit log apply as before. `tg mcp --revoke`, `tg mcp config` and
+  `tg mcp server start|stop|status` work without a profile too, with their own login. `--public-url` takes a path,
+  `https://<name>.ts.net/tg`, so the tools share one tunnel address. The MCP Registry entry starts `tg mcp`.
+  `tg <profile> mcp` is unchanged.
+
+### Changed — may break callers
+
+- **tg needs cli-base 0.63.0 (cli-core 0.450.0).** Nothing tg uses changed in it.
+
 ## 0.96.0 — 27.10.2026
 
 ### Fixed
