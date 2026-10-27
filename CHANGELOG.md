@@ -7,6 +7,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **With no session, the error and the MCP instructions also offer WireCat Desktop.** `no session`, `not logged in`
+  and missing app keys now say: run the command in a terminal, or sign in from WireCat Desktop (Tools → Telegram →
+  Manage). Over MCP the agent is told never to ask for codes or passwords (cli-core 0.452.0).
 - **Meaning search and `--discover` run on the native ONNX Runtime on Windows too (cli-core 0.451.0).** After
   `tg <profile> models download`, text models and the reranker use the native library on Windows x64 and arm64, as
   they already did on Linux and macOS: 2–3× faster than WebAssembly. The download takes `onnxruntime.dll` from the
