@@ -1379,7 +1379,7 @@ tg contacts context <person> [options]
 | `--chat <chat>` | a chat, by id or name; repeat it for more — then their newest messages in each, 20 unless --limit, short unless -v. |
 | `--sync-first` | with --chat, read their newest messages in each from the messenger first. |
 
-**Returns:** contact context — person, shared, last, recent, mentions, limits, complete, not_read, and 1 more; every field: tg commands info contacts context
+**Returns:** contact context — person, shared, last, recent, mentions, limits, complete, not_read, and 2 more; every field: tg commands info contacts context
 
 **Example:** `tg personal contacts context "Alex Example" --limit 10`
 
@@ -1400,7 +1400,7 @@ tg contacts prepare <person> [options]
 | `--limit <n>` | at most this many messages, and items in each section; 10 if not given. |
 | `--since-time <time>` | no message or meeting older than this ISO 8601 time, or 2h / 1d ago. |
 
-**Returns:** contact preparation — person, shared, last, recent, mentions, limits, complete, not_read, and 1 more; every field: tg commands info contacts prepare
+**Returns:** contact preparation — person, shared, last, recent, mentions, limits, complete, not_read, and 2 more; every field: tg commands info contacts prepare
 
 **Example:** `tg personal contacts prepare Ana`
 
@@ -5082,7 +5082,7 @@ find things by text: one resource when you know it (messages, notes), or search 
 
 ### `tg search all`
 
-search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes are local only; --backend archive or --offline keeps it to the local store), and a meeting account's transcripts when --source names one — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
+search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and a meeting account's transcripts when --source names one — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
 
 ```sh
 tg search all <query> [options]
@@ -5094,7 +5094,7 @@ tg search all <query> [options]
 
 | Option | What it does |
 |---|---|
-| `--only <resources>` | only these resources, separated by commas: messages, notes; meetings when --source names a meeting account. |
+| `--only <resources>` | only these resources, separated by commas: messages, notes, events; meetings when --source names a meeting account. |
 | `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
 | `--max-meetings <n>` | how many of the meeting account's meetings to look through, newest first, or all for every one (default 100). |
 | `--limit <n>` | how many. |
