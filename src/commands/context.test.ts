@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
@@ -84,4 +84,14 @@ describe("a deletion Telegram sends without its chat", () => {
 
 it("names a SKILL.md that exists, for `tg skill` and the MCP server's tg://skill", () => {
   expect(TELEGRAM.skill && existsSync(fileURLToPath(TELEGRAM.skill))).toBe(true)
+})
+
+describe("which profiles are signed in", () => {
+  it("counts a profile signed in only when its session file is on this computer", () => {
+    const env = { TG_STATE_DIR: mkdtempSync(join(process.env.TG_TEST_SANDBOX ?? tmpdir(), "state-")) }
+    mkdirSync(join(env.TG_STATE_DIR, "sessions"))
+    writeFileSync(join(env.TG_STATE_DIR, "sessions", "personal.session"), "")
+    expect(TELEGRAM.profileState?.("personal", env)).toBe("signed-in")
+    expect(TELEGRAM.profileState?.("default", env)).toBe("signed-out")
+  })
 })

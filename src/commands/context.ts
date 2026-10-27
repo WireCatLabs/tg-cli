@@ -134,6 +134,8 @@ export const TELEGRAM: Messenger = {
   name: "Telegram",
   resolveSettings,
   connect: (command, base, options) => telegramOf(command, base).connect(options),
+  // Bots sign in on a personal profile and keep their own session, so a tg profile is never a bot alone.
+  profileState: (profile, env) => (existsSync(sessionFile(profile, env)) ? "signed-in" : "signed-out"),
   chatArgument: "a chat: its title or part of it, its id, @username, or `me` for Saved Messages",
   groupSettings: GROUP_SETTINGS,
   mediaOptions: ["spoiler", "captionAbove", "fileName"],

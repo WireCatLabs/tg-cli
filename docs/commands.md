@@ -121,7 +121,7 @@ tg account list [query]
 |---|---|---|
 | `query` | optional | field:value terms that narrow the list — the fields are below. |
 
-**Returns:** account profile — profile, current, account, name; every field: tg commands info account list
+**Returns:** account profile — profile, current, account, name, signed_in; every field: tg commands info account list
 
 **Example:** `tg personal account list`
 
@@ -2525,7 +2525,7 @@ tg topics list <chat> [query] [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
-**Returns:** topic — id, title, closed, pinned, unread_count, last_message_at, created_at, hidden; every field: tg commands info topics list
+**Returns:** topic — id, title, closed, pinned, unread_count, last_message_at, created_at, hidden, and 1 more; every field: tg commands info topics list
 
 **Next usually:** `tg topics show <chat> <topic>`, `tg topics edit <chat> <topic>`, `tg topics delete <chat> <topic>`
 
@@ -5143,7 +5143,7 @@ tg search messages [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
-**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, match, and 5 more; every field: tg commands info search messages
+**Returns:** message hit — ref, timestamp, sender_name, chat_title, excerpt, matched_in, score, match, and 6 more; every field: tg commands info search messages
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -5170,7 +5170,7 @@ tg search notes <query> [options]
 | `--exact` | words as written only; meaning is not searched. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 
-**Returns:** note hit — ref, source, folder_id, path, title, updated_at, kind, provider, and 5 more; every field: tg commands info search notes
+**Returns:** note hit — ref, source, folder_id, path, title, updated_at, kind, provider, and 6 more; every field: tg commands info search notes
 
 **Example:** `tg personal search notes draft --limit 10`
 
@@ -11364,7 +11364,7 @@ the instructions an agent is given for this tool
 
 ### `tg skill show`
 
-print SKILL.md — `tg skill install` puts it where Claude Code, Codex and Gemini CLI look for it; --for prints the copy already there
+print SKILL.md — `tg skill install` puts it where Claude Code, Codex, Gemini CLI and OpenClaw look for it, and where Hermes does on request; --for prints the copy already there
 
 ```sh
 tg skill show [name] [options]
