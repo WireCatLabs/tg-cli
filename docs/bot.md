@@ -374,7 +374,7 @@ A refused or failed command says why in its error message and ends with a code:
 
 Every code is in the [command reference](commands.md). `--trace` and `--record` work for a bot too:
 each Bot API request is a line on stderr, never with its address, since the token is in it. A failed
-run is kept and shows in `tg personal runs list` (see [diagnostics](diagnostics.md)).
+run is kept and shows in `tg personal runs list`, with each Bot API request, its timing and any retry (see [diagnostics](diagnostics.md)).
 
 ## The bot for an agent (MCP)
 

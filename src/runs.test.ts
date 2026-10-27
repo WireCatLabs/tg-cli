@@ -67,8 +67,9 @@ describe("run records", () => {
       status: "failed",
       errorCode: "provider_error",
       providerError: "CHAT_ADMIN_REQUIRED",
-      keptBecauseFailed: true,
     })
+    // Every run is recorded since cli-core 0.467, so a failure is no longer kept as the exception.
+    expect(runsOf("failing")[0]).not.toHaveProperty("keptBecauseFailed")
   })
 
   it("keep a usage error, naming the command, with what was typed only as typed", async () => {
