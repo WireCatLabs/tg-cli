@@ -47,8 +47,9 @@ import `@mtcute/*`, and `src/commands/` may not import the mapping or the error 
 own line cap in `biome.json`, so a new feature goes into a feature file, not into the adapter.
 
 **What ships is a bundle.** `pnpm build` compiles `src/` to `dist/` with `tsc`, then
-[`scripts/bundle.ts`](../../scripts/bundle.ts) bundles `dist/bin/tg.js` with esbuild into `dist/bundle/` and makes
-`dist/bin/tg.js` a loader that turns the compile cache on and imports it: a command loads about 55 files instead of
+cli-base's `cli-dev bundle` ([WC-LAY-10](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/layout.md))
+bundles `dist/bin/tg.js` with esbuild into `dist/bundle/` and makes `dist/bin/tg.js` a loader that answers `--version`,
+turns the compile cache on and imports it: a command loads about 55 files instead of
 about 1,100. Every lazy `import()` stays a chunk of its own. cli-core, cli-base, mtcute and the native packages stay
 dependencies: a bundled module's `import.meta.url`, `import.meta.resolve` and run-time `import()` of a package
 answer from the module's own place, not the chunk's. The tests run against `src/`; `pnpm smoke:node` and
