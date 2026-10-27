@@ -40,8 +40,8 @@ without one.
 | `--full` | found messages with their whole text and every provider field. |
 | `--dry-run` | preview parsed arguments and permissions before running the action. |
 | `--yes` | go ahead without the question an ask level puts before a write. |
-| `--record` | keep this run, with the command as typed and secrets hidden; record_input false leaves the typed words out. |
-| `--no-record` | do not keep it, whatever the configuration says. |
+| `--record` | keep this run even where the config says record false; record_input false leaves the typed words out. |
+| `--no-record` | do not keep this run, even if it fails. |
 
 ## `tg session`
 
@@ -5228,7 +5228,7 @@ tg search runs [query] [options]
 | `--limit <n>` | matches per page, at most 100. Default: `20`. |
 | `--page <n>` | result page. Default: `1`. |
 
-**Returns:** run hit — run_id, command, started_at, status, cli_version, events, events_truncated, profile, and 18 more; every field: tg commands info search runs
+**Returns:** run hit — run_id, command, started_at, status, cli_version, events, events_truncated, profile, and 21 more; every field: tg commands info search runs
 
 **Example:** `tg personal search runs timeout status:failed --limit 10`
 
@@ -5773,7 +5773,7 @@ tg runs list [query] [options]
 | `--limit <n>` | how many to show. Default: `20`. |
 | `--page <n>` | which page, starting at 1. Default: `1`. |
 
-**Returns:** run — run_id, command, started_at, status, cli_version, profile, completed_at, requests, and 20 more; every field: tg commands info runs list
+**Returns:** run — run_id, command, started_at, status, cli_version, profile, completed_at, requests, and 23 more; every field: tg commands info runs list
 
 **Example:** `tg personal runs list --limit 10`
 
@@ -5793,7 +5793,7 @@ tg runs show <run-id> [options]
 |---|---|
 | `--problems` | only failed responses, warnings and crashes. |
 
-**Returns:** run details — run_id, command, started_at, status, cli_version, directory, event_count, events, and 19 more; every field: tg commands info runs show
+**Returns:** run details — run_id, command, started_at, status, cli_version, directory, event_count, events, and 22 more; every field: tg commands info runs show
 
 **Example:** `tg personal runs show run-101`
 
@@ -5845,7 +5845,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -5870,7 +5870,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|

@@ -3,6 +3,26 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **Every run is now kept, the ones that worked too.** A run that worked is kept 7 days
+  (`keep_successful_runs_for_days`), a failed one 30 (`keep_runs_for_days`), and the runs folder stays under 200 MB
+  (`runs_size_limit_mb`). With `record_input` on, as by default, a `send` that worked now keeps what you typed (the
+  message, a chat named by its title) in a run readable only by you, on this computer, for 7 days.
+  `record_input failed` keeps it only in a run that failed; `record false` keeps failed runs only; `--no-record`
+  keeps nothing. `watch`, `serve` and `mcp serve` keep a run that worked only with `--record`. A run now says who
+  asked for it: the command line, an MCP app (and its tool call), or WireCat Desktop (cli-core 0.467.0).
+
+### Added
+
+- **`tg runs show` lists each request Telegram got, with its timing, retries and waits.** A command's run now has a
+  line for every call to Telegram, for an account and for a bot: the method (`messages.getHistory`, `sendMessage`),
+  how long it took, and how it ended. When Telegram asks to wait (`FLOOD_WAIT`, or a Bot API `429`) and `tg` waits
+  and tries again, the run shows the refused call, then the retry as attempt 2 with the time waited. Message text,
+  names, phone numbers and the bot token are never written.
+
 ## 0.101.0 — 27.10.2026
 
 ### Changed — may break callers

@@ -105,9 +105,11 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `search_catch_up` | `false` | `messages sync` and `store gaps repair` also prepare the fetched chat for local search: its graph and, where installed, its vectors. Never downloads models or calls remote providers | `--catch-up`, `--no-catch-up` |
 | `picture_search` | `false` | search stored pictures by what they show. `images embed` reads the stored pictures once the model is downloaded, and then `search messages` also returns a `pictures` list ([pictures](search.md#pictures-by-what-they-show)) | none |
 | `search_reranker` | `mmarco` | the model that reranks the first 50 hits of `search messages --discover`: `mmarco` (136 MB), `bge-reranker-v2-m3` (588 MB) or `off`. A reranker that is not downloaded is skipped, and discovery says so; `tg models download mmarco` downloads it | none |
-| `record` | `false` | keep every run ([diagnostics](diagnostics.md)) | `--record`, `--no-record` |
-| `record_input` | `true` | keep a run's command line as typed, secrets hidden; `false` writes `[redacted]` for every typed value that may be text ([diagnostics](diagnostics.md#what-you-typed)) | none |
-| `keep_runs_for_days` | `30` | recorded runs older than this are removed when the next one is kept | none |
+| `record` | `true` | keep every run; `false` keeps failed runs only ([diagnostics](diagnostics.md)) | `--record`, `--no-record` (keeps nothing) |
+| `record_input` | `true` | keep a run's command line as typed, secrets hidden; `failed` keeps it only in a run that failed; `false` writes `[redacted]` for every typed value that may be text ([diagnostics](diagnostics.md#what-you-typed)) | none |
+| `keep_runs_for_days` | `30` | failed runs older than this are removed when the next run is kept | none |
+| `keep_successful_runs_for_days` | `7` | runs that worked, older than this, are removed when the next run is kept | none |
+| `runs_size_limit_mb` | `200` | the most the runs folder may hold; past it the oldest runs that worked go first | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
 | `requests_per_minute` | unset, which means `60` | requests a minute after a burst of 20, shared by every process of the profile; `0` turns it off ([limits and waits](limits.md)) | `TG_REQUESTS_PER_MINUTE` |

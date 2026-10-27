@@ -19,9 +19,9 @@ A few words this page uses:
 | Task | Command | Keeps anything? |
 |---|---|---|
 | See each request as it happens | `tg personal --trace …` | no, prints to stderr only |
-| Keep a record of one run | `tg personal --record …` | yes, a run record |
-| Find a failed run later | `tg personal runs list` | a failed run is kept by itself |
-| Keep a record of every run | `tg personal config set record true` | yes, every run |
+| Find a run later | `tg personal runs list` | every run is kept by itself |
+| Keep one run out | `tg personal --no-record …` | nothing |
+| Keep only failed runs | `tg personal config set record false` | failed runs |
 | Check the installation | `tg personal doctor`, `tg personal doctor --online` | no |
 | Make a problem report | `tg personal doctor reports create` | yes, one file you send |
 
@@ -44,50 +44,61 @@ still gets only data.
 
 ## Keep it: `--record`
 
+Every run is kept by itself. `--record` matters only for a command that runs until you stop it (`watch`, `serve`,
+`mcp serve`) and for a command WireCat Desktop runs for itself: they keep a run that worked only with `--record`.
+
 ```sh
-tg personal --record chats list
 tg personal runs list        # recorded runs, newest first
-tg personal runs show <run-id>  # one run: its outcome, and one line per operation
+tg personal runs show <run-id>  # one run: its outcome, and one line per request
 tg personal runs path <run-id>  # the folder that holds it
 ```
+
+`runs show` lists each request to Telegram: its method (`messages.getHistory`, or the Bot API's `sendMessage`), how
+long it took and how it ended. When Telegram asks to wait (`FLOOD_WAIT`, or a Bot API `429`) and `tg` waits and tries
+again, the refused request is followed by the retry as attempt 2, with the time waited. A run keeps at most 2,000 lines or 1 MB of them, then
+counts the rest.
 
 A run record is a folder under `runs/<day>/` in the state folder (`~/.local/share/tg-cli/runs/` on
 Linux). Its name is the time and the command. It holds two files:
 
 - `run.json` — the command, the profile, the version of `tg`, Node and the system, when it started
   and ended, how many requests it made, the outcome and the error code;
-- `events.jsonl` — the same operations `--trace` shows, one per line.
+- `events.jsonl` — the same operations `--trace` shows, and each request under them, one per line.
+
+A run that worked and logged no requests leaves no folder: it is one line in the day's index, and `runs show` still
+finds it.
 
 ## A failed run is always kept
 
-When a command ends in an error, its run is kept even without `--record`. `run.json` then has
+When a command ends in an error, its run is kept, even with `record` set to `false`; `run.json` then has
 `"kept_because_failed": true`. This is true for every command and every error: a bad option, an
 unknown command, a check before any work, and commands that never connect (`models`, `server`,
 `upgrade`). A failure before the command started, such as a config file that does not load, is kept
 as a run named `tg`. What the record keeps of the command line is under [What you typed](#what-you-typed);
 a run whose settings did not load hides every typed value that may be text.
 
-A fully successful run leaves no record unless you ask for one; partial runs are retained by default too. So a problem report always has a failure to
-attach. `--no-record`, or `"record": false` in the settings, turns this off too.
+So a problem report always has a failure to attach. Only `--no-record` keeps a failed run out.
 
 Successful searches and statistics queries keep their own history, apart from run records. It has its
 own controls: see [saved searches and history](search.md#saved-searches-and-history).
 
-## When to record every run
+## When to keep only failed runs
 
 ```sh
-tg personal config set record true          # profile "personal"
-tg personal --no-record chats list          # but not this one
+tg personal config set record false         # profile "personal": failed runs only
+tg personal --no-record chats list          # this run: nothing at all
 ```
 
-Then every run is kept. By default a run that worked is not written until you ask. A messenger tool
-that keeps a folder of whom you read and when would be a diary of your life that nobody asked for.
+A run that worked holds the ids of the chats you read and, with `record_input` on, what you typed (a message you
+sent, a chat named by its title). It is kept only on this computer, readable only by you, for 7 days. Set `record`
+to `false` if you would rather not keep it at all.
 
 ## How long it lives
 
-**30 days**, or `keep_runs_for_days` in the settings. Old runs are removed only when a new one is kept:
-a tool that writes nothing has no reason to walk the folder. They are removed a whole day at a time,
-by the folder's name, so nothing has to be opened to decide.
+A run that worked lives **7 days** (`keep_successful_runs_for_days`), a failed one **30 days** (`keep_runs_for_days`).
+The runs folder also stays under **200 MB** (`runs_size_limit_mb`): past it, the oldest runs that worked go first.
+Old runs are removed only when a new one is kept, checked once a day, a whole day at a time, by the folder's name,
+so nothing has to be opened to decide.
 
 ## What is never in a record
 
@@ -110,7 +121,8 @@ never carry:
   text again:
 
   ```sh
-  tg personal config set record_input false
+  tg personal config set record_input false     # everywhere
+  tg personal config set record_input failed    # kept only in a run that failed
   ```
 
 - **An older version** keeps the command's words and option names, such as `messages list --limit`.
