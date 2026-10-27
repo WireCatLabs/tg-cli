@@ -122,7 +122,7 @@ const telegramOf = (command: Command, base: BaseContext) => {
 }
 
 /** Shipped beside `dist/`; this file compiles to `dist/commands/context.js`. */
-export const SKILL = new URL("../../skills/wirecat-tg/SKILL.md", import.meta.url)
+export const SKILL = new URL("../../skills/tg-cli/SKILL.md", import.meta.url)
 
 /** Channels and supergroups number their own messages, so an id alone there names another message. */
 const OWN_NUMBERING = ["channel", "supergroup", "gigagroup", "monoforum"]
