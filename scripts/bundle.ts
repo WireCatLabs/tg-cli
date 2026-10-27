@@ -71,10 +71,20 @@ const placeOf = (file: string): string | undefined => {
 }
 
 // Node has no "resolve from this parent" call; a resolve hook for the one call gives Node's own answer. Bun has no
-// hooks, and its global install puts every package beside tg.
+// hooks but has `Bun.resolveSync(specifier, parent)`; when it finds nothing, the plain lookup keeps Bun's own error.
 const FROM = "tg-bundle:from"
 const FROM_SOURCE = `import * as module from "node:module"
+import { dirname } from "node:path"
+import { fileURLToPath, pathToFileURL } from "node:url"
 export const resolveFrom = (parent, specifier) => {
+  if (globalThis.Bun) {
+    if (specifier.includes(":")) return import.meta.resolve(specifier)
+    try {
+      return pathToFileURL(globalThis.Bun.resolveSync(specifier, dirname(fileURLToPath(parent)))).href
+    } catch {
+      return import.meta.resolve(specifier)
+    }
+  }
   if (!module.registerHooks) return import.meta.resolve(specifier)
   const hooks = module.registerHooks({
     resolve: (asked, context, next) => next(asked, asked === specifier ? { ...context, parentURL: parent } : context),

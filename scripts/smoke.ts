@@ -76,6 +76,12 @@ const offline = tg("chats", "list", "--offline", "--json")
 check("an offline read with nothing recorded fails", offline.status !== 0)
 check("and keeps stdout clean", offline.stdout === "")
 
+// A profile takes the read as far as the store: its SQLite and extension load from cli-core's own dependencies.
+tg("smoke", "config", "set", "limit", "20")
+const stored = tg("smoke", "chats", "list", "--offline", "--json")
+check("the store opens and has nothing recorded", stored.stderr.includes('"reason":"item.not-found"'))
+check("doctor finds the document readers", tg("doctor", "--json").stdout.includes('"unpdf":"built in"'))
+
 const opened = async (path: string) => {
   const storage = await openSessionStorage(path)
   const platform = new NodePlatform()
