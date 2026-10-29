@@ -19,7 +19,7 @@ Some words on this page:
 
 | Task | Command |
 | --- | --- |
-| See who a person is and where you talk to them | `tg personal contacts info` |
+| See who a person is and where you talk to them | `tg personal contacts show` |
 | Read what they said, in every chat or in the chats you name | `tg personal contacts context` |
 | Get ready to talk to them: chats, open tasks, facts, notes and meetings | `tg personal contacts prepare` |
 | Check whether the account looks like a bot, a fake or a spammer | `tg personal contacts check` |
@@ -29,23 +29,23 @@ Some words on this page:
 
 Every option of these commands is in the [command reference for contacts](commands.md#tg-contacts).
 
-## Who they are: `contacts info`
+## Who they are: `contacts show`
 
 ```sh
-tg personal contacts info @example_user
-tg personal contacts info @example_user --json
+tg personal contacts show @example_user
+tg personal contacts show @example_user --json
 ```
 
-It answers everything Telegram says about the person, and how many of their messages your local
-store holds in each chat you share:
+It answers everything Telegram says about the person, your own alias and notes (`--with-notes`), and how many of
+their messages your local store holds in each chat you share. `--offline` answers from the store alone:
 
 ```json
 {
   "id": "1000001",
   "name": "Example User",
   "usernames": ["example_user"],
-  "bio": "Coffee and maps",
-  "phone": "***0123",
+  "description": "Coffee and maps",
+  "phone": "+34600000123",
   "flags": { "bot": false, "verified": false, "premium": true, "scam": false, "fake": false,
              "restricted": false, "deleted": false, "support": false },
   "seen": "recently",
@@ -67,8 +67,8 @@ store holds in each chat you share:
 }
 ```
 
-- **`phone`** shows only the last four digits, and only when Telegram shows you their number.
-  `--show-phone` prints it whole. The MCP tool always hides it.
+- **`phone`** is the whole number, when Telegram shows you theirs. It is your data, so it is not masked, in the
+  terminal or over MCP; `--hide-phone` leaves it out.
 - **`flags`** are Telegram's own marks. `scam` and `fake` mean Telegram itself labelled the account.
 - **`seen`** is `online`, `recently`, `week`, `month`, `hidden`, or an exact time when their privacy
   settings show it to you.
@@ -237,7 +237,7 @@ tg personal contacts unlink @example_user
 ```
 
 After that, `contacts context` without `--chat` gathers both accounts: the chats you share and the
-messages from the Telegram account and from the MAX account. `contacts info` and
+messages from the Telegram account and from the MAX account. `contacts show` and
 `contacts context --chat` still show only the account you named. The link is only ever what you
 record: the same name in both messengers is never taken as the same person.
 

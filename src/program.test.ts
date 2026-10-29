@@ -198,15 +198,26 @@ describe("machine output", () => {
     expect(typeof item.chat_id).toBe("string")
   })
 
-  it("prints the phone's last four digits, and the whole number only with --show-phone", async () => {
+  it("prints the whole phone number, and leaves it out with --hide-phone", async () => {
     const adapter = () =>
       scripted({ me: async () => ({ id: "1", name: "Owner", username: null, phone: "0000001234" }) })
 
-    const masked = await tg(["account", "show", "--json"], { adapter })
-    const whole = await tg(["account", "show", "--show-phone", "--json"], { adapter })
+    const whole = await tg(["account", "show", "--json"], { adapter })
+    const hidden = await tg(["account", "show", "--hide-phone", "--json"], { adapter })
 
-    expect(JSON.parse(masked.stdout[0] ?? "").item.phone).toBe("***1234")
     expect(JSON.parse(whole.stdout[0] ?? "").item.phone).toBe("0000001234")
+    expect(JSON.parse(hidden.stdout[0] ?? "").item).not.toHaveProperty("phone")
+  })
+
+  it("answers account update with the whole phone number, and without it for --hide-phone", async () => {
+    const adapter = () =>
+      scripted({ updateProfile: async () => ({ id: "1", name: "X", username: null, phone: "0000001234" }) })
+
+    const whole = await tg(["account", "update", "--first-name", "X", "--json"], { adapter })
+    const hidden = await tg(["account", "update", "--first-name", "X", "--hide-phone", "--json"], { adapter })
+
+    expect(JSON.parse(whole.stdout[0] ?? "").item.account.phone).toBe("0000001234")
+    expect(JSON.parse(hidden.stdout[0] ?? "").item.account).not.toHaveProperty("phone")
   })
 
   it("prints one message per line with --jsonl", async () => {

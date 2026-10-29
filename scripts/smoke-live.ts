@@ -103,7 +103,7 @@ try {
     process.exit(2)
   }
   // `account show` has no Premium flag; the owner's own profile does.
-  premium = (await step("check for Premium", () => tg("contacts", "info", "me").item?.flags?.premium === true)) === true
+  premium = (await step("check for Premium", () => tg("contacts", "show", "me").item?.flags?.premium === true)) === true
 
   const text = keep(await step("send text", () => tg("messages", "send", SAVED, `tg-cli smoke ${stamp}`)))
   if (all) {

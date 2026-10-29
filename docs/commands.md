@@ -127,7 +127,7 @@ tg account list [query]
 
 ### `tg account show`
 
-who this profile is logged in as; the phone number shows its last four digits
+who this profile is logged in as, with the phone number
 
 ```sh
 tg account show [options]
@@ -135,7 +135,7 @@ tg account show [options]
 
 | Option | What it does |
 |---|---|
-| `--show-phone` | print the whole phone number. |
+| `--hide-phone` | leave the phone number out. |
 
 **Returns:** account — provider, id, name, username, phone, scope; every field: tg commands info account show
 
@@ -157,6 +157,7 @@ tg account update [options]
 | `--last-name <name>` | your last name. |
 | `--description <text>` | about you. |
 | `--photo <file>` | a new profile photo — an image file. |
+| `--hide-phone` | leave the phone number out of the answer. |
 
 **Returns:** account change — operation_id, account; every field: tg commands info account update
 
@@ -346,7 +347,7 @@ tg chats members list <chat> [query] [options]
 
 **Returns:** member — id, name, username, role, last_seen_at, registered_at, joined_at, invited_by, and 7 more; every field: tg commands info chats members list
 
-**Next usually:** `tg contacts show <person>`, `tg contacts info <person>`, `tg contacts context <person>`
+**Next usually:** `tg contacts show <person>`, `tg contacts context <person>`, `tg contacts prepare <person>`
 
 **Example:** `tg personal chats members list "Book club"`
 
@@ -370,7 +371,7 @@ tg chats members check <chat> [query] [options]
 
 **Returns:** member — id, name, username, role, last_seen_at, registered_at, joined_at, invited_by, and 7 more; every field: tg commands info chats members check
 
-**Next usually:** `tg contacts show <person>`, `tg contacts info <person>`, `tg contacts context <person>`
+**Next usually:** `tg contacts show <person>`, `tg contacts context <person>`, `tg contacts prepare <person>`
 
 **Example:** `tg personal chats members check "Book club"`
 
@@ -1312,15 +1313,15 @@ tg contacts list [query] [options]
 | `--all` | every row, no paging. |
 | `--order <recent\|name>` | newest conversation first, or alphabetical. Default: `recent`. |
 
-**Returns:** contact — ref, id, name, username, description, last_messaged_at, alias, display_name, and 4 more; every field: tg commands info contacts list
+**Returns:** contact — ref, id, name, username, description, last_messaged_at, alias, display_name, and 15 more; every field: tg commands info contacts list
 
-**Next usually:** `tg contacts show <person>`, `tg contacts info <person>`, `tg contacts context <person>`
+**Next usually:** `tg contacts show <person>`, `tg contacts context <person>`, `tg contacts prepare <person>`
 
 **Example:** `tg personal contacts list --limit 10`
 
 ### `tg contacts show`
 
-one person and the chats you share with them
+one person: what the messenger says about them — handles, flags, last seen, phone, when they registered — your alias, the chats you share, how many of their messages the store holds in each, and the earlier names and usernames the store saw them with; --offline answers from the store alone
 
 ```sh
 tg contacts show <person> [options]
@@ -1333,32 +1334,13 @@ tg contacts show <person> [options]
 | Option | What it does |
 |---|---|
 | `--with-notes` | include your private notes, subject to contacts.notes.list permission. |
+| `--hide-phone` | leave the phone number out. |
 
-**Returns:** contact — ref, id, name, username, description, last_messaged_at, alias, display_name, and 4 more; every field: tg commands info contacts show
+**Returns:** contact — ref, id, name, username, description, last_messaged_at, alias, display_name, and 15 more; every field: tg commands info contacts show
 
-**Next usually:** `tg contacts info <person>`, `tg contacts context <person>`, `tg contacts prepare <person>`
+**Next usually:** `tg contacts context <person>`, `tg contacts prepare <person>`, `tg contacts events <person> [query]`
 
 **Example:** `tg personal contacts show "Alex Example"`
-
-### `tg contacts info`
-
-everything the messenger says about one person — handles, flags, last seen, when they registered — and how many of their messages the store holds in each chat you share, the first and the last, and the earlier names and usernames the store saw them with
-
-```sh
-tg contacts info <person> [options]
-```
-
-| Argument | | What it is |
-|---|---|---|
-| `person` | required | their id, @username, or part of their name. |
-
-| Option | What it does |
-|---|---|
-| `--show-phone` | print the whole phone number. |
-
-**Returns:** contact profile — id, name, usernames, bio, flags, chats, aliases, birthday, and 7 more; every field: tg commands info contacts info
-
-**Example:** `tg personal contacts info "Alex Example"`
 
 ### `tg contacts context`
 
@@ -3699,7 +3681,7 @@ tg attachments list [query] [options]
 | `--page <n>` | which page, starting at 1. |
 | `--all` | every row, no paging. |
 
-**Returns:** attachment — kind, message, position, url, name, title, mime, size, and 7 more; every field: tg commands info attachments list
+**Returns:** attachment — kind, message, position, url, name, title, mime, size, and 8 more; every field: tg commands info attachments list
 
 **Example:** `tg personal attachments list --limit 10`
 

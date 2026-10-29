@@ -491,8 +491,8 @@ from the store only; `prepare.coverage` says what was left out.
 To summarise what one person said, call `contacts context <person> --chat <chat> --limit <n>` (MCP:
 `chats` and `limit`); the answer is `{ at, text }` per message. Ask for `-v` (MCP `detail: 1`) only when
 you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked
-with `contacts link`; `contacts info` and `--chat` read the named account only. `contacts info`
-never prints a whole phone number unless the owner asks for `--show-phone`; MCP always hides it.
+with `contacts link`; `contacts show` and `--chat` read the named account only. `contacts show`
+prints the whole phone number, as the other commands that show one; `--hide-phone` leaves it out.
 `contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
 `--no-registries` (MCP `registries: false`) unless the owner accepts that. Its score is a hint, not a verdict.
 

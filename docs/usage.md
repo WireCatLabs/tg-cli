@@ -33,7 +33,7 @@ tg [profile] [options] <resource> <action> [arguments]
 | Catch up | other people's unread messages; what you promised and what is open | `tg personal inbox`, `tg personal review` |
 | Voice | turn voice messages into text, on this computer | `tg personal messages transcribe` |
 | Files | download a message's files or a whole chat's | `tg personal messages download` |
-| People | contacts, a person's profile, a bot check | `tg personal contacts list`, `tg personal contacts info` |
+| People | contacts, a person's profile, a bot check | `tg personal contacts list`, `tg personal contacts show` |
 | Search | messages, files, dates, people; discussions by meaning | `tg personal search messages`, `tg personal search conversations` |
 | Send | text, files, voice, replies, scheduled messages | `tg personal messages send` |
 | Change | edit, forward, pin, delete, react, vote, mark read | `tg personal messages edit`, `tg personal reactions add` |
@@ -130,11 +130,8 @@ to every process on the machine in `ps`, and stays in your shell history.
 For CI, `TG_API_ID` and `TG_API_HASH` give the app without the keyring; they win over it.
 
 ```sh
-tg personal account show       # who this profile is logged in as; the phone as its last four digits
-```
-
-```sh
-tg personal account show --show-phone  # the whole phone number
+tg personal account show       # who this profile is logged in as, with the phone number
+tg personal account show --hide-phone  # the same without the phone number
 ```
 
 ```sh
@@ -424,7 +421,7 @@ tg personal contacts sync              # your whole Telegram contact list into t
 ```
 
 ```sh
-tg personal contacts info @example_user  # flags, last seen, registered, messages per shared chat
+tg personal contacts show @example_user  # flags, last seen, registered, messages per shared chat
 ```
 
 ```sh
@@ -1351,7 +1348,7 @@ secret.** Every setting and variable: [configuration](configuration.md).
 
 ## One person
 
-`tg personal contacts info <person>` shows what Telegram says about one person and how active they are in the
+`tg personal contacts show <person>` shows what Telegram says about one person and how active they are in the
 chats you share. `tg personal contacts check <person>` scores them as a possible bot, fake or spammer, with every
 reason. `tg personal contacts context <person>` reads what the store holds about them: without `--chat`, across every
 account linked to them with `contacts link`; with `--chat`, their newest messages in each chat you name. What each one asks Telegram or a public spam list, and what it sends where:
