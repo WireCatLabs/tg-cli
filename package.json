@@ -1,6 +1,6 @@
 {
   "name": "@wirecat/tg-cli",
-  "version": "0.105.0",
+  "version": "0.106.0",
   "description": "A local command line interface for a personal Telegram account, built for agents and scripts",
   "mcpName": "dev.wirecat/tg-cli",
   "license": "Apache-2.0",
