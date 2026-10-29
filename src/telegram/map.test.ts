@@ -125,6 +125,23 @@ describe("a message's details", () => {
   })
 
   it("keeps a photo's size and a voice note's duration", () => {
+    expect(
+      toMessage(
+        with_({
+          media: { type: "contact", firstName: "Ana", lastName: "Ruiz", phoneNumber: "+34 600 123 456", userId: 42 },
+        }),
+      ).attachments,
+    ).toEqual([
+      {
+        kind: "contact",
+        name: "Ana Ruiz",
+        contact: { name: "Ana Ruiz", firstName: "Ana", lastName: "Ruiz", phone: "+34 600 123 456", userId: "42" },
+      },
+    ])
+    expect(
+      toMessage(with_({ media: { type: "contact", firstName: "Ana", lastName: "", phoneNumber: "", userId: 0 } }))
+        .attachments,
+    ).toEqual([{ kind: "contact", name: "Ana", contact: { name: "Ana", firstName: "Ana" } }])
     expect(toMessage(with_({ media: { type: "photo", width: 800, height: 600 } })).attachments).toEqual([
       { kind: "photo", width: 800, height: 600 },
     ])

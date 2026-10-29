@@ -321,8 +321,25 @@ const reactionsOf = (reactions: MessageReactions): Reactions => {
   }
 }
 
+const contactOf = (media: Extract<MessageMedia, { type: "contact" }>): Attachment => {
+  const { firstName, lastName, phoneNumber, userId } = media
+  const name = [firstName, lastName].filter(Boolean).join(" ")
+  return {
+    kind: "contact",
+    ...(name ? { name } : {}),
+    contact: {
+      name,
+      ...(firstName ? { firstName } : {}),
+      ...(lastName ? { lastName } : {}),
+      ...(phoneNumber ? { phone: phoneNumber } : {}),
+      ...(userId ? { userId: String(userId) } : {}),
+    },
+  }
+}
+
 export const attachmentsOf = (media: MessageMedia): Attachment[] => {
   if (!media) return []
+  if (media.type === "contact") return [contactOf(media)]
   const read = <T>(name: string): T | undefined => {
     if (!(name in media)) return undefined
     const value = (media as unknown as Record<string, unknown>)[name]

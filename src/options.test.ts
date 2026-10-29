@@ -218,14 +218,14 @@ describe("messages comments", () => {
   })
 })
 
-describe("contacts info", () => {
+describe("contacts show", () => {
   const described = scripted({
     profile: async () => ({
       id: "7",
       name: "Zoe",
       usernames: ["zoe"],
       bio: null,
-      phone: "0123",
+      phone: "34600000123",
       flags: { bot: false, scam: false },
       seen: "week",
       registered: { at: "2015-07-01T00:00:00.000Z", source: "estimate", precision: "month" },
@@ -233,16 +233,16 @@ describe("contacts info", () => {
     }),
   })
 
-  it("shows the phone's last four digits unless --show-phone", async () => {
+  it("shows the whole phone unless --hide-phone", async () => {
     const home = env(freshHome())
-    const masked = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described, env: home })).stdout)
-    const whole = json(
-      (await tg(["contacts", "info", "7", "--show-phone", "--json"], { adapter: () => described, env: home })).stdout,
+    const whole = json((await tg(["contacts", "show", "7", "--json"], { adapter: () => described, env: home })).stdout)
+    const hidden = json(
+      (await tg(["contacts", "show", "7", "--hide-phone", "--json"], { adapter: () => described, env: home })).stdout,
     )
 
-    expect(masked.item).toMatchObject({ phone: "***0123", seen: "week", registered: { source: "estimate" } })
-    expect(masked.item.chats).toMatchObject([{ id: "7", their_messages: 0 }])
-    expect(whole.item.phone).toBe("0123")
+    expect(whole.item).toMatchObject({ phone: "34600000123", seen: "week", registered: { source: "estimate" } })
+    expect(whole.item.chats).toMatchObject([{ id: "7", their_messages: 0 }])
+    expect(hidden.item).not.toHaveProperty("phone")
   })
 
   it("lists a name the store saw them with before as an alias", async () => {
@@ -253,7 +253,7 @@ describe("contacts info", () => {
     await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe Old") })
     await tg(["messages", "list", chat.id, "--json"], { adapter: () => said("Zoe") })
 
-    const shown = json((await tg(["contacts", "info", "7", "--json"], { adapter: () => described })).stdout)
+    const shown = json((await tg(["contacts", "show", "7", "--json"], { adapter: () => described })).stdout)
 
     expect(shown.item.aliases).toMatchObject([{ name: "Zoe Old", source: "profile" }])
   })

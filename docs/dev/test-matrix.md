@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2361 ✅ · 110 ⛔ · 0 ❌** — 521 commands, 1950 options.
+**2364 ✅ · 110 ⛔ · 0 ❌** — 521 commands, 1953 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -22,12 +22,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `setup` | `--method` | ✅ |  |
 | `account list` |  | ✅ |  |
 | `account show` |  | ✅ |  |
-| `account show` | `--show-phone` | ✅ |  |
+| `account show` | `--hide-phone` | ✅ |  |
 | `account update` |  | ✅ |  |
 | `account update` | `--first-name` | ✅ |  |
 | `account update` | `--last-name` | ✅ |  |
 | `account update` | `--description` | ✅ |  |
 | `account update` | `--photo` | ✅ |  |
+| `account update` | `--hide-phone` | ✅ |  |
 | `account sessions list` |  | ✅ |  |
 | `account sessions end` |  | ✅ |  |
 | `account sessions end` | `--others` | ✅ |  |
@@ -147,8 +148,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts list` | `--order` | ✅ |  |
 | `contacts show` |  | ✅ |  |
 | `contacts show` | `--with-notes` | ✅ |  |
-| `contacts info` |  | ✅ |  |
-| `contacts info` | `--show-phone` | ✅ |  |
+| `contacts show` | `--hide-phone` | ✅ |  |
 | `contacts context` |  | ✅ |  |
 | `contacts context` | `--limit` | ✅ |  |
 | `contacts context` | `--since-time` | ⛔ | cli-core src/cli/messenger/messenger.test.ts and src/store/contacts.test.ts cover local identity context and stored-message filtering; shared option parsing |
@@ -263,6 +263,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages sync` | `--catch-up-time` | ✅ |  |
 | `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-core's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `messages sync` | `--dry-run` | ✅ |  |
+| `reactions list` |  | ✅ |  |
+| `reactions list` | `--limit` | ✅ |  |
+| `reactions list` | `--cursor` | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |

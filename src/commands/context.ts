@@ -142,6 +142,7 @@ export const TELEGRAM: Messenger = {
   personalBots: true,
   pollQuiz: true,
   pollVoters: true,
+  reactionsList: true,
   topicShow: true,
   forwardTopic: true,
   // mtcute's InputMedia.poll documents 5–600 seconds.

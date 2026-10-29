@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
+import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
 import { SendJournal, sendsPathFor } from "@wirecat/cli-core/sends"
 import { describe, expect, it } from "vitest"
 import { TG } from "./app.js"
@@ -959,6 +959,44 @@ describe("the send guard in front of the other writes", () => {
     expect(listed.code).toBe(0)
     expect(asked).toEqual([{ limit: 5, answerId: "MA" }])
     expect(journal("g-voters")).toEqual([])
+  })
+
+  it("**lists who reacted**, by one reaction and a cursor, refusing with a reason where Telegram hides the list", async () => {
+    const asked: unknown[] = []
+    let hidden = false
+    const adapter = scripted({
+      reactors: async (_chatId, _messageId, window) => {
+        asked.push(window)
+        if (hidden) throw new CliError("permission_error", "hidden", { reason: "reactions.list-hidden" })
+        return {
+          items: [
+            {
+              person: { id: "41", name: "Ana", username: null },
+              reaction: "🔥",
+              reactedAt: "2026-09-21T14:13:20.000Z",
+            },
+          ],
+          hasMore: true,
+          cursor: "next",
+        }
+      },
+    })
+
+    const listed = await tg(
+      ["g-react", "reactions", "list", "Valencia", "3", "reaction:🔥", "--limit", "1", "--cursor", "first", "--json"],
+      adapter,
+    )
+    hidden = true
+    const refused = await tg(["g-react", "reactions", "list", "Valencia", "3", "--json"], adapter)
+
+    const body = JSON.parse(listed.stdout[0] ?? "")
+    expect(body.items).toEqual([
+      { person: { id: "41", name: "Ana", username: null }, reaction: "🔥", reacted_at: "2026-09-21T14:13:20.000Z" },
+    ])
+    expect(body.page).toMatchObject({ mode: "cursor", has_more: true, next_cursor: "next" })
+    expect(asked[0]).toEqual({ limit: 1, emoji: "🔥", cursor: "first" })
+    expect(refused.code).not.toBe(0)
+    expect(refused.error).toMatchObject({ code: "permission_error", reason: "reactions.list-hidden" })
   })
 
   it("reads a poll, votes by id and takes it back, closes it, and creates one with every option", async () => {

@@ -1,7 +1,10 @@
 [
+  "account show --hide-phone",
+  "account update --hide-phone",
   "bot search messages --from",
   "chats folders create --skip",
   "chats folders update --skip",
+  "contacts show --hide-phone",
   "replies audience --reply",
   "replies edit --as-reply",
   "replies edit --contacts-only",

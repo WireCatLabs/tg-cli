@@ -309,6 +309,7 @@ tg personal chats list --json                      # find a chat, take its id
 tg personal chats list 'title:*vale* kind:group unread_count>0' --offline --json  # filtered, from the local store
 tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed
 tg personal chats members list -1001234567890 --json  # a group's members, paged
+tg personal reactions list -1001234567890 4242 reaction:🔥 --json  # who reacted; refused (reason reactions.*) where the chat hides it
 tg personal chats inspect https://t.me/+AbCd --json  # where an invite leads, without joining
 tg personal topics list -1001234567890 --json        # a forum's topics; a message's threadId is one of them
 tg personal topics show -1001234567890 12 --json     # one topic: title, closed, pinned, last activity
@@ -491,8 +492,8 @@ from the store only; `prepare.coverage` says what was left out.
 To summarise what one person said, call `contacts context <person> --chat <chat> --limit <n>` (MCP:
 `chats` and `limit`); the answer is `{ at, text }` per message. Ask for `-v` (MCP `detail: 1`) only when
 you need message ids or locators. Only `contacts context` without `--chat` gathers identities linked
-with `contacts link`; `contacts info` and `--chat` read the named account only. `contacts info`
-never prints a whole phone number unless the owner asks for `--show-phone`; MCP always hides it.
+with `contacts link`; `contacts show` and `--chat` read the named account only. `contacts show`
+prints the whole phone number, as the other commands that show one; `--hide-phone` leaves it out.
 `contacts check` sends the person's Telegram id to the public spam lists CAS and lols.bot; use
 `--no-registries` (MCP `registries: false`) unless the owner accepts that. Its score is a hint, not a verdict.
 

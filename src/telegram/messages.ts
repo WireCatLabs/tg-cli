@@ -28,6 +28,7 @@ import {
   unknownIfUnanswered,
 } from "./feature.js"
 import { attachmentsOf, checkSpoiler, peerToChat, toFormatted, toInputMedia, toMessage } from "./map.js"
+import { reactorsOf } from "./reactors.js"
 import { sendAsPeer } from "./send-as.js"
 import { uploadAttachment } from "./upload.js"
 
@@ -439,6 +440,16 @@ export const react = (feature: Feature, chatId: string, messageId: string, emoji
   return feature.write("the reaction may have been set — repeating it is safe", async () => {
     await feature.client.sendReaction({ chatId: Number(chatId), message: id, emoji })
   })
+}
+
+export const reactors = (
+  feature: Feature,
+  chatId: string,
+  messageId: string,
+  window: { limit: number; emoji?: string; cursor?: string },
+) => {
+  const id = messageNumber(messageId, "a message id is a number")
+  return feature.call(() => reactorsOf(feature.client, Number(chatId), id, window))
 }
 
 /** Up to `until`, or everything; mentions stay, as Telegram's own clients leave them until they are seen. */

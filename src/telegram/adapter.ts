@@ -330,6 +330,10 @@ export class TelegramAdapter {
     return messages.markRead(this.#feature, chatId, until)
   }
 
+  reactors(chatId: string, messageId: string, window: { limit: number; emoji?: string; cursor?: string }) {
+    return messages.reactors(this.#feature, chatId, messageId, window)
+  }
+
   delete(chatId: string, messageIds: string[], options: { forEveryone: boolean }): Promise<void> {
     return messages.deleteMessages(this.#feature, chatId, messageIds, options)
   }
