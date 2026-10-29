@@ -83,6 +83,18 @@ With a profile — it goes first, as in any command:
 claude mcp add tg-work -- tg work mcp serve
 ```
 
+One server can serve several profiles. Name them with `--profiles`, or serve every profile with
+`--profiles all`. Each tool call then names its profile:
+
+```sh
+claude mcp add tg -- tg mcp serve --profiles personal,work
+claude mcp add tg -- tg mcp serve --profiles all
+```
+
+`tg mcp serve` with no profile and no `--profiles` refuses and lists your profiles: the server
+never picks profiles for you. The line it writes to stderr at start names the profiles it serves.
+`mcp config`, `mcp revoke`, `--http` and `mcp server start|stop|status` take the same choice.
+
 **Claude Desktop, Cursor and other apps:** `tg` prints the entry for their settings file:
 
 ```sh

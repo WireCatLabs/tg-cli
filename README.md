@@ -269,6 +269,7 @@ form, so set up approval in your agent app.
 
 ```sh
 claude mcp add tg -- tg personal mcp serve  # Claude Code, by hand
+claude mcp add tg -- tg mcp serve --profiles all  # one server for every profile
 tg personal mcp check            # check the local MCP server
 ```
 

@@ -3,6 +3,32 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **An MCP server serves only the profiles you name.** `tg mcp serve` with no profile now refuses (exit 2) and lists
+  your profiles. Name one (`tg work mcp serve`), a list (`tg mcp serve --profiles work,personal`) or every profile
+  (`tg mcp serve --profiles all`); the line on stderr at start names the profiles served. The same choice applies to
+  `--http`, `mcp revoke`, `mcp config` and `mcp server start|stop|status`. An app entry that runs `tg mcp serve` with
+  no profile stops working: print it again with `tg mcp config --profiles all`, or name a profile. A background
+  server of every profile started by an older `tg` is stopped by `tg upgrade`; start it again with
+  `tg mcp server start --profiles all`. The MCP Registry entry now runs `tg mcp serve --profiles all` (cli-core
+  0.470.0).
+
+### Added
+
+- **Every message `tg` prints has `sender_is_me`**, true for a message you sent, in `messages list`, `show`,
+  `context`, search windows and `inbox` (cli-core 0.473.0).
+- **`tg runs show` keeps the network's error code of a failed run** (`error.cause_code`, such as `ETIMEDOUT`), never
+  the server's text (cli-core 0.473.0).
+
+### Fixed
+
+- **`--offline --transcribe` says which voice messages it did not transcribe.** They are in `missing`, with the
+  `tg <profile> messages transcribe <chat> <id>` command to run (cli-core 0.473.0).
+- **Each MCP tool call has its own `run_id`** in its answer and in `tg runs` (cli-core 0.471.0).
+
 ## 0.103.0 — 27.10.2026
 
 ### Changed — may break callers
