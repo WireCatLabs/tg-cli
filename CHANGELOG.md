@@ -3,6 +3,20 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **A shared contact card shows its name and whole phone**, online and from the store (`--offline`). `contacts show`
+  carries the profile `contacts info` gave, and `--hide-phone` leaves the number out of `account show`,
+  `account update` and `contacts show`. Needs cli-core 0.477.0.
+
+### Changed — may break callers
+
+- **Phone numbers are shown whole**, and `contacts info` is `contacts show`. `--show-phone` is gone: a script that
+  passes it fails as an unknown option, so drop it. The MCP tool `contacts info` is gone too; `contacts show` takes
+  its place, and a saved permission `contacts.info` is refused with the `config unset` that removes it.
+
 ## 0.105.0 — 29.10.2026
 
 ### Changed — may break callers
