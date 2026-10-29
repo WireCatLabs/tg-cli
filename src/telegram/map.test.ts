@@ -131,11 +131,17 @@ describe("a message's details", () => {
           media: { type: "contact", firstName: "Ana", lastName: "Ruiz", phoneNumber: "+34 600 123 456", userId: 42 },
         }),
       ).attachments,
-    ).toEqual([{ kind: "contact", url: "tg://user?id=42", name: "Ana Ruiz", title: "***3456" }])
+    ).toEqual([
+      {
+        kind: "contact",
+        name: "Ana Ruiz",
+        contact: { name: "Ana Ruiz", firstName: "Ana", lastName: "Ruiz", phone: "+34 600 123 456", userId: "42" },
+      },
+    ])
     expect(
       toMessage(with_({ media: { type: "contact", firstName: "Ana", lastName: "", phoneNumber: "", userId: 0 } }))
         .attachments,
-    ).toEqual([{ kind: "contact", name: "Ana" }])
+    ).toEqual([{ kind: "contact", name: "Ana", contact: { name: "Ana", firstName: "Ana" } }])
     expect(toMessage(with_({ media: { type: "photo", width: 800, height: 600 } })).attachments).toEqual([
       { kind: "photo", width: 800, height: 600 },
     ])

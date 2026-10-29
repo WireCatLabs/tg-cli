@@ -1225,10 +1225,10 @@ An agent without a terminal (for example Claude Desktop or Cursor) connects over
 
 Times are local, and a line marks each new day. `↳` is what a message answers, `↪` whose message was
 forwarded, `📎` an attachment. Control characters in a message or a name are shown as text, never run
-by the terminal. A shared contact prints as `📎` with its name, linked to the account; in JSON the attachment
-has `name`, `url` (`tg://user?id=…`) and `title`, the phone with all but its last four digits hidden — the whole
-number is `contacts info <id> --show-phone`. `-v` adds the ids of the message, the sender and the chat; `-vv`
-everything known about the message.
+by the terminal. A shared contact prints as `👤` with its name and phone; in JSON the attachment has `contact`
+with `name`, `first_name`, `last_name`, `phone` (whole, as Telegram sent it) and `user_id`, and the store keeps it,
+so `--offline` shows the same. `-v` adds the ids of the message, the sender and the chat; `-vv` everything known about
+the message.
 
 ## New messages as they arrive
 
