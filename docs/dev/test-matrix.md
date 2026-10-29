@@ -263,6 +263,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages sync` | `--catch-up-time` | ✅ |  |
 | `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-core's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `messages sync` | `--dry-run` | ✅ |  |
+| `reactions list` |  | ✅ |  |
+| `reactions list` | `--limit` | ✅ |  |
+| `reactions list` | `--cursor` | ✅ |  |
 | `reactions add` |  | ✅ |  |
 | `reactions remove` |  | ✅ |  |
 | `polls show` |  | ✅ |  |

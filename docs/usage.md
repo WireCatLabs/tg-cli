@@ -697,6 +697,10 @@ tg personal reactions remove "Book club" 4242
 ```
 
 ```sh
+tg personal reactions list "Book club" 4242 reaction:🔥 --limit 20  # who reacted, newest first; --cursor goes on
+```
+
+```sh
 tg personal polls show "Book club" 4250    # the poll and its answer ids
 ```
 
@@ -728,7 +732,9 @@ tg personal polls close "Book club" 4250   # your own poll; it cannot be reopene
 tg personal polls create "Book club" "2+2?" 3 4 5 --quiz --correct 2 --solution "Four."  # a quiz; a vote is final
 ```
 
-When you read a chat, reactions show under a message — `👍 3  🔥 1  (you: 🔥)`. A vote in a public poll
+When you read a chat, reactions show under a message — `👍 3  🔥 1  (you: 🔥)`. `reactions list` names who
+reacted; Telegram refuses it in a channel and in a chat that hides it, and the error says which (`reactions.broadcast`,
+`reactions.list-hidden`) rather than answering with an empty list. A vote in a public poll
 shows your name to everyone in the chat. Vote by the ids `polls show` prints, never by an answer's
 position. `--multiple` lets people pick several answers. People can change their vote only in a poll
 made with `--revote`. A vote in a closed poll, two answers in a one-answer poll, a changed or retracted vote

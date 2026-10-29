@@ -2127,7 +2127,7 @@ tg messages comments <chat> <post> [query] [options]
 
 **Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info messages comments
 
-**Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg polls show <chat> <message>`
+**Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg reactions list <chat> <message> [query]`
 
 **Example:** `tg personal messages comments "News channel" 101 --limit 20`
 
@@ -2185,6 +2185,29 @@ tg messages sync [chat] [options]
 ## `tg reactions`
 
 react to messages
+
+### `tg reactions list`
+
+who reacted to a message, newest first; refused where the chat hides the list
+
+```sh
+tg reactions list <chat> <message> [query] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `message` | required | the message id. |
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
+
+| Option | What it does |
+|---|---|
+| `--limit <n>` | how many to show. |
+| `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
+
+**Returns:** reaction — person, reaction, reacted_at; every field: tg commands info reactions list
+
+**Example:** `tg personal reactions list "Book club" 101 reaction:🔥 --limit 20`
 
 ### `tg reactions add`
 

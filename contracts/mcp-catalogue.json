@@ -97,6 +97,7 @@
   "messages comments": "read",
   "messages links": "read",
   "messages sync": "write",
+  "reactions list": "read",
   "reactions add": "write",
   "reactions remove": "write",
   "polls show": "read",

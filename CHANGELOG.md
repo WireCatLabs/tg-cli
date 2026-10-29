@@ -10,6 +10,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **A shared contact card shows its name and whole phone**, online and from the store (`--offline`). `contacts show`
   carries the profile `contacts info` gave, and `--hide-phone` leaves the number out of `account show`,
   `account update` and `contacts show`. Needs cli-core 0.477.0.
+- **`tg <profile> reactions list <chat> <message>` shows who reacted to a message**, newest first, with the reaction and
+  when. `reaction:<emoji>` keeps one emoji, `--limit` and `--cursor` page it. It reads only, so a read-only profile
+  and MCP can use it (permission key `reactions.list`). Where Telegram hides the list — a channel
+  (`reactions.broadcast`) or a chat that turned it off (`reactions.list-hidden`) — it fails with that reason instead of
+  an empty list. Needs a cli-core with `reactions list` (0.477.0).
 
 ### Changed — may break callers
 

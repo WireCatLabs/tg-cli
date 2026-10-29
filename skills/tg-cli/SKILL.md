@@ -309,6 +309,7 @@ tg personal chats list --json                      # find a chat, take its id
 tg personal chats list 'title:*vale* kind:group unread_count>0' --offline --json  # filtered, from the local store
 tg personal chats events -1001234567890 'time>=7d' --json  # who joined, left, was added or removed
 tg personal chats members list -1001234567890 --json  # a group's members, paged
+tg personal reactions list -1001234567890 4242 reaction:🔥 --json  # who reacted; refused (reason reactions.*) where the chat hides it
 tg personal chats inspect https://t.me/+AbCd --json  # where an invite leads, without joining
 tg personal topics list -1001234567890 --json        # a forum's topics; a message's threadId is one of them
 tg personal topics show -1001234567890 12 --json     # one topic: title, closed, pinned, last activity
