@@ -5,6 +5,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## 0.105.0 — 29.10.2026
 
+### Changed — may break callers
+
+- **The agent skill is listed on ClawHub as `wirecat-tg`.** Install it with
+  `openclaw skills install @wirecat/wirecat-tg`. The `tg-cli` listing is no longer updated.
+  `tg skill install` still writes `skills/tg-cli/`.
+
 ### Fixed
 
 - **The help and [the command reference](docs/commands.md) show `tg mcp serve --profiles work,personal`** without a
