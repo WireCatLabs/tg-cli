@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.106.0 — 29.10.2026
 
 ### Added
 
@@ -23,6 +23,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **Phone numbers are shown whole**, and `contacts info` is `contacts show`. `--show-phone` is gone: a script that
   passes it fails as an unknown option, so drop it. The MCP tool `contacts info` is gone too; `contacts show` takes
   its place, and a saved permission `contacts.info` is refused with the `config unset` that removes it.
+
+### Fixed
+
+- **`inbox`, `review`, `search messages` and `search all` answers carry `sender_is_me`**, as 0.473.0 promised, so a
+  script can tell the owner's own messages from others in them too (cli-core 0.478.0).
 
 ## 0.105.0 — 29.10.2026
 
