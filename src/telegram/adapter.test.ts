@@ -1125,7 +1125,7 @@ describe("reading", () => {
 
   it("lists the address book, and the sessions without their IP address", async () => {
     const { adapter, client } = await open()
-    client.contacts = [user(21, "Adam")]
+    client.contacts = [user(21, "Adam", { phoneNumber: "34600123456" }), user(22, "Bea")]
     client.authorizations = [
       {
         current: true,
@@ -1142,7 +1142,10 @@ describe("reading", () => {
       },
     ]
 
-    expect(await adapter.addressBook()).toEqual([{ id: "21", name: "Adam", username: null }])
+    expect(await adapter.addressBook()).toEqual([
+      { id: "21", name: "Adam", username: null, phone: "34600123456" },
+      { id: "22", name: "Bea", username: null },
+    ])
     const [session] = await adapter.sessions()
     expect(session).toEqual({
       current: true,
