@@ -57,5 +57,7 @@ export const reactorsOf = async (
       },
     ]
   })
-  return { items, hasMore: Boolean(list.nextOffset), ...(list.nextOffset ? { cursor: list.nextOffset } : {}) }
+  // Live 2026-10-29: Telegram sent nextOffset on a last page of 4 asked with limit 20; a short page is the last.
+  const more = Boolean(list.nextOffset) && list.reactions.length >= limit
+  return { items, hasMore: more, ...(more && list.nextOffset ? { cursor: list.nextOffset } : {}) }
 }

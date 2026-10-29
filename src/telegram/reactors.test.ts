@@ -56,10 +56,10 @@ describe("reactors", () => {
   })
 
   it("answers an empty last page without a cursor, and an unreacted message without asking Telegram", async () => {
-    const last = client({ answer: { reactions: [reaction(41, "🔥")], count: 1 } })
+    const last = client({ answer: { reactions: [reaction(41, "🔥")], count: 1, nextOffset: "stale" } })
     const none = client({ reactions: null })
 
-    expect(await reactorsOf(last.fake, -1007, 3, { limit: 5 })).toMatchObject({ hasMore: false })
+    expect(await reactorsOf(last.fake, -1007, 3, { limit: 5 })).toEqual({ items: expect.any(Array), hasMore: false })
     expect(last.call.mock.calls[0]?.[0]).not.toHaveProperty("reaction")
     expect(await reactorsOf(none.fake, -1007, 3, { limit: 5 })).toEqual({ items: [], hasMore: false })
     expect(none.call).not.toHaveBeenCalled()
