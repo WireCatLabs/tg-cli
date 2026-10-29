@@ -321,8 +321,25 @@ const reactionsOf = (reactions: MessageReactions): Reactions => {
   }
 }
 
+/**
+ * A shared contact has no field of its own in the shared attachment model, so it travels in the existing ones: the
+ * name, a link that opens the account, and the phone masked like `contacts info` masks it (the whole number is one
+ * `contacts info <id> --show-phone` away).
+ */
+const contactOf = (media: Extract<MessageMedia, { type: "contact" }>): Attachment => {
+  const name = [media.firstName, media.lastName].filter(Boolean).join(" ")
+  const digits = media.phoneNumber.replace(/\D/g, "")
+  return {
+    kind: "contact",
+    ...(media.userId ? { url: `tg://user?id=${String(media.userId)}` } : {}),
+    ...(name ? { name } : {}),
+    ...(digits ? { title: `***${digits.slice(-4)}` } : {}),
+  }
+}
+
 export const attachmentsOf = (media: MessageMedia): Attachment[] => {
   if (!media) return []
+  if (media.type === "contact") return [contactOf(media)]
   const read = <T>(name: string): T | undefined => {
     if (!(name in media)) return undefined
     const value = (media as unknown as Record<string, unknown>)[name]
