@@ -7,6 +7,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
+- **`contacts sync` saves each contact's phone** when Telegram shows it, so `contacts show --offline` answers it. An
+  online `contacts show` saves the phone it reads too. Needs cli-core 0.479.0 (store version 37).
 - **A shared contact card shows its name and whole phone**, online and from the store (`--offline`). `contacts show`
   carries the profile `contacts info` gave, and `--hide-phone` leaves the number out of `account show`,
   `account update` and `contacts show`. Needs cli-core 0.477.0.

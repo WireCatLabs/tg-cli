@@ -58,8 +58,13 @@ export const lookup = ({ call, client }: Feature, phone: string): Promise<Member
   call(async () => toMember(await client.getPeer(await client.resolvePhoneNumber(phone))))
 
 /** The owner's Telegram contacts — the address book, not the chats. */
-export const addressBook = ({ call, client }: Feature): Promise<Member[]> =>
-  call(async () => (await client.getContacts()).map(toMember))
+export const addressBook = ({ call, client }: Feature): Promise<Array<Member & { phone?: string }>> =>
+  call(async () =>
+    (await client.getContacts()).map((user) => ({
+      ...toMember(user),
+      ...(user.phoneNumber ? { phone: user.phoneNumber } : {}),
+    })),
+  )
 
 /** Under the name they show; `renameContact` gives one of the owner's own. */
 export const addContact = ({ write, client }: Feature, personId: string): Promise<Member> =>
