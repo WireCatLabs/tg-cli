@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2358 ✅ · 107 ⛔ · 0 ❌** — 521 commands, 1944 options.
+**2361 ✅ · 110 ⛔ · 0 ❌** — 521 commands, 1950 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -876,18 +876,24 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `upgrade` | `--check` | ✅ |  |
 | `mcp serve` |  | ✅ |  |
 | `mcp serve` | `--permission` | ✅ |  |
+| `mcp serve` | `--profiles` | ✅ |  |
 | `mcp serve` | `--http` | ✅ |  |
 | `mcp serve` | `--port` | ✅ |  |
 | `mcp serve` | `--public-url` | ✅ |  |
 | `mcp revoke` |  | ✅ |  |
+| `mcp revoke` | `--profiles` | ✅ |  |
 | `mcp server start` |  | ✅ |  |
 | `mcp server start` | `--port` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
 | `mcp server start` | `--public-url` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
 | `mcp server start` | `--permission` | ⛔ | starts a background HTTP server that listens until stopped; cli-core's src/cli/messenger/mcp-server-command.test.ts drives start, status and stop with these options |
+| `mcp server start` | `--profiles` | ⛔ | starts, finds or stops a background HTTP server of those profiles; cli-core's src/cli/messenger/mcp-server-command.test.ts drives the server of every profile (cli-core 0.470.0) |
 | `mcp server stop` |  | ✅ |  |
+| `mcp server stop` | `--profiles` | ⛔ | starts, finds or stops a background HTTP server of those profiles; cli-core's src/cli/messenger/mcp-server-command.test.ts drives the server of every profile (cli-core 0.470.0) |
 | `mcp server status` |  | ✅ |  |
+| `mcp server status` | `--profiles` | ⛔ | starts, finds or stops a background HTTP server of those profiles; cli-core's src/cli/messenger/mcp-server-command.test.ts drives the server of every profile (cli-core 0.470.0) |
 | `mcp config` |  | ✅ |  |
 | `mcp config` | `--permission` | ✅ |  |
+| `mcp config` | `--profiles` | ✅ |  |
 | `mcp add` |  | ✅ |  |
 | `mcp add` | `--allow-writes` | ⛔ | registers an external client's local configuration; cli-base's src/mcp/index.test.ts checks registration and the handshake, and tg setup was checked with an isolated Codex home |
 | `mcp add` | `--permission` | ⛔ | cli-core src/cli/messenger/mcp-command-http.test.ts covers permission override serialization; cli-base checks the external child handshake and registration |

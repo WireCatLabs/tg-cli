@@ -511,6 +511,13 @@ export const UNTESTED: Untested[] = [
       "serves MCP on stdin until the client closes; cli-core's src/mcp/bot/server.test.ts drives the server, " +
       "and src/bot.test.ts the tools tg offers",
   },
+  ...["mcp server start", "mcp server stop", "mcp server status"].map((command) => ({
+    command,
+    option: "--profiles",
+    reason:
+      "starts, finds or stops a background HTTP server of those profiles; cli-core's " +
+      "src/cli/messenger/mcp-server-command.test.ts drives the server of every profile (cli-core 0.470.0)",
+  })),
   ...["--port", "--public-url", "--permission"].map((option) => ({
     command: "mcp server start",
     option,
