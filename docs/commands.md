@@ -6007,7 +6007,7 @@ tg mcp serve [options]
 
 **Returns:** serve this profile's commands to an AI agent
 
-**Example:** `tg personal mcp serve`, `tg personal mcp serve --profiles work,personal`, `tg personal mcp serve --http --public-url https://laptop.example.ts.net`
+**Example:** `tg personal mcp serve`, `tg mcp serve --profiles work,personal`, `tg personal mcp serve --http --public-url https://laptop.example.ts.net`
 
 ### `tg mcp revoke`
 
@@ -6025,7 +6025,7 @@ tg mcp revoke [options]
 
 **Returns:** forget every login given to a browser app
 
-**Example:** `tg personal mcp revoke`, `tg personal mcp revoke --profiles all`
+**Example:** `tg personal mcp revoke`, `tg mcp revoke --profiles all`
 
 ### `tg mcp server`
 
@@ -6101,7 +6101,7 @@ tg mcp config [options]
 
 **Returns:** print the local MCP configuration of this profile, or of those --profiles names
 
-**Example:** `tg personal mcp config`, `tg personal mcp config --profiles all`
+**Example:** `tg personal mcp config`, `tg mcp config --profiles all`
 
 ### `tg mcp add`
 

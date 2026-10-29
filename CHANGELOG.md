@@ -11,6 +11,14 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   `openclaw skills install @wirecat/wirecat-tg`. The `tg-cli` listing is no longer updated.
   `tg skill install` still writes `skills/tg-cli/`.
 
+### Fixed
+
+- **The help and [the command reference](docs/commands.md) show `tg mcp serve --profiles work,personal`** without a
+  profile in front. 0.104.0 showed `tg personal mcp serve --profiles work,personal`, which `tg` refuses ("name one
+  profile or --profiles, not both"); the `--profiles all` examples of `mcp revoke` and `mcp config` had the same
+  mistake. After `tg upgrade`, the hint to restart a background server of several profiles keeps its `--profiles`
+  (cli-core 0.474.0).
+
 ## 0.104.0 — 29.10.2026
 
 ### Changed — may break callers
