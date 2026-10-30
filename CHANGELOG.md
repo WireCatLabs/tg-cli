@@ -3,6 +3,16 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **Chat titles and contact names match in any case and any alphabet.** `tg personal chats list 'title:*ТАРТ*'` now finds
+  «Тартус»; before, only Latin letters ignored case. The same holds for contact names and for the names of projects,
+  tags, mail subjects, mailboxes and labels that the shared store keeps. The first run after the update upgrades the
+  store (version 38) and fills the new lowercase copies of what it already holds. An older `tg` keeps working on the
+  upgraded store, and tells you to update (cli-core 0.484.0).
+
 ## 0.106.0 — 29.10.2026
 
 ### Added
