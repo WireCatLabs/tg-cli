@@ -3,6 +3,16 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg <profile> projects evidence <project>`** (cli-core `projectsCommand`). It shows what this account's stored
+  messages hold about a project: its name, key, aliases, words, contacts, confirmed members and confirmed linked
+  chats. **`--sync-first`** (off by default, not on MCP) first syncs the linked chats the store does not hold back to
+  `--since-time`, one at a time, inside `--sync-time` (3 minutes in all). A chat the time cuts stays partial, with
+  its `missing` and `next`. The `messages` permission guards it. Needs the cli-core release with `projectsCommand`.
+
 ## 0.109.0 — 31.10.2026
 
 ### Added
