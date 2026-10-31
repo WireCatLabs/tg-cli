@@ -80,7 +80,11 @@ describe("--offline", () => {
     expect(chatsOffline.stderr).toEqual([])
     expect(messagesOffline.stderr).toEqual([])
     expect(answer(chatsOffline)).toEqual(answer(chats))
-    expect(answer(messagesOffline)).toEqual(answer(messages))
+    const { missing, next, ...held } = answer(messagesOffline)
+    expect(held).toEqual(answer(messages))
+    // The stored copy holds only the page Telegram sent, so the offline answer names the chat to sync.
+    expect(missing).toEqual([expect.objectContaining({ field: "history", step: "messages.sync" })])
+    expect(next).toEqual([expect.objectContaining({ step: "messages.sync" })])
     expect(messagesOffline.code).toBe(0)
   })
 

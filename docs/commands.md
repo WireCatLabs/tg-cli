@@ -1790,7 +1790,7 @@ tg messages list <chat> [query] [options]
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <model>` | which downloaded speech model hears them, with --transcribe; `models list` shows them. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info messages list
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info messages list
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -1850,7 +1850,7 @@ tg messages show <chat> [message]
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
 | `message` | optional | the message id. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info messages show
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info messages show
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -1879,7 +1879,7 @@ tg messages context <chat> [message] [options]
 | `--before-n <n>` | how many before it. Default: `5`. |
 | `--after-n <n>` | how many after it. Default: `5`. |
 
-**Returns:** message context — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 41 more; every field: tg commands info messages context
+**Returns:** message context — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 42 more; every field: tg commands info messages context
 
 **Example:** `tg personal messages context "Book club" 101 --before-n 3 --after-n 3`
 
@@ -2081,7 +2081,7 @@ tg messages scheduled <chat>
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info messages scheduled
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info messages scheduled
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -2125,7 +2125,7 @@ tg messages comments <chat> <post> [query] [options]
 | `--limit <n>` | how many. |
 | `--cursor <cursor>` | go on from where the last page stopped; page.next gives it. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info messages comments
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info messages comments
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages links <chat> <message>`, `tg reactions list <chat> <message> [query]`
 
@@ -2678,7 +2678,7 @@ tg watch [options]
 |---|---|
 | `--events` | include changes and receipts; each item names its event. |
 
-**Returns:** watch item — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info watch
+**Returns:** watch item — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 32 more; every field: tg commands info watch
 
 **Example:** `tg personal watch --jsonl --timeout 30s`
 
@@ -3117,7 +3117,7 @@ tg store export [chat] [options]
 | `--all` | with --output-dir: every stored chat of this account. |
 | `--encrypt` | compress and encrypt with a password, typed at a hidden prompt or piped on stdin; it is never kept — lose it and the file cannot be opened. |
 
-**Returns:** store export — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 35 more; every field: tg commands info store export
+**Returns:** store export — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 36 more; every field: tg commands info store export
 
 **Example:** `tg personal store export "Book club" --output ./messages.jsonl`
 
@@ -3372,7 +3372,7 @@ tg conversations show <conversation> [message]
 | `conversation` | required | a conversation id from `conversations list`; or a chat: its title or part of it, its id, @username, or `me` for Saved Messages, with a message. |
 | `message` | optional | a message id in that chat: show the conversation it is in. |
 
-**Returns:** conversation details — id, chat, first_message, started_at, ended_at, messages_count, senders_count, built_at, and 39 more; every field: tg commands info conversations show
+**Returns:** conversation details — id, chat, first_message, started_at, ended_at, messages_count, senders_count, built_at, and 40 more; every field: tg commands info conversations show
 
 **Example:** `tg personal conversations show "Book club" 101`
 
@@ -5148,7 +5148,7 @@ tg search messages [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
-**Returns:** message hit — ref, timestamp, sender_name, sender_is_me, chat_title, excerpt, matched_in, score, and 7 more; every field: tg commands info search messages
+**Returns:** message hit — ref, timestamp, sender_name, sender_is_me, chat_title, excerpt, matched_in, score, and 8 more; every field: tg commands info search messages
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -5169,7 +5169,7 @@ tg search notes <query> [options]
 | Option | What it does |
 |---|---|
 | `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
-| `--filter <query>` | a query every hit must also match; it does not change the search by meaning. |
+| `--filter <query>` | a query every hit must also match, found by words or by meaning. |
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
 | `--exact` | words as written only; meaning is not searched. |
@@ -6516,7 +6516,7 @@ tg bot messages list <chat> [query] [options]
 |---|---|
 | `--limit <n>` | how many, the newest. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 30 more; every field: tg commands info bot messages list
+**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info bot messages list
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
