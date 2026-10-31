@@ -24,6 +24,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **The agent skill starts a search with `search messages`, and adds notes and Drive documents only when the owner
+  asks** (`search all`). It also says that over MCP `ask` does not ask: the owner turns on write approval in their
+  client. ClawHub's review flagged both in skill 1.0.1.
+
 - **`search messages --discover` with a narrow filter (`chat:`, `date:`) ranks that filter's own messages by
   meaning** when it holds at most 100,000 messages, instead of the 100 nearest overall, so it fills its page
   (cli-core 0.506.0).
