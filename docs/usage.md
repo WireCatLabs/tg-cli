@@ -434,7 +434,9 @@ tg personal contacts check @example_user  # does the account look like a bot or 
 
 `contacts list` is the people you have a one-to-one chat with. `contacts sync` brings in the rest of
 your Telegram contact list too. `name:` and `notes:` search the people the local store keeps, so they need a
-`contacts sync` (or messages read before) first; with nothing stored, the query is refused. `contacts lookup` never takes the number as an argument: pipe it in,
+`contacts sync` (or messages read before) first; with nothing stored, the query is refused. `notes:` and `search notes` find any part of a word, in any letter case,
+in the title too; a query of one or two characters is refused ("search needs at least three characters").
+`contacts lookup` never takes the number as an argument: pipe it in,
 or type it when asked. A person's profile, their recent messages, the bot check and what it sends
 where: [people](people.md).
 

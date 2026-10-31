@@ -3,6 +3,17 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Changed — may break callers
+
+- **Notes, documents, annotations and contact notes are found by part of a word, in any letter case.** `tg personal
+  search notes 'ontra'` now finds «Contract», and a mixed-case Cyrillic word is no longer missed. The title is searched
+  too, not only the text, and a search answers in milliseconds. A query of one or two characters is refused with
+  "search needs at least three characters", as message search is. The first run after the update upgrades the store
+  (version 40) and fills the new index in batches; until then older notes are matched as before. An older `tg` does not
+  index new notes in an upgraded store, so update every CLI that shares it (cli-core 0.491.0).
+
 ## 0.107.0 — 30.10.2026
 
 ### Fixed
