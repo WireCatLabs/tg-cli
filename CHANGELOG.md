@@ -11,7 +11,23 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   messages hold about a project: its name, key, aliases, words, contacts, confirmed members and confirmed linked
   chats. **`--sync-first`** (off by default, not on MCP) first syncs the linked chats the store does not hold back to
   `--since-time`, one at a time, inside `--sync-time` (3 minutes in all). A chat the time cuts stays partial, with
-  its `missing` and `next`. The `messages` permission guards it. (cli-core 0.504.0)
+  its `missing` and `next`. The `messages` permission guards it. (cli-core 0.511.0)
+
+### Changed — may break callers
+
+- **`search messages --discover` searches by meaning when the query uses `-`, `NOT`, `OR`, groups, phrases or
+  `exact:`** (cli-core 0.506.0). Such a query ran strict search alone. Now its words still match the whole query
+  (`discovery.method: "lexical-strict"`), and messages near in meaning to its wanted words join them. Every hit found
+  by meaning, and every reply and follow-up added, matches every field of the query and every excluded word.
+
+### Fixed
+
+- **`search messages --discover` with a narrow filter (`chat:`, `date:`) ranks that filter's own messages by
+  meaning** when it holds at most 100,000 messages, instead of the 100 nearest overall, so it fills its page
+  (cli-core 0.506.0).
+- **`search messages --discover` works on a read-only store** (cli-core 0.506.0).
+- **A long rebuild in one process no longer makes another process's write fail with "database is locked"**
+  (cli-core 0.506.0).
 
 ## 0.109.0 — 31.10.2026
 
