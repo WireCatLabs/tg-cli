@@ -12,6 +12,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   chats. **`--sync-first`** (off by default, not on MCP) first syncs the linked chats the store does not hold back to
   `--since-time`, one at a time, inside `--sync-time` (3 minutes in all). A chat the time cuts stays partial, with
   its `missing` and `next`. The `messages` permission guards it. (cli-core 0.511.0)
+- **`messages sync --json` prints its progress on stderr**, counts only (cli-core 0.507.0). tg now needs
+  `@wirecat/cli-base` 0.68.1, as cli-core 0.507.0 asks.
 
 ### Changed — may break callers
 
