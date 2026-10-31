@@ -48,7 +48,9 @@ MCP uses `tg_tools_search`, then `tg_read` or `tg_write` with `{command, argumen
 Use the CLI path such as `stats messages show`.
 Bots use `tg_bot_tools_search/read/write` with commands without `bot`; arguments are the command's options in
 snake_case. There are no forms;
-profile permissions decide access and `ask` permits the requested MCP write. CLI confirmation remains.
+profile permissions decide access. Over MCP, `ask` does not ask: it permits the write the owner requested, and only
+the MCP client can ask first. Tell the owner to turn on approval for `tg_write` in their client, or to set `readonly`
+for a profile that should not write. On the command line `ask` still asks.
 
 ## Installation readiness
 
@@ -172,9 +174,10 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **Start a search with `tg personal search all`**: messages and notes on this machine, plus Telegram's own
-   search of messages, in one answer; each hit typed (`message`, `note`, `document`). The query goes to Telegram
-   unless you add `--offline` (or `--backend archive`); use that when the owner wants nothing to leave the machine. Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
+5. **Start a search with `tg personal search messages`**: the messages kept on this machine plus Telegram's own
+   search. Add `--backend archive` when the owner wants nothing to leave the machine. **Use `tg personal search all`
+   only when the owner asks to include their notes or imported Drive documents**: it adds both to the messages, in one
+   answer, each hit typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
    For a natural question or uncertain wording, use `tg personal search messages '<question>' --discover`
    or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
@@ -323,9 +326,9 @@ tg personal messages context -1001234567890 4242 --before-n 3 --after-n 3 --json
 tg personal messages download -1001234567890 4242 --output-dir /tmp/tg --json  # the message's file; answers its path
 tg personal messages download -1001234567890 --all --output-dir /tmp/tg --jsonl --timeout 10m  # every file of the chat; run it again to continue
 tg personal messages transcribe -1001234567890 4242 --json  # a voice note as text; can take up to a minute; never download a model yourself
-tg personal search all "invoice march" --json      # messages and notes kept here, plus Telegram's own search
-tg personal search all "invoice march" --offline --json  # this machine only; the query is not sent to Telegram
-tg personal search messages "invoice march" --json  # Telegram messages only, and Telegram's own search
+tg personal search messages "invoice march" --json  # messages kept here, plus Telegram's own search
+tg personal search messages "invoice march" --backend archive --json  # this machine only; the query is not sent to Telegram
+tg personal search all "invoice march" --json      # only when the owner asks: adds their notes and Drive documents
 tg personal conversations links rebuild --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
 tg personal search conversations "<question>" --json  # by meaning, after the owner ran tg personal conversations embed --chat <chat>
@@ -335,7 +338,8 @@ tg personal watch --jsonl                          # new messages as {"type":"it
 An agent without a terminal (Claude Desktop, Cursor) uses the MCP server instead: `tg personal mcp serve`. The
 profile's `permissions` decide which commands may run, through `tg_tools_search`, `tg_read` and
 `tg_write`. Discovery keeps denied commands and their arguments, marking current unavailability
-with a reason and permission key. There is no confirmation form. `tg personal mcp config` prints the entry with full paths.
+with a reason and permission key. There is no confirmation form: approval for a write is the MCP client's, so ask
+the owner to turn it on. `tg personal mcp config` prints the entry with full paths.
 
 `tg <bot> bot me` reads the bot identity (id, name and username); it needs a token and refuses `--offline`. MCP offers `tg_bot_read` (`command: "me"`).
 Bot commands print data only on stdout with `--json`, in the same message shape as the account. Bot exit codes:
@@ -384,7 +388,8 @@ Never ask the owner to paste a credential into argv, print one, or fall back to 
 Use `tg personal stats chats show <chat> --offline --json` for stored group/channel activity. The online command also
 requests joins/leaves; MCP and offline results omit `members`. Incomplete counts are lower bounds.
 `tg personal mcp serve --http --public-url https://<name>.ts.net` serves behind your tunnel with its own owner-code login;
-MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit the requested write.
+MCP has no server forms. `deny`/`readonly` block writes; `ask`/`allow` permit the requested write without asking,
+so the client's approval is the only prompt.
 Repeat `--permission key=level` to tighten permissions for the server; it never loosens them. Never change permissions to bypass a refusal.
 `tg personal mcp revoke` forgets browser logins for the profile.
 
