@@ -15,6 +15,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`projects evidence` no longer says "held from <date> only"** for a chat that reaches its first message: it says
   "held from its first message, behind since <date>", or "with gaps". `messages sync` progress says how far back it
   got as a date ("back to <date>"), not as a message key. (cli-core 0.517.0)
+- **The agent skill starts a search with `search messages`, and adds notes and Drive documents only when the owner
+  asks** (`search all`). It also says that over MCP `ask` does not ask: the owner turns on write approval in their
+  client. ClawHub's review flagged both in skill 1.0.1.
 
 ## 0.110.0 — 01.11.2026
 
@@ -36,10 +39,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   by meaning, and every reply and follow-up added, matches every field of the query and every excluded word.
 
 ### Fixed
-
-- **The agent skill starts a search with `search messages`, and adds notes and Drive documents only when the owner
-  asks** (`search all`). It also says that over MCP `ask` does not ask: the owner turns on write approval in their
-  client. ClawHub's review flagged both in skill 1.0.1.
 
 - **`search messages --discover` with a narrow filter (`chat:`, `date:`) ranks that filter's own messages by
   meaning** when it holds at most 100,000 messages, instead of the 100 nearest overall, so it fills its page
