@@ -3,6 +3,19 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`projects evidence --json` gives the sync command for each linked chat** as `linked_chats[].sync_command`: the
+  line the text shows to sync a chat held in part, or null. (cli-core 0.517.0)
+
+### Fixed
+
+- **`projects evidence` no longer says "held from <date> only"** for a chat that reaches its first message: it says
+  "held from its first message, behind since <date>", or "with gaps". `messages sync` progress says how far back it
+  got as a date ("back to <date>"), not as a message key. (cli-core 0.517.0)
+
 ## 0.110.0 — 01.11.2026
 
 ### Added
