@@ -358,6 +358,9 @@ More: [compared with other tools](https://github.com/WireCatLabs/tg-cli/blob/mai
 where it starts; [max-cli](https://github.com/WireCatLabs/max-cli) brings the MAX messenger into the
 same local store. Start with Telegram. Add more context when you need it. Your context. Any agent.
 
+Questions and setup help: join the [WireCat Discord](https://discord.gg/DebENqbRrJ). Bugs go to this
+repository's issues.
+
 ## Technical docs
 
 Every page is on [wirecat.dev/en/docs/tg](https://wirecat.dev/en/docs/tg) and in
