@@ -446,8 +446,12 @@ export class TelegramAdapter {
     return topics.enableForum(this.#feature, chatId)
   }
 
-  createTopic(chatId: string, title: string, options: { sendId: string }): Promise<Topic> {
+  createTopic(chatId: string, title: string, options: { sendId: string; icon?: string }): Promise<Topic> {
     return topics.createTopic(this.#feature, chatId, title, options)
+  }
+
+  topicIcons(): Promise<string[]> {
+    return topics.topicIcons(this.#feature)
   }
 
   editTopic(chatId: string, topicId: string, change: TopicChange): Promise<Topic> {

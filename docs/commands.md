@@ -2553,6 +2553,26 @@ tg topics show <chat> <topic>
 
 **Example:** `tg personal topics show Team General`
 
+### `tg topics icons`
+
+the emojis a forum topic can take as its icon
+
+#### `tg topics icons list`
+
+the emojis `--emoji` takes in topics create and topics edit
+
+```sh
+tg topics icons list [query]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
+
+**Returns:** topic icon — emoji; every field: tg commands info topics icons list
+
+**Example:** `tg personal topics icons list`
+
 ### `tg topics enable`
 
 enable forum topics; only the owner, with an explicit upgrade for a basic group
@@ -2593,6 +2613,7 @@ tg topics create <chat> <title> [options]
 | Option | What it does |
 |---|---|
 | `--operation-id <id>` | identify this creation attempt; an already sent or unknown id is refused. |
+| `--emoji <emoji>` | the topic's icon, one of `topics icons list`. |
 
 **Returns:** create a named topic in an existing forum; never enable or upgrade a group…
 
@@ -2600,7 +2621,7 @@ tg topics create <chat> <title> [options]
 
 ### `tg topics edit`
 
-rename, close or reopen a forum topic
+rename, close, reopen or give an icon to a forum topic
 
 **Changes something in Telegram.**
 
@@ -2619,8 +2640,9 @@ tg topics edit <chat> <topic> [options]
 | `--closed <on\|off>` | on closes the topic to new messages, off reopens it. |
 | `--pinned <on\|off>` | on pins the topic at the top of the list, off unpins it. |
 | `--hidden <on\|off>` | on hides the General topic from the topic list, off shows it. |
+| `--emoji <emoji>` | the topic's icon, one of `topics icons list`; none removes it. |
 
-**Returns:** rename, close or reopen a forum topic
+**Returns:** rename, close, reopen or give an icon to a forum topic
 
 **Example:** `tg personal topics edit Team General`
 
@@ -2825,7 +2847,7 @@ tg schedule command <name> <args> [options]
 
 **Returns:** run tg <args…> on a timer — reads save what they read, so this is how a…
 
-**Example:** `tg personal schedule command daily <args>`
+**Example:** `tg personal schedule command health --every 1h -- doctor`, `tg personal schedule command morning-check --at 08:00 -- doctor`
 
 ### `tg schedule agent`
 
@@ -2852,7 +2874,7 @@ tg schedule agent <name> <harness> <prompt> [options]
 
 **Returns:** start an agent (claude or codex) with a prompt on a timer; it runs with…
 
-**Example:** `tg personal schedule agent daily claude <prompt>`
+**Example:** `tg personal schedule agent review claude "review what came in overnight and draft replies" --at 08:30`, `tg personal schedule agent triage codex "list what needs an answer today" --every 2h --max-cost 1`
 
 ### `tg schedule list`
 
@@ -2868,7 +2890,7 @@ tg schedule list [query]
 
 **Returns:** scheduled job — name, kind, when, last; every field: tg commands info schedule list
 
-**Example:** `tg personal schedule list`
+**Example:** `tg personal schedule list`, `tg personal schedule list kind:agent`
 
 ### `tg schedule run`
 
@@ -2882,11 +2904,11 @@ tg schedule run <name>
 
 | Argument | | What it is |
 |---|---|---|
-| `name` | required |  |
+| `name` | required | the schedule's name, as `schedule list` shows it. |
 
 **Returns:** run a schedule now, as its timer would, and wait for it
 
-**Example:** `tg personal schedule run daily`
+**Example:** `tg personal schedule run health`
 
 ### `tg schedule remove`
 
@@ -2900,11 +2922,11 @@ tg schedule remove <name>
 
 | Argument | | What it is |
 |---|---|---|
-| `name` | required |  |
+| `name` | required | the schedule's name, as `schedule list` shows it. |
 
 **Returns:** stop a schedule and remove its timer; its past output stays
 
-**Example:** `tg personal schedule remove daily`
+**Example:** `tg personal schedule remove health`
 
 ### `tg schedule exec`
 
@@ -2918,11 +2940,11 @@ tg schedule exec <file>
 
 | Argument | | What it is |
 |---|---|---|
-| `file` | required |  |
+| `file` | required | the schedule's schedule.json in the state folder, as the timer passes it. |
 
 **Returns:** what a timer runs, given the schedule's file; to run one by hand, use run
 
-**Example:** `tg personal schedule exec ./report.pdf`
+**Example:** `tg personal schedule exec ~/.local/share/tg-cli/schedules/health/schedule.json`
 
 ## `tg store`
 
@@ -4704,7 +4726,7 @@ tg tasks list [query] [options]
 |---|---|
 | `--limit <n>` | how many. |
 
-**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 21 more; every field: tg commands info tasks list
+**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 24 more; every field: tg commands info tasks list
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks update <task>`
 
@@ -4765,7 +4787,7 @@ tg tasks update <task> [options]
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks update
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks update
 
 **Example:** `tg personal tasks update DOC-12 --title "Review draft"`
 
@@ -4789,7 +4811,7 @@ tg tasks link <task> [targets] [options]
 | `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by, follow-up-of, duplicate-of or discovered-from. |
 
-**Returns:** task links — id, ref, key, project, title, description, type, status, and 23 more; every field: tg commands info tasks link
+**Returns:** task links — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks link
 
 **Example:** `tg personal tasks link DOC-12 https://example.com/draft`
 
@@ -4805,7 +4827,7 @@ tg tasks show <task>
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks show
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks show
 
 **Example:** `tg personal tasks show DOC-12`
 
@@ -5008,7 +5030,7 @@ tg tasks claim <task> [options]
 | `--lease <duration>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks claim
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks claim
 
 **Example:** `tg personal tasks claim PR-12 --lease 2h`
 
@@ -5030,7 +5052,7 @@ tg tasks release <task> [options]
 |---|---|
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks release
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks release
 
 **Example:** `tg personal tasks release PR-12`
 
@@ -5077,7 +5099,7 @@ tg tasks reject <task> [options]
 |---|---|
 | `--as-owner` | refuse it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks reject
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks reject
 
 **Example:** `tg personal tasks reject Q-15`
 
@@ -5144,7 +5166,7 @@ tg search all <query> [options]
 | `--page <n>` | which page, starting at 1. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
+| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
 **Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 8 more; every field: tg commands info search all
@@ -5174,7 +5196,7 @@ tg search messages [query] [options]
 | `--thread-messages <n>` | at most this many messages in each thread context (default: 50). |
 | `--thread-bytes <n>` | at most this many bytes of whole messages and links in each context (default: 65536). |
 | `--thread-within <duration>` | messages within this long either side of the hit (default: 1d). |
-| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server, or both (default: both; message discovery uses archive only). |
+| `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 | `--source <accounts>` | every account of this messenger held in the store; personal, bots or all — the same as in: in the query; or a list: group:work,telegram:Alice. |
 | `--limit <n>` | how many. |

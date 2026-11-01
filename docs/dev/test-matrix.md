@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2378 ✅ · 110 ⛔ · 0 ❌** — 522 commands, 1966 options.
+**2381 ✅ · 110 ⛔ · 0 ❌** — 523 commands, 1968 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -309,15 +309,18 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `topics list` | `--page` | ✅ |  |
 | `topics list` | `--all` | ✅ |  |
 | `topics show` |  | ✅ |  |
+| `topics icons list` |  | ✅ |  |
 | `topics enable` |  | ✅ |  |
 | `topics enable` | `--upgrade` | ✅ |  |
 | `topics create` |  | ✅ |  |
 | `topics create` | `--operation-id` | ✅ |  |
+| `topics create` | `--emoji` | ✅ |  |
 | `topics edit` |  | ✅ |  |
 | `topics edit` | `--title` | ✅ |  |
 | `topics edit` | `--closed` | ✅ |  |
 | `topics edit` | `--pinned` | ✅ |  |
 | `topics edit` | `--hidden` | ✅ |  |
+| `topics edit` | `--emoji` | ✅ |  |
 | `topics delete` |  | ✅ |  |
 | `topics delete` | `--allow-dangerous` | ✅ |  |
 | `topics order` |  | ✅ |  |

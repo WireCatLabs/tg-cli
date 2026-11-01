@@ -355,6 +355,8 @@ chats and basic groups are refused. Sending and updates stay on the Bot API.
 Forum setup uses `topics enable`: only the owner, explicit `--upgrade --yes` for a basic group,
 whose chat id changes. Use the returned new id afterwards. `topics create` never enables topics
 implicitly; never retry an unknown create; check `topics list`.
+`topics create` and `topics edit` take `--emoji <emoji>` for the topic's icon, one of `topics icons list`;
+`topics edit --emoji none` removes it.
 `topics delete <chat> <id>` permanently deletes the topic and every message in it for everyone.
 The General topic cannot be deleted. It asks first by default; use `--allow-dangerous` only when explicitly authorized.
 An unknown outcome requires checking `topics list` before retrying.
