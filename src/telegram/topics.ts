@@ -197,7 +197,7 @@ export const editTopic = (
   feature: Feature,
   chatId: string,
   topicId: string,
-  { title, closed, pinned, hidden, icon }: TopicChange & { icon?: string | null },
+  { title, closed, pinned, hidden, icon }: TopicChange,
 ): Promise<Topic> => {
   const id = topicNumber(topicId)
   if (hidden !== undefined && id !== 1)

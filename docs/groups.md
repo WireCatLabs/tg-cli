@@ -205,6 +205,7 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 | `tg personal topics show <chat> <id>` | one topic: title, closed or pinned, unread count, last activity |
 | `tg personal topics enable <chat>` | enable a forum; a basic group requires `--upgrade --yes` and returns a new chat id |
 | `tg personal topics create <chat> <title>` | create a topic; after an unknown outcome check `topics list` instead of repeating |
+| `tg personal topics edit <chat> <id> --emoji <emoji>` | give a topic an icon from `topics icons list`; `--emoji none` removes it; `topics create` takes `--emoji` too |
 | `tg personal messages send <chat> <text> --topic <id>`, `tg personal polls create <chat> <question> <answers> --topic <id>` | send a message or poll into a forum topic |
 | `tg personal messages forward <chat> <message> --to <forum> --topic <id>` | forward a message into a topic of the `--to` forum |
 | `tg personal chats inspect <link>` | where an invite or public link leads; joins nothing |

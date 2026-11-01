@@ -454,8 +454,7 @@ export class TelegramAdapter {
     return topics.topicIcons(this.#feature)
   }
 
-  // The icon is in cli-core's TopicChange from the release after 0.528.0; the intersection lets this build before it.
-  editTopic(chatId: string, topicId: string, change: TopicChange & { icon?: string | null }): Promise<Topic> {
+  editTopic(chatId: string, topicId: string, change: TopicChange): Promise<Topic> {
     return topics.editTopic(this.#feature, chatId, topicId, change)
   }
 

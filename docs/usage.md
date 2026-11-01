@@ -1028,6 +1028,9 @@ after an unknown creation outcome instead of repeating the creation. Send to its
 `tg personal topics edit <chat> <id> --title <new>` renames a topic, `--closed on` / `--closed off` closes it to new
 messages or reopens it, `--pinned on` / `--pinned off` pins it at the top or unpins it, and on the General
 topic (id 1) `--hidden on` / `--hidden off` hides it from the topic list or shows it again.
+`--emoji <emoji>` gives the topic an icon, on `topics edit` and on `topics create`. The emoji must be in Telegram's
+default topic icon set, which every account may use; `tg personal topics icons list` shows it, and another emoji is
+refused with the list. `topics edit --emoji none` removes the icon.
 `tg personal topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
 Repeating any of these is safe.
 `tg personal topics delete <chat> <id>` deletes a topic and every message in it, for everyone; it cannot be undone, so it

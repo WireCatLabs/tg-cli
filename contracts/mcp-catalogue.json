@@ -113,6 +113,7 @@
   "review": "read",
   "topics list": "read",
   "topics show": "read",
+  "topics icons list": "read",
   "topics enable": "write",
   "topics create": "write",
   "topics edit": "write",
