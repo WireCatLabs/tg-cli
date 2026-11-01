@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **A forum topic's icon: `topics create --emoji <emoji>` and `topics edit --emoji <emoji>`.** The emoji must be in
+  Telegram's default topic icon set, which every account may use, Premium or not; `tg <profile> topics icons list`
+  shows it. Another emoji is refused, and the error lists the set. `topics edit --emoji none` removes the icon, and
+  the topic shows its colored default again. (cli-core: the release after 0.527.0)
+
 ## 0.111.0 — 01.11.2026
 
 ### Added

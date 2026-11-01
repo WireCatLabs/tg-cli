@@ -38,6 +38,9 @@ class Signal {
   }
 }
 
+const robotIcon = Long.fromNumber(5001)
+const heartIcon = Long.fromNumber(5002)
+
 const page = <T>(items: T[], next?: unknown, total = Number.POSITIVE_INFINITY) =>
   Object.assign([...items], { next, total })
 
@@ -137,6 +140,12 @@ class FakeClient {
   })
   topics: unknown[] = []
   editForumTopic = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
+  getStickerSet = vi.fn(async (..._args: unknown[]) => ({
+    stickers: [
+      { alt: "🤖", sticker: { customEmojiId: robotIcon } },
+      { alt: "❤️", sticker: { customEmojiId: heartIcon } },
+    ],
+  }))
   toggleForumTopicPinned = vi.fn(async (..._args: unknown[]): Promise<void> => {})
   toggleGeneralTopicHidden = vi.fn(async (..._args: unknown[]): Promise<unknown> => null)
   reorderPinnedForumTopics = vi.fn(async (..._args: unknown[]): Promise<void> => {})
@@ -1451,6 +1460,37 @@ describe("forum setup", () => {
     expect(() => adapter.editTopic("-100500", "x", { closed: false })).toThrow("--topic")
   })
 
+  it("**gives a topic an icon from the default set**, removes it with null, and lists the set on a bad emoji", async () => {
+    const { adapter, client } = await open()
+    client.topics = [
+      {
+        id: 12,
+        title: "synthetic",
+        isClosed: false,
+        isPinned: false,
+        unreadCount: 0,
+        lastMessage: null,
+        date: new Date("2026-10-04T00:00:00Z"),
+      },
+    ]
+
+    expect(await adapter.topicIcons()).toEqual(["🤖", "❤️"])
+    expect(client.getStickerSet).toHaveBeenCalledWith({ system: "default_topic_icons" })
+
+    await adapter.editTopic("-100500", "12", { icon: "🤖" })
+    expect(client.editForumTopic).toHaveBeenLastCalledWith({ chatId: -100500, topicId: 12, icon: robotIcon })
+    await adapter.editTopic("-100500", "12", { icon: "❤" })
+    expect(client.editForumTopic).toHaveBeenLastCalledWith({ chatId: -100500, topicId: 12, icon: heartIcon })
+    await adapter.editTopic("-100500", "12", { icon: null })
+    expect(client.editForumTopic).toHaveBeenLastCalledWith({ chatId: -100500, topicId: 12, icon: null })
+
+    await expect(adapter.editTopic("-100500", "12", { icon: "🦄" })).rejects.toMatchObject({
+      code: "validation_error",
+      message: "🦄 is not a topic icon; choose one of 🤖 ❤️",
+    })
+    expect(client.editForumTopic).toHaveBeenCalledTimes(3)
+  })
+
   it("pins without editing, and reorders pinned topics by number without force", async () => {
     const { adapter, client } = await open()
     client.topics = [
@@ -1528,6 +1568,35 @@ describe("forum setup", () => {
       )?.args[1],
     ).toEqual({ maxRetryCount: 0, floodSleepThreshold: 0 })
     expect(client.getForumTopicsById).toHaveBeenCalledWith(-1000000000500, 12)
+  })
+  it("creates a topic with an icon from the default set, and refuses another emoji before creating", async () => {
+    const { adapter, client } = await open()
+    client.fullChat = forumFull(-1000000000500, { isForum: true })
+    client.topics = [
+      {
+        id: 12,
+        title: "synthetic",
+        isClosed: false,
+        isPinned: false,
+        unreadCount: 0,
+        lastMessage: null,
+        date: new Date("2026-10-03T00:00:00Z"),
+      },
+    ]
+    const created = () =>
+      client.calls.filter(
+        ({ method, args }) => method === "call" && (args[0] as { _: string })._ === "messages.createForumTopic",
+      )
+
+    await adapter.createTopic("-1000000000500", "synthetic", { sendId: "42", icon: "🤖" })
+    expect(created()[0]?.args[0]).toMatchObject({ title: "synthetic", iconEmojiId: robotIcon })
+
+    await expect(
+      adapter.createTopic("-1000000000500", "synthetic", { sendId: "43", icon: "🦄" }),
+    ).rejects.toMatchObject({
+      code: "validation_error",
+    })
+    expect(created()).toHaveLength(1)
   })
   it("reports unknown creation/migration without inventing a retry identity", async () => {
     const { adapter, client } = await open()

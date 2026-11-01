@@ -101,7 +101,34 @@ export const enableForum = (feature: Feature, chatId: string): Promise<ForumStat
     }
   })
 
-export const createTopic = (feature: Feature, chatId: string, title: string, { sendId }: { sendId: string }) => {
+const iconSet = async ({ client }: Feature) => {
+  const set = await client.getStickerSet({ system: "default_topic_icons" })
+  return set.stickers.map(({ alt, sticker }) => ({ emoji: alt, id: sticker.customEmojiId }))
+}
+
+const bare = (emoji: string) => emoji.replaceAll("\uFE0F", "")
+
+/** Only Premium accounts may use any custom emoji; every account may use Telegram's default topic icon set. */
+const iconIdOf = async (feature: Feature, emoji: string) => {
+  const set = await iconSet(feature)
+  const found = set.find((one) => bare(one.emoji) === bare(emoji))
+  if (!found)
+    throw new CliError(
+      "validation_error",
+      `${emoji} is not a topic icon; choose one of ${set.map((one) => one.emoji).join(" ")}`,
+    )
+  return found.id
+}
+
+export const topicIcons = (feature: Feature): Promise<string[]> =>
+  feature.call(async () => (await iconSet(feature)).map((one) => one.emoji))
+
+export const createTopic = (
+  feature: Feature,
+  chatId: string,
+  title: string,
+  { sendId, icon }: { sendId: string; icon?: string },
+) => {
   const randomId = parseSendId(sendId)
   return feature.call(async (): Promise<Topic> => {
     const { client } = feature
@@ -109,6 +136,7 @@ export const createTopic = (feature: Feature, chatId: string, title: string, { s
     if (!state.forum || state.needsUpgrade)
       throw new CliError("validation_error", "enable topics before creating a topic")
     if (!state.canCreate) throw new CliError("permission_error", "creating a topic requires manage-topics permission")
+    const iconEmojiId = icon === undefined ? undefined : await iconIdOf(feature, icon)
     let accepted = false
     try {
       const updates = await client.call(
@@ -117,6 +145,7 @@ export const createTopic = (feature: Feature, chatId: string, title: string, { s
           peer: await client.resolvePeer(Number(state.chat.id)),
           title,
           randomId,
+          ...(iconEmojiId === undefined ? {} : { iconEmojiId }),
         },
         { maxRetryCount: 0, floodSleepThreshold: 0 },
       )
@@ -168,7 +197,7 @@ export const editTopic = (
   feature: Feature,
   chatId: string,
   topicId: string,
-  { title, closed, pinned, hidden }: TopicChange,
+  { title, closed, pinned, hidden, icon }: TopicChange & { icon?: string | null },
 ): Promise<Topic> => {
   const id = topicNumber(topicId)
   if (hidden !== undefined && id !== 1)
@@ -179,13 +208,15 @@ export const editTopic = (
       if (!tl.RpcError.is(error, "TOPIC_NOT_MODIFIED") && !tl.RpcError.is(error, "PINNED_TOPIC_NOT_MODIFIED"))
         throw unknownIfUnanswered(error, "the topic may have changed — repeating it is safe")
     }
-    if (title !== undefined || closed !== undefined) {
+    const iconId = icon == null ? icon : await iconIdOf(feature, icon)
+    if (title !== undefined || closed !== undefined || iconId !== undefined) {
       await client
         .editForumTopic({
           chatId: Number(chatId),
           topicId: id,
           ...(title === undefined ? {} : { title }),
           ...(closed === undefined ? {} : { closed }),
+          ...(iconId === undefined ? {} : { icon: iconId }),
         })
         .catch(unchanged)
     }
