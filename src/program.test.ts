@@ -336,6 +336,47 @@ describe("forum control options", () => {
   })
 })
 
+describe("topic icons", () => {
+  it("passes --emoji to create and edit, none as null, and lists the set", async () => {
+    const topic = {
+      id: "12",
+      title: "synthetic topic",
+      closed: false,
+      pinned: false,
+      unreadCount: 0,
+      createdAt: null,
+      lastMessageAt: null,
+    }
+    const createTopic = vi.fn(async () => topic)
+    const editTopic = vi.fn(async () => topic)
+    const adapter = () =>
+      scripted({
+        forumState: async (id) => ({
+          chat: { ...chat, id },
+          needsUpgrade: false,
+          forum: true,
+          owner: true,
+          canCreate: true,
+          linkedDiscussion: false,
+        }),
+        createTopic,
+        editTopic,
+        topicIcons: async () => ["🤖", "📰"],
+      })
+
+    const created = await tg(["topics", "create", chat.id, "synthetic topic", "--emoji", "🤖", "--json"], { adapter })
+    const edited = await tg(["topics", "edit", chat.id, "12", "--emoji", "📰", "--json"], { adapter })
+    const removed = await tg(["topics", "edit", chat.id, "12", "--emoji", "none", "--json"], { adapter })
+    const listed = await tg(["topics", "icons", "list", "--json"], { adapter })
+
+    expect([created.code, edited.code, removed.code, listed.code]).toEqual([0, 0, 0, 0])
+    expect(createTopic).toHaveBeenCalledWith(chat.id, "synthetic topic", expect.objectContaining({ icon: "🤖" }))
+    expect(editTopic).toHaveBeenNthCalledWith(1, chat.id, "12", { icon: "📰" })
+    expect(editTopic).toHaveBeenNthCalledWith(2, chat.id, "12", { icon: null })
+    expect(JSON.parse(listed.stdout[0] ?? "").items).toEqual([{ emoji: "🤖" }, { emoji: "📰" }])
+  })
+})
+
 describe("topic options", () => {
   it("passes --topic for message sends and poll creation", async () => {
     const checked: unknown[] = []
