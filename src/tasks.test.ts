@@ -131,5 +131,5 @@ it("updates project task priority and parent offline through the shared command"
   }
   const updated = await cli(["tasks", "update", childId, "--priority", "1", "--parent", parentId, "--json"])
   expect(updated.code, updated.err).toBe(0)
-  expect(JSON.parse(updated.out).item).toMatchObject({ id: childId, priority: 1, parent: `task:${parentId}` })
+  expect(JSON.parse(updated.out).item).toMatchObject({ id: childId, priority: 0.625, parent: `task:${parentId}` })
 })

@@ -4704,7 +4704,7 @@ tg tasks list [query] [options]
 |---|---|
 | `--limit <n>` | how many. |
 
-**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 15 more; every field: tg commands info tasks list
+**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 21 more; every field: tg commands info tasks list
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks update <task>`
 
@@ -4757,7 +4757,7 @@ tg tasks update <task> [options]
 | Option | What it does |
 |---|---|
 | `--category <name>` | what it is about, from the list tasks categories prints: money, documents, meeting, …; a change is kept in the task's history. |
-| `--priority <n>` | priority from 0 (urgent) through 4 (low). |
+| `--priority <n>` | low, medium, high, critical or none; 0 (urgent) … 4 (low) still read as before. |
 | `--parent <id>` | parent task in the same project; none clears it. |
 | `--title <title>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
@@ -4765,7 +4765,7 @@ tg tasks update <task> [options]
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 18 more; every field: tg commands info tasks update
+**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks update
 
 **Example:** `tg personal tasks update DOC-12 --title "Review draft"`
 
@@ -4789,7 +4789,7 @@ tg tasks link <task> [targets] [options]
 | `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by, follow-up-of, duplicate-of or discovered-from. |
 
-**Returns:** task links — id, ref, key, project, title, description, type, status, and 20 more; every field: tg commands info tasks link
+**Returns:** task links — id, ref, key, project, title, description, type, status, and 23 more; every field: tg commands info tasks link
 
 **Example:** `tg personal tasks link DOC-12 https://example.com/draft`
 
@@ -4805,7 +4805,7 @@ tg tasks show <task>
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 18 more; every field: tg commands info tasks show
+**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks show
 
 **Example:** `tg personal tasks show DOC-12`
 
@@ -5008,7 +5008,7 @@ tg tasks claim <task> [options]
 | `--lease <duration>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 18 more; every field: tg commands info tasks claim
+**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks claim
 
 **Example:** `tg personal tasks claim PR-12 --lease 2h`
 
@@ -5030,7 +5030,7 @@ tg tasks release <task> [options]
 |---|---|
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 18 more; every field: tg commands info tasks release
+**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks release
 
 **Example:** `tg personal tasks release PR-12`
 
@@ -5077,7 +5077,7 @@ tg tasks reject <task> [options]
 |---|---|
 | `--as-owner` | refuse it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
-**Returns:** task card — id, ref, key, project, title, description, type, status, and 18 more; every field: tg commands info tasks reject
+**Returns:** task card — id, ref, key, project, title, description, type, status, and 21 more; every field: tg commands info tasks reject
 
 **Example:** `tg personal tasks reject Q-15`
 
