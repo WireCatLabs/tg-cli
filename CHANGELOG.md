@@ -3,6 +3,16 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A timer's run that finds the keyring locked is temporary, not a failed sign-in.** A schedule that caught up at
+  boot, before the login unlocked the keyring, ended with `authentication_error` (exit 4), as if the owner had to log
+  in again. A run under a timer (`TG_SCHEDULED`) now ends as `serve` does: `provider_unavailable` (exit 12) with reason
+  `credentials.unreachable`, which `schedule exec` (cli-core) tries again until the login. A command typed by hand
+  still answers `authentication_error`, and a profile that never logged in here still exits 4.
+
 ## 0.113.0 — 02.11.2026
 
 ### Added

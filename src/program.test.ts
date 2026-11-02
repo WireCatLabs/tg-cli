@@ -581,7 +581,7 @@ describe("app credentials out of reach", () => {
     expect(asked[1]).not.toHaveProperty("catchUp")
   })
 
-  it("**serve treats an unreachable keyring as temporary**, so its unit retries; a missing login still exits 4", async () => {
+  it("**serve and a timer's run treat an unreachable keyring as temporary**, so they retry; a missing login still exits 4", async () => {
     const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
     const sessions = join(pathsFor().state, "sessions")
     mkdirSync(sessions, { recursive: true })
@@ -589,8 +589,13 @@ describe("app credentials out of reach", () => {
 
     const locked = await tg(["locked", "serve"], { env })
     const never = await tg(["never", "serve"], { env })
+    const scheduled = await tg(["locked", "chats", "list", "--json"], { env: { ...env, TG_SCHEDULED: "full-sync" } })
 
     expect(locked.code).toBe(12)
+    expect(JSON.parse(scheduled.stderr.at(-1) ?? "{}").error).toMatchObject({
+      code: "provider_unavailable",
+      reason: "credentials.unreachable",
+    })
     expect(NO_RESTART_ON).not.toContain(locked.code)
     expect(locked.stderr.join("\n")).toContain("XDG_RUNTIME_DIR")
     expect(never.code).toBe(4)

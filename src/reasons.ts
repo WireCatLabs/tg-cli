@@ -16,6 +16,11 @@ export const REASONS: ErrorReason[] = defineReasons(
         "Telegram's updates stopped arriving although the connection is open",
       ],
       ["write.unanswered", "outcome_unknown", "Telegram did not answer a write, so it may have happened"],
+      [
+        "credentials.unreachable",
+        "provider_unavailable",
+        "this profile has logged in here, but the keyring holding its keys is locked or out of reach",
+      ],
     ] satisfies [string, ErrorReason["code"], string][]
   ).map(([reason, code, message]) => ({ reason, code, message, details: [] })),
 )
