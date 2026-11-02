@@ -80,9 +80,11 @@ tg work config set permissions.mcp.authority allow
 ```
 
 For a bot's server add `--bot`: `tg support config set permissions.mcp.authority allow --bot`.
-`deny` is the default; `allow` and `ask` permit execution. Leave it at `deny` for a profile you give to an agent:
-with it open, the agent can loosen its own permissions. An agent cannot set the key through `config set`, since
-that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
+`deny` is the default; `allow` and `ask` permit execution. Leave it at `deny` for a profile you give to an agent.
+With it open, the agent can change its other settings and tighten its permissions, but since 0.113.0 it can never
+loosen one: an agent, over MCP or in its own shell, may only lower a level (`readonly` to `deny`), and removing a
+permission or changing `--defaults` accepts only `deny`. You loosen them in your own terminal. An agent cannot set
+the key through `config set`, since that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
 
 ## Raw bot API calls
 
