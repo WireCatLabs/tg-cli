@@ -82,16 +82,19 @@ const telegramOf = (command: Command, base: BaseContext) => {
     const resolved = given ?? credentials.read()
     if (!resolved) {
       const loggedIn = existsSync(sessionPath)
-      // A service can start before the login keyring unlocks; its unit restarts on this code, not on 4.
-      const unreachable = loggedIn && command.name() === "serve" ? "provider_unavailable" : "authentication_error"
+      // serve's unit and a timer can start before the login unlocks the keyring: the unit restarts on this code,
+      // not on 4, and `schedule exec` tries the run again on its reason.
+      const background = command.name() === "serve" || base.env.TG_SCHEDULED !== undefined
+      const temporary = loggedIn && background
       // Logging in again would register another device, and the same environment would lose it again.
       throw new CliError(
-        unreachable,
+        temporary ? "provider_unavailable" : "authentication_error",
         loggedIn
           ? `no Telegram app credentials found for profile "${profile}", although it has logged in on this machine — ` +
               "the keyring is probably out of reach (cron, ssh, an MCP client that trims the environment: set " +
               `XDG_RUNTIME_DIR); \`tg ${asFirstWord(profile)}doctor\` shows it. Log in again only if they were removed`
           : `no Telegram app credentials for profile "${profile}" — run ${setup} in a local terminal first, or sign in from ${desktop}; agents: read \`tg skill show\``,
+        temporary ? { reason: "credentials.unreachable" } : {},
       )
     }
     const options = { credentials: resolved, sessionPath, ...connecting }
