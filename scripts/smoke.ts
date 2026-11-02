@@ -51,6 +51,12 @@ check("the loader's --version is the bundle's", recorded.stdout === version.stdo
 
 check("--help names the command", tg("--help").stdout.includes("Usage: tg"))
 
+const described = tg("--wcat-describe")
+check(
+  "--wcat-describe prints the tool for wcat",
+  described.status === 0 && (JSON.parse(described.stdout) as { name?: string }).name === "tg",
+)
+
 const bad = tg("--nonsense")
 check("an unknown option fails", bad.status !== 0)
 check("an unknown option keeps stdout clean", bad.stdout === "")

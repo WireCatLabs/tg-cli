@@ -5,7 +5,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
-These shipped in 0.114.0 and were missing from its notes, or described wrongly there.
+### Added
+
+- **`wcat tg` runs the tool, and `wcat --help` lists it.** The package installs `wcat-tg` beside `tg`, and
+  `wcat-tg --wcat-describe` prints the tool's name, version and description for `wcat`.
+
+The entries below shipped in 0.114.0 and were missing from its notes, or described wrongly there.
 
 ### Changed — may break callers
 

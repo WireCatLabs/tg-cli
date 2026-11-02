@@ -15,7 +15,8 @@
   },
   "packageManager": "pnpm@11.28.8",
   "bin": {
-    "tg": "dist/bin/tg.js"
+    "tg": "dist/bin/tg.js",
+    "wcat-tg": "dist/bin/tg.js"
   },
   "files": [
     "dist",
