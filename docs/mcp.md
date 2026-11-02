@@ -223,8 +223,9 @@ only looks and is not gated), and on the bot `recipients add|remove|clear` and `
 discoverable with their arguments. They are available to run only when the profile sets
 `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default: discovery marks them unavailable,
 names the permission and explains why; a call is refused. An agent locked to read-only could otherwise unlock a later run.
-An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from a terminal,
-and only on a profile whose agent you trust with its own limits:
+An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from your own
+terminal, outside the agent: since 0.113.0 a `config set` run in an agent's shell (where `AI_AGENT`, `CLAUDECODE` or
+`OPENCLAW_SHELL=exec` is set) is refused for this key too. Do it only on a profile whose agent you trust:
 
 ```sh
 tg agent config set permissions.mcp.authority allow
