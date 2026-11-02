@@ -5129,6 +5129,8 @@ tg projects evidence <project> [options]
 | `--alias <name>` | another name of the project, searched on its own; repeat for more. Default: ``. |
 | `--context-query <words>` | more words that all appear in one text; repeat for another. Default: ``. |
 | `--contact <person>` | a name to search, or person:<id> to read what that person wrote. Default: ``. |
+| `--purpose <purposes>` | the linked chats' purposes to read, comma separated (work, sales, support, other), or all; the configured defaults if not given, and a chat left out is counted, never dropped silently. Default: ``. |
+| `--include-proposed` | also read chats and members proposed for the project and not yet confirmed; each item they bring is marked. |
 | `--since-time <time>` | how far back: days (90d, at most 730d) or a start date (2026-09-01). Default: `60d`. |
 | `--before-time <time>` | fixed exclusive end: ISO 8601 timestamp with UTC offset. |
 | `--limit <n>` | new references at most, up to 500; 100 if not given. |
@@ -5160,9 +5162,10 @@ tg projects status <project> [options]
 |---|---|
 | `--since-time <time>` | how far back: days (60d, at most 730d) or a start date (2026-09-01). Default: `60d`. |
 | `--before-time <time>` | fixed exclusive end: ISO 8601 timestamp with UTC offset. |
+| `--purpose <purposes>` | the linked chats' purposes to read, comma separated (work, sales, support, other), or all; the configured defaults if not given, and a chat left out is counted, never dropped silently. Default: ``. |
 | `--context-query <words>` | words that all appear in one text; reports their last mention per side. Repeat for another. Default: ``. |
 
-**Returns:** project status — project, key, name, window, signals, money, chats, out_of_scope, and 10 more; every field: tg commands info projects status
+**Returns:** project status — project, key, name, window, signals, money, chats, purposes, and 11 more; every field: tg commands info projects status
 
 **Example:** `tg personal projects status HRB --context-query 1C`
 
