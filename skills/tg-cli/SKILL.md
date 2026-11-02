@@ -202,6 +202,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 7. **`tg personal messages sync` makes many requests from the owner's account.** Only when the owner asked.
    `tg personal messages sync <chat> --dry-run` only estimates what it would cost and asks Telegram nothing —
    show the owner that first. A long one goes `--background`; `tg personal store jobs show` follows it.
+   It skips groups of more than 50 people and history past the history limits, and says so under `limited`;
+   `--full-history` on one chat reads past them, only when the owner asked for that chat in full.
 8. **`messages show` and `messages context` need the chat and the message id**, or a `msg:`
    locator from `search messages`. The message asked for carries `"anchor": true`.
 9. **`TG_CONFIG_DIR`, `TG_STATE_DIR` and `TG_CACHE_DIR` also change the keyring entry.** With them

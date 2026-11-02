@@ -151,6 +151,12 @@ default), and `--pause` spaces the pages out (1 second by default; `500ms`, `30s
 you run it again later. Look at `--dry-run` first: it counts from what the store already holds and
 sends no request.
 
+**It keeps to the history limits.** By default it skips a group of more than 50 people and reads a group 365 days
+back and a one-to-one chat 1095 days back; the answer says what it left out under `limited`, and
+`tg personal store status` lists those chats. `tg personal messages sync "Book club" --full-history` reads one chat
+past the limits and keeps it in full from then on; the `history_*` settings change the limits for every chat
+([configuration](configuration-reference.md)). Live messages from `serve` are kept either way.
+
 To find and fill gaps inside a chat's saved history, and to prepare topic search right after a fetch
 (`--catch-up`), see [when nothing is found](search.md#when-nothing-is-found).
 
