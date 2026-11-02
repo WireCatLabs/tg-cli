@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2381 ✅ · 111 ⛔ · 0 ❌** — 523 commands, 1969 options.
+**2383 ✅ · 115 ⛔ · 0 ❌** — 524 commands, 1974 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -262,6 +262,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages sync` | `--catch-up-chunks` | ✅ |  |
 | `messages sync` | `--catch-up-messages` | ✅ |  |
 | `messages sync` | `--catch-up-time` | ✅ |  |
+| `messages sync` | `--full-history` | ✅ |  |
 | `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-core's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `messages sync` | `--dry-run` | ✅ |  |
 | `reactions list` |  | ✅ |  |
@@ -734,6 +735,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `projects evidence` | `--no-catch-up` | ✅ |  |
 | `projects evidence` | `--sync-first` | ✅ |  |
 | `projects evidence` | `--sync-time` | ✅ |  |
+| `projects status` |  | ✅ |  |
+| `projects status` | `--since-time` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
+| `projects status` | `--before-time` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
+| `projects status` | `--context-query` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
 | `search all` |  | ✅ |  |
 | `search all` | `--only` | ✅ |  |
 | `search all` | `--source` | ✅ |  |
@@ -2498,6 +2503,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | *global* | `--max-output-bytes` | ✅ |  |
 | *global* | `--brief` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
 | *global* | `--full` | ⛔ | cli-core src/output-detail.test.ts and src/cli/messenger/messenger.test.ts drive --brief and --full through the shared program tg mounts (0.251.0) |
+| *global* | `--compact` | ⛔ | cli-core 0.550.0 src/cli/compact.test.ts and projects-command.test.ts («prints one line per item with --compact…») cover the shared switch; tg adds no rows of its own |
 | *global* | `--dry-run` | ✅ |  |
 | *global* | `--yes` | ✅ |  |
 | *global* | `--record` | ✅ |  |

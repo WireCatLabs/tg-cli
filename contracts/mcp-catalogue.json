@@ -231,6 +231,7 @@
   "tasks close": "write",
   "tasks reject": "write",
   "projects evidence": "write",
+  "projects status": "read",
   "search all": "read",
   "search messages": "read",
   "search notes": "read",

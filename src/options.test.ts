@@ -967,14 +967,29 @@ describe("messages sync", () => {
       },
     })
     const { code, stdout } = await tg(
-      ["messages", "sync", "Valencia", "--page-size", "2", "--limit", "4", "--pause", "1ms", "--json"],
+      [
+        "messages",
+        "sync",
+        "Valencia",
+        "--page-size",
+        "2",
+        "--limit",
+        "4",
+        "--pause",
+        "1ms",
+        "--full-history",
+        "--json",
+      ],
       {
         adapter: () => pages,
       },
     )
-    const deep = await tg(["messages", "sync", "Valencia", "--last", "3", "--pause", "1ms", "--json"], {
-      adapter: () => pages,
-    })
+    const deep = await tg(
+      ["messages", "sync", "Valencia", "--last", "3", "--pause", "1ms", "--full-history", "--json"],
+      {
+        adapter: () => pages,
+      },
+    )
 
     expect(code).toBe(0)
     expect(json(stdout).item).toMatchObject({ chat: chat.id, fetched: 4, complete: false })
@@ -987,7 +1002,7 @@ describe("messages sync", () => {
       history: async () => ({ items: [message("9"), message("10")], hasMore: true }),
     })
     const { stdout } = await tg(
-      ["messages", "sync", "Valencia", "--since-time", "2026-09-27", "--pause", "1ms", "--json"],
+      ["messages", "sync", "Valencia", "--since-time", "2026-09-27", "--pause", "1ms", "--full-history", "--json"],
       {
         adapter: () => pages,
       },
