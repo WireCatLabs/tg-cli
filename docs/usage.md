@@ -1281,7 +1281,7 @@ tg personal server status
 ```
 
 ```sh
-tg personal server install  # a systemd user unit or a launchd agent; starts nothing
+tg personal server install  # a systemd user unit or a launchd agent that starts at every login; starts nothing now
 ```
 
 ## What a command did
