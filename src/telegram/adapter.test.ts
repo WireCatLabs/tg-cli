@@ -525,7 +525,12 @@ afterEach(() => {
 })
 
 const open = async (
-  options: { listen?: boolean; diagnostic?: (line: string) => void; checks?: (check: Check) => string } = {},
+  options: {
+    listen?: boolean
+    catchUp?: boolean
+    diagnostic?: (line: string) => void
+    checks?: (check: Check) => string
+  } = {},
 ) => {
   const adapter = await TelegramAdapter.open({
     credentials: { id: 1, hash: "h" },

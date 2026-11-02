@@ -5,7 +5,7 @@ import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@wirecat/cli-base"
 import { pickChat } from "@wirecat/cli-core"
-import type { SendOptions } from "@wirecat/cli-core/cli"
+import type { ConnectOptions, SendOptions } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
 import { pathsFor } from "./paths.js"
 import { NO_RESTART_ON } from "./program.js"
@@ -567,8 +567,8 @@ describe("app credentials out of reach", () => {
   })
 
   it("**serve opens its connection with catch-up on**, and watch without", async () => {
-    const asked: Record<string, unknown>[] = []
-    const adapter = (options: Record<string, unknown>) => {
+    const asked: ConnectOptions[] = []
+    const adapter = (options: ConnectOptions) => {
       asked.push(options)
       return scripted({ watch: async (_onEvent, _stop, onReady) => onReady?.() })
     }
