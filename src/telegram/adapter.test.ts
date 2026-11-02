@@ -573,6 +573,11 @@ describe("opening", () => {
     expect(stand.options).toMatchObject({ disableUpdates: false, updates: { catchUp: false } })
   })
 
+  it("hands serve's catch-up to mtcute's updates manager", async () => {
+    await open({ listen: true, catchUp: true })
+    expect(stand.options).toMatchObject({ disableUpdates: false, updates: { catchUp: true } })
+  })
+
   it("answers self() with null before a login", async () => {
     const { adapter, client } = await open()
     client.storage.self.getCached = () => null

@@ -566,6 +566,21 @@ describe("app credentials out of reach", () => {
     expect(never.stderr.join("\n")).not.toContain("XDG_RUNTIME_DIR")
   })
 
+  it("**serve opens its connection with catch-up on**, and watch without", async () => {
+    const asked: Record<string, unknown>[] = []
+    const adapter = (options: Record<string, unknown>) => {
+      asked.push(options)
+      return scripted({ watch: async (_onEvent, _stop, onReady) => onReady?.() })
+    }
+
+    await tg(["serve", "--json"], { adapter })
+    await tg(["watch", "--jsonl", "--timeout", "1s"], { adapter })
+
+    expect(asked[0]).toMatchObject({ listen: true, catchUp: true })
+    expect(asked[1]).toMatchObject({ listen: true })
+    expect(asked[1]).not.toHaveProperty("catchUp")
+  })
+
   it("**serve treats an unreachable keyring as temporary**, so its unit retries; a missing login still exits 4", async () => {
     const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
     const sessions = join(pathsFor().state, "sessions")
