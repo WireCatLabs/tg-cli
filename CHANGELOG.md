@@ -14,9 +14,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`server install` enables the service**, so `serve` starts at every login and after a reboot. A service an older
   tg installed is not enabled: run `tg <profile> server install` again. `server status` says `starts_at_login`.
   A service installed from a development checkout is written but not enabled. (cli-core 0.552.0)
-- **`messages sync` keeps to the history limits**: it skips a group above `history_group_members_max` people and
-  stops a chat at its window (`history_dialog_days`, `history_group_days`), and says so under `limited`.
-  `--full-history` reads past them. Live messages are never dropped. (cli-core 0.551.0)
+- **`messages sync` keeps to the history limits**: by default it skips a group of more than 50 people
+  (`history_group_members_max`) and reads a group 365 days back and a one-to-one chat 1095 days back
+  (`history_group_days`, `history_dialog_days`), and says what it left out under `limited`. `--full-history` reads
+  past them for one run; raise the settings to keep reading big groups. Live messages are never dropped.
+  (cli-core 0.551.0)
 - **`tg <profile> projects status <project>`** says where a project stands, from the store alone. (cli-core 0.551.0)
 - **`--compact`** prints one line per item for an agent, from the same answer `--json` prints. (cli-core 0.550.0)
 - **`messages list` reads a window bounded on both sides**, offline too. (cli-core 0.547.0)
