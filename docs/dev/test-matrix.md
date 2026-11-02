@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2381 ✅ · 110 ⛔ · 0 ❌** — 523 commands, 1968 options.
+**2381 ✅ · 111 ⛔ · 0 ❌** — 523 commands, 1969 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -221,6 +221,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages context` | `--after-n` | ✅ |  |
 | `messages download` |  | ✅ |  |
 | `messages download` | `--output-dir` | ✅ |  |
+| `messages download` | `--attachment` | ⛔ | cli-core src/cli/messenger/attachments.test.ts covers picking one file of a message, with --offline; this consumer mounts the shared command (cli-core 0.532.0) |
 | `messages download` | `--all` | ✅ |  |
 | `messages download` | `--pause` | ✅ |  |
 | `messages download` | `--extract` | ✅ |  |
