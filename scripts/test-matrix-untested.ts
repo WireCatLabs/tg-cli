@@ -266,6 +266,12 @@ export const UNTESTED: Untested[] = [
   })),
   {
     command: "messages download",
+    option: "--attachment",
+    reason:
+      "cli-core src/cli/messenger/attachments.test.ts covers picking one file of a message, with --offline; this consumer mounts the shared command (cli-core 0.532.0)",
+  },
+  {
+    command: "messages download",
     option: "--extract",
     reason:
       "cli-core src/cli/messenger/attachments.test.ts covers reading text layers after a download; this consumer mounts the shared command (cli-core 0.162.0)",
