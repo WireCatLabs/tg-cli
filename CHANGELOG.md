@@ -7,6 +7,11 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
+- **`projects evidence` and `projects status` take `--purpose`** to pick the linked chats they read:
+  `--purpose sales,work` or `--purpose all`. A chat left out is listed with its message count and the command that
+  reads it. (cli-core 0.553.0)
+- **`projects evidence --include-proposed`** also reads chats and members proposed for the project and not yet
+  confirmed, and marks what they brought. `--compact` now prints rows for `projects evidence`. (cli-core 0.553.0)
 - **`serve` reads back what arrived while it was off.** Telegram's own catch-up gives up on a gap it finds too long
   after a long downtime. 30 seconds after connecting, `serve` now reads back each chat that has newer messages than
   the store held when it started: at most 7 days back, 500 messages a chat and 5 minutes in all. After more than a
@@ -27,6 +32,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Changed — may break callers
 
+- **`projects evidence` and `projects status` read only work chats by default.** A linked chat with no purpose
+  counts as work; one linked for `sales`, `support` or `other` is now left out unless `--purpose` names it or
+  `--purpose all` is given. (cli-core 0.553.0)
 - **A search that runs out of time fails with `timeout` and reason `query.time-limit`**, in about 2 s, instead of
   `validation_error` / `query.too-large` after running far past the limit. The query was valid; add `chat:` or `date:`
   to search less of the store. (cli-core 0.552.0)

@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2383 ✅ · 115 ⛔ · 0 ❌** — 524 commands, 1974 options.
+**2383 ✅ · 118 ⛔ · 0 ❌** — 524 commands, 1977 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -725,6 +725,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `projects evidence` | `--alias` | ✅ |  |
 | `projects evidence` | `--context-query` | ✅ |  |
 | `projects evidence` | `--contact` | ✅ |  |
+| `projects evidence` | `--purpose` | ⛔ | cli-core 0.553.0 src/cli/messenger/projects-command.test.ts, src/services/project-purposes.test.ts and linked-chats.test.ts cover the shared options tg mounts, over the store |
+| `projects evidence` | `--include-proposed` | ⛔ | cli-core 0.553.0 src/cli/messenger/projects-command.test.ts, src/services/project-purposes.test.ts and linked-chats.test.ts cover the shared options tg mounts, over the store |
 | `projects evidence` | `--since-time` | ✅ |  |
 | `projects evidence` | `--before-time` | ✅ |  |
 | `projects evidence` | `--limit` | ✅ |  |
@@ -738,6 +740,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `projects status` |  | ✅ |  |
 | `projects status` | `--since-time` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
 | `projects status` | `--before-time` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
+| `projects status` | `--purpose` | ⛔ | cli-core 0.553.0 src/cli/messenger/projects-command.test.ts, src/services/project-purposes.test.ts and linked-chats.test.ts cover the shared options tg mounts, over the store |
 | `projects status` | `--context-query` | ⛔ | cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store |
 | `search all` |  | ✅ |  |
 | `search all` | `--only` | ✅ |  |
