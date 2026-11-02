@@ -129,7 +129,9 @@ XDG_RUNTIME_DIR=/run/user/$(id -u) tg personal chats list
 ```
 
 For cron, see [running on a schedule](recipes.md#running-on-a-schedule). The keyring may also be locked until
-you log in to the computer.
+you log in to the computer. `serve` and a `tg personal schedule` run then exit with code `12`
+(`provider_unavailable`) instead: the service tries again every 30 s, and a daily or one-off schedule waits for the
+login and tries again for up to 12 hours.
 
 ### "not logged in, or the session was ended — run `tg session start`"
 

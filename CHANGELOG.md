@@ -5,8 +5,38 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Added
+
+- **`serve` reads back what arrived while it was off.** Telegram's own catch-up gives up on a gap it finds too long
+  after a long downtime. 30 seconds after connecting, `serve` now reads back each chat that has newer messages than
+  the store held when it started: at most 7 days back, 500 messages a chat and 5 minutes in all. After more than a
+  week offline, run `tg <profile> messages sync --all` once. (cli-core 0.552.0)
+- **`server install` enables the service**, so `serve` starts at every login and after a reboot. A service an older
+  tg installed is not enabled: run `tg <profile> server install` again. `server status` says `starts_at_login`.
+  A service installed from a development checkout is written but not enabled. (cli-core 0.552.0)
+- **`messages sync` keeps to the history limits**: it skips a group above `history_group_members_max` people and
+  stops a chat at its window (`history_dialog_days`, `history_group_days`), and says so under `limited`.
+  `--full-history` reads past them. Live messages are never dropped. (cli-core 0.551.0)
+- **`tg <profile> projects status <project>`** says where a project stands, from the store alone. (cli-core 0.551.0)
+- **`--compact`** prints one line per item for an agent, from the same answer `--json` prints. (cli-core 0.550.0)
+- **`messages list` reads a window bounded on both sides**, offline too. (cli-core 0.547.0)
+- **A command that takes a chat or a message also takes the reference other WireCat tools print**
+  (`msg:…`, `chat:…`). (cli-core 0.546.0)
+
+### Changed — may break callers
+
+- **A search that runs out of time fails with `timeout` and reason `query.time-limit`**, in about 2 s, instead of
+  `validation_error` / `query.too-large` after running far past the limit. The query was valid; add `chat:` or `date:`
+  to search less of the store. (cli-core 0.552.0)
+- **A text of the form `<kind>:<no spaces>` given as a chat is read as a reference**, and a reference to another
+  account or messenger is refused with its own reason. An option after `--` is read as an option. (cli-core 0.546.0)
+
 ### Fixed
 
+- **A sync whose output reader goes away finishes its work.** A closed pipe used to abort it. (cli-core 0.552.0)
+- **`messages delete` with no message id refuses before it connects.** (cli-core 0.551.0)
+- **`page.next` of `messages list` runs as written, and an inclusive start keeps a message sent exactly at it.**
+  (cli-core 0.547.0)
 - **A timer's run that finds the keyring locked is temporary, not a failed sign-in.** A schedule that caught up at
   boot, before the login unlocked the keyring, ended with `authentication_error` (exit 4), as if the owner had to log
   in again. A run under a timer (`TG_SCHEDULED`) now ends as `serve` does: `provider_unavailable` (exit 12) with reason

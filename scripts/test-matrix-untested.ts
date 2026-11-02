@@ -819,4 +819,20 @@ export const UNTESTED: Untested[] = [
     reason:
       "the shared cli-core command tg mounts renamed this option in 0.399.0 (the old spelling stays hidden for one release); tg has no offline fixture for its provider, model, ownership claim or note file",
   })),
+  ...[
+    ["projects status", "--since-time"],
+    ["projects status", "--before-time"],
+    ["projects status", "--context-query"],
+  ].map(([command, option]) => ({
+    command: command as string,
+    option,
+    reason:
+      "cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store",
+  })),
+  {
+    command: "",
+    option: "--compact",
+    reason:
+      "cli-core 0.550.0 src/cli/compact.test.ts and projects-command.test.ts («prints one line per item with --compact…») cover the shared switch; tg adds no rows of its own",
+  },
 ]

@@ -38,6 +38,7 @@ without one.
 | `--max-output-bytes <bytes>` | maximum machine output bytes (default: 4194304; 0 disables). |
 | `--brief` | found messages as reference, title, time, sender and excerpt only. |
 | `--full` | found messages with their whole text and every provider field. |
+| `--compact` | one line per item for an agent: reference first, text last, paging and next steps as # lines. |
 | `--dry-run` | preview parsed arguments and permissions before running the action. |
 | `--yes` | go ahead without the question an ask level puts before a write. |
 | `--record` | keep this run even where the config says record false; record_input false leaves the typed words out. |
@@ -1781,7 +1782,7 @@ tg messages list <chat> [query] [options]
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `query` | optional | where to start and which topic: id<42, date>2026-10-01, topic:12. |
+| `query` | optional | where to start or which window, and which topic: id<42, date>=2026-10-01 date<2026-10-20, topic:12. |
 
 | Option | What it does |
 |---|---|
@@ -2176,10 +2177,11 @@ tg messages sync [chat] [options]
 | `--catch-up-chunks <n>` | at most this many local vector chunks. |
 | `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
 | `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
+| `--full-history` | read and keep this chat's history in full from now on, past the history limits (history_* settings). |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
 | `--dry-run` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
 
-**Returns:** message sync — chat, held, ranges, missing, requests, runs, seconds, fetched, and 15 more; every field: tg commands info messages sync
+**Returns:** message sync — chat, held, ranges, missing, requests, runs, seconds, fetched, and 17 more; every field: tg commands info messages sync
 
 **Example:** `tg personal messages sync "Book club" --last 100`
 
@@ -2715,7 +2717,7 @@ keep the local store current until stopped — what a systemd or launchd unit ru
 tg serve
 ```
 
-**Returns:** serve summary — profile, started_at, stopped_at, kept, replies, members, stems, tasks; every field: tg commands info serve
+**Returns:** serve summary — profile, started_at, stopped_at, kept, replies, members, stems, caught_up, and 1 more; every field: tg commands info serve
 
 **Example:** `tg personal serve`
 
@@ -2795,7 +2797,7 @@ tg server logs [options]
 
 ### `tg server install`
 
-write a systemd user unit or a launchd agent for this profile; starts nothing
+write a systemd user unit or a launchd agent for this profile and have it start at every login; starts nothing now
 
 **Changes something on this computer only.**
 
@@ -2803,13 +2805,13 @@ write a systemd user unit or a launchd agent for this profile; starts nothing
 tg server install
 ```
 
-**Returns:** write a systemd user unit or a launchd agent for this profile; starts nothing
+**Returns:** install this profile's background server to start at every login
 
 **Example:** `tg personal server install`
 
 ### `tg server uninstall`
 
-remove this profile's unit; stop it first
+remove this profile's unit, so it no longer starts at login; stop it first
 
 **Changes something on this computer only.**
 
@@ -2817,7 +2819,7 @@ remove this profile's unit; stop it first
 tg server uninstall
 ```
 
-**Returns:** remove this profile's unit; stop it first
+**Returns:** remove this profile's unit, so it no longer starts at login; stop it first
 
 **Example:** `tg personal server uninstall`
 
@@ -5142,6 +5144,28 @@ tg projects evidence <project> [options]
 
 **Example:** `tg personal projects evidence "Harbour" --since-time 30d --sync-first`
 
+### `tg projects status`
+
+per chat confirmed as the project's (and its child projects'), from what the store holds: the last message, who replies next, open questions both ways, promises, amounts with their direction, payments recorded, how long each --context-query has been quiet on their side, and how much of the chat is held. Amounts, directions and promises found by words are marked pattern: read the cited message before trusting one. Only this profile's account is read; the other linked chats are named, and memo projects status reads them
+
+```sh
+tg projects status <project> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `project` | required | an existing project's id, key, exact name or alias. |
+
+| Option | What it does |
+|---|---|
+| `--since-time <time>` | how far back: days (60d, at most 730d) or a start date (2026-09-01). Default: `60d`. |
+| `--before-time <time>` | fixed exclusive end: ISO 8601 timestamp with UTC offset. |
+| `--context-query <words>` | words that all appear in one text; reports their last mention per side. Repeat for another. Default: ``. |
+
+**Returns:** project status — project, key, name, window, signals, money, chats, out_of_scope, and 10 more; every field: tg commands info projects status
+
+**Example:** `tg personal projects status HRB --context-query 1C`
+
 ## `tg search`
 
 find things by text: one resource when you know it (messages, notes), or search all across messages and notes; for mail, the separate memo CLI: memo search mail
@@ -5170,7 +5194,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 10 more; every field: tg commands info search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 13 more; every field: tg commands info search all
 
 **Example:** `tg personal search all draft`
 
@@ -5911,7 +5935,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -5936,7 +5960,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>. |
 
 | Option | What it does |
 |---|---|

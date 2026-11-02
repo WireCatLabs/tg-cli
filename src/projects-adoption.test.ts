@@ -41,6 +41,7 @@ beforeAll(async () => {
     to: project.ref,
     kind: "member-of",
     confirmed: true,
+    by: "owner",
   })
 })
 afterAll(async () => {

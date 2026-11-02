@@ -328,9 +328,10 @@ refused.
 
 `tg personal serve` listens until stopped and saves every new message, edit, deletion and reaction. When it
 starts, it first catches up on what arrived while it was down. After a long downtime Telegram can call the gap
-too long to send; `serve` then keeps only the newest messages of a busy channel and none of the gap elsewhere, so
-after days offline run `tg personal messages sync --all` once. One `serve` runs per profile; a second one is refused.
-**Nothing starts it for you.**
+too long to send, so 30 seconds after connecting `serve` also reads back each chat that has newer messages than the
+store held when it started: at most 7 days back, 500 messages a chat and 5 minutes in all. After more than a week
+offline, or for a very busy chat, run `tg personal messages sync --all` once. An empty store is left to that command.
+One `serve` runs per profile; a second one is refused. **Nothing starts it for you.**
 
 `tg personal watch` is different: it prints new messages from now on, and does not catch up on what it missed
 ([new messages as they arrive](usage.md#new-messages-as-they-arrive)).
@@ -363,7 +364,7 @@ To keep it running across logins, install it as a user service: a systemd user u
 launchd agent on macOS.
 
 ```sh
-tg personal server install  # writes ~/.config/systemd/user/tg-serve-<profile>.service; starts nothing
+tg personal server install  # writes ~/.config/systemd/user/tg-serve-<profile>.service and enables it; starts nothing
 ```
 
 ```sh
@@ -371,11 +372,12 @@ tg personal server start  # starts it — through the unit, now that there is on
 ```
 
 ```sh
-tg personal server status
-systemctl --user enable tg-serve-personal    # only if it should start at every login
+tg personal server status  # starts_at_login says whether it starts at the next login
 ```
 
-On macOS the agent goes into `~/Library/LaunchAgents/`.
+On macOS the agent goes into `~/Library/LaunchAgents/`. `install` enables the unit, so it starts at every login and
+after a reboot; a unit an older tg installed is not enabled until you run `server install` again. A unit installed
+from a development checkout (with its own `TG_*_DIR` folders) is written but not enabled.
 
 - The unit runs the `node` and the `tg` that installed it. Install it again after moving either,
   for example after changing Node versions.
@@ -390,7 +392,9 @@ On macOS the agent goes into `~/Library/LaunchAgents/`.
   If app credentials are unavailable while a saved session exists, serve exits with code 12 and systemd retries.
   On macOS the agent does not restart after any failure, since launchd cannot exclude one exit code;
   start it again with `tg personal server start`. Run `tg personal server install` again to update an older unit.
-- `tg personal server uninstall` removes the unit. Stop it first.
+- `tg personal server uninstall` disables and removes the unit. Stop it first.
+- On macOS `server stop` unloads the agent until the next login, as it does on Linux; `server uninstall` keeps it
+  from starting again.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 
 Automatic replies from `serve` to test accounts are described in [automatic replies](replies.md).
