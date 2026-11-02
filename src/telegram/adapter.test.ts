@@ -525,7 +525,12 @@ afterEach(() => {
 })
 
 const open = async (
-  options: { listen?: boolean; diagnostic?: (line: string) => void; checks?: (check: Check) => string } = {},
+  options: {
+    listen?: boolean
+    catchUp?: boolean
+    diagnostic?: (line: string) => void
+    checks?: (check: Check) => string
+  } = {},
 ) => {
   const adapter = await TelegramAdapter.open({
     credentials: { id: 1, hash: "h" },
@@ -571,6 +576,11 @@ describe("opening", () => {
   it("asks for updates only when listening", async () => {
     await open({ listen: true })
     expect(stand.options).toMatchObject({ disableUpdates: false, updates: { catchUp: false } })
+  })
+
+  it("hands serve's catch-up to mtcute's updates manager", async () => {
+    await open({ listen: true, catchUp: true })
+    expect(stand.options).toMatchObject({ disableUpdates: false, updates: { catchUp: true } })
   })
 
   it("answers self() with null before a login", async () => {

@@ -5,7 +5,7 @@ import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@wirecat/cli-base"
 import { pickChat } from "@wirecat/cli-core"
-import type { SendOptions } from "@wirecat/cli-core/cli"
+import type { ConnectOptions, SendOptions } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
 import { pathsFor } from "./paths.js"
 import { NO_RESTART_ON } from "./program.js"
@@ -564,6 +564,21 @@ describe("app credentials out of reach", () => {
     expect(never.stderr.join("\n")).toContain("tg never setup")
     expect(never.stderr.join("\n")).toContain("tg skill show")
     expect(never.stderr.join("\n")).not.toContain("XDG_RUNTIME_DIR")
+  })
+
+  it("**serve opens its connection with catch-up on**, and watch without", async () => {
+    const asked: ConnectOptions[] = []
+    const adapter = (options: ConnectOptions) => {
+      asked.push(options)
+      return scripted({ watch: async (_onEvent, _stop, onReady) => onReady?.() })
+    }
+
+    await tg(["serve", "--json"], { adapter })
+    await tg(["watch", "--jsonl", "--timeout", "1s"], { adapter })
+
+    expect(asked[0]).toMatchObject({ listen: true, catchUp: true })
+    expect(asked[1]).toMatchObject({ listen: true })
+    expect(asked[1]).not.toHaveProperty("catchUp")
   })
 
   it("**serve treats an unreachable keyring as temporary**, so its unit retries; a missing login still exits 4", async () => {

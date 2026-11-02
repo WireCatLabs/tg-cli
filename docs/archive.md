@@ -327,8 +327,10 @@ refused.
 ## Keeping it current: `serve`
 
 `tg personal serve` listens until stopped and saves every new message, edit, deletion and reaction. When it
-starts, it first catches up on what arrived while it was down. One `serve` runs per profile; a
-second one is refused. **Nothing starts it for you.**
+starts, it first catches up on what arrived while it was down. After a long downtime Telegram can call the gap
+too long to send; `serve` then keeps only the newest messages of a busy channel and none of the gap elsewhere, so
+after days offline run `tg personal messages sync --all` once. One `serve` runs per profile; a second one is refused.
+**Nothing starts it for you.**
 
 `tg personal watch` is different: it prints new messages from now on, and does not catch up on what it missed
 ([new messages as they arrive](usage.md#new-messages-as-they-arrive)).
