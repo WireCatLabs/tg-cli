@@ -3,6 +3,24 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+These shipped in 0.114.0 and were missing from its notes, or described wrongly there.
+
+### Changed — may break callers
+
+- **`server install` fails where `systemctl --user` (or `launchctl enable`) does not work**, after it wrote the unit,
+  instead of answering success. On macOS `server stop` only unloads the agent: it starts again at the next login, as a
+  systemd unit does; `server uninstall` stops that. (cli-core 0.552.0)
+
+### Fixed
+
+- **The 0.114.0 notes said `--full-history` reads past the history limits for one run.** It reads one named chat:
+  `messages sync <chat> --full-history` reads that chat past the limits and keeps it in full from then on.
+- **`search messages --brief` keeps only the reference, chat, time, sender, excerpt and score.** It printed every field.
+  (cli-core 0.551.0)
+- **An MCP call whose answer names a step only the person can take no longer fails as a bug.** (cli-core 0.551.0)
+
 ## 0.114.0 — 02.11.2026
 
 ### Added
