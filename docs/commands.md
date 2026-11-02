@@ -1885,7 +1885,7 @@ tg messages context <chat> [message] [options]
 
 ### `tg messages download`
 
-save a message's photos, files, videos and voice notes to a folder — or a whole chat's with --all
+save a message's photos, files, videos and voice notes to a folder — or a whole chat's with --all; with --offline, copy the ones this computer already holds, one by --attachment
 
 **Changes something on this computer only.**
 
@@ -1895,19 +1895,20 @@ tg messages download <chat> [message] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `message` | optional | the message id; left out with --all. |
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id; left out with --all or a locator. |
 
 | Option | What it does |
 |---|---|
 | `--output-dir <dir>` | where to save them; created if missing. Default: `.`. |
+| `--attachment <n>` | which file of the message, from 1; needed when it has more than one. |
 | `--all` | every file of the chat, newest first; run it again to continue where it stopped. |
 | `--pause <duration>` | with --all, a pause between pages, to stay under the provider's limits. Default: `1s`. |
 | `--extract` | read text layers from the files this download maps into the local content index. |
 
 **Returns:** message download — files, extraction, complete, batch, chat, saved, existing, stopped; every field: tg commands info messages download
 
-**Example:** `tg personal messages download "Book club" 101 --output-dir ./downloads`
+**Example:** `tg personal messages download "Book club" 101 --output-dir ./downloads`, `tg personal messages download msg:telegram/me/500/101 --attachment 1 --offline`
 
 ### `tg messages transcribe`
 
@@ -2100,7 +2101,7 @@ tg messages link <chat> [message]
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
 | `message` | optional | the message id. |
 
-**Returns:** message link — ref, url, access, reason; every field: tg commands info messages link
+**Returns:** message link — ref, url, access, reason, files; every field: tg commands info messages link
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -5169,7 +5170,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 8 more; every field: tg commands info search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 10 more; every field: tg commands info search all
 
 **Example:** `tg personal search all draft`
 
@@ -5208,7 +5209,7 @@ tg search messages [query] [options]
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
 | `--saved <name\|id>` | run a saved search or an earlier run; options typed here replace its own. |
 
-**Returns:** message hit — ref, timestamp, sender_name, sender_is_me, chat_title, excerpt, matched_in, score, and 8 more; every field: tg commands info search messages
+**Returns:** message hit — ref, timestamp, sender_name, sender_is_me, chat_title, excerpt, matched_in, score, and 9 more; every field: tg commands info search messages
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
