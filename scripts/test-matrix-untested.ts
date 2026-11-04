@@ -11,6 +11,24 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   ...[
+    ["stats messages responses", "--who", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["stats messages responses", "--by", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["stats messages responses", "--timezone", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["stats messages responses", "--source", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["stats messages waiting", "--timezone", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["stats messages waiting", "--source", "src/cli/messenger/reply-stats-command.test.ts"],
+    ["tasks add", "--open-new", "src/cli/messenger/tasks.test.ts"],
+    ["tasks status", "--limit", "src/cli/messenger/tasks.test.ts"],
+    ["tasks review", "--limit", "src/cli/messenger/tasks.test.ts"],
+    ["tasks review", "--since-time", "src/cli/messenger/tasks.test.ts"],
+    ["tasks acknowledge", "--since-time", "src/cli/messenger/tasks.test.ts"],
+    ["config repair", "--dry-run", "src/cli/config-command.test.ts"],
+  ].map(([command, option, test]) => ({
+    command: command as string,
+    option,
+    reason: `cli-core 0.563.0 ${test} drives the shared option; tg mounts the command unchanged`,
+  })),
+  ...[
     ["attachments download"],
     ["attachments download", "--chat"],
     ["attachments download", "--since-time"],
