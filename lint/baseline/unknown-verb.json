@@ -10,6 +10,7 @@
   "schedule agent",
   "schedule command",
   "schedule exec",
+  "stats messages waiting",
   "topics enable",
   "topics order"
 ]
