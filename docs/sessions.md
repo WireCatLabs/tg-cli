@@ -47,6 +47,34 @@ Two ways to get it:
 
 The app is stored only after Telegram has accepted the login.
 
+### Create the app by hand
+
+Use these steps with `--app browser`, or when `--app auto` fails. You do this once per Telegram account.
+
+1. **Sign in at [my.telegram.org](https://my.telegram.org/apps).** Choose your country, type your phone number and press **Next**.
+
+   ![The my.telegram.org sign-in page with a country and a phone number field](images/telegram-app-1-sign-in.png)
+
+   Telegram sends a confirmation code as a message in your Telegram app, not by SMS. Type it on the page and press **Sign in**. Never give this code to anyone, and never type it into an agent chat.
+
+   ![The confirmation code page of my.telegram.org](images/telegram-app-2-code.png)
+
+2. **Open Development Tools** and choose **Create new application**.
+
+   ![The my.telegram.org home page with the Development Tools card](images/telegram-app-3-development-tools.png)
+
+   Fill in the form. The title needs at least 5 characters. The short name is letters and digits only, 5 to 32 characters. Avoid the word "Telegram" in both. Choose a platform, for example **Desktop**. The URL and the description are optional. Then press **Create application**.
+
+   ![The Create new application form](images/telegram-app-4-create-application.png)
+
+3. **Copy `api_id` and `api_hash`** from the Credentials section. Keep the hash private: anyone who has it can use your app's quota.
+
+   ![The Credentials section with App api_id and App api_hash](images/telegram-app-5-credentials.png)
+
+4. **Give both values to `tg`** when it asks for `App api_id` and `App api_hash`. The hash is not shown as you type.
+
+The phone number and the app values in these screenshots are examples.
+
 ## Logging in
 
 ```sh
@@ -55,8 +83,8 @@ tg personal session start phone  # a phone number, the code Telegram sends, and 
 tg personal session start phone --sms  # the same, asking Telegram for the code by SMS
 ```
 
-**QR:** scan the code in the Telegram app: Settings → Devices → Link Desktop Device. The code is
-renewed while you wait.
+**QR:** scan the code in the Telegram app, as the next section describes. The code is renewed while you
+wait.
 
 **Phone:** type the number in international format, then the login code. If the account has a
 cloud password (2FA), `tg` asks for it without showing what you type. With `--app auto`, the phone
@@ -95,6 +123,30 @@ A program that shows the questions in its own window, such as WireCat Desktop, r
 answered with one line on stdin.
 `tg personal setup` works the same way. Login is not offered as an MCP tool: an agent that has
 only MCP asks you to run the command, or runs it through its shell.
+
+### Link a device with a QR code
+
+Telegram calls this linking a desktop device. `tg` shows a QR code in the terminal and you scan it with the Telegram app on your phone. Use Telegram's own scanner, not the camera app.
+
+#### Android
+
+1. Open Telegram and go to **Settings**, then **Devices**.
+2. Press **Add Device** and allow camera access if Telegram asks.
+3. Point the camera at the QR code in your terminal.
+
+![Telegram for Android, Settings and Devices, with the Add Device button](images/telegram-android-add-device.png)
+
+#### iPhone and iPad
+
+1. Open Telegram and go to **Settings**, then **Devices**.
+2. Press **Link Desktop Device** and allow camera access if Telegram asks.
+3. Point the camera at the QR code in your terminal.
+
+If your account has a two-step password (2FA), `tg` asks for it after the scan. The terminal does not show what you type.
+
+**Incomplete login attempts.** If you scanned the code but did not enter the 2FA password, the attempt appears in **Devices** under **Incomplete login attempts**. It has no access to your messages. Finish the login in `tg`, or terminate the attempt in the same list.
+
+![The Incomplete login attempts list in Telegram's Devices screen](images/telegram-android-incomplete-login.png)
 
 ## Check and log out
 
