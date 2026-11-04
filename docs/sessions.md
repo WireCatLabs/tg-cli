@@ -75,7 +75,6 @@ Use these steps with `--app browser`, or when `--app auto` fails. You do this on
 
 The phone number and the app values in these screenshots are examples.
 
-
 ## Logging in
 
 ```sh
@@ -125,12 +124,11 @@ answered with one line on stdin.
 `tg personal setup` works the same way. Login is not offered as an MCP tool: an agent that has
 only MCP asks you to run the command, or runs it through its shell.
 
-
 ### Link a device with a QR code
 
 Telegram calls this linking a desktop device. `tg` shows a QR code in the terminal and you scan it with the Telegram app on your phone. Use Telegram's own scanner, not the camera app.
 
-**Android**
+#### Android
 
 1. Open Telegram and go to **Settings**, then **Devices**.
 2. Press **Add Device** and allow camera access if Telegram asks.
@@ -138,7 +136,7 @@ Telegram calls this linking a desktop device. `tg` shows a QR code in the termin
 
 ![Telegram for Android, Settings and Devices, with the Add Device button](images/telegram-android-add-device.png)
 
-**iPhone and iPad**
+#### iPhone and iPad
 
 1. Open Telegram and go to **Settings**, then **Devices**.
 2. Press **Link Desktop Device** and allow camera access if Telegram asks.
