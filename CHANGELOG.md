@@ -27,6 +27,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   typed as a sentence** (cli-core 0.564.0). Before, each source's hits took turns, and a question found only records
   that held every one of its words.
 
+### Fixed
+
+- **A QR login says when the code was scanned.** Telegram then takes ten seconds or more to move the login to the
+  account's data centre, and tg printed nothing until it asked for the 2FA password or finished. It now prints
+  `scan accepted, finishing sign-in`, with `--json` as the stderr line
+  `{"event":"progress","step":"scanned","message":"scan accepted, finishing sign-in"}`, which WireCat Desktop shows.
+
 ## 0.115.0 — 03.11.2026
 
 ### Added

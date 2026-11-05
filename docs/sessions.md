@@ -114,7 +114,9 @@ The agent runs it in the background, because the command waits for the scan and 
 nothing until the command ends. It reads the output and pastes the QR block into the chat as a code
 block, exactly as printed. When Telegram renews the code, a new block is printed: the agent pastes
 it and says the old one expired. With `--json`, each code is also one line on stderr,
-`{"event":"qr","qr":{"text":…,"expires_at":…,"scan":…}}`.
+`{"event":"qr","qr":{"text":…,"expires_at":…,"scan":…}}`. Once the code is scanned, tg says
+`scan accepted, finishing sign-in`, with `--json` as
+`{"event":"progress","step":"scanned","message":…}`: Telegram can take ten seconds or more to finish.
 
 The code is drawn for a dark terminal theme. Without a terminal this works only when the profile
 already has its app and the account has no 2FA password: anything else you have to type yourself.

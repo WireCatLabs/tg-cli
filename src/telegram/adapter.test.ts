@@ -312,6 +312,7 @@ class FakeClient {
   resendCode = vi.fn(async (_params: unknown): Promise<unknown> => ({ type: "sms", phoneCodeHash: "second" }))
   signIn = vi.fn(async (_params: unknown): Promise<unknown> => user(1, "Owner", { isSelf: true }))
   checkPassword = vi.fn(async (_password: unknown): Promise<unknown> => user(1, "Owner", { isSelf: true }))
+  signInQr = vi.fn(async (_params: unknown): Promise<unknown> => user(1, "Owner", { isSelf: true }))
   dialogsPulled = 0
   async *iterDialogs(options: unknown) {
     this.#record("iterDialogs", [options])
@@ -3449,19 +3450,107 @@ describe("closing", () => {
     expect(client.calls.map((call) => call.method).slice(-2)).toEqual(["logOut", "destroy"])
   })
 
-  it("logs in by QR code and answers with the account", async () => {
-    const { adapter, client } = await open()
-    const account = await adapter.login({
-      method: "qr",
-      showQr: () => {},
-      phone: async () => "",
-      code: async () => "",
-      password: async () => "",
-      note: () => {},
+  describe("a QR login", () => {
+    const qrLogin = async (setup: (client: FakeClient) => void, passwords = ["secret"]) => {
+      const { adapter, client } = await open()
+      client.getMe = async () => {
+        throw new tl.RpcError(401, "AUTH_KEY_UNREGISTERED")
+      }
+      setup(client)
+      const notes: string[] = []
+      const shown: string[] = []
+      let scans = 0
+      const account = await adapter.login({
+        method: "qr",
+        showQr: (url) => shown.push(url),
+        scanned: () => {
+          scans += 1
+        },
+        phone: async () => "",
+        code: async () => "",
+        password: async () => passwords.shift() ?? "",
+        note: (line) => notes.push(line),
+      })
+      return { account, client, notes, shown, scans: () => scans }
+    }
+    type QrParams = {
+      onUrlUpdated: (url: string, expires: Date) => void
+      onQrScanned: () => void
+      password: () => Promise<string>
+      invalidPasswordCallback: () => void
+    }
+
+    it("**says when the code was scanned**, which mtcute's start() never passes on", async () => {
+      const { account, client, shown, scans } = await qrLogin((client) => {
+        client.signInQr = vi.fn(async (params: unknown) => {
+          const { onUrlUpdated, onQrScanned } = params as QrParams
+          onUrlUpdated("tg://login?token=x", new Date())
+          onQrScanned()
+          onUrlUpdated("tg://login?token=y", new Date())
+          return user(1, "Owner", { isSelf: true })
+        })
+      })
+
+      expect(account).toEqual({ id: "1", name: "Owner", username: null })
+      expect(shown).toEqual(["tg://login?token=x", "tg://login?token=y"])
+      expect(scans()).toBe(1)
+      expect(client.calls.some((call) => call.method === "start")).toBe(false)
     })
 
-    expect(account).toEqual({ id: "1", name: "Owner", username: null })
-    expect(client.calls.find((call) => call.method === "start")?.args[0]).toHaveProperty("qrCodeHandler")
+    it("passes the 2FA password on and asks again after a wrong one", async () => {
+      const { client, notes } = await qrLogin(
+        (client) => {
+          client.signInQr = vi.fn(async (params: unknown) => {
+            const { password, invalidPasswordCallback } = params as QrParams
+            expect(await password()).toBe("wrong")
+            invalidPasswordCallback()
+            expect(await password()).toBe("secret")
+            return user(1, "Owner", { isSelf: true })
+          })
+        },
+        ["wrong", "secret"],
+      )
+
+      expect(client.signInQr).toHaveBeenCalledOnce()
+      expect(notes).toEqual(["that password was not accepted — try again"])
+    })
+
+    it("asks only for the password when a scanned login still waits for it", async () => {
+      const { client } = await qrLogin((client) => {
+        client.getMe = async () => {
+          throw new tl.RpcError(401, "SESSION_PASSWORD_NEEDED")
+        }
+      })
+
+      expect(client.checkPassword).toHaveBeenCalledWith("secret")
+      expect(client.signInQr).not.toHaveBeenCalled()
+    })
+
+    it("logs a revoked session out before it shows a new code", async () => {
+      const { client } = await qrLogin((client) => {
+        client.getMe = async () => {
+          throw new tl.RpcError(401, "SESSION_REVOKED")
+        }
+      })
+
+      expect(client.calls.map((call) => call.method)).toContain("logOut")
+      expect(client.signInQr).toHaveBeenCalledOnce()
+    })
+
+    it("asks nothing when the session is still logged in", async () => {
+      const { adapter, client } = await open()
+      await adapter.login({
+        method: "qr",
+        showQr: () => {},
+        scanned: () => {},
+        phone: async () => "",
+        code: async () => "",
+        password: async () => "",
+        note: () => {},
+      })
+
+      expect(client.signInQr).not.toHaveBeenCalled()
+    })
   })
 
   describe("a phone login that asks for SMS", () => {
@@ -3476,6 +3565,7 @@ describe("closing", () => {
         method: "phone",
         forceSms: true,
         showQr: () => {},
+        scanned: () => {},
         phone: async () => "+10000000000",
         code: async () => codes.shift() ?? "",
         password: async () => passwords.shift() ?? "",
@@ -3539,6 +3629,7 @@ describe("closing", () => {
         method: "phone",
         forceSms: true,
         showQr: () => {},
+        scanned: () => {},
         phone: async () => "+10000000000",
         code: async () => "",
         password: async () => "",
