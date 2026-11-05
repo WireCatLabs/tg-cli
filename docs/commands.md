@@ -2478,7 +2478,7 @@ tg inbox [query] [options]
 | `--transcribe` | turn voice messages not heard yet into text — by the messenger where it can, else by a model on this machine; can take minutes. |
 | `--model <model>` | which downloaded speech model hears them, with --transcribe; `models list` shows them. |
 
-**Returns:** message summary — ref, chat_id, timestamp, sender_name, sender_is_me, outgoing, text, attachments, and 3 more; every field: tg commands info inbox
+**Returns:** message summary — ref, chat_id, timestamp, sender_name, sender_is_me, outgoing, text, attachments, and 4 more; every field: tg commands info inbox
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -2504,7 +2504,7 @@ tg review [query] [options]
 | `--model <model>` | which downloaded speech model hears them, with --transcribe; `models list` shows them. |
 | `--new` | what changed since the last `review --new`, a point per chat — for scheduled runs. |
 
-**Returns:** message summary — ref, chat_id, timestamp, sender_name, sender_is_me, outgoing, text, attachments, and 3 more; every field: tg commands info review
+**Returns:** message summary — ref, chat_id, timestamp, sender_name, sender_is_me, outgoing, text, attachments, and 4 more; every field: tg commands info review
 
 **Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
 
@@ -2968,6 +2968,22 @@ tg store status [chat]
 **Returns:** store chat status — chat_id, title, kind, messages, oldest_at, newest_at, last_stored_at, held; every field: tg commands info store status
 
 **Example:** `tg personal store status "Book club"`
+
+### `tg store chats`
+
+the account's chats as the store holds them
+
+#### `tg store chats status`
+
+over this account's searchable chats of every kind, channels included: fetched (back to the first message, up to date, no gaps), partial, never (no fetch recorded and no message held), and the oldest message held; reads the store only
+
+```sh
+tg store chats status
+```
+
+**Returns:** chat coverage — chats, fetched, partial, never, oldest_message_at; every field: tg commands info store chats status
+
+**Example:** `tg personal store chats status`
 
 ### `tg store gaps`
 
@@ -4712,18 +4728,26 @@ task statistics
 
 #### `tg stats tasks show`
 
-per chat: how many tasks are open, the oldest open one, the median time to close
+tasks per chat, meeting or project: open now, and opened and closed in the period (created: in the query), with the median time to close and the mean age of the open ones
 
 ```sh
-tg stats tasks show [options]
+tg stats tasks show [query] [options]
 ```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms that narrow the list — the fields are below. |
 
 | Option | What it does |
 |---|---|
+| `--by <group>` | chat (default) or meeting: this account's tasks; project: the owner's project tasks, every project. |
 | `--chat <chat>` | only this chat; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--type <type>` | only this type: question, request, mention or promise. |
+| `--timezone <zone>` | the IANA timezone for calendar days in the period, such as created>=today. |
 
-**Returns:** task stats — open, rows; every field: tg commands info stats tasks show
+**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 24 more; every field: tg commands info stats tasks show
+
+**Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks update <task>`
 
 **Example:** `tg personal stats tasks show --chat "Project room"`
 
@@ -11693,6 +11717,7 @@ Branch on the code, not on the text: the text can change, the code does not.
 | `12` | `provider_unavailable` |
 | `13` | `invalid_response` |
 | `14` | `outcome_unknown` |
+| `15` | `conflict` |
 | `130` | `cancelled` |
 | `1` | anything else |
 
