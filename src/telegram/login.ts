@@ -7,6 +7,8 @@ export interface LoginPrompts {
   method: "qr" | "phone"
   forceSms?: boolean
   showQr: (url: string, expires: Date) => void
+  /** The QR code was scanned; Telegram still has to move the login to the account's data centre and fetch it. */
+  scanned: () => void
   phone: () => Promise<string>
   code: () => Promise<string>
   password: () => Promise<string>
@@ -67,6 +69,10 @@ const loginAskingForSms = async ({ client }: Feature, prompts: LoginPrompts): Pr
       }
     }
   }
+  return askPassword(client, prompts)
+}
+
+const askPassword = async (client: Feature["client"], prompts: LoginPrompts): Promise<User> => {
   for (;;) {
     try {
       return await client.checkPassword(await prompts.password())
@@ -77,11 +83,34 @@ const loginAskingForSms = async ({ client }: Feature, prompts: LoginPrompts): Pr
   }
 }
 
+const LOGIN_ENDED = ["SESSION_REVOKED", "USER_DEACTIVATED", "USER_DEACTIVATED_BAN"]
+
+/**
+ * mtcute's `start({ qrCodeHandler })`, which does not pass `onQrScanned` on: after the scan, moving the login to the
+ * account's data centre and fetching the account take seconds, and the owner should not watch silence meanwhile.
+ */
+const loginByQr = async ({ client }: Feature, prompts: LoginPrompts): Promise<User> => {
+  try {
+    return await client.getMe()
+  } catch (error) {
+    if (tl.RpcError.is(error, "SESSION_PASSWORD_NEEDED")) return askPassword(client, prompts)
+    if (LOGIN_ENDED.some((text) => tl.RpcError.is(error, text))) await client.logOut().catch(() => {})
+    else if (!tl.RpcError.is(error, "AUTH_KEY_UNREGISTERED")) throw error
+  }
+  return client.signInQr({
+    onUrlUpdated: prompts.showQr,
+    onQrScanned: prompts.scanned,
+    password: prompts.password,
+    invalidPasswordCallback: () => prompts.note("that password was not accepted — try again"),
+  })
+}
+
 export const login = (feature: Feature, prompts: LoginPrompts): Promise<Account> =>
   feature.call(async () => {
-    if (prompts.method === "phone" && prompts.forceSms) return toAccount(await loginAskingForSms(feature, prompts))
+    if (prompts.method === "qr") return toAccount(await loginByQr(feature, prompts))
+    if (prompts.forceSms) return toAccount(await loginAskingForSms(feature, prompts))
     const user: User = await feature.client.start({
-      ...(prompts.method === "qr" ? { qrCodeHandler: prompts.showQr } : { phone: prompts.phone }),
+      phone: prompts.phone,
       code: prompts.code,
       password: prompts.password,
       codeSentCallback: (sent) => prompts.note(`Telegram sent a login code (${sent.type})`),

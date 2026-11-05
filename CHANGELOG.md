@@ -15,6 +15,13 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **From cli-core 0.563.0:** `config repair` mends the settings file's JSON syntax; `stats messages responses` and
   `stats messages waiting`; `tasks status`, `tasks review` and `tasks acknowledge`; `tasks add --open-new`.
 
+### Fixed
+
+- **A QR login says when the code was scanned.** Telegram then takes ten seconds or more to move the login to the
+  account's data centre, and tg printed nothing until it asked for the 2FA password or finished. It now prints
+  `scan accepted, finishing sign-in`, with `--json` as the stderr line
+  `{"event":"progress","step":"scanned","message":"scan accepted, finishing sign-in"}`, which WireCat Desktop shows.
+
 ## 0.115.0 — 03.11.2026
 
 ### Added

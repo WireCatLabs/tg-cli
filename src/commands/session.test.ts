@@ -277,6 +277,27 @@ describe("session start", () => {
     ])
   })
 
+  it("**says the scan was accepted** while Telegram finishes the login: a progress line with --json, a note otherwise", async () => {
+    const scanning = () => ({
+      ...loginAdapter({}),
+      login: async (prompts: LoginPrompts) => {
+        prompts.showQr("tg://login?token=x", new Date("2026-09-29T12:00:00.000Z"))
+        prompts.scanned()
+        return { id: "1", name: "Owner", username: null }
+      },
+    })
+    const env = { ...process.env, TG_API_ID: "1", TG_API_HASH: "h" }
+
+    const json = await tg(["session", "start", "--json"], { env, adapter: scanning })
+    const events = json.stderr.filter((line) => line.startsWith('{"event"')).map((line) => JSON.parse(line))
+    expect(events.map((e) => e.event)).toEqual(["qr", "progress"])
+    expect(json.stderr).toContain('{"event":"progress","step":"scanned","message":"scan accepted, finishing sign-in"}')
+
+    const pretty = await tg(["session", "start"], { env, adapter: scanning })
+    expect(pretty.stderr).toContain("· scan accepted, finishing sign-in")
+    expect(pretty.stderr.some((line) => line.startsWith('{"event"'))).toBe(false)
+  })
+
   const drawnAt = async (columns: number) => {
     const before = Object.getOwnPropertyDescriptor(process.stderr, "columns")
     Object.defineProperty(process.stderr, "columns", { value: columns, configurable: true })

@@ -94,6 +94,8 @@ const clockTime = (time: Date): string => {
   return `${time.toLocaleTimeString("en-GB", { timeZone: zone })} ${zone}`
 }
 
+const SCANNED = "scan accepted, finishing sign-in"
+
 const KEYS_IN = {
   environment: "from TG_API_ID and TG_API_HASH",
   keyring: "in the keyring",
@@ -216,6 +218,10 @@ export const startSession = async (
           `scan in Telegram → Settings → Devices → Link Desktop Device (valid until ${clockTime(expires)})`,
           expires,
         )
+      },
+      scanned: () => {
+        if (steps.json) steps.progress("scanned", SCANNED)
+        else context.renderer.note(SCANNED)
       },
       phone,
       code: () => {
