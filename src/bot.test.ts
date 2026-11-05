@@ -153,7 +153,7 @@ describe("the long poll", () => {
         const timer = setTimeout(resolve, 150)
         init.signal?.addEventListener("abort", () => {
           clearTimeout(timer)
-          reject(Object.assign(new Error("aborted"), { name: "TimeoutError" }))
+          reject(init.signal?.reason)
         })
       })
       return new Response(JSON.stringify({ ok: true, result: [] }))

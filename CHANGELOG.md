@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A Bot API call no longer keeps the finished command in memory for 30 seconds.** Its time limit was a timer that
+  ran to the end even after Telegram answered, and it held everything the command had loaded. A process making
+  many calls in a row, such as `tg bot watch` or `tg bot mcp`, grew by megabytes per call.
+
 ## 0.116.0 — 05.11.2026
 
 ### Added

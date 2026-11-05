@@ -55,24 +55,25 @@ export class TelegramBotTransport {
    * anyone. `file` goes up in the same request, as multipart: Telegram has no upload step of its own.
    * `timeoutMs` replaces the transport's for one call — a long poll waits longer than any other request.
    */
-  async call(
+  async call(method: string, params: Record<string, unknown> = {}, options: CallOptions = {}): Promise<unknown> {
+    const timeoutMs = options.timeoutMs ?? this.#timeoutMs
+    // Not AbortSignal.timeout: its timer lives until the deadline and holds the run's whole async context, so every
+    // finished command stayed in memory for 30 s; bot-api.test.ts ran out of heap on macOS (2026-11-05).
+    const deadline = new AbortController()
+    const timer = setTimeout(() => deadline.abort(new DOMException(`${method} timed out`, "TimeoutError")), timeoutMs)
+    timer.unref()
+    try {
+      return await this.#send(method, params, { ...options, timeoutMs }, deadline.signal)
+    } finally {
+      clearTimeout(timer)
+    }
+  }
+
+  async #send(
     method: string,
-    params: Record<string, unknown> = {},
-    {
-      reads = true,
-      file,
-      files = [],
-      body,
-      secrets = [],
-      timeoutMs = this.#timeoutMs,
-    }: {
-      reads?: boolean
-      file?: OutgoingFile
-      files?: readonly OutgoingFile[]
-      body?: string
-      secrets?: readonly string[]
-      timeoutMs?: number
-    } = {},
+    params: Record<string, unknown>,
+    { reads = true, file, files = [], body, secrets = [], timeoutMs = this.#timeoutMs }: CallOptions,
+    deadline: AbortSignal,
   ): Promise<unknown> {
     // The token is the first segment of the real path; `:token` is how cli-core writes it in a run.
     const end = providerRequest(method, this.#events ?? (() => {}), {
@@ -82,7 +83,7 @@ export class TelegramBotTransport {
       // A rate-limit retry is made above the transport (cli-core's `patiently`), which names the attempt itself.
       ...(currentAttempt() ? {} : { attempt: 1 }),
     })
-    const signals = [AbortSignal.timeout(timeoutMs), ...(this.#signal ? [this.#signal] : [])]
+    const signals = [deadline, ...(this.#signal ? [this.#signal] : [])]
     let response: Response
     try {
       response = await this.#fetch(`${this.#baseUrl}/bot${this.#token}/${method}`, {
@@ -161,6 +162,15 @@ export class TelegramBotTransport {
       { operation: method, retryable: true },
     )
   }
+}
+
+interface CallOptions {
+  reads?: boolean
+  file?: OutgoingFile
+  files?: readonly OutgoingFile[]
+  body?: string
+  secrets?: readonly string[]
+  timeoutMs?: number
 }
 
 /** A file sent with a method — `photo` for sendPhoto, `document`, `voice`. */
