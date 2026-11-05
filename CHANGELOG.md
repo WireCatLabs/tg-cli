@@ -3,15 +3,20 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.116.0 — 05.11.2026
 
 ### Fixed
 
 - **A Bot API call no longer keeps the finished command in memory for 30 seconds.** Its time limit was a timer that
   ran to the end even after Telegram answered, and it held everything the command had loaded. A process making
   many calls in a row, such as `tg bot watch` or `tg bot mcp`, grew by megabytes per call.
-
-## 0.116.0 — 05.11.2026
+- **`tg account list` no longer shows a bot as an account that is not signed in.** A name that only the bot side
+  uses is left out; a name that is your account and a bot too says `bot: true`. `tg mcp serve --profiles all` leaves
+  bots out the same way (cli-core 0.567.0).
+- **A QR login says when the code was scanned.** Telegram then takes ten seconds or more to move the login to the
+  account's data centre, and tg printed nothing until it asked for the 2FA password or finished. It now prints
+  `scan accepted, finishing sign-in`, with `--json` as the stderr line
+  `{"event":"progress","step":"scanned","message":"scan accepted, finishing sign-in"}`, which WireCat Desktop shows.
 
 ### Added
 
@@ -36,16 +41,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`search all` ranks every source as one list, searches mail by meaning too, and finds records for a question
   typed as a sentence** (cli-core 0.564.0). Before, each source's hits took turns, and a question found only records
   that held every one of its words.
-
-### Fixed
-
-- **`tg account list` no longer shows a bot as an account that is not signed in.** A name that only the bot side
-  uses is left out; a name that is your account and a bot too says `bot: true`. `tg mcp serve --profiles all` leaves
-  bots out the same way (cli-core 0.567.0).
-- **A QR login says when the code was scanned.** Telegram then takes ten seconds or more to move the login to the
-  account's data centre, and tg printed nothing until it asked for the 2FA password or finished. It now prints
-  `scan accepted, finishing sign-in`, with `--json` as the stderr line
-  `{"event":"progress","step":"scanned","message":"scan accepted, finishing sign-in"}`, which WireCat Desktop shows.
 
 ## 0.115.0 — 03.11.2026
 
