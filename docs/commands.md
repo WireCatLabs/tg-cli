@@ -112,7 +112,7 @@ the logged-in account
 
 ### `tg account list`
 
-every profile on this computer, and the account each is logged in as; asks the messenger nothing
+every account profile on this computer, and the account each is logged in as; a name that is only a bot is left out (`bot list` has it), one that is a bot too says `bot: true`; asks the messenger nothing
 
 ```sh
 tg account list [query]
@@ -122,7 +122,7 @@ tg account list [query]
 |---|---|---|
 | `query` | optional | field:value terms that narrow the list — the fields are below. |
 
-**Returns:** account profile — profile, current, account, name, signed_in; every field: tg commands info account list
+**Returns:** account profile — profile, current, account, name, signed_in, bot; every field: tg commands info account list
 
 **Example:** `tg personal account list`
 
@@ -6462,7 +6462,7 @@ tg bot list [query] [options]
 
 **Returns:** bot profile — name, token, bot, id, problem; every field: tg commands info bot list
 
-**Example:** `tg sales bot list`, `tg sales bot list --check`
+**Example:** `tg personal bot list`, `tg personal bot list --check`
 
 ### `tg bot chats`
 
