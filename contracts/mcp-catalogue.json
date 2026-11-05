@@ -133,6 +133,7 @@
   "schedule remove": "write",
   "schedule exec": "write",
   "store status": "read",
+  "store chats status": "read",
   "store gaps show": "read",
   "store gaps repair": "write",
   "store jobs list": "read",

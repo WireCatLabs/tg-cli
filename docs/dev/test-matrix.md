@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2390 ✅ · 130 ⛔ · 0 ❌** — 531 commands, 1989 options.
+**2393 ✅ · 130 ⛔ · 0 ❌** — 532 commands, 1991 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -351,6 +351,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule remove` |  | ✅ |  |
 | `schedule exec` |  | ✅ |  |
 | `store status` |  | ✅ |  |
+| `store chats status` |  | ✅ |  |
 | `store gaps show` |  | ✅ |  |
 | `store gaps repair` |  | ✅ |  |
 | `store gaps repair` | `--limit` | ✅ |  |
@@ -666,8 +667,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `stats chats retention` | `--limit` | ✅ |  |
 | `stats chats official` |  | ✅ |  |
 | `stats tasks show` |  | ✅ |  |
+| `stats tasks show` | `--by` | ✅ |  |
 | `stats tasks show` | `--chat` | ✅ |  |
 | `stats tasks show` | `--type` | ✅ |  |
+| `stats tasks show` | `--timezone` | ✅ |  |
 | `stats charts` |  | ✅ |  |
 | `stats charts` | `--chart-kind` | ✅ |  |
 | `stats charts` | `--by` | ✅ |  |
