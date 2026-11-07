@@ -2936,6 +2936,16 @@ describe("the address book and the profile", () => {
       "account.getAuthorizations",
     ])
   })
+
+  it("**a profile change Telegram failed with a 500 is outcome_unknown**", async () => {
+    const { adapter, client } = await open()
+    client.updateProfile.mockRejectedValueOnce(new tl.RpcError(500, "INTERNAL"))
+
+    await expect(adapter.updateProfile({ firstName: "New" })).rejects.toMatchObject({
+      code: "outcome_unknown",
+      details: { reason: "write.unanswered" },
+    })
+  })
 })
 
 describe("marking read", () => {
