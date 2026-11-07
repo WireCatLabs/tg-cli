@@ -173,9 +173,21 @@ export const toChat = (dialog: Dialog): Chat => ({
   unreadMentions: dialog.unreadMentionsCount,
 })
 
+const UTF8 = new TextDecoder("utf-8", { fatal: true })
+
+/** The owner's review buttons carry text data, so data that is not UTF-8 is left out rather than re-encoded. */
+const callbackData = (bytes: Uint8Array): string | undefined => {
+  try {
+    return UTF8.decode(bytes)
+  } catch {
+    return undefined
+  }
+}
+
 /**
  * Only a callback button is pressable. One that asks for the 2FA password is `other`, so a press is
- * refused before any request; the callback data stays out of the model and is read again on a press.
+ * refused before any request. Its data is carried only so cli-core can refuse an owner-only button; a
+ * press still reads the bytes again from the message.
  */
 const buttonOf = ({ text, type }: tl.RawKeyboardInlineButton): Button => {
   const kind: ButtonKind = (() => {
@@ -192,7 +204,13 @@ const buttonOf = ({ text, type }: tl.RawKeyboardInlineButton): Button => {
         return "other"
     }
   })()
-  return { kind, text, ...(type._ === "inlineButtonTypeUrl" ? { url: type.url } : {}) }
+  const data = type._ === "inlineButtonTypeCallback" ? callbackData(type.data) : undefined
+  return {
+    kind,
+    text,
+    ...(type._ === "inlineButtonTypeUrl" ? { url: type.url } : {}),
+    ...(data === undefined ? {} : { data }),
+  }
 }
 
 /** A bot's inline keyboard row by row; a reply keyboard is not under the message, so it is not listed. */

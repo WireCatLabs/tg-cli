@@ -13,6 +13,9 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **`messages press` refuses the owner's one-time review buttons.** tg now hands cli-core what a callback button
+  sends the bot, so cli-core can refuse a button meant for the owner's own hand (reason `press.owner-hand-only`).
+  The data is never printed; data that is not UTF-8 text is left out. Needs cli-core with `Button.data`.
 - **Opening the store no longer drops SQLite's file locks.** It used to open the file with truncate, which released the
   POSIX locks other processes held, so two writers could overlap (cli-core 0.599.0).
 - **A write that Ctrl-C or Telegram's own server failure cut short ends as `outcome_unknown`.** A bot's write cut by
