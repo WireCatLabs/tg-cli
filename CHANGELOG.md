@@ -21,6 +21,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   somebody's message, so the error now says what happened in fixed words, chosen by Telegram's error code, and names
   a new supergroup id or a wait only from Telegram's documented fields. "chat not found" is now `validation_error`,
   as Telegram answers it with 400; it was `not_found`, picked from the words.
+- **`tg account update` that Telegram failed with an internal error ends as `outcome_unknown`.** The name, bio or
+  photo may have been changed, and it said `provider_unavailable`.
 
 ## 0.116.0 — 05.11.2026
 

@@ -75,7 +75,10 @@ export const updateProfile = (
   feature: Feature,
   { firstName, lastName, description, photo }: Parameters<NonNullable<MessengerAdapter["updateProfile"]>>[0],
 ): Promise<Account> => {
-  return feature.call(async () => {
+  const what = photo
+    ? "the profile may have changed; repeating it is safe for the name and bio, but puts the photo up again"
+    : "the profile may have changed — repeating it is safe"
+  return feature.write(what, async () => {
     if (firstName !== undefined || lastName !== undefined || description !== undefined) {
       await feature.client.updateProfile({
         ...(firstName === undefined ? {} : { firstName }),
