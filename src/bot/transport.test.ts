@@ -78,3 +78,50 @@ describe("a Bot API write whose outcome is not known", () => {
     expect((await failureOf(transport.call("getChat"))).code).toBe("cancelled")
   })
 })
+
+const refusal = (body: Record<string, unknown>, status = 400) =>
+  new Response(JSON.stringify({ ok: false, ...body }), { status })
+const TITLE = "Synthetic Family Chat"
+
+describe("a Bot API refusal", () => {
+  it.each([
+    [400, "validation_error"],
+    [401, "authentication_error"],
+    [403, "permission_error"],
+    [404, "authentication_error"],
+    [409, "provider_error"],
+  ])("**a %i is %s, with none of Telegram's description**", async (status, code) => {
+    const api = telegram(refusal({ error_code: status, description: `Bad Request: chat not found: ${TITLE}` }, status))
+    const error = await failureOf(new TelegramBotTransport({ token: TOKEN, fetch: api.fetch }).call("getChat"))
+
+    expect(error.code).toBe(code)
+    expect(JSON.stringify({ message: error.message, details: error.details })).not.toMatch(/Synthetic|not found/)
+  })
+
+  it("**the code comes from Telegram's error_code, not the words**", async () => {
+    const api = telegram(refusal({ error_code: 403, description: "Not Found" }, 200))
+    const error = await failureOf(new TelegramBotTransport({ token: TOKEN, fetch: api.fetch }).call("sendMessage"))
+
+    expect(error.code).toBe("permission_error")
+  })
+
+  it("**a migrated group names the new id from parameters, not from the description**", async () => {
+    const api = telegram(
+      refusal({ error_code: 400, description: `${TITLE} upgraded`, parameters: { migrate_to_chat_id: -1001234 } }),
+    )
+    const error = await failureOf(new TelegramBotTransport({ token: TOKEN, fetch: api.fetch }).call("sendMessage"))
+
+    expect(error).toMatchObject({ code: "not_found", details: { migrated_chat_id: "-1001234" } })
+    expect(error.message).toBe("this group became a supergroup with id -1001234 — use that id from now on")
+  })
+
+  it("**a flood limit says how long to wait, from parameters**", async () => {
+    const api = telegram(
+      refusal({ error_code: 429, description: `Too Many Requests in ${TITLE}`, parameters: { retry_after: 7 } }, 429),
+    )
+    const error = await failureOf(new TelegramBotTransport({ token: TOKEN, fetch: api.fetch }).call("sendMessage"))
+
+    expect(error).toMatchObject({ code: "rate_limited", details: { retry_after_ms: 7000 } })
+    expect(error.message).toBe("Telegram asks to wait 7 s before sendMessage")
+  })
+})

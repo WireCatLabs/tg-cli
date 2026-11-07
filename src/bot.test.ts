@@ -74,7 +74,8 @@ describe("tg bot auth", () => {
     const set = await tg(["sales", "bot", "auth", "set", "--json"], telegram({ getMe: refused }), TOKEN)
 
     expect(set.code).toBe(4)
-    expect(set.err).toContain("Telegram did not accept this bot token (Unauthorized)")
+    expect(set.err).toContain("Telegram did not accept this bot token")
+    expect(set.err).not.toContain("Unauthorized")
     expect(keyring.entries.size).toBe(0)
   })
 })
