@@ -15,6 +15,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   every request Telegram answered with 500, -500 or -503, with no limit, so a create, join, edit or delete could be
   carried out twice. A write now goes once and ends as `outcome_unknown`; a read is still asked again, and a
   `FLOOD_WAIT` is still waited out. A -500 or -503 now reads as `provider_unavailable`, not as a refusal.
+- **A bot's refused request no longer repeats Telegram's own text.** That text may quote a chat's title or
+  somebody's message, so the error now says what happened in fixed words, chosen by Telegram's error code, and names
+  a new supergroup id or a wait only from Telegram's documented fields. "chat not found" is now `validation_error`,
+  as Telegram answers it with 400; it was `not_found`, picked from the words.
 
 ## 0.116.0 — 05.11.2026
 

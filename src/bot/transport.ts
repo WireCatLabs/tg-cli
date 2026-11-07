@@ -1,4 +1,4 @@
-import { CliError, type CliErrorDetails, type ErrorCode, isCliError } from "@wirecat/cli-base"
+import { CliError, type CliErrorDetails, isCliError } from "@wirecat/cli-base"
 import type { EventSink } from "@wirecat/cli-core/cli"
 import { apiJson, apiPlainJson, currentAttempt, parseApiJson, providerRequest } from "@wirecat/cli-core/cli"
 
@@ -31,7 +31,7 @@ interface Answer {
  *
  * ⚠ **The token is part of every address** — `/bot<token>/<method>` — so the address never leaves
  * this class: not in an error, not in a trace line, and never by passing on a failed request's own
- * error, whose text may hold it. A failure keeps the method, Telegram's code and Telegram's words.
+ * error, whose text may hold it. A failure keeps the method and Telegram's code, never Telegram's words.
  */
 export class TelegramBotTransport {
   readonly #token: string
@@ -207,15 +207,15 @@ const multipart = (params: Record<string, unknown>, files: readonly OutgoingFile
 }
 
 /**
- * Telegram's own words go into the message: they name the problem ("chat not found") and never the
- * token. Its `error_code` is "subject to change", so the code here follows the HTTP status.
+ * The message is ours, keyed by Telegram's code and its documented `parameters`: Telegram's `description` may quote
+ * a chat title or a user's text, so it never reaches a message (WC-SECR-6). A token Telegram cannot parse answers
+ * 404, a revoked one 401; the methods called are this code's own.
  */
 const refusalOf = (method: string, answer: Answer, status: number): CliError => {
-  const said = answer.description ?? `HTTP ${status}`
   const details: CliErrorDetails = { operation: method, status }
   const retryAfter = answer.parameters?.retry_after
   if (retryAfter !== undefined) {
-    return new CliError("rate_limited", `Telegram asks to wait ${retryAfter} s before ${method}: ${said}`, {
+    return new CliError("rate_limited", `Telegram asks to wait ${retryAfter} s before ${method}`, {
       ...details,
       retry_after_ms: retryAfter * 1000,
       retryable: true,
@@ -223,26 +223,28 @@ const refusalOf = (method: string, answer: Answer, status: number): CliError => 
   }
   const migrated = answer.parameters?.migrate_to_chat_id
   if (migrated !== undefined) {
+    return new CliError("not_found", `this group became a supergroup with id ${migrated} — use that id from now on`, {
+      ...details,
+      migrated_chat_id: String(migrated),
+    })
+  }
+  const refused = answer.error_code ?? status
+  if (refused === 401 || refused === 404)
+    return new CliError("authentication_error", "Telegram did not accept this bot token", details)
+  if (refused === 403) {
     return new CliError(
-      "not_found",
-      `this group became a supergroup with id ${migrated} — use that id from now on (${said})`,
-      { ...details, migrated_chat_id: String(migrated) },
+      "permission_error",
+      `Telegram does not let this bot ${method} there — it may be blocked, not in the chat, or without the right`,
+      details,
     )
   }
-  // A token Telegram cannot parse answers 404, a revoked one 401; the methods called are this code's own.
-  const code: ErrorCode =
-    status === 401 || status === 404
-      ? "authentication_error"
-      : status === 403
-        ? "permission_error"
-        : status >= 500
-          ? "provider_unavailable"
-          : /not found/i.test(said)
-            ? "not_found"
-            : status === 400
-              ? "validation_error"
-              : "provider_error"
-  const message =
-    code === "authentication_error" ? `Telegram did not accept this bot token (${said})` : `${method}: ${said}`
-  return new CliError(code, message, details)
+  if (refused >= 500) return new CliError("provider_unavailable", `Telegram failed on ${method} (${refused})`, details)
+  if (refused === 400) {
+    return new CliError(
+      "validation_error",
+      `Telegram refused ${method} (400): a chat, message or value in it is wrong, or the bot cannot see it`,
+      details,
+    )
+  }
+  return new CliError("provider_error", `Telegram refused ${method} (${refused})`, details)
 }
