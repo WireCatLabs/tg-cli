@@ -2847,6 +2847,8 @@ tg schedule command <name> <args> [options]
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
 | `--at <HH:MM>` | every day at this local time. |
 | `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+| `--notify-on <when>` | desktop notice after a run (default failures for an agent that repeats with --every, else always). One of: `always`, `failures`, `never`. |
+| `--to <route>` | also send the result, when --notify-on says so, by the owner's own tg or mail: telegram-bot:<profile>/<chat id or user:id>, or email:<profile>/<address>; repeat it for more. |
 
 **Returns:** run tg <args…> on a timer — reads save what they read, so this is how a…
 
@@ -2870,14 +2872,18 @@ tg schedule agent <name> <harness> <prompt> [options]
 
 | Option | What it does |
 |---|---|
+| `--model <model>` | the model it runs on: an alias such as sonnet, or a model id; "" for the harness's default (default sonnet for claude, codex's own for codex, or the config file's). |
 | `--max-cost <usd>` | claude only: stop a run that costs more than this, in US dollars. |
+| `--max-cost-per-day <usd>` | claude only: start no run for the rest of the day once its runs cost this much, in US dollars; 0 for no cap (default 5, or the config file's). |
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
 | `--at <HH:MM>` | every day at this local time. |
 | `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
+| `--notify-on <when>` | desktop notice after a run (default failures for an agent that repeats with --every, else always). One of: `always`, `failures`, `never`. |
+| `--to <route>` | also send the result, when --notify-on says so, by the owner's own tg or mail: telegram-bot:<profile>/<chat id or user:id>, or email:<profile>/<address>; repeat it for more. |
 
 **Returns:** start an agent (claude or codex) with a prompt on a timer; it runs with…
 
-**Example:** `tg personal schedule agent review claude "review what came in overnight and draft replies" --at 08:30`, `tg personal schedule agent triage codex "list what needs an answer today" --every 2h --max-cost 1`
+**Example:** `tg personal schedule agent review claude "review what came in overnight and draft replies" --at 08:30`, `tg personal schedule agent triage codex "list what needs an answer today" --every 2h --max-cost 1`, `tg personal schedule agent weekly claude "review the week's open threads" --at 09:00 --model opus`
 
 ### `tg schedule list`
 
@@ -2891,7 +2897,7 @@ tg schedule list [query]
 |---|---|---|
 | `query` | optional | field:value terms that narrow the list — the fields are below. |
 
-**Returns:** scheduled job — name, kind, when, last; every field: tg commands info schedule list
+**Returns:** scheduled job — name, kind, when, last, notify, to, spent_today_usd, max_cost_usd, and 1 more; every field: tg commands info schedule list
 
 **Example:** `tg personal schedule list`, `tg personal schedule list kind:agent`
 
@@ -3258,7 +3264,7 @@ tg store backup <file> [options]
 
 ### `tg store restore`
 
-put a backup in place of the store; the store it replaces is kept beside it, never deleted
+put a backup in place of the store; the store it replaces is kept beside it, never deleted. Given a rollback copy (backups/<store>-rollback-schema-<version>-<time>.db, kept for a day before an upgrade older tools cannot open), put its tables back in the store and return it to that version instead
 
 **Changes something on this computer only.**
 
@@ -3268,9 +3274,9 @@ tg store restore <file>
 
 | Argument | | What it is |
 |---|---|---|
-| `file` | required | a file `store backup` wrote; one written with --encrypt asks for its password. |
+| `file` | required | a file `store backup` wrote, or a rollback copy; one written with --encrypt asks for its password. |
 
-**Returns:** store restore — path, restored_from, kept_at, schema; every field: tg commands info store restore
+**Returns:** store restore — path, restored_from, kept_at, schema, rolled_back, was, tables, rebuilt, and 1 more; every field: tg commands info store restore
 
 **Example:** `tg personal store restore ./backup.db`
 
@@ -3374,6 +3380,24 @@ tg store tables list [query]
 **Returns:** store table — name, kind, rows, bytes; every field: tg commands info store tables list
 
 **Example:** `tg personal store tables list`, `tg personal store tables list kind:data`, `tg personal store tables list --full --json`
+
+### `tg store recover`
+
+check every page and search index of the store, say what is damaged, what it means and the commands that recover it; changes nothing
+
+#### `tg store recover run`
+
+copy every readable row into a new file with the sqlite3 program, rebuild the search indexes, mentions and vector index, check it, and put it in place of the store; the damaged file is kept beside it. Refuses while a WireCat timer or process has the store
+
+**Changes something on this computer only.**
+
+```sh
+tg store recover run
+```
+
+**Returns:** rebuild a damaged store from every row it can read
+
+**Example:** `tg personal store recover run`
 
 ## `tg conversations`
 
@@ -4745,7 +4769,7 @@ tg stats tasks show [query] [options]
 | `--type <type>` | only this type: question, request, mention or promise. |
 | `--timezone <zone>` | the IANA timezone for calendar days in the period, such as created>=today. |
 
-**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 24 more; every field: tg commands info stats tasks show
+**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 26 more; every field: tg commands info stats tasks show
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks update <task>`
 
@@ -4797,7 +4821,7 @@ tg tasks list [query] [options]
 |---|---|
 | `--limit <n>` | how many. |
 
-**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 24 more; every field: tg commands info tasks list
+**Returns:** task — ref, id, title, kind, state, created_at, key, description, and 26 more; every field: tg commands info tasks list
 
 **Next usually:** `tg tasks show <task>`, `tg tasks related <task>`, `tg tasks update <task>`
 
@@ -4859,7 +4883,7 @@ tg tasks update <task> [options]
 | `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
 | `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
-**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks update
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks update
 
 **Example:** `tg personal tasks update DOC-12 --title "Review draft"`
 
@@ -4883,7 +4907,7 @@ tg tasks link <task> [targets] [options]
 | `--chat <chat>` | a chat it concerns, repeatable; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--kind <kind>` | related-to (default), evidence — it shows the task is real — or created-from; for task:<id>, related-to, blocked-by, follow-up-of, duplicate-of or discovered-from. |
 
-**Returns:** task links — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks link
+**Returns:** task links — id, ref, key, project, project_key, project_name, created_by, title, and 28 more; every field: tg commands info tasks link
 
 **Example:** `tg personal tasks link DOC-12 https://example.com/draft`
 
@@ -4899,7 +4923,7 @@ tg tasks show <task>
 |---|---|---|
 | `task` | required | the task's id or key, as tasks list shows it. |
 
-**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks show
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks show
 
 **Example:** `tg personal tasks show DOC-12`
 
@@ -5162,7 +5186,7 @@ tg tasks claim <task> [options]
 | `--lease <duration>` | how long the claim lasts: 30m, 2h (default 30m); claiming again extends it. |
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks claim
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks claim
 
 **Example:** `tg personal tasks claim PR-12 --lease 2h`
 
@@ -5184,7 +5208,7 @@ tg tasks release <task> [options]
 |---|---|
 | `--holder <name>` | who you are for claims: a session id or a chat id; default WIRECAT_HOLDER, else Claude Code's session, else the agent's name. |
 
-**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks release
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks release
 
 **Example:** `tg personal tasks release PR-12`
 
@@ -5231,7 +5255,7 @@ tg tasks reject <task> [options]
 |---|---|
 | `--as-owner` | refuse it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
-**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 24 more; every field: tg commands info tasks reject
+**Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks reject
 
 **Example:** `tg personal tasks reject Q-15`
 
@@ -5277,7 +5301,7 @@ tg projects evidence <project> [options]
 
 ### `tg projects status`
 
-per chat confirmed as the project's (and its child projects'), from what the store holds: the last message, who replies next, open questions both ways, promises, amounts with their direction, payments recorded, how long each --context-query has been quiet on their side, and how much of the chat is held. Amounts, directions and promises found by words are marked pattern: read the cited message before trusting one. Only this profile's account is read; the other linked chats are named, and memo projects status reads them
+per chat confirmed as the project's (and its child projects'), from what the store holds: the last message, who replies next, open questions both ways, promises, amounts with their direction, payments recorded, how long each --context-query has been quiet on their side, and how much of the chat is held. Amounts, directions and promises found by words are marked pattern: read the cited message before trusting one. Others' questions in a group with no role, and others' word-found promises in a group, are counted on the chat's row as unlisted, not listed. Only this profile's account is read; the other linked chats are named, and memo projects status reads them
 
 ```sh
 tg projects status <project> [options]
@@ -5294,7 +5318,7 @@ tg projects status <project> [options]
 | `--purpose <purposes>` | the linked chats' purposes to read, comma separated (work, sales, support, other), or all; the configured defaults if not given, and a chat left out is counted, never dropped silently. Default: ``. |
 | `--context-query <words>` | words that all appear in one text; reports their last mention per side. Repeat for another. Default: ``. |
 
-**Returns:** project status — project, key, name, window, signals, money, chats, purposes, and 11 more; every field: tg commands info projects status
+**Returns:** project status — project, key, name, signals, money, chats, purposes, out_of_scope, and 7 more; every field: tg commands info projects status
 
 **Example:** `tg personal projects status HRB --context-query 1C`
 
