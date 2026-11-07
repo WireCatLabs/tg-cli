@@ -5,6 +5,12 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ## Unreleased
 
+### Changed — may break callers
+
+- **`schedule agent` and `schedule command` take `--deliver-to <route>`, no longer `--to <route>`.** In tg `--to`
+  already names a message's recipient. `schedule list` names the routes `deliver_to`; schedules saved with `--to`
+  keep delivering (cli-core 0.600.0).
+
 ### Fixed
 
 - **Opening the store no longer drops SQLite's file locks.** It used to open the file with truncate, which released the
