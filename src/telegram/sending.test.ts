@@ -1,6 +1,6 @@
 import type { RpcCallMiddleware, RpcCallMiddlewareContext } from "@mtcute/node"
 import { type DiagnosticEvent, inRun, withAttempt } from "@wirecat/cli-core/cli"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { middlewaresOf } from "./sending.js"
 
 const ALLOWED = new Set([
@@ -17,7 +17,7 @@ const ALLOWED = new Set([
 ])
 
 /** The middlewares tg gives mtcute, ending in a stand-in for Telegram that answers from `answers` in turn. */
-const callThrough = async (answers: unknown[], said: string[] = []) => {
+const callThrough = async (answers: unknown[], said: string[] = [], method = "messages.getHistory") => {
   const chain = [
     ...middlewaresOf({ maxWait: 10_000, maxRetries: 2 }, (line) => said.push(line)),
     (async () => answers.shift()) as RpcCallMiddleware,
@@ -25,7 +25,7 @@ const callThrough = async (answers: unknown[], said: string[] = []) => {
   const dispatch = (at: number, context: RpcCallMiddlewareContext): Promise<unknown> =>
     (chain[at] as RpcCallMiddleware)(context, (next) => dispatch(at + 1, next))
   const context = {
-    request: { _: "messages.getHistory", peer: { _: "inputPeerUser", userId: 42 }, limit: 20 },
+    request: { _: method, peer: { _: "inputPeerUser", userId: 42 }, limit: 20 },
     manager: { teardownSignal: new AbortController().signal, _log: { warn: () => {} } },
   } as unknown as RpcCallMiddlewareContext
   const events: DiagnosticEvent[] = []
@@ -73,5 +73,54 @@ describe("request lines for MTProto", () => {
       { event: "request", operation: "messages.getHistory", attempt: 2, waitMs: 30_000 },
       { event: "response", outcome: "ok", attempt: 2, waitMs: 30_000 },
     ])
+  })
+})
+
+const INTERNAL = { _: "mt_rpc_error", errorCode: 500, errorMessage: "INTERNAL" }
+
+describe("retries after Telegram's own failure", () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it.each([
+    "messages.createChat",
+    "channels.joinChannel",
+    "messages.editMessage",
+    "messages.deleteMessages",
+    "messages.getBotCallbackAnswer",
+  ])("**%s, a write, goes once and hands back the 500**", async (method) => {
+    const { answer, events } = await callThrough([INTERNAL, { _: "updates" }], [], method)
+
+    expect(answer).toEqual(INTERNAL)
+    expect(events.filter((event) => event.event === "request")).toHaveLength(1)
+  })
+
+  it.each([-500, -503])("**a write answered %i goes once too**", async (errorCode) => {
+    const failure = { _: "mt_rpc_error", errorCode, errorMessage: "Timeout" }
+    const { answer } = await callThrough([failure, { _: "updates" }], [], "messages.createChat")
+
+    expect(answer).toEqual(failure)
+  })
+
+  it("**a read is asked again after a 500**", async () => {
+    vi.useFakeTimers()
+    const pending = callThrough([INTERNAL, { _: "messages.messages" }])
+    await vi.advanceTimersByTimeAsync(1000)
+    const { answer, events } = await pending
+
+    expect(answer).toEqual({ _: "messages.messages" })
+    expect(events.filter((event) => event.event === "request")).toHaveLength(2)
+  })
+
+  it("**a write still waits out a FLOOD_WAIT, which applied nothing**", async () => {
+    const { answer, events } = await callThrough(
+      [{ _: "mt_rpc_error", errorCode: 420, errorMessage: "FLOOD_WAIT_1" }, { _: "updates" }],
+      [],
+      "messages.createChat",
+    )
+
+    expect(answer).toEqual({ _: "updates" })
+    expect(events.filter((event) => event.event === "request")).toHaveLength(2)
   })
 })
