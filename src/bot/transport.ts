@@ -121,11 +121,16 @@ export class TelegramBotTransport {
     try {
       answer = apiPlainJson(parseApiJson(text)) as Answer
     } catch {
-      end({ ...answered, errorCode: "invalid_response" })
-      throw new CliError("invalid_response", `Telegram answered ${method} with something that is not JSON`, {
-        operation: method,
-        status: response.status,
-      })
+      // A gateway's 502 or 504 is an HTML page, and a write behind it may have gone through.
+      const failure =
+        response.status >= 500
+          ? this.#refused(method, refusalOf(method, {}, response.status), reads)
+          : new CliError("invalid_response", `Telegram answered ${method} with something that is not JSON`, {
+              operation: method,
+              status: response.status,
+            })
+      end({ ...answered, errorCode: failure.code })
+      throw failure
     }
     if (answer.ok === true) {
       end(answered)
@@ -137,18 +142,25 @@ export class TelegramBotTransport {
         if (secret) answer.description = answer.description.split(secret).join("[redacted]")
       answer.description = answer.description.replace(/\b\d+:[A-Za-z0-9_-]{20,}\b/g, "[redacted]")
     }
-    const refusal = refusalOf(method, answer, response.status)
+    const refusal = this.#refused(method, refusalOf(method, answer, response.status), reads)
     end({ ...answered, errorCode: refusal.code })
     throw refusal
+  }
+
+  /** A server failure may come after a write was made; only a refusal says it was not (WC-LIFE-9). */
+  #refused(method: string, refusal: CliError, reads: boolean): CliError {
+    if (reads || refusal.code !== "provider_unavailable") return refusal
+    return new CliError(
+      "outcome_unknown",
+      `Telegram failed on ${method}; it may or may not have carried it out — check before repeating it`,
+      { ...refusal.details, retryable: false },
+    )
   }
 
   #unanswered(method: string, error: unknown, reads: boolean, timeoutMs: number): CliError {
     // A proxy that refused, or was not there, never passed the request on — not an unknown outcome.
     if (isCliError(error) && error.details.proxy !== undefined) return error
-    const timedOut = (error as { name?: string })?.name === "TimeoutError"
-    if (this.#signal?.aborted && (this.#signal.reason as { name?: string })?.name !== "TimeoutError") {
-      return new CliError("cancelled", `${method} was cancelled`, { operation: method })
-    }
+    // A cut write may have reached Telegram, and a caller told "cancelled" would send it again (WC-LIFE-9).
     if (!reads) {
       return new CliError(
         "outcome_unknown",
@@ -156,6 +168,10 @@ export class TelegramBotTransport {
         { operation: method, retryable: false },
       )
     }
+    if (this.#signal?.aborted && (this.#signal.reason as { name?: string })?.name !== "TimeoutError") {
+      return new CliError("cancelled", `${method} was cancelled`, { operation: method })
+    }
+    const timedOut = (error as { name?: string })?.name === "TimeoutError"
     return new CliError(
       timedOut ? "timeout" : "network_error",
       timedOut ? `${method} got no answer within ${timeoutMs} ms` : `${method} could not reach Telegram`,
