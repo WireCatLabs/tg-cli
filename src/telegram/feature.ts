@@ -74,10 +74,13 @@ export const retryDetails = (sendId: string, sendAs: string | undefined) => ({
   ...(sendAs === undefined ? {} : { sendAs }),
 })
 
-/** No answer is not a refusal: the write may have reached Telegram. Anything else is left for `call` to map. */
+/**
+ * No answer, or Telegram's own server failure, is not a refusal: the write may have reached Telegram (WC-LIFE-9).
+ * Anything else is left for `call` to map.
+ */
 export const unknownIfUnanswered = (error: unknown, what: string, details: Record<string, unknown> = {}): unknown => {
   const known = toCliError(error, bareCheck)
-  if (known instanceof CliError && ["timeout", "network_error"].includes(known.code)) {
+  if (known instanceof CliError && ["timeout", "network_error", "provider_unavailable"].includes(known.code)) {
     return withCause(
       new CliError("outcome_unknown", `no answer from Telegram — ${what}`, { ...details, reason: "write.unanswered" }),
       known,

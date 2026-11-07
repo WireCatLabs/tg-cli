@@ -3,6 +3,15 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Fixed
+
+- **A write that Ctrl-C or Telegram's own server failure cut short ends as `outcome_unknown`.** A bot's write cut by
+  a stop said `cancelled`, and one answered with HTTP 5xx said `provider_unavailable`, as did an account write that
+  Telegram failed with an internal error. Telegram may have carried each of them out, and a caller told "cancelled"
+  could send the message twice. A read keeps `cancelled` and `provider_unavailable`.
+
 ## 0.116.0 — 05.11.2026
 
 ### Fixed
