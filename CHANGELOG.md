@@ -11,6 +11,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   a stop said `cancelled`, and one answered with HTTP 5xx said `provider_unavailable`, as did an account write that
   Telegram failed with an internal error. Telegram may have carried each of them out, and a caller told "cancelled"
   could send the message twice. A read keeps `cancelled` and `provider_unavailable`.
+- **An account write that Telegram fails with an internal error is sent once, not again and again.** mtcute repeated
+  every request Telegram answered with 500, -500 or -503, with no limit, so a create, join, edit or delete could be
+  carried out twice. A write now goes once and ends as `outcome_unknown`; a read is still asked again, and a
+  `FLOOD_WAIT` is still waited out. A -500 or -503 now reads as `provider_unavailable`, not as a refusal.
 
 ## 0.116.0 — 05.11.2026
 

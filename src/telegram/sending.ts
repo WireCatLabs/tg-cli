@@ -73,21 +73,38 @@ const recordRequest: RpcCallMiddleware = async (context, next) => {
   return answer
 }
 
+const READ = /^[a-z]+\.(get|search|check|resolve)[A-Z]/
+// A callback answer presses a bot's button; views with `increment` count a view.
+const NOT_READ = new Set(["messages.getBotCallbackAnswer", "messages.getMessagesViews"])
+
+const isRead = (method: string): boolean => READ.test(method) && !NOT_READ.has(method)
+
+/**
+ * Telegram may have applied a write it answers with an internal error (500, -500, -503), and mtcute retries those
+ * without limit, so a write goes once and its failure becomes `outcome_unknown`. A FLOOD_WAIT applied nothing and is
+ * still waited out. A method this cannot tell is a read counts as a write.
+ */
+const internalErrors = (): RpcCallMiddleware => {
+  const reads = networkMiddlewares.internalErrorsHandler({})
+  const writes = networkMiddlewares.internalErrorsHandler({ maxRetries: 0 })
+  return (context, next) => (isRead(context.request._) ? reads : writes)(context, next)
+}
+
 export const middlewaresOf = (
   { maxWait, maxRetries }: { maxWait: number; maxRetries: number },
   say: (line: string) => void,
 ): RpcCallMiddleware[] => [
-  ...networkMiddlewares.basic({
-    floodWaiter: {
-      maxWait,
-      maxRetries,
-      onBeforeWait: (context, seconds) => {
-        const tried = tries.get(context)
-        if (tried) tried.waitMs = seconds * 1000
-        say(`Telegram asks to wait ${seconds} s before ${context.request._} — waiting, then going on`)
-      },
+  networkMiddlewares.mediaThrottle(),
+  networkMiddlewares.floodWaiter({
+    maxWait,
+    maxRetries,
+    onBeforeWait: (context, seconds) => {
+      const tried = tries.get(context)
+      if (tried) tried.waitMs = seconds * 1000
+      say(`Telegram asks to wait ${seconds} s before ${context.request._} — waiting, then going on`)
     },
   }),
+  internalErrors(),
   // Inside the flood and internal-error waiters, so each retry they make is a line of its own.
   recordRequest,
   noteAcceptedSend,

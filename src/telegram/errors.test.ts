@@ -222,6 +222,13 @@ describe("registered reasons (WC-OUT-15)", () => {
     expect(object.details).not.toHaveProperty("cause")
   })
 
+  it.each([-500, -503])("reports a write Telegram failed with %i as write.unanswered too", (code) => {
+    expect(objectOf(unknownIfUnanswered(rpc(code, "Timeout"), "check the chat"))).toMatchObject({
+      code: "outcome_unknown",
+      reason: "write.unanswered",
+    })
+  })
+
   it("reports a write Telegram failed with a 500 as write.unanswered, since it may have gone through", () => {
     expect(objectOf(unknownIfUnanswered(rpc(500, "INTERNAL"), "check the chat"))).toMatchObject({
       code: "outcome_unknown",
