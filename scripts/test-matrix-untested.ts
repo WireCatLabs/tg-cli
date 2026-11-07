@@ -18,7 +18,7 @@ export const UNTESTED: Untested[] = [
   },
   {
     command: "schedule command",
-    option: "--to",
+    option: "--deliver-to",
     reason:
       "cli-core src/cli/messenger/schedule.test.ts drives the shared handler the CLI mounts; schedule list shows the option's value (cli-core 0.599.0)",
   },
