@@ -10,6 +10,23 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  {
+    command: "schedule command",
+    option: "--notify-on",
+    reason:
+      "cli-core src/cli/messenger/schedule.test.ts drives the shared handler the CLI mounts; schedule list shows the option's value (cli-core 0.599.0)",
+  },
+  {
+    command: "schedule command",
+    option: "--to",
+    reason:
+      "cli-core src/cli/messenger/schedule.test.ts drives the shared handler the CLI mounts; schedule list shows the option's value (cli-core 0.599.0)",
+  },
+  {
+    command: "store recover",
+    reason:
+      "cli-core src/cli/store-recover.test.ts drives the shared command the CLI mounts, on a damaged store file (cli-core 0.599.0)",
+  },
   ...[
     ["stats messages responses", "--who", "src/cli/messenger/reply-stats-command.test.ts"],
     ["stats messages responses", "--by", "src/cli/messenger/reply-stats-command.test.ts"],

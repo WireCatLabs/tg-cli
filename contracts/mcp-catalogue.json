@@ -154,6 +154,8 @@
   "store reset": "write",
   "store copies delete": "write",
   "store tables list": "read",
+  "store recover": "read",
+  "store recover run": "write",
   "conversations list": "read",
   "conversations show": "read",
   "conversations related": "read",

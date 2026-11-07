@@ -7,6 +7,8 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Fixed
 
+- **Opening the store no longer drops SQLite's file locks.** It used to open the file with truncate, which released the
+  POSIX locks other processes held, so two writers could overlap (cli-core 0.599.0).
 - **A write that Ctrl-C or Telegram's own server failure cut short ends as `outcome_unknown`.** A bot's write cut by
   a stop said `cancelled`, and one answered with HTTP 5xx said `provider_unavailable`, as did an account write that
   Telegram failed with an internal error. Telegram may have carried each of them out, and a caller told "cancelled"

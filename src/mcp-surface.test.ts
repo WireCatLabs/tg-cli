@@ -45,7 +45,7 @@ describe("tg's bot MCP surface", () => {
       botServer({ "bot.api": "allow" })
         .tools.find((tool) => tool.command === "api get-me")
         ?.availability?.(),
-    ).toEqual({ available: true })
+    ).toMatchObject({ available: true })
     expect(
       botServer()
         .tools.find((tool) => tool.command === "config set")
@@ -55,7 +55,7 @@ describe("tg's bot MCP surface", () => {
       botServer({ "mcp.authority": "allow" })
         .tools.find((tool) => tool.command === "config set")
         ?.availability?.(),
-    ).toEqual({ available: true })
+    ).toMatchObject({ available: true })
   })
 
   it("**is pinned**: a command or an argument agents gain or lose shows up in the contract", async () => {

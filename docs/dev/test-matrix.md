@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2393 ✅ · 130 ⛔ · 0 ❌** — 532 commands, 1991 options.
+**2394 ✅ · 137 ⛔ · 0 ❌** — 534 commands, 1997 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -341,11 +341,17 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule command` | `--every` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule command` | `--at` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule command` | `--at-time` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1) |
+| `schedule command` | `--notify-on` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives the shared handler the CLI mounts; schedule list shows the option's value (cli-core 0.599.0) |
+| `schedule command` | `--to` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives the shared handler the CLI mounts; schedule list shows the option's value (cli-core 0.599.0) |
 | `schedule agent` |  | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
+| `schedule agent` | `--model` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--max-cost` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
+| `schedule agent` | `--max-cost-per-day` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--every` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--at` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--at-time` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives --every and --at through the shared handler tg mounts and a one-off run that removes itself; --at-time is parsed by the same code (0.250.1) |
+| `schedule agent` | `--notify-on` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
+| `schedule agent` | `--to` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule list` |  | ✅ |  |
 | `schedule run` |  | ✅ |  |
 | `schedule remove` |  | ✅ |  |
@@ -403,6 +409,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store reset` | `--dry-run` | ✅ |  |
 | `store copies delete` |  | ✅ |  |
 | `store tables list` |  | ✅ |  |
+| `store recover` |  | ⛔ | cli-core src/cli/store-recover.test.ts drives the shared command the CLI mounts, on a damaged store file (cli-core 0.599.0) |
+| `store recover run` |  | ✅ |  |
 | `conversations list` |  | ✅ |  |
 | `conversations list` | `--limit` | ✅ |  |
 | `conversations show` |  | ✅ |  |

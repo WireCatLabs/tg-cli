@@ -30,7 +30,5 @@
   "session start --app",
   "session start --sms",
   "setup --app",
-  "stats messages responses --who",
-  "tasks add --open-new",
   "topics enable --upgrade"
 ]
