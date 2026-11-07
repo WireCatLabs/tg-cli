@@ -191,7 +191,9 @@ export const toCliError = (error: unknown, words: CheckWords<Check>, login = wor
     if (error.code === RpcError.FORBIDDEN)
       return new CliError("permission_error", `Telegram refused: ${error.text}`, details)
     if (error.code === RpcError.FLOOD) return new CliError("rate_limited", `Telegram refused: ${error.text}`, details)
-    if (error.code >= 500) return new CliError("provider_unavailable", `Telegram failed: ${error.text}`, details)
+    // A code Telegram does not list, such as -500 or -503, counts as a 500 (core.telegram.org/api/errors#other-error-codes).
+    if (error.code >= 500 || error.code < 0)
+      return new CliError("provider_unavailable", `Telegram failed: ${error.text}`, details)
     return new CliError("provider_error", `Telegram refused: ${error.text}`, details)
   }
   if (error instanceof MtTimeoutError) return new CliError("timeout", "Telegram did not answer in time")
