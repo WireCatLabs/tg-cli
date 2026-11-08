@@ -93,7 +93,8 @@ describe("registering the owner's app on my.telegram.org", () => {
     })
     await registerApp(prompts, { fetch, signal: controller.signal })
     expect(seen).toHaveLength(3)
-    expect(seen.every(({ signal }) => signal === controller.signal)).toBe(true)
+    controller.abort()
+    expect(seen.every(({ signal }) => signal?.aborted)).toBe(true)
   })
   it("reads an app that already exists, without creating another", async () => {
     const { fetch, seen } = site({

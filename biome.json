@@ -8,10 +8,11 @@
       "!**/node_modules",
       "!**/pnpm-lock.yaml",
       "!**/pnpm-workspace.yaml",
-      "!.claude/settings.json",
+      "!.claude",
       "!.worktrees",
       "!config/wirecat",
-      "!lint/baseline"
+      "!lint/baseline",
+      "!contracts/wirecat.json"
     ]
   },
   "overrides": [

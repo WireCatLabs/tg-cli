@@ -1,9 +1,13 @@
 import { CliError, type CliErrorDetails, isCliError } from "@wirecat/cli-base"
 import type { EventSink } from "@wirecat/cli-core/cli"
 import { apiJson, apiPlainJson, currentAttempt, parseApiJson, providerRequest } from "@wirecat/cli-core/cli"
+import { guardedFetch } from "../http.js"
+import { DESKTOP } from "../identity.js"
 
 const API = "https://api.telegram.org"
 const DEFAULT_TIMEOUT_MS = 30_000
+// hostFetch's own deadline stays behind the call's, so the call's timer is the one that fires and names the timeout.
+const GUARD_MARGIN_MS = 5_000
 
 export type FetchLike = (url: string, init: RequestInit) => Promise<Response>
 
@@ -36,7 +40,7 @@ interface Answer {
 export class TelegramBotTransport {
   readonly #token: string
   readonly #baseUrl: string
-  readonly #fetch: FetchLike
+  readonly #fetch: FetchLike | undefined
   readonly #timeoutMs: number
   readonly #signal: AbortSignal | undefined
   readonly #events: EventSink | undefined
@@ -44,7 +48,7 @@ export class TelegramBotTransport {
   constructor(options: BotTransportOptions) {
     this.#token = options.token
     this.#baseUrl = options.baseUrl ?? API
-    this.#fetch = options.fetch ?? fetch
+    this.#fetch = options.fetch
     this.#timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS
     this.#signal = options.signal
     this.#events = options.events
@@ -86,7 +90,8 @@ export class TelegramBotTransport {
     const signals = [deadline, ...(this.#signal ? [this.#signal] : [])]
     let response: Response
     try {
-      response = await this.#fetch(`${this.#baseUrl}/bot${this.#token}/${method}`, {
+      const send = guardedFetch(DESKTOP.hosts, this.#fetch, timeoutMs + GUARD_MARGIN_MS)
+      response = await send(`${this.#baseUrl}/bot${this.#token}/${method}`, {
         method: "POST",
         ...(file || files.length
           ? {
@@ -103,7 +108,7 @@ export class TelegramBotTransport {
         signal: AbortSignal.any(signals),
       })
     } catch (error) {
-      const failure = this.#unanswered(method, error, reads, timeoutMs)
+      const failure = this.#unanswered(method, error, reads, timeoutMs, deadline)
       end({ errorCode: failure.code })
       throw failure
     }
@@ -112,7 +117,7 @@ export class TelegramBotTransport {
     try {
       text = await response.text()
     } catch (error) {
-      const failure = this.#unanswered(method, error, reads, timeoutMs)
+      const failure = this.#unanswered(method, error, reads, timeoutMs, deadline)
       end({ status: response.status, errorCode: failure.code })
       throw failure
     }
@@ -157,9 +162,10 @@ export class TelegramBotTransport {
     )
   }
 
-  #unanswered(method: string, error: unknown, reads: boolean, timeoutMs: number): CliError {
-    // A proxy that refused, or was not there, never passed the request on — not an unknown outcome.
-    if (isCliError(error) && error.details.proxy !== undefined) return error
+  #unanswered(method: string, error: unknown, reads: boolean, timeoutMs: number, deadline: AbortSignal): CliError {
+    // A proxy that refused, or was not there, never passed the request on — not an unknown outcome; nor did a host
+    // hostFetch refused.
+    if (isCliError(error) && (error.details.proxy !== undefined || error.details.sent === false)) return error
     // A cut write may have reached Telegram, and a caller told "cancelled" would send it again (WC-LIFE-9).
     if (!reads) {
       return new CliError(
@@ -171,7 +177,8 @@ export class TelegramBotTransport {
     if (this.#signal?.aborted && (this.#signal.reason as { name?: string })?.name !== "TimeoutError") {
       return new CliError("cancelled", `${method} was cancelled`, { operation: method })
     }
-    const timedOut = (error as { name?: string })?.name === "TimeoutError"
+    // hostFetch reports the call's own deadline as `cancelled`: the deadline is what says it was a timeout.
+    const timedOut = deadline.aborted || (error as { name?: string })?.name === "TimeoutError"
     return new CliError(
       timedOut ? "timeout" : "network_error",
       timedOut ? `${method} got no answer within ${timeoutMs} ms` : `${method} could not reach Telegram`,
