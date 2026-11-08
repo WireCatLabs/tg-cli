@@ -1,5 +1,7 @@
 import { randomBytes } from "node:crypto"
 import { CliError, singleLine } from "@wirecat/cli-base"
+import { guardedFetch } from "../http.js"
+import { DESKTOP } from "../identity.js"
 import type { ApiCredentials } from "./credentials.js"
 
 /**
@@ -27,11 +29,12 @@ type Fetch = (url: string, init: RequestInit) => Promise<Response>
 export const registerApp = async (
   prompts: RegistrationPrompts,
   {
-    fetch: request = fetch,
+    fetch: send,
     shortName = randomShortName(),
     signal,
   }: { fetch?: Fetch; shortName?: string; signal?: AbortSignal } = {},
 ): Promise<ApiCredentials & { created: boolean }> => {
+  const request = guardedFetch(DESKTOP.hosts, send)
   const cookies = new Map<string, string>()
   const call = async (path: string, form?: Record<string, string>) => {
     const response = await request(`${MY_TELEGRAM}${path}`, {
