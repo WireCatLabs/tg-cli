@@ -27,6 +27,7 @@ import { type ApiCredentials, apiCredentials } from "../telegram/credentials.js"
 import { resolveProxy } from "../telegram/proxy.js"
 import { ADMIN_RIGHTS, GROUP_SETTINGS } from "../telegram/rights.js"
 import type { UpdateEnvironment } from "../update.js"
+import { TELEGRAM_REMOVAL } from "./account-removal.js"
 
 export interface Environment extends BaseEnvironment {
   keyring?: KeyringStore
@@ -184,6 +185,7 @@ export const TELEGRAM: Messenger = {
     !(chat.kind === "unknown" && chat.id.startsWith("-100")) &&
     !OWN_NUMBERING.includes(String(chat.providerMetadata?.chatType ?? "")),
   skill: SKILL,
+  accountRemoval: TELEGRAM_REMOVAL,
 }
 
 export const forCommand = (command: Command): CommandContext => {

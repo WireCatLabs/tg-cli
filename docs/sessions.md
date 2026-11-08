@@ -163,6 +163,11 @@ tg personal session end      # log out on Telegram's side, and delete the sessio
 the app. It does not delete the app id and hash from the keyring, and it leaves the local store as
 it is.
 
+To forget a profile altogether, use `tg personal account remove --keep-data` or `--delete-data`. It logs the session
+out the same way, then deletes the profile's app id and hash, its proxy password, its bots' history sessions and
+what cli-core keeps for it. `--keep-data` leaves its messages searchable in the store; `--delete-data` deletes them.
+The bot token of a same-named bot profile stays: a bot is a separate account.
+
 ## How long a session lives
 
 Until it is ended: by `tg personal session end`, from the list of devices in a Telegram app, or by Telegram
