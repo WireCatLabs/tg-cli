@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2394 ✅ · 137 ⛔ · 0 ❌** — 534 commands, 1997 options.
+**2395 ✅ · 139 ⛔ · 0 ❌** — 536 commands, 1998 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -294,6 +294,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `models list` |  | ✅ |  |
 | `models download` |  | ✅ |  |
 | `models download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline |
+| `models set` |  | ✅ |  |
+| `models add` |  | ⛔ | the shared model catalogue command from cli-core 0.609.0; cli-core's src/cli/model-catalogue-command.test.ts drives it offline |
+| `models add` | `--payload` | ⛔ | the shared model catalogue command from cli-core 0.609.0; cli-core's src/cli/model-catalogue-command.test.ts drives it offline |
 | `inbox` |  | ✅ |  |
 | `inbox` | `--new` | ✅ |  |
 | `inbox` | `--limit` | ✅ |  |

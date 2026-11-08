@@ -3,6 +3,14 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg models set` and `tg models add`** from cli-core 0.609.0: choose the local embedding model every WireCat
+  CLI uses, and add one of your own from Hugging Face. A question with a time in it (`HH:MM`, `10:30`) is searched by
+  its words again.
+
 ## 0.118.0 — 08.11.2026
 
 ### Added
