@@ -60,7 +60,14 @@ describe("tg's bot MCP surface", () => {
 
   it("**is pinned**: a command or an argument agents gain or lose shows up in the contract", async () => {
     const catalogue = Object.fromEntries(botServer().tools.map((tool) => [tool.command, toJsonSchema(tool.input)]))
+    // cli-core owns the list of store settings: a new one there must not break tg's contract (or cli-core's release).
+    const coreSettings = (key: string, value: unknown) =>
+      key === "setting" && typeof value === "object" && value !== null && "description" in value
+        ? { ...value, description: "one of: <cli-core store settings>" }
+        : value
 
-    await expect(`${JSON.stringify(catalogue, null, 2)}\n`).toMatchFileSnapshot("../contracts/bot-catalogue.snap")
+    await expect(`${JSON.stringify(catalogue, coreSettings, 2)}\n`).toMatchFileSnapshot(
+      "../contracts/bot-catalogue.snap",
+    )
   })
 })
