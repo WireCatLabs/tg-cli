@@ -601,6 +601,17 @@ export const UNTESTED: Untested[] = [
     reason: "phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline",
   },
   {
+    command: "models add",
+    reason:
+      "the shared model catalogue command from cli-core 0.609.0; cli-core's src/cli/model-catalogue-command.test.ts drives it offline",
+  },
+  {
+    command: "models add",
+    option: "--payload",
+    reason:
+      "the shared model catalogue command from cli-core 0.609.0; cli-core's src/cli/model-catalogue-command.test.ts drives it offline",
+  },
+  {
     command: "contacts show",
     option: "--with-notes",
     reason:
