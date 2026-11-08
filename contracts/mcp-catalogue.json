@@ -109,6 +109,8 @@
   "models keys remove": "write",
   "models list": "read",
   "models download": "write",
+  "models set": "write",
+  "models add": "write",
   "inbox": "read",
   "review": "read",
   "topics list": "read",
