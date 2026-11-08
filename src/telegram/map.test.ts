@@ -227,6 +227,11 @@ describe("a chat", () => {
     })
   })
 
+  it("is not searchable when it is BotFather, whose messages hold bot tokens", () => {
+    expect(peerToChat(peer({ type: "user", id: 93372553, isBot: true }))).toMatchObject({ searchable: false })
+    expect(peerToChat(peer({ type: "user", isBot: true }))).not.toHaveProperty("searchable")
+  })
+
   it("sends null for a flag that is off and a username that is gone, so the store clears them", () => {
     expect(peerToChat(peer({ type: "user", isSelf: false, isBot: false }))).toMatchObject({
       providerMetadata: { isBot: null, username: null },

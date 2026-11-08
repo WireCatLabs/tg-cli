@@ -142,6 +142,9 @@ const kindOf = (peer: Peer): ChatKind => {
   return "group"
 }
 
+// Telegram's own bot that makes bots: every token it hands out is in this chat.
+const BOTFATHER = 93372553
+
 /** A chat as a peer alone describes it — no unread count or last message, which only a dialog carries. */
 export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Chat => {
   // `null` for a flag that is off or a name that is gone: the store keeps a key that is left out.
@@ -160,6 +163,7 @@ export const peerToChat = (peer: Peer, extra: Record<string, unknown> = {}): Cha
     lastMessageAt: null,
     participantsCount: groupMembersCount(peer),
     ...(metadata ? { providerMetadata: metadata } : {}),
+    ...(peer.id === BOTFATHER ? { searchable: false as const } : {}),
   }
 }
 
