@@ -3,6 +3,39 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## Unreleased
+
+### Added
+
+- **`tg config set` takes `crm.<provider>:<account>.links` and `crm.<provider>:<account>.company-types`**, the
+  store settings a CRM tool's sync reads (cli-core 0.606.0).
+
+### Changed — may break callers
+
+- **tg opens the store that memo and the other WireCat tools now migrate, and moves it to store version 57.** A store
+  at version 56 or later is refused by tg 0.117.0 and older, and by every tool built on a cli-core older than 0.606.0,
+  with a request to upgrade. Upgrade tg, max and memo together (cli-core 0.606.0, 0.607.0).
+- **`--offline` on a command that needs Telegram answers `permission_error` (`offline.refused`), exit code 5.**
+  `chats inspect`, `chats send-as`, `topics` and `upgrade` answered `validation_error`, exit code 2. A script that
+  checks for exit code 2 there needs the new code (cli-core 0.607.0).
+- **`contacts context` and `contacts prepare` read only accounts of the profile's own scope.** A personal profile no
+  longer shows a linked person's mail, messages, events or meetings from work accounts, and a work profile none from
+  personal ones. The answer's new `accounts` lists every account read, with its scope (cli-core 0.605.0).
+- **A name typed with е finds the chat or person named with ё.** A name that matched one chat or person exactly may
+  now match two (`Алена` and `Алёна`); tg then refuses it and lists both, as for any other ambiguous name
+  (cli-core 0.601.0).
+- **Searches read more queries as plain words.** A `?` that ends a word is a question mark, so `invoice?` finds
+  "invoice". Text with a colon, a URL, a bracket or an unbalanced quote (`meeting at 10:30`) is searched as words
+  where it was refused (cli-core 0.602.0, 0.604.0).
+
+### Fixed
+
+- **A damaged store file stops writes and names `tg store recover`.** A run that hit SQLite's "database disk image is
+  malformed" crashed as `internal_error`; it now answers `configuration_error` (`store.damaged`), and later commands
+  that write refuse until a deep check or a recovery passes. Reads still work (cli-core 0.605.0).
+- **People you separated stay apart.** A third identity with the same e-mail address could join two people again
+  after you moved them apart (cli-core 0.605.0).
+
 ## 0.117.0 — 07.11.2026
 
 ### Changed — may break callers
