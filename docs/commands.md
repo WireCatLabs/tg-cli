@@ -202,6 +202,26 @@ tg account sessions end [options]
 
 **Example:** `tg personal account sessions end --others`
 
+### `tg account remove`
+
+sign the profile out, then forget it on this computer: its settings, its saved sign-in and its files; --keep-data leaves its messages in the store, where search still finds them, --delete-data deletes them; asks first, or --yes
+
+**Changes something in Telegram.**
+
+```sh
+tg account remove [options]
+```
+
+| Option | What it does |
+|---|---|
+| `--keep-data` | leave what the store holds of this account, still searchable. |
+| `--delete-data` | delete what the store and the tool's own files hold of this account. |
+| `--dry-run` | list what it would remove and keep, and change nothing. |
+
+**Returns:** account removal — profile, data, dry_run, account, revoked, config_file, removed, kept; every field: tg commands info account remove
+
+**Example:** `tg personal account remove --keep-data --dry-run`, `tg personal account remove --delete-data --yes`
+
 ## `tg chats`
 
 the account's chats

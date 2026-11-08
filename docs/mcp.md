@@ -204,6 +204,8 @@ terminal:
 - **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check|revoke`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
   `mcp` and `bot mcp` alone only print their help.
+- **Removing an account**: `account remove` signs a profile out and forgets it on this computer, so only you start
+  it.
 - **Long-running commands**: `watch`, `serve` and `bot watch` run until you stop them, and an agent call must
   return. The MCP server itself (`mcp serve`, `bot mcp serve`) is left out for the same reason, and so is
   `mcp server` and `mcp server start|stop|status`, which run it in the background.

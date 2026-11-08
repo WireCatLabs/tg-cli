@@ -7,6 +7,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Added
 
+- **`tg account remove --keep-data|--delete-data`** logs the profile out on Telegram's side, then forgets it on this
+  computer: its session files, its app id and hash and proxy password in the keyring, its bots' history sessions and
+  what cli-core keeps for it. `--keep-data` leaves its messages searchable; `--delete-data` deletes them. A bot token
+  stays, and so does every other profile. A run with moved folders forgets its own copy and never logs out for the owner.
 - **`tg models set` and `tg models add`** from cli-core 0.609.0: choose the local embedding model every WireCat
   CLI uses, and add one of your own from Hugging Face. A question with a time in it (`HH:MM`, `10:30`) is searched by
   its words again.
