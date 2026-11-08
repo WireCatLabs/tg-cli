@@ -5414,7 +5414,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 13 more; every field: tg commands info search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 15 more; every field: tg commands info search all
 
 **Example:** `tg personal search all draft`
 

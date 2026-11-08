@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2395 ✅ · 139 ⛔ · 0 ❌** — 536 commands, 1998 options.
+**2399 ✅ · 139 ⛔ · 0 ❌** — 537 commands, 2001 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -32,6 +32,10 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `account sessions list` |  | ✅ |  |
 | `account sessions end` |  | ✅ |  |
 | `account sessions end` | `--others` | ✅ |  |
+| `account remove` |  | ✅ |  |
+| `account remove` | `--keep-data` | ✅ |  |
+| `account remove` | `--delete-data` | ✅ |  |
+| `account remove` | `--dry-run` | ✅ |  |
 | `chats list` |  | ✅ |  |
 | `chats list` | `--limit` | ✅ |  |
 | `chats list` | `--page` | ✅ |  |
