@@ -10,6 +10,24 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **`tg models set` and `tg models add`** from cli-core 0.609.0: choose the local embedding model every WireCat
   CLI uses, and add one of your own from Hugging Face. A question with a time in it (`HH:MM`, `10:30`) is searched by
   its words again.
+- **tg ships `contracts/wirecat.json`, which says which hosts it talks to over HTTP.** WireCat Desktop reads it to
+  show you, before you install, what tg touches: `api.telegram.org` (bots) and `my.telegram.org` (registering your
+  app), plus the proxy you set. Your account's own connection to Telegram (MTProto) is not HTTP and is not in that
+  list.
+
+### Changed — may break callers
+
+- **tg now writes the shared store at version 59, and an older WireCat CLI refuses it until it is upgraded.** Run
+  `<cli> upgrade` for each WireCat CLI on the same store. From cli-core 0.615.0, whose message templates live in the
+  store.
+
+### Security
+
+- **tg's HTTP reaches only the hosts it declares.** Every Bot API call and every step of app registration goes
+  through cli-base's `hostFetch`. It refuses any other host before a byte is sent, checks each redirect and drops
+  the `Authorization` header on a redirect to another site. Through a SOCKS5 or HTTP proxy the check still holds.
+  It does not cover MTProto, which GramJS sends over its own sockets to Telegram's data centres, or an MTProxy.
+  From cli-base 0.87.0 (was 0.80.8) and cli-core 0.615.0 (was 0.609.0).
 
 ## 0.118.0 — 08.11.2026
 
