@@ -99,6 +99,18 @@ describe("account remove", () => {
     expect(existsSync(join(here.sessions, "personal.session"))).toBe(true)
   })
 
+  it("**--dry-run changes nothing** and logs nothing out", async () => {
+    const here = setup()
+    telegram.loggedOut = []
+
+    const { code } = await tg(["personal", "account", "remove", "--keep-data", "--dry-run", "--json"], here)
+
+    expect(code).toBe(0)
+    expect(telegram.loggedOut).toEqual([])
+    expect(existsSync(join(here.sessions, "personal.session"))).toBe(true)
+    expect(held(here.keyring, "personal:api")).toBe(true)
+  })
+
   it("**succeeds on a profile that is already signed out** and logs nothing out", async () => {
     const here = setup()
     telegram.loggedOut = []
