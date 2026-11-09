@@ -3287,7 +3287,7 @@
         "search",
         "all"
       ],
-      "summary": "search stored messages, notes, calendar events and selected meeting transcripts",
+      "summary": "search stored messages, notes, calendar events and meetings",
       "effects": {
         "remote": "read",
         "local": "read"
@@ -4183,7 +4183,7 @@
         "messages",
         "edit"
       ],
-      "summary": "replace the text of a message the bot sent",
+      "summary": "replace the text or buttons of a message the bot sent",
       "effects": {
         "remote": "write",
         "local": "write"
