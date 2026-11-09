@@ -27,6 +27,10 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 
 ### Security
 
+- **The chat with BotFather is kept out of search.** It holds every bot token BotFather sent, so search over all chats
+  (`memo search` too), search by meaning and `memo context` leave it out; `tg messages list` and a search that names
+  the chat still read it. Takes effect with the cli-core release that reads `Chat.searchable`, at the next sync of the
+  chat list; that release also masks bot tokens in every chat.
 - **tg's HTTP reaches only the hosts it declares.** Every Bot API call and every step of app registration goes
   through cli-base's `hostFetch`. It refuses any other host before a byte is sent, checks each redirect and drops
   the `Authorization` header on a redirect to another site. Through a SOCKS5 or HTTP proxy the check still holds.
