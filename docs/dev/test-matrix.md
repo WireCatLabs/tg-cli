@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2399 ✅ · 139 ⛔ · 0 ❌** — 537 commands, 2001 options.
+**2399 ✅ · 141 ⛔ · 0 ❌** — 537 commands, 2003 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -167,6 +167,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts check` |  | ✅ |  |
 | `contacts check` | `--no-registries` | ✅ |  |
 | `contacts link` |  | ✅ |  |
+| `contacts link` | `--reason` | ⛔ | an agent's link becomes a proposal only with a reason; cli-core's src/cli/messenger/messenger.test.ts drives it as the owner and as an agent |
 | `contacts unlink` |  | ✅ |  |
 | `contacts lookup` |  | ✅ |  |
 | `contacts sync` |  | ✅ |  |
@@ -267,6 +268,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages sync` | `--catch-up-messages` | ✅ |  |
 | `messages sync` | `--catch-up-time` | ✅ |  |
 | `messages sync` | `--full-history` | ✅ |  |
+| `messages sync` | `--with-muted` | ⛔ | decides which chats --all reads from the messenger's mute state; cli-core's src/cli/messenger/backfill.test.ts drives it with and without the flag against a stand-in adapter |
 | `messages sync` | `--background` | ⛔ | spawns a detached process that outlives the test; cli-core's src/cli/messenger/backfill.test.ts drives it with a stand-in spawnJob, and lane L5 owns the live check |
 | `messages sync` | `--dry-run` | ✅ |  |
 | `reactions list` |  | ✅ |  |

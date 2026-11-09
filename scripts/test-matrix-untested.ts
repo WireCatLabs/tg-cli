@@ -586,6 +586,20 @@ export const UNTESTED: Untested[] = [
       "drives it with a stand-in spawnJob, and lane L5 owns the live check",
   },
   {
+    command: "messages sync",
+    option: "--with-muted",
+    reason:
+      "decides which chats --all reads from the messenger's mute state; cli-core's src/cli/messenger/backfill.test.ts " +
+      "drives it with and without the flag against a stand-in adapter",
+  },
+  {
+    command: "contacts link",
+    option: "--reason",
+    reason:
+      "an agent's link becomes a proposal only with a reason; cli-core's src/cli/messenger/messenger.test.ts drives it " +
+      "as the owner and as an agent",
+  },
+  {
     command: "images embed",
     option: "--chat",
     reason: "downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline",
