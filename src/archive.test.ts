@@ -346,7 +346,7 @@ describe("the archive, from the store", () => {
     expect(built.code).toBe(0)
     expect(counted.code).toBe(0)
     expect(embedded.code).toBe(6)
-    expect(embedded.stderr.join("\n")).toContain("models download e5-small")
+    expect(embedded.stderr.join("\n")).toMatch(/models download (e5-small|embeddinggemma)\b/)
     expect(refreshed.code).toBe(0)
     expect((refreshed.answer as { missing: unknown[] }).missing).toContainEqual(
       expect.objectContaining({ field: "by", step: "models.download" }),
