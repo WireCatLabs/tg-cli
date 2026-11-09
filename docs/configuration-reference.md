@@ -113,6 +113,7 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `record_input` | `true` | keep a run's command line as typed, secrets hidden; `failed` keeps it only in a run that failed; `false` writes `[redacted]` for every typed value that may be text ([diagnostics](diagnostics.md#what-you-typed)) | none |
 | `keep_runs_for_days` | `30` | failed runs older than this are removed when the next run is kept | none |
 | `keep_successful_runs_for_days` | `7` | runs that worked, older than this, are removed when the next run is kept | none |
+| `keep_store_runs_for_days` | `3` | runs that worked and wrote to the store are kept this many days, even with `record` off | none |
 | `runs_size_limit_mb` | `200` | the most the runs folder may hold; past it the oldest runs that worked go first | none |
 | `permissions` | everything allowed, except: deleting, ending sessions and a few other changes ask; reply rules may not send | what the profile may do, per command ([below](#what-a-profile-may-do)) | none; `--yes` and `--allow-dangerous` only answer `ask`, they never lift `deny` |
 | `sends_per_hour` | `30`; a bot has none until it is set in the `bot` section | the most sends in any hour ([the send guard](security.md#the-send-guard)) | none |
@@ -346,7 +347,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 
 | Key | Accepted type/value | Scope |
 |---|---|---|
-| `limit`, `timeout_ms`, `keep_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
+| `limit`, `timeout_ms`, `keep_runs_for_days`, `keep_store_runs_for_days`, `sends_per_hour` | integer ≥ 1 | profile |
 | `requests_per_minute` | integer ≥ 0 | profile |
 | `history_dialog_days`, `history_group_days` | integer 1 to 1095 | profile |
 | `history_group_members_max` | integer ≥ 1 | profile |
