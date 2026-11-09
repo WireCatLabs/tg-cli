@@ -1409,7 +1409,7 @@ tg contacts prepare <person> [options]
 
 ### `tg contacts events`
 
-everything one person took part in, in every messenger linked to them — messages they wrote or were mentioned in, chats, mail, meetings, tasks — newest first, from the store; never connects
+everything one person took part in, in every messenger linked to them — messages they wrote or were mentioned in, chats, mail, meetings, tasks — newest first, from the store; only in this account's scope, personal or work, and scope: of the other one is refused; never connects
 
 ```sh
 tg contacts events <person> [query] [options]
@@ -3526,7 +3526,7 @@ tg conversations related <chat> <message> [options]
 | Option | What it does |
 |---|---|
 | `--limit <n>` | how many. |
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -3546,7 +3546,7 @@ tg conversations status [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -3674,7 +3674,7 @@ tg conversations embeddings status [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -3696,7 +3696,7 @@ tg conversations embeddings clear [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -3777,7 +3777,7 @@ tg conversations embed [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -5397,7 +5397,7 @@ find things by text: one resource when you know it (messages, notes), or search 
 
 ### `tg search all`
 
-search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and a meeting account's transcripts when --source names one — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
+search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and meeting transcripts, chat and summaries when it holds a meeting account — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
 
 ```sh
 tg search all <query> [options]
@@ -5409,9 +5409,8 @@ tg search all <query> [options]
 
 | Option | What it does |
 |---|---|
-| `--only <resources>` | only these resources, separated by commas: messages, notes, events; meetings when --source names a meeting account. |
-| `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind, and meetings only when it names one. |
-| `--max-meetings <n>` | how many of the meeting account's meetings to look through, newest first, or all for every one (default 100). |
+| `--only <resources>` | only these resources, separated by commas: messages, notes, events, meetings. |
+| `--source <accounts>` | only these accounts, separated by commas: provider:account as a hit shows it, a provider, a kind or group:<name>; each resource reads the ones of its kind. |
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
 | `--exact` | bare words and quotes match their exact form only, as exact:word does. |
@@ -5419,7 +5418,7 @@ tg search all <query> [options]
 | `--backend <archive\|server\|both>` | where to search: the local archive, the messenger's server (default: both; message discovery uses archive only), or both. |
 | `--server-time <duration>` | stop waiting for the server after this long (default: 5s). |
 
-**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 15 more; every field: tg commands info search all
+**Returns:** hit — kind, ref, provider, account, title, timestamp, excerpt, url, and 17 more; every field: tg commands info search all
 
 **Example:** `tg personal search all draft`
 
@@ -5505,7 +5504,7 @@ tg search conversations <query> [options]
 
 | Option | What it does |
 |---|---|
-| `--model <model>` | local: a model id from `models list` (default: e5-small); remote: the provider's model. |
+| `--model <model>` | local: a model id from `models list` (default: embeddinggemma); remote: the provider's model. |
 | `--embedding-provider <provider>` | embedding provider: local or openai; flags override profile settings. |
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
@@ -6831,6 +6830,7 @@ tg bot messages send <chat> [text] [options]
 | `--silent` | deliver without a notification. |
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
+| `--button <text=data>` | an inline button, as <text>=<data>; repeat for more in one row; the data (1 to 64 bytes) goes back to the bot. |
 | `--file <file>` | attach a file; the text becomes its caption. |
 | `--photo <file>` | attach a .jpg, .png or .webp as a photo; the text becomes its caption. |
 | `--as-file` | send the --file as a file to download, a video included. |
@@ -6883,7 +6883,7 @@ tg bot messages show <chat> <message>
 
 #### `tg bot messages edit`
 
-replace the text of a message the bot sent
+replace the text of a message the bot sent; --button replaces its buttons, --no-buttons takes them off
 
 **Changes something in Telegram.**
 
@@ -6901,8 +6901,10 @@ tg bot messages edit <chat> <message> <text> [options]
 |---|---|
 | `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
 | `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
+| `--button <text=data>` | a button under the message, as <text>=<data>; replaces its buttons; repeat for more in one row. |
+| `--no-buttons` | take the buttons off the message. |
 
-**Returns:** replace the text of a message the bot sent
+**Returns:** replace the text or buttons of a message the bot sent
 
 **Example:** `tg sales bot messages edit Team 101 "Doors open at 10"`
 
