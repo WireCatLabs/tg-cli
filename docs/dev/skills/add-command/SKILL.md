@@ -81,7 +81,7 @@ a line to [`skills/tg-cli/SKILL.md`](../../../../skills/tg-cli/SKILL.md), which 
 
 - `pnpm generate` rewrites `docs/commands.md`. Never edit it by hand; full validation fails on drift.
 - The user page for the area (`README.md`, `docs/usage.md`, …): English, current facts only.
-- `CHANGELOG.md` under `## Unreleased`: what a user notices, under tg's headings
+- A changelog fragment, `changes/<branch>.md`: what a user notices, under tg's headings
   ([CONVENTIONS.md](../../CONVENTIONS.md#the-changelog)).
 - `parity.json` in cli-core: the command's row moves to `both`, or says why it is one-sided.
 
