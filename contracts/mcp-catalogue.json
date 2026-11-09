@@ -133,6 +133,8 @@
   "schedule list": "read",
   "schedule run": "write",
   "schedule remove": "write",
+  "schedule pause": "write",
+  "schedule resume": "write",
   "schedule exec": "write",
   "store status": "read",
   "store chats status": "read",
