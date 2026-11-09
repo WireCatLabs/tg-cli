@@ -67,7 +67,7 @@ Prepare one chat once, then ask as many questions as you like.
 ```sh
 tg personal messages sync "Book club"              # 1. download the history, if it is not saved yet
 tg personal conversations links rebuild --chat "Book club"  # 2. separate the chat into conversations
-tg personal models download e5-small        # 3. once: download the model, 135 MB, shared with max
+tg personal models download embeddinggemma  # 3. once: download the model, 219 MB, shared with max
 tg personal conversations embed --chat "Book club"  # 4. compute a vector for each piece
 tg personal search conversations "where do we meet" --chat "Book club"  # 5. ask
 tg personal conversations show 91                # 6. read the conversation that was found
@@ -123,8 +123,9 @@ saved again; only its vector and a fingerprint that shows when the text changes.
 `tg personal search conversations` looks for your question in two ways and joins the results:
 
 - **By meaning.** The question becomes a vector too. tg compares it with the vectors of all pieces and
-  ranks each conversation by its closest piece. With the default model `e5-small`, a match by meaning must
-  be close enough: its similarity score must be above 0.80, on a scale where 1 means the same meaning.
+  ranks each conversation by its closest piece. With the default model `embeddinggemma`, every match counts and they are
+  ranked by similarity, on a scale where 1 means the same meaning. With `e5-small`, a match by meaning
+  must be close enough: its similarity score must be above 0.80.
 - **By words.** tg also looks for each word of your question in the saved messages. A word of three or
   more letters also matches longer words that start with it (`meet` finds `meeting`). Typos are not
   corrected.
@@ -281,16 +282,19 @@ ask:
 
 ```sh
 tg personal models list kind:text                     # the models, and which are downloaded
-tg personal models download embeddinggemma --accept-terms
+tg personal models download embeddinggemma
 ```
 
-`e5-small` is the default: small and fast, about 100 languages. `embeddinggemma` finds more but runs
-about seven times slower, and downloads only with `--accept-terms`, since it comes under Google's Gemma
-terms. Vectors of two models are never mixed: search with the model you embedded with. A chat embedded
-only with another model is named on stderr.
+`embeddinggemma` is the default: it reads over 100 languages and finds more, but it comes under Google's
+Gemma terms of use. No flag is needed to download it. `--accept-terms` is still accepted but does
+nothing. `e5-small` is smaller and about seven times faster, under the MIT licence. A machine that has
+only `e5-small` keeps using it until `embeddinggemma` is downloaded. Choose a model with `models set`.
+Vectors of two models are never mixed: search with the model you embedded with. A chat embedded only
+with another model is named on stderr.
 
-On a recent laptop `e5-small` embeds about 30 pieces a second; a group of 100,000 messages takes a
-little over 20 minutes, once. Later runs embed only what changed.
+On a recent laptop `embeddinggemma` embeds about 8 pieces a second; a group of 100,000 messages takes
+about an hour and a quarter, once. `e5-small` does about 30 a second and takes a little over 20
+minutes. Later runs embed only what changed.
 
 A service can compute the vectors instead, with your own key:
 
