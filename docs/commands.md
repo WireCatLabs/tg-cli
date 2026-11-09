@@ -2914,7 +2914,7 @@ tg schedule command <name> <args> [options]
 | Option | What it does |
 |---|---|
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
-| `--at <HH:MM>` | every day at this local time; 'mon 09:00' once a week (mon, tue, wed, thu, fri, sat, sun). |
+| `--at <HH:MM>` | every day at this local time; 'mon 09:00' once a week, 'mon,fri 09:00' on several days (mon, tue, wed, thu, fri, sat, sun); repeat it for more times. |
 | `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
 | `--notify-on <when>` | desktop notice after a run (default failures for an agent that repeats with --every, else always). One of: `always`, `failures`, `never`. |
 | `--deliver-to <route>` | also send the result, when --notify-on says so, by the owner's own tg or mail: telegram-bot:<profile>/<chat id or user:id>, or email:<profile>/<address>; repeat it for more. |
@@ -2945,7 +2945,7 @@ tg schedule agent <name> <harness> <prompt> [options]
 | `--max-cost <usd>` | claude only: stop a run that costs more than this, in US dollars. |
 | `--max-cost-per-day <usd>` | claude only: start no run for the rest of the day once its runs cost this much, in US dollars; 0 for no cap (default 5, or the config file's). |
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
-| `--at <HH:MM>` | every day at this local time; 'mon 09:00' once a week (mon, tue, wed, thu, fri, sat, sun). |
+| `--at <HH:MM>` | every day at this local time; 'mon 09:00' once a week, 'mon,fri 09:00' on several days (mon, tue, wed, thu, fri, sat, sun); repeat it for more times. |
 | `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
 | `--notify-on <when>` | desktop notice after a run (default failures for an agent that repeats with --every, else always). One of: `always`, `failures`, `never`. |
 | `--deliver-to <route>` | also send the result, when --notify-on says so, by the owner's own tg or mail: telegram-bot:<profile>/<chat id or user:id>, or email:<profile>/<address>; repeat it for more. |
@@ -2966,25 +2966,30 @@ tg schedule list [query]
 |---|---|---|
 | `query` | optional | field:value terms that narrow the list — the fields are below. |
 
-**Returns:** scheduled job — name, kind, when, last, notify, deliver_to, spent_today_usd, max_cost_usd, and 1 more; every field: tg commands info schedule list
+**Returns:** scheduled job — name, kind, when, last, paused, notify, deliver_to, spent_today_usd, and 2 more; every field: tg commands info schedule list
 
 **Example:** `tg personal schedule list`, `tg personal schedule list kind:agent`
 
 ### `tg schedule run`
 
-run a schedule now, as its timer would, and wait for it
+run a schedule now, as its timer would, and wait for it; a paused one runs too
 
 **Changes something in Telegram.**
 
 ```sh
-tg schedule run <name>
+tg schedule run <name> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `name` | required | the schedule's name, as `schedule list` shows it. |
 
-**Returns:** run a schedule now, as its timer would, and wait for it
+| Option | What it does |
+|---|---|
+| `--no-notify` | keep the result here: send it along none of its routes. |
+| `--deliver-to <route>` | send it along only this one of its own routes; repeat it for more. |
+
+**Returns:** run a schedule now, as its timer would, and wait for it; a paused one runs too
 
 **Example:** `tg personal schedule run health`
 
@@ -3005,6 +3010,42 @@ tg schedule remove <name>
 **Returns:** stop a schedule and remove its timer; its past output stays
 
 **Example:** `tg personal schedule remove health`
+
+### `tg schedule pause`
+
+take a schedule off its timer and keep it; run runs it, resume puts it back
+
+**Changes something on this computer only.**
+
+```sh
+tg schedule pause <name>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | the schedule's name, as `schedule list` shows it. |
+
+**Returns:** take a schedule off its timer and keep it; run runs it, resume puts it back
+
+**Example:** `tg personal schedule pause health`
+
+### `tg schedule resume`
+
+put a paused schedule back on its timer
+
+**Changes something on this computer only.**
+
+```sh
+tg schedule resume <name>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `name` | required | the schedule's name, as `schedule list` shows it. |
+
+**Returns:** put a paused schedule back on its timer
+
+**Example:** `tg personal schedule resume health`
 
 ### `tg schedule exec`
 

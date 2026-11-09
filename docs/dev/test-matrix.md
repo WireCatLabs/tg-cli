@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2399 ✅ · 143 ⛔ · 0 ❌** — 537 commands, 2005 options.
+**2401 ✅ · 145 ⛔ · 0 ❌** — 539 commands, 2007 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -363,7 +363,11 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule agent` | `--deliver-to` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule list` |  | ✅ |  |
 | `schedule run` |  | ✅ |  |
+| `schedule run` | `--no-notify` | ⛔ | cli-core src/cli/schedule/schedule.test.ts drives it through the shared schedule commands the CLI mounts |
+| `schedule run` | `--deliver-to` | ⛔ | cli-core src/cli/schedule/schedule.test.ts drives it through the shared schedule commands the CLI mounts |
 | `schedule remove` |  | ✅ |  |
+| `schedule pause` |  | ✅ |  |
+| `schedule resume` |  | ✅ |  |
 | `schedule exec` |  | ✅ |  |
 | `store status` |  | ✅ |  |
 | `store chats status` |  | ✅ |  |

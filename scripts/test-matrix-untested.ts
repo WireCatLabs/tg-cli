@@ -10,6 +10,13 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...[
+    { command: "schedule run", option: "--no-notify" },
+    { command: "schedule run", option: "--deliver-to" },
+  ].map((entry) => ({
+    ...entry,
+    reason: "cli-core src/cli/schedule/schedule.test.ts drives it through the shared schedule commands the CLI mounts",
+  })),
   ...["bot messages send --button", "bot messages edit --button", "bot messages edit --no-buttons"].map((entry) => ({
     command: entry.slice(0, entry.lastIndexOf(" ")),
     option: entry.slice(entry.lastIndexOf(" ") + 1),
