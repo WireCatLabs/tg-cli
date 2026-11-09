@@ -39,6 +39,12 @@ generated pages. What is `tg`'s own:
 checks the shape. Sections up to 0.69.0 were released with `What's new` and `Changed — may break scripts`; they stay
 as they are, because a released section is never edited.
 
+A pull request adds its entries as a changelog fragment: a new file `changes/<branch>.md` (lower case, `/` as `-`)
+with one or more of those headings and the entries under them, written as they will read in `CHANGELOG.md`, with
+links relative to `changes/` (`../docs/…`). Do not edit `## Unreleased`: every open pull request edits the same lines
+there and conflicts at each merge. `pnpm docs:check` checks the fragments; `bin/release` collects them into the
+version's section and deletes them in its pull request.
+
 When `bin/release` has to take the next free version, it renames the prepared version's heading — or, if npm already
 has that version, dates `## Unreleased` as the new one and leaves the published section alone.
 

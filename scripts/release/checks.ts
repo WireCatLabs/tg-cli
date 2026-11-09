@@ -14,7 +14,7 @@ import {
 
 const IDS = [...JOURNAL_IDS, "OPS", "CLI"]
 
-const CHANGELOG: ChangelogRules = {
+export const CHANGELOG: ChangelogRules = {
   headings: ["Added", "Changed — may break callers", "Fixed", "Removed", "Security"],
   unreleased: "Unreleased",
   ids: IDS,
