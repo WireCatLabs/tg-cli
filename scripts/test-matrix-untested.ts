@@ -10,6 +10,12 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  ...["bot messages send --button", "bot messages edit --button", "bot messages edit --no-buttons"].map((entry) => ({
+    command: entry.slice(0, entry.lastIndexOf(" ")),
+    option: entry.slice(entry.lastIndexOf(" ") + 1),
+    reason:
+      "cli-core src/cli/bot/messages.test.ts sends and edits a message's inline buttons through the shared bot commands",
+  })),
   {
     command: "schedule command",
     option: "--notify-on",
@@ -418,11 +424,6 @@ export const UNTESTED: Untested[] = [
     option: "--saved",
     reason:
       "cli-core src/cli/messenger/searches.test.ts covers saved query execution and src/services/searches.test.ts validates shared query parameters",
-  },
-  {
-    command: "search all",
-    option: "--max-meetings",
-    reason: "cli-core src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through",
   },
   {
     command: "search all",

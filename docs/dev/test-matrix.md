@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2399 ✅ · 141 ⛔ · 0 ❌** — 537 commands, 2003 options.
+**2399 ✅ · 143 ⛔ · 0 ❌** — 537 commands, 2005 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -781,7 +781,6 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search all` |  | ✅ |  |
 | `search all` | `--only` | ✅ |  |
 | `search all` | `--source` | ✅ |  |
-| `search all` | `--max-meetings` | ⛔ | cli-core src/cli/messenger/messenger.test.ts bounds how many meetings search all looks through |
 | `search all` | `--limit` | ✅ |  |
 | `search all` | `--page` | ✅ |  |
 | `search all` | `--exact` | ✅ |  |
@@ -997,6 +996,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages send` | `--silent` | ✅ |  |
 | `bot messages send` | `--md` | ✅ |  |
 | `bot messages send` | `--html` | ✅ |  |
+| `bot messages send` | `--button` | ⛔ | cli-core src/cli/bot/messages.test.ts sends and edits a message's inline buttons through the shared bot commands |
 | `bot messages send` | `--file` | ✅ |  |
 | `bot messages send` | `--photo` | ✅ |  |
 | `bot messages send` | `--as-file` | ✅ |  |
@@ -1008,6 +1008,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `bot messages edit` |  | ✅ |  |
 | `bot messages edit` | `--md` | ✅ |  |
 | `bot messages edit` | `--html` | ✅ |  |
+| `bot messages edit` | `--button` | ⛔ | cli-core src/cli/bot/messages.test.ts sends and edits a message's inline buttons through the shared bot commands |
+| `bot messages edit` | `--no-buttons` | ⛔ | cli-core src/cli/bot/messages.test.ts sends and edits a message's inline buttons through the shared bot commands |
 | `bot messages delete` |  | ✅ |  |
 | `bot messages delete` | `--allow-dangerous` | ✅ |  |
 | `bot messages pin` |  | ✅ |  |
