@@ -7358,6 +7358,8 @@
         "error_code",
         "operation",
         "profile",
+        "kind",
+        "table",
         "run_id",
         "command",
         "completed_at",

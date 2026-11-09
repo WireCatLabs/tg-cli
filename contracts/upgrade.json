@@ -51,6 +51,23 @@
       "diagnostic": "4 terms\n"
     },
     {
+      "id": "candidate-store-first-read",
+      "args": ["contract", "--offline", "--json", "--record", "messages", "list", "7"],
+      "exit": 0,
+      "stream": "stdout",
+      "kind": "json",
+      "previous": false,
+      "allowSensitiveOutput": true,
+      "json": {
+        "items": [
+          {
+            "id": "101",
+            "text": "wirecat-synthetic-message-canary"
+          }
+        ]
+      }
+    },
+    {
       "id": "candidate-store-data",
       "args": ["contract", "--offline", "--json", "--trace", "--record", "messages", "list", "7"],
       "exit": 0,
