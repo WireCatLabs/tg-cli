@@ -1456,7 +1456,7 @@ record that two people in the store are one person — the same name is never en
 **Changes something on this computer only.**
 
 ```sh
-tg contacts link <person> <other>
+tg contacts link <person> <other> [options]
 ```
 
 | Argument | | What it is |
@@ -1464,7 +1464,11 @@ tg contacts link <person> <other>
 | `person` | required | their id, @username, or part of their name. |
 | `other` | required | the same in another messenger of the store, as <messenger>:<person> — max:Ana; me: it is you, as zoom:<id> me. |
 
-**Returns:** linked person — uid, name, identities; every field: tg commands info contacts link
+| Option | What it does |
+|---|---|
+| `--reason <text>` | why they are one person; an agent's link is a proposal and needs it. |
+
+**Returns:** linked person — uid, name, identities, proposal; every field: tg commands info contacts link
 
 **Example:** `tg personal contacts link "Alex Example" zoom:101`
 
@@ -1482,7 +1486,7 @@ tg contacts unlink <person>
 |---|---|---|
 | `person` | required | their id, @username, or part of their name; <messenger>:<person> for another messenger. |
 
-**Returns:** linked person — uid, name, identities; every field: tg commands info contacts unlink
+**Returns:** linked person — uid, name, identities, proposal; every field: tg commands info contacts unlink
 
 **Example:** `tg personal contacts unlink "Alex Example"`
 
@@ -2186,7 +2190,7 @@ tg messages sync [chat] [options]
 
 | Option | What it does |
 |---|---|
-| `--all` | every chat, most recently active first — what search needs; the last 90d unless --since-time or --last. |
+| `--all` | every chat, most recently active first — what search needs; the last 90d unless --since-time or --last; muted chats only with --with-muted or history_muted true. |
 | `--limit <n>` | at most this many messages in this run, per chat with --all; 1000 if not given. |
 | `--page-size <n>` | how many messages one request asks for; 100 if not given. |
 | `--pause <duration>` | pause between pages, to stay under the provider's limits. Default: `1s`. |
@@ -2198,6 +2202,7 @@ tg messages sync [chat] [options]
 | `--catch-up-messages <n>` | skip a graph rebuild larger than this many messages. |
 | `--catch-up-time <duration>` | local preparation time budget, 30s by default. |
 | `--full-history` | read and keep this chat's history in full from now on, past the history limits (history_* settings). |
+| `--with-muted` | with --all: also read the chats the owner muted, as history_muted true does. |
 | `--background` | run as a job that outlives this command; `store jobs show` follows it. |
 | `--dry-run` | only estimate how many messages, requests and minutes a full fetch would still take — from the store, no request. |
 
@@ -2470,13 +2475,13 @@ tg models download <model> [options]
 
 | Option | What it does |
 |---|---|
-| `--accept-terms` | accept the model's licence terms, for a model that has its own. |
+| `--accept-terms` | no longer needed; kept so older scripts still run. |
 
 **Returns:** model — id, kind, title, languages, size_bytes, downloaded, default, path, and 6 more; every field: tg commands info models download
 
 **Next usually:** `tg models set <model>`, `tg images models download <model>`
 
-**Example:** `tg personal models download e5-small`, `tg personal models download mmarco`
+**Example:** `tg personal models download embeddinggemma`, `tg personal models download mmarco`
 
 ### `tg models set`
 
@@ -4241,7 +4246,7 @@ tg mentions confirm <id> [person] [options]
 | `--all-in-chat` | a name: also every undecided place of the same name in its chat. |
 | `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
-**Returns:** mention decision — kind, value, status, target, mentions; every field: tg commands info mentions confirm
+**Returns:** mention decision — kind, value, status, target, mentions, proposal; every field: tg commands info mentions confirm
 
 **Example:** `tg personal mentions confirm 12 person:7`, `tg personal mentions confirm 15`, `tg personal mentions confirm 31 person:7 --all-in-chat`
 
@@ -4264,7 +4269,7 @@ tg mentions reject <id> [options]
 | `--all-in-chat` | a name: also every undecided place of the same name in its chat. |
 | `--as-owner` | record it as yours although an agent's terminal runs the tool (AI_AGENT or CLAUDECODE set). |
 
-**Returns:** mention decision — kind, value, status, target, mentions; every field: tg commands info mentions reject
+**Returns:** mention decision — kind, value, status, target, mentions, proposal; every field: tg commands info mentions reject
 
 **Example:** `tg personal mentions reject 12`
 
@@ -6155,7 +6160,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -6180,7 +6185,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self. |
 
 | Option | What it does |
 |---|---|

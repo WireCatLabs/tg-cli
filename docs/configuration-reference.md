@@ -106,6 +106,7 @@ command that uses an account stops with exit code `2` and lists the profiles on 
 | `history_dialog_days` | `1095` | how many days back `messages sync` reads a one-to-one chat, 1 to 1095 | `messages sync --full-history` |
 | `history_group_days` | `365` | how many days back `messages sync` reads a group, 1 to 1095 | `messages sync --full-history` |
 | `history_group_members_max` | `50` | `messages sync` does not read the history of a group with more people; `store status` lists what was left out. Live messages from `serve` are kept either way | `messages sync --full-history` |
+| `history_muted` | `false` | `messages sync --all` also reads the chats you muted. Without it they are left out and counted in `limited.muted`; a chat you name, or keep with `--full-history`, is read either way | `messages sync --all --with-muted` |
 | `picture_search` | `false` | search stored pictures by what they show. `images embed` reads the stored pictures once the model is downloaded, and then `search messages` also returns a `pictures` list ([pictures](search.md#pictures-by-what-they-show)) | none |
 | `search_reranker` | `mmarco` | the model that reranks the first 50 hits of `search messages --discover`: `mmarco` (136 MB), `bge-reranker-v2-m3` (588 MB) or `off`. A reranker that is not downloaded is skipped, and discovery says so; `tg models download mmarco` downloads it | none |
 | `record` | `true` | keep every run; `false` keeps failed runs only ([diagnostics](diagnostics.md)) | `--record`, `--no-record` (keeps nothing) |
@@ -349,7 +350,7 @@ Unknown keys and invalid types are errors. Defaults and effects are listed [abov
 | `requests_per_minute` | integer ≥ 0 | profile |
 | `history_dialog_days`, `history_group_days` | integer 1 to 1095 | profile |
 | `history_group_members_max` | integer ≥ 1 | profile |
-| `color`, `sender_colors`, `search_catch_up`, `record`, `record_input` | boolean | profile |
+| `color`, `sender_colors`, `search_catch_up`, `history_muted`, `record`, `record_input` | boolean | profile |
 | `permissions` | object of command paths and `deny`, `readonly`, `ask`, `allow` levels | profile |
 | `read_other_bots` | boolean or array of profile names | bot only |
 | `update_check`, `skill_hint` | boolean | root `defaults` only |
