@@ -3,7 +3,7 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
-## Unreleased
+## 0.119.0 — 09.11.2026
 
 ### Added
 
@@ -18,12 +18,25 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
   show you, before you install, what tg touches: `api.telegram.org` (bots) and `my.telegram.org` (registering your
   app), plus the proxy you set. Your account's own connection to Telegram (MTProto) is not HTTP and is not in that
   list.
+- **A pull request adds its changelog entries as a fragment, `changes/<branch>.md`.** Open pull requests no longer
+  conflict under `## Unreleased`. `pnpm docs:check` checks each fragment, and `bin/release` collects them into the
+  version's section. An entry under `## Unreleased` still works during the move.
 
 ### Changed — may break callers
 
 - **tg now writes the shared store at version 59, and an older WireCat CLI refuses it until it is upgraded.** Run
   `<cli> upgrade` for each WireCat CLI on the same store. From cli-core 0.615.0, whose message templates live in the
   store.
+
+### Fixed
+
+- **`tg serve` exits when the build it runs is out of date, so its service starts the new one.** Every minute it
+  checks whether the shared store moved to a format this build can no longer write, or whether a newer tg is
+  installed. If so it logs `serve.outdated` and exits with code 3, and the systemd unit (`Restart=on-failure`)
+  starts the installed version. Before, a serve could run for a day on the old build and store nothing.
+- **After `tg store recover run`, the next ordinary sync fetches again what the damage may have taken.** The recovery
+  marks what each chat held from a day before the last deep check that passed as not fetched, so a sync no longer
+  jumps over a hole inside a chat. From cli-core 0.618.0 (was 0.616.0).
 
 ### Security
 
