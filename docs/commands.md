@@ -3298,6 +3298,24 @@ tg store clear [options]
 
 **Example:** `tg personal store clear --left --dry-run`
 
+### `tg store import`
+
+load a JSON file marked "synthetic": true (account, people, chats, members, messages) into this profile's account in the local store, as a sync would save them; the same file twice adds nothing and a changed message is updated in place. Refuses the owner's real store. Without --yes, says what it would load and changes nothing
+
+**Changes something on this computer only.**
+
+```sh
+tg store import <file>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `file` | required | the JSON file to load. |
+
+**Returns:** store import — store, profile, account, imported, file, added; every field: tg commands info store import
+
+**Example:** `tg personal store import ./synthetic-chats.json --yes`
+
 ### `tg store info`
 
 the store file: where it is, its size, its schema against the one this tool speaks, which tools used it and how many rows it holds, by provider, chat kind, account, year (UTC) and attachment kind, over every account; changes nothing
