@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2401 ✅ · 145 ⛔ · 0 ❌** — 539 commands, 2007 options.
+**2402 ✅ · 145 ⛔ · 0 ❌** — 540 commands, 2007 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -406,6 +406,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `store clear` | `--left` | ✅ |  |
 | `store clear` | `--allow-dangerous` | ✅ |  |
 | `store clear` | `--dry-run` | ✅ |  |
+| `store import` |  | ✅ |  |
 | `store info` |  | ✅ |  |
 | `store check` |  | ✅ |  |
 | `store migrate` |  | ✅ |  |
