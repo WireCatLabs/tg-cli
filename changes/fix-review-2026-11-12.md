@@ -14,7 +14,9 @@
 - **`tg session end` in a run with moved folders keeps the owner's login.** With only `TG_CONFIG_DIR` or
   `TG_CACHE_DIR` moved, the state folder is still the owner's, and `session end` logged that login out on Telegram
   and deleted its file. It now answers `ended: false` with `kept: "owners-sign-in"` and changes nothing.
-  `account remove` in such a run keeps the owner's session file and bots folder too.
+  `account remove` in such a run keeps the owner's session file and bots folder too. A moved run whose state folder
+  is its own forgets its session file but never logs out on Telegram (`logged_out: false`): a file copied there
+  would still be the owner's login.
 
 ### Fixed
 

@@ -86,7 +86,7 @@ describe("a run with only the config folder moved (SEC-189)", () => {
 })
 
 describe("a run whose state folder is moved too", () => {
-  it("**session end ends the run's own login** and leaves the owner's file alone", async () => {
+  it("**session end forgets the run's own session without logging out**, and leaves the owner's file alone", async () => {
     const owners = ownersSession()
     const env = moved("CONFIG", "STATE")
     const own = sessionFile(PROFILE, env)
@@ -100,13 +100,13 @@ describe("a run whose state folder is moved too", () => {
       streams,
       tty: false,
       env,
-      keyring: memoryKeyring(),
       adapter: () => scripted({ logout: async () => void loggedOut.push(true) }),
     })
 
     expect(code).toBe(0)
-    expect(JSON.parse(streams.stdout.join("")).item).toEqual({ profile: PROFILE, ended: true })
-    expect(loggedOut).toEqual([true])
+    expect(JSON.parse(streams.stdout.join("")).item).toEqual({ profile: PROFILE, ended: true, logged_out: false })
+    expect(streams.stderr.join("")).toContain("list of sessions")
+    expect(loggedOut).toEqual([])
     expect(existsSync(own)).toBe(false)
     expect(existsSync(owners)).toBe(true)
   })

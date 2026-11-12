@@ -165,7 +165,9 @@ it is.
 
 A run with only `TG_CONFIG_DIR` or `TG_CACHE_DIR` moved still uses your own session file. There,
 `session end` and `account remove` keep that login and its file, and `session end` answers `ended: false` with
-`kept: "owners-sign-in"`. Only a run with your own folders ends your login.
+`kept: "owners-sign-in"`. A run whose state folder is moved too forgets its own session file but does not log
+it out on Telegram, and answers `logged_out: false`: end that device from a Telegram app's list of sessions. Only a
+run with your own folders logs out on Telegram.
 
 To forget a profile altogether, use `tg personal account remove --keep-data` or `--delete-data`. It logs the session
 out the same way, then deletes the profile's app id and hash, its proxy password, its bots' history sessions and
