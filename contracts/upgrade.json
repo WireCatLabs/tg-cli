@@ -1,14 +1,15 @@
 {
   "command": "node",
   "args": ["../dist/bin/tg.js"],
-  "previous": {
-    "entry": "./previous/node_modules/@wirecat/previous-cli/dist/bin/tg.js",
-    "version": "0.45.0"
-  },
+  "previous": {},
   "fixtures": [
     {
       "path": "TG/CONFIG/config.json",
       "text": "{\"defaults\": {\"limit\": 7}, \"profiles\": {\"contract\": {}}}"
+    },
+    {
+      "path": "import.json",
+      "text": "{\"synthetic\": true, \"account\": {\"id\": \"601\", \"name\": \"Contract\", \"username\": null}, \"people\": [{\"id\": \"11\", \"name\": \"Synthetic Example\", \"username\": null}], \"chats\": [{\"id\": \"7\", \"title\": \"Synthetic Contract Group\", \"kind\": \"group\", \"unreadCount\": 0, \"lastMessageAt\": null, \"participantsCount\": null}], \"messages\": [{\"id\": \"101\", \"chatId\": \"7\", \"senderId\": \"11\", \"senderName\": \"Synthetic Example\", \"timestamp\": \"2026-10-01T10:00:00Z\", \"editedAt\": null, \"text\": \"wirecat-synthetic-message-canary\", \"outgoing\": false}]}"
     }
   ],
   "canaries": ["wirecat-synthetic-message-canary"],
@@ -16,18 +17,20 @@
   "cases": [
     {
       "id": "seed-previous-store",
-      "args": ["{{previousEntry}}"],
+      "args": ["contract", "--json", "store", "import", "import.json", "--yes"],
       "exit": 0,
       "stream": "stdout",
       "kind": "json",
-      "entry": "./seed.mjs",
+      "previous": true,
       "json": {
-        "seeded": true
+        "item": {
+          "imported": true
+        }
       }
     },
     {
       "id": "previous-store-data",
-      "args": ["contract", "--offline", "--json", "--trace", "--record", "messages", "list", "7"],
+      "args": ["contract", "--offline", "--json", "--record", "messages", "list", "7"],
       "exit": 0,
       "stream": "stdout",
       "kind": "json",

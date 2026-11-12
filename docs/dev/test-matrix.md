@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2402 ✅ · 145 ⛔ · 0 ❌** — 540 commands, 2007 options.
+**2404 ✅ · 148 ⛔ · 0 ❌** — 542 commands, 2010 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -169,6 +169,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `contacts link` |  | ✅ |  |
 | `contacts link` | `--reason` | ⛔ | an agent's link becomes a proposal only with a reason; cli-core's src/cli/messenger/messenger.test.ts drives it as the owner and as an agent |
 | `contacts unlink` |  | ✅ |  |
+| `contacts unlink` | `--from` | ⛔ | cli-core 0.647.0 src/cli/messenger/messenger.test.ts drives the shared option; tg mounts the command unchanged |
 | `contacts lookup` |  | ✅ |  |
 | `contacts sync` |  | ✅ |  |
 | `contacts aliases set` |  | ✅ |  |
@@ -355,6 +356,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule agent` |  | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--model` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--max-cost` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
+| `schedule agent` | `--allow-dangerous` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--max-cost-per-day` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--every` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--at` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
@@ -362,6 +364,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `schedule agent` | `--notify-on` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule agent` | `--deliver-to` | ⛔ | cli-core src/cli/messenger/schedule.test.ts drives this through the shared handler tg mounts; schedules.os.test.ts runs the timers on macOS and Windows CI (0.250.1) |
 | `schedule list` |  | ✅ |  |
+| `schedule agents list` |  | ✅ |  |
 | `schedule run` |  | ✅ |  |
 | `schedule run` | `--no-notify` | ⛔ | cli-core src/cli/schedule/schedule.test.ts drives it through the shared schedule commands the CLI mounts |
 | `schedule run` | `--deliver-to` | ⛔ | cli-core src/cli/schedule/schedule.test.ts drives it through the shared schedule commands the CLI mounts |
@@ -568,6 +571,8 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `images embed` |  | ✅ |  |
 | `images embed` | `--chat` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
 | `images embed` | `--limit` | ⛔ | downloads each picture through Telegram and needs the downloaded model; cli-core's tests drive it offline |
+| `images read` |  | ✅ |  |
+| `images read` | `--attachment` | ⛔ | cli-core 0.647.0 src/cli/messenger/attachments.test.ts drives the shared option; tg mounts the command unchanged |
 | `images models list` |  | ✅ |  |
 | `images models download` |  | ✅ |  |
 | `metadata show` |  | ✅ |  |

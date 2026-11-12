@@ -209,6 +209,8 @@ terminal:
 - **Long-running commands**: `watch`, `serve` and `bot watch` run until you stop them, and an agent call must
   return. The MCP server itself (`mcp serve`, `bot mcp serve`) is left out for the same reason, and so is
   `mcp server` and `mcp server start|stop|status`, which run it in the background.
+- **Reading a picture with your coding agent**: `images read` starts Claude Code or Codex on this computer, so an
+  agent never starts another one through it.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
 `schedule run|exec`, `doctor reports create` and `account sessions end` have their own permission keys, set to `ask` by default. They are offered to the

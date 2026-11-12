@@ -1787,7 +1787,7 @@
         "schedule",
         "agent"
       ],
-      "summary": "start an agent (claude or codex) with a prompt on a timer; it runs with…",
+      "summary": "start an agent (claude, codex, gemini, cursor, opencode, openclaw, hermes,…",
       "effects": {
         "remote": "none",
         "local": "write"
@@ -1804,6 +1804,19 @@
         "local": "read"
       },
       "entity": "scheduled_job"
+    },
+    {
+      "path": [
+        "schedule",
+        "agents",
+        "list"
+      ],
+      "summary": "the agents a schedule may start, and which are on PATH here",
+      "effects": {
+        "remote": "none",
+        "local": "read"
+      },
+      "entity": "schedule_harness"
     },
     {
       "path": [
@@ -2708,6 +2721,19 @@
       },
       "permission": "conversations.embeddings",
       "entity": "image_embedding"
+    },
+    {
+      "path": [
+        "images",
+        "read"
+      ],
+      "summary": "have your coding agent read the text of one picture, and keep it for search",
+      "effects": {
+        "remote": "read",
+        "local": "write"
+      },
+      "permission": "images.read",
+      "entity": "attachment_text_change"
     },
     {
       "path": [
@@ -3808,7 +3834,7 @@
         "reports",
         "show"
       ],
-      "summary": "what a problem report holds; writes nothing",
+      "summary": "what a report holds and never holds, and where to send it; writes nothing",
       "effects": {
         "remote": "none",
         "local": "none"
@@ -3820,7 +3846,7 @@
         "reports",
         "create"
       ],
-      "summary": "write a problem report to a file, and say where to send it",
+      "summary": "the report file written: its path, the run it is about, and where to send it",
       "effects": {
         "remote": "none",
         "local": "write"
@@ -7205,9 +7231,24 @@
         "when",
         "notify",
         "deliver_to",
+        "harness",
+        "reports_cost",
         "spent_today_usd",
         "max_cost_usd",
         "max_cost_per_day_usd"
+      ]
+    },
+    "schedule_harness": {
+      "fields": [
+        "id",
+        "name",
+        "programs",
+        "reports_cost",
+        "restricted",
+        "restricted_reason",
+        "allowed_with_ack",
+        "installed",
+        "path"
       ]
     },
     "job": {
@@ -7295,6 +7336,7 @@
         "source",
         "kind",
         "muted",
+        "participants_count",
         "has",
         "topic",
         "in",
@@ -7337,6 +7379,7 @@
         "source",
         "kind",
         "muted",
+        "participants_count",
         "has",
         "topic",
         "in",

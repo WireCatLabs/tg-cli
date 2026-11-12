@@ -1468,7 +1468,7 @@ tg contacts link <person> <other> [options]
 |---|---|
 | `--reason <text>` | why they are one person; an agent's link is a proposal and needs it. |
 
-**Returns:** linked person — uid, name, identities, proposal; every field: tg commands info contacts link
+**Returns:** linked person — uid, name, identities, display_name, proposal; every field: tg commands info contacts link
 
 **Example:** `tg personal contacts link "Alex Example" zoom:101`
 
@@ -1479,16 +1479,20 @@ undo contacts link for one identity: it is a person of its own again
 **Changes something on this computer only.**
 
 ```sh
-tg contacts unlink <person>
+tg contacts unlink <person> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `person` | required | their id, @username, or part of their name; <messenger>:<person> for another messenger. |
 
-**Returns:** linked person — uid, name, identities, proposal; every field: tg commands info contacts unlink
+| Option | What it does |
+|---|---|
+| `--from <person>` | the person it leaves, person:<uid> or person:me; refused when it sits on another. |
 
-**Example:** `tg personal contacts unlink "Alex Example"`
+**Returns:** linked person — uid, name, identities, display_name, proposal; every field: tg commands info contacts unlink
+
+**Example:** `tg personal contacts unlink "Alex Example" --from person:me`
 
 ### `tg contacts lookup`
 
@@ -2925,7 +2929,7 @@ tg schedule command <name> <args> [options]
 
 ### `tg schedule agent`
 
-start an agent (claude or codex) with a prompt on a timer; it runs with TG_READ_ONLY=1, so it reads and drafts and cannot send — its answer is kept and you are notified
+start an agent (claude, codex, gemini, cursor, opencode, openclaw, hermes, grok, kimi) with a prompt on a timer; it runs with TG_READ_ONLY=1, so it reads and drafts and cannot send, and its own limits hold it to these CLIs' commands; an agent with no such limit is refused (`schedule agents list` says which) — its answer is kept and you are notified
 
 **Changes something on this computer only.**
 
@@ -2936,23 +2940,24 @@ tg schedule agent <name> <harness> <prompt> [options]
 | Argument | | What it is |
 |---|---|---|
 | `name` | required | lowercase letters, digits and dashes. |
-| `harness` | required | the agent to start. One of: `claude`, `codex`. |
+| `harness` | required | the agent to start. One of: `claude`, `codex`, `gemini`, `cursor`, `opencode`, `openclaw`, `hermes`, `grok`, `kimi`. |
 | `prompt` | required | what to do, e.g. "run the daily follow-up review: tg skill show follow-ups". |
 
 | Option | What it does |
 |---|---|
-| `--model <model>` | the model it runs on: an alias such as sonnet, or a model id; "" for the harness's default (default sonnet for claude, codex's own for codex, or the config file's). |
+| `--model <model>` | the model it runs on: an alias such as sonnet, or a model id; "" for the agent's own default (default sonnet for claude, the agent's own for the others, or the config file's). |
 | `--max-cost <usd>` | claude only: stop a run that costs more than this, in US dollars. |
-| `--max-cost-per-day <usd>` | claude only: start no run for the rest of the day once its runs cost this much, in US dollars; 0 for no cap (default 5, or the config file's). |
+| `--allow-dangerous` | start an agent its own limits cannot hold to these CLIs' commands, where `schedule agents list` says allowed_with_ack: it may then run any program inside its sandbox. |
+| `--max-cost-per-day <usd>` | claude only, as the others report no cost: start no run for the rest of the day once its runs cost this much, in US dollars; 0 for no cap (default 5, or the config file's). |
 | `--every <duration>` | repeat: 30m, 2h, 1d. |
 | `--at <HH:MM>` | every day at this local time; 'mon 09:00' once a week, 'mon,fri 09:00' on several days (mon, tue, wed, thu, fri, sat, sun); repeat it for more times. |
 | `--at-time <time>` | one run: 30m, 2d from now, or an ISO time; the schedule removes itself after it. |
 | `--notify-on <when>` | desktop notice after a run (default failures for an agent that repeats with --every, else always). One of: `always`, `failures`, `never`. |
 | `--deliver-to <route>` | also send the result, when --notify-on says so, by the owner's own tg or mail: telegram-bot:<profile>/<chat id or user:id>, or email:<profile>/<address>; repeat it for more. |
 
-**Returns:** start an agent (claude or codex) with a prompt on a timer; it runs with…
+**Returns:** start an agent (claude, codex, gemini, cursor, opencode, openclaw, hermes,…
 
-**Example:** `tg personal schedule agent review claude "review what came in overnight and draft replies" --at 08:30`, `tg personal schedule agent triage codex "list what needs an answer today" --every 2h --max-cost 1`, `tg personal schedule agent weekly claude "review the week's open threads" --at 09:00 --model opus`
+**Example:** `tg personal schedule agent review claude "review what came in overnight and draft replies" --at 08:30`, `tg personal schedule agent triage gemini "list what needs an answer today" --every 2h`, `tg personal schedule agent weekly claude "review the week's open threads" --at 09:00 --model opus`
 
 ### `tg schedule list`
 
@@ -2966,9 +2971,29 @@ tg schedule list [query]
 |---|---|---|
 | `query` | optional | field:value terms that narrow the list — the fields are below. |
 
-**Returns:** scheduled job — name, kind, when, last, paused, notify, deliver_to, spent_today_usd, and 2 more; every field: tg commands info schedule list
+**Returns:** scheduled job — name, kind, when, last, paused, notify, deliver_to, harness, and 4 more; every field: tg commands info schedule list
 
 **Example:** `tg personal schedule list`, `tg personal schedule list kind:agent`
+
+### `tg schedule agents`
+
+the coding agents an agent schedule may start
+
+#### `tg schedule agents list`
+
+the agents a schedule may start, and which are on PATH here
+
+```sh
+tg schedule agents list [query]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `query` | optional | field:value terms; this list filters by none yet. |
+
+**Returns:** schedule harness — id, name, programs, reports_cost, restricted, restricted_reason, allowed_with_ack, installed, and 1 more; every field: tg commands info schedule agents list
+
+**Example:** `tg personal schedule agents list`, `tg personal schedule agents list --json`
 
 ### `tg schedule run`
 
@@ -3054,12 +3079,13 @@ what a timer runs, given the schedule's file; to run one by hand, use run
 **Changes something in Telegram.**
 
 ```sh
-tg schedule exec <file>
+tg schedule exec <file> [seal]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `file` | required | the schedule's schedule.json in the state folder, as the timer passes it. |
+| `seal` | optional | the file's SHA-256 as it was saved, which the timer passes; a file that differs does not run. |
 
 **Returns:** what a timer runs, given the schedule's file; to run one by hand, use run
 
@@ -3491,7 +3517,7 @@ tg store copies delete <name>
 
 ### `tg store tables`
 
-the tables of the local archive
+the tables of the local store
 
 #### `tg store tables list`
 
@@ -3946,7 +3972,7 @@ tg attachments update <chat> [message] [options]
 | `--attachment <n>` | which file of the message, from 1; needed when it has more than one. |
 | `--text-file <path>` | read the text from this file; - or none reads stdin. |
 
-**Returns:** attachment text change — ref, attachment, origin, chars, replaced; every field: tg commands info attachments update
+**Returns:** attachment text change — ref, attachment, origin, chars, replaced, extractor, text; every field: tg commands info attachments update
 
 **Example:** `tg personal attachments update "Book club" 101 --text-file ./transcript.txt`
 
@@ -4372,6 +4398,29 @@ tg images embed [options]
 **Returns:** image embedding — model, embedded, skipped, failed, more; every field: tg commands info images embed
 
 **Example:** `tg personal images embed`, `tg personal images embed --limit 500`
+
+### `tg images read`
+
+give one picture of a message to the coding agent chosen in `models picture-reading` (Claude Code or Codex) and keep the text it read, so search finds it; the picture goes to that agent's provider. Refused while picture reading is never; the saved copy is used when there is one, else the messenger's download
+
+**Changes something on this computer only.**
+
+```sh
+tg images read <chat> [message] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages; or a msg: locator, with no message id after it. |
+| `message` | optional | the message id. |
+
+| Option | What it does |
+|---|---|
+| `--attachment <n>` | which file of the message, from 1; needed when it has more than one. |
+
+**Returns:** attachment text change — ref, attachment, origin, chars, replaced, extractor, text; every field: tg commands info images read
+
+**Example:** `tg personal images read "msg:..." --attachment 1`, `tg personal images read "Book club" 101`
 
 ### `tg images models`
 
@@ -6218,7 +6267,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -6243,7 +6292,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities. |
 
 | Option | What it does |
 |---|---|
@@ -6299,6 +6348,10 @@ tg doctor [options]
 |---|---|
 | `--online` | also connect once and read the account; sends nothing. |
 
+**Returns:** the state this installation is in, without connecting unless --online
+
+**Example:** `tg personal doctor`
+
 ### `tg doctor reports`
 
 problem reports
@@ -6311,7 +6364,7 @@ what a problem report holds; writes nothing
 tg doctor reports show
 ```
 
-**Returns:** what a problem report holds; writes nothing
+**Returns:** what a report holds and never holds, and where to send it; writes nothing
 
 **Example:** `tg personal doctor reports show`
 
@@ -6330,7 +6383,7 @@ tg doctor reports create [options]
 | `--run <id>` | the run the report is about; the newest failed one if not given. |
 | `--output <file>` | where to write it; a new file in this directory if not given. |
 
-**Returns:** write a problem report to a file, and say where to send it
+**Returns:** the report file written: its path, the run it is about, and where to send it
 
 **Example:** `tg personal doctor reports create --output ./problem-report.json`
 
@@ -7104,7 +7157,7 @@ tg bot search messages [query] [options]
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
 | `--newest` | newest first instead of best first. |
-| `--from <who>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
+| `--from <person>` | only what this person wrote — an id, @username or part of a name; repeat it for any of several. |
 
 **Returns:** search the messages this bot has seen, in the local copy, by text
 

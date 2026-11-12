@@ -10,6 +10,18 @@ export interface Untested {
 }
 
 export const UNTESTED: Untested[] = [
+  {
+    command: "contacts unlink",
+    option: "--from",
+    reason:
+      "cli-core 0.647.0 src/cli/messenger/messenger.test.ts drives the shared option; tg mounts the command unchanged",
+  },
+  {
+    command: "images read",
+    option: "--attachment",
+    reason:
+      "cli-core 0.647.0 src/cli/messenger/attachments.test.ts drives the shared option; tg mounts the command unchanged",
+  },
   ...[
     { command: "schedule run", option: "--no-notify" },
     { command: "schedule run", option: "--deliver-to" },

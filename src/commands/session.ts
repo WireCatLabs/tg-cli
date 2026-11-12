@@ -23,6 +23,7 @@ import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { SHELL_OVERRIDES } from "../contract-overrides.js"
+import { usesOwnersSession } from "../paths.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, forCommand } from "./context.js"
@@ -312,6 +313,14 @@ const sessionCommandDefinition = () => {
         )
       if (!existsSync(context.sessionPath)) {
         printItem(context, { profile: context.profile, ended: false })
+        return
+      }
+      if (usesOwnersSession(context.profile, context.env)) {
+        printItem(context, { profile: context.profile, ended: false, kept: "owners-sign-in" })
+        context.renderer.note(
+          `kept "${context.profile}" logged in: this run's folders are moved, and it uses the owner's session ` +
+            `(${context.sessionPath}), which only a run with the owner's own folders can end`,
+        )
         return
       }
       await context.withTelegram((telegram) => telegram.logout())

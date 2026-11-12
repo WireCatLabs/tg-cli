@@ -77,7 +77,11 @@ describe("shared attachment OCR adoption", () => {
     const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
       const body = JSON.parse(String(init?.body))
       expect(body.model).toBe("vision-fixture")
-      expect(body.messages.at(-1).content[0].image_url.url).toBe(`data:${image.mimeType};base64,${image.data}`)
+      expect(body.messages.at(-1).content).toContainEqual(
+        expect.objectContaining({
+          image_url: expect.objectContaining({ url: `data:${image.mimeType};base64,${image.data}` }),
+        }),
+      )
       return Response.json({
         choices: [{ finish_reason: "stop", message: { content: "consumerocrneedle" } }],
         usage: { total_tokens: 12 },
