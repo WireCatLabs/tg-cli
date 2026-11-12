@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   ci:
-    uses: WireCatLabs/cli-base/.github/workflows/node-ci.yml@582fa50ee11d4ad56a7e8a08f6966a4d69edaeb8 # v0.75.1
+    uses: WireCatLabs/cli-base/.github/workflows/node-ci.yml@c1f6e9811a0c6d9d6f45df7ba06803702b4dbd7d # v0.95.0
     with:
       pack: ${{ inputs.pack || false }}
       pack-checks: node --experimental-strip-types scripts/release-check.ts --artifact-only
