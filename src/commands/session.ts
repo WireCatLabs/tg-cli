@@ -10,6 +10,7 @@ import {
   commandWords,
   environmentOf,
   logsInOrOut,
+  mayRevoke,
   printItem,
   REMOTE_WRITE,
   refuseCommandName,
@@ -24,7 +25,7 @@ import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { SHELL_OVERRIDES } from "../contract-overrides.js"
-import { isMoved, usesOwnersSession } from "../paths.js"
+import { usesOwnersSession } from "../paths.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
 import { type CommandContext, type Environment, forCommand } from "./context.js"
@@ -327,7 +328,8 @@ const sessionCommandDefinition = () => {
       const forget = () => {
         for (const suffix of ["", "-wal", "-shm"]) rmSync(`${context.sessionPath}${suffix}`, { force: true })
       }
-      if (isMoved(context.env, environmentOf<Environment>(this).keyring)) {
+      // A session file copied into moved folders would still be the owner's login (WC-SECR-24).
+      if (!mayRevoke(TG, context.env, environmentOf<Environment>(this).keyring)) {
         forget()
         printItem(context, { profile: context.profile, ended: true, logged_out: false })
         context.renderer.note(

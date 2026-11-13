@@ -118,7 +118,9 @@ describe("TG_READ_ONLY", () => {
     const { code, error, opened } = await locked(["ro-store", ...words], { MESSAGING_STORE: store })
 
     expect([code, error.code, opened]).toEqual([5, "permission_error", 0])
-    expect(error.message).toContain("cannot change the message store")
+    expect(error.message).toMatch(
+      name === "restore" ? /changes what a later run may do/ : /cannot change the message store/,
+    )
     expect(readFileSync(store, "utf8")).toBe("kept")
     expect(existsSync(output)).toBe(false)
   })

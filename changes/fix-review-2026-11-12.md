@@ -1,13 +1,20 @@
 ### Added
 
-- **From `@wirecat/cli-core` 0.647.0** (was 0.633.0): `images read <ref>` has your coding agent read the text of one
+- **From `@wirecat/cli-core` 0.648.0** (was 0.633.0): `images read <ref>` has your coding agent read the text of one
   picture and keeps it for search; `schedule agent` starts gemini, cursor, opencode, openclaw, hermes, grok and kimi
   as well as claude and codex, and `schedule agents list` says which are on PATH; `contacts unlink --from <person>`.
 
 ### Changed — may break callers
 
-- **Every agent schedule must be saved again** (cli-core 0.647.0). A schedule saved before is refused with
+- **Every agent schedule must be saved again** (cli-core 0.648.0). A schedule saved before is refused with
   `agent.refused` and a hint to save it again; a codex schedule needs `--allow-dangerous`.
+- **`stats tasks show` has no `--chat` any more** (cli-core 0.648.0): name the chat in the query,
+  `tg personal stats tasks show 'chat:"Project room"'`.
+- **A mistyped profile is `not_found`** with reason `profile.unknown` and the profiles on this computer, where it was
+  "not signed in" (cli-core 0.648.0). `tg serve` under a service unit is not restarted after that exit (6), as after a
+  missing login (4); a unit installed before keeps its old setting until `server install` runs again.
+- **`store reset` is no longer offered over MCP**, and `store restore` and `store recover run` need `mcp.authority`
+  (cli-core 0.648.0). `doctor reports create --output` refuses to overwrite a file.
 
 ### Security
 

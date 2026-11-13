@@ -25,13 +25,6 @@ const accountHome = () => {
 }
 
 /**
- * **A run whose folders are not the owner's**, which never logs out at Telegram (WC-SECR-24): a session file copied
- * into its folders is still the owner's login. A keyring handed in means a test, as in cli-core's `mayRevoke`.
- */
-export const isMoved = (env: NodeJS.ProcessEnv, keyring?: unknown) =>
-  keyring === undefined && isMovedRun({ appName: TG.appName, prefix: TG.envPrefix, env })
-
-/**
  * **A run with moved folders holding the owner's own login**: only the config or cache folder moved, so the state
  * folder and the session file in it are the owner's. Such a run may use the login but never end or delete it
  * (WC-SECR-24). An account with no home counts as the owner's, the safe answer.
