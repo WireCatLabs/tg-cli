@@ -3,6 +3,37 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.125.0 — 13.11.2026
+
+### Changed — may break callers
+
+- **`contacts context` and `contacts prepare` answer `meetings[]`** (cli-core 0.650.0): the recorded calls of that
+  person, from a meetings CLI that shares the store. A caller that checks the answer against a pinned schema updates
+  it.
+
+### Fixed
+
+- **`TG_READ_ONLY` lets Telegram's search through** (cli-core 0.650.0). The lock promises "can read and sync but never
+  send", yet `search messages --backend server` failed with `permission_error` and the default `--backend both`
+  dropped the server without a word. Reads that only fetch from Telegram or work locally now pass the lock
+  ([#874](https://github.com/WireCatLabs/tg-cli/issues/874)); catch-up for local search too
+  ([#872](https://github.com/WireCatLabs/tg-cli/issues/872)).
+- **An archive-only search over a partly synced chat suggests Telegram's search** (cli-core 0.650.0): `next` leads
+  with the same query and `--backend server` ([#873](https://github.com/WireCatLabs/tg-cli/issues/873)).
+- **The skill no longer keeps agents on the local copy.** For an agreement or a document it said "search the local
+  archive", and agents added `--backend archive`, so a message older than the synced history came back "not found"
+  although Telegram's own search had it. The skill now searches the archive and Telegram together, keeps
+  `--backend archive` for an owner who asked that nothing leaves the machine, and, when a search finds nothing in a
+  partly synced chat, tries the server before a sync ([#873](https://github.com/WireCatLabs/tg-cli/issues/873)).
+
+### Security
+
+- **The update check and model calls reach only their own host** (cli-core 0.650.0). A redirect to another host is
+  refused, and each exchange has a deadline.
+- **A run with moved folders removes nothing in the owner's folders** (cli-core 0.650.0). With only `TG_CONFIG_DIR`
+  moved, `account remove` deleted files in the owner's real state folder, and `--delete-data` purged the account from
+  the owner's store. Now each is kept, with its reason under `kept`.
+
 ## 0.124.0 — 13.11.2026
 
 ### Added
