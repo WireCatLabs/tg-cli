@@ -24,7 +24,7 @@ const messageOf = async (feature: Feature, chatId: Id, messageId: Id): Promise<T
 export const buttons = (feature: Feature, chatId: Id, messageId: Id): Promise<Button[][]> =>
   feature.call(async () => toButtons((await messageOf(feature, chatId, messageId)).markup) ?? [])
 
-/** The callback data never leaves the adapter: the button is read again from the message, by its place. */
+/** The press sends the bytes read again from the message, by the button's place, never the decoded `data`. */
 export const pressButton = (feature: Feature, chatId: Id, messageId: Id, row: number, column: number): Promise<void> =>
   feature.write("the button may have reached the bot — pressing again tells it twice", async () => {
     const message = await messageOf(feature, chatId, messageId)
