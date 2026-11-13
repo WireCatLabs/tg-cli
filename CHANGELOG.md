@@ -3,6 +3,40 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.126.0 — 13.11.2026
+
+### Added
+
+- **The first screen and first run list `pbx`** (cli-core 0.651.0), WireCat's Asterisk tool, under "Works with" and
+  among the tools first run offers to install.
+- **`doctor reports create` gives a pre-filled issue link** (cli-core 0.651.0) in `issue_url` and in its note. The
+  title and body hold only the version, the platform and the failed run's error code; the report file stays on the
+  computer until you attach it.
+
+### Changed — may break callers
+
+- **Built on cli-core 0.656.0** (was 0.651.0). See the
+  [cli-core changelog](https://github.com/WireCatLabs/cli-core/blob/main/CHANGELOG.md).
+
+### Fixed
+
+- **A mistyped profile in `TG_PROFILE` lists the profiles here** (cli-core 0.651.0), as a mistyped first word does.
+- **`session start` and `setup` keep Telegram's refusal** (cli-core 0.651.0). A failed sign-in for a new profile was
+  reported as "no profile named …", which hid the reason.
+- **`schedule command` saves PATH without its relative folders** (cli-core 0.651.0). Under pnpm, `schedule exec`
+  refused such a schedule; save it again and it runs.
+- **A model at an IPv6 address such as `https://[fd00::1]` is reached again** (cli-core 0.651.0).
+- **A shared config that cannot be read no longer makes this tool read-only.** A WireCat config
+  (`~/.config/WireCat/config.json`) with a byte-order mark, broken JSON, a folder in its place or an older `setup`
+  shape capped every profile at read-only, and an MCP server hid `messages sync`. Now only the owner's own "read only"
+  answer limits a tool, and even then `messages sync` is offered over MCP: it only reads the messenger into the local
+  store (cli-core 0.656.0).
+
+### Security
+
+- **`account remove` with only the config folder moved no longer signs the owner's session out** (cli-core 0.651.0).
+  The state folder there is the owner's, so the sign-in is now listed under `kept`.
+
 ## 0.125.0 — 13.11.2026
 
 ### Changed — may break callers
