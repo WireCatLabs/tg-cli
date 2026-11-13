@@ -5,8 +5,9 @@ import { Readable } from "node:stream"
 import { stripVTControlCharacters } from "node:util"
 import { CliError } from "@wirecat/cli-base"
 import { pickChat } from "@wirecat/cli-core"
-import type { ConnectOptions, SendOptions } from "@wirecat/cli-core/cli"
+import { type ConnectOptions, rememberAccount, type SendOptions } from "@wirecat/cli-core/cli"
 import { describe, expect, it, vi } from "vitest"
+import { TG } from "./app.js"
 import { pathsFor } from "./paths.js"
 import { NO_RESTART_ON } from "./program.js"
 import { chat, message, scripted, tg } from "./testing/scripted.js"
@@ -99,7 +100,8 @@ describe("first-run discovery", () => {
 
   it("points a fresh profile without a session to guided setup", async () => {
     const result = await tg(["unconfigured", "chats", "list", "--json"], { adapter: undefined })
-    expect(result.code).toBe(4)
+    expect(result.code).toBe(6)
+    expect(JSON.parse(result.stderr.at(-1) ?? "{}").error).toMatchObject({ reason: "profile.unknown" })
     expect(result.stdout).toEqual([])
     expect(result.stderr.join("\n")).toContain("tg unconfigured setup")
     expect(result.stderr.join("\n")).toContain("local terminal")
@@ -555,6 +557,7 @@ describe("app credentials out of reach", () => {
     const sessions = join(pathsFor().state, "sessions")
     mkdirSync(sessions, { recursive: true })
     writeFileSync(join(sessions, "reach.session"), "")
+    rememberAccount(TG, "reach", "1", process.env)
 
     const loggedIn = await tg(["reach", "chats", "list", "--json"], { env })
     const never = await tg(["never", "chats", "list", "--json"], { env })
@@ -581,11 +584,12 @@ describe("app credentials out of reach", () => {
     expect(asked[1]).not.toHaveProperty("catchUp")
   })
 
-  it("**serve and a timer's run treat an unreachable keyring as temporary**, so they retry; a missing login still exits 4", async () => {
+  it("**serve and a timer's run treat an unreachable keyring as temporary**, so they retry; a missing login is never restarted", async () => {
     const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
     const sessions = join(pathsFor().state, "sessions")
     mkdirSync(sessions, { recursive: true })
     writeFileSync(join(sessions, "locked.session"), "")
+    rememberAccount(TG, "locked", "1", process.env)
 
     const locked = await tg(["locked", "serve"], { env })
     const never = await tg(["never", "serve"], { env })
@@ -598,7 +602,7 @@ describe("app credentials out of reach", () => {
     })
     expect(NO_RESTART_ON).not.toContain(locked.code)
     expect(locked.stderr.join("\n")).toContain("XDG_RUNTIME_DIR")
-    expect(never.code).toBe(4)
+    expect(never.code).toBe(6)
     expect(NO_RESTART_ON).toContain(never.code)
   })
 })

@@ -133,10 +133,10 @@ broadening the search. The examples on this page are fictional.
 
 Good search needs your chats downloaded. Telegram's search finds a message by its words even if tg never
 fetched it, but everything else reads only the store: counting with `stats`, topic search, `has:`,
-`filename:`, regex, presets, tags, and the ranking of word forms. Start by downloading every chat:
+`filename:`, regex, presets, tags, and the ranking of word forms. Start by downloading your chats:
 
 ```sh
-tg personal messages sync --all --background  # the last 90 days of every chat, as a background job
+tg personal messages sync --all --background  # the last 90 days of every chat but the muted ones, as a background job
 ```
 
 ```sh

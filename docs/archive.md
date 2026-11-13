@@ -130,11 +130,15 @@ tg personal messages sync "Book club" --limit 5000  # up to 5000 messages in thi
 ```
 
 ```sh
-tg personal messages sync --all                 # every chat, most recently active first: the last 90 days
+tg personal messages sync --all                 # every chat but the muted ones, most recently active first: the last 90 days
 ```
 
 ```sh
-tg personal messages sync --all --since-time 365d  # every chat, back to a year ago
+tg personal messages sync --all --with-muted    # the muted chats too
+```
+
+```sh
+tg personal messages sync --all --since-time 365d  # the same chats, back to a year ago
 ```
 
 `messages sync` reads a chat's history page by page, newest first, and saves it. **It is resumable**:

@@ -8,7 +8,9 @@ import {
   answerStdinOption,
   asFirstWord,
   commandWords,
+  environmentOf,
   logsInOrOut,
+  mayRevoke,
   printItem,
   REMOTE_WRITE,
   refuseCommandName,
@@ -23,9 +25,10 @@ import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"
 import { openInBrowser } from "../browser.js"
 import { SHELL_OVERRIDES } from "../contract-overrides.js"
+import { usesOwnersSession } from "../paths.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
-import { type CommandContext, forCommand } from "./context.js"
+import { type CommandContext, type Environment, forCommand } from "./context.js"
 
 /** `field` names the question for a window that answers it (`--answer-stdin`). */
 type Ask = (prompt: string, echo: boolean, field: string) => Promise<string>
@@ -314,8 +317,29 @@ const sessionCommandDefinition = () => {
         printItem(context, { profile: context.profile, ended: false })
         return
       }
+      if (usesOwnersSession(context.profile, context.env)) {
+        printItem(context, { profile: context.profile, ended: false, kept: "owners-sign-in" })
+        context.renderer.note(
+          `kept "${context.profile}" logged in: this run's folders are moved, and it uses the owner's session ` +
+            `(${context.sessionPath}), which only a run with the owner's own folders can end`,
+        )
+        return
+      }
+      const forget = () => {
+        for (const suffix of ["", "-wal", "-shm"]) rmSync(`${context.sessionPath}${suffix}`, { force: true })
+      }
+      // A session file copied into moved folders would still be the owner's login (WC-SECR-24).
+      if (!mayRevoke(TG, context.env, environmentOf<Environment>(this).keyring)) {
+        forget()
+        printItem(context, { profile: context.profile, ended: true, logged_out: false })
+        context.renderer.note(
+          `forgot "${context.profile}"'s session here without logging it out on Telegram: this run's folders are ` +
+            "moved; the device stays in a Telegram app's list of sessions until you end it there",
+        )
+        return
+      }
       await context.withTelegram((telegram) => telegram.logout())
-      for (const suffix of ["", "-wal", "-shm"]) rmSync(`${context.sessionPath}${suffix}`, { force: true })
+      forget()
       printItem(context, { profile: context.profile, ended: true })
     })
 

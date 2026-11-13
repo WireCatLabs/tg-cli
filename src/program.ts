@@ -57,8 +57,11 @@ import { setupCommand } from "./commands/setup.js"
 import { upgradeCommand } from "./commands/update.js"
 import { updateNotice } from "./update.js"
 
-/** A revoked or missing login fails the same on every retry; serve reports a locked keyring with another code. */
-export const NO_RESTART_ON = [exitCodeFor("authentication_error")]
+/**
+ * A revoked or missing login, or a profile this computer never had (`profile.unknown`), fails the same on every retry;
+ * serve reports a locked keyring with another code.
+ */
+export const NO_RESTART_ON = [exitCodeFor("authentication_error"), exitCodeFor("not_found")]
 
 // The generated Bot API commands, about 1.5 MB of modules: only a command line that reaches them pays for them.
 let botApi: (() => Command) | undefined

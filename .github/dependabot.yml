@@ -5,6 +5,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # One pull request a week for every action, so one CI run instead of one per pin.
+    groups:
+      actions:
+        patterns:
+          - "*"
   # The shared packages, at most a day after they ship. Dependabot's list stops at pnpm 10, so CI's
   # frozen install is what proves each lockfile it writes.
   - package-ecosystem: npm

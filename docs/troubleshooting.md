@@ -430,6 +430,7 @@ it again.
 
 `tg personal server status --json` includes `stopped` and `unit.exitCode` when the last normal exit was one
 the unit does not restart on. For exit 4, renew the session with `tg personal session start`, then `tg personal server start`.
+For exit 6, the unit names a profile this computer does not have: install it again under the right name.
 `tg personal server logs` says why. Under a service, the usual reason is the keyring: a service starts before
 the keyring is open, or without `XDG_RUNTIME_DIR`. After moving Node or `tg`, run
 `tg personal server install` again: the unit runs the paths that installed it ([running as a service](archive.md#as-a-service)).
