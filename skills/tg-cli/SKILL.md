@@ -185,7 +185,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    the first result and its score do not establish an answer. Explicit syntax remains strict.
    **Without `--discover`, `tg personal search messages` also asks Telegram's search** (`--backend both`; `archive`
    for the archive only). Good search needs downloaded chats: if a search finds nothing and the answer has a `missing`
-   `coverage` entry, run its `messages.sync` step (`tg personal messages sync --all --background`) or ask the owner before saying the message does not exist.
+   `coverage` entry, first search Telegram too (the same query with `--backend server`, the `search.server` step):
+   the local copy may not reach back that far, and Telegram's search does. Then run its `messages.sync` step
+   (`tg personal messages sync --all --background`) or ask the owner before saying the message does not exist.
    Words and quoted phrases include word forms;
    use `exact:` or `--exact` for exact forms. Explicit `text:` still matches forms. The default is strict Lucene:
    phrases, AND/OR/NOT, field groups and date ranges. `alpha OR beta gamma` = `(alpha OR beta) AND gamma`.
@@ -265,7 +267,9 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 
 Choose a path from the user's task rather than reading recent messages by default:
 
-- **Find an agreement or document:** find the relevant chat IDs, then search the local archive.
+- **Find an agreement or document:** find the relevant chat IDs, then `search messages` in them: the local archive
+  and Telegram's search together. Keep to `--backend archive` only when the owner asked that nothing leaves the
+  machine.
   Inspect search coverage and `store status`; `messages list` alone is only a recent window.
   Follow promising hits with `messages context` or `messages show` and cite their locators.
   Check related chats for a later correction. Empty hits, an empty chat and `page.has_more: false`
