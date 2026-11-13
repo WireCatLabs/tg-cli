@@ -11,6 +11,11 @@ it("**pins tg's own personal catalogue**: cli-core pins the commands it mounts (
   await expect(`${JSON.stringify(catalogue, null, 2)}\n`).toMatchFileSnapshot("../contracts/mcp-catalogue.json")
 })
 
+it("**pins the bot's own catalogue**: the generated Bot API commands, as read or write", async () => {
+  const catalogue = ownCatalogue(createProgram(), { root: ["bot"], includeUnavailable: true, offline: true })
+  await expect(`${JSON.stringify(catalogue, null, 2)}\n`).toMatchFileSnapshot("../contracts/bot-mcp-catalogue.json")
+})
+
 it("**keeps tg's invariants**: sending is a write, and login, account removal and long runs stay in a terminal", () => {
   const tools = toolsFromCommands(describeProgram(createProgram()), PERSONAL)
   const level = Object.fromEntries(tools.map((tool) => [tool.command, tool.writes ? "write" : "read"]))
