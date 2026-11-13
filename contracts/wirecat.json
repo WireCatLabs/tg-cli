@@ -7567,7 +7567,13 @@
   "network": {
     "hosts": [
       "api.telegram.org",
-      "my.telegram.org"
+      "my.telegram.org",
+      "registry.npmjs.org",
+      "huggingface.co",
+      "*.huggingface.co",
+      "*.hf.co",
+      "github.com",
+      "*.githubusercontent.com"
     ],
     "user_hosts": "the proxy you set for Telegram, if any"
   },

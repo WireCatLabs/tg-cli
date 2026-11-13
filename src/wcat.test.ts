@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { describeProgram } from "@wirecat/cli-base/commands"
-import { buildManifest, manifestText } from "@wirecat/cli-base/wcat/manifest"
+import { buildManifest, manifestText, SHARED_HOSTS } from "@wirecat/cli-base/wcat/manifest"
 import { expect, it } from "vitest"
 import { guardedFetch } from "./http.js"
 import { DESKTOP } from "./identity.js"
@@ -16,7 +16,7 @@ it("the shipped manifest is what pnpm generate builds now, with the hosts tg rea
   })
 
   expect(readFileSync(new URL("../contracts/wirecat.json", import.meta.url), "utf8")).toBe(manifestText(manifest))
-  expect(manifest.network?.hosts).toEqual(["api.telegram.org", "my.telegram.org"])
+  expect(manifest.network?.hosts).toEqual(["api.telegram.org", "my.telegram.org", ...SHARED_HOSTS])
 })
 
 it("tg's HTTP refuses a host the manifest does not list before anything is sent", async () => {
