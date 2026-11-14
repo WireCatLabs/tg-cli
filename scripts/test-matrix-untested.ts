@@ -17,6 +17,12 @@ export const UNTESTED: Untested[] = [
       "cli-core 0.647.0 src/cli/messenger/messenger.test.ts drives the shared option; tg mounts the command unchanged",
   },
   {
+    command: "tasks scan",
+    option: "--yes",
+    reason:
+      "cli-core 0.662.0 src/cli/messenger/tasks.test.ts drives the shared option; tg mounts the command unchanged",
+  },
+  {
     command: "images read",
     option: "--attachment",
     reason:

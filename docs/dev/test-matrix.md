@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2403 ✅ · 148 ⛔ · 0 ❌** — 542 commands, 2009 options.
+**2403 ✅ · 149 ⛔ · 0 ❌** — 542 commands, 2010 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -747,6 +747,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `tasks categories` |  | ✅ |  |
 | `tasks scan` |  | ✅ |  |
 | `tasks scan` | `--last` | ⛔ | cli-core src/cli/messenger/tasks.test.ts ("tasks scan lists what a chat's history would open, and opens it only with --yes") drives this through the shared handler tg mounts (0.320.0) |
+| `tasks scan` | `--yes` | ⛔ | cli-core 0.662.0 src/cli/messenger/tasks.test.ts drives the shared option; tg mounts the command unchanged |
 | `tasks status` |  | ✅ |  |
 | `tasks status` | `--limit` | ⛔ | cli-core 0.563.0 src/cli/messenger/tasks.test.ts drives the shared option; tg mounts the command unchanged |
 | `tasks review` |  | ✅ |  |
