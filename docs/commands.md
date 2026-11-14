@@ -2433,6 +2433,44 @@ tg models keys remove <provider>
 
 **Example:** `tg personal models keys remove openai`
 
+### `tg models chats`
+
+whether chat text may go to a model off this computer: allowed, ask or denied
+
+#### `tg models chats show`
+
+whether chat text may go to a model outside this computer, and since when
+
+```sh
+tg models chats show
+```
+
+**Returns:** chat sending — mode, meaning, since, changed; every field: tg commands info models chats show
+
+**Example:** `tg personal models chats show`
+
+#### `tg models chats set`
+
+allowed: no yes needed; ask: --yes needed, an agent may pass it; denied: refused even with --yes. Only you make it less strict
+
+**Changes something on this computer only.**
+
+```sh
+tg models chats set <mode> [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `mode` | required | allowed, ask or denied. |
+
+| Option | What it does |
+|---|---|
+| `--from-app` | you did this in WireCat Desktop. |
+
+**Returns:** chat sending — mode, meaning, since, changed; every field: tg commands info models chats set
+
+**Example:** `tg personal models chats set allowed`, `tg personal models chats set ask`, `tg personal models chats set denied`
+
 ### `tg models list`
 
 speech, embedding and reranker models: downloaded or not, each kind's default
@@ -3641,7 +3679,8 @@ tg conversations links rebuild [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
-| `--analyze` | link batches using the configured analysis provider; requires --chat and remembers consent for this chat/provider. |
+| `--analyze` | link batches using the configured analysis provider; requires --chat. A model outside this computer follows the `models chats` setting: under ask, a yes is remembered for this chat and provider. |
+| `--yes` | send this chat's text to the analysis model outside this computer, when `models chats` is ask. |
 | `--analysis-provider <provider>` | analysis: agent, openai or anthropic. |
 | `--model <model>` | analysis model; overrides models.analysis.model. |
 | `--base-url <url>` | analysis API endpoint; overrides models.analysis.base_url. |
@@ -3815,6 +3854,7 @@ tg conversations embed [options]
 | `--threads <n>` | local: threads in all (default: min(8, cores)). |
 | `--concurrency <n>` | remote: requests at once (default: 4). |
 | `--max-tokens <n>` | remote: stop before a run that could send more tokens than this. |
+| `--yes` | remote: send the chunks to the model outside this computer, when `models chats` is ask. |
 | `--max-chats <n>` | at most this many chats in one run; 20 if not given. |
 | `--max-chunks <n>` | at most this many chunks embedded in one run; 2000 if not given, and no limit with --chat. |
 
@@ -3939,7 +3979,7 @@ tg attachments download <dir> [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | only this chat; repeat for more; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. Default: ``. |
-| `--since-time <time>` | include messages from this ISO timestamp with a time zone. |
+| `--since-time <time>` | include messages from this time: ISO 8601, a date, today, yesterday, or 2h, 7d ago. |
 | `--pause <duration>` | pause between history pages. Default: `1s`. |
 
 **Returns:** media archive — directory, chats, saved, existing, complete; every field: tg commands info attachments download
@@ -3985,7 +4025,7 @@ tg attachments jobs install <dir> [options]
 | `--at <HH:mm>` | daily start time. Default: `03:00`. |
 | `--timezone <zone>` | IANA time zone of the daily start time. Default: `UTC`. |
 | `--chat <chat>` | only this chat; repeat for more; a chat: its title or part of it, its id, @username, or `me` for Saved Messages. Default: ``. |
-| `--since-time <time>` | include messages from this ISO timestamp with a time zone. |
+| `--since-time <time>` | include messages from this time: ISO 8601, a date, today, yesterday, or 2h, 7d ago; fixed when installed. |
 
 **Returns:** media archive timer — name, installed, service_path, timer_path, active, action; every field: tg commands info attachments jobs install
 
@@ -4078,7 +4118,7 @@ tg attachments move <dir> <archive-dir> [options]
 
 | Option | What it does |
 |---|---|
-| `--before-time <time>` | move images whose message date is before this ISO timestamp with zone. |
+| `--before-time <time>` | move images whose message date is before this time: ISO 8601, a date (its start), today, or 7d ago. |
 | `--dry-run` | show counts and bytes without moving files or creating the destination. |
 
 **Returns:** media archive move — directory, archive_directory, before_time, selected, selected_bytes, moved, moved_bytes, already_archived, and 3 more; every field: tg commands info attachments move
@@ -4102,7 +4142,7 @@ tg tags rebuild [options]
 | Option | What it does |
 |---|---|
 | `--chat <chat>` | a stored group/channel; repeat to select several. Default: ``. |
-| `--limit <n>` | process at most 1–500 chats. Default: `50`. |
+| `--limit <n>` | process at most 1–500 chats; the configured limit if not given. |
 | `--sync-first` | read current descriptions from the messenger before classifying. |
 | `--dry-run` | preview cached classification without changing the store. |
 
@@ -4444,7 +4484,7 @@ tg metadata sync [options]
 |---|---|
 | `--chat <chat>` | stored group/channel; repeat for several. Default: ``. |
 | `--only-missing` | only chats with no metadata yet; without --chat, every stored group/channel. |
-| `--limit <n>` | process at most 1–500 chats. Default: `50`. |
+| `--limit <n>` | process at most 1–500 chats; the configured limit if not given. |
 
 **Returns:** chat metadata refresh — chats, has_more; every field: tg commands info metadata sync
 
@@ -4512,7 +4552,7 @@ tg stats messages counters show [query] [options]
 | `--timezone <zone>` | IANA timezone for query dates. |
 | `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
 | `--counters <names>` | distinct views,reactions,comments fields; all three by default. |
-| `--limit <n>` | messages, 1–100; 20 by default. |
+| `--limit <n>` | messages, 1–100; the configured limit if not given. |
 | `--max-age <duration>` | maximum fresh observation age; 24h by default. |
 
 **Returns:** counters — cutoff, max_age_ms, selection, rows; every field: tg commands info stats messages counters show
@@ -4541,7 +4581,7 @@ tg stats messages counters sync [query] [options]
 | `--timezone <zone>` | IANA timezone for query dates. |
 | `--selection <json>` | pinned counter-targets selection from counters show; conflicts with query and scope. |
 | `--counters <names>` | distinct views,reactions,comments fields; all three by default. |
-| `--limit <n>` | messages, 1–100; 20 by default. |
+| `--limit <n>` | messages, 1–100; the configured limit if not given. |
 | `--max-messages <n>` | maximum messages to refresh, 1–100. |
 | `--sync-time <duration>` | remote refresh budget; 30s by default, maximum 5m. |
 | `--dry-run` | preview exact stored targets and counter capabilities without connecting. |
@@ -4567,7 +4607,7 @@ tg stats messages unanswered [query] [options]
 | `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--limit <n>` | report rows, 1–100; the configured limit if not given. |
 | `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands info stats messages unanswered
@@ -4591,7 +4631,7 @@ tg stats messages discussion [query] [options]
 | `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--limit <n>` | report rows, 1–100; the configured limit if not given. |
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands info stats messages discussion
 
@@ -4687,7 +4727,7 @@ tg stats messages evidence <message> [options]
 |---|---|
 | `--selection <json>` | the resolved ranking selection returned in drilldown. |
 | `--component <name>` | the exposed ranking component. |
-| `--limit <n>` | evidence rows, 1–100; 20 if not given. |
+| `--limit <n>` | evidence rows, 1–100; the configured limit if not given. |
 | `--cursor <cursor>` | continue the same component and stored-evidence fingerprint. |
 
 **Returns:** evidence — message, contribution, related, counters, person_ref, joined_at, cohort, checkpoints, and 2 more; every field: tg commands info stats messages evidence
@@ -4715,7 +4755,7 @@ tg stats contacts responses [query] [options]
 | `--source <accounts>` | every held account of this messenger; personal, bots or all. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--limit <n>` | report rows, 1–100; the configured limit if not given. |
 | `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands info stats contacts responses
@@ -4768,7 +4808,7 @@ tg stats contacts evidence <person> [options]
 |---|---|
 | `--selection <json>` | the resolved ranking selection returned in drilldown. |
 | `--component <name>` | the exposed ranking component. |
-| `--limit <n>` | evidence rows, 1–100; 20 if not given. |
+| `--limit <n>` | evidence rows, 1–100; the configured limit if not given. |
 | `--cursor <cursor>` | continue the same component and stored-evidence fingerprint. |
 
 **Returns:** evidence — message, contribution, related, counters, person_ref, joined_at, cohort, checkpoints, and 2 more; every field: tg commands info stats contacts evidence
@@ -4820,7 +4860,7 @@ tg stats chats newcomers <chat> [options]
 | `--within <duration>` | the help window after a known newcomer join. |
 | `--saved <name\|id>` | run a saved report of this kind; typed report options replace stored options. |
 | `--timezone <zone>` | the IANA timezone for calendar date boundaries. |
-| `--limit <n>` | report rows, 1–100; 20 if not given. |
+| `--limit <n>` | report rows, 1–100; the configured limit if not given. |
 | `--answerer <person>` | stored name, alias, @username, ID or person:provider/account/id; ambiguous names require a choice; repeat for more. |
 
 **Returns:** admin report — report, cutoff, total, summary, quality, rows; every field: tg commands info stats chats newcomers
@@ -4972,8 +5012,8 @@ tg tasks add <message> [options]
 | `--open-new` | open a task from a message the chat's task point already passed (a read again with tasks review --since-time); without it such a read only updates and closes tasks. |
 | `--title <title>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
-| `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
-| `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--due <time>` | when it must be done: an ISO 8601 time, a date (its end), today, or 2h, 3d from now; none clears it. |
+| `--remind-time <time>` | when to look at it again: an ISO 8601 time, a date (its start), today, or 2h, 3d from now; none clears it. |
 | `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
 **Returns:** task created — id, source, source_kind, account, group, kind, state, origin, and 16 more; every field: tg commands info tasks add
@@ -5001,8 +5041,8 @@ tg tasks update <task> [options]
 | `--parent <id>` | parent task in the same project; none clears it. |
 | `--title <title>` | one line: the action and its object — send Alex the API token. |
 | `--description <text>` | the detail, in Markdown: who owes whom, done when, next step, keywords. |
-| `--due <time>` | when it must be done: an ISO 8601 time or 2h, 3d from now; none clears it. |
-| `--remind-time <time>` | when to look at it again: an ISO 8601 time or 2h, 3d from now; none clears it. |
+| `--due <time>` | when it must be done: an ISO 8601 time, a date (its end), today, or 2h, 3d from now; none clears it. |
+| `--remind-time <time>` | when to look at it again: an ISO 8601 time, a date (its start), today, or 2h, 3d from now; none clears it. |
 | `--assignee <person...>` | who does it: sender (whoever sent the task's message) or person:<id>; none clears it. Leave it out when unsure: a task with no assignee is better than none. |
 
 **Returns:** task card — id, ref, key, project, project_key, project_name, created_by, title, and 26 more; every field: tg commands info tasks update
@@ -5591,8 +5631,8 @@ tg search runs [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | matches per page, at most 100. Default: `20`. |
-| `--page <n>` | result page. Default: `1`. |
+| `--limit <n>` | matches per page, at most 100. |
+| `--page <n>` | result page. |
 
 **Returns:** run hit — run_id, command, started_at, status, cli_version, events, events_truncated, profile, and 21 more; every field: tg commands info search runs
 
@@ -6104,8 +6144,8 @@ tg runs list [query] [options]
 
 | Option | What it does |
 |---|---|
-| `--limit <n>` | how many to show. Default: `20`. |
-| `--page <n>` | which page, starting at 1. Default: `1`. |
+| `--limit <n>` | how many to show. |
+| `--page <n>` | which page, starting at 1. |
 
 **Returns:** run — run_id, command, started_at, status, cli_version, profile, completed_at, requests, and 23 more; every field: tg commands info runs list
 

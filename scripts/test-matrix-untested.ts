@@ -11,6 +11,22 @@ export interface Untested {
 
 export const UNTESTED: Untested[] = [
   {
+    command: "models chats set",
+    option: "--from-app",
+    reason:
+      "cli-core 0.664.0 src/cli/messenger/models-command.test.ts drives the shared command; tg mounts it unchanged",
+  },
+  {
+    command: "conversations links rebuild",
+    option: "--yes",
+    reason: "cli-core 0.664.0 src/cli/messenger/analysis.test.ts drives the shared command; tg mounts it unchanged",
+  },
+  {
+    command: "conversations embed",
+    option: "--yes",
+    reason: "cli-core 0.664.0 src/cli/messenger/analysis.test.ts drives the shared command; tg mounts it unchanged",
+  },
+  {
     command: "contacts unlink",
     option: "--from",
     reason:
