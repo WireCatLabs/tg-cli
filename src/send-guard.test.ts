@@ -919,8 +919,8 @@ describe("the send guard in front of the other writes", () => {
     expect(journal("g-profile").map((entry) => entry.action)).toEqual(["profile", "sessions-end"])
   })
 
-  it("deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
-    configure({ "g-del": { sends_per_hour: 2 } })
+  it("at ask, deletes only with --allow-dangerous, and counts each message toward the hourly limit", async () => {
+    configure({ "g-del": { sends_per_hour: 2, permissions: { "messages.delete": "ask" } } })
     const { adapter, deleted } = telegram()
 
     const unasked = await tg(["g-del", "messages", "delete", "Valencia", "5"], adapter)

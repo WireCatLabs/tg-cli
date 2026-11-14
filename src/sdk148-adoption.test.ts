@@ -127,10 +127,10 @@ describe("SDK148 local commands through the consumer", () => {
     expect(cleared.code, cleared.err).toBe(0)
     expect(JSON.parse(cleared.out).item).toMatchObject({ cleared: { deadlines: [], send_block: null } })
   })
-  it("keeps reply sending denied, with an audience of everyone by default", async () => {
+  it("allows reply sending, with an audience of everyone by default (owner, 2026-11-14)", async () => {
     const status = await cli(["replies", "status", "--json"])
     expect(status.code, status.err).toBe(0)
-    expect(JSON.parse(status.out).item).toMatchObject({ send: "deny", audience: { reply: "all", allow: 0 } })
+    expect(JSON.parse(status.out).item).toMatchObject({ send: "allow", audience: { reply: "all", allow: 0 } })
     expect(JSON.parse(status.out).item).not.toHaveProperty("testers")
   })
 })
