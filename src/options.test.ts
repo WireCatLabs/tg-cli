@@ -106,11 +106,11 @@ describe("the global options", () => {
     await tg(["unkept", "account", "show", "--no-record"], { adapter: () => failing })
     await tg(["kept", "account", "show"], { adapter: () => failing })
 
-    const profiles = json((await tg(["runs", "list", "--json"])).stdout).items.map(
-      (run: { profile: string }) => run.profile,
-    )
-    expect(profiles).toContain("kept")
-    expect(profiles).not.toContain("unkept")
+    // By profile: `runs list` shows only defaults.limit runs, and the other tests' runs may fill it.
+    const runsOf = async (profile: string) =>
+      json((await tg(["runs", "list", `profile:${profile}`, "--json"])).stdout).items as unknown[]
+    expect(await runsOf("kept")).not.toEqual([])
+    expect(await runsOf("unkept")).toEqual([])
   })
 })
 

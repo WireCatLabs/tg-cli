@@ -1,8 +1,10 @@
 ### Changed — may break callers
 
-- **`store clear --allow-dangerous` is yours alone** (cli-core 0.663.0; tg now builds on 0.664.0, was 0.662.0). Its
-  MCP tool no longer takes `allow_dangerous`: an agent previews with `dry_run`, and you run the command in a
-  terminal.
+- **An agent can no longer delete a chat or clear its history over MCP** (cli-core 0.664.0). `chats delete` and
+  `chats clear` are not offered as MCP tools: over MCP an `ask` level went ahead without a question. On the command
+  line both still ask first.
+- **`store clear --allow-dangerous` is yours alone** (cli-core 0.663.0; tg now builds on 0.665.0, was 0.662.0). Its MCP
+  tool no longer takes `allow_dangerous`: an agent previews with `dry_run`, and you run the command in a terminal.
 - **Lists without `--limit` show the configured `defaults.limit`** (20 unless set), so `metadata sync` and
   `tags rebuild` drop from 50 to 20 (cli-core 0.663.0).
 - **`models chats show|set allowed|ask|denied`** decides whether chat text may go to a model outside this computer
