@@ -179,8 +179,14 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    only when the owner asks to include their notes or imported Drive documents**: it adds both to the messages, in one
    answer, each hit typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
-   For a natural question or uncertain wording, use `tg personal search messages '<question>' --discover`
-   or MCP `discover: true`. It searches the local archive without model downloads, keeps hard filters
+   **For a question in the owner's own words** (a sentence, unsure wording, a name that may be misspelled, no chat
+   named), search in this order: `tg personal search conversations '<question>'` (by meaning and words; `conversations
+   status` shows which chats have vectors), then `tg personal search messages '<question>' --discover`, then key words.
+   Pass the question as the owner wrote it; do not cut it to one word first. Never filter the results yourself
+   (`grep -v`, `jq select`) by chat or sender: a hit in a chat you did not expect is often the answer. When the owner
+   says "I advised / I wrote", add `from:me`. A search that stops at its time limit answers `query.time-limit`: run it
+   again with `--timeout 60s` before trying other words.
+   For `--discover` (MCP `discover: true`): it searches the local archive without model downloads, keeps hard filters
    and includes eligible direct replies. Inspect missing terms, parent links and the messages;
    the first result and its score do not establish an answer. Explicit syntax remains strict.
    **Without `--discover`, `tg personal search messages` also asks Telegram's search** (`--backend both`; `archive`
@@ -261,7 +267,8 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
 22. **Nothing relevant: search again in other words before saying it is not there.** A search finds the words
     it is given, and a paraphrase misses. Try the words the answer itself would contain (a document's title, the
     term the sender would use), one or two key words instead of a sentence, a synonym, the other language; for a
-    question, `--discover`. After two or three tries, say what you searched for.
+    question, `search conversations` and `--discover` first (trap 5). After two or three tries, say what you searched
+    for.
 
 ## The usual path
 
@@ -337,7 +344,7 @@ tg personal search messages "invoice march" --backend archive --json  # this mac
 tg personal search all "invoice march" --json      # only when the owner asks: adds their notes and Drive documents
 tg personal conversations links rebuild --chat -1001234567890 --json  # the threads inside a group, from what was kept; then list | show
 tg skill show link-conversations                   # only when the owner asks you to untangle a chat's threads yourself
-tg personal search conversations "<question>" --json  # by meaning, after the owner ran tg personal conversations embed --chat <chat>
+tg personal search conversations "<question>" --json  # by meaning and words: the first search for a question in the owner's words
 tg personal watch --jsonl                          # new messages as {"type":"item","data"} lines, then a {"type":"end"} line
 ```
 
