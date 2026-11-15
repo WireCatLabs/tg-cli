@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2403 ✅ · 149 ⛔ · 0 ❌** — 542 commands, 2010 options.
+**2405 ✅ · 152 ⛔ · 0 ❌** — 544 commands, 2013 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -298,6 +298,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `polls create` | `--close-time` | ✅ |  |
 | `models keys set` |  | ✅ |  |
 | `models keys remove` |  | ✅ |  |
+| `models chats show` |  | ✅ |  |
+| `models chats set` |  | ✅ |  |
+| `models chats set` | `--from-app` | ⛔ | cli-core 0.664.0 src/cli/messenger/models-command.test.ts drives the shared command; tg mounts it unchanged |
 | `models list` |  | ✅ |  |
 | `models download` |  | ✅ |  |
 | `models download` | `--accept-terms` | ⛔ | phase 5's shared command; it downloads a model over the network, and cli-core's tests drive it offline |
@@ -452,6 +455,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations links rebuild` |  | ✅ |  |
 | `conversations links rebuild` | `--chat` | ✅ |  |
 | `conversations links rebuild` | `--analyze` | ✅ |  |
+| `conversations links rebuild` | `--yes` | ⛔ | cli-core 0.664.0 src/cli/messenger/analysis.test.ts drives the shared command; tg mounts it unchanged |
 | `conversations links rebuild` | `--analysis-provider` | ✅ |  |
 | `conversations links rebuild` | `--model` | ✅ |  |
 | `conversations links rebuild` | `--base-url` | ✅ |  |
@@ -492,6 +496,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `conversations embed` | `--threads` | ✅ |  |
 | `conversations embed` | `--concurrency` | ✅ |  |
 | `conversations embed` | `--max-tokens` | ✅ |  |
+| `conversations embed` | `--yes` | ⛔ | cli-core 0.664.0 src/cli/messenger/analysis.test.ts drives the shared command; tg mounts it unchanged |
 | `conversations embed` | `--max-chats` | ✅ |  |
 | `conversations embed` | `--max-chunks` | ✅ |  |
 | `attachments extract` |  | ✅ |  |
