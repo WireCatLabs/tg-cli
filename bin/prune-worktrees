@@ -2,64 +2,72 @@
 # Removes worktrees whose work is already on main, and their local branches. Run it from a
 # terminal: inside the sandbox git cannot delete a worktree or its record.
 #
-#   bin/prune-worktrees           # lists them, asks, then removes
+#   bin/prune-worktrees                               # this repository: lists, asks, then removes
+#   bin/prune-worktrees /home/leemour/Projects/AI/*/  # every repository there, one question for all
 #
 # A worktree is removed only when its commit is on origin/main or its branch's PR is merged, and
 # nothing in it is uncommitted except build tarballs (*.tgz), and no process works in it. The rest is
-# listed as kept.
+# listed as kept. A folder that is not a repository's main checkout with an origin is skipped.
 set -eu
 
-cd "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
-git fetch -q --prune origin
-# A folder deleted by hand leaves its record, and the record keeps its branch from being deleted.
-orphans=$(git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,19)} /^$/{print w "\t" b; b=""}' |
-  while IFS="$(printf '\t')" read -r tree branch; do
-    [ ! -d "$tree" ] && [ -n "$branch" ] && echo "$branch"
-  done)
-git worktree prune
-for branch in $orphans; do
-  if [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
-    git branch -D "$branch" > /dev/null && echo "deleted branch $branch — its folder was gone and its PR merged"
-  fi
-done
+[ $# -gt 0 ] || set -- "$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)"
 
-main=$(pwd -P)
 list=$(mktemp)
 trap 'rm -f "$list"' EXIT
 
-git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,8)} /^detached/{b=""} /^$/{print w "\t" b; b=""}' |
-  while IFS="$(printf '\t')" read -r tree ref; do
-    [ "$tree" = "$main" ] || [ ! -d "$tree" ] && continue
-    branch=${ref#refs/heads/}
-    dirty=$(git -C "$tree" status --porcelain 2>/dev/null | grep -v '^?? [^/]*\.tgz$' || true)
-    if [ -n "$dirty" ]; then
-      echo "keep  $tree — uncommitted changes"
-      continue
-    fi
-    if for proc in /proc/[0-9]*; do readlink "$proc/cwd" 2>/dev/null; done | grep -q "^$tree\(/\|$\)"; then
-      echo "keep  $tree — a running process works in it"
-      continue
-    fi
-    head=$(git -C "$tree" rev-parse HEAD)
-    if git merge-base --is-ancestor "$head" origin/main; then
-      echo "$tree	$branch" >> "$list"
-    elif [ -n "$branch" ] && [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
-      echo "$tree	$branch" >> "$list"
-    else
-      echo "keep  $tree — not merged"
+for repo in "$@"; do
+  [ -d "$repo" ] || continue
+  repo=$(CDPATH='' cd -- "$repo" && pwd -P)
+  [ -d "$repo/.git" ] && git -C "$repo" remote get-url origin > /dev/null 2>&1 || continue
+  cd "$repo"
+  echo "# $repo"
+  git fetch -q --prune origin || { echo "skip  $repo — fetch failed"; continue; }
+  # A folder deleted by hand leaves its record, and the record keeps its branch from being deleted.
+  orphans=$(git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,19)} /^$/{print w "\t" b; b=""}' |
+    while IFS="$(printf '\t')" read -r tree branch; do
+      if [ ! -d "$tree" ] && [ -n "$branch" ]; then echo "$branch"; fi
+    done)
+  git worktree prune
+  for branch in $orphans; do
+    if [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
+      git branch -D "$branch" > /dev/null && echo "deleted branch $branch — its folder was gone and its PR merged"
     fi
   done
 
+  git worktree list --porcelain | awk '/^worktree /{w=substr($0,10)} /^branch /{b=substr($0,8)} /^detached/{b=""} /^$/{print w "\t" b; b=""}' |
+    while IFS="$(printf '\t')" read -r tree ref; do
+      if [ "$tree" = "$repo" ] || [ ! -d "$tree" ]; then continue; fi
+      branch=${ref#refs/heads/}
+      dirty=$(git -C "$tree" status --porcelain 2>/dev/null | grep -v '^?? [^/]*\.tgz$' || true)
+      if [ -n "$dirty" ]; then
+        echo "keep  $tree — uncommitted changes"
+        continue
+      fi
+      if for proc in /proc/[0-9]*; do readlink "$proc/cwd" 2>/dev/null; done | grep -q "^$tree\(/\|$\)"; then
+        echo "keep  $tree — a running process works in it"
+        continue
+      fi
+      head=$(git -C "$tree" rev-parse HEAD)
+      if git merge-base --is-ancestor "$head" origin/main; then
+        printf '%s\t%s\t%s\n' "$repo" "$tree" "$branch" >> "$list"
+      elif [ -n "$branch" ] && [ -n "$(gh pr list --head "$branch" --state merged --json number -q '.[0].number')" ]; then
+        printf '%s\t%s\t%s\n' "$repo" "$tree" "$branch" >> "$list"
+      else
+        echo "keep  $tree — not merged"
+      fi
+    done
+done
+
 [ -s "$list" ] || { echo "nothing to remove"; exit 0; }
 echo
-cut -f1 "$list" | sed 's/^/remove /'
+cut -f2 "$list" | sed 's/^/remove /'
 printf '\nRemove these %s worktrees and their local branches? [y/N] ' "$(wc -l < "$list")"
 read -r answer
 [ "$answer" = y ] || exit 1
 
-while IFS="$(printf '\t')" read -r tree branch; do
-  git worktree remove --force "$tree"
-  [ -z "$branch" ] || git branch -D "$branch" > /dev/null
+while IFS="$(printf '\t')" read -r repo tree branch; do
+  git -C "$repo" worktree remove --force "$tree"
+  [ -z "$branch" ] || git -C "$repo" branch -D "$branch" > /dev/null
 done < "$list"
-git worktree prune
+cut -f1 "$list" | sort -u | while read -r repo; do git -C "$repo" worktree prune; done
 echo "removed $(wc -l < "$list")"
