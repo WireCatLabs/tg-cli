@@ -5,7 +5,7 @@
   past message, link, price or decision), even when the question does not say Telegram, and names
   `search conversations` as the first step; trap 5 now starts with it. The first screen (`tg --help`,
   `tg <profile> --help`) lists `search conversations "<question>"` next to `search all`; the `TG_READ_ONLY=1` line
-  left it, as `schedule agent` and `mcp serve --permission` say the same. In Experiment B round 4 an agent with ten
+  left it, as `schedule agent` and `mcp serve --permission` say the same. In a test where an agent had ten
   calls opened the skill in 1 of 32 sessions and ran `search conversations` in 1
   ([#896](https://github.com/WireCatLabs/tg-cli/issues/896)).
 - **An option an agent guesses fails with the form that runs** (cli-core 0.672.0). `--chat`, `--around`, `--since`,
