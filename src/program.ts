@@ -87,11 +87,11 @@ export const definition: ProgramDefinition = {
       { command: "review 'date>1d'", does: "what changed in every chat since yesterday" },
       { command: "tasks agenda", does: "tasks due, replies you owe, replies you wait for" },
       { command: "inbox --transcribe", does: "unread in every chat, voice as text; marks nothing read by default" },
+      { command: 'search conversations "<question>"', does: "ask in your own words: who said, advised or sent what" },
       { command: "search all invoice", does: "messages and notes, from the local store and Telegram's server" },
       { command: "attachments extract", does: "text of PDFs and documents, ready for search" },
       { command: "schedule agent …", does: "an agent on a timer; it runs read-only and can never send" },
       { command: "mcp serve --permission …", does: "your account in any agent, with messages.send=deny" },
-      { command: "TG_READ_ONLY=1 tg …", does: "a run that can read and sync but never send, edit or delete" },
     ],
   },
   configure: (program) => {
