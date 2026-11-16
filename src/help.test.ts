@@ -91,6 +91,19 @@ describe("the root help", () => {
     expect(help).not.toContain("Getting started")
   })
 
+  it("shows the search for a question in the owner's words next to `search all`, with and without a profile", async () => {
+    for (const argv of [["--help"], ["personal", "--help"]]) {
+      const streams = captureStreams()
+      expect(await run(argv, { streams, tty: false, keyring: memoryKeyring() })).toBe(0)
+      const lines = streams.stdout.join("\n").split("\n")
+      const ask = lines.findIndex((line) => line.includes('search conversations "<question>"'))
+
+      expect([argv.join(" "), ask]).not.toEqual([argv.join(" "), -1])
+      expect(lines[ask]).toContain("ask in your own words")
+      expect(lines[ask + 1]).toContain("search all")
+    }
+  })
+
   it("`help options` lists the options every command takes", async () => {
     const { code, stdout } = await atTerminal(["help", "options"])
     const text = stdout.join("\n")

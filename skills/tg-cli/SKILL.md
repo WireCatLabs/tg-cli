@@ -1,7 +1,7 @@
 ---
 name: tg-cli
 description: >-
-  Set up Telegram and read or send messages in the owner's personal account through tg. Use when asked to install or connect Telegram, find a chat or person, read a conversation, or send a message.
+  Answer questions from the owner's Telegram history, and read or send messages in their personal account, through tg. Use for any question their chats could answer, even when it does not say Telegram: who said, advised or sent what, a past message, link, file, price or decision. Also to set up Telegram, find a chat or person, read a conversation or send a message. For a question, start with tg <profile> search conversations "<the question>".
 metadata:
   openclaw:
     requires:
@@ -174,18 +174,20 @@ summary; news digests remain separate future work. Permission: `messages.evidenc
    deduplication contract applies to the same chat, topic, content and `--operation-id`.
    Never automatically repeat an unknown write based only on its error code.
 
-5. **Start a search with `tg personal search messages`**: the messages kept on this machine plus Telegram's own
+5. **A question in the owner's own words starts with `tg personal search conversations '<question>'`** (who said,
+   advised or sent what; a sentence, unsure wording, a name that may be misspelled, no chat named): it searches by
+   meaning and words; `conversations status` shows which chats have vectors. Then `tg personal search messages
+   '<question>' --discover`, then key words. Pass the question as the owner wrote it; do not cut it to one word first.
+   Never filter the results yourself (`grep -v`, `jq select`) by chat or sender: a hit in a chat you did not expect is
+   often the answer. When the owner says "I advised / I wrote", add `from:me`. A search that stops at its time limit
+   answers `query.time-limit`: run it again with `--timeout 60s` before trying other words.
+   **For known words, use `tg personal search messages`**: the messages kept on this machine plus Telegram's own
    search. Add `--backend archive` when the owner wants nothing to leave the machine. **Use `tg personal search all`
    only when the owner asks to include their notes or imported Drive documents**: it adds both to the messages, in one
    answer, each hit typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
    `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
-   **For a question in the owner's own words** (a sentence, unsure wording, a name that may be misspelled, no chat
-   named), search in this order: `tg personal search conversations '<question>'` (by meaning and words; `conversations
-   status` shows which chats have vectors), then `tg personal search messages '<question>' --discover`, then key words.
-   Pass the question as the owner wrote it; do not cut it to one word first. Never filter the results yourself
-   (`grep -v`, `jq select`) by chat or sender: a hit in a chat you did not expect is often the answer. When the owner
-   says "I advised / I wrote", add `from:me`. A search that stops at its time limit answers `query.time-limit`: run it
-   again with `--timeout 60s` before trying other words.
+   One chat is `chat:<chat>` in the query, dates are `date>=2026-10-01` or `date:7d` in the query (`--since-time` for
+   `search conversations`), and the messages around a hit are `tg personal messages context <hit ref>`.
    For `--discover` (MCP `discover: true`): it searches the local archive without model downloads, keeps hard filters
    and includes eligible direct replies. Inspect missing terms, parent links and the messages;
    the first result and its score do not establish an answer. Explicit syntax remains strict.
