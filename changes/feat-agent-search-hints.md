@@ -8,3 +8,8 @@
   left it, as `schedule agent` and `mcp serve --permission` say the same. In Experiment B round 4 an agent with ten
   calls opened the skill in 1 of 32 sessions and ran `search conversations` in 1
   ([#896](https://github.com/WireCatLabs/tg-cli/issues/896)).
+- **An option an agent guesses fails with the form that runs** (cli-core 0.672.0). `--chat`, `--around`, `--since`,
+  `--after`, `--until`, `--before` and `--only` on `search all`, `search messages`, `search notes`,
+  `search conversations` and `messages list`, `show` and `context` now say in one line what to type instead
+  (`chat:<chat>` in the query, `messages context <hit ref>`, `date>=…` or `--since-time`, `--after-n`). Before, the
+  error was a bare "unknown option", or named an unrelated option (`--since` → `--source`).
