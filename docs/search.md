@@ -188,7 +188,14 @@ tg personal search messages 'invoic*'            # every word that starts with "
 Words next to each other must all be in the message. Search includes word forms, according to
 the store's language settings: `piso` can find `pisos`. Quotes keep words together and also allow
 word forms. Use `exact:piso` or add `--exact` for words without an explicit field. An explicit
-`text:` still matches forms. Case and accents are ignored. Written message text is not corrected for typos.
+`text:` still matches forms. Case and accents are ignored.
+
+Typos in written message text are corrected only by [archive discovery](#when-you-remember-the-question-rather-than-its-wording)
+(`--discover`), and only for plain words without quotes, fields or wildcards. A word the store does not know is
+matched to the closest words it does know: one letter off for a word of up to four letters, two for a longer one.
+Numbers are never corrected. The answer names each correction, `rolluot → rollout` at a terminal and `corrections`
+with `--json`, and a message found through one has `match: "corrected"`. The known words are the ones in the stored
+messages, and `tg personal store rebuild` builds the list again. Search without `--discover` does not correct typos.
 
 Bare words and `transcript:` also search saved voice-note transcripts, including word forms and
 single-word spellings that speech recognition may have garbled. `text:` searches written text only;
