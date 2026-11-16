@@ -932,8 +932,10 @@ export const UNTESTED: Untested[] = [
       "cli-core 0.549.0 src/cli/messenger/projects-command.test.ts («answers from the store alone, for this profile's account…») covers the shared command tg mounts, over the store",
   })),
   ...[
+    ["projects evidence", "--purposes"],
     ["projects evidence", "--purpose"],
     ["projects evidence", "--include-proposed"],
+    ["projects status", "--purposes"],
     ["projects status", "--purpose"],
   ].map(([command, option]) => ({
     command: command as string,
