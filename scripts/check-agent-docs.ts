@@ -11,7 +11,8 @@ const keys = CONFIG.allSettings
 const file = new URL("../skills/tg-cli/SKILL.md", import.meta.url)
 const source = readFileSync(file, "utf8")
 const program = createProgram()
-assert.deepEqual(validateSkill(source, { folder: "tg-cli", file: file.pathname, program }), [])
+// An agent carries SKILL.md in every turn after it opens it; the references only when it reads one (WC-DOC-22).
+assert.deepEqual(validateSkill(source, { folder: "tg-cli", file: file.pathname, program, maxBytes: 9216 }), [])
 assert.deepEqual(validateSkill(withVersion(source, VERSION), { folder: "tg-cli", version: VERSION, program }), [])
 const reference = readFileSync(new URL("../docs/configuration-reference.md", import.meta.url), "utf8")
 for (const key of keys) assert.ok(reference.includes(key), `configuration reference misses ${key}`)

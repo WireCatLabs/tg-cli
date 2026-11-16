@@ -11322,7 +11322,7 @@ tg skill show [name] [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `name` | optional | one of the skills shipped for a task: follow-ups, link-conversations. |
+| `name` | optional | a part of this skill, or a skill shipped for a task: tasks, stats, setup, search, people, messages, mcp-and-bots, history, files, follow-ups, link-conversations. |
 
 | Option | What it does |
 |---|---|
