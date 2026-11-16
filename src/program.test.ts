@@ -85,12 +85,13 @@ describe("first-run discovery", () => {
     expect(adapter).not.toHaveBeenCalled()
   })
 
-  it("makes the bundled skill readable without credentials or a session", async () => {
+  it("makes the bundled skill and its setup part readable without credentials or a session", async () => {
     const adapter = vi.fn(() => scripted())
-    const result = await tg(["skill", "show"], {
-      adapter,
-      env: { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined },
-    })
+    const env = { ...process.env, TG_API_ID: undefined, TG_API_HASH: undefined }
+    const core = await tg(["skill", "show"], { adapter, env })
+    expect(core.code).toBe(0)
+    expect(core.stdout.join("\n")).toContain("[setup](references/setup.md) (`setup`)")
+    const result = await tg(["skill", "show", "setup"], { adapter, env })
     expect(result.code).toBe(0)
     expect(result.stdout.join("\n")).toContain("## First setup")
     expect(result.stdout.join("\n")).toContain("tg setup --help")

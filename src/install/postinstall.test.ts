@@ -24,6 +24,8 @@ describe("global installation", () => {
       const file = join(install.home, directory, "skills/tg-cli/SKILL.md")
       expect(readFileSync(file, "utf8")).toContain("name: tg-cli")
       expect(readFileSync(file, "utf8")).toContain("metadata:")
+      // SKILL.md links them; without them an installed agent follows a link into nothing.
+      expect(existsSync(join(install.home, directory, "skills/tg-cli/references/search.md"))).toBe(true)
     }
     expect(install.note.mock.calls.flat().join("\n")).toContain("Agent: read tg skill show")
   })

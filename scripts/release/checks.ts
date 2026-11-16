@@ -50,7 +50,7 @@ export const PACKED = [
   "README.md",
   "LICENSE",
   "THIRD_PARTY_NOTICES",
-  "skills/tg-cli/SKILL.md",
+  "skills/tg-cli/",
   "scenarios/",
   "contracts/wirecat.json",
   "spec/bot/LICENSE",
@@ -66,6 +66,7 @@ export const docsRules = (root: string): DocsRules => ({
     ...["README.md", "CHANGELOG.md", "AGENTS.md", "CLAUDE.md", "skills/tg-cli/SKILL.md"].map((name) =>
       join(root, name),
     ),
+    ...markdownFiles(join(root, "skills/tg-cli/references")),
     ...markdownFiles(join(root, "docs")),
   ],
   ids: IDS,

@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs"
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
@@ -84,6 +84,16 @@ describe("a deletion Telegram sends without its chat", () => {
 
 it("names a SKILL.md that exists, for `tg skill` and the MCP server's tg://skill", () => {
   expect(TELEGRAM.skill && existsSync(fileURLToPath(TELEGRAM.skill))).toBe(true)
+})
+
+it("indexes every reference file by its link and its `tg skill show` name", () => {
+  const skill = readFileSync(fileURLToPath(TELEGRAM.skill as URL), "utf8")
+  const references = readdirSync(fileURLToPath(new URL("references/", TELEGRAM.skill)))
+  expect(references.length).toBeGreaterThan(0)
+  for (const file of references) {
+    const name = file.replace(/\.md$/, "")
+    expect(skill).toContain(`[${name}](references/${file}) (\`${name}\`)`)
+  }
 })
 
 describe("which profiles are signed in", () => {
