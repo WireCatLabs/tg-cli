@@ -8,5 +8,5 @@
   rode in every later turn of an agent's session: in a timed agent test the median input per turn rose from about
   31,000 to 47,000 tokens, and half the sessions ran out of time. `tg skill install` now copies the whole folder,
   `tg skill show <name>` prints one reference (`tg skill show search`), and the MCP server serves each one at
-  `tg://skill/references/<name>.md` (cli-base 0.106.0, cli-core CORE_VERSION). A script that read only SKILL.md for
+  `tg://skill/references/<name>.md` (cli-base 0.106.0, cli-core 0.681.0). A script that read only SKILL.md for
   a rule should read the reference its index names.
