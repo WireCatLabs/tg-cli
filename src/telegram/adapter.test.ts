@@ -2423,12 +2423,25 @@ describe("a bot's buttons", () => {
 
     expect(await adapter.buttons("900", "5")).toEqual([
       [
-        { kind: "callback", text: "b0" },
+        { kind: "callback", text: "b0", data: "\u0001" },
         { kind: "link", text: "b1", url: "https://example.invalid" },
       ],
       [
-        { kind: "other", text: "b0" },
+        { kind: "other", text: "b0", data: "\u0002" },
         { kind: "app", text: "b1" },
+      ],
+    ])
+  })
+
+  it("**carries a callback button's data as text**, and leaves out data that is not UTF-8", async () => {
+    const { adapter, client } = await open()
+    const text = [...new TextEncoder().encode("wcr1:abc")]
+    client.found = { ...message(5), markup: keyboard([callback(text), callback([0xff, 0xfe])]) }
+
+    expect(await adapter.buttons("900", "5")).toEqual([
+      [
+        { kind: "callback", text: "b0", data: "wcr1:abc" },
+        { kind: "callback", text: "b1" },
       ],
     ])
   })
