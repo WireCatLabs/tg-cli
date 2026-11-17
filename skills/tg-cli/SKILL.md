@@ -37,7 +37,8 @@ Choose a path from the user's task rather than reading recent messages by defaul
    named); do not cut it to one word. When the owner says "I advised / I wrote", add `from:me`.
 2. Then `tg personal search messages "<question>" --discover --json`, then key words with
    `tg personal search messages "<words>"` (this machine's copy plus Telegram's own search). Add
-   `--backend archive` when the owner wants nothing to leave the machine.
+   `--backend archive` when the owner wants nothing to leave the machine. Every word must match; unsure which
+   word the message uses, join the variants with a capital OR: `invoice OR счёт`, `colour OR color`.
 3. **Never filter the results yourself** (`grep -v`, `jq select`) by chat or sender: a hit in a chat you did
    not expect is often the answer. The first result and its score do not establish an answer.
 4. **Read around a hit:** `tg personal messages context <hit ref>`. `messages show` and `messages context`
