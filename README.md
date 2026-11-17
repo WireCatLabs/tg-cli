@@ -56,8 +56,6 @@ Agent:  Draft: "Hi Bob, how is the mock-up going?" Send it?
 You:    Yes.
 ```
 
-*Invented people, illustrative output.*
-
 ## Why tg
 
 - **Your data never leaves your computer.** `tg` talks only to Telegram. There is no WireCat server and no account
