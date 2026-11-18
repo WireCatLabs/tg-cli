@@ -34,7 +34,10 @@ Choose a path from the user's task rather than reading recent messages by defaul
 
 1. **Start with `tg personal search conversations "<the question>" --json`**: it searches by meaning and
    words. Pass the question as the owner wrote it (a sentence, unsure wording, a misspelled name, no chat
-   named); do not cut it to one word. When the owner says "I advised / I wrote", add `from:me`.
+   named); do not cut it to one word. When the owner says "I advised / I wrote", add `from:me`. Then run it once
+   more with a one-sentence example of the message that would answer it, as someone in the chat would write it
+   (`"I block ads with uBlock Origin and Privacy Badger"` for "who said how they block ads?"). Use both lists:
+   a reply reads closer to the answer than the question does, and each finds answers the other misses.
 2. Then `tg personal search messages "<question>" --discover --json`, then key words with
    `tg personal search messages "<words>"` (this machine's copy plus Telegram's own search). Add
    `--backend archive` when the owner wants nothing to leave the machine. Every word must match; unsure which
