@@ -32,10 +32,11 @@ unless the task or `TG_PROFILE` says. `personal` below stands for the profile th
 
 Choose a path from the user's task rather than reading recent messages by default.
 
-1. **Start with `tg personal search conversations "<the question>" --json`**: it searches by meaning and
-   words. Pass the question as the owner wrote it (a sentence, unsure wording, a misspelled name, no chat
-   named); do not cut it to one word. When the owner says "I advised / I wrote", add `from:me`. Then search once
-   more with a one-sentence example of the reply that would answer it, and read both lists.
+1. **Start with `tg personal search conversations "<the question>" --like "<a reply that would answer it>"
+   --json`**: it searches by meaning and words. Pass the question as the owner wrote it (unsure wording, a
+   misspelled name, no chat named); do not cut it to one word. The reply is your one-sentence guess, worded like a
+   chat message. Read the `lines` of every hit, `from_owner` ones too: the owner's own conversations come last.
+   When the owner says "I advised / I wrote", add `from:me`.
 2. Then `tg personal search messages "<question>" --discover --json`, then key words with
    `tg personal search messages "<words>"` (this machine's copy plus Telegram's own search). Add
    `--backend archive` when the owner wants nothing to leave the machine. Every word must match; unsure which
