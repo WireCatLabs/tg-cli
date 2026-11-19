@@ -200,6 +200,9 @@ class FakeClient {
   sendMedia = vi.fn(async (..._args: unknown[]): Promise<unknown> => message(98))
   scheduledQueue: unknown[] = []
   getAllScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
+  getScheduledMessages = vi.fn(async (..._args: unknown[]) => this.scheduledQueue)
+  deleteScheduledMessages = vi.fn(async (..._args: unknown[]): Promise<void> => {})
+  sendScheduled = vi.fn(async (..._args: unknown[]): Promise<unknown[]> => [message(120)])
   createSupergroup = vi.fn(async (params: { title: string }): Promise<unknown> => group(-100700, params.title))
   createChannel = vi.fn(async (params: { title: string }): Promise<unknown> => group(-100701, params.title))
   addChatMembers = vi.fn(async (..._args: unknown[]): Promise<{ userId: number }[]> => [])
@@ -2137,6 +2140,40 @@ describe("sending", () => {
       ["7", at],
       ["8", "2030-01-02T09:00:00.000Z"],
     ])
+  })
+
+  it("**cancels, edits and sends now by the scheduled ids**, never by a sent message's", async () => {
+    const { adapter, client } = await open()
+    const at = "2030-01-01T09:00:00.000Z"
+
+    await adapter.cancelScheduled("-100500", ["12", "13"])
+    await adapter.editScheduled("-100500", "12", { text: "later", at })
+    await adapter.editScheduled("-100500", "12", { at })
+    const sent = await adapter.sendScheduled("-100500", ["12"])
+
+    expect(client.deleteScheduledMessages).toHaveBeenCalledWith(-100500, [12, 13])
+    expect(client.editMessage.mock.calls).toEqual([
+      [{ chatId: -100500, message: 12, text: "later", scheduleDate: new Date(at) }],
+      [{ chatId: -100500, message: 12, scheduleDate: new Date(at) }],
+    ])
+    expect(client.sendScheduled).toHaveBeenCalledWith(-100500, [12])
+    expect(sent.map((one) => one.id)).toEqual(["120"])
+    expect(client.deleteMessagesById).not.toHaveBeenCalled()
+  })
+
+  it("**takes a scheduled edit to the same text and time as done**, and a cancel without an answer as unknown", async () => {
+    const { adapter, client } = await open()
+    const at = "2030-01-01T09:00:00.000Z"
+    client.scheduledQueue = [{ ...message(12), isScheduled: true, date: new Date(at) }]
+    client.editMessage.mockRejectedValueOnce(new tl.RpcError(400, "MESSAGE_NOT_MODIFIED"))
+    client.deleteScheduledMessages.mockRejectedValueOnce(new MtTimeoutError(1000))
+
+    await expect(adapter.editScheduled("-100500", "12", { text: "same", at })).resolves.toMatchObject({
+      id: "12",
+      scheduledFor: at,
+    })
+    expect(client.getScheduledMessages).toHaveBeenCalledWith(-100500, [12])
+    await expect(adapter.cancelScheduled("-100500", ["12"])).rejects.toMatchObject({ code: "outcome_unknown" })
   })
 
   it("**makes a timeout an unknown outcome** that names the send id to repeat", async () => {

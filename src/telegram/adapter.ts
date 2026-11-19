@@ -281,13 +281,12 @@ export class TelegramAdapter {
     return messages.fetchCounters(this.#feature, reference, messageId, fields, signal)
   }
 
-  permalink(chatId: string, messageId: string) {
-    return messages.permalink(this.#feature, chatId, messageId)
-  }
-
-  scheduled(reference: string): Promise<Message[]> {
-    return messages.scheduled(this.#feature, reference)
-  }
+  permalink = (chatId: string, messageId: string) => messages.permalink(this.#feature, chatId, messageId)
+  scheduled = (reference: string): Promise<Message[]> => messages.scheduled(this.#feature, reference)
+  cancelScheduled = (chatId: string, ids: string[]) => messages.cancelScheduled(this.#feature, chatId, ids)
+  editScheduled = (chatId: string, id: string, change: { text?: string; formatting?: TextSpan[]; at: string }) =>
+    messages.editScheduled(this.#feature, chatId, id, change)
+  sendScheduled = (chatId: string, ids: string[]) => messages.sendScheduled(this.#feature, chatId, ids)
 
   send(chatId: string, text: string, options: SendOptions): Promise<Sent> {
     return messages.send(this.#feature, chatId, text, options)
