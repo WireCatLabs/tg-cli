@@ -3,6 +3,37 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.134.0 — 19.11.2026
+
+### Added
+
+- **Cancel, edit and send now a scheduled message.** `tg personal messages scheduled cancel "Book club" 12` cancels
+  it, `tg personal messages scheduled edit "Book club" 12 "new text"` changes the text (add `--at-time 2h` to move
+  it too, or give only `--at-time` to move it), and `tg personal messages scheduled send "Book club" 12` sends it
+  right away. Before, `tg` could schedule and list, and the owner cancelled a post in the Telegram app. Telegram
+  numbers scheduled messages apart from sent ones: `messages edit` on a scheduled id failed with
+  `MESSAGE_ID_INVALID`, and `messages delete` with the same number would have deleted an old group message. The new
+  commands take only the ids `messages scheduled <chat>` lists and check each against that list first. Cancelling
+  asks as a delete does at an `ask` level (`--allow-dangerous`). On cli-core 0.714.0.
+
+### Changed — may break callers
+
+- **The MCP Registry entry asks which profiles to serve.** It started `mcp serve --profiles all`, so a client that
+  installed the server from the registry reached every account on the computer without the owner choosing. Now
+  `--profiles` is a required argument with the example `personal`: the client asks for one profile, a
+  comma-separated list or `all`. Why: a CLI never picks an account for the owner
+  ([WC-MCP-9](https://github.com/WireCatLabs/cli-base/blob/main/docs/standards/mcp.md#wc-mcp-9--a-server-serves-the-profiles-it-is-told-with-one-connection-for-each)). Watch for: a client set up from the old entry keeps `--profiles all` until it is set up again; a
+  server added by hand or with `mcp config` does not change.
+
+### Fixed
+
+- **The agent skill searches by meaning twice: with the question, then with a one-sentence example of the reply that
+  would answer it.** A reply reads closer to the answer than a question does. On 10 test questions the question
+  found the answer in the top 20 for 8, the example reply for 9, and both together for 10.
+- **The agent skill says that every word of `search messages` must match, and to join variants with a capital OR**
+  (`invoice OR счёт`) when it is unsure which word a message uses. Several spellings in one search found only the
+  messages that hold all of them.
+
 ## 0.133.0 — 16.11.2026
 
 ### Changed — may break callers
