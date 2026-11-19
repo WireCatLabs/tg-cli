@@ -195,3 +195,193 @@ Run: pnpm bot:generate
 | `sendGame` | `sendGame` | `tg bot api send-game` | write | contract | generated | Use this method to send a game. On success, the sent Message is returned. |
 | `setGameScore` | `setGameScore` | `tg bot api set-game-score` | write | contract | generated | Use this method to set the score of the specified user in a game message. On success, if the message is not an inline message, the Message is returned, otherwise True is returned. Returns an error, if the new score is not greater than the user's current score in the chat and force is False. |
 | `getGameHighScores` | `getGameHighScores` | `tg bot api get-game-high-scores` | read | contract | generated | Use this method to get data for high score tables. Will return the score of the specified user and several of their neighbors in a game. Returns an Array of GameHighScore objects. |
+
+## Effects not taken from the HTTP method
+
+| Operation | Effect | Why |
+|---|---|---|
+| `getUpdates` | destructive | override: An offset acknowledges updates; a negative offset forgets earlier updates. Never classify this as a harmless read. |
+| `setWebhook` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteWebhook` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getWebhookInfo` | read | override: Reads existing API state without changing it. |
+| `getMe` | read | override: Reads existing API state without changing it. |
+| `logOut` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `close` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `sendMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `forwardMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `forwardMessages` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `copyMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `copyMessages` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendPhoto` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendLivePhoto` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendAudio` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendDocument` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendVideo` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendAnimation` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendVoice` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendVideoNote` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendPaidMedia` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendMediaGroup` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendLocation` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendVenue` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendContact` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendPoll` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendChecklist` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendDice` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendMessageDraft` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendChatAction` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setMessageReaction` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getUserProfilePhotos` | read | override: Reads existing API state without changing it. |
+| `getUserProfileAudios` | read | override: Reads existing API state without changing it. |
+| `setUserEmojiStatus` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getFile` | read | override: Reads existing API state without changing it. |
+| `banChatMember` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `unbanChatMember` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `restrictChatMember` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `promoteChatMember` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setChatAdministratorCustomTitle` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setChatMemberTag` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `banChatSenderChat` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `unbanChatSenderChat` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setChatPermissions` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `exportChatInviteLink` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `createChatInviteLink` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editChatInviteLink` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `createChatSubscriptionInviteLink` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editChatSubscriptionInviteLink` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `revokeChatInviteLink` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `approveChatJoinRequest` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `declineChatJoinRequest` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `answerChatJoinRequestQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendChatJoinRequestWebApp` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setChatPhoto` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteChatPhoto` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `setChatTitle` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setChatDescription` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `pinChatMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `unpinChatMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `unpinAllChatMessages` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `leaveChat` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getChat` | read | override: Reads existing API state without changing it. |
+| `getChatAdministrators` | read | override: Reads existing API state without changing it. |
+| `getChatMemberCount` | read | override: Reads existing API state without changing it. |
+| `getChatMember` | read | override: Reads existing API state without changing it. |
+| `getUserPersonalChatMessages` | read | override: Reads existing API state without changing it. |
+| `setChatStickerSet` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteChatStickerSet` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getForumTopicIconStickers` | read | override: Reads existing API state without changing it. |
+| `createForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `closeForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `reopenForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteForumTopic` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `unpinAllForumTopicMessages` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `editGeneralForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `closeGeneralForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `reopenGeneralForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `hideGeneralForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `unhideGeneralForumTopic` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `unpinAllGeneralForumTopicMessages` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `answerCallbackQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `answerGuestQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getUserChatBoosts` | read | override: Reads existing API state without changing it. |
+| `getBusinessConnection` | read | override: Reads existing API state without changing it. |
+| `getManagedBotToken` | read | override: Reads existing API state without changing it. Returns an authentication token; output must be directed to secure storage or execution refused. |
+| `replaceManagedBotToken` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. Returns an authentication token; output must be directed to secure storage or execution refused. |
+| `getManagedBotAccessSettings` | read | override: Reads existing API state without changing it. |
+| `setManagedBotAccessSettings` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setMyCommands` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteMyCommands` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getMyCommands` | read | override: Reads existing API state without changing it. |
+| `setMyName` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getMyName` | read | override: Reads existing API state without changing it. |
+| `setMyDescription` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getMyDescription` | read | override: Reads existing API state without changing it. |
+| `setMyShortDescription` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getMyShortDescription` | read | override: Reads existing API state without changing it. |
+| `setMyProfilePhoto` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `removeMyProfilePhoto` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `setChatMenuButton` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getChatMenuButton` | read | override: Reads existing API state without changing it. |
+| `setMyDefaultAdministratorRights` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getMyDefaultAdministratorRights` | read | override: Reads existing API state without changing it. |
+| `getAvailableGifts` | read | override: Reads existing API state without changing it. |
+| `sendGift` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `giftPremiumSubscription` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `verifyUser` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `verifyChat` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `removeUserVerification` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `removeChatVerification` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `readBusinessMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteBusinessMessages` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `setBusinessAccountName` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setBusinessAccountUsername` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setBusinessAccountBio` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setBusinessAccountProfilePhoto` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `removeBusinessAccountProfilePhoto` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `setBusinessAccountGiftSettings` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getBusinessAccountStarBalance` | read | override: Reads existing API state without changing it. |
+| `transferBusinessAccountStars` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getBusinessAccountGifts` | read | override: Reads existing API state without changing it. |
+| `getUserGifts` | read | override: Reads existing API state without changing it. |
+| `getChatGifts` | read | override: Reads existing API state without changing it. |
+| `convertGiftToStars` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `upgradeGift` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `transferGift` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `postStory` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `repostStory` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editStory` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteStory` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `answerWebAppQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `savePreparedInlineMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `savePreparedKeyboardButton` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageText` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageCaption` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageMedia` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageLiveLocation` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `stopMessageLiveLocation` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageChecklist` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editMessageReplyMarkup` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `stopPoll` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editEphemeralMessageText` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editEphemeralMessageMedia` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editEphemeralMessageCaption` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `editEphemeralMessageReplyMarkup` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `approveSuggestedPost` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `declineSuggestedPost` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `deleteMessage` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `deleteMessages` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `deleteEphemeralMessage` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `deleteMessageReaction` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `deleteAllMessageReactions` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `sendSticker` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getStickerSet` | read | override: Reads existing API state without changing it. |
+| `getCustomEmojiStickers` | read | override: Reads existing API state without changing it. |
+| `uploadStickerFile` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `createNewStickerSet` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `addStickerToSet` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerPositionInSet` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteStickerFromSet` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `replaceStickerInSet` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerEmojiList` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerKeywords` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerMaskPosition` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerSetTitle` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setStickerSetThumbnail` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setCustomEmojiStickerSetThumbnail` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `deleteStickerSet` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `sendRichMessage` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendRichMessageDraft` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `answerInlineQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendInvoice` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `createInvoiceLink` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `answerShippingQuery` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `answerPreCheckoutQuery` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `getMyStarBalance` | read | override: Reads existing API state without changing it. |
+| `getStarTransactions` | read | override: Reads existing API state without changing it. |
+| `refundStarPayment` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `editUserStarSubscription` | destructive | override: Can remove state, consume authorization/update state, or commit a payment that cannot simply be undone. |
+| `setPassportDataErrors` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `sendGame` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `setGameScore` | write | override: Changes bot state or sends a response/message; it is not a read. |
+| `getGameHighScores` | read | override: Reads existing API state without changing it. |

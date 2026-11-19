@@ -242,6 +242,60 @@ export const scheduled = (feature: Feature, reference: string): Promise<Message[
   })
 }
 
+/**
+ * The ids below are the scheduled list's: Telegram numbers scheduled messages apart from sent ones, so the same number
+ * in the chat's history is another message.
+ */
+const scheduledNumbers = (ids: string[]) => ids.map((id) => messageNumber(id, "a scheduled id is a number"))
+
+export const cancelScheduled = (feature: Feature, chatId: string, ids: string[]): Promise<void> => {
+  const numbers = scheduledNumbers(ids)
+  return feature.write("the scheduled messages may have been cancelled — repeating it is safe", () =>
+    feature.client.deleteScheduledMessages(Number(chatId), numbers),
+  )
+}
+
+/**
+ * `scheduleDate` goes with every edit, the current time when only the text changes: without it Telegram reads the id
+ * as a sent message's (`MESSAGE_ID_INVALID`). Setting the same text and time twice answers MESSAGE_NOT_MODIFIED, taken
+ * here as done, so a retry after an unknown outcome is safe.
+ */
+export const editScheduled = (
+  feature: Feature,
+  chatId: string,
+  messageId: string,
+  { text, formatting, at }: { text?: string; formatting?: TextSpan[]; at: string },
+): Promise<Message> => {
+  const [id] = scheduledNumbers([messageId]) as [number]
+  const body = text === undefined ? undefined : formatting ? toFormatted(text, formatting) : text
+  return feature.call(async () => {
+    try {
+      return toMessage(
+        await feature.client.editMessage({
+          chatId: Number(chatId),
+          message: id,
+          ...(body === undefined ? {} : { text: body }),
+          scheduleDate: new Date(at),
+        }),
+      )
+    } catch (error) {
+      if (tl.RpcError.is(error, "MESSAGE_NOT_MODIFIED")) {
+        const [current] = await feature.client.getScheduledMessages(Number(chatId), [id])
+        if (current) return toMessage(current)
+      }
+      throw unknownIfUnanswered(error, "the edit may have been made — repeating it is safe")
+    }
+  })
+}
+
+export const sendScheduled = (feature: Feature, chatId: string, ids: string[]): Promise<Message[]> => {
+  const numbers = scheduledNumbers(ids)
+  return feature.write(
+    "the scheduled messages may have been sent — check the chat and its scheduled list before repeating",
+    async () => (await feature.client.sendScheduled(Number(chatId), numbers)).map(toMessage),
+  )
+}
+
 export const saveDraft = (
   feature: Feature,
   chatId: string,

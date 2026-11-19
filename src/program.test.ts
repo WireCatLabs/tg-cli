@@ -487,6 +487,35 @@ describe("sending", () => {
     expect(JSON.parse(queued.stdout[0] ?? "").items[0].scheduled_for).toBe("2030-01-01T09:00:00.000Z")
   })
 
+  it("edits a scheduled message's time and text, and cancels one", async () => {
+    const edits: { text?: string; formatting?: unknown; at: string }[] = []
+    const cancelled: string[][] = []
+    const adapter = () =>
+      scripted({
+        scheduled: async () => [message("43", { text: "later", scheduledFor: "2030-01-01T09:00:00.000Z" })],
+        editScheduled: async (_chat, id, change) => {
+          edits.push(change)
+          return message(id, { text: change.text ?? "later", outgoing: true, scheduledFor: change.at })
+        },
+        cancelScheduled: async (_chat, ids) => {
+          cancelled.push(ids)
+        },
+      })
+
+    const moved = await tg(["messages", "scheduled", "edit", "me", "43", "--at-time", "2h", "--json"], {
+      adapter,
+    })
+    const md = await tg(["messages", "scheduled", "edit", "me", "43", "**now**", "--md", "--json"], { adapter })
+    const html = await tg(["messages", "scheduled", "edit", "me", "43", "<b>now</b>", "--html", "--json"], { adapter })
+    const gone = await tg(["messages", "scheduled", "cancel", "me", "43", "--allow-dangerous", "--json"], { adapter })
+
+    expect([moved.code, md.code, html.code, gone.code]).toEqual([0, 0, 0, 0])
+    expect(edits[0]?.at).toMatch(/^\d{4}-\d{2}-\d{2}T/)
+    expect(edits[1]).toMatchObject({ text: "now", formatting: [{ type: "bold", from: 0, length: 3 }] })
+    expect(edits[2]).toMatchObject({ text: "now", formatting: [{ type: "bold", from: 0, length: 3 }] })
+    expect(cancelled).toEqual([["43"]])
+  })
+
   it("attaches a --photo or a --file, and sends a protected one only with --allow-any-file", async () => {
     const root = mkdtempSync(join(tmpdir(), "tg-upload-"))
     writeFileSync(join(root, "cat.png"), "png")

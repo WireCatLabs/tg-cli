@@ -2089,21 +2089,75 @@ tg messages press <chat> <message> <button>
 
 ### `tg messages scheduled`
 
-messages waiting to be sent later in a chat, soonest first; cancel one in the app
+messages waiting to be sent later in a chat, soonest first, with their scheduled ids
+
+#### `tg messages scheduled cancel`
+
+cancel scheduled messages before they are sent; they cannot be got back
+
+**Changes something in Telegram.**
 
 ```sh
-tg messages scheduled <chat>
+tg messages scheduled cancel <chat> <scheduled-id> [options]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `scheduled-id` | required | the scheduled ids `messages scheduled <chat>` lists, by spaces or commas, at most 10; never the id of a sent message. |
 
-**Returns:** message — ref, id, chat_id, sender_id, sender_name, sender_is_me, timestamp, edited_at, and 31 more; every field: tg commands info messages scheduled
+| Option | What it does |
+|---|---|
+| `--allow-dangerous` | go ahead without the question an ask level puts before a cancellation. |
 
-**Next usually:** `tg messages transcribe <chat> <message>`, `tg messages comments <chat> <post> [query]`, `tg messages links <chat> <message>`
+**Returns:** scheduled cancellation — operation_id, chat_id, cancelled; every field: tg commands info messages scheduled cancel
 
-**Example:** `tg personal messages scheduled "Book club"`
+**Example:** `tg personal messages scheduled cancel "Book club" 3`
+
+#### `tg messages scheduled edit`
+
+change the text or the time of a scheduled message before it is sent
+
+**Changes something in Telegram.**
+
+```sh
+tg messages scheduled edit <chat> <scheduled-id> [text] [options]
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `scheduled-id` | required | the scheduled id `messages scheduled <chat>` lists; never the id of a sent message. |
+| `text` | optional | the new text; without it and without --at-time, read from stdin. |
+
+| Option | What it does |
+|---|---|
+| `--at-time <time>` | send it at this time instead: 2026-09-25T09:00 (local time), or 30m, 2h, 1d from now. |
+| `--md` | read this messenger's Markdown; see its formatting guide for supported syntax. |
+| `--html` | the text is HTML: <b>, <i>, <a href>, <code>. |
+
+**Returns:** message write — operation_id, message, messages, scheduled_for; every field: tg commands info messages scheduled edit
+
+**Example:** `tg personal messages scheduled edit "Book club" 3 "The meeting starts at 11."`, `tg personal messages scheduled edit "Book club" 3 --at-time 2026-12-01T09:00`
+
+#### `tg messages scheduled send`
+
+deliver what is scheduled right away instead of at its time; each gets a new id
+
+**Changes something in Telegram.**
+
+```sh
+tg messages scheduled send <chat> <scheduled-id>
+```
+
+| Argument | | What it is |
+|---|---|---|
+| `chat` | required | a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
+| `scheduled-id` | required | the scheduled ids `messages scheduled <chat>` lists, by spaces or commas, at most 10; never the id of a sent message. |
+
+**Returns:** scheduled send — operation_id, chat_id, sent, messages; every field: tg commands info messages scheduled send
+
+**Example:** `tg personal messages scheduled send "Book club" 3`
 
 ### `tg messages link`
 
@@ -6217,7 +6271,7 @@ tg config set <setting> <value> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities, crm.<provider>:<account>.files.max_files, crm.<provider>:<account>.files.max_file_mb, crm.<provider>:<account>.files.max_run_mb, crm.<provider>:<account>.files.run_minutes, crm.<provider>:<account>.files.days, crm.<provider>:<account>.files.max_total_mb. |
 | `value` | required | a number, true or false; for a group tg:work,max:Alice,email:me@x. |
 
 | Option | What it does |
@@ -6240,7 +6294,7 @@ tg config unset <setting> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities. |
+| `setting` | required | one of: limit, timeout_ms, color, sender_colors, record, record_input, keep_runs_for_days, keep_successful_runs_for_days, keep_store_runs_for_days, runs_size_limit_mb, permissions, sends_per_hour, requests_per_minute, transcribe_with, speech_model, search_catch_up, history_dialog_days, history_group_days, history_group_members_max, history_muted, picture_search, search_reranker, embedding_provider, embedding_model, embedding_base_url, embedding_dims, models, proxy, read_other_bots, update_check, skill_hint, search_stemmers.cyrillic, search_stemmers.latin, owner_languages, phone_countries, task_categories.<name>, task_agent_close, task_agent_close_min, task_first_pass_per_chat, account_groups.<name>, crm.<provider>:<account>.links, crm.<provider>:<account>.company-types, crm.<provider>:<account>.scope, crm.<provider>:<account>.unassigned, crm.<provider>:<account>.self, crm.<provider>:<account>.stage-tasks, crm.<provider>:<account>.activities, crm.<provider>:<account>.files.max_files, crm.<provider>:<account>.files.max_file_mb, crm.<provider>:<account>.files.max_run_mb, crm.<provider>:<account>.files.run_minutes, crm.<provider>:<account>.files.days, crm.<provider>:<account>.files.max_total_mb. |
 
 | Option | What it does |
 |---|---|
