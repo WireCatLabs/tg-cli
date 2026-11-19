@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2405 ✅ · 154 ⛔ · 0 ❌** — 544 commands, 2015 options.
+**2412 ✅ · 154 ⛔ · 0 ❌** — 547 commands, 2019 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -251,6 +251,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `messages unpin` |  | ✅ |  |
 | `messages press` |  | ✅ |  |
 | `messages scheduled` |  | ✅ |  |
+| `messages scheduled cancel` |  | ✅ |  |
+| `messages scheduled cancel` | `--allow-dangerous` | ✅ |  |
+| `messages scheduled edit` |  | ✅ |  |
+| `messages scheduled edit` | `--at-time` | ✅ |  |
+| `messages scheduled edit` | `--md` | ✅ |  |
+| `messages scheduled edit` | `--html` | ✅ |  |
+| `messages scheduled send` |  | ✅ |  |
 | `messages link` |  | ✅ |  |
 | `messages comments` |  | ✅ |  |
 | `messages comments` | `--limit` | ✅ |  |
