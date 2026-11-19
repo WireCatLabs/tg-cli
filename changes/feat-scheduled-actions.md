@@ -7,4 +7,4 @@
   numbers scheduled messages apart from sent ones: `messages edit` on a scheduled id failed with
   `MESSAGE_ID_INVALID`, and `messages delete` with the same number would have deleted an old group message. The new
   commands take only the ids `messages scheduled <chat>` lists and check each against that list first. Cancelling
-  asks as a delete does at an `ask` level (`--allow-dangerous`). From cli-core with the scheduled actions.
+  asks as a delete does at an `ask` level (`--allow-dangerous`). On cli-core 0.714.0.
