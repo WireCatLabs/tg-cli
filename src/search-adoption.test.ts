@@ -165,6 +165,13 @@ describe("shared search adoption", () => {
       expect.objectContaining({ field: "by", step: "models.download" }),
     )
   })
+  it("takes a made-up reply and still answers by words without a model", async () => {
+    const result = await invoke(["search", "conversations", "кафе", "--like", "Встречаемся в кафе у вокзала"])
+    expect(result.code).toBe(0)
+    expect(JSON.parse(result.stdout).missing).toContainEqual(
+      expect.objectContaining({ field: "by", step: "models.download" }),
+    )
+  })
   it("refuses scoped filters during local graph refresh", async () => {
     const result = await invoke([
       "search",

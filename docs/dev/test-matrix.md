@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2412 ✅ · 154 ⛔ · 0 ❌** — 547 commands, 2019 options.
+**2413 ✅ · 154 ⛔ · 0 ❌** — 547 commands, 2020 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -849,6 +849,7 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `search conversations` | `--sync-first` | ✅ |  |
 | `search conversations` | `--sync-time` | ✅ |  |
 | `search conversations` | `--max-messages` | ✅ |  |
+| `search conversations` | `--like` | ✅ |  |
 | `search conversations` | `--chat` | ✅ |  |
 | `search conversations` | `--since-time` | ✅ |  |
 | `search conversations` | `--filter` | ✅ |  |
