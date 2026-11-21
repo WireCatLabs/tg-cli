@@ -3654,7 +3654,7 @@ tg conversations related <chat> <message> [options]
 | `--base-url <url>` | a server with OpenAI's /v1/embeddings: Gemini, Jina, or Ollama and LM Studio on this machine. |
 | `--dims <n>` | remote: the vector size — needed with --base-url; shortens an OpenAI model's. |
 
-**Returns:** conversation hit — summary, chunk, score, by, stale, source, locator, matched_in; every field: tg commands info conversations related
+**Returns:** conversation hit — summary, chunk, score, by, stale, source, locator, matched_in, and 3 more; every field: tg commands info conversations related
 
 **Example:** `tg personal conversations related "Book club" 101`
 
@@ -5659,6 +5659,7 @@ tg search conversations <query> [options]
 | `--sync-first` | first fetch new messages within the chat, time and message bounds. |
 | `--sync-time <duration>` | stop fetching after this long (default: 30s). |
 | `--max-messages <n>` | fetch at most this many messages total (default: 500). |
+| `--like <text>` | a made-up reply that would answer the query, one sentence: searched by meaning too, which finds an answer worded unlike the question. |
 | `--chat <chat>` | only this chat: a chat: its title or part of it, its id, @username, or `me` for Saved Messages. |
 | `--since-time <time>` | only those still going at this ISO 8601 time, or 30m / 2h / 1d ago, or later. |
 | `--filter <query>` | strict Lucene filter: any message in a conversation must match; does not change the meaning query. |
@@ -5667,7 +5668,7 @@ tg search conversations <query> [options]
 | `--limit <n>` | how many. |
 | `--catch-up` | first build and embed, on this machine, the chats in scope that changed or were never built — within --max-chats and --max-chunks. |
 
-**Returns:** conversation hit — summary, chunk, score, by, stale, source, locator, matched_in; every field: tg commands info search conversations
+**Returns:** conversation hit — summary, chunk, score, by, stale, source, locator, matched_in, and 3 more; every field: tg commands info search conversations
 
 **Example:** `tg personal search conversations "Reviewing the project draft"`
 
