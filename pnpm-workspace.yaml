@@ -14,3 +14,5 @@ overrides:
   micromark-extension-math>katex: 0.18.2
 
 
+  '@wirecat/cli-core': file:/var/tmp/claude/claude-1000/-home-leemour-Projects-AI-product/27a06c33-140d-47be-8076-877df757fc92/scratchpad/pack/wirecat-cli-core-0.684.0.tgz
+  '@wirecat/cli-base': 0.108.0
