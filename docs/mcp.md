@@ -1,8 +1,8 @@
 # The MCP server
 
 This page helps when you want an AI app without a terminal to work with your Telegram, for example
-Claude Desktop or the chat in Cursor. It also helps when you want the app itself to ask you before
-each action. After reading it, you can connect the app to your account, choose what the agent may
+Claude Desktop or the chat in Cursor. It also helps when you want the app itself, not `tg`, to ask you
+before each action. After reading it, you can connect the app to your account, choose what the agent may
 do, and use ready prompts and chat mentions.
 
 A few terms first:
@@ -22,11 +22,11 @@ instead.
 ## Do you need it
 
 An AI agent that can run commands in a terminal (for example Claude Code, Codex, Cursor's agent or
-Gemini CLI) does not need MCP. It calls `tg` directly, which costs the same tokens and can do the
-same things; it learns how from the skill that `tg skill show` prints. MCP is for:
+Gemini CLI) does not need MCP. It calls `tg` directly, which uses the command-line interface directly; it learns how from the skill that `tg skill show` prints. MCP is for:
 
 - apps without a terminal, such as Claude Desktop or Cursor's chat;
-- anyone who wants the app to ask before each send.
+- anyone who wants the app to ask before each send. The app asks, not `tg`: over MCP a write set to `ask`
+  runs without a question.
 
 For ChatGPT or Claude **in the browser**, use `tg personal mcp serve --http` — see
 [connecting a browser or phone app](remote.md).
@@ -162,6 +162,8 @@ everyone, and channels and supergroups that do not allow deleting for yourself a
 
 ## Tools
 
+**Command coverage.** These tools give the agent access to most everyday command-line operations: messages, chats, contacts, attachments, conversation analysis and statistics. The search tool returns available commands with their argument schemas and effects; availability follows provider support and profile permissions. Use the [complete command reference](./commands.md) for syntax and parameters. Execute the command path offered by the catalogue through the read or write tool; account login and interactive installation are performed in the terminal.
+
 | Tool | What it does |
 |---|---|
 | `tg_tools_search` | Find a command, its arguments and its effects |
@@ -197,8 +199,7 @@ of account settings.
 
 ### Commands the server leaves out
 
-Every command is a tool, writes included; the profile's permissions limit what the agent may run. Read-only is
-a choice you make in those permissions, not a default. A few commands are never offered, and you run them in a
+The catalogue includes read and write commands, subject to the profile permissions and exclusions below. Read-only access is a choice you configure in those permissions. A few commands are never offered, and you run them in a
 terminal:
 
 - **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check|revoke`,
@@ -231,7 +232,7 @@ discoverable with their arguments. They are available to run only when the profi
 `permissions.mcp.authority` to `allow` (or `ask`). It is `deny` by default: discovery marks them unavailable,
 names the permission and explains why; a call is refused. An agent locked to read-only could otherwise unlock a later run.
 An agent cannot set that key itself, because `config set` is one of the commands it gates. Set it from your own
-terminal, outside the agent: since 0.113.0 a `config set` run in an agent's shell (where `AI_AGENT`, `CLAUDECODE` or
+terminal, outside the agent: a `config set` run in an agent's shell (where `AI_AGENT`, `CLAUDECODE` or
 `OPENCLAW_SHELL=exec` is set) is refused for this key too. Do it only on a profile whose agent you trust:
 
 ```sh
@@ -287,7 +288,7 @@ up an external service for search vectors, MCP search sends the query text to th
 
 `tg_read` (`command: "attachments list"`) shows saved file paths and whether their text was
 extracted. `tg_write` (`command: "attachments update"`) saves text the agent read from a file.
-Extracting text is done in the terminal only. `tg_read` with `command: "messages context"` and
+Text extraction is governed by the profile’s attachment permissions. `tg_read` with `command: "messages context"` and
 `arguments: { offline: true }` reads only the local copy.
 
 ## How it holds the connection

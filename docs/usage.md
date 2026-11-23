@@ -21,7 +21,9 @@ Terms used on this page:
 Each command does one thing, prints its answer and exits. Only `tg personal watch`, `tg personal serve` and `tg personal mcp serve`
 stay running, and each of them says so.
 
-```sh
+The following is a syntax template, not a command to copy. Replace placeholders with the values shown in the examples below.
+
+```text
 tg [profile] [options] <resource> <action> [arguments]
 ```
 
@@ -318,11 +320,11 @@ tg personal review --unanswered            # questions nobody answered in 24 hou
 tg personal review 'chat:Neighbours' --unanswered 4h
 ```
 
-`--unanswered [hours]` keeps only questions waiting for you or for a group's admins. A question is a
+`--unanswered [duration]` keeps only questions waiting for you or for a group's admins. A question is a
 message with `?` in it (a link's `?` does not count), or a reply to you or to an admin. It is
 answered when you or an admin replied to it, or were the next to speak after the person who asked.
-Questions younger than the hours given (24 by default) are left out: nobody has had time to answer.
-When a group's admins are not known, the command says so, and only your answers count.
+Questions younger than the given duration (24 hours by default) are left out: nobody has had time to answer.
+When a group's admins are not known, the command says so, and only your answers count. Use a duration such as `4h` or `1d`; a bare number of hours is not accepted.
 
 Saved voice transcripts count in this filter too. Add `--transcribe` to transcribe voice messages
 that have no saved transcript before the questions are selected. A voice message that could not be
@@ -1032,7 +1034,7 @@ topic (id 1) `--hidden on` / `--hidden off` hides it from the topic list or show
 default topic icon set, which every account may use; `tg personal topics icons list` shows it, and another emoji is
 refused with the list. `topics edit --emoji none` removes the icon.
 `tg personal topics order <chat> <id...>` puts the pinned topics in that order; it pins and unpins nothing.
-Repeating any of these is safe.
+Repeating topic edits and ordering is safe. After an unknown creation outcome, inspect the topic list before creating again.
 `tg personal topics delete <chat> <id>` deletes a topic and every message in it, for everyone; it cannot be undone, so it
 asks first by default; an explicit `topics.delete: allow` or `--allow-dangerous` skips the question. The
 General topic cannot be deleted.
@@ -1168,7 +1170,7 @@ tg personal chats list --json | jq -r '.items[].id'
 ```
 
 ```sh
-tg personal messages list me --jsonl | jq -r .text  # one message per line
+tg personal messages list me --jsonl | jq -r 'select(.type == "item") | .data.text'  # message text from item records
 ```
 
 - `--json`: one JSON value. **Every list is one object**, always the same shape:
@@ -1176,10 +1178,8 @@ tg personal messages list me --jsonl | jq -r .text  # one message per line
   the next step in `page.next`. `--all` and `--offline` answer with the same object. One thing, not a list, is
   `{ "item": {...}, "meta": {...} }`.
 - A chat's messages page with `--cursor`, not a page number; `page.next` carries it.
-- `--jsonl`: one object per line, no wrapper; whether there is more is said on stderr only.
-  A report (`stats …`) is one object, so `--jsonl` on it is refused; `stats * evidence` lists still stream.
-- An error that ends the command is `{ "error": { "code": "...", "message": "..." } }` on stderr, and stdout is empty, so a
-  refusal can never be taken for an empty result.
+- `--jsonl`: item records carry the result in `data`; a final end record carries completeness and page metadata. Check that record rather than treating the stream as bare messages. A report (`stats …`) is one object, so `--jsonl` on it is refused; `stats * evidence` lists still stream.
+- An error uses `{ "error": { "code": "...", "message": "..." } }` on stderr. A refusal before output writes no result, so it cannot be mistaken for an empty result. If a stream already printed records, keep them and inspect its final completeness record; a missing end record also means the stream did not finish.
 - Partial reads and downloads may exit `0`: inspect `complete` and `batch` or `issue`; partial download JSONL adds `batch_summary`.
 - **Branch on the exit code, not on the text.** The text changes; the code does not. `0` worked, `2`
   bad input, `4` not logged in, `5` the profile may not do this, `6` not found, `7` not on the list of
@@ -1193,8 +1193,11 @@ tg personal messages list me --jsonl | jq -r .text  # one message per line
   `remote: "write"` changes something in Telegram.
 
 ```sh
-if ! tg personal messages send "Book club" "See you at 7" --json > /dev/null; then
-  case $? in
+if tg personal messages send "Book club" "See you at 7" --json > /dev/null; then
+  :
+else
+  send_status=$?
+  case "$send_status" in
     14) echo "it may have gone — repeat only with the same --operation-id" ;;
     4)  echo "run tg personal session start" ;;
   esac
@@ -1368,7 +1371,7 @@ account linked to them with `contacts link`; with `--chat`, their newest message
 [people](people.md).
 
 A few limits to know: an estimated registration date is guessed from the account id with a community
-table, and there is no estimate past December 2024. The bot check reads up to 1,000 stored messages.
+table ending in August 2026; newer IDs receive no estimate. The bot check reads up to 1,000 stored messages.
 `contacts context` returns message bodies, so it follows the `messages` permissions; linking and
 unlinking identities is controlled by `contacts` and never changes Telegram's address book.
 

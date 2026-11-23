@@ -174,7 +174,7 @@ narrow the chat, the dates or the pattern.
 ## The answer
 
 `--json` returns `{ items, page: { limit, has_more }, next?, missing?, meta }`, even when nothing matched.
-`--jsonl` streams the items only.
+`--jsonl` emits one item per line followed by a final record with completeness and pagination metadata.
 
 - `items`: the hits, best first (or newest first with `--newest`), each with its `ref` (`msg:…`), `timestamp`,
   `sender_name`, `excerpt` and `matched_in`.
