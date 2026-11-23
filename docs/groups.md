@@ -28,7 +28,7 @@ this page:
 | Keep a list of what waits on you | `tg personal tasks list` |
 | Remove spam by your own rules | `tg personal chats rules set`, `tg personal chats moderate` |
 | Replace a leaked invite link | `tg personal chats links reset` |
-| Let people in, or turn them away | `tg personal chats requests list\|accept\|decline` |
+| Let people in, or turn them away | `tg personal chats requests list\|confirm\|reject` |
 | See the week's activity and Telegram's own statistics | `tg personal stats chats show`, `tg personal stats chats official` |
 | Save the member list every day | `tg personal chats members fetch --track` |
 | Find members that look like bots or spammers | `tg personal chats members check` |
@@ -215,9 +215,9 @@ see [running on a schedule](recipes.md#running-on-a-schedule).
 | `tg personal chats members add\|remove <chat> <person...>` | add people (they are told; who could not be added is named) or remove them (their messages stay) |
 | `tg personal chats admins add <chat> <person> --can <rights>` | make a member an admin with these rights: members, admins, info, pin, link, post, edit, delete |
 | `tg personal chats admins remove <chat> <person>` | take an admin's rights back; they stay a member |
-| `tg personal chats links update <chat> <link> --approval\|--no-approval --expire-time <time> --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
+| `tg personal chats links update <chat> <link> --approval --expire-time <time>`, `tg personal chats links update <chat> <link> --no-approval --max-uses <n>` | change only the supplied approval, expiry or usage limit of your extra invite link; supply at least one change |
 | `tg personal chats links show\|reset <chat>` | the invite link; `reset` makes a new one and the old one stops working |
-| `tg personal chats requests list\|accept\|decline <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
+| `tg personal chats requests list\|confirm\|reject <chat>` | requests to join a group that needs an admin's approval: who asked, let them in, turn them away; `--all` answers every request |
 | `tg personal chats rules show\|set\|unset <chat>` | the group's rules |
 | `tg personal chats moderate <chat>` | check the group by its rules; does what the rules allow |
 | `tg personal messages delete --for-everyone`, `pin`, `unpin` | delete for everyone, pin |
@@ -300,8 +300,8 @@ tg personal tasks add msg:telegram/<you>/<chat>/<message> --type promise --categ
 ```
 
 `tasks categories` lists the categories a task can take. To change the list, edit the `task_categories`
-section of `~/.config/WireCat/config.json`. Every WireCat tool built on cli-core 0.298.0 or newer reads this file
-(tg since 0.63.0), so one edit changes the list in all of them. It holds only your changes to the
+section of `~/.config/WireCat/config.json`, a settings file that WireCat tools
+share, not one profile's. It holds only your changes to the
 default list: a name with its meaning and trigger words adds or replaces a category, and `null` drops a default
 one:
 

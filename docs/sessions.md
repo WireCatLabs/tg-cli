@@ -30,6 +30,12 @@ Setup checks an existing session and does not silently log in again if it is rej
 
 ## The app from my.telegram.org
 
+> **See the my.telegram.org login screen**
+>
+> ![Official my.telegram.org login screen with an empty phone-number field.](https://wirecat.dev/telegram-app-login.png)
+>
+> This is the website login for managing your Telegram application credentials. The code arrives in Telegram, not by SMS. After login, choose **API development tools**. Authorizing the CLI with a QR code comes later. [my.telegram.org](https://my.telegram.org/apps)
+
 Every user registers their own app. Telegram gives one app per phone number, so an app id is never
 shared or built into `tg`. You need it once per profile; `tg personal session start` asks only when the profile
 has none.
@@ -187,8 +193,21 @@ again with `tg personal session start`
 
 ## Profiles
 
-A profile is a separate login: its own session, app, settings, recipients and runs. It is named by
-**the first word**, not by an option:
+A profile is a named connection to a Telegram account in the CLI. Usually you use one per phone number: for example `personal` for a personal account and `work` for a work account. Each connection has its own login session, application credentials, settings, allowed recipients and run records.
+
+`work` is a label you choose, not a phone number. Connect a work account with:
+
+```sh
+tg work session start --app browser
+```
+
+Use the work number to register credentials; for QR login, switch Telegram on your phone to the work account. Then check which account the label refers to:
+
+```sh
+tg work account show
+```
+
+You can also connect the same account in multiple profiles; a profile does not create a Telegram account. The profile name is **the first word after `tg`**, before the command:
 
 ```sh
 tg personal chats list     # profile "personal"

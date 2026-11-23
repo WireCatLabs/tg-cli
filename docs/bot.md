@@ -210,9 +210,9 @@ tg sales bot messages sync -1001234567890 --until-id https://t.me/c/1234567890/5
 tg sales bot messages sync -1001234567890 --last 200 --pause 1s
 ```
 
-`--from` starts at that message, inclusive, and must name the same chat. Without it, the command
+`--until-id` starts at that message, given as its t.me link, inclusive, and must name the same chat. Without it, the command
 uses the newest message the bot has kept for the chat. If there is none, it reads the newest from
-the same profile's personal session, if it has one. If neither knows a number, it exits with code `2` and asks for `--from`.
+the same profile's personal session, if it has one. If neither knows a number, it exits with code `2` and asks for `--until-id`.
 It uses the profile's own Telegram app credentials (`api_id` and `api_hash`), never another profile's;
 `TG_API_ID` and `TG_API_HASH` also work. No personal login is made.
 
@@ -389,7 +389,7 @@ The agent gets what the bot profile's permissions allow, under `bot.`: the chats
 messages, admins, the command menu, the journal and the recipient list — and, unless the profile is
 read-only, writing as the bot: send, edit, pin, "typing", answer buttons, delete, remove members.
 `permissions.bot: readonly` blocks writes unless a more specific rule permits one.
-`ask` and `allow` permit a requested MCP write without a server form; `deny` and `readonly`
+Over MCP, `ask` and `allow` both let a write run without asking you; `deny` and `readonly`
 block it. Old confirmation flags have no effect. Separate moderation rule consent still
 applies: actions requiring it return a plan for you to approve through the CLI.
 `tg_bot_read` (`command: "status"`) says which profile

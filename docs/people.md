@@ -158,7 +158,7 @@ tg personal contacts prepare @example_user --limit 5 --since-time 30d
 - With `contacts.notes.list: deny` the notes are left out, and the answer says so. With `messages: deny` the command
   is refused, as `contacts context` is.
 
-## Bot, fake or spammer: `contacts check`
+## Check account signals and their limits: `contacts check`
 
 ```sh
 tg personal contacts check @example_user

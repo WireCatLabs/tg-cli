@@ -21,7 +21,7 @@ Start with reading, and allow changes only when you need them.
 |---|---|
 | `deny` | The action is refused, including reading. |
 | `readonly` | Reading works; changes are refused. |
-| `ask` | A change asks in the terminal. |
+| `ask` | A change asks first in the terminal. Over MCP it runs without asking. |
 | `allow` | The action can run without another question. |
 
 A refusal tells you to check the requested action and settings. It does not mean your account
@@ -39,8 +39,8 @@ Replace `work` with your profile. For a default that allows reading messages and
 tg work config set permissions.messages readonly
 ```
 
-More specific keys win: `permissions.messages.send ask` still permits sending, with a question
-in the terminal and without a server form over MCP. Set that key to `readonly` to refuse sends.
+More specific keys win: `permissions.messages.send ask` still permits sending. In the terminal it asks
+first. Over MCP it does not ask, and the agent's send goes ahead. Set that key to `readonly` to refuse sends.
 Check other exceptions with `config show`.
 
 This controls messages. Other actions, such as reactions or chat administration, have their own
@@ -66,8 +66,9 @@ The commands to manage them are in [the send guard](security.md#the-send-guard).
 
 Add `--permission messages.send=deny` to the server startup command to refuse sending for that
 process. Saved settings stay the same. The flag only tightens: an override that would loosen the
-profile's level is refused at startup. Over MCP, `ask` does not require a server form: the app controls
-its own approvals and may allow a call without asking again. Use `deny` or `readonly` to refuse changes. [Browser setup](remote.md) explains the full connection.
+profile's level is refused at startup. Over MCP, a change set to `ask` runs without asking you: nobody is at a
+terminal to answer, and the server shows no form. Only the agent app may still ask, if you leave its write tool
+unapproved there. Use `deny` or `readonly` to refuse changes. [Browser setup](remote.md) explains the full connection.
 
 ## Let an agent change its own limits
 
@@ -81,7 +82,7 @@ tg work config set permissions.mcp.authority allow
 
 For a bot's server add `--bot`: `tg support config set permissions.mcp.authority allow --bot`.
 `deny` is the default; `allow` and `ask` permit execution. Leave it at `deny` for a profile you give to an agent.
-With it open, the agent can change its other settings and tighten its permissions, but since 0.113.0 it can never
+With it open, the agent can change its other settings and tighten its permissions, but it can never
 loosen one: an agent, over MCP or in its own shell, may only lower a level (`readonly` to `deny`), and removing a
 permission or changing `--defaults` accepts only `deny`. You loosen them in your own terminal. An agent cannot set
 the key through `config set`, since that command is behind the key. See [the MCP server](mcp.md#commands-that-change-what-a-later-run-may-do).
@@ -100,7 +101,7 @@ Set it back to `deny` to make those tools unavailable again; they remain discove
 
 ## Limits and detailed rules
 
-An assistant that can edit configuration files or run unrestricted terminal commands may be able
+An AI agent that can edit configuration files or run unrestricted terminal commands may be able
 to change these settings. Read [security](security.md) before giving that access.
 For nested permissions and exact command keys, see
 [what a profile may do](configuration-reference.md#what-a-profile-may-do).
@@ -109,7 +110,7 @@ For nested permissions and exact command keys, see
 
 `messages send --draft` uses the separate `drafts` permission. Saving changes the Telegram draft
 for that chat or topic, sends no message and journals no draft text. `deny` or `readonly` refuses
-the save; `ask` requests confirmation in the CLI and follows the MCP client’s approval flow.
+the save; `ask` asks first in the terminal, and over MCP it saves without asking.
 
 Over MCP, the `messages send` command must also be permitted by its command-level permission.
 A `drafts: allow` setting does not lift `messages.send: deny` or `readonly`.

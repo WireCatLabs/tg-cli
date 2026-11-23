@@ -407,7 +407,7 @@ from a development checkout (with its own `TG_*_DIR` folders) is written but not
   from starting again.
 - `tg upgrade` restarts a running server, so it does not keep running the old version.
 
-Automatic replies from `serve` to test accounts are described in [automatic replies](replies.md).
+Automatic replies from `serve` follow your rules and chosen audience; see [automatic replies](replies.md).
 
 ## Its health, a backup, a restore
 

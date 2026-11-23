@@ -2,7 +2,7 @@
 
 You need to find something that was written: a message, an agreement, a file someone sent, a code from
 months ago. This page shows how to search everything tg has saved on this computer — Telegram messages,
-and the mail and notes that [memo](https://github.com/WireCatLabs/cli-memo) imported — and how to ask
+and the notes that [memo](https://github.com/WireCatLabs/cli-memo) imported — and how to ask
 Telegram's own search at the same time.
 
 After reading it you can find messages by words, people, chats, dates, files and links, save a search
@@ -38,7 +38,7 @@ matched: `missing_terms` names unmatched terms, and `parent` links a reply to it
 Read the evidence and check [archive coverage](archive.md) before concluding that a fact is absent.
 
 Without `--discover`, the usual strict search remains. Boolean syntax, quoted phrases, wildcards,
-AST requests, `--exact` and `--newest` keep strict behavior. Discovery does not combine with legacy,
+AST requests, `--exact` and `--newest` keep strict behavior. Discovery does not combine with
 regular-expression search or `--backend server`. Meaning-based conversation search remains a
 separate [topic-search option](topic-search.md).
 
@@ -96,8 +96,7 @@ tg personal search all 'lease agreement' --offline  # the store only; nothing is
 `search notes`, `source:internal` and `source:file` keep the notes written in memo or imported from a folder.
 When a field does not apply — `chat:`/`from:` for notes — `search all` skips that resource and explains why.
 
-Mail and notes reach the store through memo: `memo sync --mail` and `memo import`. Without them,
-`search all` searches messages only.
+Notes reach the store through `memo sync --only notes`. Without imported notes, `search all` searches messages only. Search mail separately with Memo.
 
 The rest of this page is about searching messages, `tg personal search messages`. It reads the local store;
 ordinary search also asks Telegram ([below](#asking-telegram-too---backend)); discovery searches only the archive, even with `--backend both`.
@@ -602,7 +601,7 @@ links it falls back to neighbours in time; links that are out of date are marked
 ## Results as JSON
 
 At a terminal tg prints a readable transcript. `--json` returns one object with the messages and what
-was searched; `--jsonl` streams the messages only, one per line. The fields of the answer are in the
+was searched; `--jsonl` emits one item per line followed by a final record with completeness and pagination metadata. The fields of the answer are in the
 [query language reference](query-language.md#the-answer).
 
 ## When nothing is found
