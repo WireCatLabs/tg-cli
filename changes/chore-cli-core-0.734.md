@@ -1,3 +1,8 @@
+### Changed — may break callers
+
+- **The store moves to version 72** on its first open (cli-core 0.722.0). Like every store migration it only goes
+  forward.
+
 ### Fixed
 
 - **`search conversations --like` shows the part of a huge conversation that answers the question** (cli-core
@@ -7,5 +12,3 @@
 - **A usage error says how to fix the call** (cli-core 0.734.0). An unknown flag that a sibling command takes names it
   (`unknown option '--like' — --like is an option of search conversations`), `--filter` on `search messages` says the
   filter goes in the query, and a query that fails after `--` says to put options before `--`.
-- **The store moves to version 72** on its first open (cli-core 0.722.0). Like every store migration it only goes
-  forward.
