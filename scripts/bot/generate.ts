@@ -6,8 +6,8 @@ import {
   coverageGenerator,
   definitionsGenerator,
   generate,
+  type ModelOverride,
   manifestGenerator,
-  type Override,
   typesGenerator,
   valibotGenerator,
   writeArtifacts,
@@ -26,8 +26,8 @@ const artifacts = generate(
   [
     typesGenerator({ path: "src/bot/generated/types.ts" }),
     valibotGenerator({ path: "src/bot/generated/schemas.ts", typesImport: "./types.js" }),
-    manifestGenerator({ path: "src/bot/generated/manifest.ts" }),
-    definitionsGenerator({ path: "src/bot/generated/definitions.ts" }),
+    manifestGenerator({ path: "src/bot/generated/manifest.ts", coreImport: "@wirecat/cli-base/codegen/runtime" }),
+    definitionsGenerator({ path: "src/bot/generated/definitions.ts", coreImport: "@wirecat/cli-base/codegen/runtime" }),
     coverageGenerator({
       path: "docs/dev/bot-api-coverage.md",
       title: "Telegram Bot API coverage",
@@ -35,7 +35,7 @@ const artifacts = generate(
     }),
   ],
   {
-    overrides: read("spec/bot/effects.json") as Record<string, Override>,
+    overrides: read("spec/bot/effects.json") as Record<string, ModelOverride>,
     banner: ["Source: spec/bot/api.json", "Run: pnpm bot:generate"],
   },
 )

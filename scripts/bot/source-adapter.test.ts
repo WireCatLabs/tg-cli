@@ -1,12 +1,18 @@
 import { readFileSync } from "node:fs"
-import { applyOverrides, generate, manifestGenerator, type Override, validateModel } from "@wirecat/cli-base/codegen"
+import {
+  applyOverrides,
+  generate,
+  type ModelOverride,
+  manifestGenerator,
+  validateModel,
+} from "@wirecat/cli-base/codegen"
 import { describe, expect, it } from "vitest"
 import { adaptBotApi, type BotApiSource } from "./source-adapter.js"
 
 const source = JSON.parse(readFileSync(new URL("../../spec/bot/api.json", import.meta.url), "utf8")) as BotApiSource
 const effects = JSON.parse(readFileSync(new URL("../../spec/bot/effects.json", import.meta.url), "utf8")) as Record<
   string,
-  Override
+  ModelOverride
 >
 const model = () => adaptBotApi(source, { sourceUrl: "upstream", sourceRevision: "pinned" })
 

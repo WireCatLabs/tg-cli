@@ -1,6 +1,6 @@
 import { statSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import type { ManifestOperation } from "@wirecat/cli-base/codegen"
+import type { ManifestOperation } from "@wirecat/cli-base/codegen/runtime"
 import {
   type ApiCommandInput,
   apiPlainJson,
