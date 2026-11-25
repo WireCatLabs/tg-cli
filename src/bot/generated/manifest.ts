@@ -2,7 +2,7 @@
 // Source: spec/bot/api.json
 // Run: pnpm bot:generate
 
-import type { ManifestOperation } from "@wirecat/cli-base/codegen"
+import type { ManifestOperation } from "@wirecat/cli-base/codegen/runtime"
 
 export const operations: readonly ManifestOperation[] = [
   {

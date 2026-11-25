@@ -483,6 +483,12 @@ export const UNTESTED: Untested[] = [
     reason: "cli-core src/cli/messenger/store-maintenance.test.ts resets without a copy and checks backup: null",
   },
   {
+    command: "store migrate",
+    option: "--no-backup",
+    reason:
+      "cli-core src/cli/messenger/store-maintenance.test.ts covers store migrate; consumer mounts the shared command",
+  },
+  {
     command: "tags add",
     option: "--contact",
     reason:
