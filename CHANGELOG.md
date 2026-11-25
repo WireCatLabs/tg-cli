@@ -3,6 +3,48 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.136.0 — 25.11.2026
+
+### Changed — may break callers
+
+- **The store moves to version 72** on its first open (cli-core 0.722.0). Like every store migration it only goes
+  forward.
+- **The MCP server no longer offers `schedule exec`, and it runs only a file in tg's own schedules folder** (cli-core
+  0.736.0). An agent runs a saved schedule with `schedule run <name>`. Installed timers keep running.
+- **tg builds on cli-core 1.0.0 and cli-base 1.0.0.** The store moves to version 73 on its first open: an id is never
+  handed out twice, and only tools on cli-core 1.0 open the store after that. Upgrade every installed WireCat CLI
+  before you run this version. The migration writes a rollback copy first and refuses to run without one.
+- **An MCP call that names a refused place answers `permission_error`**, not `validation_error`. Before any MCP call
+  runs, each option and argument that takes a local file or folder is checked by its real path: a call cannot name a
+  credential folder, a folder of a WireCat tool or the message store. A shell run is unchanged.
+- **`schedule exec` is no longer offered over MCP.** It runs only a schedule file in the tool's own schedules folder.
+  An agent runs a saved schedule with `schedule run <name>`.
+
+### Fixed
+
+- **`search conversations --like` shows the part of a huge conversation that answers the question** (cli-core
+  0.734.0; tg now builds on it, was 0.718.0). A conversation of more than 50 chunks holds text near any question, so
+  its nearest chunk was often about something else. With a made-up reply, such a hit now shows the chunk that ranks
+  best by meaning and by the words that are rare inside that conversation. Without `--like` nothing changes.
+- **A usage error says how to fix the call** (cli-core 0.734.0). An unknown flag that a sibling command takes names it
+  (`unknown option '--like' — --like is an option of search conversations`), `--filter` on `search messages` says the
+  filter goes in the query, and a query that fails after `--` says to put options before `--`.
+- **`messages sync <chat> --full-history --background` reads the chat in full** (cli-core 0.752.0; tg now builds on
+  0.753.0, was 0.734.0). The background job was started without `--full-history`, so a big group ended at once with
+  `fetched: 0` and `limited: "group_too_large"`. The job now gets the flag, and `store jobs retry` keeps it
+  ([#916](https://github.com/WireCatLabs/tg-cli/issues/916)).
+- **A long sync stays fast as the chat grows** (cli-core 0.753.0). Each saved message looked through the whole chat
+  for replies waiting for their thread's root, so a page of 100 took 78 ms at 10,000 stored messages and 919 ms at
+  90,000. That search now runs once per page: 32 to 42 ms up to 60,000
+  ([#917](https://github.com/WireCatLabs/tg-cli/issues/917),
+  [benchmark](https://github.com/WireCatLabs/cli-testing/tree/main/performance/store/sync-growth)).
+- **`messages download --output-dir` refuses credential folders, tg's own folders and the message store** (cli-core
+  0.736.0), for one message, `--all` and `--offline`.
+- **The agent skill says where the sender and the chat go in each search.** `search conversations` takes
+  `--filter 'from:me'`; `search messages` takes no `--like`, `--chat` or `--filter`, and `from:me` and `chat:<chat>`
+  go in its query. The skill's short description now also names `--like` and `messages context <hit ref>`, for an
+  agent that starts from the description without opening the skill.
+
 ## 0.135.0 — 23.11.2026
 
 ### Added
