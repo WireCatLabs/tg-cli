@@ -17,8 +17,6 @@ Notable changes to `@wirecat/tg-cli`. One section per version, newest first; ver
 - **An MCP call that names a refused place answers `permission_error`**, not `validation_error`. Before any MCP call
   runs, each option and argument that takes a local file or folder is checked by its real path: a call cannot name a
   credential folder, a folder of a WireCat tool or the message store. A shell run is unchanged.
-- **`schedule exec` is no longer offered over MCP.** It runs only a schedule file in the tool's own schedules folder.
-  An agent runs a saved schedule with `schedule run <name>`.
 
 ### Fixed
 
