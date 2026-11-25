@@ -1,3 +1,8 @@
+### Changed — may break callers
+
+- **The MCP server no longer offers `schedule exec`, and it runs only a file in tg's own schedules folder** (cli-core
+  0.736.0). An agent runs a saved schedule with `schedule run <name>`. Installed timers keep running.
+
 ### Fixed
 
 - **`messages sync <chat> --full-history --background` reads the chat in full** (cli-core 0.752.0; tg now builds on
