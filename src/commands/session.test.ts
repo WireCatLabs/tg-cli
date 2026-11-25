@@ -471,3 +471,35 @@ describe("session end", () => {
     },
   )
 })
+
+describe("session status and session list", () => {
+  it("**says a profile with no session is not logged in**, even with --check, asking Telegram nothing", async () => {
+    const asked = () =>
+      scripted({
+        login: async () => {
+          throw new Error("must not ask Telegram")
+        },
+      })
+
+    for (const argv of [
+      ["fresh", "session", "status", "--json=profile,signed_in,verified"],
+      ["fresh", "session", "status", "--check", "--json=profile,signed_in,verified"],
+    ]) {
+      const { code, stdout } = await tg(argv, { adapter: asked })
+      expect(code).toBe(0)
+      expect(JSON.parse(stdout.join("\n")).item).toMatchObject({ profile: "fresh", signed_in: false, verified: false })
+    }
+  })
+
+  it("**lists the profiles with no profile named**, and `account list` is gone", async () => {
+    const { TG_PROFILE: _, ...unnamed } = process.env
+
+    const listed = await tg(["session", "list", "--json=profile,account"], { env: unnamed })
+    const gone = await tg(["account", "list", "--json=profile"], { env: unnamed })
+
+    expect(listed.stderr).toEqual([])
+    expect(listed.code).toBe(0)
+    expect(Array.isArray(JSON.parse(listed.stdout.join("\n")).items)).toBe(true)
+    expect(gone.code).not.toBe(0)
+  })
+})

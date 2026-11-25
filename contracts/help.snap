@@ -32,7 +32,7 @@ Works with:
   linear                             Linear issues and projects, searchable with your other WireCat data
 
 Start here:   tg personal setup  (any profile name works)
-              tg account list    your profiles and their logged-in accounts
+              tg session list    your profiles and their logged-in accounts
 Next:         tg commands        every command, by section
               tg guide           scenarios: command sequences for common tasks
               tg help options    output, offline, timeouts, dry run

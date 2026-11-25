@@ -160,7 +160,7 @@ If your account has a two-step password (2FA), `tg` asks for it after the scan. 
 
 ```sh
 tg personal account show     # who this profile is logged in as
-tg account list              # every profile on this computer, and the account each is logged in as
+tg session list              # every profile on this computer, and the account each is logged in as
 tg personal account sessions list  # every device and app logged in to the account; ends nothing
 tg personal session end      # log out on Telegram's side, and delete the session file here
 ```
@@ -223,7 +223,7 @@ The order, first match wins: the first word, then `TG_PROFILE`. With
 none of them, a command that uses an account stops with exit code `2` and lists the profiles on this
 computer; with none there yet, it says to run `tg personal setup`. `tg` never picks one, not even the
 only one. Commands that use no account run without a profile: `--help`, `--version`, `commands`,
-`skill show`, `account list` and `config show`.
+`skill show`, `session list` and `config show`.
 
 A word that is not a command and has no command after it is an error that says so:
 
