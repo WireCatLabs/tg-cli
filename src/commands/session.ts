@@ -11,6 +11,7 @@ import {
   environmentOf,
   logsInOrOut,
   mayRevoke,
+  messengerSessionCommands,
   printItem,
   REMOTE_WRITE,
   refuseCommandName,
@@ -28,7 +29,7 @@ import { SHELL_OVERRIDES } from "../contract-overrides.js"
 import { usesOwnersSession } from "../paths.js"
 import { type ApiCredentials, parseApiHash, parseApiId } from "../telegram/credentials.js"
 import { MY_TELEGRAM, registerApp } from "../telegram/registration.js"
-import { type CommandContext, type Environment, forCommand } from "./context.js"
+import { type CommandContext, type Environment, forCommand, TELEGRAM } from "./context.js"
 
 /** `field` names the question for a window that answers it (`--answer-stdin`). */
 type Ask = (prompt: string, echo: boolean, field: string) => Promise<string>
@@ -343,6 +344,7 @@ const sessionCommandDefinition = () => {
       printItem(context, { profile: context.profile, ended: true })
     })
 
+  for (const command of messengerSessionCommands(TELEGRAM)) session.addCommand(command)
   return session
 }
 

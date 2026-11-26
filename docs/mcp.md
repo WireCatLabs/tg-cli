@@ -202,7 +202,7 @@ of account settings.
 The catalogue includes read and write commands, subject to the profile permissions and exclusions below. Read-only access is a choice you configure in those permissions. A few commands are never offered, and you run them in a
 terminal:
 
-- **Login and setup**: `setup`, `session start|end`, `complete`, `mcp config|add|check|revoke`,
+- **Login and setup**: `setup`, `session start|status|list|end`, `complete`, `mcp config|add|check|revoke`,
   `bot auth set|show|remove`, `bot mcp config`. An agent call cannot use them, or they need you at the keyboard.
   `mcp` and `bot mcp` alone only print their help.
 - **Removing an account**: `account remove` signs a profile out and forgets it on this computer, so only you start

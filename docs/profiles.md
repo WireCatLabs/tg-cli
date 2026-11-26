@@ -17,7 +17,7 @@ settings, and how to switch to a bot.
 | Give your agent fewer rights than you have | A profile with its own [permissions](permissions.md) |
 | Keep an agent on that one profile | `TG_PROFILE_LOCK` ([profiles in login and sessions](sessions.md#profiles)) |
 | Run a Telegram bot next to your account | A bot profile: `tg support bot api get-me` |
-| See every profile on this computer | `tg account list` |
+| See every profile on this computer | `tg session list` |
 
 ## Choose a profile
 
@@ -27,7 +27,7 @@ Put the profile name before the command:
 tg work config show
 ```
 
-`tg account list` shows every profile on this computer and the account each is logged in as;
+`tg session list` shows every profile on this computer and the account each is logged in as;
 `tg work session end` logs the profile `work` out.
 
 A setting under `profiles.work` in the config file applies to that profile; values under `defaults`

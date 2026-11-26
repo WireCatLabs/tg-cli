@@ -7,7 +7,7 @@ ran it · ⛔ not tested offline, with the reason and where it is checked instea
 Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 [TESTING.md](TESTING.md) for how, and for the states and failures that cut across commands.
 
-**2413 ✅ · 155 ⛔ · 0 ❌** — 547 commands, 2021 options.
+**2415 ✅ · 155 ⛔ · 0 ❌** — 548 commands, 2022 options.
 
 | Command | Option | | Note |
 |---|---|---|---|
@@ -16,11 +16,13 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `session start` | `--sms` | ✅ |  |
 | `session start` | `--answer-stdin` | ✅ |  |
 | `session end` |  | ✅ |  |
+| `session status` |  | ✅ |  |
+| `session status` | `--check` | ✅ |  |
+| `session list` |  | ✅ |  |
 | `setup` |  | ✅ |  |
 | `setup` | `--agent` | ✅ |  |
 | `setup` | `--app` | ✅ |  |
 | `setup` | `--method` | ✅ |  |
-| `account list` |  | ✅ |  |
 | `account show` |  | ✅ |  |
 | `account show` | `--hide-phone` | ✅ |  |
 | `account update` |  | ✅ |  |
