@@ -3,6 +3,17 @@
 Notable changes to `@wirecat/tg-cli`. One section per version, newest first; versions follow
 [semantic versioning](https://semver.org), so before `1.0.0` the command interface may still change.
 
+## 0.138.0 — 27.11.2026
+
+### Changed — may break callers
+
+- **tg builds on cli-core 2.0.0.** The store moves to version 78 on its first open, and tools on cli-core 1.x refuse
+  the migrated store. Upgrade every installed WireCat CLI to its cli-core 2.0 release before you run this version.
+  The migration writes a rollback copy first.
+- **An AI agent is named `agent:<id>`, and a sender bot `bot:<id>`.** In the store's JSON output an agent's type is
+  `agent`, not `bot` (`author`, `created_by`, `confirmed_by`, `decided_by`). The old `sender-bot:<id>` still reads as
+  `bot:<id>`. Telegram bots and the `bot` commands are unchanged.
+
 ## 0.137.0 — 26.11.2026
 
 ### Added
