@@ -99,7 +99,7 @@ check("and keeps stdout clean", offline.stdout === "")
 tg("smoke", "config", "set", "limit", "20")
 const stored = tg("smoke", "chats", "list", "--offline", "--json")
 check("the store opens and has nothing recorded", stored.stderr.includes('"reason":"item.not-found"'))
-check("doctor finds the document readers", tg("doctor", "--json").stdout.includes('"unpdf":"built in"'))
+check("doctor finds the document readers", tg("doctor", "--json").stdout.includes('"unpdf":"on first use"'))
 
 const opened = async (path: string) => {
   const storage = await openSessionStorage(path)
