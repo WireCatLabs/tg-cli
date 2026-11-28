@@ -1,6 +1,6 @@
 import { Readable } from "node:stream"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { botCopy, ChatRegistry, listRuns, runsDirFor } from "@wirecat/cli-core/cli"
+import { botCopy, ChatRegistry, listRuns, runsDirFor } from "@wirecat/cli-core"
 import { beforeEach, describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import { type FetchLike, TelegramBotTransport } from "./bot/transport.js"

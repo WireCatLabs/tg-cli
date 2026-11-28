@@ -17,7 +17,7 @@ Read when a first search found nothing useful, the owner gave known words, a dat
   **For known words, use `tg personal search messages`**: the messages kept on this machine plus Telegram's own
   search. Add `--backend archive` when the owner wants nothing to leave the machine. **Use `tg personal search all`
   only when the owner asks to include their notes or imported Drive documents**: it adds both to the messages, in one
-  answer, each hit typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is memo's (`memo search mail`). Narrow with `tg personal search messages`, `search notes`,
+  answer, each hit typed (`message`, `note`, `document`). Imported Drive documents retain their Google link and edit time; `--source drive:<profile>` selects a registered Drive profile. `tg personal chats documents list CHAT_ID` shows documents linked in stored messages. Mail is `wcat`'s (`wcat search mail`). Narrow with `tg personal search messages`, `search notes`,
   `search conversations` (by meaning) or `search topics`; every search lives under `tg personal search`.
   One chat is `chat:<chat>` in the query, dates are `date>=2026-10-01` or `date:7d` in the query (`--since-time` for
   `search conversations`), and the messages around a hit are `tg personal messages context <hit ref>`.
@@ -42,10 +42,10 @@ Read when a first search found nothing useful, the owner gave known words, a dat
 
 - **`content:` narrows a search to the text of files, `transcript:` to voice transcripts, `filename:` to file
   names.** Compare like with like: `tg personal search messages 'content:invoice'` with
-  `memo search messages 'content:invoice'`, a plain word with a plain word — never a plain word in one tool
+  `wcat search messages 'content:invoice'`, a plain word with a plain word — never a plain word in one tool
   with `content:` in the other.
 - **Every search answers `items[].ref` in its `--json` list.** `search all` adds `kind` to each item; more
-  hits are a `page.next` step. memo's searches answer the same way.
+  hits are a `page.next` step. `wcat`'s searches answer the same way.
 
 - **Nothing relevant: search again in other words before saying it is not there.** A search finds the words
   it is given, and a paraphrase misses. Try the words the answer itself would contain (a document's title, the

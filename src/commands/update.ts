@@ -1,4 +1,4 @@
-import { environmentOf, outputFor, restartServers, upgradeCommand as sharedUpgradeCommand } from "@wirecat/cli-core/cli"
+import { environmentOf, outputFor, restartServers, upgradeCommand as sharedUpgradeCommand } from "@wirecat/cli-core"
 import { TG } from "../app.js"
 import { installer, latest, PACKAGE, runUpdate, tgScript } from "../update.js"
 import type { Environment } from "./context.js"

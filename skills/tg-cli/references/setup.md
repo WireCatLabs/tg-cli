@@ -85,7 +85,7 @@ the owner before `tg personal messages sync <chat> --last 100`; setup starts no 
   of reach (cron, ssh, a trimmed environment). Do not log in again — that adds another device;
   set `XDG_RUNTIME_DIR`. `tg personal doctor` shows it.
 
-- **Before reporting a bug, compare `tg -V` with `npm view @wirecat/tg-cli version`** (memo:
-  `memo --version`, `@wirecat/cli-memo`). An older install may lack the fix. In a zsh loop over command
+- **Before reporting a bug, compare `tg -V` with `npm view @wirecat/tg-cli version`** (`wcat`:
+  `wcat-wirecat --version`, `@wirecat/wirecat`). An older install may lack the fix. In a zsh loop over command
   paths, `$c` is not split into words: `tg $c --help` passes `search messages` as one argument; write
   `${=c}`.

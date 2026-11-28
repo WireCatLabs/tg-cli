@@ -17,8 +17,8 @@ First, the words this page uses:
   command that uses an account names it, so you pick one name at setup (`tg personal setup`) and use
   it from then on ([profiles](#profiles)).
 
-Do not confuse `tg personal session` with `tg personal account sessions`. `tg personal session` is the login of `tg` itself;
-`tg personal account sessions` lists every other device and app logged in to your account.
+Do not confuse `tg personal session` with `tg personal account devices`. `tg personal session` is the login of `tg` itself;
+`tg personal account devices` lists every other device and app logged in to your account.
 
 ## First run
 
@@ -161,7 +161,7 @@ If your account has a two-step password (2FA), `tg` asks for it after the scan. 
 ```sh
 tg personal account show     # who this profile is logged in as
 tg session list              # every profile on this computer, and the account each is logged in as
-tg personal account sessions list  # every device and app logged in to the account; ends nothing
+tg personal account devices list  # every device and app logged in to the account; ends nothing
 tg personal session end      # log out on Telegram's side, and delete the session file here
 ```
 

@@ -177,7 +177,7 @@ More: [bots](https://wirecat.dev/en/docs/tg/bot)
 
 `tg` keeps what it reads in the same local database as the other WireCat tools, such as WhatsApp, MAX and Google
 Calendar. `tg personal search all` finds a word in messages, notes, calendar events and meeting transcripts at once.
-Mail has its own search in memo. `tg personal contacts link` records that two accounts are one person.
+Mail has its own search in `wcat`. `tg personal contacts link` records that two accounts are one person.
 
 More: [WireCat](https://wirecat.dev)
 

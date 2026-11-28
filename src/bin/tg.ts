@@ -15,7 +15,7 @@ const wcat = await wcatStart({
 if (wcat.code !== undefined) {
   process.exitCode = wcat.code
 } else {
-  const { startCli } = await import("@wirecat/cli-core/cli/start")
+  const { startCli } = await import("@wirecat/cli-core/start")
   await startCli({
     app: TG,
     sqlite: true,

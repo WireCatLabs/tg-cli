@@ -86,8 +86,8 @@ const BEFORE: [Unanswered, string][] = [
     "the folder may have been joined; check `tg personal chats folders list` before repeating — a repeat joins nothing new",
   ],
   [
-    { what: "the other devices may or may not have been logged out", check: "account.sessions.list" },
-    "the other devices may or may not have been logged out; check `tg personal account sessions list`",
+    { what: "the other devices may or may not have been logged out", check: "account.devices.list" },
+    "the other devices may or may not have been logged out; check `tg personal account devices list`",
   ],
 ]
 

@@ -31,9 +31,9 @@ Measured from the test run (`coverage/argv.jsonl`), not searched for — see
 | `account update` | `--description` | ✅ |  |
 | `account update` | `--photo` | ✅ |  |
 | `account update` | `--hide-phone` | ✅ |  |
-| `account sessions list` |  | ✅ |  |
-| `account sessions end` |  | ✅ |  |
-| `account sessions end` | `--others` | ✅ |  |
+| `account devices list` |  | ✅ |  |
+| `account devices end` |  | ✅ |  |
+| `account devices end` | `--others` | ✅ |  |
 | `account remove` |  | ✅ |  |
 | `account remove` | `--keep-data` | ✅ |  |
 | `account remove` | `--delete-data` | ✅ |  |

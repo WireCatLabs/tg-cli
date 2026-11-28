@@ -1,6 +1,6 @@
 import { chmodSync, closeSync, existsSync, openSync } from "node:fs"
 import { BaseSqliteStorage, BaseSqliteStorageDriver, type ISqliteDatabase, type ISqliteStatement } from "@mtcute/node"
-import { type CacheDatabase, openCache, type SqlValue } from "@wirecat/cli-core/store"
+import { type CacheDatabase, openCache, type SqlValue } from "@wirecat/cli-core"
 
 /**
  * mtcute's session storage over the SQLite the runtime already has — `node:sqlite` or `bun:sqlite`,

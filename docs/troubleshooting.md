@@ -390,7 +390,7 @@ read. Run `tg upgrade`. Nothing in the store is lost ([the store and other versi
 
 Exit code `3`, on the first start after an upgrade. The store moves once into the WireCat folder, and both the old
 folder and the WireCat folder hold a `wirecat.db` with different contents — usually because an older `tg`, `max`
-or `memo` created a new store in the old place after the move. Nothing was changed. Keep the store you want, move
+or `wcat` created a new store in the old place after the move. Nothing was changed. Keep the store you want, move
 the other one away, and run the command again. Upgrade every CLI that shares the store together.
 
 ### "nothing recorded for profile … yet — run the command once without --offline"

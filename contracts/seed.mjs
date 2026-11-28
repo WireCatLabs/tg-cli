@@ -10,7 +10,7 @@ const storeModule = () => {
   try {
     return fromPrevious.resolve("@wirecat/cli-messaging/store")
   } catch {
-    return fromPrevious.resolve("@wirecat/cli-core/store")
+    return fromPrevious.resolve("@wirecat/cli-core")
   }
 }
 const { openStore } = await import(pathToFileURL(storeModule()).href)

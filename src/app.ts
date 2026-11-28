@@ -1,4 +1,4 @@
-import { type Configuration, settingsFor } from "@wirecat/cli-core/cli"
+import { type Configuration, settingsFor } from "@wirecat/cli-core"
 import * as v from "valibot"
 import { TG } from "./identity.js"
 import { proxySetting } from "./proxy.js"

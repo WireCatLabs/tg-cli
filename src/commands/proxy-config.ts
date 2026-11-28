@@ -1,6 +1,5 @@
 import { CliError, isCliError } from "@wirecat/cli-base"
-import { readSecret } from "@wirecat/cli-core"
-import { environmentOf } from "@wirecat/cli-core/cli"
+import { environmentOf, readSecret } from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { CONFIG } from "../app.js"
 import { parseProxy, proxyLabel } from "../proxy.js"

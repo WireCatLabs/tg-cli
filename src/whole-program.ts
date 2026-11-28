@@ -1,4 +1,4 @@
-import { createProgram as create } from "@wirecat/cli-core/cli"
+import { createProgram as create } from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { telegramBotApiCommand } from "./commands/bot-api.js"
 import { definition, useBotApi } from "./program.js"

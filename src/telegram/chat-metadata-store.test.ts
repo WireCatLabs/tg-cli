@@ -1,7 +1,7 @@
 import { mkdtempSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
-import { openStore } from "@wirecat/cli-core/store"
+import { openStore } from "@wirecat/cli-core"
 import { expect, it } from "vitest"
 import { toChat } from "./map.js"
 

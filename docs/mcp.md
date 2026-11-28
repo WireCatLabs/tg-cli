@@ -219,7 +219,7 @@ terminal:
   name instead.
 
 Commands such as `store backup|restore`, `server start|stop|restart`, model downloads,
-`schedule run`, `doctor reports create` and `account sessions end` have their own permission keys, set to `ask` by default. They are offered to the
+`schedule run`, `doctor reports create` and `account devices end` have their own permission keys, set to `ask` by default. They are offered to the
 agent; the MCP app controls approval. In `tg commands --json`, a command left out of MCP is marked
 `mcp: false`, and a long-running one carries a `lifetime` instead. Raw `bot api` operations need their own
 explicit [permission](permissions.md#raw-bot-api-calls).

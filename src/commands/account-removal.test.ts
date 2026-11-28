@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:
 import { tmpdir } from "node:os"
 import { dirname, join } from "node:path"
 import { captureStreams, type KeyringStore, memoryKeyring } from "@wirecat/cli-base"
-import { holdLock, lockPath } from "@wirecat/cli-core/background"
+import { holdLock, lockPath } from "@wirecat/cli-core"
 import { describe, expect, it, vi } from "vitest"
 import { TG } from "../app.js"
 import { run } from "../program.js"

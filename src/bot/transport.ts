@@ -1,6 +1,5 @@
 import { CliError, type CliErrorDetails, isCliError } from "@wirecat/cli-base"
-import type { EventSink } from "@wirecat/cli-core/cli"
-import { apiJson, apiPlainJson, currentAttempt, parseApiJson, providerRequest } from "@wirecat/cli-core/cli"
+import { apiJson, apiPlainJson, currentAttempt, type EventSink, parseApiJson, providerRequest } from "@wirecat/cli-core"
 import { guardedFetch } from "../http.js"
 import { DESKTOP } from "../identity.js"
 

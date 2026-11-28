@@ -1,5 +1,4 @@
-import type { MessengerAdapter } from "@wirecat/cli-core/cli"
-import { uploadBlob } from "@wirecat/cli-core/sends"
+import { type MessengerAdapter, uploadBlob } from "@wirecat/cli-core"
 import type { Feature } from "./feature.js"
 import { type Account, toAccount } from "./map.js"
 

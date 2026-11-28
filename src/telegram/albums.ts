@@ -1,8 +1,7 @@
 import { createHash } from "node:crypto"
 import { getMarkedPeerId, Long, PeersIndex, Message as TgMessage, type tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { SendOptions } from "@wirecat/cli-core/cli"
-import type { Upload } from "@wirecat/cli-core/sends"
+import type { SendOptions, Upload } from "@wirecat/cli-core"
 import {
   type Feature,
   messageNumber,

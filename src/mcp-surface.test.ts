@@ -1,7 +1,7 @@
 import { toJsonSchema } from "@valibot/to-json-schema"
 import { memoryKeyring } from "@wirecat/cli-base"
 import { describeProgram } from "@wirecat/cli-base/commands"
-import { changesAuthorityAt } from "@wirecat/cli-core/cli"
+import { changesAuthorityAt } from "@wirecat/cli-core"
 import { createBotServer } from "@wirecat/cli-core/mcp"
 import { describe, expect, it } from "vitest"
 import { resolveSettings } from "./app.js"

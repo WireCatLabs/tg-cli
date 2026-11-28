@@ -141,7 +141,7 @@ tg session list                # every profile on this computer and the account 
 ```
 
 ```sh
-tg personal account sessions list  # every device and app logged in to the account; ends nothing
+tg personal account devices list  # every device and app logged in to the account; ends nothing
 ```
 
 ```sh
@@ -473,10 +473,10 @@ tg personal account update --first-name Ann --description "about me" --photo me.
 ```
 
 ```sh
-tg personal account sessions end --others  # logs out every other device, your phone too; asks first
+tg personal account devices end --others  # logs out every other device, your phone too; asks first
 ```
 
-`contacts import` answers how many it sent and who Telegram knew, never a number. `account sessions
+`contacts import` answers how many it sent and who Telegram knew, never a number. `account devices
 end` asks before it goes; `--yes` answers in a script.
 
 ### Pages

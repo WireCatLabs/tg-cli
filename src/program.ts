@@ -45,7 +45,7 @@ import {
   tasksCommand,
   topicsCommand,
   watchCommand,
-} from "@wirecat/cli-core/cli"
+} from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { CONFIG, TG } from "./app.js"
 import { needsBotApi } from "./bot-api-need.js"

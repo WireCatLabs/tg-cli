@@ -2,15 +2,16 @@ import { accessSync, constants, existsSync, mkdirSync } from "node:fs"
 import { CliError, indent, renderPretty } from "@wirecat/cli-base"
 import { annotate, customizeSharedCommand } from "@wirecat/cli-base/commands"
 import { installSkill, type SkillTarget } from "@wirecat/cli-base/skill"
-import { atTerminal } from "@wirecat/cli-core"
 import {
   AGENTS,
   type Agent,
   agentFor,
   asFirstWord,
+  atTerminal,
   type Closeable,
   commandWords,
   environmentOf,
+  levelFor,
   logsInOrOut,
   printItem,
   REMOTE_WRITE,
@@ -21,8 +22,7 @@ import {
   secretInputOf,
   sharedCommandTemplate,
   withDeadline,
-} from "@wirecat/cli-core/cli"
-import { levelFor } from "@wirecat/cli-core/sends"
+} from "@wirecat/cli-core"
 import { Command, Option } from "commander"
 import { TG } from "../app.js"
 import { SHELL_OVERRIDES } from "../contract-overrides.js"

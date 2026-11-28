@@ -1,5 +1,5 @@
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { checkGuide } from "@wirecat/cli-core/cli"
+import { checkGuide } from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { describe, expect, it } from "vitest"
 import { createProgram, run } from "./whole-program.js"
@@ -128,12 +128,12 @@ describe("tg guide", () => {
     expect(await checkGuide(createProgram, { packageRoot: process.cwd() })).toEqual([])
   })
 
-  it("lists the scenarios and memo's person-brief", async () => {
+  it("lists the scenarios and wcat's person-brief", async () => {
     const { code, stdout } = await atTerminal(["guide"])
     const text = stdout.join("\n")
 
     expect(code).toBe(0)
     expect(text).toContain("catch-up")
-    expect(text).toContain("memo guide person-brief")
+    expect(text).toContain("wcat guide person-brief")
   })
 })

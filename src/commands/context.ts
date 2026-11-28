@@ -1,12 +1,12 @@
 import { existsSync } from "node:fs"
 import { dirname } from "node:path"
 import { CliError, type KeyringStore } from "@wirecat/cli-base"
-import { checkWords } from "@wirecat/cli-core"
 import {
   asFirstWord,
   type BaseContext,
   type BaseEnvironment,
   type ConnectOptions,
+  checkWords,
   environmentOf,
   type Messenger,
   type MessengerAdapter,
@@ -15,7 +15,7 @@ import {
   privateFiles,
   type ServerSystem,
   withSqliteSidecars,
-} from "@wirecat/cli-core/cli"
+} from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { resolveSettings, TG } from "../app.js"
 import type { FetchLike } from "../bot/transport.js"

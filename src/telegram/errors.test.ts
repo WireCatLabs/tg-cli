@@ -10,8 +10,7 @@ import {
   tl,
 } from "@mtcute/node"
 import { errorObjectOf } from "@wirecat/cli-base"
-import { bareCheck } from "@wirecat/cli-core"
-import { failureContext } from "@wirecat/cli-core/cli"
+import { bareCheck, failureContext } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { TG } from "../app.js"
 import { backgroundError, toCliError } from "./errors.js"

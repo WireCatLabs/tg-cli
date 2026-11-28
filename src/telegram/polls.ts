@@ -1,7 +1,6 @@
 import type { Poll as TgPoll } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { CheckWords, Poll } from "@wirecat/cli-core"
-import type { NewPoll } from "@wirecat/cli-core/cli"
+import type { CheckWords, NewPoll, Poll } from "@wirecat/cli-core"
 import { pollClosed } from "./errors.js"
 import {
   type Check,

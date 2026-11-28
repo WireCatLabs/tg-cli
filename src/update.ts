@@ -1,6 +1,6 @@
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import { appUpdate, type UpdateEnvironment } from "@wirecat/cli-core/update"
+import { appUpdate, type UpdateEnvironment } from "@wirecat/cli-core"
 import { resolveSettings } from "./app.js"
 import { pathsFor } from "./paths.js"
 import { VERSION } from "./version.js"
