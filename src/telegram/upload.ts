@@ -1,7 +1,6 @@
 import type { TelegramClient, UploadedFile } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import { bareCheck } from "@wirecat/cli-core"
-import { type Upload, uploadBlob } from "@wirecat/cli-core/sends"
+import { bareCheck, type Upload, uploadBlob } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
 import { toUploadParams } from "./map.js"
 

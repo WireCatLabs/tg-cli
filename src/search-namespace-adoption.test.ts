@@ -1,6 +1,5 @@
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { rememberAccount } from "@wirecat/cli-core/cli"
-import { openStore, storePath } from "@wirecat/cli-core/store"
+import { openStore, rememberAccount, storePath } from "@wirecat/cli-core"
 import { seedSearchRecipes } from "@wirecat/cli-core/testing"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
@@ -77,7 +76,7 @@ describe("search <resource> adoption", () => {
     expect(notes.answer.items.map(({ kind }: { kind: string }) => kind)).toEqual(["note"])
     const mail = await invoke(["search", "all", "invoice", "--only", "mail"])
     expect(mail.code).toBe(2)
-    expect(mail.stderr).toContain("memo search mail")
+    expect(mail.stderr).toContain("wcat search mail")
   })
 
   it("search messages never returns mail", async () => {

@@ -2,8 +2,7 @@ import { mkdtempSync } from "node:fs"
 import { join } from "node:path"
 import { FileLocation, Long, MtPeerNotFoundError, MtTimeoutError, tl } from "@mtcute/node"
 import { errorObjectOf } from "@wirecat/cli-base"
-import { checkWords, type MessageEvent } from "@wirecat/cli-core"
-import { REMOTE_WRITE } from "@wirecat/cli-core/cli"
+import { checkWords, type MessageEvent, REMOTE_WRITE } from "@wirecat/cli-core"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import {
   type Check,

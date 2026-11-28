@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs"
 import { dirname } from "node:path"
 import { configFilePath, resolvePaths } from "@wirecat/cli-base"
-import { botCommand } from "@wirecat/cli-core/cli"
+import { botCommand } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { BOT_WITHOUT_API, needsBotApi } from "./bot-api-need.js"
 import { botMcp, TELEGRAM_BOT } from "./commands/bot.js"

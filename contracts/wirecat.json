@@ -90,7 +90,7 @@
     {
       "path": [
         "account",
-        "sessions",
+        "devices",
         "list"
       ],
       "summary": "every device and app logged in to this account; nothing is ended",
@@ -98,13 +98,13 @@
         "remote": "read",
         "local": "read"
       },
-      "permission": "account.sessions.list",
+      "permission": "account.devices.list",
       "entity": "account_session"
     },
     {
       "path": [
         "account",
-        "sessions",
+        "devices",
         "end"
       ],
       "summary": "log out every other device, your phone included; this one stays",
@@ -112,7 +112,7 @@
         "remote": "write",
         "local": "write"
       },
-      "permission": "account.sessions.end",
+      "permission": "account.devices.end",
       "entity": "ended_account_sessions"
     },
     {
@@ -7816,7 +7816,7 @@
         "list",
         "command:\"messages sync\" status:success",
         "--limit",
-        "50",
+        "200",
         "--no-record",
         "--json"
       ],

@@ -156,7 +156,7 @@ secret. `tg doctor` names the file or its folder when other users can read it ([
 | `allow` | it goes ahead and never asks |
 
 **A key is a command path**: `messages`, `messages.delete`, `messages.send`, `reactions`,
-`messages.sync`, `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.sessions.end`. It
+`messages.sync`, `polls.vote`, `chats.mark-read`, `chats.members.remove`, `contacts`, `account.devices.end`. It
 starts with a resource — `messages`, `reactions`, `polls`, `topics`, `chats`, `contacts`, `account`,
 `bot`, `conversations`, `tags`, `search`, `searches`, `tasks`, `replies`, `attachments`, `stats`,
 `store` or `metadata` — and must name a known command or checked write. Unknown command keys are
@@ -192,7 +192,7 @@ do; those commands remain discoverable with current availability ([permissions](
 
 **The defaults allow everything except a few changes that are hard to reverse.** These ask: `messages.delete`,
 `bot.messages.delete`, `chats.delete`, `chats.clear`, `topics.enable`, `topics.delete` and
-`account.sessions.end`. Reply rules may not send until you allow it: `replies.send` is `deny`. A
+`account.devices.end`. Reply rules may not send until you allow it: `replies.send` is `deny`. A
 built-in default only tightens: `messages: readonly` still refuses a deletion, and `messages: allow`
 keeps the question before a deletion until you set `messages.delete` itself.
 

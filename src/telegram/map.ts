@@ -40,15 +40,15 @@ import type {
   Message,
   MessageChange,
   MessageHit,
+  NewPoll,
   Poll,
   ProviderMetadata,
   QuotedMessage,
   Reactions,
   TextSpan,
   Topic,
+  Upload,
 } from "@wirecat/cli-core"
-import type { NewPoll } from "@wirecat/cli-core/cli"
-import type { Upload } from "@wirecat/cli-core/sends"
 import { rulesOf } from "./folder-rules.js"
 
 /** The only file that knows mtcute's shapes. Every id leaves it as a string: Telegram ids are 64-bit. */

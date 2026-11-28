@@ -1,8 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 import { networkMiddlewares, type RpcCallMiddleware, type RpcCallMiddlewareContext, tl } from "@mtcute/node"
 import { CliError, isCliError } from "@wirecat/cli-base"
-import { bareCheck } from "@wirecat/cli-core"
-import { currentAttempt, providerRequest, runEvent } from "@wirecat/cli-core/cli"
+import { bareCheck, currentAttempt, providerRequest, runEvent } from "@wirecat/cli-core"
 import { toCliError } from "./errors.js"
 
 const SENDS = new Set([

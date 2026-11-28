@@ -1,7 +1,7 @@
 import { tmpdir } from "node:os"
 import { basename, sep } from "node:path"
 import { resolvePaths } from "@wirecat/cli-base"
-import { storePath } from "@wirecat/cli-core/store"
+import { storePath } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 
 describe("the test sandbox", () => {

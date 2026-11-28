@@ -2,6 +2,8 @@ import { CliError } from "@wirecat/cli-base"
 import type {
   AdminRight,
   Attachment,
+  BotChatAdmin,
+  BotEvent,
   Chat,
   ChatKind,
   Markup,
@@ -9,7 +11,6 @@ import type {
   QuotedMessage,
   TextSpan,
 } from "@wirecat/cli-core"
-import type { BotChatAdmin, BotEvent } from "@wirecat/cli-core/cli"
 
 /** Telegram's [User](https://core.telegram.org/bots/api#user), the fields read here. */
 export interface User {

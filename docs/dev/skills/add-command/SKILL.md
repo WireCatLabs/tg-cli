@@ -45,7 +45,7 @@ Work in a worktree off `origin/main`, one per repository you touch: `git switch 
 ## 2. The command's contract
 
 - `annotate(command, { effects })` on every command, reads too: `REMOTE_WRITE`, `FETCH`, `REMOTE_READ`,
-  `LOCAL_WRITE`, `LOCAL_READ` from `@wirecat/cli-core/cli`; one without counts as a write. Nothing sends, marks read or
+  `LOCAL_WRITE`, `LOCAL_READ` from `@wirecat/cli-core`; one without counts as a write. Nothing sends, marks read or
   deletes unless the typed command asks for it (rule 1). Anything that cannot be undone gets the
   level `ask` in cli-core's built-in permission defaults, so it asks first; `--allow-dangerous`
   answers yes for a deletion, `--yes` for the rest.

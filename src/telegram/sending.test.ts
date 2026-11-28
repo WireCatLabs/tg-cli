@@ -1,5 +1,5 @@
 import type { RpcCallMiddleware, RpcCallMiddlewareContext } from "@mtcute/node"
-import { type DiagnosticEvent, inRun, withAttempt } from "@wirecat/cli-core/cli"
+import { type DiagnosticEvent, inRun, withAttempt } from "@wirecat/cli-core"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { middlewaresOf } from "./sending.js"
 

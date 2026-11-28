@@ -172,43 +172,43 @@ tg account update [options]
 
 **Example:** `tg personal account update --first-name Alex`
 
-### `tg account sessions`
+### `tg account devices`
 
 where else this account is logged in — not `tg session`, which is this tool's own login
 
-#### `tg account sessions list`
+#### `tg account devices list`
 
 every device and app logged in to this account; nothing is ended
 
 ```sh
-tg account sessions list [query]
+tg account devices list [query]
 ```
 
 | Argument | | What it is |
 |---|---|---|
 | `query` | optional | field:value terms; this list filters by none yet. |
 
-**Returns:** account session — current, client, device, location, last_active_at, created_at; every field: tg commands info account sessions list
+**Returns:** account session — current, client, device, location, last_active_at, created_at; every field: tg commands info account devices list
 
-**Example:** `tg personal account sessions list`
+**Example:** `tg personal account devices list`
 
-#### `tg account sessions end`
+#### `tg account devices end`
 
 log out every other device, your phone included; this one stays
 
 **Changes something in Telegram.**
 
 ```sh
-tg account sessions end [options]
+tg account devices end [options]
 ```
 
 | Option | What it does |
 |---|---|
-| `--others` | every session but this one. |
+| `--others` | every device but this one. |
 
-**Returns:** ended account sessions — operation_id, sessions; every field: tg commands info account sessions end
+**Returns:** ended account sessions — operation_id, sessions; every field: tg commands info account devices end
 
-**Example:** `tg personal account sessions end --others`
+**Example:** `tg personal account devices end --others`
 
 ### `tg account remove`
 
@@ -5534,7 +5534,7 @@ tg projects evidence <project> [options]
 
 ### `tg projects status`
 
-per chat confirmed as the project's (and its child projects'), from what the store holds: the last message, who replies next, open questions both ways, promises, amounts with their direction, payments recorded, how long each --context-query has been quiet on their side, and how much of the chat is held. Amounts, directions and promises found by words are marked pattern: read the cited message before trusting one. Others' questions in a group with no role, and others' word-found promises in a group, are counted on the chat's row as unlisted, not listed. Only this profile's account is read; the other linked chats are named, and memo projects status reads them
+per chat confirmed as the project's (and its child projects'), from what the store holds: the last message, who replies next, open questions both ways, promises, amounts with their direction, payments recorded, how long each --context-query has been quiet on their side, and how much of the chat is held. Amounts, directions and promises found by words are marked pattern: read the cited message before trusting one. Others' questions in a group with no role, and others' word-found promises in a group, are counted on the chat's row as unlisted, not listed. Only this profile's account is read; the other linked chats are named, and wcat projects status reads them
 
 ```sh
 tg projects status <project> [options]
@@ -5557,11 +5557,11 @@ tg projects status <project> [options]
 
 ## `tg search`
 
-find things by text: one resource when you know it (messages, notes), or search all across messages and notes; for mail, the separate memo CLI: memo search mail
+find things by text: one resource when you know it (messages, notes), or search all across messages and notes; for mail, wcat: wcat search mail
 
 ### `tg search all`
 
-search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and meeting transcripts, chat and summaries when it holds a meeting account — best match first; not mail (the separate memo CLI searches it: memo search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
+search messenger messages and notes in the local store, and by default the messenger's server for messages too (notes and events are local only; --backend archive or --offline keeps it to the local store), calendar events when the store holds a calendar, and meeting transcripts, chat and summaries when it holds a meeting account — best match first; not mail (wcat searches it: wcat search mail), tasks, people, memories or projects. Use it when you do not know where something was written; search messages or notes reads one kind with all its fields
 
 ```sh
 tg search all <query> [options]
@@ -5629,7 +5629,7 @@ tg search messages [query] [options]
 
 ### `tg search notes`
 
-search the notes — written in memo, or imported from a notes folder — by words and, with the local text model, by meaning; each hit says which found it and what it links to
+search the notes — written in wcat, or imported from a notes folder — by words and, with the local text model, by meaning; each hit says which found it and what it links to
 
 ```sh
 tg search notes <query> [options]
@@ -5637,11 +5637,11 @@ tg search notes <query> [options]
 
 | Argument | | What it is |
 |---|---|---|
-| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, tag:, source:internal (written in memo) or source:file (from a notes folder) and date ranges. |
+| `query` | required | strict Lucene query: words, "phrases", AND/OR/NOT, tag:, source:internal (written in wcat) or source:file (from a notes folder) and date ranges. |
 
 | Option | What it does |
 |---|---|
-| `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in memo, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
+| `--source <accounts>` | only these notes accounts, separated by commas: notes:internal for notes written in wcat, notes:<folder id> as a hit shows it, notes, documents or group:<name>. |
 | `--filter <query>` | a query every hit must also match, found by words or by meaning. |
 | `--limit <n>` | how many. |
 | `--page <n>` | which page, starting at 1. |
@@ -7205,7 +7205,7 @@ tg bot watch [options]
 | `--events` | also edits, deletions, buttons pressed and people coming and going; every line names its event. |
 | `--types <types>` | only these update types, comma-separated, in the messenger's words. |
 | `--public-url <url>` | receive by webhook at your tunnel's https address instead of polling, e.g. https://<name>.ts.net. |
-| `--port <port>` | the local port behind the tunnel for --public-url (default 8766). |
+| `--port <port>` | the local port behind the tunnel for --public-url (default 9466). |
 
 **Example:** `tg sales bot watch --jsonl`, `tg sales bot watch --events`
 

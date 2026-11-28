@@ -1,4 +1,4 @@
-import { type DiagnosticEvent, withAttempt } from "@wirecat/cli-core/cli"
+import { type DiagnosticEvent, withAttempt } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { TelegramBotTransport } from "./transport.js"
 

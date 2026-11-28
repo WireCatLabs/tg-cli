@@ -1,14 +1,14 @@
 import { existsSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
-import { checkWords } from "@wirecat/cli-core"
 import {
   type BotMcp,
   type BotMessenger,
   BotTokenStore,
   botCopy,
+  checkWords,
   environmentOf,
   type RunBotCommand,
-} from "@wirecat/cli-core/cli"
+} from "@wirecat/cli-core"
 import { resolveSettings, TG } from "../app.js"
 import { telegramBotAdapter } from "../bot/adapter.js"
 import { BOT_ADMIN_RIGHTS } from "../bot/map.js"

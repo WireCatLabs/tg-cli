@@ -2,8 +2,7 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFil
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { fileURLToPath } from "node:url"
-import type { Chat, Message } from "@wirecat/cli-core"
-import { type AccountKey, openStore } from "@wirecat/cli-core/store"
+import { type AccountKey, type Chat, type Message, openStore } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { TELEGRAM } from "./context.js"
 

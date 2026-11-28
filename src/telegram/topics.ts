@@ -1,7 +1,6 @@
 import { getMarkedPeerId, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { Message, Page, Topic, TopicChange } from "@wirecat/cli-core"
-import type { ForumState } from "@wirecat/cli-core/cli"
+import type { ForumState, Message, Page, Topic, TopicChange } from "@wirecat/cli-core"
 import {
   type Feature,
   forwardedCopy,

@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { SendJournal, sendsPathFor } from "@wirecat/cli-core/sends"
+import { SendJournal, sendsPathFor } from "@wirecat/cli-core"
 import { describe, expect, it } from "vitest"
 import { TG } from "./app.js"
 import type { Adapter } from "./commands/context.js"
@@ -911,7 +911,7 @@ describe("the send guard in front of the other writes", () => {
           adapter,
         )
       ).code,
-      (await tg(["g-profile", "account", "sessions", "end", "--others", "--yes"], adapter)).code,
+      (await tg(["g-profile", "account", "devices", "end", "--others", "--yes"], adapter)).code,
     ]
 
     expect(codes).toEqual([0, 0])

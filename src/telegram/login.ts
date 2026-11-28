@@ -140,7 +140,7 @@ export const endOtherSessions = (feature: Feature): Promise<AccountSession[]> =>
     } catch (error) {
       throw feature.unanswered(error, {
         what: "the other devices may or may not have been logged out",
-        check: "account.sessions.list",
+        check: "account.devices.list",
       })
     }
     const { authorizations } = await feature.client.call({ _: "account.getAuthorizations" })

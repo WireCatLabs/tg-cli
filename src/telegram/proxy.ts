@@ -1,6 +1,5 @@
 import { CliError, Credentials, type KeyringStore } from "@wirecat/cli-base"
-import type { CheckWords } from "@wirecat/cli-core"
-import { fromFile, type Settings } from "@wirecat/cli-core/cli"
+import { type CheckWords, fromFile, type Settings } from "@wirecat/cli-core"
 import { APP, isolated, pathsFor } from "../paths.js"
 import { type ProxyServer, parseProxy, proxyLabel } from "../proxy.js"
 import type { Check } from "./feature.js"

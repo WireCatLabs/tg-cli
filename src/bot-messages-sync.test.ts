@@ -1,5 +1,5 @@
 import { CliError, captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { BotTokenStore } from "@wirecat/cli-core/cli"
+import { BotTokenStore } from "@wirecat/cli-core"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
 import type { Environment } from "./commands/context.js"

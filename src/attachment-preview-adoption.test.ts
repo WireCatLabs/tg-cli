@@ -3,8 +3,8 @@ import { mkdtempSync, writeFileSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { rememberAccount } from "@wirecat/cli-core/cli"
-import { openStore } from "@wirecat/cli-core/store"
+import { openStore, rememberAccount } from "@wirecat/cli-core"
+import { placeEngines } from "@wirecat/cli-core/testing"
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest"
 import { TG } from "./app.js"
 import { run } from "./program.js"
@@ -41,6 +41,7 @@ const bytes = Buffer.from(document)
 const sha256 = createHash("sha256").update(bytes).digest("hex")
 const db = await openStore()
 beforeAll(async () => {
+  placeEngines(process.env, ["unpdf"])
   rememberAccount(TG, profile, account.account, process.env)
   writeFileSync(path, bytes)
   writeFileSync(textFile, "pdfpreviewneedle")

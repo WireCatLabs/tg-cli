@@ -1,17 +1,21 @@
 import { FileLocation, Long, PeersIndex, Message as TgMessage, tl } from "@mtcute/node"
 import { CliError } from "@wirecat/cli-base"
-import type { TextSpan } from "@wirecat/cli-core"
 import {
+  type After,
   type Attachment,
   type Chat,
   type CounterField,
+  type Download,
   type Markup,
   type Message,
   type MessageHit,
   observedCounters,
   type Page,
+  type SendOptions,
+  type ServerQuery,
+  type TextSpan,
+  type Transcript,
 } from "@wirecat/cli-core"
-import type { After, Download, SendOptions, ServerQuery, Transcript } from "@wirecat/cli-core/cli"
 import { checkAlbum, sendAlbum } from "./albums.js"
 import { toCliError } from "./errors.js"
 import {

@@ -14,7 +14,7 @@ import { toMessage, toMessageHit } from "./map.js"
 
 /** The commands a message sends a person to; the command layer names them in its own words. */
 export const CHECKS = [
-  "account.sessions.list",
+  "account.devices.list",
   "bot.auth.set",
   "chats.folders.list",
   "chats.links.create",

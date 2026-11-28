@@ -2,25 +2,28 @@ import { existsSync, rmSync } from "node:fs"
 import { CliError } from "@wirecat/cli-base"
 import { annotate, customizeSharedCommand } from "@wirecat/cli-base/commands"
 import { timezoneOf } from "@wirecat/cli-base/query"
-import { type Account, atTerminal, loginQr, readSecret } from "@wirecat/cli-core"
-import { servingProfiles } from "@wirecat/cli-core/background"
 import {
+  type Account,
   answerStdinOption,
   asFirstWord,
+  atTerminal,
   commandWords,
   environmentOf,
+  loginQr,
   logsInOrOut,
   mayRevoke,
   messengerSessionCommands,
   printItem,
   REMOTE_WRITE,
+  readSecret,
   refuseCommandName,
   rememberAccount,
   rootOf,
   type SignInSteps,
+  servingProfiles,
   sharedCommandTemplate,
   signInSteps,
-} from "@wirecat/cli-core/cli"
+} from "@wirecat/cli-core"
 import { Argument, Command, Option } from "commander"
 import { TG } from "../app.js"
 import { proxiedFetch } from "../bot/proxy.js"

@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs"
 import { join } from "node:path"
 import { captureStreams, memoryKeyring } from "@wirecat/cli-base"
-import { SendJournal, sendsPathFor } from "@wirecat/cli-core/sends"
+import { SendJournal, sendsPathFor } from "@wirecat/cli-core"
 import { expect, it, vi } from "vitest"
 import { TG } from "./app.js"
 import { pathsFor } from "./paths.js"

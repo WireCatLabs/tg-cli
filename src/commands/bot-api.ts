@@ -9,19 +9,17 @@ import {
   ChatRegistry,
   checkApiBody,
   checkApiParameter,
-  generatedApiCommand,
-  overrideSharedContract,
-  ownerOnlyOption,
-  prepareRpcApiBody,
-} from "@wirecat/cli-core/cli"
-import {
   DEFAULT_PERMISSIONS,
+  generatedApiCommand,
   guardedWrite,
   levelFor,
   newOperationId,
+  overrideSharedContract,
+  ownerOnlyOption,
+  prepareRpcApiBody,
   readUpload,
   uploadBytes,
-} from "@wirecat/cli-core/sends"
+} from "@wirecat/cli-core"
 import type { Command } from "commander"
 import { definitions } from "../bot/generated/definitions.js"
 import { operations } from "../bot/generated/manifest.js"
