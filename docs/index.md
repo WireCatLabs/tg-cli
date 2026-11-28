@@ -78,7 +78,7 @@ How `tg` differs from other tools: [compared with other tools](compare.md).
 | [Security](security.md) | What reaches the disk and the network, and what stops a send going to the wrong place? |
 | [Roadmap](roadmap.md) | What is coming next? |
 
-[Search](search.md): `tg personal search all` covers messages and notes at once (mail is `memo search mail`); `search messages`
+[Search](search.md): `tg personal search all` covers messages and notes at once (mail is `wcat search mail`); `search messages`
 finds messages by words, people, dates, files and tags; [topic search](topic-search.md) finds
 discussions by what they were about; the [search query language](query-language.md) is the full
 reference.

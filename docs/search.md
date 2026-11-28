@@ -2,7 +2,7 @@
 
 You need to find something that was written: a message, an agreement, a file someone sent, a code from
 months ago. This page shows how to search everything tg has saved on this computer — Telegram messages,
-and the notes that [memo](https://github.com/WireCatLabs/cli-memo) imported — and how to ask
+and the notes that [`files`](https://github.com/WireCatLabs/files-cli) imported — and how to ask
 Telegram's own search at the same time.
 
 After reading it you can find messages by words, people, chats, dates, files and links, save a search
@@ -51,8 +51,8 @@ written, start with `search all`.
 |---|---|
 | Search messages and notes in one answer; without `--offline`, also on Telegram's server | `tg personal search all '<query>'` |
 | Search Telegram messages only; without `--discover`, also on Telegram's server | `tg personal search messages '<query>'` |
-| Search mail | memo's: install @wirecat/cli-memo, then `memo search mail '<query>'` |
-| Search notes written in memo or imported from a folder | `tg personal search notes '<query>'` |
+| Search mail | install @wirecat/wirecat, then `wcat search mail '<query>'` |
+| Search notes written or imported by `files` | `tg personal search notes '<query>'` |
 | Find a discussion by what it was about | `tg personal search conversations '<question>'` ([topic search](topic-search.md)) |
 | Find a topic in a forum group by its title | `tg personal search topics <chat> '<words>'` |
 | Count matches by chat, sender, day or hour | `tg personal stats messages show '<query>'` |
@@ -71,7 +71,7 @@ tg personal search messages 'lease chat:"Book club"'  # Telegram messages only, 
 ```
 
 ```sh
-tg personal search notes 'budget source:internal'  # only notes written in memo
+tg personal search notes 'budget source:internal'  # only notes written in files
 ```
 
 ```sh
@@ -91,12 +91,12 @@ tg personal search all 'lease agreement' --offline  # the store only; nothing is
 ```
 
 `search all` says what each hit is — a message (`msg:…`) or a note (`note:…`). tg never searches mail:
-`search all --only mail` is refused with a pointer to `memo search mail`. In `search messages`,
+`search all --only mail` is refused with a pointer to `wcat search mail`. In `search messages`,
 `NOT has:attachment`, `has:voice` and `has:file` in the query keep only text, voice or files; in
-`search notes`, `source:internal` and `source:file` keep the notes written in memo or imported from a folder.
+`search notes`, `source:internal` and `source:file` keep the notes written in `files` or imported by `files` from a folder.
 When a field does not apply — `chat:`/`from:` for notes — `search all` skips that resource and explains why.
 
-Notes reach the store through `memo sync --only notes`. Without imported notes, `search all` searches messages only. Search mail separately with Memo.
+Notes reach the store through `files sync`. Without imported notes, `search all` searches messages only. Search mail separately with `wcat`.
 
 The rest of this page is about searching messages, `tg personal search messages`. It reads the local store;
 ordinary search also asks Telegram ([below](#asking-telegram-too---backend)); discovery searches only the archive, even with `--backend both`.
