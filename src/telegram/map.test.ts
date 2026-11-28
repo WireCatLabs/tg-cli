@@ -11,7 +11,13 @@ import {
   toReactionChange,
 } from "./map.js"
 
-const tgMessage = (sender: { type: "user" | "chat"; id: number; displayName: string; username?: string }) =>
+const tgMessage = (sender: {
+  type: "user" | "chat"
+  id: number
+  displayName: string
+  username?: string
+  isBot?: boolean
+}) =>
   ({
     id: 7,
     chat: { id: -1001234567890 },
@@ -83,6 +89,15 @@ describe("a Telegram message", () => {
     expect(toMessage(tgMessage({ type: "user", id: 778, displayName: "Luis" }))).not.toHaveProperty("senderUsername")
     const channel = { type: "chat", id: -1001234567890, displayName: "News", username: "news" } as const
     expect(toMessage(tgMessage(channel))).not.toHaveProperty("senderUsername")
+  })
+
+  it("**says when its author is a bot**, so the store files the bot under Bots, and says nothing for a person", () => {
+    const bot = { type: "user", id: 779, displayName: "Weather Bot", isBot: true } as const
+    expect(toMessage(tgMessage(bot))).toHaveProperty("senderIsBot", true)
+    expect(toMessage(tgMessage({ type: "user", id: 777, displayName: "Ana" }))).not.toHaveProperty("senderIsBot")
+    expect(toMessage(tgMessage({ type: "chat", id: -1001234567890, displayName: "News" }))).not.toHaveProperty(
+      "senderIsBot",
+    )
   })
 })
 
