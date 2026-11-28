@@ -25,6 +25,21 @@ export const DESKTOP: ManifestIdentity & { hosts: readonly string[] } = {
   signIn: {
     gives: "Lets your agent read your Telegram chats, and send messages when you allow it.",
     asks: "Your phone number and the code Telegram sends, and an app ID from my.telegram.org.",
+    methods: [
+      { id: "qr", label: "QR code", words: ["{profile}", "session", "start", "qr", "--json", "--answer-stdin"] },
+      {
+        id: "phone",
+        label: "Phone number",
+        words: ["{profile}", "session", "start", "phone", "--json", "--answer-stdin"],
+      },
+    ],
+  },
+  mcpPort: 8765,
+  syncCommand: ["messages", "sync", "--all", "--timeout", "120m"],
+  syncSchedule: {
+    every: "1h",
+    choices: ["15m", "30m", "1h", "2h", "3h", "4h", "8h", "24h"],
+    args: ["messages", "sync", "--all", "--timeout", "50m"],
   },
   hosts: ["api.telegram.org", "my.telegram.org"],
   userHosts: "the proxy you set for Telegram, if any",
