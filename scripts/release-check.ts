@@ -41,8 +41,9 @@ const failed = releaseCheck(
       name: "test matrix",
       run: command(
         root,
-        "pnpm",
-        "exec",
+        "node",
+        "--experimental-strip-types",
+        "scripts/sandboxed.ts",
         "cli-dev",
         "test-matrix",
         "--program",
